@@ -1,0 +1,120 @@
+@use "@/styles/variables" as *;
+
+.searchBox {
+  position: relative;
+  width: 445px;
+  flex: 0 0 auto;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $text-placeholder;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px 16px 12px 48px;
+  border: 1px solid $primary;
+  border-radius: $radius-2xl;
+  font-size: $font-size-sm;
+  outline: none;
+  box-shadow: 0px 1px 2px 0px rgba(217, 217, 234, 0.05), 0px 0px 0px 4px $primary-soft;
+
+  &::placeholder {
+    color: $dark;
+  }
+}
+
+.destinationGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.destinationCard {
+  background: $white;
+  border: 1px solid $border;
+  border-radius: $radius-2xl;
+  padding: 16px;
+  cursor: pointer;
+  transition: transform $transition-base, box-shadow $transition-base, background $transition-base,
+    border-color $transition-base;
+  text-align: left;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.destinationCardSelected {
+  background: $secondary-light;
+  border-color: $secondary;
+}
+
+.destinationImageWrapper {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.destinationImageWrapper img {
+  width: 100%;
+  height: 155px;
+  object-fit: cover;
+  display: block;
+}
+
+.destinationCheckbox {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  background: #ff5527;
+  border: 1.125px solid #ff5527;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.destinationCheckbox svg {
+  color: $white;
+}
+
+.destinationName {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-medium;
+  color: $dark;
+  text-align: center;
+  margin: 0;
+}
+
+@media (max-width: 1024px) {
+  .searchBox {
+    width: 360px;
+  }
+}
+
+@media (max-width: 768px) {
+  .searchBox {
+    width: 100%;
+  }
+
+  .destinationGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .destinationGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
