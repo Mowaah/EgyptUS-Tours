@@ -1,0 +1,120 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.section {
+  @include section-padding;
+  background: $background;
+}
+
+.container {
+  @include container;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-3xl;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.gallery {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  justify-content: center;
+}
+
+.galleryGrid {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 450px;
+  padding-top: 480px;
+}
+
+.viewAll {
+  text-align: center;
+  margin-top: $spacing-2xl;
+}
+
+.galleryItem {
+  position: relative;
+  width: 267px;
+  height: 437px;
+  border-radius: 24px;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: transform $transition-base;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba($primary, 0.5) 0%, transparent 40%);
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  &:nth-child(1) {
+    transform: rotate(2deg) translateY(-80px);
+    width: 240px;
+    height: 390px;
+    margin-right: -35px;
+    margin-top: -200px;
+    z-index: 1;
+  }
+
+  &:nth-child(2) {
+    transform: rotate(2deg) translateY(-40px);
+    width: 242px;
+    height: 390px;
+    margin-right: 25px;
+    z-index: 2;
+  }
+
+  &:nth-child(3) {
+    transform: rotate(0deg);
+    z-index: 5;
+    width: 267px;
+    height: 437px;
+    margin: 0 -10px;
+  }
+
+  &:nth-child(4) {
+    transform: rotate(-2deg) translateY(-40px);
+    width: 235px;
+    height: 390px;
+    margin-left: 25px;
+    z-index: 2;
+  }
+
+  &:nth-child(5) {
+    transform: rotate(-2deg) translateY(-80px);
+    width: 230px;
+    height: 390px;
+    margin-left: -35px;
+    z-index: 1;
+  }
+
+  &:hover {
+    z-index: 6;
+  }
+}
+
+.galleryImage {
+  object-fit: cover;
+  transition: transform $transition-slow;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}

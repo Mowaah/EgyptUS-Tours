@@ -1,0 +1,43 @@
+@use "@/styles/variables" as *;
+
+.card {
+  background: $background;
+  border: 1px solid transparent;
+  border-radius: $radius-xl;
+  padding: $spacing-xl;
+  transition: box-shadow $transition-base;
+
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+}
+
+.iconWrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: $radius-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-md;
+
+  svg,
+  img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+}
+
+.title {
+  color: $dark;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-medium;
+  margin-bottom: $spacing-sm;
+}
+
+.description {
+  color: $text-lighter;
+  font-size: $font-size-sm;
+  line-height: 1.6;
+}

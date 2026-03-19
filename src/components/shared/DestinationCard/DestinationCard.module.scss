@@ -1,0 +1,114 @@
+@use "@/styles/variables" as *;
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-radius: $radius-2xl;
+  overflow: hidden;
+  min-height: 536px;
+  flex-shrink: 0;
+  width: 200px;
+  cursor: pointer;
+  transition: all $transition-base;
+
+  &:hover .image {
+    transform: scale(1.05);
+  }
+
+  &.expanded {
+    width: 376px;
+  }
+
+  @media (min-width: 1024px) {
+    &.expanded {
+      width: 340px;
+    }
+  }
+}
+
+.image {
+  object-fit: cover;
+  transition: transform $transition-slow;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba($primary, 0.2) 0%, transparent 30%),
+    linear-gradient(transparent 0%, #1333677D 49%, #15366E);
+  mix-blend-mode: hard-light;
+
+  &.overlayExpanded {
+    background: linear-gradient(rgba(0, 0, 0, 0) 0%, #001D4C 100%);
+    mix-blend-mode: normal;
+  }
+  z-index: 1;
+  pointer-events: none;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  padding: $spacing-lg;
+  color: $white;
+}
+
+.title {
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-medium;
+  line-height: 1.2;
+  margin-bottom: $spacing-xs;
+}
+
+.description {
+  font-size: $font-size-xs;
+  opacity: 0.85;
+  line-height: 1.5;
+  margin-bottom: $spacing-md;
+}
+
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-sm;
+  width: 100%;
+  background: $white;
+  color: $primary;
+  padding: 0.6rem 1.25rem;
+  border-radius: 24px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  transition: background $transition-fast;
+
+  &:hover {
+    color: $white;
+    background: $secondary;
+  }
+}
+
+.arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-full;
+  background: $white;
+  backdrop-filter: blur(4px);
+  color: $primary-dark;
+  position: absolute;
+  top: $spacing-md;
+  right: $spacing-md;
+  z-index: 3;
+  transition: background $transition-fast, transform $transition-fast;
+
+  &:hover {
+    background: $secondary;
+    color: $white;
+    transform: scale(1.1) rotate(45deg);
+  }
+}

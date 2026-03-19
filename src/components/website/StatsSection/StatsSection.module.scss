@@ -1,0 +1,52 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.section {
+  background: $white;
+  padding: $spacing-3xl 0;
+}
+
+.container {
+  @include container;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-2xl;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  padding: 0 $spacing-3xl;
+
+  @media (min-width: 768px) {
+    border-right: 1px solid $border-strong;
+
+    &:last-child {
+      border-right: none;
+    }
+
+    &:first-child {
+      padding-left: 0;
+    }
+  }
+}
+
+.value {
+  font-size: 60px;
+  font-weight: $font-weight-bold;
+  color: $primary;
+  line-height: 1.1;
+}
+
+.description {
+  font-size: $font-size-sm;
+  color: $text-light;
+  line-height: 1.65;
+  margin: 0;
+}

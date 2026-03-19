@@ -1,0 +1,163 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.section {
+  @include section-padding;
+  background: $background;
+}
+
+.container {
+  @include container;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-xl;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 1fr;
+    align-items: flex-start;
+  }
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $spacing-md;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+}
+
+.largeHeading {
+  font-size: 46px !important;
+
+  @media (min-width: 1024px) {
+    font-size: 36px !important;
+    line-height: 1.4;
+  }
+}
+
+.card {
+  background: $white;
+  border: 1px solid $border-strong;
+  border-radius: $radius-2xl;
+  padding: $spacing-xl;
+  width: 100%;
+  max-width: 650px;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  position: relative;
+  z-index: 2;
+}
+
+.cardLabel {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  font-size: $font-size-sm;
+  color: $text-light;
+  margin: 0;
+
+  svg {
+    color: $text-light;
+    flex-shrink: 0;
+  }
+}
+
+.vehicleGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-sm;
+}
+
+.vehicleBtn {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 18px;
+  border-radius: $radius-xl;
+  border: 1px solid $border-strong;
+  background: $white;
+  cursor: pointer;
+  text-align: left;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $secondary;
+  }
+}
+
+.vehicleBtnActive {
+  border-color: $secondary;
+  background: rgba($secondary, 0.06);
+}
+
+.vehicleName {
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: $dark;
+}
+
+.vehiclePassengers {
+  font-size: $font-size-xs;
+  color: $text-light;
+}
+
+.pickupDate {
+  padding: 14px 18px;
+  border: 1px solid $border-strong;
+  border-radius: $radius-xl;
+  background: $white;
+  transition: all $transition-fast;
+  min-height: 64px;
+  width: 100%;
+  max-width: 280px;
+  position: relative;
+  cursor: pointer;
+  text-align: left;
+}
+
+.dateNative {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dateValue {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dateMain {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $dark;
+}
+
+.dateYear {
+  font-size: $font-size-xs;
+  color: $text-light;
+}
+
+.mapImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+
+  @media (min-width: 1024px) {
+    margin-top: -50px;
+  }
+}

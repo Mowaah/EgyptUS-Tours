@@ -1,0 +1,80 @@
+@use "@/styles/variables" as *;
+
+.root {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+}
+
+.sides {
+  justify-content: space-between;
+  width: 100%;
+}
+
+.inline {
+  justify-content: flex-start;
+  gap: $spacing-sm;
+}
+
+.content {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.button {
+  width: var(--pa-size, 44px);
+  height: var(--pa-size, 44px);
+  border-radius: $radius-full;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background-color $transition-fast,
+    border-color $transition-fast,
+    color $transition-fast,
+    opacity $transition-fast;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1.5px solid $secondary;
+  background: $white;
+  color: $secondary;
+
+  &:hover:not(:disabled),
+  &:active:not(:disabled) {
+    background: $secondary;
+    border-color: $secondary;
+    color: $white;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.icon {
+  width: var(--pa-icon-w, 22px);
+  height: var(--pa-icon-h, 22px);
+  background-color: currentColor;
+
+  -webkit-mask-image: url("/images/pagination-arrow.svg");
+  mask-image: url("/images/pagination-arrow.svg");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.prev .icon {
+  transform: rotate(0deg);
+}
+
+.next .icon {
+  transform: rotate(180deg);
+}
+

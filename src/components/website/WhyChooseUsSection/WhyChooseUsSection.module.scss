@@ -1,0 +1,64 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.section {
+  @include section-padding;
+  background: $background;
+}
+
+.container {
+  @include container;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-lg;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+}
+
+.card {
+  border-radius: 32px;
+  padding: $spacing-xl;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.iconBox {
+  width: 56px;
+  height: 56px;
+  border-radius: $radius-lg;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-xs;
+  flex-shrink: 0;
+}
+
+.cardTitle {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-semibold;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.cardDesc {
+  font-size: $font-size-lg;
+  color: $text-muted;
+  line-height: 1.4;
+  margin: 0;
+  width: 90%;
+}

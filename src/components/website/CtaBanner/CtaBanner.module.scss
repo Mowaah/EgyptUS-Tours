@@ -1,0 +1,40 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.section {
+  @include section-padding;
+  background: $background;
+}
+
+.container {
+  @include container;
+}
+
+.card {
+  background: linear-gradient(to bottom, #EAF5FF 0%, #FFFFFF 100%);
+  border-radius: 32px;
+  padding: $spacing-xl;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-md;
+  text-align: center;
+}
+
+.heading {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0;
+
+  @media (min-width: 768px) {
+    font-size: $font-size-xl;
+  }
+}
+
+.description {
+  font-size: $font-size-sm;
+  color: $text-light;
+  line-height: 1.6;
+  margin: 0;
+}

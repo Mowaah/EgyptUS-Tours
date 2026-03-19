@@ -1,0 +1,156 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.card {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  border-radius: 22px;
+  padding: 8px;
+  border: 1px solid $border-card;
+  box-shadow: none; 
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.favorite {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 35px;
+  height: 35px;
+  border-radius: 100px;
+  background: $white;
+  @include flex-center;
+  transition: all $transition-fast;
+  z-index: 2;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.heartIcon {
+  width: 20px;
+  height: 20px;
+  fill: transparent;
+  stroke: $border-strong;
+  stroke-width: 1.5;
+  transition: fill $transition-fast, stroke $transition-fast;
+}
+
+.heartActive {
+  fill: $danger;
+  stroke: $danger;
+}
+
+.location {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 4px;
+  background: $primary-soft; 
+  color: $primary;
+  padding: 6px 12px;
+  border-radius: 21px;
+  font-size: 10px;
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  background: $background-soft;
+  border-radius: 12px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.title {
+  color: $dark;
+  font-size: 16.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 8px;
+  @include truncate(2);
+}
+
+.description {
+  color: $text-light;
+  font-size: 11px;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  @include truncate(2);
+}
+
+.meta {
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.price {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.priceLabel {
+  color: $text-light;
+  font-size: $font-size-sm;
+  display: none; 
+}
+
+.priceValue {
+  color: $primary;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.pricePer {
+  color: $text-light;
+  font-size: 9px;
+}
+
+.viewTripBtn {
+  border-radius: 40px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  background: $primary !important;
+  height: 40px;
+  padding: 10px 14px;
+  width: 100%;
+}
+
+.details {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: $text-light;
+  font-size: 9px;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  svg {
+    color: $text-light;
+    width: 12px;
+    height: 12px;
+  }
+}

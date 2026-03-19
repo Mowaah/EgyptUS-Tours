@@ -1,0 +1,13 @@
+@use "@/styles/variables" as *;
+
+.stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.ratingValue {
+  font-size: $font-size-sm;
+  color: $text-light;
+  margin-left: 2px;
+}

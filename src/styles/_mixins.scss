@@ -1,0 +1,47 @@
+@use "@/styles/variables" as *;
+
+@mixin container {
+  max-width: $container-max;
+  margin: 0 auto;
+  padding: 0 $container-padding;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin section-padding {
+  padding: 0 0;
+
+  @media (min-width: 1024px) {
+    padding: $spacing-3xl 0;
+  }
+}
+
+@mixin card {
+  background: $white;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+}
+
+@mixin truncate($lines: 1) {
+  @if $lines == 1 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}

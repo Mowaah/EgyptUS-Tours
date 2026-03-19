@@ -1,0 +1,165 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.navbar {
+  background: transparent;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: background $transition-base;
+
+  &.scrolled {
+    background: $white;
+    border-bottom: 1px solid $border;
+
+    .link {
+      color: $text;
+
+      &:hover {
+        color: $dark;
+        background: $background;
+      }
+
+      &.active {
+        background: $primary;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        border-color: transparent;
+        color: $white;
+      }
+    }
+
+    .hamburger span {
+      background: $dark;
+    }
+  }
+}
+
+.container {
+  @include container;
+  @include flex-between;
+  height: 72px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+
+.links {
+  display: none;
+  gap: $spacing-xs;
+
+  @media (min-width: 1024px) {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.linkItem {
+  position: relative;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-normal;
+  color: $white;
+  border-radius: $radius-full;
+  transition: all $transition-fast;
+  position: relative;
+
+  &:hover {
+    color: $white;
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  &.active {
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    font-weight: $font-weight-medium;
+    color: $white;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 50%;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.5),
+        transparent
+      );
+      pointer-events: none;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1px;
+      height: 50%;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.5),
+        transparent
+      );
+      pointer-events: none;
+    }
+  }
+}
+
+.cta {
+  display: none;
+
+  @media (min-width: 1024px) {
+    display: block;
+  }
+}
+
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: $spacing-sm;
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+
+  span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: $white;
+    border-radius: 2px;
+    transition: all $transition-fast;
+  }
+}
+
+.open {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 72px;
+  left: 0;
+  right: 0;
+  background: $white;
+  border-bottom: 1px solid $border;
+  padding: $spacing-lg;
+  box-shadow: $shadow-lg;
+  z-index: 99;
+}

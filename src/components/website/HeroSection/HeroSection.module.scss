@@ -1,0 +1,65 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.hero {
+  position: relative;
+  min-height: 81vh;
+  display: flex;
+  flex-direction: column;
+  margin-top: -72px;
+}
+
+.background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: url("/images/home/hero-bg.jpg") center / cover no-repeat;
+  background-color: $dark;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.15) 50%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+}
+
+.container {
+  @include container;
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding-top: 180px;
+  padding-bottom: 8rem;
+}
+
+.content {
+  max-width: 600px;
+  margin-bottom: $spacing-3xl;
+  text-align: left;
+  align-self: flex-start;
+}
+
+.heading {
+  color: $white;
+  font-size: 110px;
+  font-weight: $font-weight-medium;
+  line-height: 1.05;
+  margin-bottom: $spacing-md;
+}
+
+.subheading {
+  color: $white;
+  font-size: 40px;
+  line-height: 1.5;
+  margin-bottom: $spacing-xl;
+}

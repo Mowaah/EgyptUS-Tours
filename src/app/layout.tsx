@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.scss";
 
 export const metadata: Metadata = {
-  title: "3amo Travel",
-  description: "Your travel agency",
+  title: "EgyptUS Tours",
+  description: "History, culture, and adventure all in one trip",
 };
 
 export default function RootLayout({

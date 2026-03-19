@@ -1,0 +1,59 @@
+@use "@/styles/variables" as *;
+
+.header {
+  margin: 0 0 $spacing-md;
+}
+
+.center {
+  text-align: center;
+  margin: 0 auto $spacing-md;
+}
+
+.left {
+  text-align: left;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  color: $secondary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.05em;
+  margin-bottom: $spacing-lg;
+}
+
+.labelIcon {
+  width: 22px;
+  height: 22px;
+  margin-right: 2px;
+}
+
+.heading {
+  color: $primary-dark;
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+  margin: 0 0 $spacing-md;
+
+  @media (min-width: 1024px) {
+    font-size: $font-size-4xl;
+  }
+
+  .center & {
+    margin: 0 auto $spacing-md;
+  }
+}
+
+.description {
+  color: $text-light;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  line-height: 1.4;
+  max-width: 545px;
+
+  .center & {
+    margin: 0 auto;
+  }
+}

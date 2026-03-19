@@ -1,0 +1,269 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.section {
+  @include section-padding;
+
+  @media (min-width: 1024px) {
+    padding-top: 0;
+  }
+}
+
+.container {
+  @include container;
+}
+
+.toolbar {
+  @include flex-between;
+  margin-bottom: $spacing-lg;
+  padding: 0 16px;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+}
+
+.count {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $primary-dark;
+}
+
+.layout {
+  display: flex;
+  gap: 16px;
+  margin-top: 40px;
+  align-items: flex-start;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar {
+  display: none;
+  width: 265px;
+  flex-shrink: 0;
+
+  @media (min-width: 1024px) {
+    display: block;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+}
+
+.filterGroup {
+  padding: 24px 20px;
+  margin-bottom: 12px;
+  border: 1px solid $border;
+  border-radius: 24px;
+}
+
+.filterHeader {
+  @include flex-between;
+  cursor: pointer;
+
+  h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: $dark;
+  }
+}
+
+.filterGroupExpanded {
+  .filterHeader {
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid $border;
+  }
+}
+
+.chevron {
+  transition: transform $transition-fast;
+  transform: rotate(-90deg);
+  color: $dark;
+
+  &.expanded {
+    transform: rotate(0deg);
+  }
+}
+
+.filterOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkbox,
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: $text;
+  cursor: pointer;
+
+  input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 1px solid $border-input;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+
+    &:checked {
+      background-color: $secondary;
+      border-color: $secondary;
+      box-shadow: 0 0 0 4px $secondary-light, $shadow-sm;
+      background-image: url("/images/check.svg");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 12px;
+    }
+  }
+}
+
+.priceRange {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.rangeContainer {
+  position: relative;
+  height: 20px;
+  margin: 10px 0;
+}
+
+.rangeTrack {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  transform: translateY(-50%);
+  background: $background-input;
+  border-radius: 8px;
+}
+
+.rangeTrackFill {
+  position: absolute;
+  top: 50%;
+  height: 4px;
+  transform: translateY(-50%);
+  background: $secondary;
+  border-radius: 8px;
+  z-index: 1;
+}
+
+.rangeInput {
+  appearance: none;
+  -webkit-appearance: none;
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  outline: none;
+  z-index: 2;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    pointer-events: auto;
+    width: 14px;
+    height: 14px;
+    background: $secondary;
+    border: 1.24px solid $white;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 0 1px $secondary-light;
+  }
+
+  &::-moz-range-thumb {
+    pointer-events: auto;
+    width: 14px;
+    height: 14px;
+    background: $secondary;
+    border: 1.24px solid $white;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 0 1px $secondary-light;
+  }
+}
+
+.rangeLabel {
+  font-size: 14px;
+  color: $text;
+  text-align: center;
+  margin-top: 8px;
+}
+
+.grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  margin-top: $spacing-2xl;
+}
+
+.pages {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+}
+
+.pageBtn {
+  width: 36px;
+  height: 32px;
+  @include flex-center;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: $text-lighter;
+  border: 1px solid $border;
+  background: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover:not(:disabled) {
+    background: $secondary-light;
+    color: $secondary;
+    border-color: $secondary-border;
+  }
+
+  &.active {
+    background: $secondary-light;
+    color: $secondary;
+    border: 1px solid $secondary-border;
+  }
+
+  &.dots {
+    border: none;
+    cursor: default;
+    background: transparent;
+  }
+}

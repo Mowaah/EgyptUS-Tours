@@ -1,0 +1,83 @@
+@use "@/styles/variables" as *;
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  border-radius: $radius-full;
+  font-weight: $font-weight-normal;
+  transition: all $transition-base;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &.sm {
+    padding: 10px 28px;
+    font-size: $font-size-sm;
+  }
+
+  &.md {
+    padding: 10px 28px;
+    font-size: 16px;
+  }
+
+  &.lg {
+    padding: 12px 20px;
+    font-size: 16px;
+  }
+
+  &.fullWidth {
+    width: 100%;
+  }
+}
+
+.primary {
+  background: $primary;
+  color: $white;
+
+  &:hover {
+    background: $primary-dark;
+  }
+}
+
+.secondary {
+  background: $secondary;
+  color: $white;
+
+  &:hover {
+    background: $secondary-dark;
+  }
+}
+
+.outline {
+  background: transparent;
+  color: $primary;
+  border-radius: 40px;
+  font-weight: 500;
+  border: 2px solid $primary;
+
+  &:hover {
+    color: $white;
+    background: $secondary;
+    border-color: $secondary;
+  }
+
+  &:hover .icon img {
+    filter: brightness(0) invert(1);
+  }
+}
+
+.dark {
+  background: $dark;
+  color: $white;
+
+  &:hover {
+    background: #2a3d5e;
+  }
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.1em;
+}

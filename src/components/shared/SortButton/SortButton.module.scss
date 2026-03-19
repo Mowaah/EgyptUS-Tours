@@ -1,0 +1,43 @@
+@use "@/styles/variables" as *;
+
+.sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: $primary-dark;
+  font-weight: 500;
+}
+
+.selectWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  border: 1px solid $border-strong;
+  border-radius: 16px;
+  background: $white;
+  padding: 10px 20px;
+  color: $text-placeholder;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  line-height: 1.2;
+
+  &::-ms-expand {
+    display: none;
+  }
+}
+
+.arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}

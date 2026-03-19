@@ -1,0 +1,148 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.footer {
+  background: $primary-dark;
+  padding: $spacing-3xl 0 $spacing-xl;
+}
+
+.container {
+  @include container;
+}
+
+.top {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-4xl;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 320px 1fr;
+  }
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.tagline {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-normal;
+  color: $white;
+  line-height: 1.4;
+  margin: 0;
+  max-width: 320px;
+}
+
+.socialBlock {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  margin-top: $spacing-4xl;
+}
+
+.followLabel {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $white;
+}
+
+.socials {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.socialIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-full;
+  background: rgba($white, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background $transition-fast;
+  color: $white;
+
+  &:hover {
+    background: rgba($white, 0.2);
+  }
+
+  img {
+    filter: brightness(0) invert(1);
+  }
+}
+
+.linksGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-2xl;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.linkGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.linkGroupTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $white;
+  margin: 0;
+}
+
+.linkList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.link {
+  font-size: $font-size-sm;
+  color: $white;
+  text-decoration: none;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $white;
+  }
+}
+
+.contactItem {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+}
+
+.contactLabel {
+  font-size: $font-size-sm;
+  color: $white;
+  font-weight: $font-weight-medium;
+}
+
+.contactValue {
+  font-size: $font-size-sm;
+  color: $white;
+}
+
+.divider {
+  height: 1px;
+  background: rgba($white, 0.12);
+  margin: $spacing-2xl 0 $spacing-lg;
+}
+
+.copyright {
+  font-size: 11px;
+  font-weight: $font-weight-normal;
+  color: $white;
+  text-align: center;
+  margin: 0;
+}

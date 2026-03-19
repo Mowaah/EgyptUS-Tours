@@ -1,0 +1,27 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.section {
+  @include section-padding;
+  background: $white;
+  overflow: hidden;
+}
+
+.container {
+  @include container;
+}
+
+.cards {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-lg;
+  overflow-x: auto;
+  padding-bottom: $spacing-md;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  margin-top: $spacing-2xl;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
