@@ -1,7 +1,18 @@
+"use client";
+
 import Image from "next/image";
+import { usePathname } from "next/navigation";
+
 import styles from "./TopBar.module.scss";
 
+const HIDE_TOPBAR_PREFIX = "/booking";
+
 export default function TopBar() {
+  const pathname = usePathname();
+  if (pathname === HIDE_TOPBAR_PREFIX || pathname.startsWith(`${HIDE_TOPBAR_PREFIX}/`)) {
+    return null;
+  }
+
   return (
     <div className={styles.topbar}>
       <div className={styles.container}>

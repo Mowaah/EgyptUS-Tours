@@ -1,319 +1,58 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import styles from "./PlanYourTripPage.module.scss";
+import { DESTINATIONS, EXPERIENCE_OPTIONS, STEPS, TRANSPORT_OPTIONS } from "./planYourTripData";
+import {
+  IconArrowLeft,
+  IconMinus,
+  IconPlus,
+  IconStar,
+  IconX,
+} from "./PlanYourTripIcons";
+import type { PlanStep, TripData } from "./planYourTripTypes";
+import { clampMin0, filterDestinations, toggleInArray } from "./planYourTripUtils";
 import StepDestination from "./steps/Destination/StepDestination";
 import StepTravelerInfo from "./steps/TravelerInfo/StepTravelerInfo";
 import StepPreferences from "./steps/Preferences/StepPreferences";
 
-type Step = 1 | 2 | 3;
-
-type IconProps = {
-  size?: number;
-  className?: string;
-};
-
-function IconArrowLeft({ size = 16, className }: IconProps) {
-  return (
-    <svg
-      className={className}
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M15 18l-6-6 6-6"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function IconHome({ size = 16, className }: IconProps) {
-  return (
-    <svg
-      className={className}
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M3 10.5L12 3l9 7.5V21a0 0 0 0 1 0 0h-6v-6H9v6H3V10.5z"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function IconSearch({ size = 20, className }: IconProps) {
-  return (
-    <svg
-      className={className}
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
-      <path
-        d="M20 20l-3.5-3.5"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function IconCheck({ size = 16, className }: IconProps) {
-  return (
-    <svg
-      className={className}
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M20 6L9 17l-5-5"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function IconMinus({ size = 16, className }: IconProps) {
-  return (
-    <svg
-      className={className}
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path d="M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function IconPlus({ size = 16, className }: IconProps) {
-  return (
-    <svg
-      className={className}
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path d="M12 5v14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function IconStar({
-  size = 14,
-  className,
-  fill = "none",
-  opacity = 1,
-}: IconProps & { fill?: string; opacity?: number }) {
-  return (
-    <svg
-      className={className}
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill={fill}
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      style={{ opacity }}
-    >
-      <path
-        d="M12 2l3.2 6.5 7.2 1-5.2 5.1 1.2 7.2L12 18.9 5.6 21.8l1.2-7.2L1.6 9.5l7.2-1L12 2z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function IconX({ size = 12, className }: IconProps) {
-  return (
-    <svg
-      className={className}
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M6 6l12 12M18 6L6 18"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-type TripData = {
-  destinations: string[];
+const initialTripData: TripData = {
+  destinations: [],
   travelerInfo: {
-    name: string;
-    email: string;
-    phone: string;
-    nationality: string;
-    startDate: string;
-    endDate: string;
-    adults: number;
-    children: number;
-    infants: number;
-    tripDetails: string;
-  };
+    name: "",
+    email: "",
+    phone: "",
+    nationality: "",
+    startDate: "",
+    endDate: "",
+    adults: 0,
+    children: 0,
+    infants: 0,
+    tripDetails: "",
+  },
   preferences: {
-    hotelCategory: number;
-    roomType: string;
-    transportation: string[];
-    experiences: string[];
-  };
+    hotelCategory: 5,
+    roomType: "Standard Room",
+    transportation: [],
+    experiences: [],
+  },
 };
-
-type Destination = {
-  id: string;
-  name: string;
-  image: string;
-};
-
-const DESTINATIONS: Destination[] = [
-  {
-    id: "egypt",
-    name: "Egypt",
-    image:
-      "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    id: "dubai-1",
-    name: "Dubai",
-    image:
-      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    id: "saudi-1",
-    name: "Saudi Arabia",
-    image:
-      "https://images.unsplash.com/photo-1614071403589-1e5d37b04b2d?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    id: "qatar-1",
-    name: "Qatar",
-    image:
-      "https://images.unsplash.com/photo-1614003488101-4fe3b4a6f4f8?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    id: "turkey-1",
-    name: "Turkey",
-    image:
-      "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    id: "greece-1",
-    name: "Greece",
-    image:
-      "https://images.unsplash.com/photo-1505735454785-337d7d3f7c2b?auto=format&fit=crop&w=1200&q=80",
-  },
-];
-
-const TRANSPORT_OPTIONS = [
-  "Shared Transport",
-  "Private Transport",
-  "VIP Luxury Car",
-  "Airport Transfer Only",
-  "I don't need transport",
-] as const;
-
-const EXPERIENCE_OPTIONS = [
-  "Private Tour Guide",
-  "Photographer",
-  "Special Event during trip",
-  "Nile Cruise",
-  "Desert Safari",
-] as const;
-
-const STEPS: Array<{ number: Step; label: string }> = [
-  { number: 1, label: "Destination" },
-  { number: 2, label: "Traveler Information" },
-  { number: 3, label: "Travel Preferences" },
-];
-
-function clampMin0(n: number) {
-  return Math.max(0, n);
-}
-
-function toggleInArray(arr: string[], value: string) {
-  return arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value];
-}
 
 export default function PlanYourTripPage() {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState<Step>(1);
+  const [currentStep, setCurrentStep] = useState<PlanStep>(1);
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState("");
+  const [tripData, setTripData] = useState<TripData>(initialTripData);
 
-  const [tripData, setTripData] = useState<TripData>({
-    destinations: [],
-    travelerInfo: {
-      name: "",
-      email: "",
-      phone: "",
-      nationality: "",
-      startDate: "",
-      endDate: "",
-      adults: 0,
-      children: 0,
-      infants: 0,
-      tripDetails: "",
-    },
-    preferences: {
-      hotelCategory: 5,
-      roomType: "Standard Room",
-      transportation: [],
-      experiences: [],
-    },
-  });
-
-  const filteredDestinations = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return DESTINATIONS;
-    return DESTINATIONS.filter((d) => d.name.toLowerCase().includes(q));
-  }, [search]);
+  const filteredDestinations = useMemo(
+    () => filterDestinations(DESTINATIONS, search),
+    [search],
+  );
 
   const toggleDestination = (id: string) => {
     setTripData((prev) => ({
@@ -331,10 +70,7 @@ export default function PlanYourTripPage() {
   ) => {
     setTripData((prev) => ({
       ...prev,
-      travelerInfo: {
-        ...prev.travelerInfo,
-        [field]: value,
-      },
+      travelerInfo: { ...prev.travelerInfo, [field]: value },
     }));
   };
 
@@ -344,10 +80,7 @@ export default function PlanYourTripPage() {
       const next = inc ? current + 1 : clampMin0(current - 1);
       return {
         ...prev,
-        travelerInfo: {
-          ...prev.travelerInfo,
-          [field]: next,
-        },
+        travelerInfo: { ...prev.travelerInfo, [field]: next },
       };
     });
   };
@@ -355,10 +88,7 @@ export default function PlanYourTripPage() {
   const setPreferences = (patch: Partial<TripData["preferences"]>) => {
     setTripData((prev) => ({
       ...prev,
-      preferences: {
-        ...prev.preferences,
-        ...patch,
-      },
+      preferences: { ...prev.preferences, ...patch },
     }));
   };
 
@@ -383,6 +113,17 @@ export default function PlanYourTripPage() {
   return (
     <div className={styles.page}>
       <div className={styles.breadcrumb}>
+        <div className={styles.breadcrumbArt} aria-hidden="true">
+          <div className={styles.breadcrumbDottedLine} />
+          <Image
+            src="/images/trips2.svg"
+            alt=""
+            width={22.5}
+            height={19.5}
+            className={styles.breadcrumbTripsIcon}
+            aria-hidden
+          />
+        </div>
         <div className={styles.breadcrumbContainer}>
           <Link className={styles.backButton} href="/">
             <IconArrowLeft size={16} />
@@ -390,10 +131,17 @@ export default function PlanYourTripPage() {
           </Link>
 
           <div className={styles.breadcrumbPath} aria-label="Breadcrumb">
-            <IconHome size={16} />
+            <Image
+              src="/images/home.svg"
+              alt=""
+              width={16}
+              height={16}
+              className={styles.breadcrumbHomeIcon}
+              aria-hidden
+            />
             <span className={styles.breadcrumbLabel}>Home</span>
             <span className={styles.breadcrumbSeparator} aria-hidden="true">
-              \
+              /
             </span>
             <span className={styles.breadcrumbCurrent}>Plan Your Trip</span>
           </div>
@@ -409,20 +157,28 @@ export default function PlanYourTripPage() {
       <div className={styles.stepIndicator}>
         <div className={styles.stepContainer}>
           {STEPS.map((step, index) => {
-            const circleClass =
-              currentStep === step.number
-                ? styles.stepCircleActive
-                : currentStep > step.number
-                  ? styles.stepCircleCompleted
-                  : styles.stepCircleInactive;
+            const isCurrent = currentStep === step.number;
+            const isDone = currentStep > step.number;
+
+            const circleClass = isCurrent
+              ? styles.stepCircleActive
+              : isDone
+                ? styles.stepCircleCompleted
+                : styles.stepCircleInactive;
 
             return (
               <div key={step.number} className={styles.stepChunk}>
-                <div className={styles.step}>
-                  <div className={`${styles.stepCircle} ${circleClass}`}>{step.number}</div>
+                <div className={styles.step} aria-current={isCurrent ? "step" : undefined}>
+                  <div className={`${styles.stepCircle} ${circleClass}`}>
+                    {isCurrent ? (
+                      <span className={styles.stepBullseyeDot} aria-hidden="true" />
+                    ) : (
+                      step.number
+                    )}
+                  </div>
                   <span
                     className={`${styles.stepLabel} ${
-                      currentStep >= step.number ? styles.stepLabelActive : ""
+                      isCurrent ? styles.stepLabelCurrent : isDone ? styles.stepLabelDone : ""
                     }`}
                   >
                     {step.label}
@@ -431,7 +187,7 @@ export default function PlanYourTripPage() {
                 {index < STEPS.length - 1 && (
                   <div
                     className={`${styles.stepLine} ${
-                      currentStep > step.number ? styles.stepLineCompleted : ""
+                      currentStep >= step.number ? styles.stepLineActive : ""
                     }`}
                     aria-hidden="true"
                   />
@@ -453,8 +209,6 @@ export default function PlanYourTripPage() {
               onToggleDestination={toggleDestination}
               onContinue={handleContinue}
               continueDisabled={tripData.destinations.length === 0}
-              IconSearch={IconSearch}
-              IconCheck={IconCheck}
             />
           )}
 
@@ -489,7 +243,13 @@ export default function PlanYourTripPage() {
         <div className={styles.modalOverlay} role="dialog" aria-modal="true">
           <div className={styles.modal}>
             <div className={styles.modalIcon} aria-hidden="true">
-              <IconCheck size={32} />
+              <Image
+                src="/images/check.svg"
+                alt=""
+                width={32}
+                height={32}
+                className={styles.modalCheckIcon}
+              />
             </div>
 
             <h2 className={styles.modalTitle}>Your Custom Trip Request Has Been Received!</h2>
@@ -513,4 +273,3 @@ export default function PlanYourTripPage() {
     </div>
   );
 }
-

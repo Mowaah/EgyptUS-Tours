@@ -6,9 +6,11 @@ $primary-hover: #2566CF;
 $primary-soft: rgba(41, 113, 230, 0.11);
 
 $secondary: #FF6600;
-$secondary-light: #FEE2D5;
+$secondary-light: #FFF3EB;
 $secondary-dark: #E65C00;
 $secondary-border: #FFD0B0;
+$counter-minus-bg: #fed7aa;
+$counter-pill-border: #e2e8f0;
 
 $dark: #0E2851;
 $text: #2B2B38;
@@ -16,6 +18,8 @@ $text-light: #6B7280;
 $text-lighter: #4A5565;
 $text-muted: #606978;
 $text-placeholder: #B1B1B1;
+
+$nav-link-on-light: #4b5563;
 
 $border: #F4F4F4;
 $border-card: #DFEAFB;
@@ -74,6 +78,7 @@ $shadow-card: 0 2px 12px rgba(0, 0, 0, 0.08);
 // Layout
 $container-max: 1280px;
 $container-padding: 0rem;
+$navbar-height-desktop: 110px;
 
 // Transitions
 $transition-fast: 150ms ease;

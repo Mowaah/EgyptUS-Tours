@@ -8,6 +8,35 @@
   z-index: 100;
   transition: background $transition-base;
 
+  &.lightPage:not(.scrolled) {
+    .link {
+      color: $nav-link-on-light;
+
+      &:hover {
+        color: $dark;
+        background: $background-alt;
+      }
+
+      &.active {
+        color: $primary;
+        background: rgba(41, 113, 230, 0.1);
+        border-color: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+
+        &::before,
+        &::after {
+          display: none;
+        }
+      }
+    }
+
+    .hamburger span {
+      background: $nav-link-on-light;
+    }
+  }
+
   &.scrolled {
     background: $white;
     border-bottom: 1px solid $border;
@@ -38,7 +67,7 @@
 .container {
   @include container;
   @include flex-between;
-  height: 72px;
+  height: $navbar-height-desktop;
 }
 
 .logo {
@@ -130,6 +159,12 @@
   }
 }
 
+.ctaGhost {
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
 .hamburger {
   display: flex;
   flex-direction: column;
@@ -154,7 +189,7 @@
   display: flex;
   flex-direction: column;
   position: absolute;
-  top: 72px;
+  top: $navbar-height-desktop;
   left: 0;
   right: 0;
   background: $white;
@@ -162,4 +197,25 @@
   padding: $spacing-lg;
   box-shadow: $shadow-lg;
   z-index: 99;
+
+  .link {
+    color: $nav-link-on-light;
+
+    &:hover {
+      color: $dark;
+      background: $background-alt;
+    }
+
+    &.active {
+      color: $white;
+      background: $primary;
+      border-color: transparent;
+      box-shadow: none;
+
+      &::before,
+      &::after {
+        display: none;
+      }
+    }
+  }
 }

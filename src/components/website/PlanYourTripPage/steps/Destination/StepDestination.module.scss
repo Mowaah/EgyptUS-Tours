@@ -1,9 +1,57 @@
 @use "@/styles/variables" as *;
 
+.destinationGrid {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  margin-bottom: 32px;
+  margin-inline: clamp(1.5rem, 8vw, 6rem);
+  background-color: $white;
+  padding: $spacing-xl;
+  border-radius: 32px;
+  border: 1px solid $border-strong;
+}
+
+.destinationGridHeader {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.destinationScroll {
+  min-width: 0;
+}
+
+.destinationCards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.destinationGridDivider {
+  flex-shrink: 0;
+  margin: 0;
+  border: none;
+  height: 1px;
+  background: $border-strong;
+}
+
+.destinationGridFooter {
+  flex-shrink: 0;
+  width: 100%;
+
+  & > button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
 .searchBox {
   position: relative;
   width: 445px;
-  flex: 0 0 auto;
+  flex-shrink: 0;
 }
 
 .searchIcon {
@@ -11,28 +59,28 @@
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: $text-placeholder;
+  display: block;
+  pointer-events: none;
 }
 
 .searchInput {
   width: 100%;
   padding: 12px 16px 12px 48px;
-  border: 1px solid $primary;
-  border-radius: $radius-2xl;
+  border: 1px solid $border-input;
+  border-radius: $radius-xl;
   font-size: $font-size-sm;
+  background: $white;
   outline: none;
-  box-shadow: 0px 1px 2px 0px rgba(217, 217, 234, 0.05), 0px 0px 0px 4px $primary-soft;
+  transition: box-shadow $transition-fast, border-color $transition-fast;
 
   &::placeholder {
-    color: $dark;
+    color: $text-placeholder;
   }
-}
 
-.destinationGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
-  margin-bottom: 32px;
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0px 1px 2px 0px rgba(217, 217, 234, 0.05), 0px 0px 0px 4px $primary-soft;
+  }
 }
 
 .destinationCard {
@@ -41,13 +89,10 @@
   border-radius: $radius-2xl;
   padding: 16px;
   cursor: pointer;
-  transition: transform $transition-base, box-shadow $transition-base, background $transition-base,
-    border-color $transition-base;
   text-align: left;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: $shadow-md;
+    border-color: $secondary;
   }
 }
 
@@ -74,18 +119,21 @@
   position: absolute;
   top: 12px;
   right: 12px;
+  display: block;
   width: 24px;
   height: 24px;
-  background: #ff5527;
-  border: 1.125px solid #ff5527;
+  box-sizing: border-box;
   border-radius: $radius-md;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: 1.5px solid rgba(14, 40, 81, 0.2);
+  background-color: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  pointer-events: none;
 }
 
-.destinationCheckbox svg {
-  color: $white;
+.destinationCheckboxSelected {
+  border-color: $secondary;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  background: $secondary url("/images/check.svg") no-repeat center / 14px 14px;
 }
 
 .destinationName {
@@ -103,18 +151,21 @@
 }
 
 @media (max-width: 768px) {
+  .destinationGridHeader {
+    flex-direction: column;
+  }
+
   .searchBox {
     width: 100%;
   }
 
-  .destinationGrid {
+  .destinationCards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 480px) {
-  .destinationGrid {
+  .destinationCards {
     grid-template-columns: 1fr;
   }
 }
-

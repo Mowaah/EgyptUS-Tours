@@ -1,2 +1,183 @@
-// Step-specific styles can live here when needed.
+@use "@/styles/variables" as *;
 
+.phoneRow {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: stretch;
+}
+
+.phonePrefix {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid $border-strong;
+  border-radius: $radius-xl;
+  font-size: $font-size-sm;
+  color: $dark;
+  white-space: nowrap;
+  flex-shrink: 0;
+  background: $white;
+  cursor: default;
+
+  span {
+    font-weight: $font-weight-medium;
+  }
+
+  svg {
+    color: $text-light;
+    flex-shrink: 0;
+  }
+}
+
+.inputPhone {
+  flex: 1;
+  min-width: 0;
+}
+
+.dateField {
+  position: relative;
+  width: 100%;
+}
+
+.dateIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dateFieldInput {
+  padding-left: 42px;
+
+  &::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.65;
+  }
+}
+
+.numberFieldRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  min-height: 48px;
+}
+
+.counterRowLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.counterRowTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $dark;
+  line-height: 1.3;
+}
+
+.counterRowHint {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-normal;
+  color: $text-placeholder;
+  line-height: 1.3;
+}
+
+.counterPill {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 10px;
+  padding: 8px;
+  border: 1px solid $counter-pill-border;
+  border-radius: 16px;
+  background: $white;
+  box-sizing: border-box;
+}
+
+.counterPillButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  padding: 0;
+  border: none;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: opacity $transition-fast, transform $transition-fast;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.counterPillButtonMinus {
+  background: $counter-minus-bg;
+
+  svg {
+    color: $secondary;
+  }
+}
+
+.counterPillButtonPlus {
+  background: $secondary;
+
+  svg {
+    color: $white;
+  }
+}
+
+.counterPillValue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  padding: 0 2px;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.formTextarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  border: 1px solid $border-strong;
+  border-radius: $radius-xl;
+  font-size: $font-size-sm;
+  color: $text;
+  font-family: inherit;
+  resize: vertical;
+  background: $white;
+  outline: none;
+  transition: border-color $transition-fast;
+
+  &::placeholder {
+    color: $text-placeholder;
+  }
+
+  &:focus {
+    border-color: $primary;
+  }
+}

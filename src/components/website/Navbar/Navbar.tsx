@@ -18,10 +18,14 @@ const NAV_LINKS = [
   { label: "About Us", href: "/about" },
 ];
 
+const LIGHT_NAV_PATHS = ["/booking"];
+
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const lightNavBackground =
+    LIGHT_NAV_PATHS.includes(pathname) || LIGHT_NAV_PATHS.some((p) => pathname.startsWith(`${p}/`));
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -30,15 +34,36 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const planTripButton = (
+    <Button
+      variant="primary"
+      size="md"
+      href="/booking"
+      icon={
+        <Image
+          src="/images/arrow-right.svg"
+          alt=""
+          width={24}
+          height={24}
+          style={{ marginTop: "4px" }}
+        />
+      }
+    >
+      Plan your trip
+    </Button>
+  );
+
   return (
-    <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ""}`}>
+    <nav
+      className={`${styles.navbar}${scrolled ? ` ${styles.scrolled}` : ""}${lightNavBackground ? ` ${styles.lightPage}` : ""}`}
+    >
       <div className={styles.container}>
         <Link href="/" className={styles.logo}>
           <Image
             src="/images/logo.svg"
             alt="EgyptUS Tours"
-            width={40}
-            height={48}
+            width={51}
+            height={62}
             priority
           />
         </Link>
@@ -56,6 +81,7 @@ export default function Navbar() {
         <ul className={`${styles.links} ${mobileOpen ? styles.open : ""}`}>
           {NAV_LINKS.map((link) => {
             const isActive = pathname === link.href;
+            const useDarkDropdownArrow = !isActive && (scrolled || lightNavBackground);
             return (
               <li key={link.href} className={styles.linkItem}>
                 <Link
@@ -66,7 +92,7 @@ export default function Navbar() {
                   {link.label}
                   {link.hasDropdown && (
                     <Image
-                      src={scrolled && !isActive ? "/images/arrow-down2.svg" : "/images/arrow-down2-white.svg"}
+                      src={useDarkDropdownArrow ? "/images/arrow-down2.svg" : "/images/arrow-down2-white.svg"}
                       alt=""
                       width={10}
                       height={10}
@@ -79,22 +105,13 @@ export default function Navbar() {
         </ul>
 
         <div className={styles.cta}>
-          <Button
-            variant="primary"
-            size="md"
-            href="/booking"
-            icon={
-              <Image
-                src="/images/arrow-right.svg"
-                alt=""
-                width={24}
-                height={24}
-                style={{ marginTop: "4px" }}
-              />
-            }
-          >
-            Plan your trip
-          </Button>
+          {lightNavBackground ? (
+            <div className={styles.ctaGhost} aria-hidden="true" inert>
+              {planTripButton}
+            </div>
+          ) : (
+            planTripButton
+          )}
         </div>
       </div>
     </nav>

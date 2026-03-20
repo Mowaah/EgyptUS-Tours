@@ -37,13 +37,16 @@ export default function StepPreferences({
     arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value];
 
   return (
-    <>
-      <div className={styles.formHeaderColumn}>
-        <h2 className={styles.formTitle}>Travel Preferences</h2>
-        <p className={styles.formSubtitle}>Select your travel options to help us plan your trip.</p>
-      </div>
+    <div className={styles.stepFormCard}>
+      <header className={styles.stepFormCardHeader}>
+        <div className={styles.formHeaderColumn}>
+          <h2 className={styles.formTitle}>Travel Preferences</h2>
+          <p className={styles.formSubtitle}>Select your travel options to help us plan your trip.</p>
+        </div>
+      </header>
 
-      <div className={styles.formGrid}>
+      <div className={styles.stepFormCardScroll}>
+        <div className={styles.formGrid}>
         <div className={styles.formGroup}>
           <label htmlFor="pti-hotel">Preferred hotel category</label>
           <div className={styles.selectWrapper}>
@@ -175,17 +178,22 @@ export default function StepPreferences({
             </div>
           </div>
         </div>
+        </div>
       </div>
 
-      <div className={styles.formActions}>
-        <button className={styles.previousButton} onClick={onPrevious} type="button">
-          Previous
-        </button>
-        <button className={styles.continueButton} onClick={onContinue} type="button">
-          Continue
-        </button>
+      <hr className={styles.stepFormCardDivider} aria-hidden="true" />
+
+      <div className={styles.stepFormCardFooter}>
+        <div className={styles.formActions}>
+          <button className={styles.previousButton} onClick={onPrevious} type="button">
+            Previous
+          </button>
+          <button className={styles.continueButton} onClick={onContinue} type="button">
+            Continue
+          </button>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 
