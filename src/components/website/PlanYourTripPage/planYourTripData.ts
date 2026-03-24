@@ -47,6 +47,27 @@ export const TRANSPORT_OPTIONS = [
   "I don't need transport",
 ] as const;
 
+export type HotelCategoryOption = {
+  value: string;
+  /** Star tier 3–5, or null for text-only rows */
+  starCount: 3 | 4 | 5 | null;
+};
+
+export const HOTEL_CATEGORY_OPTIONS: HotelCategoryOption[] = [
+  { value: "5.0", starCount: 5 },
+  { value: "4.0", starCount: 4 },
+  { value: "3.0", starCount: 3 },
+  { value: "Luxury Boutique", starCount: null },
+  { value: "I don't need hotel", starCount: null },
+];
+
+export const ROOM_TYPE_OPTIONS = [
+  "Standard Room",
+  "Nile View",
+  "Suite",
+  "I don't need hotel",
+] as const;
+
 export const EXPERIENCE_OPTIONS = [
   "Private Tour Guide",
   "Photographer",

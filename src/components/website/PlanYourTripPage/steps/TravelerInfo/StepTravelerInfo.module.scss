@@ -35,29 +35,6 @@
   min-width: 0;
 }
 
-.dateField {
-  position: relative;
-  width: 100%;
-}
-
-.dateIcon {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.dateFieldInput {
-  padding-left: 42px;
-
-  &::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-    opacity: 0.65;
-  }
-}
-
 .numberFieldRow {
   display: flex;
   align-items: center;

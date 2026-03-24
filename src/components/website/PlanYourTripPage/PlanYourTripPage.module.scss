@@ -296,6 +296,11 @@
 
 .stepFormCardFooter {
   flex-shrink: 0;
+
+  .previousButton,
+  .continueButton {
+    height: auto;
+  }
 }
 
 .formGrid {
@@ -345,6 +350,29 @@
   }
 }
 
+// public/images/calendar.svg — shared by Plan Your Trip date fields
+input[type="date"].formInput {
+  position: relative;
+  padding-left: 42px;
+  background-color: $white;
+  background-image: url("/images/calendar3.svg");
+  background-repeat: no-repeat;
+  background-position: left 14px center;
+  background-size: 20px 20px;
+
+  // Hide native calendar glyph on the right; invisible overlay keeps the picker openable
+  &::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+}
+
 select.formInput {
   appearance: none;
   background-image: url("/images/chevron-down.svg");
@@ -355,132 +383,14 @@ select.formInput {
   cursor: pointer;
 }
 
-.selectWrapper {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  border: 1px solid $border-strong;
-  border-radius: $radius-xl;
-  background: $white;
-}
-
-.selectWrapper .formInput {
-  flex: 1;
-  min-width: 0;
-  margin: 0;
-  border: none;
-  padding: 8px 32px 8px 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-
-  &:focus {
-    box-shadow: none;
-  }
-}
-
-.stars {
-  display: flex;
-  gap: 2px;
-}
-
-.ratingValue {
-  margin-left: auto;
-  font-size: $font-size-sm;
-  color: $dark;
-  font-variant-numeric: tabular-nums;
-}
-
-.multiSelect {
-  position: relative;
-}
-
-.selectedItems {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 12px 16px;
-  border: 1px solid $primary;
-  border-radius: $radius-2xl;
-  min-height: 48px;
-  box-shadow: 0px 1px 2px 0px rgba(217, 217, 234, 0.05), 0px 0px 0px 4px $primary-soft;
-  background: $white;
-}
-
-.placeholder {
-  color: rgba(10, 10, 10, 0.5);
-  font-size: $font-size-sm;
-}
-
-.tag {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 12px;
-  background: $secondary-light;
-  border: 1px solid $secondary;
-  border-radius: $radius-full;
-  font-size: $font-size-sm;
-  color: $secondary;
-
-  button {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    svg {
-      color: $secondary;
-    }
-  }
-}
-
-.options {
-  margin-top: 8px;
-  background: $white;
-  border: 1px solid $border;
-  border-radius: $radius-2xl;
-  padding: 8px;
-  box-shadow: $shadow-md;
-}
-
-.option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px;
-  cursor: pointer;
-  border-radius: $radius-md;
-  transition: background $transition-fast;
-
-  &:hover {
-    background: $background-alt;
-  }
-
-  input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    accent-color: $secondary;
-  }
-
-  span {
-    font-size: $font-size-sm;
-    color: $dark;
-  }
-}
-
 .formActions {
   display: flex;
   gap: 16px;
+  align-items: center;
 }
 
 .previousButton {
-  flex: 1;
+  flex: 1 1 auto;
   padding: 14px;
   background: $white;
   border: 1px solid $primary;
@@ -497,7 +407,7 @@ select.formInput {
 }
 
 .continueButton {
-  flex: 1;
+  flex: 1 1 auto;
   padding: 14px;
   background: $primary;
   border: none;
@@ -647,6 +557,13 @@ select.formInput {
 
   .formActions {
     flex-direction: column;
+    align-items: stretch;
+  }
+
+  .previousButton,
+  .continueButton {
+    flex: 0 0 auto;
+    width: 100%;
   }
 }
 

@@ -7,13 +7,7 @@ import { useRouter } from "next/navigation";
 
 import styles from "./PlanYourTripPage.module.scss";
 import { DESTINATIONS, EXPERIENCE_OPTIONS, STEPS, TRANSPORT_OPTIONS } from "./planYourTripData";
-import {
-  IconArrowLeft,
-  IconMinus,
-  IconPlus,
-  IconStar,
-  IconX,
-} from "./PlanYourTripIcons";
+import { IconArrowLeft, IconMinus, IconPlus } from "./PlanYourTripIcons";
 import type { PlanStep, TripData } from "./planYourTripTypes";
 import { clampMin0, filterDestinations, toggleInArray } from "./planYourTripUtils";
 import StepDestination from "./steps/Destination/StepDestination";
@@ -35,9 +29,9 @@ const initialTripData: TripData = {
     tripDetails: "",
   },
   preferences: {
-    hotelCategory: 5,
-    roomType: "Standard Room",
-    transportation: [],
+    hotelCategory: "",
+    roomType: "",
+    transportation: "",
     experiences: [],
   },
 };
@@ -232,8 +226,6 @@ export default function PlanYourTripPage() {
               onSetPreferences={setPreferences}
               onPrevious={handlePrevious}
               onContinue={handleContinue}
-              IconStar={IconStar}
-              IconX={IconX}
             />
           )}
         </div>

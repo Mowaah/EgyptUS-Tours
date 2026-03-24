@@ -124,44 +124,24 @@ export default function StepTravelerInfo({
 
           <div className={pageStyles.formGroup}>
             <label htmlFor="pti-start">Start Date</label>
-            <div className={styles.dateField}>
-              <Image
-                src="/images/calendar.svg"
-                alt=""
-                width={16}
-                height={16}
-                className={styles.dateIcon}
-                aria-hidden
-              />
-              <input
-                id="pti-start"
-                className={`${pageStyles.formInput} ${styles.dateFieldInput}`}
-                type="date"
-                value={travelerInfo.startDate}
-                onChange={(e) => onTravelerChange("startDate", e.target.value)}
-              />
-            </div>
+            <input
+              id="pti-start"
+              className={pageStyles.formInput}
+              type="date"
+              value={travelerInfo.startDate}
+              onChange={(e) => onTravelerChange("startDate", e.target.value)}
+            />
           </div>
 
           <div className={pageStyles.formGroup}>
             <label htmlFor="pti-end">End Date</label>
-            <div className={styles.dateField}>
-              <Image
-                src="/images/calendar.svg"
-                alt=""
-                width={16}
-                height={16}
-                className={styles.dateIcon}
-                aria-hidden
-              />
-              <input
-                id="pti-end"
-                className={`${pageStyles.formInput} ${styles.dateFieldInput}`}
-                type="date"
-                value={travelerInfo.endDate}
-                onChange={(e) => onTravelerChange("endDate", e.target.value)}
-              />
-            </div>
+            <input
+              id="pti-end"
+              className={pageStyles.formInput}
+              type="date"
+              value={travelerInfo.endDate}
+              onChange={(e) => onTravelerChange("endDate", e.target.value)}
+            />
           </div>
 
           <div className={pageStyles.formGroup}>

@@ -21,9 +21,9 @@ export type TripData = {
     tripDetails: string;
   };
   preferences: {
-    hotelCategory: number;
+    hotelCategory: string;
     roomType: string;
-    transportation: string[];
+    transportation: string;
     experiences: string[];
   };
 };
