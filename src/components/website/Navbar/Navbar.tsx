@@ -85,9 +85,11 @@ export default function Navbar() {
     </Button>
   );
 
+  const shouldShowScrolled = scrolled || pathname !== "/";
+
   return (
     <nav
-      className={`${styles.navbar}${scrolled ? ` ${styles.scrolled}` : ""}${lightNavBackground ? ` ${styles.lightPage}` : ""}`}
+      className={`${styles.navbar}${shouldShowScrolled ? ` ${styles.scrolled}` : ""}${lightNavBackground ? ` ${styles.lightPage}` : ""}`}
     >
       <div className={styles.container}>
         <Link href="/" className={styles.logo}>
@@ -113,15 +115,22 @@ export default function Navbar() {
         <ul className={`${styles.links} ${mobileOpen ? styles.open : ""}`}>
           {NAV_LINKS.map((link) => {
             const isActive = pathname === link.href;
-            const useDarkDropdownArrow = !isActive && (scrolled || lightNavBackground);
-            const useGlass = isActive && !scrolled && !lightNavBackground && !mobileOpen;
+            const usePrimaryDropdownArrow = isActive && shouldShowScrolled;
+            const useDarkDropdownArrow = !isActive && (shouldShowScrolled || lightNavBackground);
+            const useGlass = isActive && !shouldShowScrolled && !lightNavBackground && !mobileOpen;
 
             const content = (
               <>
                 {link.label}
                 {link.hasDropdown && (
                   <Image
-                    src={useDarkDropdownArrow ? "/images/arrow-down2.svg" : "/images/arrow-down2-white.svg"}
+                    src={
+                      usePrimaryDropdownArrow
+                        ? "/images/chevron-blue.svg"
+                        : useDarkDropdownArrow
+                        ? "/images/arrow-down2.svg"
+                        : "/images/arrow-down2-white.svg"
+                    }
                     alt=""
                     width={10}
                     height={10}
@@ -175,7 +184,7 @@ export default function Navbar() {
           ) : (
             planTripButton
           )}
-          <UserMenu scrolled={scrolled} lightNavBackground={lightNavBackground} />
+          <UserMenu scrolled={shouldShowScrolled} lightNavBackground={lightNavBackground} />
         </div>
       </div>
     </nav>

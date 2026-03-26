@@ -22,6 +22,17 @@
   white-space: nowrap;
 }
 
+.wrapRows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: $spacing-xl;
+
+  .wrapper {
+    margin: 0; // Align to left side
+  }
+}
+
 .tab {
   padding: 12px 24px;
   border-radius: 80px;

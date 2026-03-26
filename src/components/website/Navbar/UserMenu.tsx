@@ -30,14 +30,13 @@ export default function UserMenu({ scrolled, lightNavBackground }: UserMenuProps
 
   const toggleButton = (
     <>
-      <Image
-        src="/images/profile.svg"
-        alt="Profile"
-        width={24}
-        height={24}
+      <div
         className={`${styles.profileIcon} ${darkIcon ? styles.darkIcon : ""}`}
+        aria-hidden="true"
       />
-      <span className={`${styles.hamburger} ${darkIcon ? styles.darkHamburger : ""}`}>
+      <span
+        className={`${styles.hamburger} ${darkIcon ? styles.darkHamburger : ""}`}
+      >
         <span />
         <span />
         <span />

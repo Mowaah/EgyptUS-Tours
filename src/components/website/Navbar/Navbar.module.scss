@@ -41,8 +41,9 @@
       }
 
       &.active {
-        background: $primary;
-        color: $white;
+        background: rgba(21, 93, 252, 0.1);
+        color: $primary;
+        font-weight: $font-weight-medium;
       }
     }
 
@@ -192,14 +193,16 @@
       transform: translateX(-50%) translateY(0);
       pointer-events: auto;
     }
+  }
+}
 
-    .hasDropdownLink:not(.active) {
-      color: $primary !important;
-      background: rgba(41, 113, 230, 0.1) !important;
+.navbar.scrolled .linkItem:hover {
+  .hasDropdownLink:not(.active) {
+    color: $primary !important;
+    background: rgba(41, 113, 230, 0.1) !important;
 
-      img {
-        filter: invert(34%) sepia(85%) saturate(2250%) hue-rotate(204deg) brightness(97%) contrast(89%) !important;
-      }
+    img {
+      filter: invert(34%) sepia(85%) saturate(2250%) hue-rotate(204deg) brightness(97%) contrast(89%) !important;
     }
   }
 }

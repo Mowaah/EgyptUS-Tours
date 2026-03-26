@@ -1,0 +1,103 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.section {
+  @include section-padding;
+  background: $white;
+}
+
+.container {
+  @include container;
+  padding: 0 24px;
+
+  @media (min-width: 1024px) {
+    padding: 0 40px;
+  }
+}
+
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 48px;
+  max-width: 880px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.item {
+  border: 1px solid $border-strong;
+  border-radius: 16px;
+  overflow: hidden;
+  background: $white;
+  transition: box-shadow $transition-base;
+
+  &.open {
+    box-shadow: $shadow-md;
+  }
+}
+
+.question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.number {
+  font-size: 15px;
+  font-weight: $font-weight-bold;
+  color: $text-lighter;
+  min-width: 28px;
+  flex-shrink: 0;
+}
+
+.questionText {
+  flex: 1;
+  font-size: 16px;
+  font-weight: $font-weight-semibold;
+  color: $dark;
+}
+
+.icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid $border-strong;
+  background: $white;
+  @include flex-center;
+  flex-shrink: 0;
+  transition: background $transition-fast, border-color $transition-fast;
+}
+
+.open .icon {
+  background: $secondary-light;
+  border-color: $secondary-border;
+}
+
+.chevron {
+  transition: transform $transition-base;
+  transform: rotate(0deg);
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.answer {
+  background: $background-alt;
+  border-top: 1px solid $border-strong;
+  padding: 16px 24px 20px;
+
+  p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: $text-light;
+    padding-left: 44px;
+  }
+}

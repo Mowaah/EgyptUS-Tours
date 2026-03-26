@@ -5,20 +5,108 @@
   @include section-padding;
 
   @media (min-width: 1024px) {
-    padding-top: 0;
+    padding-top: 40px;
   }
 }
 
 .container {
   @include container;
+  padding: 0 24px;
+
+  @media (min-width: 1024px) {
+    padding: 0 40px;
+  }
 }
 
+// ── Page Header ──────────────────────────────────────────────
+.pageHeader {
+  margin-bottom: 40px;
+}
+
+.labelRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: $secondary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.05em;
+  margin-bottom: $spacing-lg;
+}
+
+.labelText {
+  color: $secondary;
+}
+
+.pageHeading {
+  color: $primary-dark;
+  font-size: clamp(1.75rem, 4vw, 2.6rem);
+  font-weight: $font-weight-bold;
+  line-height: 1.2;
+  margin: 0 0 $spacing-md;
+  max-width: 700px;
+}
+
+.highlight {
+  color: $secondary;
+}
+
+.pageDesc {
+  color: $text-light;
+  font-size: $font-size-base;
+  line-height: 1.6;
+  max-width: 600px;
+}
+
+// ── Toolbar ──────────────────────────────────────────────────
 .toolbar {
   @include flex-between;
   margin-bottom: $spacing-lg;
-  padding: 0 16px;
   flex-wrap: wrap;
   gap: $spacing-md;
+}
+
+.toolbarRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.searchWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  color: $text-light;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.searchInput {
+  height: 40px;
+  min-width: 260px;
+  border: 1px solid $border-strong;
+  border-radius: $radius-full;
+  padding: 0 16px 0 38px;
+  font-size: 13px;
+  color: $text;
+  background: $white;
+  outline: none;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+
+  &::placeholder {
+    color: $text-placeholder;
+  }
+
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 3px $primary-soft;
+  }
 }
 
 .count {

@@ -17,11 +17,12 @@
 }
 
 .solidToggle {
-  background: $white;
-  border: 1px solid #DDDDDD;
+  background: rgba(21, 93, 252, 0.1);
+  border: none;
 
   &:hover {
     box-shadow: $shadow-md;
+    background: rgba(21, 93, 252, 0.15);
   }
 }
 
@@ -32,8 +33,21 @@
   }
 }
 
+.profileIcon {
+  width: 24px;
+  height: 24px;
+  background-color: $white;
+  -webkit-mask-image: url("/images/profile.svg");
+  mask-image: url("/images/profile.svg");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  transition: background-color $transition-fast;
+}
+
 .darkIcon {
-  filter: brightness(0.3);
+  background-color: $primary;
 }
 
 .hamburger {
@@ -52,7 +66,7 @@
 }
 
 .darkHamburger span {
-  background: $text;
+  background: $primary;
 }
 
 .dropdown {

@@ -12,7 +12,24 @@ import { Trip } from "@/types";
 import Image from "next/image";
 import styles from "./TripsSection.module.scss";
 
-const TRIP_CATEGORIES = [
+// Categories shown only on the dedicated /trips page
+const PAGE_CATEGORIES = [
+  "Classic Tours",
+  "Christmas Tours",
+  "Nile Cruises",
+  "Dahabilyas",
+  "Luxury Tours",
+  "Honeymoon Tours",
+  "Christmas Cruises",
+  "Desert Tours",
+  "Luxury Nile Cruises",
+  "GEM Tours",
+  "Egypt Excursions",
+  "Egypt Shore Excursions",
+];
+
+// Condensed set used on the homepage
+const HOME_CATEGORIES = [
   "Classic Tours",
   "Christmas Tours",
   "Nile Cruises",
@@ -36,7 +53,7 @@ const DEMO_TRIPS: Trip[] = Array.from({ length: 3 }, (_, i) => ({
   isFavorite: false,
 }));
 
-const DURATION_OPTIONS = ["1-3 days", "4-7 days", "8-14 days", "15+ days"];
+const DURATION_OPTIONS = ["Any", "Less than 10 days", "10-15 Days", "15-20 Days", "More than 20 days"];
 const SPECIAL_OFFERS = [
   "Any",
   "Christmas & New Year Offers",
@@ -44,7 +61,15 @@ const SPECIAL_OFFERS = [
   "Easter Offers",
 ];
 
-export default function TripsSection() {
+interface TripsSectionProps {
+  /** "home" (default) renders the condensed homepage version with SectionHeader.
+   *  "page" renders the full /trips page version with page heading + search bar. */
+  variant?: "home" | "page";
+}
+
+export default function TripsSection({ variant = "home" }: TripsSectionProps) {
+  const isPage = variant === "page";
+
   const [expanded, setExpanded] = useState<{
     duration: boolean;
     offers: boolean;
@@ -74,26 +99,76 @@ export default function TripsSection() {
   return (
     <section className={styles.section}>
       <div className={styles.container}>
-        <SectionHeader
-          label="Trips"
-          heading="Choose The Right Trip For Your Adventure"
-          description="We make trip planning easy. Discover handpicked journeys, compare destinations, and book trips crafted around your travel style."
-          descriptionMaxWidth="680px"
-        />
 
-        <div className={styles.toolbar}>
-          <span className={styles.count}>Found 60 Tours</span>
-          <SortButton
-            options={[
-              { value: "recommended", label: "Recommended" },
-              { value: "price-low", label: "Price: Low to High" },
-              { value: "price-high", label: "Price: High to Low" },
-            ]}
-            defaultValue="recommended"
+        {/* ── Header: homepage uses SectionHeader, trips page uses page-specific heading ── */}
+        {isPage ? (
+          <div className={styles.pageHeader}>
+            <div className={styles.labelRow}>
+              <Image src="/images/trips2.svg" alt="Trips" width={18} height={18} />
+              <span className={styles.labelText}>Trips</span>
+            </div>
+            <h1 className={styles.pageHeading}>
+              Choose The Right Trip For Your Adventure{" "}
+              <span className={styles.highlight}>In EGYPT</span>
+            </h1>
+            <p className={styles.pageDesc}>
+              We make trip planning easy. Discover handpicked journeys, compare
+              destinations, and book trips crafted around your travel style.
+            </p>
+          </div>
+        ) : (
+          <SectionHeader
+            label="Trips"
+            heading="Choose The Right Trip For Your Adventure"
+            description="We make trip planning easy. Discover handpicked journeys, compare destinations, and book trips crafted around your travel style."
+            descriptionMaxWidth="680px"
           />
+        )}
+
+        {/* ── Toolbar ── */}
+        <div className={styles.toolbar}>
+          <span className={styles.count}>
+            {isPage ? "60 Tours Founded" : "Found 60 Tours"}
+          </span>
+
+          {isPage ? (
+            <div className={styles.toolbarRight}>
+              <SortButton
+                options={[
+                  { value: "recommended", label: "Recommended" },
+                  { value: "price-low", label: "Price: Low to High" },
+                  { value: "price-high", label: "Price: High to Low" },
+                ]}
+                defaultValue="recommended"
+              />
+              <div className={styles.searchWrap}>
+                <Image
+                  src="/images/search.svg"
+                  alt="Search"
+                  width={18}
+                  height={18}
+                  className={styles.searchIcon}
+                />
+                <input
+                  type="text"
+                  placeholder="Search trips, destinations, or cultures..."
+                  className={styles.searchInput}
+                />
+              </div>
+            </div>
+          ) : (
+            <SortButton
+              options={[
+                { value: "recommended", label: "Recommended" },
+                { value: "price-low", label: "Price: Low to High" },
+                { value: "price-high", label: "Price: High to Low" },
+              ]}
+              defaultValue="recommended"
+            />
+          )}
         </div>
 
-        <CategoryTabs tabs={TRIP_CATEGORIES} />
+        <CategoryTabs tabs={isPage ? PAGE_CATEGORIES : HOME_CATEGORIES} wrap={isPage} />
 
         <div className={styles.layout}>
           <aside className={styles.sidebar}>
