@@ -22,6 +22,36 @@ const NAV_LINKS = [
 
 const LIGHT_NAV_PATHS = ["/booking"];
 
+const DESTINATION_LINKS = [
+  { label: "Saudi Arabia", href: "/destinations/saudi-arabia" },
+  { label: "Turkey", href: "/destinations/turkey" },
+  { label: "Greece", href: "/destinations/greece" },
+  { label: "Jordan", href: "/destinations/jordan" },
+  { label: "African Safari", href: "/destinations/african-safari" },
+  { label: "Peru", href: "/destinations/peru" },
+  { label: "Dubai", href: "/destinations/dubai" },
+  { label: "India", href: "/destinations/india" },
+  { label: "Sri Lanka Tours", href: "/destinations/sri-lanka" },
+  { label: "Morocco", href: "/destinations/morocco" },
+  { label: "Tunisia", href: "/destinations/tunisia" },
+  { label: "Oman", href: "/destinations/oman" },
+];
+
+const TRIP_LINKS = [
+  { label: "Classic Tours", href: "/trips/classic" },
+  { label: "Christmas Tours", href: "/trips/christmas" },
+  { label: "Nile Cruises", href: "/trips/nile-cruises" },
+  { label: "Classic Tours", href: "/trips/classic" },
+  { label: "Christmas Tours", href: "/trips/christmas" },
+  { label: "Nile Cruises", href: "/trips/nile-cruises" },
+  { label: "Classic Tours", href: "/trips/classic" },
+  { label: "Christmas Tours", href: "/trips/christmas" },
+  { label: "Nile Cruises", href: "/trips/nile-cruises" },
+  { label: "Classic Tours", href: "/trips/classic" },
+  { label: "Christmas Tours", href: "/trips/christmas" },
+  { label: "Nile Cruises", href: "/trips/nile-cruises" },
+];
+
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -113,10 +143,24 @@ export default function Navbar() {
                 ) : (
                   <Link
                     href={link.href}
-                    className={`${styles.link} ${isActive ? styles.active : ""}`}
+                    className={`${styles.link} ${isActive ? styles.active : ""} ${link.hasDropdown ? styles.hasDropdownLink : ""}`}
                   >
                     {content}
                   </Link>
+                )}
+                {link.hasDropdown && (
+                  <div className={styles.dropdownWrapper}>
+                    <div className={styles.dropdownCard}>
+                      <div className={styles.dropdownGrid}>
+                        {(link.label === "Destinations" ? DESTINATION_LINKS : TRIP_LINKS).map((opt, i) => (
+                          <Link key={i} href={opt.href} className={styles.dropdownOption}>
+                            <Image src="/images/➢.svg" alt="" width={15} height={12} className={styles.dropdownIcon} />
+                            <span className={styles.dropdownText}>{opt.label}</span>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 )}
               </li>
             );
