@@ -84,16 +84,19 @@ export default function StepTravelerInfo({
           />
 
           <div className={formStyles.field}>
-            <label htmlFor="pti-phone" className={formStyles.fieldLabel}>Enter your Phone Number</label>
+            <label htmlFor="pti-phone" className={formStyles.fieldLabel}>Phone Number</label>
             <div className={styles.phoneRow}>
-              <PhonePrefixSelect />
+              <PhonePrefixSelect
+                phoneValue={travelerInfo.phone}
+                onPhoneChange={(val) => onTravelerChange("phone", val)}
+              />
               <input
                 id="pti-phone"
-                className={`${formStyles.input} ${styles.inputPhone}`}
                 type="tel"
-                placeholder="000-0000"
+                className={`${formStyles.input} ${styles.inputPhone}`}
                 value={travelerInfo.phone}
                 onChange={(e) => onTravelerChange("phone", e.target.value)}
+                placeholder="+1 555-0000"
               />
             </div>
           </div>
@@ -103,7 +106,7 @@ export default function StepTravelerInfo({
             label="Select Your Nationality"
             isSelect
             className={pageStyles.formInput}
-            value={travelerInfo.nationality}
+            value={travelerInfo.nationality || ""}
             onChange={(e) => onTravelerChange("nationality", e.target.value)}
           >
             <option value="">Your Nationality</option>
@@ -111,7 +114,6 @@ export default function StepTravelerInfo({
             <option value="UK">United Kingdom</option>
             <option value="CA">Canada</option>
             <option value="AU">Australia</option>
-            <option value="EG">Egypt</option>
             <option value="AE">United Arab Emirates</option>
           </FormField>
 

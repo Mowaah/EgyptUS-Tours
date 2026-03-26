@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { SectionHeader, Button, FormField, PhonePrefixSelect } from "@/components/shared";
 import Image from "next/image";
 import CountrySelect from "./CountrySelect";
@@ -5,6 +8,8 @@ import styles from "./B2BSection.module.scss";
 import formStyles from "@/components/shared/FormField/FormField.module.scss";
 
 export default function B2BSection() {
+  const [phone, setPhone] = useState("");
+
   return (
     <section className={styles.section}>
       <div className={styles.container}>
@@ -109,11 +114,16 @@ export default function B2BSection() {
               <div className={formStyles.field}>
                 <label className={formStyles.fieldLabel}>Phone Number</label>
                 <div className={styles.phoneRow}>
-                  <PhonePrefixSelect />
+                  <PhonePrefixSelect 
+                    phoneValue={phone}
+                    onPhoneChange={setPhone}
+                  />
                   <input
                     type="tel"
                     placeholder="+1 (555) 000-0000"
                     className={`${formStyles.input} ${styles.inputPhone}`}
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
                   />
                 </div>
               </div>
