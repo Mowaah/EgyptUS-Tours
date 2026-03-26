@@ -1,0 +1,53 @@
+// GlassCard.module.scss — liquid glass surface styles.
+//
+// backdrop-filter (blur + SVG distortion + saturate) lives in GlassCard.tsx
+// as an inline style to prevent Next.js PostCSS from stripping it.
+//
+// The glass "edge" effect comes entirely from layered inset box-shadows —
+// no border property. This is how the reference CSS achieves the optical-glass
+// look: each inset shadow simulates light hitting or leaving a specific glass face.
+
+.glass {
+  position: relative;
+  // No overflow:hidden — kills backdrop-filter in Chrome/Safari.
+
+  // Neutral tinted surface. Low enough to show the warped backdrop,
+  // present enough to give the glass physical "body".
+  // Matches the reference: color-mix(in srgb, #bbbbbc 12%, transparent)
+  background: rgba(187, 187, 188, 0.12);
+
+  // ── Edge lighting via inset shadows ──────────────────────────────────────
+  //
+  // Bright insets  = light hitting the lit glass faces (top-left in default lighting)
+  // Dark insets    = shadow inside the glass thickness (opposite faces)
+  // Outer shadows  = element lifting off the background
+  //
+  // Values ported directly from the reference implementation.
+  box-shadow:
+    // Top edge — lit face (bright)
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.38),
+    // Left edge — lit face (bright)
+    inset 1px 0 0 0 rgba(255, 255, 255, 0.28),
+    // Bottom edge — shadow face (dim)
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.10),
+    // Right edge — shadow face (dim)
+    inset -1px 0 0 0 rgba(255, 255, 255, 0.10),
+
+    // Top-left corner — brightest specular (light hits here most directly)
+    inset 1px 1.5px 0px -2px rgba(255, 255, 255, 0.90),
+
+    // Bottom-right corner — secondary bright face
+    inset -1.2px -1.2px 0px -2px rgba(255, 255, 255, 0.80),
+
+    // Bottom bright highlight — light escaping the bottom edge
+    inset -2px -5px 1px -6px rgba(255, 255, 255, 0.60),
+
+    // Dark inner haze — simulates depth/thickness of the glass body
+    inset -0.3px -1px 4px 0px rgba(0, 0, 0, 0.12),
+    inset -1.5px 2.5px 0px -2px rgba(0, 0, 0, 0.20),
+    inset 0px 3px 4px -2px rgba(0, 0, 0, 0.20),
+
+    // Outer drop shadow — lifts element off the background
+    0px 1px 5px 0px rgba(0, 0, 0, 0.10),
+    0px 6px 16px 0px rgba(0, 0, 0, 0.08);
+}

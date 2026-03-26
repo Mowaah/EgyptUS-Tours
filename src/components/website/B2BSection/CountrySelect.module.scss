@@ -1,0 +1,126 @@
+@use "@/styles/variables" as *;
+
+.wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border: 1px solid $border-strong;
+  border-radius: $radius-xl;
+  background: $white;
+  cursor: pointer;
+  outline: none;
+  transition: all $transition-fast;
+  font-family: inherit;
+
+  // same height as standard inputs
+  min-height: 46px;
+
+  &:hover {
+    border-color: $border-input;
+  }
+
+  &.open {
+    border-color: $primary;
+    // Exactly matches the blue active glow in the mockup
+    box-shadow: 0 0 0 1px $primary;
+  }
+}
+
+.placeholder {
+  color: #A3A3A3;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-normal;
+}
+
+.selectedRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: $dark; // dark text from mockup
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.flag {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  display: block; // fixes inline img spacing
+  flex-shrink: 0;
+}
+
+.chevron {
+  transition: transform $transition-fast;
+  flex-shrink: 0;
+}
+
+.open .chevron {
+  transform: rotate(180deg);
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  background: $white;
+  // Border and shadow exact to mockup
+  border: 1px solid $border-strong;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  padding: 4px 0;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.scrollArea {
+  max-height: 244px;
+  overflow-y: auto;
+  padding-right: 4px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 8px 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #E5E7EB;
+    border-radius: 6px;
+
+    &:hover {
+      background: #D1D5DB;
+    }
+  }
+}
+
+.option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: $dark;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-normal;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: $background-alt;
+  }
+}

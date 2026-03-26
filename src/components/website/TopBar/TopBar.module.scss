@@ -5,7 +5,9 @@
   background: linear-gradient(90deg, #205AB7, #0E2851);
   color: $white;
   font-size: $font-size-sm;
-  padding: $spacing-sm 0;
+  padding: 10px 0;
+  position: relative;
+  z-index: 105;
 }
 
 .container {
@@ -23,30 +25,154 @@
   height: 28px;
   border-radius: $radius-full;
   display: flex;
-  background: #205AB7;
+  background: rgba(255, 255, 255, 0.1);
   align-items: center;
   justify-content: center;
-  opacity: 0.85;
   transition: all $transition-fast;
 
   &:hover {
-    opacity: 1;
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.2);
   }
 }
 
-.language {
+.settings {
   display: flex;
   align-items: center;
-  gap: $spacing-xs;
-  cursor: pointer;
+  gap: $spacing-md;
+}
 
-  span {
-    font-size: $font-size-sm;
-  }
+.dropdownWrapper {
+  position: relative;
+}
+
+.langWrapper {
+  width: 130px;
+}
+
+.currWrapper {
+  width: 120px;
+}
+
+.dropdownToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: $white;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  padding: 6px;
+  border-radius: $radius-full;
+  transition: all $transition-fast;
 
   &:hover {
+    opacity: 0.8;
+  }
+
+  &.open .chevron {
+    transform: rotate(180deg);
+  }
+}
+
+.langToggle {
+  width: 100%;
+  justify-content: center;
+  padding: 10px 16px;
+  background: transparent;
+
+  &:hover,
+  &.open {
+    background: rgba(0, 0, 0, 0.10);
     opacity: 1;
   }
+}
+
+.currToggle {
+  width: 100%;
+  justify-content: center;
+  padding: 10px 8px;
+  background: transparent;
+
+  &:hover,
+  &.open {
+    background: rgba(0, 0, 0, 0.10);
+    opacity: 1;
+  }
+}
+
+.flagIcon {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.chevron {
+  transition: transform $transition-fast;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  background: $white;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-xl;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 50;
+  box-sizing: border-box;
+}
+
+// No longer needed
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: $background-alt;
+  }
+}
+
+.menuItemSelected {
+  background: $background-alt;
+}
+
+.menuItemText {
+  color: $text-muted;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-normal;
+  flex: 1;
+  text-align: left;
+}
+
+.radioEmpty {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid $border-input;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.radioSelected {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid $secondary;
+  background: $secondary url("/images/check.svg") no-repeat center / 8px 8px;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }

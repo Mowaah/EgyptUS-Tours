@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { SectionHeader, Button } from "@/components/shared";
+import { SectionHeader, Button, CustomDatePicker } from "@/components/shared";
 import Image from "next/image";
 import styles from "./TransportationSection.module.scss";
 
@@ -14,32 +14,7 @@ const VEHICLES = [
 
 export default function TransportationSection() {
   const [selected, setSelected] = useState("sedan");
-  const [pickupDate, setPickupDate] = useState("2026-08-29");
-  const dateRef = useRef<HTMLInputElement | null>(null);
-
-  const formattedPickup = (() => {
-    const d = new Date(pickupDate);
-    if (Number.isNaN(d.getTime())) return { main: "Select date", year: "" };
-
-    return {
-      main: d.toLocaleDateString(undefined, {
-        weekday: "short",
-        day: "2-digit",
-        month: "short",
-      }),
-      year: d.getFullYear().toString(),
-    };
-  })();
-
-  const openDatePicker = () => {
-    const el = dateRef.current;
-    if (!el) return;
-    try {
-      (el as any).showPicker?.();
-    } catch {
-    }
-    el.focus();
-  };
+  const [pickupDate, setPickupDate] = useState("08/29/2026");
 
   return (
     <section className={styles.section}>
@@ -95,26 +70,7 @@ export default function TransportationSection() {
                 <Image src="/images/calendar.svg" alt="" width={16} height={16} />
                 Pickup Date
               </p>
-              <button
-                type="button"
-                className={styles.pickupDate}
-                onClick={openDatePicker}
-              >
-                <div className={styles.dateValue}>
-                  <span className={styles.dateMain}>{formattedPickup.main}</span>
-                  {formattedPickup.year ? (
-                    <span className={styles.dateYear}>{formattedPickup.year}</span>
-                  ) : null}
-                </div>
-                <input
-                  aria-label="Pickup date"
-                  type="date"
-                  className={styles.dateNative}
-                  value={pickupDate}
-                  onChange={(e) => setPickupDate(e.target.value)}
-                  ref={dateRef}
-                />
-              </button>
+              <CustomDatePicker value={pickupDate} onChange={setPickupDate} />
 
               <Button
                 variant="secondary"

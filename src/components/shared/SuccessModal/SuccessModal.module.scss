@@ -1,0 +1,124 @@
+@use "@/styles/variables" as *;
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  // A subtle drop-shadow blur instead of plain solid black
+  background: rgba(229, 231, 235, 0.4); // soft grayish backdrop
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.modal {
+  background: $white;
+  border-radius: $radius-2xl;
+  padding: 48px;
+  max-width: 626px;
+  width: 92%;
+  text-align: center;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px) scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.modalIcon {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: #05DF72;
+  box-shadow: 0 0 6.3px 0 rgba(5, 223, 114, 0.76);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+
+.modalCheckIcon {
+  display: block;
+}
+
+.modalTitle {
+  font-size: $font-size-4xl;
+  font-weight: 700;
+  color: $dark;
+  margin: 0 0 16px 0;
+}
+
+.modalMessage {
+  font-size: $font-size-xl;
+  color: $text-lighter;
+  line-height: 1.6;
+  margin: 0 auto 32px auto;
+  max-width: 550px;
+}
+
+.modalActions {
+  display: flex;
+  gap: 16px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  max-width: 500px; // keep buttons from stretching too far, but stretch enough
+}
+
+.modalSecondaryButton {
+  padding: 16px 24px;
+  flex: 1;
+  width: 100%;
+  background: $white;
+  border: 1px solid $primary;
+  border-radius: $radius-full;
+  color: $primary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: $primary-soft;
+  }
+}
+
+.modalPrimaryButton {
+  padding: 16px 24px;
+  flex: 1;
+  width: 100%;
+  background: $primary;
+  border: none;
+  border-radius: $radius-full;
+  color: $white;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: $primary-hover;
+  }
+}

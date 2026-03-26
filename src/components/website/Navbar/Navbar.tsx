@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Button from "@/components/shared/Button/Button";
+import { GlassCard } from "@/components/shared";
+import UserMenu from "./UserMenu";
 import styles from "./Navbar.module.scss";
 
 const NAV_LINKS = [
@@ -82,23 +84,40 @@ export default function Navbar() {
           {NAV_LINKS.map((link) => {
             const isActive = pathname === link.href;
             const useDarkDropdownArrow = !isActive && (scrolled || lightNavBackground);
+            const useGlass = isActive && !scrolled && !lightNavBackground && !mobileOpen;
+
+            const content = (
+              <>
+                {link.label}
+                {link.hasDropdown && (
+                  <Image
+                    src={useDarkDropdownArrow ? "/images/arrow-down2.svg" : "/images/arrow-down2-white.svg"}
+                    alt=""
+                    width={10}
+                    height={10}
+                  />
+                )}
+              </>
+            );
+
             return (
               <li key={link.href} className={styles.linkItem}>
-                <Link
-                  href={link.href}
-                  className={`${styles.link} ${isActive ? styles.active : ""}`}
-                  style={isActive && !scrolled ? { backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)" } : undefined}
-                >
-                  {link.label}
-                  {link.hasDropdown && (
-                    <Image
-                      src={useDarkDropdownArrow ? "/images/arrow-down2.svg" : "/images/arrow-down2-white.svg"}
-                      alt=""
-                      width={10}
-                      height={10}
-                    />
-                  )}
-                </Link>
+                {useGlass ? (
+                  <GlassCard
+                    as={Link}
+                    href={link.href}
+                    className={`${styles.link} ${styles.active}`}
+                  >
+                    {content}
+                  </GlassCard>
+                ) : (
+                  <Link
+                    href={link.href}
+                    className={`${styles.link} ${isActive ? styles.active : ""}`}
+                  >
+                    {content}
+                  </Link>
+                )}
               </li>
             );
           })}
@@ -112,6 +131,7 @@ export default function Navbar() {
           ) : (
             planTripButton
           )}
+          <UserMenu scrolled={scrolled} lightNavBackground={lightNavBackground} />
         </div>
       </div>
     </nav>

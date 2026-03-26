@@ -111,43 +111,7 @@
   color: $text-light;
 }
 
-.pickupDate {
-  padding: 14px 18px;
-  border: 1px solid $border-strong;
-  border-radius: $radius-xl;
-  background: $white;
-  transition: all $transition-fast;
-  min-height: 64px;
-  width: 100%;
-  max-width: 280px;
-  position: relative;
-  cursor: pointer;
-  text-align: left;
-}
 
-.dateNative {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.dateValue {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.dateMain {
-  font-size: $font-size-lg;
-  font-weight: $font-weight-bold;
-  color: $dark;
-}
-
-.dateYear {
-  font-size: $font-size-xs;
-  color: $text-light;
-}
 
 .mapImage {
   display: block;

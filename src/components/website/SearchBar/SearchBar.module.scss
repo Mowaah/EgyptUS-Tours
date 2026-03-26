@@ -28,7 +28,7 @@
   &.active {
     background: $primary;
     color: $white;
-    border: 1px solid transparent; 
+    border: 1px solid transparent;
 
     &::after {
       content: "";
@@ -41,49 +41,11 @@
     }
   }
 
-  &:not(.active) {
-    background: rgba(255, 255, 255, 0.1);
-    overflow: hidden;
-    border-top: 1px solid rgba(255, 255, 255, 0.3);
-    border-left: 1px solid rgba(255, 255, 255, 0.3);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    border-right: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 
-    &:hover {
-      background: rgba(255, 255, 255, 0.18);
-    }
-
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 50%;
-      height: 1px;
-      background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.5),
-        transparent
-      );
-      pointer-events: none;
-    }
-
-    &::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 1px;
-      height: 50%;
-      background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.5),
-        transparent
-      );
-      pointer-events: none;
-    }
+  &:hover {
+    background: rgba(255, 255, 255, 0.18);
   }
+
 
   svg {
     width: 18px;
@@ -94,46 +56,8 @@
 .searchBar {
   display: flex;
   align-items: center;
-  position: relative;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.1);
   border-radius: $radius-full;
   padding: $spacing-xs $spacing-sm;
-  border-top: 1px solid rgba(255, 255, 255, 0.3);
-  border-left: 1px solid rgba(255, 255, 255, 0.3);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  border-right: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 50%;
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.5),
-      transparent
-    );
-    pointer-events: none;
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 1px;
-    height: 50%;
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.5),
-      transparent
-    );
-    pointer-events: none;
-  }
 }
 
 .filterWrapper {

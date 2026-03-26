@@ -1,9 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import { FormField, PhonePrefixSelect, CustomDatePicker } from "@/components/shared";
 
 import pageStyles from "../../PlanYourTripPage.module.scss";
 import styles from "./StepTravelerInfo.module.scss";
+import formStyles from "@/components/shared/FormField/FormField.module.scss";
 
 type TravelerInfo = {
   name: string;
@@ -61,41 +63,33 @@ export default function StepTravelerInfo({
 
       <div className={pageStyles.stepFormCardScroll}>
         <div className={pageStyles.formGrid}>
-          <div className={pageStyles.formGroup}>
-            <label htmlFor="pti-name">Enter your Name</label>
-            <input
-              id="pti-name"
-              className={pageStyles.formInput}
-              type="text"
-              placeholder="John Doe"
-              value={travelerInfo.name}
-              onChange={(e) => onTravelerChange("name", e.target.value)}
-            />
-          </div>
+          <FormField
+            id="pti-name"
+            label="Enter your Name"
+            className={pageStyles.formInput}
+            type="text"
+            placeholder="John Doe"
+            value={travelerInfo.name}
+            onChange={(e) => onTravelerChange("name", e.target.value)}
+          />
 
-          <div className={pageStyles.formGroup}>
-            <label htmlFor="pti-email">Enter your E-mail</label>
-            <input
-              id="pti-email"
-              className={pageStyles.formInput}
-              type="email"
-              placeholder="example@gmail.com"
-              value={travelerInfo.email}
-              onChange={(e) => onTravelerChange("email", e.target.value)}
-            />
-          </div>
+          <FormField
+            id="pti-email"
+            label="Enter your E-mail"
+            className={pageStyles.formInput}
+            type="email"
+            placeholder="example@gmail.com"
+            value={travelerInfo.email}
+            onChange={(e) => onTravelerChange("email", e.target.value)}
+          />
 
-          <div className={pageStyles.formGroup}>
-            <label htmlFor="pti-phone">Enter your Phone Number</label>
+          <div className={formStyles.field}>
+            <label htmlFor="pti-phone" className={formStyles.fieldLabel}>Enter your Phone Number</label>
             <div className={styles.phoneRow}>
-              <div className={styles.phonePrefix} aria-hidden="true">
-                <Image src="/images/en.svg" alt="" width={20} height={14} />
-                <span>+1</span>
-                <PhoneChevron />
-              </div>
+              <PhonePrefixSelect />
               <input
                 id="pti-phone"
-                className={`${pageStyles.formInput} ${styles.inputPhone}`}
+                className={`${formStyles.input} ${styles.inputPhone}`}
                 type="tel"
                 placeholder="000-0000"
                 value={travelerInfo.phone}
@@ -104,43 +98,40 @@ export default function StepTravelerInfo({
             </div>
           </div>
 
-          <div className={pageStyles.formGroup}>
-            <label htmlFor="pti-nationality">Select Your Nationality</label>
-            <select
-              id="pti-nationality"
-              className={pageStyles.formInput}
-              value={travelerInfo.nationality}
-              onChange={(e) => onTravelerChange("nationality", e.target.value)}
-            >
-              <option value="">Your Nationality</option>
-              <option value="US">United States</option>
-              <option value="UK">United Kingdom</option>
-              <option value="CA">Canada</option>
-              <option value="AU">Australia</option>
-              <option value="EG">Egypt</option>
-              <option value="AE">United Arab Emirates</option>
-            </select>
-          </div>
+          <FormField
+            id="pti-nationality"
+            label="Select Your Nationality"
+            isSelect
+            className={pageStyles.formInput}
+            value={travelerInfo.nationality}
+            onChange={(e) => onTravelerChange("nationality", e.target.value)}
+          >
+            <option value="">Your Nationality</option>
+            <option value="US">United States</option>
+            <option value="UK">United Kingdom</option>
+            <option value="CA">Canada</option>
+            <option value="AU">Australia</option>
+            <option value="EG">Egypt</option>
+            <option value="AE">United Arab Emirates</option>
+          </FormField>
 
-          <div className={pageStyles.formGroup}>
-            <label htmlFor="pti-start">Start Date</label>
-            <input
-              id="pti-start"
-              className={pageStyles.formInput}
-              type="date"
+          <div className={formStyles.field}>
+            <label className={formStyles.fieldLabel}>Start Date</label>
+            <CustomDatePicker
+              variant="input"
+              className={`${formStyles.input} ${pageStyles.dateInput}`}
               value={travelerInfo.startDate}
-              onChange={(e) => onTravelerChange("startDate", e.target.value)}
+              onChange={(date) => onTravelerChange("startDate", date)}
             />
           </div>
 
-          <div className={pageStyles.formGroup}>
-            <label htmlFor="pti-end">End Date</label>
-            <input
-              id="pti-end"
-              className={pageStyles.formInput}
-              type="date"
+          <div className={formStyles.field}>
+            <label className={formStyles.fieldLabel}>End Date</label>
+            <CustomDatePicker
+              variant="input"
+              className={`${formStyles.input} ${pageStyles.dateInput}`}
               value={travelerInfo.endDate}
-              onChange={(e) => onTravelerChange("endDate", e.target.value)}
+              onChange={(date) => onTravelerChange("endDate", date)}
             />
           </div>
 
@@ -240,17 +231,17 @@ export default function StepTravelerInfo({
             </div>
           </div>
 
-          <div className={pageStyles.formGroupFull}>
-            <label htmlFor="pti-details">Trip Details</label>
-            <textarea
-              id="pti-details"
-              className={styles.formTextarea}
-              placeholder="Share your trip details"
-              value={travelerInfo.tripDetails}
-              onChange={(e) => onTravelerChange("tripDetails", e.target.value)}
-              rows={4}
-            />
-          </div>
+          <FormField
+            id="pti-details"
+            label="Trip Details"
+            isTextarea
+            wrapperClassName={pageStyles.formGroupFull}
+            className={styles.formTextarea}
+            placeholder="Share your trip details"
+            value={travelerInfo.tripDetails}
+            onChange={(e) => onTravelerChange("tripDetails", e.target.value)}
+            rows={4}
+          />
         </div>
       </div>
 

@@ -1,4 +1,7 @@
-import { Button } from "@/components/shared";
+"use client";
+
+import { useState } from "react";
+import { Button, SuccessModal, FormField } from "@/components/shared";
 import Image from "next/image";
 import styles from "./ContactSection.module.scss";
 
@@ -9,6 +12,10 @@ const AVATARS = [
 ];
 
 export default function ContactSection() {
+  const [email, setEmail] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
+  const isEmailInvalid = email.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
   return (
     <section className={styles.section}>
       <div className={styles.container}>
@@ -39,40 +46,49 @@ export default function ContactSection() {
           </div>
 
           <div className={styles.formCard}>
-            <div className={styles.field}>
-              <label className={styles.fieldLabel}>Full Name</label>
-              <input type="text" placeholder="Full name here..." className={styles.input} />
-            </div>
-            <div className={styles.field}>
-              <label className={styles.fieldLabel}>Email</label>
-              <input type="email" placeholder="Your email here..." className={styles.input} />
-            </div>
-            <div className={styles.field}>
-              <label className={styles.fieldLabel}>Message</label>
-              <textarea
-                placeholder="How we can help you?"
-                className={`${styles.input} ${styles.textarea}`}
-                rows={5}
-              />
-            </div>
+            <FormField label="Full Name" type="text" placeholder="Full name here..." />
+            
+            <FormField 
+              label="Email" 
+              type="email" 
+              placeholder="Your email here..." 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              error={isEmailInvalid ? "Please enter a valid email address." : undefined}
+            />
+
+            <FormField 
+              label="Message" 
+              isTextarea 
+              placeholder="How we can help you?" 
+              rows={5} 
+            />
+
             <Button
-                variant="secondary"
-                fullWidth
-                icon={
-                  <Image
-                    src="/images/arrow-right.svg"
-                    alt=""
-                    width={24}
-                    height={24}
-                    style={{ marginTop: "2px" }}
-                  />
-                }
-              >
-                Send 
-              </Button>
+              variant="secondary"
+              fullWidth
+              onClick={() => {
+                if (!isEmailInvalid) setShowSuccess(true);
+              }}
+              icon={
+                <Image
+                  src="/images/arrow-right.svg"
+                  alt=""
+                  width={24}
+                  height={24}
+                  style={{ marginTop: "2px" }}
+                />
+              }
+            >
+              Send
+            </Button>
           </div>
         </div>
       </div>
+
+      {showSuccess && (
+        <SuccessModal onClose={() => setShowSuccess(false)} />
+      )}
     </section>
   );
 }

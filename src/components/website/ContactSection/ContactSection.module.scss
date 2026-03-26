@@ -114,41 +114,4 @@
   gap: $spacing-md;
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
 
-.fieldLabel {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: $dark;
-}
-
-.input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid $border-strong;
-  border-radius: $radius-xl;
-  font-size: $font-size-sm;
-  color: $text;
-  background: $white;
-  outline: none;
-  transition: border-color $transition-fast;
-  font-family: inherit;
-  box-sizing: border-box;
-
-  &::placeholder {
-    color: $text-placeholder;
-  }
-
-  &:focus {
-    border-color: $primary;
-  }
-}
-
-.textarea {
-  resize: vertical;
-  min-height: 120px;
-}

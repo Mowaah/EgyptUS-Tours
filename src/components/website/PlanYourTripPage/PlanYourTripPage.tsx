@@ -10,6 +10,7 @@ import { DESTINATIONS, EXPERIENCE_OPTIONS, STEPS, TRANSPORT_OPTIONS } from "./pl
 import { IconArrowLeft, IconMinus, IconPlus } from "./PlanYourTripIcons";
 import type { PlanStep, TripData } from "./planYourTripTypes";
 import { clampMin0, filterDestinations, toggleInArray } from "./planYourTripUtils";
+import { SuccessModal } from "@/components/shared";
 import StepDestination from "./steps/Destination/StepDestination";
 import StepTravelerInfo from "./steps/TravelerInfo/StepTravelerInfo";
 import StepPreferences from "./steps/Preferences/StepPreferences";
@@ -232,35 +233,13 @@ export default function PlanYourTripPage() {
       </main>
 
       {showModal && (
-        <div className={styles.modalOverlay} role="dialog" aria-modal="true">
-          <div className={styles.modal}>
-            <div className={styles.modalIcon} aria-hidden="true">
-              <Image
-                src="/images/check.svg"
-                alt=""
-                width={32}
-                height={32}
-                className={styles.modalCheckIcon}
-              />
-            </div>
-
-            <h2 className={styles.modalTitle}>Your Custom Trip Request Has Been Received!</h2>
-
-            <p className={styles.modalMessage}>
-              Thank you for designing your journey with us. Our travel specialists are reviewing
-              your preferences and will contact you within 24 hours.
-            </p>
-
-            <div className={styles.modalActions}>
-              <button className={styles.modalSecondaryButton} onClick={handleReset} type="button">
-                Back to Home
-              </button>
-              <button className={styles.modalPrimaryButton} onClick={handleReset} type="button">
-                Explore More Experiences
-              </button>
-            </div>
-          </div>
-        </div>
+        <SuccessModal
+          title="Your Custom Trip Request Has Been Received!"
+          message="Thank you for designing your journey with us. Our travel specialists are reviewing your preferences and will contact you within 24 hours."
+          primaryButtonText="Explore More Experiences"
+          onPrimaryClick={handleReset}
+          onClose={handleReset}
+        />
       )}
     </div>
   );

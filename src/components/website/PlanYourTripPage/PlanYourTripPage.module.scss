@@ -5,7 +5,6 @@
   background: $background;
 }
 
-// CSS Modules require local selectors, so scope global box-sizing under the page root.
 .page :global(*) {
   box-sizing: border-box;
 }
@@ -328,30 +327,9 @@
 }
 
 // Matches ContactSection / B2BSection form fields
-.formInput {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 12px 16px;
-  border: 1px solid $border-strong;
-  border-radius: $radius-xl;
-  font-size: $font-size-sm;
-  color: $text;
-  background: $white;
-  outline: none;
-  font-family: inherit;
-  transition: border-color $transition-fast;
-
-  &::placeholder {
-    color: $text-placeholder;
-  }
-
-  &:focus {
-    border-color: $primary;
-  }
-}
 
 // public/images/calendar.svg — shared by Plan Your Trip date fields
-input[type="date"].formInput {
+.dateInput {
   position: relative;
   padding-left: 42px;
   background-color: $white;
@@ -360,7 +338,7 @@ input[type="date"].formInput {
   background-position: left 14px center;
   background-size: 20px 20px;
 
-  // Hide native calendar glyph on the right; invisible overlay keeps the picker openable
+  // Hide native calendar glyph if actual date input is used instead of CustomDatePicker
   &::-webkit-calendar-picker-indicator {
     opacity: 0;
     position: absolute;
@@ -428,116 +406,10 @@ select.formInput {
   }
 }
 
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  animation: fadeIn 0.3s ease;
-}
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.modal {
-  background: $white;
-  border-radius: $radius-2xl;
-  padding: 48px;
-  max-width: 560px;
-  width: 92%;
-  text-align: center;
-  animation: slideUp 0.3s ease;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.modalIcon {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: #00c48c;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 24px;
-}
-
-.modalCheckIcon {
-  display: block;
-}
-
-.modalTitle {
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
-  color: $dark;
-  margin: 0 0 16px 0;
-}
-
-.modalMessage {
-  font-size: $font-size-base;
-  color: $text-light;
-  line-height: 1.6;
-  margin: 0 0 32px 0;
-}
-
-.modalActions {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.modalSecondaryButton {
-  padding: 12px 24px;
-  background: $white;
-  border: 1px solid $primary;
-  border-radius: $radius-full;
-  color: $primary;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  cursor: pointer;
-  transition: background $transition-fast;
-
-  &:hover {
-    background: $primary-soft;
-  }
-}
-
-.modalPrimaryButton {
-  padding: 12px 24px;
-  background: $primary;
-  border: none;
-  border-radius: $radius-full;
-  color: $white;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  cursor: pointer;
-  transition: background $transition-fast;
-
-  &:hover {
-    background: $primary-hover;
-  }
-}
 
 @media (max-width: 1024px) {
+
   .breadcrumb,
   .stepIndicator,
   .mainContent {
@@ -576,4 +448,3 @@ select.formInput {
     font-size: $font-size-3xl;
   }
 }
-

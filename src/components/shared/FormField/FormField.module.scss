@@ -1,0 +1,59 @@
+@use "@/styles/variables" as *;
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.fieldLabel {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $dark;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid $border-strong;
+  border-radius: $radius-xl;
+  font-size: $font-size-sm;
+  color: $text;
+  background: $white;
+  outline: none;
+  transition: border-color $transition-fast;
+  font-family: inherit;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: $text-placeholder;
+  }
+
+  &:focus {
+    border-color: $primary;
+  }
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.inputInvalid {
+  border-color: #D32F2F !important;
+  color: $dark !important;
+}
+
+.errorMessage {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #D32F2F;
+  font-size: 12px;
+  margin-top: 2px;
+
+  svg {
+    flex-shrink: 0;
+  }
+}

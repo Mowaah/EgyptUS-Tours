@@ -1,0 +1,139 @@
+@use "@/styles/variables" as *;
+
+.wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.trigger {
+  padding: 14px 18px;
+  border: 1px solid $border-strong;
+  border-radius: $radius-xl;
+  background: $white;
+  transition: border-color $transition-fast;
+  min-height: 64px;
+  width: 100%;
+  position: relative;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  &:hover,
+  &.triggerActive {
+    border-color: $secondary;
+  }
+}
+
+.dateValue {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dateMain {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $dark;
+}
+
+.dateYear {
+  font-size: $font-size-sm;
+  color: $text-light;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  width: 320px;
+  background: $white;
+  border-radius: $radius-2xl;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  padding: 24px;
+  z-index: 100;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.monthYear {
+  font-weight: $font-weight-medium;
+  color: #0E2851;
+  font-size: $font-size-sm;
+}
+
+.navBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+  transition: opacity $transition-fast;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.flipIcon {
+  transform: scaleX(-1);
+}
+
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 16px;
+}
+
+.weekdayName {
+  font-size: 10px;
+  color: #B5BEC6;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.daysGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: 12px;
+  column-gap: 4px;
+}
+
+.dayBtn {
+  background: transparent;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-base;
+  color: #4A5660;
+  cursor: pointer;
+  transition: all $transition-fast;
+  margin: 0 auto;
+
+  &:hover:not(.daySelected) {
+    background: $background-alt;
+  }
+}
+
+.dayOutside {
+  visibility: hidden;
+}
+
+.daySelected {
+  background: $secondary;
+  color: $white;
+}

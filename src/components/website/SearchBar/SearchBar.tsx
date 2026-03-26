@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import styles from "./SearchBar.module.scss";
+import { GlassCard } from "@/components/shared";
 
 const FILTERS = [
   { label: "Date", icon: "calendar" },
@@ -17,30 +18,46 @@ export default function SearchBar() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.tabs}>
-        <button
-          className={`${styles.tab} ${activeTab === "trips" ? styles.active : ""}`}
-          onClick={() => setActiveTab("trips")}
-          style={activeTab !== "trips" ? { backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)" } : undefined}
-        >
-          <Image src="/images/search/trips.svg" alt="" width={18} height={18} />
-          <span>trips</span>
-        </button>
-        <button
-          className={`${styles.tab} ${activeTab === "hotels" ? styles.active : ""}`}
-          onClick={() => setActiveTab("hotels")}
-          style={activeTab !== "hotels" ? { backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)" } : undefined}
-        >
-          <Image
-            src="/images/search/hotels.svg"
-            alt=""
-            width={18}
-            height={18}
-          />
-          <span>Hotels</span>
-        </button>
+        {activeTab === "trips" ? (
+          <button
+            className={`${styles.tab} ${styles.active}`}
+            onClick={() => setActiveTab("trips")}
+          >
+            <Image src="/images/search/trips.svg" alt="" width={18} height={18} />
+            <span>trips</span>
+          </button>
+        ) : (
+          <GlassCard
+            as="button"
+            className={styles.tab}
+            onClick={() => setActiveTab("trips")}
+          >
+            <Image src="/images/search/trips.svg" alt="" width={18} height={18} />
+            <span>trips</span>
+          </GlassCard>
+        )}
+
+        {activeTab === "hotels" ? (
+          <button
+            className={`${styles.tab} ${styles.active}`}
+            onClick={() => setActiveTab("hotels")}
+          >
+            <Image src="/images/search/hotels.svg" alt="" width={18} height={18} />
+            <span>Hotels</span>
+          </button>
+        ) : (
+          <GlassCard
+            as="button"
+            className={styles.tab}
+            onClick={() => setActiveTab("hotels")}
+          >
+            <Image src="/images/search/hotels.svg" alt="" width={18} height={18} />
+            <span>Hotels</span>
+          </GlassCard>
+        )}
       </div>
 
-      <div className={styles.searchBar} style={{ backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)" }}>
+      <GlassCard className={styles.searchBar}>
         {FILTERS.map((filter, i) => (
           <div key={filter.label} className={styles.filterWrapper}>
             <button className={styles.filter}>
@@ -69,7 +86,7 @@ export default function SearchBar() {
           <Image src="/images/search/search.svg" alt="" width={18} height={18} />
           Search
         </button>
-      </div>
+      </GlassCard>
     </div>
   );
 }

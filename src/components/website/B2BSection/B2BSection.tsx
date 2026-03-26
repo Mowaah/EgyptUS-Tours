@@ -1,6 +1,8 @@
-import { SectionHeader, Button } from "@/components/shared";
+import { SectionHeader, Button, FormField, PhonePrefixSelect } from "@/components/shared";
 import Image from "next/image";
+import CountrySelect from "./CountrySelect";
 import styles from "./B2BSection.module.scss";
+import formStyles from "@/components/shared/FormField/FormField.module.scss";
 
 export default function B2BSection() {
   return (
@@ -93,77 +95,37 @@ export default function B2BSection() {
 
           <div className={styles.right}>
             <div className={styles.formCard}>
-              <div className={styles.field}>
-                <label className={styles.label}>Company Name</label>
-                <input
-                  type="text"
-                  placeholder="Company Name"
-                  className={styles.input}
-                />
+              <FormField label="Company Name" type="text" placeholder="Company Name" />
+
+              <div className={formStyles.field}>
+                <label className={formStyles.fieldLabel}>Country</label>
+                <CountrySelect />
               </div>
 
-              <div className={styles.field}>
-                <label className={styles.label}>Country</label>
-                <input
-                  type="text"
-                  placeholder="Headquarters Country"
-                  className={styles.input}
-                />
-              </div>
+              <FormField label="Contact Person" type="text" placeholder="Full Name" />
 
-              <div className={styles.field}>
-                <label className={styles.label}>Contact Person</label>
-                <input
-                  type="text"
-                  placeholder="Full Name"
-                  className={styles.input}
-                />
-              </div>
+              <FormField label="Email Address" type="email" placeholder="youremail@company.com" />
 
-              <div className={styles.field}>
-                <label className={styles.label}>Email Address</label>
-                <input
-                  type="email"
-                  placeholder="youremail@company.com"
-                  className={styles.input}
-                />
-              </div>
-
-              <div className={styles.field}>
-                <label className={styles.label}>Phone Number</label>
+              <div className={formStyles.field}>
+                <label className={formStyles.fieldLabel}>Phone Number</label>
                 <div className={styles.phoneRow}>
-                  <div className={styles.phonePrefix}>
-                    <Image src="/images/en.svg" alt="flag" width={20} height={14} />
-                    <span>+20</span>
-                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
-                      <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
-                  </div>
+                  <PhonePrefixSelect />
                   <input
                     type="tel"
                     placeholder="+1 (555) 000-0000"
-                    className={`${styles.input} ${styles.inputPhone}`}
+                    className={`${formStyles.input} ${styles.inputPhone}`}
                   />
                 </div>
               </div>
 
-              <div className={styles.field}>
-                <label className={styles.label}>Website</label>
-                <input
-                  type="url"
-                  placeholder="www.company.com"
-                  className={styles.input}
-                />
-              </div>
+              <FormField label="Website" type="url" placeholder="www.company.com" />
 
-              <div className={styles.field}>
-                <label className={styles.label}>Request Details</label>
-                <textarea
-                  placeholder="Tell us about your request."
-                  className={`${styles.input} ${styles.textarea}`}
-                  rows={4}
-                />
-              </div>
+              <FormField 
+                label="Request Details" 
+                isTextarea 
+                placeholder="Tell us about your request." 
+                rows={4} 
+              />
 
               <Button
                 variant="secondary"
