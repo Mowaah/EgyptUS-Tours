@@ -1,0 +1,78 @@
+@use "@/styles/variables" as *;
+
+.section {
+  padding: 80px 0;
+  background: #FAFBFF;
+  border-top: 1px solid $border;
+  position: relative;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.heading {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0 0 12px;
+}
+
+.subtitle {
+  font-size: $font-size-base;
+  color: $text-light;
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.column {
+  background: $white;
+  border: 1px solid $border;
+  border-radius: $radius-xl;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.season {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $dark;
+  margin: 0 0 8px;
+}
+
+.tier {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: $secondary-light;
+  border-radius: $radius-lg;
+  padding: 14px;
+}
+
+.tierIconWrap {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.tierPrice {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0;
+}
+
+.tierLabel {
+  font-size: $font-size-sm;
+  color: $text-light;
+  margin: 0;
+}

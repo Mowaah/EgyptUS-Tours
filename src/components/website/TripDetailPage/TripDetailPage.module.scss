@@ -1,0 +1,62 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.page {
+  min-height: 100vh;
+  background: $white;
+}
+
+.container {
+  @include container;
+
+  @media (min-width: 1024px) {}
+}
+
+.heroSection {
+  position: relative;
+  // increase bottom margin so the card doesn't overlap the content below
+  margin-bottom: 120px;
+
+  @media (min-width: 1024px) {
+    margin-bottom: 180px;
+  }
+}
+
+.galleryWrap {
+  @include container;
+  padding: 0;
+  position: relative;
+
+  @media (min-width: 1024px) {
+    padding: 0;
+  }
+}
+
+.heroOverlay {
+  position: absolute;
+  bottom: 0px; // align edge with bottom of galleryWrap before transform
+  left: 50%;
+  transform: translate(-50%, 50%); // half-in, half-out and horizontally centered
+  width: calc(100% - 48px);
+  z-index: 10;
+
+  @media (min-width: 1024px) {
+    // Center of the main image logic: 
+    // container padding = 40px left
+    // main image width = calc(100% - 80px - 148px)
+    // Left of main image = 40px, Center = 40px + (main_width / 2)
+    left: calc(40px + (100% - 80px - 148px) / 2);
+
+    // Width of the card: inset a bit from the main image width (16px inset on each side = 32px)
+    width: calc(100% - 80px - 148px - 32px);
+    max-width: 999px;
+
+    // maintain transform for centering
+    transform: translate(-50%, 50%);
+  }
+}
+
+.pricingWrap {
+  background: #FAFBFF;
+  width: 100%;
+}

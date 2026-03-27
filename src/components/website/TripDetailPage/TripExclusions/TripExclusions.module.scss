@@ -1,0 +1,35 @@
+@use "@/styles/variables" as *;
+
+.section {
+  padding: 48px 0;
+  border-top: 1px solid $border;
+}
+
+.heading {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0 0 24px;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: $font-size-base;
+  color: $text;
+}
+
+.icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}

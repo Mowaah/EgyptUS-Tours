@@ -16,3 +16,5 @@ export { default as CustomDatePicker } from "./CustomDatePicker/CustomDatePicker
 export { default as EmptyState } from "./EmptyState/EmptyState";
 export { default as Breadcrumb } from "./Breadcrumb/Breadcrumb";
 export { default as PageHeader } from "./PageHeader/PageHeader";
+export { default as TestimonialCard } from "./TestimonialCard/TestimonialCard";
+export type { Testimonial } from "./TestimonialCard/TestimonialCard";

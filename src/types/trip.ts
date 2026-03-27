@@ -13,4 +13,79 @@ export interface Trip {
   };
   countries?: number;
   isFavorite?: boolean;
+
+  // ── Detail-page fields ──────────────────────────────────────
+  images?: string[];
+  rating?: number;
+  reviewCount?: number;
+  tags?: string[];
+  privatePrice?: number;
+  groupPrice?: number;
+
+  overview?: {
+    description: string;
+    culturalValue: string;
+    whoIsItFor: string;
+  };
+
+  included?: string[];
+  excluded?: string[];
+
+  itinerary?: Array<{
+    day: number;
+    title: string;
+    subtitle?: string;
+    description: string;
+    image?: string;
+    value?: number;
+    durationHours?: number;
+    meals?: number;
+    highlights?: string[];
+  }>;
+
+  availability?: Array<{
+    dates: string; // e.g. "March 15-19, 2026"
+    duration: string; // e.g. "5 Days / 4 Nights"
+    spotsLeft: number;
+    totalSpots: number;
+  }>;
+
+  vipExperiences?: Array<{
+    title: string;
+    description: string;
+    image: string;
+    rating: number;
+    reviewCount: number;
+    originalPrice: number;
+    discountedPrice: number;
+    savings: number;
+    badge?: string; // "MOST POPULAR" | "BEST VALUE" | "LIMITED SPOTS" | "PREMIUM EXPERIENCE"
+    features: string[];
+    added?: boolean;
+  }>;
+
+  importantLinks?: Array<{
+    label: string;
+    href: string;
+  }>;
+
+  pricing?: Array<{
+    season: string; // e.g. "Sep – May"
+    tiers: Array<{
+      label: string; // e.g. "Per Single Cabin"
+      price: number;
+    }>;
+  }>;
+
+  travelerPhotos?: string[];
+
+  hotels?: Array<{
+    name: string;
+    location: string;
+    description: string;
+    image: string;
+    rating: number;
+    reviewCount: number;
+    amenities: string[];
+  }>;
 }

@@ -1,0 +1,95 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.heroBar {
+  background: $white;
+  padding: 22px 32px;
+  border-radius: 28px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.topRow {
+  display: flex;
+  align-items: baseline;
+  /* Align reviews baseline with buttons text baseline */
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 7px;
+  /* Symmetric positive margin */
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reviews {
+  color: #4A5565;
+  font-size: 14px;
+}
+
+.rating {
+  font-weight: $font-weight-bold;
+  color: $dark;
+  font-size: 18px;
+}
+
+.star {
+  display: block;
+}
+
+.titleRow {
+  margin-bottom: 8px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: $font-weight-medium;
+  color: $dark;
+  margin: 0;
+  line-height: 1;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.favorite {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: none;
+  background: $white;
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  svg path {
+    fill: $border-input;
+    transition: fill $transition-fast;
+  }
+
+  &:hover svg path,
+  &.favoriteActive svg path {
+    fill: $danger;
+  }
+}
+
+.actionBtn {
+  gap: 6px;
+}
+
+.subtitle {
+  color: #4A5565E5;
+  opacity: 0.90;
+  font-size: 14px;
+  margin: 0;
+}

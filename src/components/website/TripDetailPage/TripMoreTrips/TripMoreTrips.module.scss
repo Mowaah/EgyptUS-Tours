@@ -1,0 +1,71 @@
+@use "@/styles/variables" as *;
+
+.section {
+  padding: 80px 0;
+  border-top: 1px solid $border;
+  margin-bottom: 64px; // Bottom space before footer
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  gap: 24px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.headerText {
+  max-width: 600px;
+}
+
+.heading {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0 0 12px;
+}
+
+.subtitle {
+  font-size: $font-size-base;
+  color: $text-light;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.exploreBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: $primary;
+  color: $white;
+  border: none;
+  border-radius: $radius-full;
+  padding: 12px 28px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: darken(#2971E6, 10%);
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}

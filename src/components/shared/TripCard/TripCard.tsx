@@ -81,7 +81,7 @@ export default function TripCard({ trip, onFavoriteToggle }: TripCardProps) {
         </div>
       </div>
 
-      <Button variant="primary" fullWidth className={styles.viewTripBtn}>
+      <Button variant="primary" fullWidth className={styles.viewTripBtn} href={`/trips/luxor-nile-cruise`}>
         View Trip
       </Button>
     </div>

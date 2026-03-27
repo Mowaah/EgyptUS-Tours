@@ -1,0 +1,270 @@
+@use "@/styles/variables" as *;
+
+.section {
+  padding: 64px 0;
+  border-top: 1px solid $border;
+}
+
+.headerWrap {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.satisfactionPill {
+  display: inline-block;
+  background: $secondary-light;
+  color: $secondary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  padding: 6px 18px;
+  border-radius: $radius-full;
+  margin-bottom: 16px;
+}
+
+.heading {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0 0 12px;
+}
+
+.subtitle {
+  font-size: $font-size-base;
+  color: $text-light;
+  margin: 0;
+}
+
+.valueHighlight {
+  color: $secondary;
+  font-weight: $font-weight-semibold;
+}
+
+// ── Timeline ──────────────────────────────────────────────────
+.timeline {
+  display: flex;
+  gap: 0;
+  justify-content: center;
+  margin-bottom: 32px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.dayBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 4px;
+  min-width: 120px;
+  position: relative;
+}
+
+.dayLabel {
+  font-size: $font-size-sm;
+  color: $text-light;
+  font-weight: $font-weight-medium;
+}
+
+.dayLabelActive {
+  color: $secondary;
+  font-weight: $font-weight-semibold;
+}
+
+.thumbCircle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  border: 3px solid $border;
+  transition: border-color $transition-fast;
+  background: $background-alt;
+}
+
+.thumbCircleActive {
+  border-color: $secondary;
+}
+
+.thumbImg {
+  object-fit: cover;
+}
+
+.connectorWrap {
+  position: relative;
+  width: 100%;
+  height: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.connector {
+  position: absolute;
+  left: 50%;
+  right: -50%;
+  height: 2px;
+  background: $border;
+  transition: background $transition-fast;
+}
+
+.connectorActive {
+  background: $secondary;
+}
+
+.connectorDot {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: $border-input;
+  transition: background $transition-fast;
+}
+
+.connectorDotActive {
+  background: $secondary;
+}
+
+.dayTitle {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: $dark;
+  text-align: center;
+  margin: 0;
+}
+
+.daySubtitle {
+  font-size: $font-size-xs;
+  color: $text-light;
+  text-align: center;
+  margin: 0;
+}
+
+// ── Detail Card ───────────────────────────────────────────────
+.detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid $border;
+  border-radius: $radius-xl;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detailImg {
+  position: relative;
+  min-height: 320px;
+}
+
+.detailImgInner {
+  object-fit: cover;
+}
+
+.valueBadge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: $primary;
+  color: $white;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  padding: 6px 14px;
+  border-radius: $radius-full;
+}
+
+.detailOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+}
+
+.overlayDay {
+  font-size: $font-size-sm;
+  color: rgba(255,255,255,0.85);
+  margin: 0 0 4px;
+}
+
+.overlayTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $white;
+  margin: 0;
+}
+
+.detailInfo {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.metaRow {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: $font-size-sm;
+  color: $text-light;
+}
+
+.detailDesc {
+  font-size: $font-size-base;
+  color: $text;
+  line-height: 1.75;
+  margin: 0;
+}
+
+.highlights {
+  background: $background-alt;
+  border-radius: $radius-lg;
+  padding: 16px;
+}
+
+.highlightsTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $secondary;
+  margin: 0 0 12px;
+}
+
+.highlightsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.highlightItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: $font-size-sm;
+  color: $text;
+  background: $white;
+  border-radius: $radius-lg;
+  padding: 10px 14px;
+
+  svg {
+    color: $primary;
+    flex-shrink: 0;
+  }
+}

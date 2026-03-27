@@ -1,0 +1,52 @@
+@use "@/styles/variables" as *;
+
+.section {
+  padding: 64px 0;
+  border-top: 1px solid $border;
+}
+
+.heading {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0 0 32px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.loadMoreWrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.loadMoreBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: $white;
+  color: $primary;
+  border: 1.5px solid $primary;
+  border-radius: $radius-full;
+  padding: 12px 28px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: $primary-soft;
+  }
+}

@@ -1,0 +1,136 @@
+@use "@/styles/variables" as *;
+
+.section {
+  padding: 48px 0;
+  border-top: 1px solid $border;
+}
+
+.heading {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0 0 8px;
+}
+
+.subtitle {
+  font-size: $font-size-base;
+  color: $text-light;
+  margin: 0 0 28px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.count {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $dark;
+}
+
+.sortWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sortLabel {
+  font-size: $font-size-sm;
+  color: $text-light;
+}
+
+.sortSelect {
+  font-size: $font-size-sm;
+  color: $dark;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-weight: $font-weight-medium;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  border: 1px solid $border;
+  border-radius: $radius-xl;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dates {
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0;
+}
+
+.duration {
+  font-size: $font-size-sm;
+  color: $text-light;
+  margin: 0;
+}
+
+.spotsBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: $radius-lg;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  border: none;
+}
+
+.hot {
+  background: $secondary-light;
+  color: $secondary;
+}
+
+.warm {
+  background: $primary-soft;
+  color: $primary;
+}
+
+.cool {
+  background: rgba(41, 113, 230, 0.06);
+  color: $primary;
+}
+
+.almostFull {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: $font-size-sm;
+  color: $secondary;
+  font-weight: $font-weight-medium;
+}
+
+.pctLabel {
+  font-size: $font-size-sm;
+  color: $text-light;
+  margin: 0;
+}
+
+.note {
+  margin-top: 28px;
+  background: $background-alt;
+  border-radius: $radius-lg;
+  padding: 14px 20px;
+  font-size: $font-size-sm;
+  color: $text-light;
+  text-align: center;
+}

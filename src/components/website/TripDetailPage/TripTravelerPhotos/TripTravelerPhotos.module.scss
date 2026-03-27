@@ -1,0 +1,56 @@
+@use "@/styles/variables" as *;
+
+.section {
+  padding: 48px 0;
+  border-top: 1px solid $border;
+}
+
+.heading {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0 0 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.photo {
+  position: relative;
+  height: 220px;
+  border-radius: $radius-xl;
+  overflow: hidden;
+}
+
+.img {
+  object-fit: cover;
+  transition: transform $transition-base;
+
+  &:hover {
+    transform: scale(1.04);
+  }
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: $border-input;
+  border: none;
+  cursor: pointer;
+  transition: background $transition-fast;
+}
+
+.dotActive {
+  background: $primary;
+}

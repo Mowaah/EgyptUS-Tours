@@ -1,0 +1,110 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.section {
+  padding: 48px 0;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 48px;
+  align-items: flex-start;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.content {}
+
+.heading {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0 0 28px;
+}
+
+.label {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $secondary;
+  margin: 24px 0 10px;
+}
+
+.text {
+  color: $text-light;
+  font-size: $font-size-base;
+  line-height: 1.75;
+  margin: 0;
+}
+
+// ── Sidebar ──────────────────────────────────────────────────
+.sidebar {
+  @media (min-width: 1024px) {
+    position: sticky;
+    top: 100px;
+  }
+}
+
+.bookCard {
+  border: 1px solid $border-card;
+  border-radius: $radius-xl;
+  padding: 24px;
+  background: $white;
+}
+
+.bookTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0 0 8px;
+}
+
+.bookSubtitle {
+  font-size: $font-size-sm;
+  color: $text-light;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.divider {
+  height: 1px;
+  background: $border;
+  margin: 16px 0;
+}
+
+.priceRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tierLabel {
+  display: block;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $dark;
+}
+
+.tierSub {
+  display: block;
+  font-size: $font-size-xs;
+  color: $text-light;
+  margin-top: 2px;
+}
+
+.tierPrice {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $primary;
+  white-space: nowrap;
+}
+
+.ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}

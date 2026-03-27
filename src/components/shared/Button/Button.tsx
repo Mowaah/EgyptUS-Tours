@@ -4,7 +4,7 @@ import styles from "./Button.module.scss";
 
 interface ButtonProps {
   children: React.ReactNode;
-  variant?: "primary" | "secondary" | "outline" | "dark";
+  variant?: "primary" | "secondary" | "outline" | "secondary-outline" | "dark";
   size?: "sm" | "md" | "lg";
   icon?: React.ReactNode;
   iconPosition?: "left" | "right";
