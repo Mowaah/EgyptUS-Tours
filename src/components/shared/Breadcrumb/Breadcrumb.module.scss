@@ -1,0 +1,51 @@
+@use "@/styles/variables" as *;
+
+.breadcrumb {
+  display: inline-flex;
+  align-items: center;
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #c6cbd2;
+  font-size: $font-size-sm;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #c6cbd2; // Grayish unselected
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $primary;
+  }
+}
+
+.homeIcon {
+  margin-top: -1px; // Align icon visually
+}
+
+.separator {
+  color: #c6cbd2;
+  user-select: none;
+}
+
+.current {
+  color: $secondary; // Orange for active/current
+  font-weight: $font-weight-medium;
+}

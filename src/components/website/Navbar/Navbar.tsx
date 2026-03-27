@@ -58,6 +58,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const lightNavBackground =
     LIGHT_NAV_PATHS.includes(pathname) || LIGHT_NAV_PATHS.some((p) => pathname.startsWith(`${p}/`));
+  const isBookingPage = pathname === "/booking";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -102,15 +103,17 @@ export default function Navbar() {
           />
         </Link>
 
-        <button
-          className={styles.hamburger}
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
-        >
-          <span />
-          <span />
-          <span />
-        </button>
+        {!isBookingPage && (
+          <button
+            className={styles.hamburger}
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Toggle menu"
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+        )}
 
         <ul className={`${styles.links} ${mobileOpen ? styles.open : ""}`}>
           {NAV_LINKS.map((link) => {
@@ -184,7 +187,9 @@ export default function Navbar() {
           ) : (
             planTripButton
           )}
-          <UserMenu scrolled={shouldShowScrolled} lightNavBackground={lightNavBackground} />
+          {!isBookingPage && (
+            <UserMenu scrolled={shouldShowScrolled} lightNavBackground={lightNavBackground} />
+          )}
         </div>
       </div>
     </nav>

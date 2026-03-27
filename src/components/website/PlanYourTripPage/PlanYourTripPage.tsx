@@ -10,7 +10,7 @@ import { DESTINATIONS, EXPERIENCE_OPTIONS, STEPS, TRANSPORT_OPTIONS } from "./pl
 import { IconArrowLeft, IconMinus, IconPlus } from "./PlanYourTripIcons";
 import type { PlanStep, TripData } from "./planYourTripTypes";
 import { clampMin0, filterDestinations, toggleInArray } from "./planYourTripUtils";
-import { SuccessModal } from "@/components/shared";
+import { SuccessModal, Breadcrumb, PageHeader } from "@/components/shared";
 import StepDestination from "./steps/Destination/StepDestination";
 import StepTravelerInfo from "./steps/TravelerInfo/StepTravelerInfo";
 import StepPreferences from "./steps/Preferences/StepPreferences";
@@ -107,47 +107,14 @@ export default function PlanYourTripPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.breadcrumb}>
-        <div className={styles.breadcrumbArt} aria-hidden="true">
-          <div className={styles.breadcrumbDottedLine} />
-          <Image
-            src="/images/trips2.svg"
-            alt=""
-            width={22.5}
-            height={19.5}
-            className={styles.breadcrumbTripsIcon}
-            aria-hidden
-          />
-        </div>
-        <div className={styles.breadcrumbContainer}>
-          <Link className={styles.backButton} href="/">
-            <IconArrowLeft size={16} />
-            Back To Home
-          </Link>
-
-          <div className={styles.breadcrumbPath} aria-label="Breadcrumb">
-            <Image
-              src="/images/home.svg"
-              alt=""
-              width={16}
-              height={16}
-              className={styles.breadcrumbHomeIcon}
-              aria-hidden
-            />
-            <span className={styles.breadcrumbLabel}>Home</span>
-            <span className={styles.breadcrumbSeparator} aria-hidden="true">
-              /
-            </span>
-            <span className={styles.breadcrumbCurrent}>Plan Your Trip</span>
-          </div>
-
-          <h1 className={styles.breadcrumbTitle}>Plan Your Perfect Trip</h1>
-          <p className={styles.breadcrumbSubtitle}>
-            Fill out the form below and our team will craft a personalized travel experience
-            tailored just for you.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        breadcrumbs={[{ label: "Plan Your Trip", isCurrent: true }]}
+        title="Plan Your Perfect Trip"
+        subtitle="Fill out the form below and our team will craft a personalized travel experience tailored just for you."
+        backButton={{ text: "Back To Home", href: "/" }}
+        decorationSrc="/images/dotted-line3.svg"
+        subtitleMaxWidth="750px"
+      />
 
       <div className={styles.stepIndicator}>
         <div className={styles.stepContainer}>
@@ -172,18 +139,16 @@ export default function PlanYourTripPage() {
                     )}
                   </div>
                   <span
-                    className={`${styles.stepLabel} ${
-                      isCurrent ? styles.stepLabelCurrent : isDone ? styles.stepLabelDone : ""
-                    }`}
+                    className={`${styles.stepLabel} ${isCurrent ? styles.stepLabelCurrent : isDone ? styles.stepLabelDone : ""
+                      }`}
                   >
                     {step.label}
                   </span>
                 </div>
                 {index < STEPS.length - 1 && (
                   <div
-                    className={`${styles.stepLine} ${
-                      currentStep >= step.number ? styles.stepLineActive : ""
-                    }`}
+                    className={`${styles.stepLine} ${currentStep >= step.number ? styles.stepLineActive : ""
+                      }`}
                     aria-hidden="true"
                   />
                 )}

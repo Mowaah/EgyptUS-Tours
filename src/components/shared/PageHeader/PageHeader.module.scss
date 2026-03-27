@@ -1,0 +1,99 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.headerWrapper {
+  position: relative;
+  width: 100%;
+  padding: 80px 0 40px;
+
+  @media (min-width: 1024px) {
+    padding: 60px 0 40px;
+  }
+}
+
+.decorationWrapper {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1440px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
+}
+
+.decoration {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: auto;
+}
+
+.container {
+  @include container;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+
+  @media (min-width: 1024px) {
+    padding: 0 40px;
+  }
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: $white;
+  border: 1px solid $primary;
+  border-radius: $radius-full;
+  color: $primary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: background $transition-fast;
+  text-decoration: none;
+  margin-bottom: 24px;
+
+  &:hover {
+    background: $primary-soft;
+  }
+}
+
+.backArrow {
+  transform: rotate(180deg);
+  display: block;
+}
+
+.breadcrumbComp {
+  margin-bottom: 12px;
+}
+
+.title {
+  color: $primary-dark;
+  font-size: clamp(1.75rem, 4vw, 2.6rem);
+  font-weight: $font-weight-bold;
+  line-height: 1.2;
+  margin: 0 0 $spacing-md;
+  max-width: 700px;
+}
+
+.subtitle {
+  color: $text-light;
+  font-size: $font-size-base;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0;
+}

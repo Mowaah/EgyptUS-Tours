@@ -1,0 +1,60 @@
+@use "@/styles/variables" as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: $spacing-2xl $spacing-xl;
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+.iconWrapper {
+  margin-bottom: $spacing-2xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  background: rgba(41, 113, 230, 0.08);
+  border-radius: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+
+  // Outer thick "shadow" border
+  &::before {
+    content: "";
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+    border-radius: 50%;
+    background: rgba(41, 113, 230, 0.03);
+    z-index: -1;
+  }
+}
+
+.icon {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+}
+
+
+.title {
+  font-size: 18px;
+  font-weight: $font-weight-medium;
+  color: $text-light;
+  margin-bottom: $spacing-sm;
+}
+
+.description {
+  font-size: 16px;
+  color: #9CA3AF;
+  line-height: 1.6;
+  margin-bottom: $spacing-xl;
+}

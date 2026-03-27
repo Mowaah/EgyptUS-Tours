@@ -1,8 +1,10 @@
-import styles from "./SectionHeader.module.scss";
 import Image from "next/image";
+import Breadcrumb from "../Breadcrumb/Breadcrumb";
+import styles from "./SectionHeader.module.scss";
 
 interface SectionHeaderProps {
-  label: string;
+  label?: string;
+  breadcrumbItems?: { label: string; href?: string; isCurrent?: boolean }[];
   heading: string;
   description?: string;
   align?: "left" | "center";
@@ -16,6 +18,7 @@ interface SectionHeaderProps {
 
 export default function SectionHeader({
   label,
+  breadcrumbItems,
   heading,
   description,
   align = "center",
@@ -32,18 +35,24 @@ export default function SectionHeader({
       style={maxWidth ? { maxWidth } : undefined}
     >
       {showLabel && (
-        <span className={styles.label}>
-          {icon || (
-            <Image
-              src="/images/trips2.svg"
-              alt="Trips"
-              width={18}
-              height={18}
-              className={styles.labelIcon}
-            />
+        <>
+          {breadcrumbItems ? (
+            <Breadcrumb items={breadcrumbItems} />
+          ) : (
+            <span className={styles.label}>
+              {icon || (
+                <Image
+                  src="/images/trips2.svg"
+                  alt="Trips"
+                  width={18}
+                  height={18}
+                  className={styles.labelIcon}
+                />
+              )}
+              {label}
+            </span>
           )}
-          {label}
-        </span>
+        </>
       )}
       <h2
         className={`${styles.heading} ${headingClassName || ""}`}

@@ -7,6 +7,9 @@ import {
   CategoryTabs,
   SortButton,
   PaginationArrows,
+  EmptyState,
+  Breadcrumb,
+  PageHeader,
 } from "@/components/shared";
 import { Trip } from "@/types";
 import Image from "next/image";
@@ -82,7 +85,14 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
     priceRange: { min: 1, max: 12000 }
   });
 
+  const [searchQuery, setSearchQuery] = useState("");
   const [trips, setTrips] = useState<Trip[]>(DEMO_TRIPS);
+
+  // Simple filtering for demonstration
+  const filteredTrips = trips.filter(trip =>
+    trip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    trip.location.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleFavoriteToggle = (id: string) => {
     setTrips((prev) =>
@@ -92,39 +102,43 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
     );
   };
 
+  const handleResetSearch = () => {
+    setSearchQuery("");
+  };
+
   const toggleFilter = (key: keyof typeof expanded) => {
     setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   return (
-    <section className={styles.section}>
-      <div className={styles.container}>
-
-        {/* ── Header: homepage uses SectionHeader, trips page uses page-specific heading ── */}
-        {isPage ? (
-          <div className={styles.pageHeader}>
-            <div className={styles.labelRow}>
-              <Image src="/images/trips2.svg" alt="Trips" width={18} height={18} />
-              <span className={styles.labelText}>Trips</span>
-            </div>
-            <h1 className={styles.pageHeading}>
-              Choose The Right Trip For Your Adventure{" "}
-              <span className={styles.highlight}>In EGYPT</span>
-            </h1>
-            <p className={styles.pageDesc}>
-              We make trip planning easy. Discover handpicked journeys, compare
-              destinations, and book trips crafted around your travel style.
-            </p>
-          </div>
-        ) : (
+    <section className={styles.section} style={isPage ? { paddingTop: 0 } : {}}>
+      {/* ── Header: homepage uses SectionHeader, trips page uses page-specific heading ── */}
+      {isPage ? (
+        <PageHeader
+          breadcrumbs={[{ label: "Trips", isCurrent: true }]}
+          title={
+            <>
+              Choose The Right Trip For Your Adventure In{" "}
+              <span className={styles.highlight}>EGYPT</span>
+            </>
+          }
+          subtitle="We make trip planning easy. Discover handpicked journeys, compare destinations, and book trips crafted around your travel style."
+          decorationSrc="/images/dotted-line4.svg"
+          subtitleMaxWidth="550px"
+          titleMaxWidth="800px"
+        />
+      ) : (
+        <div className={styles.container}>
           <SectionHeader
             label="Trips"
             heading="Choose The Right Trip For Your Adventure"
             description="We make trip planning easy. Discover handpicked journeys, compare destinations, and book trips crafted around your travel style."
-            descriptionMaxWidth="680px"
+            descriptionMaxWidth="600px"
           />
-        )}
+        </div>
+      )}
 
+      <div className={styles.container}>
         {/* ── Toolbar ── */}
         <div className={styles.toolbar}>
           <span className={styles.count}>
@@ -153,6 +167,8 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
                   type="text"
                   placeholder="Search trips, destinations, or cultures..."
                   className={styles.searchInput}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
             </div>
@@ -246,9 +262,9 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
                 <div className={styles.priceRange}>
                   <div className={styles.rangeContainer}>
                     <div className={styles.rangeTrack} />
-                    <div 
-                      className={styles.rangeTrackFill} 
-                      style={{ 
+                    <div
+                      className={styles.rangeTrackFill}
+                      style={{
                         left: `${((expanded.priceRange?.min || 1) / 12000) * 100}%`,
                         width: `${(((expanded.priceRange?.max || 12000) - (expanded.priceRange?.min || 1)) / 12000) * 100}%`
                       }}
@@ -291,36 +307,42 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
           </aside>
 
           <div className={styles.main}>
-            <div className={styles.grid}>
-              {trips.map((trip) => (
-                <TripCard
-                  key={trip.id}
-                  trip={trip}
-                  onFavoriteToggle={handleFavoriteToggle}
-                />
-              ))}
-            </div>
-
-            <div className={styles.pagination}>
-              <PaginationArrows
-                layout="inline"
-                size={30}
-                iconWidth={15}
-                iconHeight={15}
-              >
-                <div className={styles.pages}>
-                  {[1, 2, 3, "...", 13, 14, 15].map((page, i) => (
-                    <button
-                      key={i}
-                      className={`${styles.pageBtn} ${page === 1 ? styles.active : ""} ${page === "..." ? styles.dots : ""}`}
-                      disabled={page === "..."}
-                    >
-                      {page}
-                    </button>
+            {filteredTrips.length > 0 ? (
+              <>
+                <div className={styles.grid}>
+                  {filteredTrips.map((trip) => (
+                    <TripCard
+                      key={trip.id}
+                      trip={trip}
+                      onFavoriteToggle={handleFavoriteToggle}
+                    />
                   ))}
                 </div>
-              </PaginationArrows>
-            </div>
+
+                <div className={styles.pagination}>
+                  <PaginationArrows
+                    layout="inline"
+                    size={30}
+                    iconWidth={15}
+                    iconHeight={15}
+                  >
+                    <div className={styles.pages}>
+                      {[1, 2, 3, "...", 13, 14, 15].map((page, i) => (
+                        <button
+                          key={i}
+                          className={`${styles.pageBtn} ${page === 1 ? styles.active : ""} ${page === "..." ? styles.dots : ""}`}
+                          disabled={page === "..."}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </div>
+                  </PaginationArrows>
+                </div>
+              </>
+            ) : (
+              <EmptyState onButtonClick={handleResetSearch} />
+            )}
           </div>
         </div>
       </div>
