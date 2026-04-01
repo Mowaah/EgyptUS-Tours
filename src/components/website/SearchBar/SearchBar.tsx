@@ -71,7 +71,7 @@ export default function SearchBar() {
               </span>
               <span className={styles.label}>{filter.label}</span>
               <Image
-                src="/images/arrow-down2-white.svg"
+                src="/images/arrows/arrow-down2-white.svg"
                 alt=""
                 width={12}
                 height={12}

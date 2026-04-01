@@ -26,7 +26,7 @@ export default function DesertBannerSection() {
           variant="secondary"
           href="/desert"
           icon={
-            <Image src="/images/arrow-right.svg" alt="" width={16} height={16} />
+            <Image src="/images/arrows/arrow-right.svg" alt="" width={16} height={16} />
           }
         >
           Explore more

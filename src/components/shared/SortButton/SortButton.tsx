@@ -35,7 +35,7 @@ export default function SortButton({
           ))}
         </select>
         <Image
-          src="/images/arrow-down2.svg"
+          src="/images/arrows/arrow-down2.svg"
           alt=""
           width={12}
           height={7}

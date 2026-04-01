@@ -70,7 +70,7 @@ export default function MultiCountrySection() {
               href="/trips"
               icon={
                 <Image
-                  src="/images/arrow-right-blue.svg"
+                  src="/images/arrows/arrow-right-blue.svg"
                   alt=""
                   width={16}
                   height={16}

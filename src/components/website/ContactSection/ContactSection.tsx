@@ -47,21 +47,21 @@ export default function ContactSection() {
 
           <div className={styles.formCard}>
             <FormField label="Full Name" type="text" placeholder="Full name here..." />
-            
-            <FormField 
-              label="Email" 
-              type="email" 
-              placeholder="Your email here..." 
+
+            <FormField
+              label="Email"
+              type="email"
+              placeholder="Your email here..."
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               error={isEmailInvalid ? "Please enter a valid email address." : undefined}
             />
 
-            <FormField 
-              label="Message" 
-              isTextarea 
-              placeholder="How we can help you?" 
-              rows={5} 
+            <FormField
+              label="Message"
+              isTextarea
+              placeholder="How we can help you?"
+              rows={5}
             />
 
             <Button
@@ -72,7 +72,7 @@ export default function ContactSection() {
               }}
               icon={
                 <Image
-                  src="/images/arrow-right.svg"
+                  src="/images/arrows/arrow-right.svg"
                   alt=""
                   width={24}
                   height={24}

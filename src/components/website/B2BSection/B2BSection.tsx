@@ -36,7 +36,7 @@ export default function B2BSection() {
               href="/b2b"
               icon={
                 <Image
-                  src="/images/arrow-right-blue.svg"
+                  src="/images/arrows/arrow-right-blue.svg"
                   alt=""
                   width={16}
                   height={16}
@@ -114,7 +114,7 @@ export default function B2BSection() {
               <div className={formStyles.field}>
                 <label className={formStyles.fieldLabel}>Phone Number</label>
                 <div className={styles.phoneRow}>
-                  <PhonePrefixSelect 
+                  <PhonePrefixSelect
                     phoneValue={phone}
                     onPhoneChange={setPhone}
                   />
@@ -130,11 +130,11 @@ export default function B2BSection() {
 
               <FormField label="Website" type="url" placeholder="www.company.com" />
 
-              <FormField 
-                label="Request Details" 
-                isTextarea 
-                placeholder="Tell us about your request." 
-                rows={4} 
+              <FormField
+                label="Request Details"
+                isTextarea
+                placeholder="Tell us about your request."
+                rows={4}
               />
 
               <Button
@@ -142,7 +142,7 @@ export default function B2BSection() {
                 fullWidth
                 icon={
                   <Image
-                    src="/images/arrow-right.svg"
+                    src="/images/arrows/arrow-right.svg"
                     alt=""
                     width={24}
                     height={24}

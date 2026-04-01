@@ -24,7 +24,7 @@ export default function HeroSection() {
             href="/booking"
             icon={
               <Image
-                src="/images/arrow-right.svg"
+                src="/images/arrows/arrow-right.svg"
                 alt=""
                 width={24}
                 height={24}

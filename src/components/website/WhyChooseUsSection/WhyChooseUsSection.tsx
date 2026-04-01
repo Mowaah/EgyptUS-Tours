@@ -53,7 +53,7 @@ export default function WhyChooseUsSection() {
               variant="outline"
               href="/about"
               icon={
-                <Image src="/images/arrow-right-blue.svg" alt="" width={16} height={16} />
+                <Image src="/images/arrows/arrow-right-blue.svg" alt="" width={16} height={16} />
               }
             >
               About Us

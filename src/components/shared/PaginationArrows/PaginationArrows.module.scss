@@ -60,8 +60,8 @@
   height: var(--pa-icon-h, 22px);
   background-color: currentColor;
 
-  -webkit-mask-image: url("/images/pagination-arrow.svg");
-  mask-image: url("/images/pagination-arrow.svg");
+  -webkit-mask-image: url("/images/arrows/pagination-arrow.svg");
+  mask-image: url("/images/arrows/pagination-arrow.svg");
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   -webkit-mask-position: center;
@@ -77,4 +77,3 @@
 .next .icon {
   transform: rotate(180deg);
 }
-

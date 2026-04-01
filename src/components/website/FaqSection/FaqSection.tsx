@@ -51,7 +51,7 @@ export default function FaqSection() {
           heading="Got questions?"
           description="We've got answers. Find everything you need to know to plan your perfect trip."
           align="center"
-          maxWidth="600px"
+          maxWidth="500px"
         />
 
         <div className={styles.accordion}>
@@ -73,7 +73,7 @@ export default function FaqSection() {
                   <span className={styles.questionText}>{item.question}</span>
                   <span className={styles.icon}>
                     <Image
-                      src="/images/arrow-down2.svg"
+                      src="/images/arrows/chevron-blue.svg"
                       alt="Toggle"
                       width={14}
                       height={8}

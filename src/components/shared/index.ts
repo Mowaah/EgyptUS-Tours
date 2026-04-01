@@ -2,6 +2,7 @@ export { default as Button } from "./Button/Button";
 export { default as SectionHeader } from "./SectionHeader/SectionHeader";
 export { default as TripCard } from "./TripCard/TripCard";
 export { default as HotelCard } from "./HotelCard/HotelCard";
+export { default as BlogCard } from "./BlogCard/BlogCard";
 export { default as CategoryTabs } from "./CategoryTabs/CategoryTabs";
 export { default as DestinationCard } from "./DestinationCard/DestinationCard";
 export { default as FeatureCard } from "./FeatureCard/FeatureCard";

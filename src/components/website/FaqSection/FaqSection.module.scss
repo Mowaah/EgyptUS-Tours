@@ -8,11 +8,6 @@
 
 .container {
   @include container;
-  padding: 0 24px;
-
-  @media (min-width: 1024px) {
-    padding: 0 40px;
-  }
 }
 
 .accordion {
@@ -20,21 +15,17 @@
   flex-direction: column;
   gap: 16px;
   margin-top: 48px;
-  max-width: 880px;
+  max-width: 960px;
   margin-left: auto;
   margin-right: auto;
 }
 
 .item {
-  border: 1px solid $border-strong;
-  border-radius: 16px;
+  border: 1px solid #E5E7EB;
+  border-radius: 32px;
   overflow: hidden;
   background: $white;
   transition: box-shadow $transition-base;
-
-  &.open {
-    box-shadow: $shadow-md;
-  }
 }
 
 .question {
@@ -50,17 +41,16 @@
 }
 
 .number {
-  font-size: 15px;
+  font-size: 20px;
   font-weight: $font-weight-bold;
-  color: $text-lighter;
-  min-width: 28px;
+  color: #0E1835;
   flex-shrink: 0;
 }
 
 .questionText {
   flex: 1;
-  font-size: 16px;
-  font-weight: $font-weight-semibold;
+  font-size: 20px;
+  font-weight: $font-weight-normal;
   color: $dark;
 }
 
@@ -75,11 +65,6 @@
   transition: background $transition-fast, border-color $transition-fast;
 }
 
-.open .icon {
-  background: $secondary-light;
-  border-color: $secondary-border;
-}
-
 .chevron {
   transition: transform $transition-base;
   transform: rotate(0deg);
@@ -90,14 +75,14 @@
 }
 
 .answer {
-  background: $background-alt;
-  border-top: 1px solid $border-strong;
-  padding: 16px 24px 20px;
+  background: rgba(234, 241, 253, 0.5);
+  margin: 0 20px 20px;
+  border-radius: 12px;
+  padding: 16px 20px;
 
   p {
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.7;
-    color: $text-light;
-    padding-left: 44px;
+    color: #6B7280;
   }
 }

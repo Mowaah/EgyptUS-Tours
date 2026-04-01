@@ -35,10 +35,10 @@ export default function TripGallery({ trip }: TripGalleryProps) {
           {activeIndex + 1} / {images.length}
         </GlassCard>
         <button className={`${styles.arrow} ${styles.arrowLeft}`} onClick={prev} aria-label="Previous">
-          <Image src="/images/pagination-arrow.svg" alt="Previous" width={16} height={16} />
+          <Image src="/images/arrows/pagination-arrow.svg" alt="Previous" width={16} height={16} />
         </button>
         <button className={`${styles.arrow} ${styles.arrowRight}`} onClick={next} aria-label="Next">
-          <Image src="/images/pagination-arrow.svg" alt="Next" width={16} height={16} style={{ transform: "rotate(180deg)" }} />
+          <Image src="/images/arrows/pagination-arrow.svg" alt="Next" width={16} height={16} style={{ transform: "rotate(180deg)" }} />
         </button>
       </div>
 

@@ -36,7 +36,7 @@ export default function EmptyState({
           className={styles.button}
           icon={
             <Image
-              src="/images/arrow-right-blue.svg"
+              src="/images/arrows/arrow-right-blue.svg"
               alt=""
               width={20}
               height={20}

@@ -74,7 +74,7 @@ export default function Navbar() {
       href="/booking"
       icon={
         <Image
-          src="/images/arrow-right.svg"
+          src="/images/arrows/arrow-right.svg"
           alt=""
           width={24}
           height={24}
@@ -129,10 +129,10 @@ export default function Navbar() {
                   <Image
                     src={
                       usePrimaryDropdownArrow
-                        ? "/images/chevron-blue.svg"
+                        ? "/images/arrows/chevron-blue.svg"
                         : useDarkDropdownArrow
-                        ? "/images/arrow-down2.svg"
-                        : "/images/arrow-down2-white.svg"
+                          ? "/images/arrows/arrow-down2.svg"
+                          : "/images/arrows/arrow-down2-white.svg"
                     }
                     alt=""
                     width={10}

@@ -195,7 +195,7 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
               >
                 <h4>Duration</h4>
                 <Image
-                  src="/images/arrow-down2.svg"
+                  src="/images/arrows/arrow-down2.svg"
                   alt="Toggle duration filter"
                   width={15}
                   height={8}
@@ -221,7 +221,7 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
               >
                 <h4>Special Offers</h4>
                 <Image
-                  src="/images/arrow-down2.svg"
+                  src="/images/arrows/arrow-down2.svg"
                   alt="Toggle special offers filter"
                   width={15}
                   height={8}
@@ -251,7 +251,7 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
               >
                 <h4>Price Range</h4>
                 <Image
-                  src="/images/arrow-down2.svg"
+                  src="/images/arrows/arrow-down2.svg"
                   alt="Toggle price range filter"
                   width={15}
                   height={8}

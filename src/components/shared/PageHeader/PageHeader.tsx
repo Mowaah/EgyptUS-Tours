@@ -47,7 +47,7 @@ export default function PageHeader({
         {backButton && (
           <Link className={styles.backButton} href={backButton.href}>
             <Image
-              src="/images/arrow-right-blue.svg"
+              src="/images/arrows/arrow-right-blue.svg"
               alt=""
               width={24}
               height={24}

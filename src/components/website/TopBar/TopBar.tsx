@@ -25,7 +25,7 @@ export default function TopBar() {
   const [currOpen, setCurrOpen] = useState(false);
   const [activeLang, setActiveLang] = useState(LANGUAGES[0]);
   const [activeCurr, setActiveCurr] = useState(CURRENCIES[0]);
-  
+
   const langRef = useRef<HTMLDivElement>(null);
   const currRef = useRef<HTMLDivElement>(null);
 
@@ -65,13 +65,13 @@ export default function TopBar() {
         <div className={styles.settings}>
           {/* Language Dropdown */}
           <div className={`${styles.dropdownWrapper} ${styles.langWrapper}`} ref={langRef}>
-            <button 
+            <button
               className={`${styles.dropdownToggle} ${styles.langToggle} ${langOpen ? styles.open : ""}`}
               onClick={() => { setLangOpen(o => !o); setCurrOpen(false); }}
             >
               <Image src={activeLang.icon} alt={activeLang.name} width={20} height={20} className={styles.flagIcon} />
               <span>{activeLang.code}</span>
-              <Image src="/images/arrow-down2-white.svg" alt="" width={12} height={12} className={styles.chevron} />
+              <Image src="/images/arrows/arrow-down2-white.svg" alt="" width={12} height={12} className={styles.chevron} />
             </button>
             {langOpen && (
               <div className={styles.dropdownMenu}>
@@ -94,12 +94,12 @@ export default function TopBar() {
 
           {/* Currency Dropdown */}
           <div className={`${styles.dropdownWrapper} ${styles.currWrapper}`} ref={currRef}>
-            <button 
+            <button
               className={`${styles.dropdownToggle} ${styles.currToggle} ${currOpen ? styles.open : ""}`}
               onClick={() => { setCurrOpen(o => !o); setLangOpen(false); }}
             >
               <span>{activeCurr.code} ({activeCurr.symbol})</span>
-              <Image src="/images/arrow-down2-white.svg" alt="" width={12} height={12} className={styles.chevron} />
+              <Image src="/images/arrows/arrow-down2-white.svg" alt="" width={12} height={12} className={styles.chevron} />
             </button>
             {currOpen && (
               <div className={styles.dropdownMenu}>
