@@ -2,8 +2,6 @@
 
 .section {
   padding: 80px 0;
-  background: #FAFBFF;
-  border-top: 1px solid $border;
   position: relative;
 }
 
@@ -21,22 +19,22 @@
 
 .subtitle {
   font-size: $font-size-base;
-  color: $text-light;
-  max-width: 520px;
+  color: $text-lighter;
+  max-width: 500px;
   margin: 0 auto;
   line-height: 1.6;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(354px, 1fr));
+  gap: 32px;
 }
 
 .column {
   background: $white;
-  border: 1px solid $border;
-  border-radius: $radius-xl;
+  border: 1px solid rgba(255, 102, 0, 0.1);
+  border-radius: 32px;
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -44,35 +42,43 @@
 }
 
 .season {
-  font-size: $font-size-lg;
-  font-weight: $font-weight-semibold;
+  font-size: 18px;
+  font-weight: 700;
   color: $dark;
-  margin: 0 0 8px;
+  margin: -4px -20px 12px;
+  padding: 0 20px 12px;
+  border-bottom: 1px solid rgba(255, 102, 0, 0.1);
 }
 
 .tier {
   display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  background: $secondary-light;
-  border-radius: $radius-lg;
-  padding: 14px;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(255, 102, 0, 0.03);
+  border-radius: 24px;
+  padding: 16px 20px;
+}
+
+.tierHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .tierIconWrap {
   flex-shrink: 0;
-  margin-top: 2px;
 }
 
 .tierPrice {
-  font-size: $font-size-xl;
+  font-size: 20px;
   font-weight: $font-weight-bold;
-  color: $dark;
+  color: $secondary;
   margin: 0;
 }
 
 .tierLabel {
-  font-size: $font-size-sm;
-  color: $text-light;
+  font-size: 14px;
+  font-weight: $font-weight-bold;
+  color: $dark;
   margin: 0;
 }

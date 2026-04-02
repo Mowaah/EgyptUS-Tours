@@ -1,9 +1,12 @@
 "use client";
 import { useState } from "react";
 import { Trip } from "@/types";
+import { SortButton } from "@/components/shared";
 import styles from "./TripAvailability.module.scss";
 
-interface Props { trip: Trip; }
+interface Props {
+  trip: Trip;
+}
 
 function getAvailability(spotsLeft: number, total: number) {
   const pct = Math.round(((total - spotsLeft) / total) * 100);
@@ -14,7 +17,7 @@ function getAvailability(spotsLeft: number, total: number) {
 
 export default function TripAvailability({ trip }: Props) {
   const slots = trip.availability ?? [];
-  const [sort, setSort] = useState("Month");
+  const [sort, setSort] = useState("month");
   if (!slots.length) return null;
 
   return (
@@ -27,18 +30,15 @@ export default function TripAvailability({ trip }: Props) {
 
       <div className={styles.toolbar}>
         <span className={styles.count}>{slots.length} Trips Founded</span>
-        <div className={styles.sortWrap}>
-          <span className={styles.sortLabel}>Sort by:</span>
-          <select
-            className={styles.sortSelect}
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-          >
-            <option>Month</option>
-            <option>Spots</option>
-            <option>Price</option>
-          </select>
-        </div>
+        <SortButton
+          options={[
+            { value: "month", label: "Month" },
+            { value: "spots", label: "Spots" },
+            { value: "price", label: "Price" },
+          ]}
+          defaultValue={sort}
+          onChange={setSort}
+        />
       </div>
 
       <div className={styles.grid}>

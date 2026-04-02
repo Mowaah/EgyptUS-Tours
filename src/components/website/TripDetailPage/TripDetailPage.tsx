@@ -60,24 +60,26 @@ export default function TripDetailPage({ trip }: TripDetailPageProps) {
 
         {/* Taken by Travelers */}
         <TripTravelerPhotos trip={trip} />
-
-        {/* Dates & Availability */}
-        <TripAvailability trip={trip} />
-
-        {/* Day-by-Day Itinerary */}
-        <TripItinerary trip={trip} />
       </div>
 
-      {/* ── Full-width pricing section ── */}
-      <div className={styles.pricingWrap}>
-        <div className={styles.container}>
-          <TripPricing trip={trip} />
-        </div>
+      {/* ── Full-width pricing section (Swapped here) ── */}
+      <div className={styles.container}>
+        <TripPricing trip={trip} />
       </div>
 
-      {/* ── Accommodations ── */}
+      {/* ── Accommodations (Swapped here) ── */}
       <div className={styles.container}>
         <TripAccommodations trip={trip} />
+      </div>
+
+      {/* Dates & Availability Swapped here */}
+      <div className={styles.container}>
+        <TripAvailability trip={trip} />
+      </div>
+
+      <div className={styles.container}>
+        {/* Day-by-Day Itinerary */}
+        <TripItinerary trip={trip} />
       </div>
 
       {/* ── Important Links ── */}

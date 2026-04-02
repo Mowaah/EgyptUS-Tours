@@ -1,4 +1,5 @@
 @use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
 
 .section {
   padding: 48px 0;
@@ -6,7 +7,7 @@
 }
 
 .heading {
-  font-size: $font-size-2xl;
+  font-size: $font-size-3xl;
   font-weight: $font-weight-bold;
   color: $dark;
   margin: 0 0 8px;
@@ -14,42 +15,21 @@
 
 .subtitle {
   font-size: $font-size-base;
-  color: $text-light;
+  color: $text-lighter;
   margin: 0 0 28px;
 }
 
 .toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  @include flex-between;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .count {
-  font-size: $font-size-base;
-  font-weight: $font-weight-semibold;
-  color: $dark;
-}
-
-.sortWrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.sortLabel {
-  font-size: $font-size-sm;
-  color: $text-light;
-}
-
-.sortSelect {
-  font-size: $font-size-sm;
-  color: $dark;
-  background: none;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  font-weight: $font-weight-medium;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $primary-dark;
 }
 
 .grid {
@@ -127,10 +107,11 @@
 
 .note {
   margin-top: 28px;
-  background: $background-alt;
-  border-radius: $radius-lg;
+  background: #F6FBFF;
+  border: 1px solid #DFEAFB;
+  border-radius: 12px;
   padding: 14px 20px;
-  font-size: $font-size-sm;
-  color: $text-light;
+  font-size: 14px;
+  color: $text-lighter;
   text-align: center;
 }

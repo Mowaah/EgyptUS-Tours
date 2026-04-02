@@ -41,22 +41,11 @@
   z-index: 10;
 
   @media (min-width: 1024px) {
-    // Center of the main image logic: 
-    // container padding = 40px left
-    // main image width = calc(100% - 80px - 148px)
-    // Left of main image = 40px, Center = 40px + (main_width / 2)
     left: calc(40px + (100% - 80px - 148px) / 2);
-
-    // Width of the card: inset a bit from the main image width (16px inset on each side = 32px)
     width: calc(100% - 80px - 148px - 32px);
     max-width: 999px;
 
     // maintain transform for centering
     transform: translate(-50%, 50%);
   }
-}
-
-.pricingWrap {
-  background: #FAFBFF;
-  width: 100%;
 }

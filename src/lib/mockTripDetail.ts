@@ -198,17 +198,17 @@ export const mockTripDetail: Trip = {
     {
       season: "Sep – May",
       tiers: [
-        { label: "Per Single Cabin", price: 2575 },
-        { label: "Per Person in Double Cabin", price: 1205 },
-        { label: "Per Person in Triple Cabin", price: 1169 },
+        { label: "Per Single in Single Room", price: 2575 },
+        { label: "Per Person in Double Room", price: 1205 },
+        { label: "Per Person in Triple Room", price: 1169 },
       ],
     },
     {
       season: "Jun – Aug",
       tiers: [
-        { label: "Per Single Cabin", price: 2199 },
-        { label: "Per Person in Double Cabin", price: 1050 },
-        { label: "Per Person in Triple Cabin", price: 999 },
+        { label: "Per Single in Single Room", price: 2199 },
+        { label: "Per Person in Double Room", price: 1050 },
+        { label: "Per Person in Triple Room", price: 999 },
       ],
     },
     {
@@ -229,7 +229,7 @@ export const mockTripDetail: Trip = {
       location: "Luxor, Egypt",
       description:
         "Elegant 5-star hotel on the Nile with stunning temple views, outdoor pool, and rooftop terrace.",
-      image: "/images/contact1.jpg",
+      image: "/images/accommodation/accomodation3.jpg",
       rating: 4.8,
       reviewCount: 2847,
       amenities: ["Free WiFi", "Pool", "Restaurant", "Spa"],
@@ -239,7 +239,7 @@ export const mockTripDetail: Trip = {
       location: "Aswan, Egypt",
       description:
         "Luxurious resort on Elephantine Island featuring private beach, multiple restaurants, and Nile views.",
-      image: "/images/contact2.jpg",
+      image: "/images/accommodation/accomodation2.jpg",
       rating: 4.7,
       reviewCount: 2132,
       amenities: ["Beach Access", "Pool", "Gym", "Bar"],
@@ -249,7 +249,7 @@ export const mockTripDetail: Trip = {
       location: "Cairo, Egypt (Optional Extension)",
       description:
         "Contemporary hotel on Gezira Island with floor-to-ceiling windows, dining, and Cairo Tower proximity.",
-      image: "/images/contact3.jpg",
+      image: "/images/accommodation/accomodations.jpg",
       rating: 4.9,
       reviewCount: 3201,
       amenities: ["Free WiFi", "Fine Dining", "Concierge", "Airport Transfer"],

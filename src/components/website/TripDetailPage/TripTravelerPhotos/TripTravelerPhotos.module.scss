@@ -5,24 +5,29 @@
   border-top: 1px solid $border;
 }
 
+.container {
+  width: fit-content;
+}
+
 .heading {
-  font-size: $font-size-2xl;
+  font-size: $font-size-3xl;
   font-weight: $font-weight-bold;
   color: $dark;
   margin: 0 0 24px;
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  display: flex;
   gap: 16px;
 }
 
 .photo {
   position: relative;
-  height: 220px;
+  width: 256px;
+  height: 256px;
   border-radius: $radius-xl;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .img {

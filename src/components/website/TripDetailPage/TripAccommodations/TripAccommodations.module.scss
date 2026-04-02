@@ -2,7 +2,6 @@
 
 .section {
   padding: 80px 0;
-  border-top: 1px solid $border;
 }
 
 .header {
@@ -11,16 +10,16 @@
 }
 
 .heading {
-  font-size: $font-size-3xl;
+  font-size: $font-size-4xl;
   font-weight: $font-weight-bold;
   color: $dark;
   margin: 0 0 12px;
 }
 
 .subtitle {
-  font-size: $font-size-base;
-  color: $text-light;
-  max-width: 480px;
+  font-size: $font-size-lg;
+  color: $text-lighter;
+  max-width: 630px;
   margin: 0 auto;
   line-height: 1.6;
 }
@@ -28,26 +27,33 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
+  gap: 26px;
 }
 
 .card {
   background: $white;
-  border: 1px solid $border;
-  border-radius: $radius-xl;
-  overflow: hidden;
+  border: 1px solid #EAF1FD;
+  border-radius: 24px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  transition: box-shadow $transition-base;
-
-  &:hover {
-    box-shadow: $shadow-lg;
-  }
+  gap: 12px;
 }
 
 .imageWrap {
   position: relative;
-  height: 200px;
+  height: 224px;
+  border-radius: 18px 18px 0 0;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(41, 113, 230, 0.45) 0%, rgba(0, 0, 0, 0.4) 100%);
+    z-index: 1;
+    pointer-events: none;
+  }
 }
 
 .image {
@@ -58,13 +64,14 @@
   position: absolute;
   top: 14px;
   left: 14px;
-  background: $primary;
-  color: $white;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
+  background: #DFEFFF;
+  color: $primary;
+  font-size: 12px;
+  font-weight: $font-weight-bold;
   letter-spacing: 0.05em;
-  padding: 4px 10px;
+  padding: 6px 12px;
   border-radius: $radius-full;
+  z-index: 2;
 }
 
 .ratingBadge {
@@ -77,23 +84,31 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  color: $dark;
+  font-size: 14px;
+  font-weight: $font-weight-bold;
+  color: $primary;
   box-shadow: $shadow-sm;
+  z-index: 2;
 }
 
 .reviewCount {
-  color: $text-light;
+  color: #6A7282;
+  font-size: 12px;
   font-weight: $font-weight-normal;
 }
 
 .content {
-  padding: 20px;
+  padding: 8px 12px 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 14px;
   flex: 1;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .name {
@@ -108,13 +123,13 @@
   align-items: center;
   gap: 4px;
   font-size: $font-size-sm;
-  color: $primary;
+  color: $text-lighter;
   margin: 0;
 }
 
 .description {
   font-size: $font-size-sm;
-  color: $text-light;
+  color: $text-lighter;
   line-height: 1.6;
   margin: 0;
 }
@@ -127,9 +142,13 @@
 }
 
 .amenity {
-  background: $background-alt;
-  color: $text;
-  font-size: $font-size-xs;
-  padding: 4px 10px;
-  border-radius: $radius-full;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #F8F9FA;
+  color: #364153;
+  font-size: 12px;
+  font-weight: $font-weight-medium;
+  padding: 5px 10px;
+  border-radius: 10px;
 }

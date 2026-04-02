@@ -46,29 +46,30 @@ export default function TripOverview({ trip }: TripOverviewProps) {
             <p className={styles.bookSubtitle}>
               Choose between a private experience or a group trip tailored to your preference.
             </p>
-
             <div className={styles.divider} />
 
-            <div className={styles.priceRow}>
-              <div>
-                <span className={styles.tierLabel}>Private Tour</span>
-                <span className={styles.tierSub}>Maximum flexibility</span>
+            <div className={styles.pricingContainer}>
+              <div className={styles.priceRow}>
+                <div>
+                  <span className={styles.tierLabel}>Private Tour</span>
+                  <span className={styles.tierSub}>Maximum flexibility</span>
+                </div>
+                <span className={styles.tierPrice}>
+                  ${trip.privatePrice?.toLocaleString()}
+                </span>
               </div>
-              <span className={styles.tierPrice}>
-                ${trip.privatePrice?.toLocaleString()}
-              </span>
             </div>
 
-            <div className={styles.divider} />
-
-            <div className={styles.priceRow}>
-              <div>
-                <span className={styles.tierLabel}>Group Tour</span>
-                <span className={styles.tierSub}>Up to 12 travelers</span>
+            <div className={styles.pricingContainer}>
+              <div className={styles.priceRow}>
+                <div>
+                  <span className={styles.tierLabel}>Group Tour</span>
+                  <span className={styles.tierSub}>Up to 12 travelers</span>
+                </div>
+                <span className={styles.tierPrice}>
+                  ${trip.groupPrice?.toLocaleString()}
+                </span>
               </div>
-              <span className={styles.tierPrice}>
-                ${trip.groupPrice?.toLocaleString()}
-              </span>
             </div>
 
             <div className={styles.ctas}>
