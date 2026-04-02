@@ -106,7 +106,7 @@ export const mockTripDetail: Trip = {
       subtitle: "Jewel of the Nile",
       description:
         "Explore Aswan's iconic attractions: the High Dam, the Unfinished Obelisk, and the island temple of Philae. Enjoy a traditional felucca sailing experience around Elephantine Island.",
-      image: "/images/contact1.jpg",
+      image: "/images/daybyday.jpg",
       value: 950,
       durationHours: 7,
       meals: 3,
@@ -118,7 +118,7 @@ export const mockTripDetail: Trip = {
       subtitle: "Farewell to Egypt",
       description:
         "Morning at leisure for last-minute shopping at the Aswan souq. Transfer to Aswan Airport for your onward journey.",
-      image: "/images/contact2.jpg",
+      image: "/images/daybyday2.jpg",
       value: 480,
       durationHours: 3,
       meals: 1,

@@ -2,7 +2,6 @@
 
 .section {
   padding: 64px 0;
-  border-top: 1px solid $border;
 }
 
 .headerWrap {
@@ -12,133 +11,170 @@
 
 .satisfactionPill {
   display: inline-block;
-  background: $secondary-light;
-  color: $secondary;
-  font-size: $font-size-sm;
+  background: linear-gradient(to right, rgba(41, 113, 230, 0.1), rgba(255, 102, 0, 0.1));
+  color: $dark;
+  font-size: 13px;
   font-weight: $font-weight-medium;
-  padding: 6px 18px;
+  padding: 7px 24px;
   border-radius: $radius-full;
   margin-bottom: 16px;
 }
 
 .heading {
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-size: 40px;
   font-weight: $font-weight-bold;
   color: $dark;
   margin: 0 0 12px;
 }
 
 .subtitle {
-  font-size: $font-size-base;
-  color: $text-light;
+  font-size: $font-size-lg;
+  color: $text-lighter;
   margin: 0;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 .valueHighlight {
   color: $secondary;
-  font-weight: $font-weight-semibold;
+  font-weight: $font-weight-bold;
 }
 
 // ── Timeline ──────────────────────────────────────────────────
 .timeline {
   display: flex;
-  gap: 0;
-  justify-content: center;
-  margin-bottom: 32px;
-  overflow-x: auto;
-  padding-bottom: 4px;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 0 auto 56px;
+  position: relative;
+  width: 100%;
+  padding: 0;
+
+  @media (max-width: 991px) {
+    overflow-x: auto;
+    padding-bottom: 20px;
+  }
 }
 
 .dayBtn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0 4px;
-  min-width: 120px;
   position: relative;
+  flex: 1;
 }
 
 .dayLabel {
-  font-size: $font-size-sm;
-  color: $text-light;
+  font-size: 16px;
+  color: $dark;
   font-weight: $font-weight-medium;
+  transition: color $transition-fast;
 }
 
 .dayLabelActive {
   color: $secondary;
-  font-weight: $font-weight-semibold;
 }
 
 .thumbCircle {
-  width: 72px;
-  height: 72px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   overflow: hidden;
   position: relative;
-  border: 3px solid $border;
-  transition: border-color $transition-fast;
-  background: $background-alt;
+  border: 4px solid transparent;
+  transition: all $transition-base;
+  background: $white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  z-index: 2;
 }
 
-.thumbCircleActive {
+// Applied to all days up to and including active (i <= active)
+.thumbCircleVisited {
   border-color: $secondary;
 }
 
-.thumbImg {
-  object-fit: cover;
+// Applied only to the currently selected day (i === active)
+.thumbCircleSelected {
+  transform: scale(1.1);
+  box-shadow: 0 8px 24px rgba(255, 102, 0, 0.2);
+}
+
+// Applied to days after the active day (i > active)
+.thumbCircleInactive {
+  border-color: #DADADA;
 }
 
 .connectorWrap {
-  position: relative;
   width: 100%;
-  height: 16px;
+  height: 12px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-top: 20px;
 }
 
-.connector {
+.connectorTrack,
+.connectorFill {
   position: absolute;
-  left: 50%;
-  right: -50%;
-  height: 2px;
-  background: $border;
-  transition: background $transition-fast;
+  top: 50%;
+  transform: translateY(-50%);
+  left: -70%;
+  right: 30%;
+  height: 4px;
+  border-radius: 99px;
+  pointer-events: none;
 }
 
-.connectorActive {
+.connectorTrack {
+  background: #EDF2F7;
+  z-index: 0;
+}
+
+.connectorFill {
   background: $secondary;
+  z-index: 1;
 }
 
 .connectorDot {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  background: $border-input;
-  transition: background $transition-fast;
+  background: #E2E8F0;
+  border: 2px solid $white;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .connectorDotActive {
   background: $secondary;
+  transform: scale(1.2);
+}
+
+.dayInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .dayTitle {
-  font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
+  font-size: 14px;
+  font-weight: $font-weight-medium;
   color: $dark;
   text-align: center;
   margin: 0;
+  max-width: 300px;
 }
 
 .daySubtitle {
-  font-size: $font-size-xs;
-  color: $text-light;
+  font-size: 11px;
+  color: $text-lighter;
+  font-weight: $font-weight-normal;
   text-align: center;
   margin: 0;
 }
@@ -146,20 +182,25 @@
 // ── Detail Card ───────────────────────────────────────────────
 .detail {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-  border: 1px solid $border;
-  border-radius: $radius-xl;
-  overflow: hidden;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 40px;
+  background: $white;
+  border: 1px solid #F1F5F9;
+  border-radius: 32px;
+  padding: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
 
-  @media (max-width: 768px) {
+  @media (max-width: 991px) {
     grid-template-columns: 1fr;
+    gap: 24px;
   }
 }
 
 .detailImg {
   position: relative;
-  min-height: 320px;
+  height: 527px;
+  border-radius: 24px;
+  overflow: hidden;
 }
 
 .detailImgInner {
@@ -168,14 +209,15 @@
 
 .valueBadge {
   position: absolute;
-  top: 16px;
-  left: 16px;
+  top: 20px;
+  left: 20px;
   background: $primary;
   color: $white;
-  font-size: $font-size-sm;
+  font-size: 14.5px;
   font-weight: $font-weight-bold;
-  padding: 6px 14px;
+  padding: 12px 18px;
   border-radius: $radius-full;
+  z-index: 2;
 }
 
 .detailOverlay {
@@ -183,65 +225,70 @@
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 20px;
-  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+  padding: 16px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .overlayDay {
-  font-size: $font-size-sm;
-  color: rgba(255,255,255,0.85);
-  margin: 0 0 4px;
-}
-
-.overlayTitle {
-  font-size: $font-size-xl;
+  font-size: 29px;
   font-weight: $font-weight-bold;
   color: $white;
   margin: 0;
 }
 
+.overlayTitle {
+  font-size: 19.3px;
+  color: $white;
+  font-weight: $font-weight-normal;
+  margin: 0;
+}
+
 .detailInfo {
-  padding: 28px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
+  padding-top: 16px;
 }
 
 .metaRow {
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+  gap: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #F1F5F9;
 }
 
 .metaItem {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: $font-size-sm;
-  color: $text-light;
+  gap: 8px;
+  font-size: 15.7px;
+  color: $text-lighter;
 }
 
 .detailDesc {
-  font-size: $font-size-base;
-  color: $text;
-  line-height: 1.75;
+  font-size: 17px;
+  color: $text-lighter;
+  line-height: 1.8;
   margin: 0;
 }
 
 .highlights {
-  background: $background-alt;
-  border-radius: $radius-lg;
-  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .highlightsTitle {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: $font-size-base;
-  font-weight: $font-weight-semibold;
-  color: $secondary;
-  margin: 0 0 12px;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0;
 }
 
 .highlightsList {
@@ -250,18 +297,23 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .highlightItem {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: $font-size-sm;
-  color: $text;
-  background: $white;
-  border-radius: $radius-lg;
-  padding: 10px 14px;
+  gap: 12px;
+  font-size: 15.7px;
+  color: $text-lighter;
+  background: #F8F9FA;
+  border-radius: $radius-full;
+  padding: 12px 20px;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: #F1F5F9;
+  }
 
   svg {
     color: $primary;
