@@ -59,44 +59,57 @@
 }
 
 .duration {
-  font-size: $font-size-sm;
-  color: $text-light;
+  font-size: 13px;
+  color: #6B7280;
   margin: 0;
 }
 
 .spotsBadge {
   display: flex;
+  width: 100%;
   align-items: center;
   gap: 8px;
   padding: 8px 14px;
-  border-radius: $radius-lg;
+  border-radius: 10px;
   font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
+  font-weight: $font-weight-medium;
   border: none;
 }
 
-.hot {
-  background: $secondary-light;
+.orange {
+  background: rgba(255, 102, 0, 0.1);
   color: $secondary;
 }
 
-.warm {
-  background: $primary-soft;
+.blue {
+  background: rgba(41, 113, 230, 0.1);
   color: $primary;
 }
 
-.cool {
-  background: rgba(41, 113, 230, 0.06);
-  color: $primary;
+.green {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10B981;
 }
 
-.almostFull {
+.statusText {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: $font-size-sm;
-  color: $secondary;
+  font-size: 12px;
   font-weight: $font-weight-medium;
+  margin: 0;
+}
+
+.orangeText {
+  color: $secondary;
+}
+
+.blueText {
+  color: $primary;
+}
+
+.greenText {
+  color: #10B981;
 }
 
 .pctLabel {

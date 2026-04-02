@@ -23,7 +23,7 @@
 }
 
 .heading {
-  font-size: $font-size-2xl;
+  font-size: $font-size-3xl;
   font-weight: $font-weight-bold;
   color: $dark;
   margin: 0 0 12px;
@@ -31,41 +31,53 @@
 
 .subtitle {
   font-size: $font-size-base;
-  color: $text-light;
+  color: $text-lighter;
   margin: 0;
   line-height: 1.6;
 }
 
-.exploreBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: $primary;
-  color: $white;
-  border: none;
-  border-radius: $radius-full;
-  padding: 12px 28px;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background $transition-fast;
-
-  &:hover {
-    background: darken(#2971E6, 10%);
-  }
-}
-
 .grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
   gap: 24px;
+  overflow-x: auto;
+  padding-bottom: 24px;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
 
+  // Modern subtle scrollbar
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #E2E8F0;
+    border-radius: 4px;
+  }
+  &:hover::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+  }
+  scrollbar-width: thin;
+  scrollbar-color: #E2E8F0 transparent;
+
+  & > * {
+    flex: 0 0 calc(25% - 18px);
+    min-width: 320px;
+    scroll-snap-align: start;
+  }
+  
   @media (max-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
+    & > * {
+      flex: 0 0 calc(50% - 12px);
+    }
   }
 
   @media (max-width: 640px) {
-    grid-template-columns: 1fr;
+    & > * {
+      flex: 0 0 85%;
+      min-width: 280px;
+    }
   }
 }

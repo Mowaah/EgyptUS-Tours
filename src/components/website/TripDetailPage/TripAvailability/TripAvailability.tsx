@@ -8,11 +8,12 @@ interface Props {
   trip: Trip;
 }
 
-function getAvailability(spotsLeft: number, total: number) {
+function getStatus(spotsLeft: number, total: number) {
   const pct = Math.round(((total - spotsLeft) / total) * 100);
-  if (spotsLeft <= 3) return { label: "Almost Full!", pct, color: "hot" as const };
-  if (pct >= 60) return { label: `${pct}% Full`, pct, color: "warm" as const };
-  return { label: `${pct}% Full`, pct, color: "cool" as const };
+  let color = "green"; // Default when plenty of spots
+  if (spotsLeft <= 4) color = "orange";
+  else if (pct >= 50) color = "blue";
+  return { pct, color };
 }
 
 export default function TripAvailability({ trip }: Props) {
@@ -43,7 +44,7 @@ export default function TripAvailability({ trip }: Props) {
 
       <div className={styles.grid}>
         {slots.map((slot, i) => {
-          const { label, pct, color } = getAvailability(slot.spotsLeft, slot.totalSpots);
+          const { pct, color } = getStatus(slot.spotsLeft, slot.totalSpots);
           return (
             <div key={i} className={styles.card}>
               <p className={styles.dates}>{slot.dates}</p>
@@ -55,7 +56,7 @@ export default function TripAvailability({ trip }: Props) {
                 {slot.spotsLeft} Spots left
               </div>
               {slot.spotsLeft <= 4 ? (
-                <div className={styles.almostFull}>
+                <div className={`${styles.statusText} ${styles[color + "Text"]}`}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                     <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.8" />
                     <path d="M12 8v4M12 16h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -63,7 +64,9 @@ export default function TripAvailability({ trip }: Props) {
                   Almost Full!
                 </div>
               ) : (
-                <p className={styles.pctLabel}>{pct}% Full</p>
+                <p className={`${styles.statusText} ${styles[color + "Text"]}`}>
+                  {pct}% Full
+                </p>
               )}
             </div>
           );

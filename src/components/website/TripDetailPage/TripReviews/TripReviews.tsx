@@ -1,5 +1,6 @@
-import { TestimonialCard } from "@/components/shared";
+import { TestimonialCard, Button } from "@/components/shared";
 import type { Testimonial } from "@/components/shared/TestimonialCard/TestimonialCard";
+import Image from "next/image";
 import styles from "./TripReviews.module.scss";
 
 // Reusing same mock data from home page repeated to fill 2 rows
@@ -46,14 +47,21 @@ export default function TripReviews() {
           <TestimonialCard key={i} testimonial={review} />
         ))}
       </div>
-
       <div className={styles.loadMoreWrap}>
-        <button className={styles.loadMoreBtn}>
+        <Button
+          variant="outline"
+          icon={
+            <Image
+              src="/images/arrows/arrow-right-blue.svg"
+              alt=""
+              width={20}
+              height={20}
+              style={{ transform: "rotate(90deg)" }}
+            />
+          }
+        >
           Load More
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-            <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
+        </Button>
       </div>
     </section>
   );

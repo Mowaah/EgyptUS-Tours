@@ -2,11 +2,10 @@
 
 .section {
   padding: 64px 0;
-  border-top: 1px solid $border;
 }
 
 .heading {
-  font-size: $font-size-2xl;
+  font-size: $font-size-3xl;
   font-weight: $font-weight-bold;
   color: $dark;
   margin: 0 0 32px;
@@ -30,23 +29,4 @@
   display: flex;
   justify-content: center;
   margin-top: 40px;
-}
-
-.loadMoreBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: $white;
-  color: $primary;
-  border: 1.5px solid $primary;
-  border-radius: $radius-full;
-  padding: 12px 28px;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: background $transition-fast;
-
-  &:hover {
-    background: $primary-soft;
-  }
 }
