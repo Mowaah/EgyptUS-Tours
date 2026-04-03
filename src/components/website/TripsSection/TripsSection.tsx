@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import {
   SectionHeader,
   TripCard,
@@ -8,11 +9,9 @@ import {
   SortButton,
   PaginationArrows,
   EmptyState,
-  Breadcrumb,
   PageHeader,
 } from "@/components/shared";
 import { Trip } from "@/types";
-import Image from "next/image";
 import styles from "./TripsSection.module.scss";
 
 // Categories shown only on the dedicated /trips page
@@ -43,11 +42,11 @@ const HOME_CATEGORIES = [
   "Egypt Shore Excursions",
 ];
 
-const DEMO_TRIPS: Trip[] = Array.from({ length: 3 }, (_, i) => ({
+const DEMO_TRIPS: Trip[] = Array.from({ length: 6 }, (_, i) => ({
   id: `trip-${i + 1}`,
   title: "Luxury 5 days Luxor and Aswan Nile Cruise",
   description:
-    "Lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
+    "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
   image: "/images/home/hero-bg.jpg",
   location: "Luxor & Aswan",
   price: 2000,
@@ -64,14 +63,30 @@ const SPECIAL_OFFERS = [
   "Easter Offers",
 ];
 
+export interface SearchParams {
+  date?: string;
+  destination?: string;
+  budget?: string;
+  tripType?: string;
+}
+
 interface TripsSectionProps {
   /** "home" (default) renders the condensed homepage version with SectionHeader.
    *  "page" renders the full /trips page version with page heading + search bar. */
   variant?: "home" | "page";
+  /** When provided (redirected from SearchBar) renders Search Results mode */
+  searchParams?: SearchParams;
 }
 
-export default function TripsSection({ variant = "home" }: TripsSectionProps) {
+interface FilterPill {
+  icon: string;
+  label: string;
+  value: string;
+}
+
+export default function TripsSection({ variant = "home", searchParams }: TripsSectionProps) {
   const isPage = variant === "page";
+  const isSearchResults = isPage && !!searchParams;
 
   const [expanded, setExpanded] = useState<{
     duration: boolean;
@@ -82,16 +97,16 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
     duration: true,
     offers: true,
     price: true,
-    priceRange: { min: 1, max: 12000 }
+    priceRange: { min: 1, max: 12000 },
   });
 
   const [searchQuery, setSearchQuery] = useState("");
   const [trips, setTrips] = useState<Trip[]>(DEMO_TRIPS);
 
-  // Simple filtering for demonstration
-  const filteredTrips = trips.filter(trip =>
-    trip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    trip.location.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredTrips = trips.filter(
+    (trip) =>
+      trip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      trip.location.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleFavoriteToggle = (id: string) => {
@@ -106,27 +121,49 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
     setSearchQuery("");
   };
 
-  const toggleFilter = (key: keyof typeof expanded) => {
+  const toggleFilter = (key: "duration" | "offers" | "price") => {
     setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
+  // Build filter pills from searchParams
+  const filterPills: FilterPill[] = [];
+  if (searchParams?.date)
+    filterPills.push({ icon: "calendar", label: "Date", value: searchParams.date });
+  if (searchParams?.destination)
+    filterPills.push({ icon: "location", label: "Destination", value: searchParams.destination });
+  if (searchParams?.budget)
+    filterPills.push({ icon: "budget", label: "Budget", value: searchParams.budget });
+  if (searchParams?.tripType)
+    filterPills.push({ icon: "trip-type", label: "Trip Type", value: searchParams.tripType });
+
   return (
     <section className={styles.section} style={isPage ? { paddingTop: 0 } : {}}>
-      {/* ── Header: homepage uses SectionHeader, trips page uses page-specific heading ── */}
+
+      {/* ── Header ── */}
       {isPage ? (
-        <PageHeader
-          breadcrumbs={[{ label: "Trips", isCurrent: true }]}
-          title={
-            <>
-              Choose The Right Trip For Your Adventure In{" "}
-              <span className={styles.highlight}>EGYPT</span>
-            </>
-          }
-          subtitle="We make trip planning easy. Discover handpicked journeys, compare destinations, and book trips crafted around your travel style."
-          decorationSrc="/images/dotted-line4.svg"
-          subtitleMaxWidth="550px"
-          titleMaxWidth="800px"
-        />
+        isSearchResults ? (
+          <PageHeader
+            breadcrumbs={[{ label: "Trips", isCurrent: true }]}
+            title="Search Results"
+            subtitle="We make trip planning easy. Discover handpicked journeys, compare destinations, and book trips crafted around your travel style."
+            decorationSrc="/images/dotted-line4.svg"
+            subtitleMaxWidth="550px"
+          />
+        ) : (
+          <PageHeader
+            breadcrumbs={[{ label: "Trips", isCurrent: true }]}
+            title={
+              <>
+                Choose The Right Trip For Your Adventure In{" "}
+                <span className={styles.highlight}>EGYPT</span>
+              </>
+            }
+            subtitle="We make trip planning easy. Discover handpicked journeys, compare destinations, and book trips crafted around your travel style."
+            decorationSrc="/images/dotted-line4.svg"
+            subtitleMaxWidth="550px"
+            titleMaxWidth="800px"
+          />
+        )
       ) : (
         <div className={styles.container}>
           <SectionHeader
@@ -138,12 +175,48 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
         </div>
       )}
 
+      {/* ── Search filter summary bar ── */}
+      {isSearchResults && filterPills.length > 0 && (
+        <div className={styles.filterSummaryBar}>
+          <div className={styles.container}>
+            <div className={styles.filterSummaryCard}>
+              {filterPills.map((pill) => (
+                <div key={pill.label} className={styles.filterSummaryPill}>
+                  <Image
+                    src={`/images/search/${pill.icon}.svg`}
+                    alt=""
+                    width={20}
+                    height={20}
+                    className={styles.filterSummaryIcon}
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display = "none";
+                    }}
+                  />
+                  <div className={styles.filterSummaryText}>
+                    <span className={styles.filterSummaryLabel}>{pill.label}</span>
+                    <span className={styles.filterSummaryValue}>{pill.value}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+
       <div className={styles.container}>
         {/* ── Toolbar ── */}
         <div className={styles.toolbar}>
-          <span className={styles.count}>
-            {isPage ? "60 Tours Founded" : "Found 60 Tours"}
-          </span>
+          <div>
+            {isPage && (
+              <h2 className={styles.availableTripsTitle}>Available Trips</h2>
+            )}
+            <span className={styles.countSearch}>
+              {isPage
+                ? `${filteredTrips.length} Trips found for your route`
+                : `Found ${filteredTrips.length} Tours`}
+            </span>
+          </div>
 
           {isPage ? (
             <div className={styles.toolbarRight}>
@@ -165,7 +238,7 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
                 />
                 <input
                   type="text"
-                  placeholder="Search trips, destinations, or cultures..."
+                  placeholder="Search vehicles, transport option......."
                   className={styles.searchInput}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -187,12 +260,11 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
         <CategoryTabs tabs={isPage ? PAGE_CATEGORIES : HOME_CATEGORIES} wrap={isPage} />
 
         <div className={styles.layout}>
+          {/* ── Sidebar ── */}
           <aside className={styles.sidebar}>
+            {/* Duration */}
             <div className={`${styles.filterGroup} ${expanded.duration ? styles.filterGroupExpanded : ""}`}>
-              <div
-                className={styles.filterHeader}
-                onClick={() => toggleFilter("duration")}
-              >
+              <div className={styles.filterHeader} onClick={() => toggleFilter("duration")}>
                 <h4>Duration</h4>
                 <Image
                   src="/images/arrows/arrow-down2.svg"
@@ -204,9 +276,9 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
               </div>
               {expanded.duration && (
                 <div className={styles.filterOptions}>
-                  {DURATION_OPTIONS.map((opt) => (
-                    <label key={opt} className={styles.checkbox}>
-                      <input type="checkbox" />
+                  {DURATION_OPTIONS.map((opt, i) => (
+                    <label key={opt} className={styles.radio}>
+                      <input type="radio" name="duration" defaultChecked={i === 0} />
                       <span>{opt}</span>
                     </label>
                   ))}
@@ -214,11 +286,9 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
               )}
             </div>
 
+            {/* Special Offers */}
             <div className={`${styles.filterGroup} ${expanded.offers ? styles.filterGroupExpanded : ""}`}>
-              <div
-                className={styles.filterHeader}
-                onClick={() => toggleFilter("offers")}
-              >
+              <div className={styles.filterHeader} onClick={() => toggleFilter("offers")}>
                 <h4>Special Offers</h4>
                 <Image
                   src="/images/arrows/arrow-down2.svg"
@@ -232,11 +302,7 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
                 <div className={styles.filterOptions}>
                   {SPECIAL_OFFERS.map((opt, i) => (
                     <label key={`${opt}-${i}`} className={styles.radio}>
-                      <input
-                        type="radio"
-                        name="offers"
-                        defaultChecked={i === 0}
-                      />
+                      <input type="radio" name="offers" defaultChecked={i === 0} />
                       <span>{opt}</span>
                     </label>
                   ))}
@@ -244,11 +310,9 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
               )}
             </div>
 
+            {/* Price Range */}
             <div className={`${styles.filterGroup} ${expanded.price ? styles.filterGroupExpanded : ""}`}>
-              <div
-                className={styles.filterHeader}
-                onClick={() => toggleFilter("price")}
-              >
+              <div className={styles.filterHeader} onClick={() => toggleFilter("price")}>
                 <h4>Price Range</h4>
                 <Image
                   src="/images/arrows/arrow-down2.svg"
@@ -265,20 +329,20 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
                     <div
                       className={styles.rangeTrackFill}
                       style={{
-                        left: `${((expanded.priceRange?.min || 1) / 12000) * 100}%`,
-                        width: `${(((expanded.priceRange?.max || 12000) - (expanded.priceRange?.min || 1)) / 12000) * 100}%`
+                        left: `${((expanded.priceRange.min) / 12000) * 100}%`,
+                        width: `${((expanded.priceRange.max - expanded.priceRange.min) / 12000) * 100}%`,
                       }}
                     />
                     <input
                       type="range"
                       min="1"
                       max="12000"
-                      value={expanded.priceRange?.min || 1}
+                      value={expanded.priceRange.min}
                       onChange={(e) => {
-                        const val = Math.min(Number(e.target.value), (expanded.priceRange?.max || 12000) - 500);
-                        setExpanded(prev => ({
+                        const val = Math.min(Number(e.target.value), expanded.priceRange.max - 500);
+                        setExpanded((prev) => ({
                           ...prev,
-                          priceRange: { ...(prev.priceRange || { min: 1, max: 12000 }), min: val }
+                          priceRange: { ...prev.priceRange, min: val },
                         }));
                       }}
                       className={styles.rangeInput}
@@ -287,25 +351,26 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
                       type="range"
                       min="1"
                       max="12000"
-                      value={expanded.priceRange?.max || 12000}
+                      value={expanded.priceRange.max}
                       onChange={(e) => {
-                        const val = Math.max(Number(e.target.value), (expanded.priceRange?.min || 1) + 500);
-                        setExpanded(prev => ({
+                        const val = Math.max(Number(e.target.value), expanded.priceRange.min + 500);
+                        setExpanded((prev) => ({
                           ...prev,
-                          priceRange: { ...(prev.priceRange || { min: 1, max: 12000 }), max: val }
+                          priceRange: { ...prev.priceRange, max: val },
                         }));
                       }}
                       className={styles.rangeInput}
                     />
                   </div>
                   <span className={styles.rangeLabel}>
-                    ${expanded.priceRange?.min || 1} - ${expanded.priceRange?.max || 12000}
+                    ${expanded.priceRange.min} - ${expanded.priceRange.max}
                   </span>
                 </div>
               )}
             </div>
           </aside>
 
+          {/* ── Trip grid ── */}
           <div className={styles.main}>
             {filteredTrips.length > 0 ? (
               <>
@@ -320,12 +385,7 @@ export default function TripsSection({ variant = "home" }: TripsSectionProps) {
                 </div>
 
                 <div className={styles.pagination}>
-                  <PaginationArrows
-                    layout="inline"
-                    size={30}
-                    iconWidth={15}
-                    iconHeight={15}
-                  >
+                  <PaginationArrows layout="inline" size={30} iconWidth={15} iconHeight={15}>
                     <div className={styles.pages}>
                       {[1, 2, 3, "...", 13, 14, 15].map((page, i) => (
                         <button

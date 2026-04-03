@@ -20,10 +20,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-.prefDropdown {
-  position: relative;
-  width: 100%;
-}
 
 .prefTrigger {
   display: flex;
@@ -135,74 +131,15 @@
 }
 
 .prefPanel {
-  position: absolute;
   top: calc(100% + 4px);
-  left: 0;
   right: 0;
   z-index: 45;
   max-height: min(280px, 42vh);
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 8px;
-  background: $white;
   border: 1px solid $border-strong;
-  border-radius: $radius-xl;
   box-shadow: $shadow-lg;
 }
-
-.prefOption {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 10px 12px;
-  border: none;
-  border-radius: $radius-md;
-  background: transparent;
-  cursor: pointer;
-  text-align: left;
-  font-family: inherit;
-  font-size: $font-size-sm;
-  color: $dark;
-  transition: background $transition-fast;
-
-  &:hover {
-    background: $background-alt;
-  }
-}
-
-.prefOptionSelected {
-  background: $background-alt;
-}
-
-.prefOptionRadio {
-  flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 1.5px solid $border-input;
-  box-sizing: border-box;
-}
-
-.prefOptionRadioSelected {
-  border-color: $secondary;
-  background: $secondary url("/images/check.svg") no-repeat center / 10px 10px;
-}
-
-.prefOptionCheckbox {
-  flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
-  border: 1.5px solid $border-input;
-  box-sizing: border-box;
-}
-
-.prefOptionCheckboxSelected {
-  border-color: $secondary;
-  background: $secondary url("/images/check.svg") no-repeat center / 10px 10px;
-}
-
 .prefOptionRow {
   flex: 1;
   display: flex;

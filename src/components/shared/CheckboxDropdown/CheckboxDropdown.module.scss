@@ -1,0 +1,93 @@
+@use "@/styles/variables" as *;
+
+.wrapper {
+  position: relative;
+  display: flex;
+  flex: 1;
+  width: 100%;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 200px;
+  background: $white;
+  border-radius: $radius-xl;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 50;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    min-width: 180px;
+  }
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  width: 100%;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: $background-alt;
+  }
+}
+
+.menuItemSelected {
+  background: $background-alt;
+}
+
+.menuItemText {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $text;
+  white-space: nowrap;
+}
+
+.radioEmpty {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid $border-input;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.radioSelected {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid $secondary;
+  background: $secondary url("/images/check.svg") no-repeat center / 8px 8px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.checkboxEmpty {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1.5px solid $border-input;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.checkboxSelected {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1.5px solid $secondary;
+  background: $secondary url("/images/check.svg") no-repeat center / 10px 10px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}

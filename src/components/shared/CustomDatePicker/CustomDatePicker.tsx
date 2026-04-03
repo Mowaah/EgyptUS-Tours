@@ -8,7 +8,9 @@ interface CustomDatePickerProps {
   value: string;
   onChange: (date: string) => void;
   className?: string;
-  variant?: "card" | "input";
+  dropdownClassName?: string;
+  variant?: "card" | "input" | "custom";
+  renderTrigger?: (isOpen: boolean, setIsOpen: (o: boolean) => void, displayTxt: string) => React.ReactNode;
 }
 
 const WEEKDAYS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -41,11 +43,11 @@ const parseDateString = (val: string) => {
   return new Date();
 };
 
-export default function CustomDatePicker({ value, onChange, className, variant = "card" }: CustomDatePickerProps) {
+export default function CustomDatePicker({ value, onChange, className, dropdownClassName = "", variant = "card", renderTrigger }: CustomDatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const initialDate = parseDateString(value);
 
-  // The month currently being viewed in the calendar popup
+  // ... rest remains same until the dropdown div renderer
   const [viewDate, setViewDate] = useState(initialDate);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -174,6 +176,8 @@ export default function CustomDatePicker({ value, onChange, className, variant =
           className={className}
           placeholder="mm/dd/yyyy"
         />
+      ) : variant === "custom" && renderTrigger ? (
+        renderTrigger(isOpen, setIsOpen, Number.isNaN(selectedDateObj.getTime()) ? "" : `${String(selectedDateObj.getDate()).padStart(2, '0')} - ${String(selectedDateObj.getMonth() + 1).padStart(2, '0')} - ${selectedDateObj.getFullYear()}`)
       ) : (
         <button
           type="button"
@@ -190,8 +194,9 @@ export default function CustomDatePicker({ value, onChange, className, variant =
       )}
 
       {isOpen && (
-        <div className={styles.dropdown}>
+        <div className={`${styles.dropdown} ${dropdownClassName}`}>
           <div className={styles.header}>
+
             <button className={styles.navBtn} onClick={handlePrevMonth}>
               <ArrowIcon className={styles.flipIcon} />
             </button>

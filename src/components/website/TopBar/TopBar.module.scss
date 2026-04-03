@@ -112,42 +112,9 @@
 }
 
 .dropdownMenu {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
   width: 100%;
-  background: $white;
-  border-radius: $radius-xl;
+  min-width: unset;
   box-shadow: $shadow-xl;
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  z-index: 50;
-  box-sizing: border-box;
-}
-
-// No longer needed
-
-.menuItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
-  width: 100%;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: background $transition-fast;
-
-  &:hover {
-    background: $background-alt;
-  }
-}
-
-.menuItemSelected {
-  background: $background-alt;
 }
 
 .menuItemText {
@@ -156,23 +123,4 @@
   font-weight: $font-weight-normal;
   flex: 1;
   text-align: left;
-}
-
-.radioEmpty {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 1.5px solid $border-input;
-  box-sizing: border-box;
-  flex-shrink: 0;
-}
-
-.radioSelected {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 1.5px solid $secondary;
-  background: $secondary url("/images/check.svg") no-repeat center / 8px 8px;
-  box-sizing: border-box;
-  flex-shrink: 0;
 }

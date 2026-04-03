@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import CheckboxDropdown from "@/components/shared/CheckboxDropdown/CheckboxDropdown";
 
 import styles from "./TopBar.module.scss";
 
@@ -21,27 +22,8 @@ const CURRENCIES = [
 
 export default function TopBar() {
   const pathname = usePathname();
-  const [langOpen, setLangOpen] = useState(false);
-  const [currOpen, setCurrOpen] = useState(false);
   const [activeLang, setActiveLang] = useState(LANGUAGES[0]);
   const [activeCurr, setActiveCurr] = useState(CURRENCIES[0]);
-
-  const langRef = useRef<HTMLDivElement>(null);
-  const currRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Node;
-      if (langRef.current && !langRef.current.contains(target)) {
-        setLangOpen(false);
-      }
-      if (currRef.current && !currRef.current.contains(target)) {
-        setCurrOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   if (pathname === HIDE_TOPBAR_PREFIX || pathname.startsWith(`${HIDE_TOPBAR_PREFIX}/`)) {
     return null;
@@ -64,60 +46,53 @@ export default function TopBar() {
 
         <div className={styles.settings}>
           {/* Language Dropdown */}
-          <div className={`${styles.dropdownWrapper} ${styles.langWrapper}`} ref={langRef}>
-            <button
-              className={`${styles.dropdownToggle} ${styles.langToggle} ${langOpen ? styles.open : ""}`}
-              onClick={() => { setLangOpen(o => !o); setCurrOpen(false); }}
-            >
-              <Image src={activeLang.icon} alt={activeLang.name} width={20} height={20} className={styles.flagIcon} />
-              <span>{activeLang.code}</span>
-              <Image src="/images/arrows/arrow-down2-white.svg" alt="" width={12} height={12} className={styles.chevron} />
-            </button>
-            {langOpen && (
-              <div className={styles.dropdownMenu}>
-                {LANGUAGES.map((lang) => {
-                  const isSelected = lang.code === activeLang.code;
-                  return (
-                    <button
-                      key={lang.code}
-                      className={`${styles.menuItem} ${isSelected ? styles.menuItemSelected : ""}`}
-                      onClick={() => { setActiveLang(lang); setLangOpen(false); }}
-                    >
-                      <Image src={lang.icon} alt="" width={22} height={22} className={styles.flagIcon} />
-                      <span className={styles.menuItemText}>{lang.name}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
+          <div className={`${styles.dropdownWrapper} ${styles.langWrapper}`}>
+            <CheckboxDropdown
+              options={LANGUAGES.map(l => ({ ...l, label: l.name, value: l.code }))}
+              value={activeLang.code}
+              onChange={(val) => setActiveLang(LANGUAGES.find(l => l.code === val) || LANGUAGES[0])}
+              dropdownClassName={styles.dropdownMenu}
+              checkboxStyle="none"
+              renderTrigger={(isOpen, setIsOpen) => (
+                <button
+                  className={`${styles.dropdownToggle} ${styles.langToggle} ${isOpen ? styles.open : ""}`}
+                  onClick={() => setIsOpen(!isOpen)}
+                >
+                  <Image src={activeLang.icon} alt={activeLang.name} width={20} height={20} className={styles.flagIcon} />
+                  <span>{activeLang.code}</span>
+                  <Image src="/images/arrows/arrow-down2-white.svg" alt="" width={12} height={12} className={styles.chevron} />
+                </button>
+              )}
+              renderOption={(opt) => (
+                <>
+                  <Image src={opt.icon as string} alt="" width={22} height={22} className={styles.flagIcon} />
+                  <span className={styles.menuItemText}>{opt.name as string}</span>
+                </>
+              )}
+            />
           </div>
 
           {/* Currency Dropdown */}
-          <div className={`${styles.dropdownWrapper} ${styles.currWrapper}`} ref={currRef}>
-            <button
-              className={`${styles.dropdownToggle} ${styles.currToggle} ${currOpen ? styles.open : ""}`}
-              onClick={() => { setCurrOpen(o => !o); setLangOpen(false); }}
-            >
-              <span>{activeCurr.code} ({activeCurr.symbol})</span>
-              <Image src="/images/arrows/arrow-down2-white.svg" alt="" width={12} height={12} className={styles.chevron} />
-            </button>
-            {currOpen && (
-              <div className={styles.dropdownMenu}>
-                {CURRENCIES.map((curr) => {
-                  const isSelected = curr.code === activeCurr.code;
-                  return (
-                    <button
-                      key={curr.code}
-                      className={`${styles.menuItem} ${isSelected ? styles.menuItemSelected : ""}`}
-                      onClick={() => { setActiveCurr(curr); setCurrOpen(false); }}
-                    >
-                      <span className={isSelected ? styles.radioSelected : styles.radioEmpty} />
-                      <span className={styles.menuItemText}>{curr.code} ({curr.symbol})</span>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
+          <div className={`${styles.dropdownWrapper} ${styles.currWrapper}`}>
+            <CheckboxDropdown
+              options={CURRENCIES.map(c => ({ ...c, label: c.code, value: c.code }))}
+              value={activeCurr.code}
+              onChange={(val) => setActiveCurr(CURRENCIES.find(c => c.code === val) || CURRENCIES[0])}
+              dropdownClassName={styles.dropdownMenu}
+              checkboxStyle="radio"
+              renderTrigger={(isOpen, setIsOpen) => (
+                <button
+                  className={`${styles.dropdownToggle} ${styles.currToggle} ${isOpen ? styles.open : ""}`}
+                  onClick={() => setIsOpen(!isOpen)}
+                >
+                  <span>{activeCurr.code} ({activeCurr.symbol})</span>
+                  <Image src="/images/arrows/arrow-down2-white.svg" alt="" width={12} height={12} className={styles.chevron} />
+                </button>
+              )}
+              renderOption={(opt) => (
+                <span className={styles.menuItemText}>{opt.code as string} ({opt.symbol as string})</span>
+              )}
+            />
           </div>
         </div>
       </div>

@@ -9,10 +9,30 @@ export const metadata: Metadata = {
     "Browse our handpicked collection of Egypt tours. Filter by duration, special offers, and price range to find your perfect adventure.",
 };
 
-export default function TripsPage() {
+interface TripsPageProps {
+  searchParams: Promise<{
+    date?: string;
+    destination?: string;
+    budget?: string;
+    tripType?: string;
+  }>;
+}
+
+export default async function TripsPage({ searchParams }: TripsPageProps) {
+  const params = await searchParams;
+  const hasSearch = !!(params.date || params.destination || params.budget || params.tripType);
+
   return (
     <>
-      <TripsSection variant="page" />
+      <TripsSection
+        variant="page"
+        searchParams={hasSearch ? {
+          date: params.date,
+          destination: params.destination,
+          budget: params.budget,
+          tripType: params.tripType,
+        } : undefined}
+      />
       <FaqSection />
       <BlogsSection />
     </>
