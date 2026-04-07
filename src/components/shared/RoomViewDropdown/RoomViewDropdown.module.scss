@@ -1,0 +1,27 @@
+@use "@/styles/variables" as *;
+
+.option {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 0;
+}
+
+.optionName {
+  font-size: 14px;
+  font-weight: $font-weight-medium;
+  color: $dark;
+}
+
+.optionFree {
+  font-size: 14px;
+  font-weight: $font-weight-bold;
+  color: #15C023;
+}
+
+.optionPrice {
+  font-size: 14px;
+  font-weight: $font-weight-bold;
+  color: $dark;
+}

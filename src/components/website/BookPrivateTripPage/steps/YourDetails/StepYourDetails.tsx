@@ -1,0 +1,341 @@
+import React from "react";
+import { FormField, PhonePrefixSelect, CustomDatePicker, RoomViewDropdown } from "@/components/shared";
+import type { RoomViewOption } from "@/components/shared";
+
+import planPage from "../../../PlanYourTripPage/PlanYourTripPage.module.scss";
+import travelerStyles from "../../../PlanYourTripPage/steps/TravelerInfo/StepTravelerInfo.module.scss";
+import formStyles from "@/components/shared/FormField/FormField.module.scss";
+import stepStyles from "./StepYourDetails.module.scss";
+import { BookingData } from "../../BookPrivateTripPage";
+import { IconMinus, IconPlus } from "../../../PlanYourTripPage/PlanYourTripIcons";
+
+const ROOM_VIEW_OPTIONS: RoomViewOption[] = [
+  { label: "Garden View", value: "garden" },
+  { label: "Nile View", value: "nile", price: "+$ 456" },
+  { label: "Sea View", value: "sea", price: "+$ 456" },
+];
+
+interface StepYourDetailsProps {
+  formData: BookingData;
+  onChange: (patch: Partial<BookingData>) => void;
+  onContinue: () => void;
+}
+
+export default function StepYourDetails({ formData, onChange, onContinue }: StepYourDetailsProps) {
+  const handleRoomChange = (roomType: "single" | "double" | "triple", increment: boolean) => {
+    onChange({
+      rooms: {
+        ...formData.rooms,
+        [roomType]: Math.max(0, formData.rooms[roomType] + (increment ? 1 : -1)),
+      },
+    });
+  };
+
+  const handleGuestChange = (guestType: "adults" | "children" | "infants", increment: boolean) => {
+    onChange({
+      [guestType]: Math.max(0, formData[guestType] + (increment ? 1 : -1)),
+    });
+  };
+
+  return (
+    <div className={planPage.stepFormCard}>
+      <header className={planPage.stepFormCardHeader}>
+        <div className={planPage.formHeaderColumn}>
+          <h2 className={planPage.formTitle}>Enter Your Information</h2>
+          <p className={planPage.formSubtitle}>Complete the form below to move to booking confirmation.</p>
+        </div>
+      </header>
+
+      <div className={planPage.stepFormCardScroll}>
+        <div className={planPage.formGrid}>
+          <FormField
+            id="pti-name"
+            label="Enter your Name"
+            className={planPage.formInput}
+            type="text"
+            placeholder="John Doe"
+            value={formData.name}
+            onChange={(e) => onChange({ name: e.target.value })}
+          />
+
+          <FormField
+            id="pti-email"
+            label="Enter your E-mail"
+            className={planPage.formInput}
+            type="email"
+            placeholder="example@gmail.com"
+            value={formData.email}
+            onChange={(e) => onChange({ email: e.target.value })}
+          />
+
+          <div className={formStyles.field}>
+            <label htmlFor="pti-phone" className={formStyles.fieldLabel}>Phone Number</label>
+            <div className={travelerStyles.phoneRow}>
+              <PhonePrefixSelect
+                phoneValue={formData.phone}
+                onPhoneChange={(val) => onChange({ phone: val })}
+              />
+              <input
+                id="pti-phone"
+                type="tel"
+                className={`${formStyles.input} ${travelerStyles.inputPhone}`}
+                value={formData.phone}
+                onChange={(e) => onChange({ phone: e.target.value })}
+                placeholder="+1 555-0000"
+              />
+            </div>
+          </div>
+
+          <FormField
+            id="pti-nationality"
+            label="Select Your Nationality"
+            isSelect
+            className={planPage.formInput}
+            value={formData.nationality}
+            onChange={(e) => onChange({ nationality: e.target.value })}
+          >
+            <option value="">Your Nationality</option>
+            <option value="Egyptian">Egyptian</option>
+            <option value="USA">USA</option>
+            <option value="UK">UK</option>
+          </FormField>
+
+          <div className={formStyles.field}>
+            <label className={formStyles.fieldLabel}>Start Date</label>
+            <CustomDatePicker
+              variant="input"
+              className={`${formStyles.input} ${planPage.dateInput}`}
+              value={formData.startDate}
+              onChange={(date) => onChange({ startDate: date })}
+            />
+          </div>
+
+          <div className={formStyles.field}>
+            <label className={formStyles.fieldLabel}>End Date</label>
+            <CustomDatePicker
+              variant="input"
+              className={`${formStyles.input} ${planPage.dateInput}`}
+              value={formData.endDate}
+              onChange={(date) => onChange({ endDate: date })}
+            />
+          </div>
+        </div>
+
+        <hr className={`${planPage.stepFormCardDivider} ${stepStyles.divider}`} aria-hidden="true" />
+
+        <div className={planPage.formGrid}>
+          <div className={planPage.formGroup}>
+            <div className={travelerStyles.numberFieldRow}>
+              <p className={travelerStyles.counterRowLabel} id="pti-adults-label">
+                <span className={travelerStyles.counterRowTitle}>No of Adults</span>
+                <span className={travelerStyles.counterRowHint}>( +12 years )</span>
+              </p>
+              <div
+                className={travelerStyles.counterPill}
+                role="group"
+                aria-labelledby="pti-adults-label"
+              >
+                <button
+                  type="button"
+                  onClick={() => handleGuestChange("adults", false)}
+                  className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonMinus}`}
+                  aria-label="Decrease adults"
+                >
+                  <IconMinus size={16} />
+                </button>
+                <span className={travelerStyles.counterPillValue}>{formData.adults}</span>
+                <button
+                  type="button"
+                  onClick={() => handleGuestChange("adults", true)}
+                  className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonPlus}`}
+                  aria-label="Increase adults"
+                >
+                  <IconPlus size={16} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className={planPage.formGroup}>
+            <div className={travelerStyles.numberFieldRow}>
+              <p className={travelerStyles.counterRowLabel} id="pti-children-label">
+                <span className={travelerStyles.counterRowTitle}>No of Children</span>
+                <span className={travelerStyles.counterRowHint}>( 2 to 11 years )</span>
+              </p>
+              <div
+                className={travelerStyles.counterPill}
+                role="group"
+                aria-labelledby="pti-children-label"
+              >
+                <button
+                  type="button"
+                  onClick={() => handleGuestChange("children", false)}
+                  className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonMinus}`}
+                  aria-label="Decrease children"
+                >
+                  <IconMinus size={16} />
+                </button>
+                <span className={travelerStyles.counterPillValue}>{formData.children}</span>
+                <button
+                  type="button"
+                  onClick={() => handleGuestChange("children", true)}
+                  className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonPlus}`}
+                  aria-label="Increase children"
+                >
+                  <IconPlus size={16} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className={planPage.formGroup}>
+            <div className={travelerStyles.numberFieldRow}>
+              <p className={travelerStyles.counterRowLabel} id="pti-infants-label">
+                <span className={travelerStyles.counterRowTitle}>No of Infants</span>
+                <span className={travelerStyles.counterRowHint}>( 0 to 2 years )</span>
+              </p>
+              <div
+                className={travelerStyles.counterPill}
+                role="group"
+                aria-labelledby="pti-infants-label"
+              >
+                <button
+                  type="button"
+                  onClick={() => handleGuestChange("infants", false)}
+                  className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonMinus}`}
+                  aria-label="Decrease infants"
+                >
+                  <IconMinus size={16} />
+                </button>
+                <span className={travelerStyles.counterPillValue}>{formData.infants}</span>
+                <button
+                  type="button"
+                  onClick={() => handleGuestChange("infants", true)}
+                  className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonPlus}`}
+                  aria-label="Increase infants"
+                >
+                  <IconPlus size={16} />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr className={`${planPage.stepFormCardDivider} ${stepStyles.divider}`} aria-hidden="true" />
+
+        <h3 className={stepStyles.sectionTitle}>Type of Room</h3>
+        
+        <div className={stepStyles.roomList}>
+          {[
+            { id: "single", label: "Single Room - Garden View", price: "EGP 5,800", count: formData.rooms.single },
+            { id: "double", label: "Double Room - Garden View", price: "EGP 4,100", count: formData.rooms.double },
+            { id: "triple", label: "Triple Room - Garden View", price: "EGP 3,500", count: formData.rooms.triple }
+          ].map((room) => (
+            <div key={room.id} className={stepStyles.roomRowWrapper}>
+              <label className={`${stepStyles.roomInfoBox} ${room.count > 0 ? stepStyles.selected : ''}`}>
+                <div className={stepStyles.roomRadioGroup}>
+                  <div className={`${stepStyles.radioCircle} ${room.count > 0 ? stepStyles.checked : ''}`}>
+                    <input type="radio" name="roomTypeSelect" checked={room.count > 0} onChange={() => handleRoomChange(room.id as any, true)} className={stepStyles.radioInputHidden} />
+                  </div>
+                  <div className={stepStyles.roomTexts}>
+                    <span className={stepStyles.roomTitle}>{room.label}</span>
+                    <span className={stepStyles.roomSubtitle}>1 person</span>
+                  </div>
+                </div>
+                
+                <div className={stepStyles.priceContainer}>
+                  <span className={stepStyles.priceValue}>{room.price}</span>
+                  <span className={stepStyles.roomSubtitle}>/ person</span>
+                </div>
+              </label>
+              
+              <div className={`${travelerStyles.counterPill} ${stepStyles.roomCounterPill}`} role="group" style={{ margin: 0 }}>
+                <button
+                  type="button"
+                  onClick={() => handleRoomChange(room.id as any, false)}
+                  className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonMinus}`}
+                  style={{ opacity: room.count === 0 ? 0.4 : 1 }}
+                >
+                  <IconMinus size={16} />
+                </button>
+                <span className={travelerStyles.counterPillValue}>{room.count}</span>
+                <button
+                  type="button"
+                  onClick={() => handleRoomChange(room.id as any, true)}
+                  className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonPlus}`}
+                >
+                  <IconPlus size={16} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {formData.rooms.double > 0 && (
+          <>
+            <h3 className={stepStyles.sectionTitle}>Customize Your Double Rooms ( {formData.rooms.double} selected )</h3>
+            <div className={planPage.formGrid}>
+              {Array.from({ length: formData.rooms.double }).map((_, i) => (
+                <div key={i} className={planPage.formGroup}>
+                  <label className={formStyles.fieldLabel}>Room {i + 1}</label>
+                  <RoomViewDropdown
+                    id={`double-room-${i}`}
+                    options={ROOM_VIEW_OPTIONS}
+                    value="garden"
+                    onChange={() => {}}
+                  />
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {formData.rooms.triple > 0 && (
+          <>
+            <h3 className={stepStyles.sectionTitle}>Customize Your Triple Rooms ( {formData.rooms.triple} selected )</h3>
+            <div className={planPage.formGrid}>
+              {Array.from({ length: formData.rooms.triple }).map((_, i) => (
+                <div key={i} className={planPage.formGroup}>
+                  <label className={formStyles.fieldLabel}>Room {i + 1}</label>
+                  <RoomViewDropdown
+                    id={`triple-room-${i}`}
+                    options={ROOM_VIEW_OPTIONS}
+                    value="garden"
+                    onChange={() => {}}
+                  />
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {(formData.rooms.double > 0 || formData.rooms.triple > 0) && (
+          <hr className={`${planPage.stepFormCardDivider} ${stepStyles.divider}`} aria-hidden="true" />
+        )}
+
+        <h3 className={stepStyles.sectionTitle}>Special Requests (Optional)</h3>
+        <FormField
+          id="pti-details"
+          label=""
+          isTextarea
+          wrapperClassName={planPage.formGroupFull}
+          className={travelerStyles.formTextarea}
+          placeholder="Any special requirements or requests for your trip..."
+          value={formData.specialRequests}
+          onChange={(e) => onChange({ specialRequests: e.target.value })}
+          rows={4}
+        />
+      </div>
+
+      <hr className={planPage.stepFormCardDivider} aria-hidden="true" />
+
+      <div className={planPage.stepFormCardFooter}>
+        <div className={planPage.formActions}>
+          <button className={planPage.continueButton} onClick={onContinue} type="button" style={{ width: '100%' }}>
+            Continue
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

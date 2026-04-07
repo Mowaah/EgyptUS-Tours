@@ -1,0 +1,273 @@
+@use "@/styles/variables" as *;
+
+.sidebarCard {
+  background: $white;
+  border: 1px solid $border-strong;
+  border-radius: 32px;
+  padding: 16px;
+  position: sticky;
+  top: 40px;
+}
+
+.sidebarImage {
+  width: 100%;
+  height: 144px;
+  border-radius: 24px;
+  object-fit: cover;
+  margin-bottom: 16px;
+}
+
+/* Title + rating */
+.titleRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.sidebarTitle {
+  font-size: 18px;
+  font-weight: $font-weight-bold;
+  margin: 0;
+  color: $dark;
+  flex: 1;
+  line-height: 1.3;
+}
+
+.ratingPill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #F9FAFB;
+  padding: 7.5px 12px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.ratingValue {
+  font-size: 16px;
+  font-weight: $font-weight-bold;
+  color: $primary;
+}
+
+.reviewCount {
+  font-size: 14px;
+  color: #6A7282;
+  font-weight: $font-weight-normal;
+}
+
+/* Your Stay */
+.sidebarSectionLabel {
+  font-size: 14px;
+  font-weight: $font-weight-medium;
+  color: #C6C6C6;
+  margin-bottom: 12px;
+}
+
+.datesRow {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.dateBlock {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.dateHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.dateIconPill {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dateLabel {
+  font-size: 16px;
+  font-weight: $font-weight-medium;
+  color: $secondary;
+}
+
+.dateTextBlock {
+  display: flex;
+  flex-direction: column;
+  margin-left: 11px;
+  padding-left: 26px;
+  border-left: 1px solid #FFC299;
+  margin-top: 4px;
+  gap: 2px;
+}
+
+.dateValue {
+  font-size: 14px;
+  font-weight: $font-weight-medium;
+  color: $dark;
+  padding-left: 2px;
+}
+
+.dateTime {
+  font-size: 14px;
+  color: #97A0AF;
+  padding-left: 2px;
+}
+
+/* Guests */
+.guestsPills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.guestPill {
+  flex: 1;
+  background: #EAF1FD;
+  color: $dark;
+  padding: 6.45px 12px;
+  border-radius: 24px;
+  font-size: 12px;
+  font-weight: $font-weight-medium;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+/* Dividers */
+.divider {
+  border-bottom: 1px dotted $border-strong;
+  margin: 16px 0;
+}
+
+.dividerSolid {
+  height: 1px;
+  background: $border-strong;
+  margin: 16px 0;
+}
+
+/* Price rows */
+.priceRows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.priceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: $font-weight-normal;
+  color: #4A5565;
+
+  strong {
+    font-weight: $font-weight-bold;
+    color: $dark;
+    font-size: 14px;
+  }
+}
+
+.discount {
+  color: #009625 !important;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.totalLabel {
+  font-size: 20px;
+  font-weight: $font-weight-bold;
+  color: $secondary;
+}
+
+.totalValue {
+  font-size: 20px;
+  font-weight: $font-weight-bold;
+  color: $secondary;
+}
+
+/* Deposit */
+.depositCard {
+  background: #F9FAFB;
+  border-radius: 24px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.depositTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.depositLabel {
+  font-size: 14px;
+  font-weight: $font-weight-bold;
+  color: $dark;
+}
+
+.depositAmount {
+  font-size: 20px;
+  font-weight: $font-weight-bold;
+  color: $primary;
+}
+
+.depositBottomRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.depositNote {
+  font-size: 12px;
+  color: #6B7280;
+  flex: 1;
+  line-height: 1.4;
+}
+
+.remainingAmount {
+  font-size: 12px;
+  color: #6B7280;
+  white-space: nowrap;
+}
+
+/* Features */
+.featuresList {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.featureItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 20px;
+  width: 190px;
+  background: #EAFCF1;
+  border-radius: 999px;
+  color: #10B981;
+  font-size: 14px;
+  font-weight: $font-weight-normal;
+}

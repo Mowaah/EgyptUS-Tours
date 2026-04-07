@@ -1,0 +1,21 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+// ─── Two-column layout shared by BookingSummary + Payment steps ───────────────
+
+.twoColumnLayout {
+  display: grid;
+  gap: 32px;
+  grid-template-columns: 1fr 400px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.reviewSection {
+  border: 1px solid rgba(241, 241, 241, 0.7);
+  border-radius: 32px;
+  padding: 24px;
+}
+

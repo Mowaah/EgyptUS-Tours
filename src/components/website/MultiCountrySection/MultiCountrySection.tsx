@@ -1,7 +1,7 @@
-import { SectionHeader, TripCard, Button } from "@/components/shared";
+import { Button, SectionHeader, TripCard } from "@/components/shared";
 import { Trip } from "@/types";
-import styles from "./MultiCountrySection.module.scss";
 import Image from "next/image";
+import styles from "./MultiCountrySection.module.scss";
 
 const DEMO_TRIPS: Trip[] = [
   {

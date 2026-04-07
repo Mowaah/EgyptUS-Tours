@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Trip } from "@/types";
 import Button from "@/components/shared/Button/Button";
 import styles from "./TripOverview.module.scss";
@@ -73,14 +74,16 @@ export default function TripOverview({ trip }: TripOverviewProps) {
             </div>
 
             <div className={styles.ctas}>
-              <Button
-                variant="secondary"
-                fullWidth
-                icon={<Image src="/images/profile.svg" alt="" width={24} height={24} />}
-                iconPosition="right"
-              >
-                Book Private Trip
-              </Button>
+              <Link href={`/trips/${trip.id}/book-private`} style={{ textDecoration: 'none' }}>
+                <Button
+                  variant="secondary"
+                  fullWidth
+                  icon={<Image src="/images/profile.svg" alt="" width={24} height={24} />}
+                  iconPosition="right"
+                >
+                  Book Private Trip
+                </Button>
+              </Link>
               <Button
                 variant="secondary-outline"
                 fullWidth

@@ -10,7 +10,7 @@ import { DESTINATIONS, EXPERIENCE_OPTIONS, STEPS, TRANSPORT_OPTIONS } from "./pl
 import { IconArrowLeft, IconMinus, IconPlus } from "./PlanYourTripIcons";
 import type { PlanStep, TripData } from "./planYourTripTypes";
 import { clampMin0, filterDestinations, toggleInArray } from "./planYourTripUtils";
-import { SuccessModal, Breadcrumb, PageHeader } from "@/components/shared";
+import { SuccessModal, Breadcrumb, PageHeader, StepIndicator } from "@/components/shared";
 import StepDestination from "./steps/Destination/StepDestination";
 import StepTravelerInfo from "./steps/TravelerInfo/StepTravelerInfo";
 import StepPreferences from "./steps/Preferences/StepPreferences";
@@ -116,47 +116,7 @@ export default function PlanYourTripPage() {
         subtitleMaxWidth="750px"
       />
 
-      <div className={styles.stepIndicator}>
-        <div className={styles.stepContainer}>
-          {STEPS.map((step, index) => {
-            const isCurrent = currentStep === step.number;
-            const isDone = currentStep > step.number;
-
-            const circleClass = isCurrent
-              ? styles.stepCircleActive
-              : isDone
-                ? styles.stepCircleCompleted
-                : styles.stepCircleInactive;
-
-            return (
-              <div key={step.number} className={styles.stepChunk}>
-                <div className={styles.step} aria-current={isCurrent ? "step" : undefined}>
-                  <div className={`${styles.stepCircle} ${circleClass}`}>
-                    {isCurrent ? (
-                      <span className={styles.stepBullseyeDot} aria-hidden="true" />
-                    ) : (
-                      step.number
-                    )}
-                  </div>
-                  <span
-                    className={`${styles.stepLabel} ${isCurrent ? styles.stepLabelCurrent : isDone ? styles.stepLabelDone : ""
-                      }`}
-                  >
-                    {step.label}
-                  </span>
-                </div>
-                {index < STEPS.length - 1 && (
-                  <div
-                    className={`${styles.stepLine} ${currentStep >= step.number ? styles.stepLineActive : ""
-                      }`}
-                    aria-hidden="true"
-                  />
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      <StepIndicator steps={STEPS} currentStep={currentStep} />
 
       <main className={styles.mainContent}>
         <div className={styles.content}>

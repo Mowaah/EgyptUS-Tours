@@ -279,6 +279,10 @@ select.formInput {
 }
 
 .continueButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   flex: 1 1 auto;
   padding: 14px;
   background: $primary;

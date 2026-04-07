@@ -9,6 +9,7 @@ export interface SuccessModalProps {
   onClose: () => void;
   primaryButtonText?: string;
   onPrimaryClick?: () => void;
+  children?: React.ReactNode;
 }
 
 export default function SuccessModal({
@@ -18,6 +19,7 @@ export default function SuccessModal({
   onClose,
   primaryButtonText,
   onPrimaryClick,
+  children,
 }: SuccessModalProps) {
   return (
     <div className={styles.modalOverlay} role="dialog" aria-modal="true">
@@ -34,6 +36,8 @@ export default function SuccessModal({
 
         <h2 className={styles.modalTitle}>{title}</h2>
         <p className={styles.modalMessage}>{message}</p>
+
+        {children}
 
         <div className={styles.modalActions}>
           <button className={styles.modalSecondaryButton} onClick={onClose} type="button">

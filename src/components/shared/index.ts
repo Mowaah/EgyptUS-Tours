@@ -20,3 +20,8 @@ export { default as Breadcrumb } from "./Breadcrumb/Breadcrumb";
 export { default as PageHeader } from "./PageHeader/PageHeader";
 export { default as TestimonialCard } from "./TestimonialCard/TestimonialCard";
 export type { Testimonial } from "./TestimonialCard/TestimonialCard";
+export { default as StepIndicator } from "./StepIndicator/StepIndicator";
+export type { StepDef } from "./StepIndicator/StepIndicator";
+export { default as BookingSidebar } from "./BookingSidebar/BookingSidebar";
+export { default as RoomViewDropdown } from "./RoomViewDropdown/RoomViewDropdown";
+export type { RoomViewOption } from "./RoomViewDropdown/RoomViewDropdown";

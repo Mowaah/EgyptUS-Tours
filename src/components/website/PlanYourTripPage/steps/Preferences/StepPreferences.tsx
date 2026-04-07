@@ -332,14 +332,12 @@ export default function StepPreferences({
                   }}
                 >
                   <div
-                    className={`${styles.prefTriggerValueCluster}${
-                      isOpen && exp.length > 0 ? ` ${styles.prefTriggerValueClusterMultiline}` : ""
-                    }`}
+                    className={`${styles.prefTriggerValueCluster}${isOpen && exp.length > 0 ? ` ${styles.prefTriggerValueClusterMultiline}` : ""
+                      }`}
                   >
                     <div
-                      className={`${styles.prefTriggerMain}${
-                        isOpen && exp.length > 0 ? ` ${styles.prefTriggerMainMultiline}` : ""
-                      }`}
+                      className={`${styles.prefTriggerMain}${isOpen && exp.length > 0 ? ` ${styles.prefTriggerMainMultiline}` : ""
+                        }`}
                     >
                       {exp.length === 0 ? (
                         <span className={styles.multiSelectPlaceholder}>Select Experiences</span>
