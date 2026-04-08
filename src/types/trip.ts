@@ -1,3 +1,14 @@
+export interface TripHotel {
+  name: string;
+  location: string;
+  description: string;
+  image: string;
+  photos?: string[];
+  rating: number;
+  reviewCount: number;
+  amenities: string[];
+}
+
 export interface Trip {
   id: string;
   title: string;
@@ -79,13 +90,5 @@ export interface Trip {
 
   travelerPhotos?: string[];
 
-  hotels?: Array<{
-    name: string;
-    location: string;
-    description: string;
-    image: string;
-    rating: number;
-    reviewCount: number;
-    amenities: string[];
-  }>;
+  hotels?: TripHotel[];
 }

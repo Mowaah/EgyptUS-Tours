@@ -3,9 +3,9 @@
 
 .topbar {
   background: linear-gradient(90deg, #205AB7, #0E2851);
+  height: 40px;
   color: $white;
-  font-size: $font-size-sm;
-  padding: 10px 0;
+  font-size: 11px;
   position: relative;
   z-index: 105;
 }
@@ -13,6 +13,7 @@
 .container {
   @include container;
   @include flex-between;
+  height: 100%;
 }
 
 .socials {
@@ -21,8 +22,8 @@
 }
 
 .socialIcon {
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   border-radius: $radius-full;
   display: flex;
   background: rgba(255, 255, 255, 0.1);
@@ -56,7 +57,7 @@
 .dropdownToggle {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   cursor: pointer;
   background: transparent;
   border: none;
@@ -74,13 +75,21 @@
   &.open .chevron {
     transform: rotate(180deg);
   }
+
+  span {
+    line-height: 1;
+  }
 }
 
 .langToggle {
   width: 100%;
   justify-content: center;
-  padding: 10px 16px;
+  padding: 8px 12px;
   background: transparent;
+
+  span {
+    font-size: 11px;
+  }
 
   &:hover,
   &.open {
@@ -92,8 +101,12 @@
 .currToggle {
   width: 100%;
   justify-content: center;
-  padding: 10px 8px;
+  padding: 8px 12px;
   background: transparent;
+
+  span {
+    font-size: 11px;
+  }
 
   &:hover,
   &.open {
@@ -108,6 +121,8 @@
 }
 
 .chevron {
+  display: block;
+  flex-shrink: 0;
   transition: transform $transition-fast;
 }
 

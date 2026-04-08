@@ -230,6 +230,14 @@ export const mockTripDetail: Trip = {
       description:
         "Elegant 5-star hotel on the Nile with stunning temple views, outdoor pool, and rooftop terrace.",
       image: "/images/accommodation/accomodation3.jpg",
+      photos: [
+        "/images/accommodation/accomodation3.jpg",
+        "/images/accommodation/accomodation2.jpg",
+        "/images/accommodation/accomodations.jpg",
+        "/images/accommodation/accomodation3.jpg",
+        "/images/accommodation/accomodation2.jpg",
+        "/images/accommodation/accomodations.jpg",
+      ],
       rating: 4.8,
       reviewCount: 2847,
       amenities: ["Free WiFi", "Pool", "Restaurant", "Spa"],
@@ -238,11 +246,24 @@ export const mockTripDetail: Trip = {
       name: "Mövenpick Resort Aswan",
       location: "Aswan, Egypt",
       description:
-        "Luxurious resort on Elephantine Island featuring private beach, multiple restaurants, and Nile views.",
+        "Nestled on the tranquil Elephantine Island, Mövenpick Resort Aswan is a botanical paradise offering stunning panoramic views of the Nile. This 5-star resort combines Swiss hospitality with Egyptian charm, featuring lush gardens and private beach access.",
       image: "/images/accommodation/accomodation2.jpg",
+      photos: [
+        "/images/accommodation/accomodation2.jpg",
+        "/images/accommodation/accomodation3.jpg",
+        "/images/accommodation/accomodations.jpg",
+        "/images/accommodation/accomodation2.jpg",
+        "/images/accommodation/accomodation3.jpg",
+        "/images/accommodation/accomodations.jpg",
+      ],
       rating: 4.7,
-      reviewCount: 2132,
-      amenities: ["Beach Access", "Pool", "Gym", "Bar"],
+      reviewCount: 1923,
+      amenities: [
+        "Private Beach", "3 Swimming Pools", "Fitness Center",
+        "Tennis Courts", "4 Restaurants", "3 Bars",
+        "Spa & Wellness Center", "Water Sports", "Free Boat Transfer",
+        "Kids Club", "Free WiFi", "24-Hour Reception"
+      ],
     },
     {
       name: "Sofitel Cairo Nile El Gezirah",
@@ -250,6 +271,11 @@ export const mockTripDetail: Trip = {
       description:
         "Contemporary hotel on Gezira Island with floor-to-ceiling windows, dining, and Cairo Tower proximity.",
       image: "/images/accommodation/accomodations.jpg",
+      photos: [
+        "/images/accommodation/accomodations.jpg",
+        "/images/accommodation/accomodation3.jpg",
+        "/images/accommodation/accomodation2.jpg",
+      ],
       rating: 4.9,
       reviewCount: 3201,
       amenities: ["Free WiFi", "Fine Dining", "Concierge", "Airport Transfer"],

@@ -1,0 +1,38 @@
+@use "@/styles/variables" as *;
+
+.badge {
+  display: flex;
+  align-items: center;
+  color: $primary;
+  border-radius: 100px;
+  font-weight: $font-weight-bold;
+  white-space: nowrap;
+
+  &.size-sm {
+    background: $white;
+    padding: 4px 10px;
+    gap: 5px;
+    font-size: 14px;
+    box-shadow: $shadow-sm;
+
+    .reviewCount {
+      font-size: 12px;
+    }
+  }
+
+  &.size-md {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 6px 12px;
+    gap: 4px;
+    font-size: 18px;
+
+    .reviewCount {
+      font-size: 14px;
+    }
+  }
+}
+
+.reviewCount {
+  color: #6A7282;
+  font-weight: $font-weight-normal;
+}

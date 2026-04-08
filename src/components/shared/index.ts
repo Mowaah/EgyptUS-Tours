@@ -22,6 +22,7 @@ export type {
   CheckboxIndicatorVariant,
 } from "./CheckboxIndicator/CheckboxIndicator";
 export { default as EmptyState } from "./EmptyState/EmptyState";
+export { default as RatingBadge } from "./RatingBadge/RatingBadge";
 export { default as Breadcrumb } from "./Breadcrumb/Breadcrumb";
 export { default as PageHeader } from "./PageHeader/PageHeader";
 export { default as TestimonialCard } from "./TestimonialCard/TestimonialCard";

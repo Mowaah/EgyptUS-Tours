@@ -7,7 +7,14 @@ export default function HeroSection() {
   return (
     <section className={styles.hero}>
       <div className={styles.background}>
-        <div className={styles.overlay} />
+        <Image
+          src="/images/home/hero-bg.png"
+          alt=""
+          fill
+          priority
+          quality={100}
+          style={{ objectFit: "cover", objectPosition: "center" }}
+        />
       </div>
 
       <div className={styles.container}>

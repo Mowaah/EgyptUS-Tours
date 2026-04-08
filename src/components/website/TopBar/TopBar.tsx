@@ -34,13 +34,13 @@ export default function TopBar() {
       <div className={styles.container}>
         <div className={styles.socials}>
           <a href="#" aria-label="LinkedIn" className={styles.socialIcon}>
-            <Image src="/images/linkedin.svg" alt="LinkedIn" width={14} height={14} />
+            <Image src="/images/linkedin.svg" alt="LinkedIn" width={9.67} height={9.67} />
           </a>
           <a href="#" aria-label="Facebook" className={styles.socialIcon}>
-            <Image src="/images/facebook.svg" alt="Facebook" width={16} height={16} />
+            <Image src="/images/facebook.svg" alt="Facebook" width={12.6} height={12.6} />
           </a>
           <a href="#" aria-label="X" className={styles.socialIcon}>
-            <Image src="/images/x.svg" alt="X" width={14} height={14} />
+            <Image src="/images/x.svg" alt="X" width={9.78} height={10} />
           </a>
         </div>
 
@@ -58,14 +58,14 @@ export default function TopBar() {
                   className={`${styles.dropdownToggle} ${styles.langToggle} ${isOpen ? styles.open : ""}`}
                   onClick={() => setIsOpen(!isOpen)}
                 >
-                  <Image src={activeLang.icon} alt={activeLang.name} width={20} height={20} className={styles.flagIcon} />
+                  <Image src={activeLang.icon} alt={activeLang.name} width={16} height={16} className={styles.flagIcon} />
                   <span>{activeLang.code}</span>
-                  <Image src="/images/arrows/arrow-down2-white.svg" alt="" width={12} height={12} className={styles.chevron} />
+                  <Image src="/images/arrows/arrow-down3.svg" alt="" width={14} height={14} className={styles.chevron} />
                 </button>
               )}
               renderOption={(opt) => (
                 <>
-                  <Image src={opt.icon as string} alt="" width={22} height={22} className={styles.flagIcon} />
+                  <Image src={opt.icon as string} alt="" width={16} height={16} className={styles.flagIcon} />
                   <span className={styles.menuItemText}>{opt.name as string}</span>
                 </>
               )}
@@ -86,7 +86,7 @@ export default function TopBar() {
                   onClick={() => setIsOpen(!isOpen)}
                 >
                   <span>{activeCurr.code} ({activeCurr.symbol})</span>
-                  <Image src="/images/arrows/arrow-down2-white.svg" alt="" width={12} height={12} className={styles.chevron} />
+                  <Image src="/images/arrows/arrow-down3.svg" alt="" width={14} height={14} className={styles.chevron} />
                 </button>
               )}
               renderOption={(opt) => (

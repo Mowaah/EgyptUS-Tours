@@ -3,7 +3,7 @@
 
 .hero {
   position: relative;
-  min-height: 81vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   margin-top: -$navbar-height-desktop;
@@ -13,19 +13,7 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: url("/images/home/hero-bg.jpg") center / cover no-repeat;
   background-color: $dark;
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.3) 0%,
-    rgba(0, 0, 0, 0.15) 50%,
-    rgba(0, 0, 0, 0.4) 100%
-  );
 }
 
 .container {
@@ -44,6 +32,7 @@
 
 .content {
   max-width: 600px;
+  padding-left: 18px;
   margin-bottom: $spacing-3xl;
   text-align: left;
   align-self: flex-start;

@@ -28,7 +28,6 @@ const TRIP_TYPE_OPTIONS = [
 ];
 
 export default function SearchBar() {
-  const [activeTab, setActiveTab] = useState("trips");
   const [date, setDate] = useState("");
   const [destination, setDestination] = useState("");
   const [budget, setBudget] = useState("");
@@ -58,43 +57,10 @@ export default function SearchBar() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.tabs}>
-        {activeTab === "trips" ? (
-          <button
-            className={`${styles.tab} ${styles.active}`}
-            onClick={() => setActiveTab("trips")}
-          >
-            <Image src="/images/search/trips.svg" alt="" width={18} height={18} />
-            <span>trips</span>
-          </button>
-        ) : (
-          <GlassCard
-            as="button"
-            className={styles.tab}
-            onClick={() => setActiveTab("trips")}
-          >
-            <Image src="/images/search/trips.svg" alt="" width={18} height={18} />
-            <span>trips</span>
-          </GlassCard>
-        )}
-
-        {activeTab === "hotels" ? (
-          <button
-            className={`${styles.tab} ${styles.active}`}
-            onClick={() => setActiveTab("hotels")}
-          >
-            <Image src="/images/search/hotels.svg" alt="" width={18} height={18} />
-            <span>Hotels</span>
-          </button>
-        ) : (
-          <GlassCard
-            as="button"
-            className={styles.tab}
-            onClick={() => setActiveTab("hotels")}
-          >
-            <Image src="/images/search/hotels.svg" alt="" width={18} height={18} />
-            <span>Hotels</span>
-          </GlassCard>
-        )}
+        <button className={`${styles.tab} ${styles.active}`}>
+          <Image src="/images/search/trips.svg" alt="" width={21.92} height={20} />
+          <span>trips</span>
+        </button>
       </div>
 
       <GlassCard className={styles.searchBar}>

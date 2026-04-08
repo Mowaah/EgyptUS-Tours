@@ -53,9 +53,12 @@
 }
 
 .container {
-  @include container;
   @include flex-between;
   height: $navbar-height-desktop;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 $spacing-2xl;
 }
 
 .logo {
@@ -67,7 +70,7 @@
 
 .links {
   display: none;
-  gap: $spacing-xs;
+  gap: $spacing-sm;
 
   @media (min-width: 1024px) {
     display: flex;
@@ -99,6 +102,7 @@
   &.active {
     font-weight: $font-weight-medium;
     color: $white;
+    padding: 6.5px 18px;
   }
 }
 

@@ -12,7 +12,9 @@
     "axios": "^1.13.5",
     "next": "16.1.6",
     "react": "19.2.3",
+    "react-countup": "^6.5.3",
     "react-dom": "19.2.3",
+    "react-intersection-observer": "^10.0.3",
     "sass": "^1.97.3"
   },
   "devDependencies": {

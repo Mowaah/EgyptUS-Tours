@@ -38,9 +38,9 @@ export default function GlassCard({
       className={`${styles.glass} ${className}`}
       style={{
         // Chrome/Edge: blur → SVG warp → saturate
-        backdropFilter: `blur(10px) url(#${filterId}) saturate(160%)`,
+        backdropFilter: `blur(5px) url(#${filterId}) saturate(140%)`,
         // Safari fallback: blur + saturate, no distortion
-        WebkitBackdropFilter: `blur(10px) saturate(160%)`,
+        WebkitBackdropFilter: `blur(5px) saturate(140%)`,
         ...style,
       }}
       {...rest}
@@ -74,7 +74,7 @@ export default function GlassCard({
             <feDisplacementMap
               in="SourceGraphic"
               in2="noise"
-              scale="8"
+              scale="4"
               xChannelSelector="R"
               yChannelSelector="G"
             />

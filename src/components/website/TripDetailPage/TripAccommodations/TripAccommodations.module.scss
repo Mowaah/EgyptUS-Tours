@@ -78,23 +78,7 @@
   position: absolute;
   bottom: 14px;
   right: 14px;
-  background: $white;
-  border-radius: $radius-full;
-  padding: 4px 10px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 14px;
-  font-weight: $font-weight-bold;
-  color: $primary;
-  box-shadow: $shadow-sm;
   z-index: 2;
-}
-
-.reviewCount {
-  color: #6A7282;
-  font-size: 12px;
-  font-weight: $font-weight-normal;
 }
 
 .content {
