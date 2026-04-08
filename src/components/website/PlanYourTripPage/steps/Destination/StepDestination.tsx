@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 
+import { CheckboxIndicator } from "@/components/shared";
+
 import sharedStyles from "../../PlanYourTripPage.module.scss";
 import type { PlanDestination } from "../../planYourTripTypes";
 import styles from "./StepDestination.module.scss";
@@ -65,9 +67,12 @@ export default function StepDestination({
               >
                 <div className={styles.destinationImageWrapper}>
                   <img src={destination.image} alt={destination.name} />
-                  <span
-                    className={`${styles.destinationCheckbox} ${selected ? styles.destinationCheckboxSelected : ""}`}
-                    aria-hidden="true"
+                  <CheckboxIndicator
+                    variant="square"
+                    surface="overlay"
+                    selected={selected}
+                    className={styles.destinationCheckbox}
+                    aria-hidden
                   />
                 </div>
                 <h3 className={styles.destinationName}>{destination.name}</h3>

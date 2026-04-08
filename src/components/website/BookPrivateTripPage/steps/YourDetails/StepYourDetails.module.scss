@@ -116,3 +116,97 @@
   font-weight: $font-weight-bold;
   color: #0D1B3E;
 }
+
+/* Group Trip Section — same vertical rhythm as .formGrid (24px) and label↔control gap as FormField (6px) */
+.groupSection {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+/* Same width as a single .formGrid cell (2 cols + 24px gap) — matches name/email/date fields */
+.monthSelectTrigger {
+  display: block;
+  width: 100%;
+  max-width: calc((100% - 24px) / 2);
+  align-self: flex-start;
+  margin: 0;
+  padding: 12px 36px 12px 42px;
+  border: 1px solid $border-strong;
+  border-radius: $radius-xl;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-normal;
+  color: $text;
+  background-color: $white;
+  background-image: url("/images/calendar3.svg"), url("/images/arrows/chevron-down2.svg");
+  background-repeat: no-repeat, no-repeat;
+  background-position: left 14px center, right 14px center;
+  background-size: 20px 20px, 20px 20px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color $transition-fast;
+  font-family: inherit;
+  box-sizing: border-box;
+  text-align: left;
+
+  &:hover {
+    border-color: $border-input;
+  }
+
+  &:focus-visible {
+    border-color: $primary;
+  }
+
+  @media (max-width: 768px) {
+    max-width: none;
+    align-self: stretch;
+  }
+}
+
+.departureGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.departureCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border: 1px solid #EAF1FD;
+  border-radius: 16px;
+  background: white;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $primary;
+  }
+
+  &.departureSelected {
+    border-color: $primary;
+  }
+}
+
+.departureInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.departureDate {
+  font-size: 14px;
+  font-weight: $font-weight-bold;
+  color: #0D1B3E;
+}
+
+.departureDuration {
+  font-size: 13px;
+  color: #6B7280;
+}

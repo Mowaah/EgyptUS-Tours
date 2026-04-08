@@ -1,5 +1,11 @@
 import React from "react";
-import { FormField, PhonePrefixSelect, CustomDatePicker, RoomViewDropdown } from "@/components/shared";
+import {
+  CheckboxIndicator,
+  FormField,
+  PhonePrefixSelect,
+  CustomDatePicker,
+  RoomViewDropdown,
+} from "@/components/shared";
 import type { RoomViewOption } from "@/components/shared";
 
 import planPage from "../../../PlanYourTripPage/PlanYourTripPage.module.scss";
@@ -15,13 +21,23 @@ const ROOM_VIEW_OPTIONS: RoomViewOption[] = [
   { label: "Sea View", value: "sea", price: "+$ 456" },
 ];
 
+const GROUP_DEPARTURE_DATES = [
+  { id: "1", date: "March 15-19, 2026", duration: "5 Days / 4 Nights" },
+  { id: "2", date: "March 15-19, 2026", duration: "5 Days / 4 Nights" },
+  { id: "3", date: "March 15-19, 2026", duration: "5 Days / 4 Nights" },
+  { id: "4", date: "March 15-19, 2026", duration: "5 Days / 4 Nights" },
+  { id: "5", date: "March 15-19, 2026", duration: "5 Days / 4 Nights" },
+  { id: "6", date: "March 15-19, 2026", duration: "5 Days / 4 Nights" },
+];
+
 interface StepYourDetailsProps {
   formData: BookingData;
   onChange: (patch: Partial<BookingData>) => void;
   onContinue: () => void;
+  isGroupTrip?: boolean;
 }
 
-export default function StepYourDetails({ formData, onChange, onContinue }: StepYourDetailsProps) {
+export default function StepYourDetails({ formData, onChange, onContinue, isGroupTrip }: StepYourDetailsProps) {
   const handleRoomChange = (roomType: "single" | "double" | "triple", increment: boolean) => {
     onChange({
       rooms: {
@@ -100,25 +116,68 @@ export default function StepYourDetails({ formData, onChange, onContinue }: Step
             <option value="UK">UK</option>
           </FormField>
 
-          <div className={formStyles.field}>
-            <label className={formStyles.fieldLabel}>Start Date</label>
-            <CustomDatePicker
-              variant="input"
-              className={`${formStyles.input} ${planPage.dateInput}`}
-              value={formData.startDate}
-              onChange={(date) => onChange({ startDate: date })}
-            />
-          </div>
+          {isGroupTrip ? (
+            <div className={planPage.formGroupFull}>
+              <div className={stepStyles.groupSection}>
+                <div className={formStyles.field}>
+                  <label htmlFor="pti-group-departure-month" className={formStyles.fieldLabel}>
+                    Select Month
+                  </label>
+                  <button
+                    id="pti-group-departure-month"
+                    type="button"
+                    className={stepStyles.monthSelectTrigger}
+                  >
+                    {formData.departureMonth || "April 2026"}
+                  </button>
+                </div>
 
-          <div className={formStyles.field}>
-            <label className={formStyles.fieldLabel}>End Date</label>
-            <CustomDatePicker
-              variant="input"
-              className={`${formStyles.input} ${planPage.dateInput}`}
-              value={formData.endDate}
-              onChange={(date) => onChange({ endDate: date })}
-            />
-          </div>
+                <div className={formStyles.field}>
+                  <span className={formStyles.fieldLabel}>Choose Departure Date</span>
+                  <div className={stepStyles.departureGrid}>
+                    {GROUP_DEPARTURE_DATES.map((dep) => {
+                      const isSelected = formData.departureDateId === dep.id;
+                      return (
+                        <div
+                          key={dep.id}
+                          className={`${stepStyles.departureCard} ${isSelected ? stepStyles.departureSelected : ''}`}
+                          onClick={() => onChange({ departureDateId: dep.id })}
+                        >
+                          <div className={stepStyles.departureInfo}>
+                            <span className={stepStyles.departureDate}>{dep.date}</span>
+                            <span className={stepStyles.departureDuration}>{dep.duration}</span>
+                          </div>
+                          <CheckboxIndicator variant="square" size="md" selected={isSelected} aria-hidden />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className={formStyles.field}>
+                <label className={formStyles.fieldLabel}>Start Date</label>
+                <CustomDatePicker
+                  variant="input"
+                  className={`${formStyles.input} ${planPage.dateInput}`}
+                  value={formData.startDate}
+                  onChange={(date) => onChange({ startDate: date })}
+                />
+              </div>
+
+              <div className={formStyles.field}>
+                <label className={formStyles.fieldLabel}>End Date</label>
+                <CustomDatePicker
+                  variant="input"
+                  className={`${formStyles.input} ${planPage.dateInput}`}
+                  value={formData.endDate}
+                  onChange={(date) => onChange({ endDate: date })}
+                />
+              </div>
+            </>
+          )}
         </div>
 
         <hr className={`${planPage.stepFormCardDivider} ${stepStyles.divider}`} aria-hidden="true" />

@@ -28,14 +28,7 @@ export default function StepPayment({
   depositAmount
 }: StepPaymentProps) {
   return (
-    <div className={planPage.stepFormCard}>
-      <header className={planPage.stepFormCardHeader}>
-        <div className={`${planPage.formHeaderColumn} ${stepStyles.headerCol}`}>
-          <h2 className={planPage.formTitle}>Review & Confirm Your Booking</h2>
-          <p className={`${planPage.formSubtitle} ${stepStyles.subtitle}`}>Please review your trip details carefully before confirming your reservation.</p>
-        </div>
-      </header>
-
+    <div className={stepStyles.root}>
       <div className={localStyles.twoColumnLayout}>
         <div className={stepStyles.leftColumnCards}>
           <div className={stepStyles.paymentSection}>
@@ -94,6 +87,21 @@ export default function StepPayment({
                 Your payment information is encrypted and secure. We never store your card details.
               </div>
             </div>
+
+            <hr
+              className={`${planPage.stepFormCardDivider} ${stepStyles.paymentDivider}`}
+              aria-hidden="true"
+            />
+
+            <div className={`${planPage.formActions} ${stepStyles.paymentActions}`}>
+              <button className={planPage.previousButton} onClick={onPrevious} type="button">
+                Previous
+              </button>
+              <button className={planPage.continueButton} onClick={onContinue} type="button">
+                Confirm & Pay ${depositAmount.toLocaleString()} Deposit
+                <Image src="/images/money-send.svg" width={24} height={24} alt="" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -103,19 +111,6 @@ export default function StepPayment({
           totalAmount={totalAmount}
           depositAmount={depositAmount}
         />
-      </div>
-
-      <hr className={planPage.stepFormCardDivider} aria-hidden="true" />
-
-      <div className={planPage.stepFormCardFooter}>
-        <div className={planPage.formActions}>
-          <button className={planPage.previousButton} onClick={onPrevious} type="button">
-            Previous
-          </button>
-          <button className={planPage.continueButton} onClick={onContinue} type="button">
-            Confirm & Pay ${depositAmount.toLocaleString()} Deposit
-          </button>
-        </div>
       </div>
     </div>
   );

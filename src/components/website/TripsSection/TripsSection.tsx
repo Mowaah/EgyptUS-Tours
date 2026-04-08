@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import {
+  CheckboxIndicator,
   SectionHeader,
   TripCard,
   CategoryTabs,
@@ -99,6 +100,9 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
     price: true,
     priceRange: { min: 1, max: 12000 },
   });
+
+  const [durationFilter, setDurationFilter] = useState(DURATION_OPTIONS[0]);
+  const [offersFilter, setOffersFilter] = useState(SPECIAL_OFFERS[0]);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [trips, setTrips] = useState<Trip[]>(DEMO_TRIPS);
@@ -276,9 +280,22 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
               </div>
               {expanded.duration && (
                 <div className={styles.filterOptions}>
-                  {DURATION_OPTIONS.map((opt, i) => (
+                  {DURATION_OPTIONS.map((opt) => (
                     <label key={opt} className={styles.radio}>
-                      <input type="radio" name="duration" defaultChecked={i === 0} />
+                      <input
+                        type="radio"
+                        name="duration"
+                        className={styles.radioInputHidden}
+                        checked={durationFilter === opt}
+                        onChange={() => setDurationFilter(opt)}
+                      />
+                      <CheckboxIndicator
+                        variant="radio"
+                        size="md"
+                        emphasis="filter"
+                        selected={durationFilter === opt}
+                        aria-hidden
+                      />
                       <span>{opt}</span>
                     </label>
                   ))}
@@ -302,7 +319,20 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
                 <div className={styles.filterOptions}>
                   {SPECIAL_OFFERS.map((opt, i) => (
                     <label key={`${opt}-${i}`} className={styles.radio}>
-                      <input type="radio" name="offers" defaultChecked={i === 0} />
+                      <input
+                        type="radio"
+                        name="offers"
+                        className={styles.radioInputHidden}
+                        checked={offersFilter === opt}
+                        onChange={() => setOffersFilter(opt)}
+                      />
+                      <CheckboxIndicator
+                        variant="radio"
+                        size="md"
+                        emphasis="filter"
+                        selected={offersFilter === opt}
+                        aria-hidden
+                      />
                       <span>{opt}</span>
                     </label>
                   ))}

@@ -15,6 +15,12 @@ export { default as FormField } from "./FormField/FormField";
 export { default as PhonePrefixSelect } from "./PhonePrefixSelect/PhonePrefixSelect";
 export { default as CustomDatePicker } from "./CustomDatePicker/CustomDatePicker";
 export { default as CheckboxDropdown } from "./CheckboxDropdown/CheckboxDropdown";
+export { default as CheckboxIndicator } from "./CheckboxIndicator/CheckboxIndicator";
+export type {
+  CheckboxIndicatorProps,
+  CheckboxIndicatorSize,
+  CheckboxIndicatorVariant,
+} from "./CheckboxIndicator/CheckboxIndicator";
 export { default as EmptyState } from "./EmptyState/EmptyState";
 export { default as Breadcrumb } from "./Breadcrumb/Breadcrumb";
 export { default as PageHeader } from "./PageHeader/PageHeader";

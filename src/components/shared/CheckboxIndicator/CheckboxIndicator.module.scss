@@ -1,0 +1,103 @@
+@use "@/styles/variables" as *;
+
+.root {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  display: block;
+}
+
+.radioSmEmpty {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid $border-input;
+}
+
+.radioSmSelected {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid $secondary;
+  background: $secondary url("/images/check.svg") no-repeat center / 8px 8px;
+}
+
+.radioMdEmpty {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid $border-input;
+}
+
+.radioMdSelected {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid $secondary;
+  background: $secondary url("/images/check.svg") no-repeat center / 12px 12px;
+}
+
+/** Trips sidebar filters: thinner empty ring + glow when selected (matches previous native input styling). */
+.radioMdEmptyFilter {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid $border-input;
+}
+
+.radioMdSelectedFilter {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid $secondary;
+  background: $secondary url("/images/check.svg") no-repeat center / 12px 12px;
+  box-shadow: 0 0 0 4px $secondary-light, $shadow-sm;
+}
+
+.squareSmEmpty {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1.5px solid $border-input;
+}
+
+.squareSmSelected {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1.5px solid $secondary;
+  background: $secondary url("/images/check.svg") no-repeat center / 10px 10px;
+}
+
+.squareMdEmpty {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1.5px solid $border-input;
+  background: transparent;
+}
+
+.squareMdSelected {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1.5px solid $secondary;
+  background: $secondary url("/images/check.svg") no-repeat center / 14px 14px;
+}
+
+.squareOverlayEmpty {
+  width: 24px;
+  height: 24px;
+  border-radius: $radius-md;
+  border: 1.5px solid rgba(14, 40, 81, 0.2);
+  background-color: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.squareOverlaySelected {
+  width: 24px;
+  height: 24px;
+  border-radius: $radius-md;
+  border: 1.5px solid $secondary;
+  background: $secondary url("/images/check.svg") no-repeat center / 14px 14px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}

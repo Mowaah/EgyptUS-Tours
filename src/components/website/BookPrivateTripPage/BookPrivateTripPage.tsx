@@ -13,7 +13,6 @@ import StepYourDetails from "./steps/YourDetails/StepYourDetails";
 import StepBookingSummary from "./steps/BookingSummary/StepBookingSummary";
 import StepPayment from "./steps/Payment/StepPayment";
 
-// Re-export for backward compat with step components
 export type { BookingData };
 
 const STEPS = [
@@ -22,7 +21,12 @@ const STEPS = [
   { number: 3, label: "Payment" },
 ];
 
-export default function BookPrivateTripPage({ trip }: { trip: Trip }) {
+interface BookPrivateTripPageProps {
+  trip: Trip;
+  isGroupTrip?: boolean;
+}
+
+export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTripPageProps) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -73,7 +77,8 @@ export default function BookPrivateTripPage({ trip }: { trip: Trip }) {
             <StepYourDetails
               formData={formData}
               onChange={handleChange}
-              onContinue={handleContinue}
+              onContinue={() => setCurrentStep(2)}
+              isGroupTrip={isGroupTrip}
             />
           )}
 

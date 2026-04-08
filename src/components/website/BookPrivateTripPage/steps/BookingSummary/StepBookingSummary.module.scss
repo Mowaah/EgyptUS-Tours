@@ -111,22 +111,6 @@
   }
 }
 
-.checkboxBox {
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
-  border: 1.5px solid $border-input;
-  background: transparent;
-  display: inline-flex;
-  flex-shrink: 0;
-  transition: all $transition-fast;
-
-  &.checked {
-    border-color: $secondary;
-    background: $secondary url("/images/check.svg") no-repeat center / 14px 14px;
-  }
-}
-
 .checkboxInputHidden {
   display: none;
 }

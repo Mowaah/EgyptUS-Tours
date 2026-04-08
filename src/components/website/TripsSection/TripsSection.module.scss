@@ -225,7 +225,6 @@
   gap: 12px;
 }
 
-.checkbox,
 .radio {
   display: flex;
   align-items: center;
@@ -233,27 +232,10 @@
   font-size: 14px;
   color: $text;
   cursor: pointer;
+}
 
-  input {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 1px solid $border-input;
-    border-radius: 50%;
-    cursor: pointer;
-    position: relative;
-
-    &:checked {
-      background-color: $secondary;
-      border-color: $secondary;
-      box-shadow: 0 0 0 4px $secondary-light, $shadow-sm;
-      background-image: url("/images/check.svg");
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 12px;
-    }
-  }
+.radioInputHidden {
+  display: none;
 }
 
 .priceRange {

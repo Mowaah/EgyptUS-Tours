@@ -21,6 +21,9 @@ export interface BookingData {
   cardName: string;
   expiry: string;
   cvv: string;
+  // Group trips specific fields
+  departureMonth?: string;
+  departureDateId?: string;
 }
 
 export const INITIAL_BOOKING_DATA: BookingData = {
@@ -40,4 +43,6 @@ export const INITIAL_BOOKING_DATA: BookingData = {
   cardName: "",
   expiry: "",
   cvv: "",
+  departureMonth: "April 2026",
+  departureDateId: "",
 };

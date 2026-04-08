@@ -313,9 +313,14 @@ export default function PhonePrefixSelect({ phoneValue = "", onPhoneChange }: Ph
           alt={selected.code}
           className={styles.flag}
         />
-        <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
-          <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
+        <img
+          src="/images/arrows/chevron-down2.svg"
+          alt=""
+          width={20}
+          height={20}
+          className={styles.chevron}
+          aria-hidden
+        />
       </button>
 
       {isOpen && (

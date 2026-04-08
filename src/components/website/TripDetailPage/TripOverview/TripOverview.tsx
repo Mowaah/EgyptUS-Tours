@@ -84,14 +84,16 @@ export default function TripOverview({ trip }: TripOverviewProps) {
                   Book Private Trip
                 </Button>
               </Link>
-              <Button
-                variant="secondary-outline"
-                fullWidth
-                icon={<Image src="/images/profile2.svg" alt="" width={24} height={24} />}
-                iconPosition="right"
-              >
-                Book Group Trip
-              </Button>
+              <Link href={`/trips/${trip.id}/book-group`} style={{ textDecoration: 'none' }}>
+                <Button
+                  variant="secondary-outline"
+                  fullWidth
+                  icon={<Image src="/images/profile2.svg" alt="" width={24} height={24} />}
+                  iconPosition="right"
+                >
+                  Book Group Trip
+                </Button>
+              </Link>
             </div>
           </div>
         </aside>

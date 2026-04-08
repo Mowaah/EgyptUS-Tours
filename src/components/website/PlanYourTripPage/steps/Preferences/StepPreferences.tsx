@@ -26,16 +26,14 @@ type Preferences = {
 
 function Chevron({ open }: { open: boolean }) {
   return (
-    <svg
+    <img
+      src="/images/arrows/chevron-down2.svg"
+      alt=""
+      width={20}
+      height={20}
       className={`${styles.multiSelectChevron} ${open ? styles.multiSelectChevronOpen : ""}`}
-      width={12}
-      height={8}
-      viewBox="0 0 10 6"
-      fill="none"
       aria-hidden
-    >
-      <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
+    />
   );
 }
 

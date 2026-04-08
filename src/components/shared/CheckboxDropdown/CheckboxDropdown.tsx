@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Image from "next/image";
+
+import CheckboxIndicator from "@/components/shared/CheckboxIndicator/CheckboxIndicator";
 import styles from "./CheckboxDropdown.module.scss";
 
 export interface CheckboxOption {
@@ -84,11 +85,12 @@ export default function CheckboxDropdown<T extends CheckboxOption>({
                 }}
               >
                 {checkboxStyle !== "none" && (
-                  <span className={
-                    selected
-                      ? (checkboxStyle === "radio" ? styles.radioSelected : styles.checkboxSelected)
-                      : (checkboxStyle === "radio" ? styles.radioEmpty : styles.checkboxEmpty)
-                  } />
+                  <CheckboxIndicator
+                    variant={checkboxStyle === "radio" ? "radio" : "square"}
+                    size="sm"
+                    selected={selected}
+                    aria-hidden
+                  />
                 )}
                 {renderOption ? renderOption(opt, selected) : (
                   <span className={styles.menuItemText}>{opt.label}</span>
