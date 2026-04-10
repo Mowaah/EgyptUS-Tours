@@ -79,6 +79,7 @@ export default function TopBar() {
               value={activeCurr.code}
               onChange={(val) => setActiveCurr(CURRENCIES.find(c => c.code === val) || CURRENCIES[0])}
               dropdownClassName={styles.dropdownMenu}
+              checkboxClassName={styles.customRadio}
               checkboxStyle="radio"
               renderTrigger={(isOpen, setIsOpen) => (
                 <button

@@ -20,6 +20,7 @@ export interface CheckboxDropdownProps<T extends CheckboxOption = CheckboxOption
   renderOption?: (option: T, isSelected: boolean) => React.ReactNode;
   checkboxStyle?: "radio" | "checkbox" | "none";
   dropdownClassName?: string;
+  checkboxClassName?: string;
 }
 
 export default function CheckboxDropdown<T extends CheckboxOption>({
@@ -31,6 +32,7 @@ export default function CheckboxDropdown<T extends CheckboxOption>({
   renderOption,
   checkboxStyle = "radio",
   dropdownClassName = "",
+  checkboxClassName = "",
 }: CheckboxDropdownProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -90,6 +92,7 @@ export default function CheckboxDropdown<T extends CheckboxOption>({
                     size="sm"
                     selected={selected}
                     aria-hidden
+                    className={checkboxClassName}
                   />
                 )}
                 {renderOption ? renderOption(opt, selected) : (

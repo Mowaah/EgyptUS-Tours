@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { CategoryTabs } from "@/components/shared";
 import styles from "./TripTabNav.module.scss";
 
 export const TAB_IDS = [
@@ -8,6 +9,7 @@ export const TAB_IDS = [
   "included",
   "excluded",
   "traveler-photos",
+  "prices-accommodation",
   "itinerary",
   "pricing",
   "vip-experiences",
@@ -20,6 +22,7 @@ export const TAB_LABELS: Record<(typeof TAB_IDS)[number], string> = {
   "included": "What's Included",
   "excluded": "What's Not Included",
   "traveler-photos": "Taken by Travelers",
+  "prices-accommodation": "Prices & Accommodation",
   "itinerary": "Day-by-Day Itinerary",
   "pricing": "Pricing",
   "vip-experiences": "VIP Experiences",
@@ -57,18 +60,20 @@ export default function TripTabNav() {
     }
   };
 
+  const activeIndex = TAB_IDS.indexOf(activeTab as any);
+
   return (
     <div className={styles.tabNav}>
       <div className={styles.inner}>
-        {TAB_IDS.map((id) => (
-          <button
-            key={id}
-            className={`${styles.tab} ${activeTab === id ? styles.active : ""}`}
-            onClick={() => scrollTo(id)}
-          >
-            {TAB_LABELS[id]}
-          </button>
-        ))}
+        <CategoryTabs
+          tabs={TAB_IDS.map(id => TAB_LABELS[id as keyof typeof TAB_LABELS])}
+          active={activeIndex !== -1 ? activeIndex : 0}
+          onTabChange={(_: string, idx: number) => {
+            const id = TAB_IDS[idx];
+            setActiveTab(id);
+            scrollTo(id);
+          }}
+        />
       </div>
     </div>
   );

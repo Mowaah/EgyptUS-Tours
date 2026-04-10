@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   border-radius: 32px;
-  width: 360px;
+  width: 100%;
   padding: 16px;
   border: 1px solid $border-card;
   box-shadow: none;
@@ -132,5 +132,35 @@
     font-size: $font-size-sm;
     font-weight: $font-weight-normal;
     color: $text-light;
+  }
+}
+
+// ── List-view overrides ────────────────────────────────────────
+// List = same vertical card, just full-width (no fixed 360px)
+.listCard {
+  width: 100%;
+}
+
+// "Start Route" pill overlaid on the image bottom-right
+.routeBtn {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.1);
+  border: 0.5px solid rgba(255, 255, 255, 1);
+  border-radius: 250px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: $white;
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
   }
 }

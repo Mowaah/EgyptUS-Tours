@@ -13,95 +13,18 @@
   @include container;
 }
 
-.highlight {
-  color: $secondary;
-}
-
-// ── Filter summary bar ────────────────────────────────────────
-.filterSummaryBar {
-  padding: 24px 0 72px;
-}
-
-.filterSummaryCard {
-  background: rgba(234, 241, 253, 0.2);
-  border: 1px solid $border-strong;
-  border-radius: 32px;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-}
-
-.filterSummaryPill {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  padding: 18px 28px;
-  position: relative;
-
-  &:not(:last-child)::after {
-    content: "";
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 1px;
-    height: 32px;
-    background: $border-strong;
-  }
-}
-
-.filterSummaryIcon {
-  flex-shrink: 0;
-  // Convert white SVG strokes → orange (#FF6600)
-  filter: brightness(0) saturate(100%) invert(47%) sepia(97%) saturate(1200%) hue-rotate(2deg) brightness(102%) contrast(104%);
-}
-
-.filterSummaryText {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.filterSummaryLabel {
-  font-size: 12px;
-  color: #9CA3AF;
-  font-weight: $font-weight-normal;
-}
-
-.filterSummaryValue {
-  font-size: 16px;
-  font-weight: $font-weight-medium;
-  color: $dark;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-// ── Toolbar heading ───────────────────────────────────────────
-.availableTripsTitle {
-  font-size: 30px;
-  font-weight: $font-weight-bold;
-  color: $dark;
-  margin-bottom: 2px;
+// ── Toolbar ───────────────────────────────────────────────────
+.toolbar {
+  @include flex-between;
+  margin-bottom: $spacing-lg;
+  flex-wrap: wrap;
+  gap: $spacing-md;
 }
 
 .countSearch {
   font-size: 18px;
   font-weight: $font-weight-medium;
   color: $dark;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-// ── Toolbar ──────────────────────────────────────────────────
-.toolbar {
-  @include flex-between;
-  margin-bottom: $spacing-lg;
-  flex-wrap: wrap;
-  gap: $spacing-md;
 }
 
 .toolbarRight {
@@ -113,12 +36,7 @@
 
 
 
-.count {
-  font-size: $font-size-lg;
-  font-weight: $font-weight-bold;
-  color: $primary-dark;
-}
-
+// ── Layout ────────────────────────────────────────────────────
 .layout {
   display: flex;
   gap: 16px;
@@ -130,8 +48,10 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
+// ── Sidebar ───────────────────────────────────────────────────
 .sidebar {
   display: none;
   width: 265px;
@@ -199,6 +119,18 @@
   display: none;
 }
 
+.ratingOptionRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ratingNum {
+  font-size: 13px;
+  color: $text-light;
+}
+
+// Price range
 .priceRange {
   display: flex;
   flex-direction: column;
@@ -279,22 +211,66 @@
   margin-top: 8px;
 }
 
-.grid {
-  flex: 1;
+// ── View Toggle ───────────────────────────────────────────────
+.viewToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: rgba(14, 40, 81, 0.05);
+  border-radius: 80px;
+  align-self: flex-end;
+  margin-bottom: 20px;
+}
+
+.viewBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 24px;
+  border-radius: $radius-full;
+  font-size: 14px;
+  font-weight: $font-weight-medium;
+  color: $dark;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background $transition-fast, color $transition-fast;
+
+  &:hover {
+    color: $dark;
+  }
+}
+
+.viewActive {
+  background: $white;
+  color: $dark;
+  box-shadow: $shadow-sm;
+}
+
+// ── Card views ────────────────────────────────────────────────
+.gridView {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
+  gap: 16px;
   align-items: start;
 
   @media (min-width: 640px) {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr);
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
+.listView {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// ── Pagination ────────────────────────────────────────────────
 .pagination {
   display: flex;
   align-items: center;

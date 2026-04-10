@@ -11,6 +11,7 @@ import {
   PaginationArrows,
   EmptyState,
   PageHeader,
+  SearchInput,
 } from "@/components/shared";
 import { Trip } from "@/types";
 import styles from "./TripsSection.module.scss";
@@ -141,7 +142,7 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
     filterPills.push({ icon: "trip-type", label: "Trip Type", value: searchParams.tripType });
 
   return (
-    <section className={styles.section} style={isPage ? { paddingTop: 0 } : {}}>
+    <section className={styles.section}>
 
       {/* ── Header ── */}
       {isPage ? (
@@ -232,22 +233,11 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
                 ]}
                 defaultValue="recommended"
               />
-              <div className={styles.searchWrap}>
-                <Image
-                  src="/images/search.svg"
-                  alt="Search"
-                  width={18}
-                  height={18}
-                  className={styles.searchIcon}
-                />
-                <input
-                  type="text"
-                  placeholder="Search vehicles, transport option......."
-                  className={styles.searchInput}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
+              <SearchInput
+                placeholder="Search vehicles, transport option..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
           ) : (
             <SortButton

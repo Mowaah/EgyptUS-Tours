@@ -14,6 +14,7 @@
   @include container;
   @include flex-between;
   height: 100%;
+  padding: 0 $spacing-xl;
 }
 
 .socials {
@@ -39,19 +40,28 @@
 .settings {
   display: flex;
   align-items: center;
-  gap: $spacing-md;
+  gap: $spacing-xs;
+  height: 100%;
 }
 
 .dropdownWrapper {
   position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+
+  >div {
+    height: 100%;
+    align-items: center;
+  }
 }
 
 .langWrapper {
-  width: 130px;
+  width: 98px;
 }
 
 .currWrapper {
-  width: 120px;
+  width: 105px;
 }
 
 .dropdownToggle {
@@ -62,10 +72,10 @@
   background: transparent;
   border: none;
   color: $white;
-  font-size: $font-size-sm;
+  font-size: 11px;
   font-weight: $font-weight-medium;
-  padding: 6px;
-  border-radius: $radius-full;
+  padding: 16px 12px;
+  border-radius: 16px;
   transition: all $transition-fast;
 
   &:hover {
@@ -84,7 +94,7 @@
 .langToggle {
   width: 100%;
   justify-content: center;
-  padding: 8px 12px;
+  padding: 4px;
   background: transparent;
 
   span {
@@ -101,7 +111,7 @@
 .currToggle {
   width: 100%;
   justify-content: center;
-  padding: 8px 12px;
+  padding: 4px;
   background: transparent;
 
   span {
@@ -129,13 +139,29 @@
 .dropdownMenu {
   width: 100%;
   min-width: unset;
-  box-shadow: $shadow-xl;
+  box-shadow: $shadow-md;
+  padding: 4px;
+  top: 100% !important;
+
+  button {
+    gap: 8px !important;
+  }
 }
 
 .menuItemText {
   color: $text-muted;
-  font-size: $font-size-xs;
+  font-size: 11px;
   font-weight: $font-weight-normal;
   flex: 1;
   text-align: left;
+}
+
+.customRadio {
+  width: 14px !important;
+  height: 14px !important;
+  border-width: 1px !important;
+
+  &[class*="Selected"] {
+    background-size: 8px 8px !important;
+  }
 }

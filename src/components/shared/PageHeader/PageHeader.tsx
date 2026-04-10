@@ -35,8 +35,8 @@ export default function PageHeader({
           <Image
             src={decorationSrc}
             alt=""
-            width={268}
-            height={208}
+            width={340}
+            height={247}
             className={styles.decoration}
             aria-hidden="true"
           />

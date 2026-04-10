@@ -1,31 +1,44 @@
 import Image from "next/image";
 import { Hotel } from "@/types";
 import Button from "../Button/Button";
-import { StarRating } from "@/components/shared";
+import { StarRating, GlassCard } from "@/components/shared";
 import styles from "./HotelCard.module.scss";
 
 interface HotelCardProps {
   hotel: Hotel;
+  /** Grid (default) or list view */
+  view?: "grid" | "list";
+  /** Whether to show the Start Route button (default false) */
+  showRouteBtn?: boolean;
 }
 
-export default function HotelCard({ hotel }: HotelCardProps) {
+export default function HotelCard({ hotel, view = "grid", showRouteBtn = false }: HotelCardProps) {
+  const isList = view === "list";
+
   return (
-    <div className={styles.card}>
-      <div className={styles.imageWrapper}>
+    <div className={`${styles.card} ${isList ? styles.listCard : ""}`}>
+      {/* ── Image ── */}
+      <div className={`${styles.imageWrapper} ${isList ? styles.listImageWrapper : ""}`}>
         <Image
           src={hotel.image}
           alt={hotel.name}
           fill
-          sizes="(max-width: 768px) 100vw, 320px"
+          sizes="(max-width: 768px) 100vw, 50vw"
           className={styles.image}
         />
         <div className={styles.overlay}>
           <h3 className={styles.name}>{hotel.name}</h3>
           <span className={styles.location}>{hotel.location}</span>
         </div>
+        {!isList && showRouteBtn && (
+          <GlassCard as="button" className={styles.routeBtn} type="button">
+            Start Route
+          </GlassCard>
+        )}
       </div>
 
-      <div className={styles.content}>
+      {/* ── Content ── */}
+      <div className={`${styles.content} ${isList ? styles.listContent : ""}`}>
         <div className={styles.ratingRow}>
           <span className={styles.starLabel}>
             {hotel.stars}-Star Luxury Hotel

@@ -38,7 +38,23 @@ const DEMO_HOTELS: Hotel[] = Array.from({ length: 4 }, (_, i) => ({
   reviews: 1847,
 }));
 
+import { useRef } from "react";
+
 export default function HotelsSection() {
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollBy({ left: -400, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollBy({ left: 400, behavior: "smooth" });
+    }
+  };
+
   return (
     <section className={styles.section}>
       <div className={styles.container}>
@@ -69,13 +85,19 @@ export default function HotelsSection() {
               size={30}
               iconWidth={15}
               iconHeight={15}
+              onPrev={scrollLeft}
+              onNext={scrollRight}
             />
           </div>
         </div>
 
-        <div className={styles.grid}>
+        {/* Removed margin/padding bleed logic if tracking within container, 
+            but kept the slider robust */}
+        <div className={styles.slider} ref={sliderRef}>
           {DEMO_HOTELS.map((hotel) => (
-            <HotelCard key={hotel.id} hotel={hotel} />
+            <div key={hotel.id} className={styles.slide}>
+              <HotelCard hotel={hotel} />
+            </div>
           ))}
         </div>
 
