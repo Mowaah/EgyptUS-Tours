@@ -1,8 +1,7 @@
 import { Trip } from "@/types";
-import { PageHeader } from "@/components/shared";
-import TripGallery from "./TripGallery/TripGallery";
-import TripHeroBar from "./TripHeroBar/TripHeroBar";
-import TripTabNav from "./TripTabNav/TripTabNav";
+import { PageHeader, DetailGallery, DetailHeroBar, DetailTabNav } from "@/components/shared";
+import Image from "next/image";
+import Button from "@/components/shared/Button/Button";
 import TripOverview from "./TripOverview/TripOverview";
 import TripInclusions from "./TripInclusions/TripInclusions";
 import TripExclusions from "./TripExclusions/TripExclusions";
@@ -21,11 +20,24 @@ interface TripDetailPageProps {
   trip: Trip;
 }
 
+const TRIP_TABS = [
+  { id: "overview", label: "Overview" },
+  { id: "included", label: "What's Included" },
+  { id: "excluded", label: "What's Not Included" },
+  { id: "traveler-photos", label: "Taken by Travelers" },
+  { id: "prices-accommodation", label: "Prices & Accommodation" },
+  { id: "itinerary", label: "Day-by-Day Itinerary" },
+  { id: "pricing", label: "Pricing" },
+  { id: "vip-experiences", label: "VIP Experiences" },
+  { id: "reviews", label: "Traveler Reviews" },
+  { id: "more-adventures", label: "More Inspiring Adventures" },
+];
+
 export default function TripDetailPage({ trip }: TripDetailPageProps) {
   return (
     <div className={styles.page}>
-      {/* ── Page Header: breadcrumb + back button ── */}
       <PageHeader
+        className={styles.pageHeader}
         breadcrumbs={[
           { label: "Trips", href: "/trips" },
           { label: "Trip Details", isCurrent: true },
@@ -36,16 +48,42 @@ export default function TripDetailPage({ trip }: TripDetailPageProps) {
       {/* ── Gallery & Hero Bar ── */}
       <div className={styles.heroSection}>
         <div className={styles.galleryWrap}>
-          <TripGallery trip={trip} />
+          <DetailGallery images={trip.images || [trip.image]} title={trip.title} />
 
           <div className={styles.heroOverlay}>
-            <TripHeroBar trip={trip} />
+            <DetailHeroBar
+              title={trip.title}
+              description={trip.description}
+              rating={trip.rating ?? 0}
+              reviewCount={trip.reviewCount ?? 0}
+              isFavorite={trip.isFavorite}
+            >
+              <Button
+                variant="outline"
+                size="sm"
+                className={styles.actionBtn}
+                icon={<Image src="/images/brochure.svg" alt="" width={18} height={18} />}
+                iconPosition="left"
+              >
+                Get the Brochure
+              </Button>
+
+              <Button
+                variant="primary"
+                size="sm"
+                className={styles.actionBtn}
+                icon={<Image src="/images/share.svg" alt="" width={18} height={18} />}
+                iconPosition="left"
+              >
+                Share
+              </Button>
+            </DetailHeroBar>
           </div>
         </div>
       </div>
 
       {/* ── Sticky Tab Navigation ── */}
-      <TripTabNav />
+      <DetailTabNav tabs={TRIP_TABS} />
 
       {/* ── Main content sections ── */}
       <div className={styles.container}>

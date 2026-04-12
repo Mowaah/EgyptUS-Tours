@@ -4,16 +4,16 @@
 .headerWrapper {
   position: relative;
   width: 100%;
-  padding: 0px 0 40px;
+  padding: 40px 0 40px;
 
   @media (min-width: 1024px) {
-    padding: 0px 0 60px;
+    padding: 60px 0 60px;
   }
 }
 
 .decorationWrapper {
   position: absolute;
-  top: -50;
+  top: -30;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;

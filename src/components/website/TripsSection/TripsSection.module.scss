@@ -5,7 +5,7 @@
   @include section-padding;
 
   @media (min-width: 1024px) {
-    padding-top: 40px;
+    padding-top: 12px;
   }
 }
 
@@ -144,140 +144,6 @@
   }
 }
 
-.filterGroup {
-  padding: 24px 20px;
-  margin-bottom: 12px;
-  border: 1px solid $border;
-  border-radius: 24px;
-}
-
-.filterHeader {
-  @include flex-between;
-  cursor: pointer;
-
-  h4 {
-    font-size: 16px;
-    font-weight: 700;
-    color: $dark;
-  }
-}
-
-.filterGroupExpanded {
-  .filterHeader {
-    padding-bottom: 16px;
-    margin-bottom: 16px;
-    border-bottom: 1px solid $border;
-  }
-}
-
-.chevron {
-  transition: transform $transition-fast;
-  transform: rotate(-90deg);
-  color: $dark;
-
-  &.expanded {
-    transform: rotate(0deg);
-  }
-}
-
-.filterOptions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.radio {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
-  color: $text;
-  cursor: pointer;
-}
-
-.radioInputHidden {
-  display: none;
-}
-
-.priceRange {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-top: 8px;
-}
-
-.rangeContainer {
-  position: relative;
-  height: 20px;
-  margin: 10px 0;
-}
-
-.rangeTrack {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 4px;
-  transform: translateY(-50%);
-  background: $background-input;
-  border-radius: 8px;
-}
-
-.rangeTrackFill {
-  position: absolute;
-  top: 50%;
-  height: 4px;
-  transform: translateY(-50%);
-  background: $secondary;
-  border-radius: 8px;
-  z-index: 1;
-}
-
-.rangeInput {
-  appearance: none;
-  -webkit-appearance: none;
-  pointer-events: none;
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  background: transparent;
-  outline: none;
-  z-index: 2;
-
-  &::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    pointer-events: auto;
-    width: 14px;
-    height: 14px;
-    background: $secondary;
-    border: 1.24px solid $white;
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 0 0 1px $secondary-light;
-  }
-
-  &::-moz-range-thumb {
-    pointer-events: auto;
-    width: 14px;
-    height: 14px;
-    background: $secondary;
-    border: 1.24px solid $white;
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 0 0 1px $secondary-light;
-  }
-}
-
-.rangeLabel {
-  font-size: 14px;
-  color: $text;
-  text-align: center;
-  margin-top: 8px;
-}
 
 .grid {
   flex: 1;

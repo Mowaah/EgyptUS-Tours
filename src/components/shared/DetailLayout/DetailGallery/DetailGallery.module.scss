@@ -7,6 +7,15 @@
   height: 552px;
   border-radius: $radius-2xl;
   overflow: hidden;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    height: 400px;
+    
+    .thumbs {
+      display: none;
+    }
+  }
 }
 
 .main {

@@ -33,3 +33,5 @@ export { default as BookingSidebar } from "./BookingSidebar/BookingSidebar";
 export { default as RoomViewDropdown } from "./RoomViewDropdown/RoomViewDropdown";
 export type { RoomViewOption } from "./RoomViewDropdown/RoomViewDropdown";
 export { default as SearchInput } from "./SearchInput/SearchInput";
+export * from "./DetailLayout";
+export * from "./SidebarFilter";

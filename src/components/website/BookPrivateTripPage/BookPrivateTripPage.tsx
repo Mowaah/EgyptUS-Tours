@@ -58,7 +58,6 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
     <div className={planPageStyles.page}>
       <PageHeader
         breadcrumbs={[
-          { label: "Home", href: "/" },
           { label: "Trips", href: "/trips" },
           { label: "Trip Details", href: `/trips/${trip.id}` },
           { label: "Booking", isCurrent: true }

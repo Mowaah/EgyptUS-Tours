@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Trip } from "@/types";
 import Button from "../Button/Button";
 import styles from "./TripCard.module.scss";
@@ -11,9 +12,11 @@ interface TripCardProps {
 }
 
 export default function TripCard({ trip, onFavoriteToggle }: TripCardProps) {
+  const tripDetailsHref = `/trips/${trip.id}`;
+
   return (
     <div className={styles.card}>
-      <div className={styles.imageWrapper}>
+      <Link href={tripDetailsHref} className={styles.imageWrapper}>
         <Image
           src={trip.image}
           alt={trip.title}
@@ -24,7 +27,11 @@ export default function TripCard({ trip, onFavoriteToggle }: TripCardProps) {
         {onFavoriteToggle && (
           <button
             className={`${styles.favorite} ${trip.isFavorite ? styles.active : ""}`}
-            onClick={() => onFavoriteToggle(trip.id)}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onFavoriteToggle(trip.id);
+            }}
             aria-label="Toggle favorite"
           >
             <svg
@@ -38,7 +45,7 @@ export default function TripCard({ trip, onFavoriteToggle }: TripCardProps) {
             </svg>
           </button>
         )}
-      </div>
+      </Link>
 
       <div className={styles.content}>
         <span className={styles.location}>
@@ -47,7 +54,9 @@ export default function TripCard({ trip, onFavoriteToggle }: TripCardProps) {
           </svg>
           {trip.location}
         </span>
-        <h3 className={styles.title}>{trip.title}</h3>
+        <h3 className={styles.title}>
+          <Link href={tripDetailsHref}>{trip.title}</Link>
+        </h3>
         <p className={styles.description}>{trip.description}</p>
 
         <div className={styles.meta}>
@@ -79,9 +88,10 @@ export default function TripCard({ trip, onFavoriteToggle }: TripCardProps) {
         </div>
       </div>
 
-      <Button variant="primary" fullWidth className={styles.viewTripBtn} href={`/trips/luxor-nile-cruise`}>
+      <Button variant="primary" fullWidth className={styles.viewTripBtn} href={tripDetailsHref}>
         View Trip
       </Button>
     </div>
   );
 }
+

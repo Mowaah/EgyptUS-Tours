@@ -8,8 +8,11 @@
 
 .container {
   @include container;
+  padding: 0 $spacing-lg;
 
-  @media (min-width: 1024px) {}
+  @media (min-width: 1024px) {
+    padding: 0;
+  }
 }
 
 .pageHeader {
@@ -18,7 +21,6 @@
 
 .heroSection {
   position: relative;
-  // increase bottom margin so the card doesn't overlap the content below
   margin-bottom: 120px;
 
   @media (min-width: 1024px) {
@@ -30,10 +32,6 @@
   @include container;
   padding: 0;
   position: relative;
-
-  @media (min-width: 1024px) {
-    padding: 0;
-  }
 }
 
 .heroOverlay {

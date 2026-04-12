@@ -2,16 +2,15 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Trip } from "@/types";
 import GlassCard from "@/components/shared/GlassCard/GlassCard";
-import styles from "./TripGallery.module.scss";
+import styles from "./DetailGallery.module.scss";
 
-interface TripGalleryProps {
-  trip: Trip;
+interface DetailGalleryProps {
+  images: string[];
+  title: string;
 }
 
-export default function TripGallery({ trip }: TripGalleryProps) {
-  const images = trip.images ?? [trip.image];
+export default function DetailGallery({ images, title }: DetailGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const prev = () => setActiveIndex((i) => (i - 1 + images.length) % images.length);
@@ -25,7 +24,7 @@ export default function TripGallery({ trip }: TripGalleryProps) {
       <div className={styles.main}>
         <Image
           src={images[activeIndex]}
-          alt={trip.title}
+          alt={title}
           fill
           sizes="(max-width: 1024px) 100vw, 75vw"
           className={styles.mainImg}
@@ -50,7 +49,7 @@ export default function TripGallery({ trip }: TripGalleryProps) {
             className={`${styles.thumb} ${activeIndex === i + 1 ? styles.thumbActive : ""}`}
             onClick={() => setActiveIndex(i + 1)}
           >
-            <Image src={src} alt={`Photo ${i + 2}`} fill sizes="120px" className={styles.thumbImg} />
+            <Image src={src} alt={`${title} Photo ${i + 2}`} fill sizes="120px" className={styles.thumbImg} />
           </button>
         ))}
       </div>

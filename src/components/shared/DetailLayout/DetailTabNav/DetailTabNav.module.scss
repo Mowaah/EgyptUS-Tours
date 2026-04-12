@@ -9,4 +9,11 @@
 
 .inner {
   display: flex;
+  max-width: $container-max;
+  margin: 0 auto;
+  padding: 8px $spacing-lg;
+  
+  @media (min-width: 1024px) {
+    padding: 8px 0;
+  }
 }

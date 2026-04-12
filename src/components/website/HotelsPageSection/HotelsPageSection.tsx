@@ -12,6 +12,8 @@ import {
   PageHeader,
   StarRating,
   SearchInput,
+  FilterGroup,
+  PriceRangeFilter,
 } from "@/components/shared";
 import { Hotel } from "@/types";
 import styles from "./HotelsPageSection.module.scss";
@@ -140,111 +142,55 @@ export default function HotelsPageSection() {
           {/* Sidebar */}
           <aside className={styles.sidebar}>
             {/* Rating */}
-            <div
-              className={`${styles.filterGroup} ${ratingExpanded ? styles.filterGroupExpanded : ""}`}
+            <FilterGroup
+              title="Rating"
+              isExpanded={ratingExpanded}
+              onToggle={() => setRatingExpanded((v) => !v)}
             >
-              <div
-                className={styles.filterHeader}
-                onClick={() => setRatingExpanded((v) => !v)}
-              >
-                <h4>Rating</h4>
-                <Image
-                  src="/images/arrows/arrow-down2.svg"
-                  alt="Toggle rating filter"
-                  width={15}
-                  height={8}
-                  className={`${styles.chevron} ${ratingExpanded ? styles.expanded : ""}`}
-                />
+              <div className={styles.filterOptions}>
+                {RATING_OPTIONS.map((opt) => (
+                  <label key={opt.value} className={styles.radio}>
+                    <input
+                      type="radio"
+                      name="rating"
+                      className={styles.radioInputHidden}
+                      checked={ratingFilter === opt.value}
+                      onChange={() => setRatingFilter(opt.value)}
+                    />
+                    <CheckboxIndicator
+                      variant="radio"
+                      size="md"
+                      emphasis="filter"
+                      selected={ratingFilter === opt.value}
+                      aria-hidden
+                    />
+                    {opt.value === "any" ? (
+                      <span>Any</span>
+                    ) : (
+                      <span className={styles.ratingOptionRow}>
+                        <StarRating filled={Number(opt.value)} showValue={false} size={14} />
+                        <span className={styles.ratingNum}>{opt.label}</span>
+                      </span>
+                    )}
+                  </label>
+                ))}
               </div>
-              {ratingExpanded && (
-                <div className={styles.filterOptions}>
-                  {RATING_OPTIONS.map((opt) => (
-                    <label key={opt.value} className={styles.radio}>
-                      <input
-                        type="radio"
-                        name="rating"
-                        className={styles.radioInputHidden}
-                        checked={ratingFilter === opt.value}
-                        onChange={() => setRatingFilter(opt.value)}
-                      />
-                      <CheckboxIndicator
-                        variant="radio"
-                        size="md"
-                        emphasis="filter"
-                        selected={ratingFilter === opt.value}
-                        aria-hidden
-                      />
-                      {opt.value === "any" ? (
-                        <span>Any</span>
-                      ) : (
-                        <span className={styles.ratingOptionRow}>
-                          <StarRating filled={Number(opt.value)} showValue={false} size={14} />
-                          <span className={styles.ratingNum}>{opt.label}</span>
-                        </span>
-                      )}
-                    </label>
-                  ))}
-                </div>
-              )}
-            </div>
+            </FilterGroup>
 
             {/* Price Range */}
-            <div
-              className={`${styles.filterGroup} ${priceExpanded ? styles.filterGroupExpanded : ""}`}
+            <FilterGroup
+              title="Price Range"
+              isExpanded={priceExpanded}
+              onToggle={() => setPriceExpanded((v) => !v)}
             >
-              <div
-                className={styles.filterHeader}
-                onClick={() => setPriceExpanded((v) => !v)}
-              >
-                <h4>Price Range</h4>
-                <Image
-                  src="/images/arrows/arrow-down2.svg"
-                  alt="Toggle price range filter"
-                  width={15}
-                  height={8}
-                  className={`${styles.chevron} ${priceExpanded ? styles.expanded : ""}`}
-                />
-              </div>
-              {priceExpanded && (
-                <div className={styles.priceRange}>
-                  <div className={styles.rangeContainer}>
-                    <div className={styles.rangeTrack} />
-                    <div
-                      className={styles.rangeTrackFill}
-                      style={{
-                        left: `${(priceRange.min / 12000) * 100}%`,
-                        width: `${((priceRange.max - priceRange.min) / 12000) * 100}%`,
-                      }}
-                    />
-                    <input
-                      type="range"
-                      min="1"
-                      max="12000"
-                      value={priceRange.min}
-                      onChange={(e) => {
-                        const val = Math.min(Number(e.target.value), priceRange.max - 500);
-                        setPriceRange((prev) => ({ ...prev, min: val }));
-                      }}
-                      className={styles.rangeInput}
-                    />
-                    <input
-                      type="range"
-                      min="1"
-                      max="12000"
-                      value={priceRange.max}
-                      onChange={(e) => {
-                        const val = Math.max(Number(e.target.value), priceRange.min + 500);
-                        setPriceRange((prev) => ({ ...prev, max: val }));
-                      }}
-                      className={styles.rangeInput}
-                    />
-                  </div>
-                  <span className={styles.rangeLabel}>
-                    ${priceRange.min} - ${priceRange.max}
-                  </span>
-                </div>
-              )}
-            </div>
+              <PriceRangeFilter
+                min={1}
+                max={12000}
+                valueMin={priceRange.min}
+                valueMax={priceRange.max}
+                onChange={(min, max) => setPriceRange({ min, max })}
+              />
+            </FilterGroup>
           </aside>
 
           {/* ── Main content ── */}

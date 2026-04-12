@@ -9,8 +9,9 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
-  // In production, fetch trip by id. For now, use mock if id matches.
-  const trip = id === mockTripDetail.id ? mockTripDetail : null;
+  // In development, return mock data for any valid-looking id
+  const isDemoId = id.startsWith("trip-") || id === mockTripDetail.id;
+  const trip = isDemoId ? mockTripDetail : null;
   if (!trip) return { title: "Trip Not Found" };
   return {
     title: `${trip.title} | Egypt US Tours`,
@@ -20,8 +21,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function TripDetailRoutePage({ params }: PageProps) {
   const { id } = await params;
-  // In production, fetch trip by id
-  const trip = id === mockTripDetail.id ? mockTripDetail : null;
+  // In development, return mock data for any valid-looking id
+  const isDemoId = id.startsWith("trip-") || id === mockTripDetail.id;
+  const trip = isDemoId ? mockTripDetail : null;
   if (!trip) notFound();
 
   return <TripDetailPage trip={trip} />;

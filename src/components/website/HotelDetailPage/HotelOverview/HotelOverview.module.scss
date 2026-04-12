@@ -3,7 +3,7 @@
 
 .section {
   @include section-padding;
-
+  padding-bottom: 0;
 }
 
 .layout {
@@ -14,10 +14,9 @@
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
+    gap: 48px;
   }
 }
-
-
 
 .heading {
   font-size: $font-size-3xl;
@@ -26,24 +25,33 @@
   margin: 0 0 16px;
 }
 
+.overviewSection {
+  margin-bottom: 32px;
+}
+
+.integratedSection {
+  margin-top: 64px;
+}
+
 .label {
   font-size: $font-size-lg;
-  font-weight: $font-weight-medium;
+  font-weight: $font-weight-bold;
   color: $secondary;
-  margin: 24px 0 10px;
+  margin: 0 0 16px;
 }
 
 .text {
   color: $text-lighter;
-  font-size: $font-size-base;
-  line-height: 1.75;
+  font-size: 15px;
+  line-height: 1.8;
   margin: 0;
   border-left: 3px solid #EBEBEB;
   padding-left: 20px;
-  margin-bottom: 16px;
 }
 
-// ── Sidebar ──────────────────────────────────────────────────
+.sidebar {
+  /* Removed sticky positioning as requested */
+}
 
 .bookCard {
   border: 1px solid $border;
@@ -52,63 +60,66 @@
   background: $white;
 }
 
+
 .bookTitle {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: $font-weight-bold;
   color: $dark;
-  margin: 0 0 4px;
+  margin: 0 0 8px;
 }
 
 .bookSubtitle {
-  font-size: $font-size-sm;
-  color: $text-muted;
-  line-height: 1.6;
+  font-size: 14px;
+  color: $text-light;
+  line-height: 1.5;
   margin: 0;
-}
-
-.pricingContainer {
-  background: #F9FAFB;
-  border-radius: 24px;
-  padding: 12px;
-  margin: 0 -14px 20px;
 }
 
 .divider {
   height: 1px;
   background: $border;
-  margin: 24px -24px;
+  margin: 24px -32px;
+}
+
+.priceContainer {
+  background: #F9FAFB;
+  border-radius: 20px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
 }
 
 .priceRow {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 12px;
 }
 
-.tierLabel {
+.priceLabel {
   display: block;
-  font-size: $font-size-base;
+  font-size: 15px;
   font-weight: $font-weight-bold;
   color: $dark;
 }
 
-.tierSub {
+.priceSub {
   display: block;
-  font-size: 13px;
+  font-size: 12px;
   color: $text-light;
-  margin-top: 2px;
 }
 
-.tierPrice {
-  font-size: 26px;
+.priceValue {
+  font-size: 24px;
   font-weight: $font-weight-bold;
   color: $primary;
-  white-space: nowrap;
 }
 
 .ctas {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.cancelPolicy {
+  text-align: center;
+  font-size: 12px;
+  color: $text-light;
+  margin: 0;
 }

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Hotel } from "@/types";
 import Button from "../Button/Button";
 import { StarRating, GlassCard } from "@/components/shared";
@@ -14,11 +15,12 @@ interface HotelCardProps {
 
 export default function HotelCard({ hotel, view = "grid", showRouteBtn = false }: HotelCardProps) {
   const isList = view === "list";
+  const hotelDetailsHref = `/hotels/${hotel.id}`;
 
   return (
     <div className={`${styles.card} ${isList ? styles.listCard : ""}`}>
       {/* ── Image ── */}
-      <div className={`${styles.imageWrapper} ${isList ? styles.listImageWrapper : ""}`}>
+      <Link href={hotelDetailsHref} className={`${styles.imageWrapper} ${isList ? styles.listImageWrapper : ""}`}>
         <Image
           src={hotel.image}
           alt={hotel.name}
@@ -35,7 +37,7 @@ export default function HotelCard({ hotel, view = "grid", showRouteBtn = false }
             Start Route
           </GlassCard>
         )}
-      </div>
+      </Link>
 
       {/* ── Content ── */}
       <div className={`${styles.content} ${isList ? styles.listContent : ""}`}>
@@ -71,11 +73,12 @@ export default function HotelCard({ hotel, view = "grid", showRouteBtn = false }
               <small>/night</small>
             </span>
           </div>
-          <Button variant="primary" size="sm">
-            Book Now
+          <Button variant="primary" size="sm" href={hotelDetailsHref}>
+            View Details
           </Button>
         </div>
       </div>
     </div>
   );
 }
+

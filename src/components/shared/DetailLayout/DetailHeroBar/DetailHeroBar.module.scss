@@ -1,5 +1,4 @@
 @use "@/styles/variables" as *;
-@use "@/styles/mixins" as *;
 
 .heroBar {
   background: $white;
@@ -48,13 +47,13 @@
   font-weight: $font-weight-medium;
   color: $dark;
   margin: 0;
-  line-height: 1;
+  line-height: 1.2;
 }
 
 .actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   flex-shrink: 0;
 }
 
@@ -65,29 +64,38 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  border: none;
-  background: $white;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: transparent;
   cursor: pointer;
-  transition: background $transition-fast;
+  transition: all $transition-fast;
 
   svg path {
-    fill: $border-input;
-    transition: fill $transition-fast;
+    fill: none;
+    stroke: $text-light;
+    stroke-width: 1.5;
+    transition: all $transition-fast;
   }
 
-  &:hover svg path,
-  &.favoriteActive svg path {
-    fill: $danger;
+  &:hover {
+    background: #FFEDED;
+    border-color: #FFB3B3;
+    svg path {
+      stroke: $danger;
+      fill: $danger;
+    }
   }
-}
 
-.actionBtn {
-  gap: 6px;
+  &.favoriteActive {
+    svg path {
+      fill: $danger;
+      stroke: $danger;
+    }
+  }
 }
 
 .subtitle {
-  color: #4A5565E5;
-  opacity: 0.90;
-  font-size: 14px;
+  color: $text-light;
+  font-size: 16px;
   margin: 0;
+  opacity: 0.8;
 }

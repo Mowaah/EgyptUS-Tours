@@ -12,6 +12,9 @@ import {
   EmptyState,
   PageHeader,
   SearchInput,
+  FilterGroup,
+  RadioFilterList,
+  PriceRangeFilter,
 } from "@/components/shared";
 import { Trip } from "@/types";
 import styles from "./TripsSection.module.scss";
@@ -257,137 +260,50 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
           {/* ── Sidebar ── */}
           <aside className={styles.sidebar}>
             {/* Duration */}
-            <div className={`${styles.filterGroup} ${expanded.duration ? styles.filterGroupExpanded : ""}`}>
-              <div className={styles.filterHeader} onClick={() => toggleFilter("duration")}>
-                <h4>Duration</h4>
-                <Image
-                  src="/images/arrows/arrow-down2.svg"
-                  alt="Toggle duration filter"
-                  width={15}
-                  height={8}
-                  className={`${styles.chevron} ${expanded.duration ? styles.expanded : ""}`}
-                />
-              </div>
-              {expanded.duration && (
-                <div className={styles.filterOptions}>
-                  {DURATION_OPTIONS.map((opt) => (
-                    <label key={opt} className={styles.radio}>
-                      <input
-                        type="radio"
-                        name="duration"
-                        className={styles.radioInputHidden}
-                        checked={durationFilter === opt}
-                        onChange={() => setDurationFilter(opt)}
-                      />
-                      <CheckboxIndicator
-                        variant="radio"
-                        size="md"
-                        emphasis="filter"
-                        selected={durationFilter === opt}
-                        aria-hidden
-                      />
-                      <span>{opt}</span>
-                    </label>
-                  ))}
-                </div>
-              )}
-            </div>
+            <FilterGroup
+              title="Duration"
+              isExpanded={expanded.duration}
+              onToggle={() => toggleFilter("duration")}
+            >
+              <RadioFilterList
+                options={DURATION_OPTIONS}
+                name="duration"
+                selectedValue={durationFilter}
+                onChange={setDurationFilter}
+              />
+            </FilterGroup>
 
             {/* Special Offers */}
-            <div className={`${styles.filterGroup} ${expanded.offers ? styles.filterGroupExpanded : ""}`}>
-              <div className={styles.filterHeader} onClick={() => toggleFilter("offers")}>
-                <h4>Special Offers</h4>
-                <Image
-                  src="/images/arrows/arrow-down2.svg"
-                  alt="Toggle special offers filter"
-                  width={15}
-                  height={8}
-                  className={`${styles.chevron} ${expanded.offers ? styles.expanded : ""}`}
-                />
-              </div>
-              {expanded.offers && (
-                <div className={styles.filterOptions}>
-                  {SPECIAL_OFFERS.map((opt, i) => (
-                    <label key={`${opt}-${i}`} className={styles.radio}>
-                      <input
-                        type="radio"
-                        name="offers"
-                        className={styles.radioInputHidden}
-                        checked={offersFilter === opt}
-                        onChange={() => setOffersFilter(opt)}
-                      />
-                      <CheckboxIndicator
-                        variant="radio"
-                        size="md"
-                        emphasis="filter"
-                        selected={offersFilter === opt}
-                        aria-hidden
-                      />
-                      <span>{opt}</span>
-                    </label>
-                  ))}
-                </div>
-              )}
-            </div>
+            <FilterGroup
+              title="Special Offers"
+              isExpanded={expanded.offers}
+              onToggle={() => toggleFilter("offers")}
+            >
+              <RadioFilterList
+                options={SPECIAL_OFFERS}
+                name="offers"
+                selectedValue={offersFilter}
+                onChange={setOffersFilter}
+              />
+            </FilterGroup>
 
             {/* Price Range */}
-            <div className={`${styles.filterGroup} ${expanded.price ? styles.filterGroupExpanded : ""}`}>
-              <div className={styles.filterHeader} onClick={() => toggleFilter("price")}>
-                <h4>Price Range</h4>
-                <Image
-                  src="/images/arrows/arrow-down2.svg"
-                  alt="Toggle price range filter"
-                  width={15}
-                  height={8}
-                  className={`${styles.chevron} ${expanded.price ? styles.expanded : ""}`}
-                />
-              </div>
-              {expanded.price && (
-                <div className={styles.priceRange}>
-                  <div className={styles.rangeContainer}>
-                    <div className={styles.rangeTrack} />
-                    <div
-                      className={styles.rangeTrackFill}
-                      style={{
-                        left: `${((expanded.priceRange.min) / 12000) * 100}%`,
-                        width: `${((expanded.priceRange.max - expanded.priceRange.min) / 12000) * 100}%`,
-                      }}
-                    />
-                    <input
-                      type="range"
-                      min="1"
-                      max="12000"
-                      value={expanded.priceRange.min}
-                      onChange={(e) => {
-                        const val = Math.min(Number(e.target.value), expanded.priceRange.max - 500);
-                        setExpanded((prev) => ({
-                          ...prev,
-                          priceRange: { ...prev.priceRange, min: val },
-                        }));
-                      }}
-                      className={styles.rangeInput}
-                    />
-                    <input
-                      type="range"
-                      min="1"
-                      max="12000"
-                      value={expanded.priceRange.max}
-                      onChange={(e) => {
-                        const val = Math.max(Number(e.target.value), expanded.priceRange.min + 500);
-                        setExpanded((prev) => ({
-                          ...prev,
-                          priceRange: { ...prev.priceRange, max: val },
-                        }));
-                      }}
-                      className={styles.rangeInput}
-                    />
-                  </div>
-                  <span className={styles.rangeLabel}>
-                    ${expanded.priceRange.min} - ${expanded.priceRange.max}
-                  </span>
-                </div>
-              )}
-            </div>
+            <FilterGroup
+              title="Price Range"
+              isExpanded={expanded.price}
+              onToggle={() => toggleFilter("price")}
+            >
+              <PriceRangeFilter
+                min={1}
+                max={12000}
+                valueMin={expanded.priceRange.min}
+                valueMax={expanded.priceRange.max}
+                onChange={(min, max) => setExpanded((prev) => ({
+                  ...prev,
+                  priceRange: { min, max }
+                }))}
+              />
+            </FilterGroup>
           </aside>
 
           {/* ── Trip grid ── */}

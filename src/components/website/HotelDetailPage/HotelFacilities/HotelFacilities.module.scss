@@ -1,0 +1,55 @@
+@use "@/styles/variables" as *;
+
+.section {
+  margin-right: -36px;
+}
+
+.heading {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0 0 16px;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: #FFFFFF;
+  border: 1px solid #F4F4F4;
+  border-radius: 24px;
+  padding: 24px 20px;
+}
+
+.facilityPill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #EAF1FD;
+  border: 1px solid #BDD3F7;
+  border-radius: $radius-full;
+  padding: 8px;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $primary;
+    box-shadow: 0 4px 12px rgba(41, 113, 230, 0.1);
+  }
+}
+
+.iconBox {
+  color: $primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-full;
+  padding: 4px;
+  background: #DFEAFB;
+  border: 2px solid rgba(21, 93, 252, 0.04);
+}
+
+.facilityName {
+  font-size: 12px;
+  font-weight: $font-weight-medium;
+  color: $dark;
+}

@@ -1,19 +1,27 @@
 "use client";
 
-import Image from "next/image";
-import { Trip } from "@/types";
-import Button from "@/components/shared/Button/Button";
-import styles from "./TripHeroBar.module.scss";
+import { ReactNode } from "react";
+import styles from "./DetailHeroBar.module.scss";
 
-interface TripHeroBarProps {
-  trip: Trip;
+interface DetailHeroBarProps {
+  title: string;
+  description?: string;
+  rating: number;
+  reviewCount: number;
+  isFavorite?: boolean;
   onFavoriteToggle?: () => void;
+  children?: ReactNode; // Slots for specific actions (Brochure, Share, etc.)
 }
 
-export default function TripHeroBar({ trip, onFavoriteToggle }: TripHeroBarProps) {
-  const rating = trip.rating ?? 0;
-  const reviewCount = trip.reviewCount ?? 0;
-
+export default function DetailHeroBar({
+  title,
+  description,
+  rating,
+  reviewCount,
+  isFavorite,
+  onFavoriteToggle,
+  children,
+}: DetailHeroBarProps) {
   return (
     <div className={styles.heroBar}>
       <div className={styles.topRow}>
@@ -27,7 +35,7 @@ export default function TripHeroBar({ trip, onFavoriteToggle }: TripHeroBarProps
 
         <div className={styles.actions}>
           <button
-            className={`${styles.favorite} ${trip.isFavorite ? styles.favoriteActive : ""}`}
+            className={`${styles.favorite} ${isFavorite ? styles.favoriteActive : ""}`}
             onClick={onFavoriteToggle}
             aria-label="Toggle favorite"
           >
@@ -36,33 +44,15 @@ export default function TripHeroBar({ trip, onFavoriteToggle }: TripHeroBarProps
             </svg>
           </button>
 
-          <Button
-            variant="outline"
-            size="sm"
-            className={styles.actionBtn}
-            icon={<Image src="/images/brochure.svg" alt="" width={18} height={18} />}
-            iconPosition="left"
-          >
-            Get the Brochure
-          </Button>
-
-          <Button
-            variant="primary"
-            size="sm"
-            className={styles.actionBtn}
-            icon={<Image src="/images/share.svg" alt="" width={18} height={18} />}
-            iconPosition="left"
-          >
-            Share
-          </Button>
+          {children}
         </div>
       </div>
 
       <div className={styles.titleRow}>
-        <h1 className={styles.title}>{trip.title}</h1>
+        <h1 className={styles.title}>{title}</h1>
       </div>
 
-      <p className={styles.subtitle}>{trip.description}</p>
+      {description && <p className={styles.subtitle}>{description}</p>}
     </div>
   );
 }

@@ -1,0 +1,44 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.filterGroup {
+  padding: 24px 20px;
+  margin-bottom: 12px;
+  border: 1px solid $border;
+  border-radius: 24px;
+}
+
+.filterHeader {
+  @include flex-between;
+  cursor: pointer;
+
+  h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: $dark;
+    margin: 0;
+  }
+}
+
+.filterGroupExpanded {
+  .filterHeader {
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid $border;
+  }
+}
+
+.chevron {
+  transition: transform $transition-fast;
+  transform: rotate(-90deg);
+  color: $dark;
+
+  &.expanded {
+    transform: rotate(0deg);
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+}

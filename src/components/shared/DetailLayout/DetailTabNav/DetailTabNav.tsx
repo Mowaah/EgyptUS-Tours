@@ -2,36 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { CategoryTabs } from "@/components/shared";
-import styles from "./TripTabNav.module.scss";
+import styles from "./DetailTabNav.module.scss";
 
-export const TAB_IDS = [
-  "overview",
-  "included",
-  "excluded",
-  "traveler-photos",
-  "prices-accommodation",
-  "itinerary",
-  "pricing",
-  "vip-experiences",
-  "reviews",
-  "more-adventures",
-] as const;
+interface DetailTabNavProps {
+  tabs: { id: string; label: string }[];
+}
 
-export const TAB_LABELS: Record<(typeof TAB_IDS)[number], string> = {
-  "overview": "Overview",
-  "included": "What's Included",
-  "excluded": "What's Not Included",
-  "traveler-photos": "Taken by Travelers",
-  "prices-accommodation": "Prices & Accommodation",
-  "itinerary": "Day-by-Day Itinerary",
-  "pricing": "Pricing",
-  "vip-experiences": "VIP Experiences",
-  "reviews": "Traveler Reviews",
-  "more-adventures": "More Inspiring Adventures",
-};
-
-export default function TripTabNav() {
-  const [activeTab, setActiveTab] = useState<string>(TAB_IDS[0]);
+export default function DetailTabNav({ tabs }: DetailTabNavProps) {
+  const [activeTab, setActiveTab] = useState<string>(tabs[0]?.id || "");
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -44,12 +22,14 @@ export default function TripTabNav() {
       },
       { rootMargin: "-120px 0px -60% 0px", threshold: 0 }
     );
-    TAB_IDS.forEach((id) => {
-      const el = document.getElementById(id);
+    
+    tabs.forEach((tab) => {
+      const el = document.getElementById(tab.id);
       if (el) observer.observe(el);
     });
+    
     return () => observer.disconnect();
-  }, []);
+  }, [tabs]);
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
@@ -60,19 +40,20 @@ export default function TripTabNav() {
     }
   };
 
-  const activeIndex = TAB_IDS.indexOf(activeTab as any);
+  const activeIndex = tabs.findIndex(tab => tab.id === activeTab);
 
   return (
     <div className={styles.tabNav}>
       <div className={styles.inner}>
         <CategoryTabs
-          tabs={TAB_IDS.map(id => TAB_LABELS[id as keyof typeof TAB_LABELS])}
+          tabs={tabs.map(tab => tab.label)}
           active={activeIndex !== -1 ? activeIndex : 0}
           onTabChange={(_: string, idx: number) => {
-            const id = TAB_IDS[idx];
+            const id = tabs[idx].id;
             setActiveTab(id);
             scrollTo(id);
           }}
+          wrap
         />
       </div>
     </div>
