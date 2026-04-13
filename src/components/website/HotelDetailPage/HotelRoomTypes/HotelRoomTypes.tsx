@@ -17,7 +17,7 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
   const [roomType, setRoomType] = useState("All");
   const [roomView, setRoomView] = useState("Sea View");
   const [priceRange, setPriceRange] = useState({ min: 1, max: 12000 });
-  
+
   const [expanded, setExpanded] = useState({
     type: true,
     view: true,
@@ -107,23 +107,38 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
 function RoomCard({ room }: { room: HotelRoom }) {
   return (
     <div className={styles.roomCard}>
+      {/* ── Image ── */}
       <div className={styles.roomGallery}>
         <Image src={room.images[0]} alt={room.name} fill className={styles.roomImg} />
+
+        {/* Gradient overlay */}
+        <div className={styles.roomGradient} />
+
+        {/* Discount badge */}
         {room.discountPercent && (
           <div className={styles.discountBadge}>{room.discountPercent}% off</div>
         )}
+
+        {/* Navigation arrows */}
         <div className={styles.galleryArrows}>
-           <button className={styles.galleryArrow}><Image src="/images/arrows/pagination-arrow.svg" alt="" width={12} height={12} /></button>
-           <button className={styles.galleryArrow}><Image src="/images/arrows/pagination-arrow.svg" alt="" width={12} height={12} style={{ transform: "rotate(180deg)" }} /></button>
+          <button className={styles.galleryArrow}>
+            <Image src="/images/arrows/arrow-right-white.svg" alt="Previous" width={24} height={24} style={{ transform: "rotate(180deg)" }} />
+          </button>
+          <button className={styles.galleryArrow}>
+            <Image src="/images/arrows/arrow-right-white.svg" alt="Next" width={24} height={24} style={{ transform: "rotate(0deg)" }} />
+          </button>
         </div>
       </div>
-      
+
+      {/* ── Info ── */}
       <div className={styles.roomInfo}>
+        {/* Title + desc */}
         <div className={styles.roomHead}>
           <h3 className={styles.roomName}>{room.name}</h3>
           <p className={styles.roomDesc}>{room.description}</p>
         </div>
-        
+
+        {/* Features */}
         <div className={styles.roomDetails}>
           <h4 className={styles.detailsLabel}>Details</h4>
           <div className={styles.featurePills}>
@@ -134,13 +149,12 @@ function RoomCard({ room }: { room: HotelRoom }) {
         </div>
       </div>
 
+      {/* ── Price ── */}
       <div className={styles.roomPrice}>
-        <div className={styles.priceWrap}>
-          <span className={styles.priceLabel}>Price</span>
-          <div className={styles.priceValue}>
-            <span className={styles.amount}>${room.pricePerNight}</span>
-            <span className={styles.per}>/per night</span>
-          </div>
+        <span className={styles.priceLabel}>Price</span>
+        <div className={styles.priceValue}>
+          <span className={styles.amount}>${room.pricePerNight}</span>
+          <span className={styles.per}>/per night</span>
         </div>
       </div>
     </div>

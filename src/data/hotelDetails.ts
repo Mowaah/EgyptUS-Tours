@@ -74,6 +74,34 @@ export const MOCK_HOTEL_DETAIL: Hotel = {
       author: "Anna & Marco",
       date: "January 28, 2025",
       rating: 5
+    },
+    {
+      title: "Luxury & Comfort Combined",
+      body: "Elegant rooms, attentive staff, and a peaceful ambiance made our stay absolutely memorable.",
+      author: "Michael Thompson",
+      date: "January 07, 2025",
+      rating: 5
+    },
+    {
+      title: "A Stay to Remember",
+      body: "From check-in to check-out, everything was seamless. The sunset views were breathtaking.",
+      author: "Isabella Thompson",
+      date: "November 18, 2024",
+      rating: 5
+    },
+    {
+      title: "Ideal for a Romantic Escape",
+      body: "A perfect choice for couples. The atmosphere, views, and service made our trip unforgettable.",
+      author: "Robert Jackson",
+      date: "October 17, 2024",
+      rating: 4.5
+    },
+    {
+      title: "Exceptional Experience",
+      body: "Amazing location, beautiful design, and warm hospitality. Highly recommended for a relaxing stay in Cairo.",
+      author: "William Hernandez",
+      date: "December 23, 2024",
+      rating: 5
     }
   ],
   relatedTripIds: ["trip-1", "trip-2"]

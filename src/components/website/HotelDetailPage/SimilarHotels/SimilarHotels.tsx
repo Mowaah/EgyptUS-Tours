@@ -48,7 +48,7 @@ export default function SimilarHotels({ hotel }: SimilarHotelsProps) {
 
       <div className={styles.grid}>
         {SIMILAR_HOTELS.map((h, i) => (
-          <HotelCard key={i} hotel={h} />
+          <HotelCard key={i} hotel={h} imageHeight={225} />
         ))}
       </div>
     </section>

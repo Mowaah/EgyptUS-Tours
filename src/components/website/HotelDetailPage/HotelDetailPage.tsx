@@ -4,7 +4,6 @@ import Image from "next/image";
 import Button from "@/components/shared/Button/Button";
 import HotelOverview from "./HotelOverview/HotelOverview";
 import HotelRoomTypes from "./HotelRoomTypes/HotelRoomTypes";
-import RelatedTrips from "./RelatedTrips/RelatedTrips";
 import HotelReviews from "./HotelReviews/HotelReviews";
 import SimilarHotels from "./SimilarHotels/SimilarHotels";
 import styles from "./HotelDetailPage.module.scss";
@@ -18,7 +17,6 @@ const HOTEL_TABS = [
   { id: "hotel-facilities", label: "Hotel Facilities" },
   { id: "location", label: "Location" },
   { id: "room-types", label: "Room Types" },
-  { id: "related-trips", label: "Related Trips" },
   { id: "reviews", label: "Reviews" },
   { id: "similar-hotels", label: "Similar Hotels" },
 ];
@@ -74,9 +72,6 @@ export default function HotelDetailPage({ hotel }: HotelDetailPageProps) {
         <HotelRoomTypes hotel={hotel} />
       </div>
 
-      <div className={styles.container}>
-        <RelatedTrips hotel={hotel} />
-      </div>
 
       <div className={styles.container}>
         <HotelReviews hotel={hotel} />

@@ -2,7 +2,6 @@
 
 .section {
   padding: 64px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .heading {
@@ -26,6 +25,93 @@
   }
 }
 
+// ── Review Card ──
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  border: 1px solid #E5E7EB;
+  border-radius: 24px;
+  background: $white;
+  transition: box-shadow $transition-fast;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+}
+
+.cardTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cardTitle {
+  font-size: 18px;
+  font-weight: $font-weight-medium;
+  color: #0E2851;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.cardRating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.ratingNum {
+  font-size: 14px;
+  font-weight: $font-weight-bold;
+  color: $primary;
+}
+
+.cardBody {
+  font-size: 14px;
+  color: #364153;
+  line-height: 1.6;
+  margin: 0;
+  flex: 1;
+}
+
+// ── Author ──
+.cardAuthor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid #F3F4F6;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #E5E7EB;
+  flex-shrink: 0;
+}
+
+.authorInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.authorName {
+  font-size: 14px;
+  font-weight: $font-weight-medium;
+  color: $primary;
+}
+
+.authorDate {
+  font-size: 12px;
+  color: #6A7282;
+}
+
+// ── Load More ──
 .loadMoreWrap {
   display: flex;
   justify-content: center;

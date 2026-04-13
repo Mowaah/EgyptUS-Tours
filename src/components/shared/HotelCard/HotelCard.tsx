@@ -11,16 +11,18 @@ interface HotelCardProps {
   view?: "grid" | "list";
   /** Whether to show the Start Route button (default false) */
   showRouteBtn?: boolean;
+  /** Override image height (default 288px) */
+  imageHeight?: number;
 }
 
-export default function HotelCard({ hotel, view = "grid", showRouteBtn = false }: HotelCardProps) {
+export default function HotelCard({ hotel, view = "grid", showRouteBtn = false, imageHeight }: HotelCardProps) {
   const isList = view === "list";
   const hotelDetailsHref = `/hotels/${hotel.id}`;
 
   return (
     <div className={`${styles.card} ${isList ? styles.listCard : ""}`}>
       {/* ── Image ── */}
-      <Link href={hotelDetailsHref} className={`${styles.imageWrapper} ${isList ? styles.listImageWrapper : ""}`}>
+      <Link href={hotelDetailsHref} className={`${styles.imageWrapper} ${isList ? styles.listImageWrapper : ""}`} style={imageHeight ? { height: imageHeight } : undefined}>
         <Image
           src={hotel.image}
           alt={hotel.name}

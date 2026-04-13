@@ -3,7 +3,6 @@
 
 .section {
   padding: 64px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .header {
@@ -18,8 +17,8 @@
 }
 
 .subtitle {
-  font-size: 15px;
-  color: $text-light;
+  font-size: 16px;
+  color: #4A5565;
   max-width: 600px;
   line-height: 1.6;
 }
@@ -48,102 +47,141 @@
   gap: 24px;
 }
 
+// ── Room Card ──
 .roomCard {
-  display: grid;
-  grid-template-columns: 260px 1fr 200px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 24px;
+  gap: 24px;
   background: $white;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  border-radius: 28px;
-  overflow: hidden;
-  transition: transform $transition-fast, box-shadow $transition-fast;
+  border: 1px solid #DFEAFB;
+  border-radius: 32px;
+  transition: box-shadow $transition-fast;
 
   &:hover {
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 8px 24px rgba(41, 113, 230, 0.08);
   }
 
   @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
 }
 
+// ── Image column ──
 .roomGallery {
   position: relative;
-  height: 100%;
-  min-height: 200px;
+  width: 327px;
+  height: 174px;
+  border-radius: 24px;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 200px;
+  }
 }
 
 .roomImg {
   object-fit: cover;
+  border-radius: 0;
+}
+
+.roomGradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 40%, rgba(0, 0, 0, 0) 100%);
+  z-index: 1;
+  pointer-events: none;
 }
 
 .discountBadge {
   position: absolute;
   top: 16px;
   left: 16px;
-  background: #DCFCE7;
-  color: #166534;
-  font-size: 12px;
-  font-weight: $font-weight-bold;
-  padding: 4px 12px;
-  border-radius: $radius-full;
+  background: #CDF8E5;
+  color: #06C270;
+  font-size: 14px;
+  font-weight: $font-weight-medium;
+  padding: 2px 8px;
+  border-radius: 24px;
   z-index: 2;
 }
 
 .galleryArrows {
   position: absolute;
-  bottom: 16px;
-  left: 16px;
+  inset: 0;
   display: flex;
-  gap: 8px;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 6px 55px;
   z-index: 2;
+  pointer-events: none;
 }
 
 .galleryArrow {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.8);
+  width: 32px;
+  height: 32px;
+  border-radius: 100px;
+  background: rgba(0, 0, 0, 0.5);
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  pointer-events: auto;
   transition: background $transition-fast;
 
   &:hover {
-    background: $white;
+    background: rgba(0, 0, 0, 0.75);
   }
 }
 
+// ── Info column ──
 .roomInfo {
-  padding: 24px 32px;
-  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
 
-  @media (max-width: 768px) {
-    border-right: none;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  }
+.roomHead {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .roomName {
   font-size: 18px;
-  font-weight: $font-weight-bold;
-  color: $dark;
-  margin: 0 0 8px;
+  font-weight: 500;
+  color: #000;
+  margin: 0;
+  line-height: 1.33;
 }
 
 .roomDesc {
   font-size: 14px;
   color: $text-muted;
   line-height: 1.6;
-  margin: 0 0 20px;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.roomDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 200px;
 }
 
 .detailsLabel {
   font-size: 14px;
   font-weight: $font-weight-bold;
   color: $dark;
-  margin: 0 0 12px;
+  margin: 0;
+  letter-spacing: 0.01em;
 }
 
 .featurePills {
@@ -153,29 +191,42 @@
 }
 
 .featurePill {
-  font-size: 12px;
+  font-size: 11px;
   color: $primary;
-  background: #EFF6FF;
-  padding: 4px 12px;
-  border-radius: $radius-full;
+  background: rgba(41, 113, 230, 0.11);
+  padding: 4px 7px;
+  border-radius: 21px;
+  letter-spacing: 0.01em;
+  line-height: 1.36;
 }
 
+// ── Price column ──
 .roomPrice {
-  padding: 24px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  background: #F9FAFB;
-}
+  align-items: flex-start;
+  gap: 4px;
+  padding-left: 24px;
+  border-left: 1px solid #E5E5E5;
+  align-self: stretch;
+  width: 117px;
+  flex-shrink: 0;
 
-.priceWrap {
-  text-align: right;
+  @media (max-width: 768px) {
+    border-left: none;
+    border-top: 1px solid #E5E5E5;
+    padding-left: 0;
+    padding-top: 16px;
+    width: 100%;
+    align-self: auto;
+  }
 }
 
 .priceLabel {
-  font-size: 13px;
-  color: $text-light;
-  display: block;
+  font-size: 12px;
+  color: $text-muted;
+  letter-spacing: 0.01em;
 }
 
 .priceValue {
@@ -184,12 +235,14 @@
 }
 
 .amount {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: $font-weight-bold;
   color: $primary;
+  line-height: 1;
 }
 
 .per {
   font-size: 12px;
   color: $text-light;
+  letter-spacing: 0.01em;
 }
