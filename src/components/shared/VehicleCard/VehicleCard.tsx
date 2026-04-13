@@ -86,7 +86,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
               <span className={styles.priceValue}>{vehicle.price}</span>
             </div>
             {/* Defaulting to a placeholder booking action for now */}
-            <Button variant="primary" href={`/transportation/book/${vehicle.id}`} style={{ padding: "10px 24px", height: "auto", fontSize: "14px" }}>
+            <Button variant="primary" href={`/transportation/book/${vehicle.id}`} className={styles.bookBtn}>
               Book Now
             </Button>
           </div>
