@@ -75,8 +75,8 @@ export default function HotelCard({ hotel, view = "grid", showRouteBtn = false, 
               <small>/night</small>
             </span>
           </div>
-          <Button variant="primary" size="sm" href={hotelDetailsHref}>
-            View Details
+          <Button variant="primary" size="sm" href={`/hotels/${hotel.id}/book`}>
+            Book Now
           </Button>
         </div>
       </div>

@@ -262,7 +262,7 @@ select.formInput {
 }
 
 .previousButton {
-  flex: 1 1 auto;
+  flex: 1;
   padding: 14px;
   background: $white;
   border: 1px solid $primary;
@@ -283,7 +283,7 @@ select.formInput {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  flex: 1 1 auto;
+  flex: 1;
   padding: 14px;
   background: $primary;
   border: none;

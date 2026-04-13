@@ -44,7 +44,7 @@ export default function HotelOverview({ hotel }: HotelOverviewProps) {
             <p className={styles.bookSubtitle}>
               Choose your check-in and check-out dates and select the number of rooms.
             </p>
-            
+
             <div className={styles.divider} />
 
             <div className={styles.priceContainer}>
@@ -66,10 +66,10 @@ export default function HotelOverview({ hotel }: HotelOverviewProps) {
                 icon={<Image src="/images/arrows/arrow-right.svg" alt="" width={20} height={20} />}
                 iconPosition="right"
               >
-                Check Rooms & Dates
+                Check Rooms &amp; Dates
               </Button>
             </div>
-            
+
             <p className={styles.cancelPolicy}>
               Free cancellation up to 24 hours before
             </p>

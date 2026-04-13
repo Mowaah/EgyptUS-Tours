@@ -1,0 +1,115 @@
+@use "@/styles/variables" as *;
+
+.divider {
+  margin: 24px 0;
+  border: none;
+  height: 1px;
+  background: $border-strong;
+}
+
+.sectionTitle {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: $font-weight-medium;
+  color: $dark;
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+}
+
+.roomList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.roomRowWrapper {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.roomInfoBox {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 16px;
+  border-radius: 12px;
+  background: $white;
+  border: 1px solid $border-strong;
+  transition: border-color $transition-fast;
+  cursor: pointer;
+}
+
+.selected {
+  border-color: $primary;
+}
+
+.roomRadioGroup {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.radioCircle {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border-radius: 100%;
+  border: 1.13px solid #C2C2C2;
+  background: $white;
+  flex-shrink: 0;
+  transition: background $transition-fast, border-color $transition-fast;
+
+  &.checked {
+    border-color: $primary;
+    background: $primary url("/images/check.svg") no-repeat center / 11px 11px;
+  }
+}
+
+.radioInputHidden {
+  opacity: 0;
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.roomTexts {
+  display: flex;
+  flex-direction: column;
+}
+
+.roomTitle {
+  font-size: 13px;
+  font-weight: $font-weight-medium;
+  color: #0D1B3E;
+}
+
+.roomSub {
+  font-size: 11px;
+  color: $text-muted;
+}
+
+.priceCol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.priceVal {
+  font-size: 14px;
+  font-weight: $font-weight-bold;
+  color: #0D1B3E;
+}
+
+.roomCounter {
+  height: 55.98px !important;
+}
