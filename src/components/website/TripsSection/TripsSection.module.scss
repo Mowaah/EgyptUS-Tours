@@ -2,11 +2,7 @@
 @use "@/styles/mixins" as *;
 
 .section {
-  @include section-padding;
-
-  @media (min-width: 1024px) {
-    padding-top: 12px;
-  }
+  min-height: 100vh;
 }
 
 .container {

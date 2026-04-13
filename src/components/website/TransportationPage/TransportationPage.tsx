@@ -36,9 +36,9 @@ const MOCK_VEHICLES: Vehicle[] = [
 
 const CATEGORIES = ["All Vehicles", "Sedan", "SUV & Luxury", "Van & Hiace", "Bus"];
 const SORT_OPTIONS = [
-  { id: "recommended", label: "Recommended" },
-  { id: "price_asc", label: "Price: Low to High" },
-  { id: "price_desc", label: "Price: High to Low" },
+  { value: "recommended", label: "Recommended" },
+  { value: "price_asc", label: "Price: Low to High" },
+  { value: "price_desc", label: "Price: High to Low" },
 ];
 
 const TRANSPORT_FAQS = [
@@ -118,7 +118,7 @@ export default function TransportationPage() {
       <div className={styles.container}>
         <div className={styles.filterBar}>
           <h2 className={styles.resultsCount}>
-            <span className={styles.countNumber}>{filteredVehicles.length}</span> Vehicles Founded
+            {filteredVehicles.length} Vehicles Founded
           </h2>
           <div className={styles.controlsWrap}>
             <SortButton
@@ -128,7 +128,7 @@ export default function TransportationPage() {
             />
             <SearchInput
               value={searchQuery}
-              onChange={setSearchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search vehicles, transport option..."
             />
           </div>
