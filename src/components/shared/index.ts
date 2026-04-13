@@ -35,3 +35,5 @@ export type { RoomViewOption } from "./RoomViewDropdown/RoomViewDropdown";
 export { default as SearchInput } from "./SearchInput/SearchInput";
 export * from "./DetailLayout";
 export * from "./SidebarFilter";
+export { default as VehicleCard } from "./VehicleCard/VehicleCard";
+export type { Vehicle } from "./VehicleCard/VehicleCard";

@@ -5,7 +5,7 @@ import { SectionHeader } from "@/components/shared";
 import Image from "next/image";
 import styles from "./FaqSection.module.scss";
 
-interface FaqItem {
+export interface FaqItem {
   question: string;
   answer: string;
 }
@@ -38,7 +38,11 @@ const FAQ_ITEMS: FaqItem[] = [
   },
 ];
 
-export default function FaqSection() {
+interface FaqSectionProps {
+  items?: FaqItem[];
+}
+
+export default function FaqSection({ items = FAQ_ITEMS }: FaqSectionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
@@ -55,7 +59,7 @@ export default function FaqSection() {
         />
 
         <div className={styles.accordion}>
-          {FAQ_ITEMS.map((item, i) => {
+          {items.map((item, i) => {
             const isOpen = openIndex === i;
             return (
               <div
