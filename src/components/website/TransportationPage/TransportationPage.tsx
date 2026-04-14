@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import {
   PageHeader,
@@ -72,18 +73,23 @@ const FEATURES = [
     desc: "Professional chauffeurs with local knowledge"
   },
   {
-    icon: "/images/clock2.svg",
+    icon: "/images/clock-blue.svg",
     title: "24/7 Service",
     desc: "Available round the clock for your convenience"
   },
   {
-    icon: "/images/star-yellow.svg",
+    icon: "/images/star-yellow2.svg",
     title: "Top Rated",
     desc: "4.9+ average rating from satisfied customers"
   }
 ];
 
 export default function TransportationPage() {
+  const searchParams = useSearchParams();
+  const searchVehicle = searchParams.get("vehicle");
+  const searchDate = searchParams.get("date");
+  const isSearchResults = !!(searchVehicle || searchDate);
+
   const [activeTab, setActiveTab] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("recommended");
@@ -94,15 +100,25 @@ export default function TransportationPage() {
     if (searchQuery && !v.title.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
     }
+    if (isSearchResults) {
+        // Mock filtering logic based on URL search query
+        return true; 
+    }
     // Tab match
     const tabItem = CATEGORIES[activeTab];
     if (tabItem !== "All Vehicles") {
-      // strict match or partial mapping logic. For now, empty or mock if not Sedan.
-      // Since all mocks are "Premium Sedan", if tab is "Bus", it'll be empty.
       if (tabItem === "Bus" || tabItem === "Van & Hiace") return false;
     }
     return true;
   });
+
+  const getVehicleName = (id: string | null) => {
+    if (id === "sedan") return "Sedan";
+    if (id === "hiace") return "Hiace";
+    if (id === "bus") return "Bus";
+    if (id === "luxury") return "Luxury Cars";
+    return "Sedan";
+  };
 
   return (
     <div className={styles.page}>
@@ -111,21 +127,52 @@ export default function TransportationPage() {
           { label: "Home", href: "/" },
           { label: "Transportation", isCurrent: true }
         ]}
-        title="Travel in Comfort"
+        title={isSearchResults ? "Search Results" : "Travel in Comfort"}
         subtitle="Choose the perfect vehicle for every journey — from city rides to luxury transfers."
         decorationSrc="/images/dotted-line3.svg"
       />
       <div className={styles.container}>
+        
+        {isSearchResults && (
+          <div className={styles.searchSummaryBox}>
+            <div className={styles.summaryItem}>
+              <Image src="/images/calendar-orange.svg" alt="" width={20} height={20} />
+              <div className={styles.summaryText}>
+                <span className={styles.summaryLabel}>Date</span>
+                <span className={styles.summaryValue}>{searchDate || "Fri, 29 Aug 2026"}</span>
+              </div>
+            </div>
+            <div className={styles.summaryItem}>
+              <Image src="/images/car-orange.svg" alt="" width={20} height={20} />
+              <div className={styles.summaryText}>
+                <span className={styles.summaryLabel}>Vehicle</span>
+                <span className={styles.summaryValue}>{getVehicleName(searchVehicle)}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className={styles.filterBar}>
-          <h2 className={styles.resultsCount}>
-            {filteredVehicles.length} Vehicles Founded
-          </h2>
+          {isSearchResults ? (
+            <div className={styles.toolbarTitle}>
+              <h2 className={styles.availableVehicles}>Available Vehicles</h2>
+              <span className={styles.vehiclesCount}>{filteredVehicles.length} vehicles found for your route</span>
+            </div>
+          ) : (
+             <h2 className={styles.resultsCount}>
+              {filteredVehicles.length} Vehicles Founded
+            </h2>
+          )}
+          
           <div className={styles.controlsWrap}>
-            <SortButton
-              options={SORT_OPTIONS}
-              defaultValue={sortOption}
-              onChange={setSortOption}
-            />
+            <div className={styles.sortWrap}>
+              <span className={styles.sortLabel}>Sort by:</span>
+              <SortButton
+                options={SORT_OPTIONS}
+                defaultValue={sortOption}
+                onChange={setSortOption}
+              />
+            </div>
             <SearchInput
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -134,21 +181,23 @@ export default function TransportationPage() {
           </div>
         </div>
 
-        <div className={styles.tabsRow}>
-          <CategoryTabs
-            tabs={CATEGORIES}
-            active={activeTab}
-            onTabChange={(_, index) => setActiveTab(index)}
-            wrap
-          />
-        </div>
+        {!isSearchResults && (
+          <div className={styles.tabsRow}>
+            <CategoryTabs
+              tabs={CATEGORIES}
+              active={activeTab}
+              onTabChange={(_, index) => setActiveTab(index)}
+              wrap
+            />
+          </div>
+        )}
 
         <div style={{ marginTop: 32 }}>
           {filteredVehicles.length > 0 ? (
             <>
-              <div className={styles.vehicleGrid}>
+              <div className={isSearchResults ? styles.vehicleList : styles.vehicleGrid}>
                 {filteredVehicles.map(vehicle => (
-                  <VehicleCard key={vehicle.id} vehicle={vehicle} />
+                  <VehicleCard key={vehicle.id} vehicle={vehicle} view={isSearchResults ? "list" : "grid"} />
                 ))}
               </div>
 

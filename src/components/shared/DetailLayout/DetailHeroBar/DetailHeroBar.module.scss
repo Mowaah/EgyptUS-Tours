@@ -30,7 +30,7 @@
 
 .rating {
   font-weight: $font-weight-bold;
-  color: $dark;
+  color: $primary;
   font-size: 18px;
 }
 
@@ -79,6 +79,7 @@
   &:hover {
     background: #FFEDED;
     border-color: #FFB3B3;
+
     svg path {
       stroke: $danger;
       fill: $danger;
@@ -94,8 +95,7 @@
 }
 
 .subtitle {
-  color: $text-light;
-  font-size: 16px;
+  color: rgba(74, 85, 101, 0.9);
+  font-size: 14px;
   margin: 0;
-  opacity: 0.8;
 }

@@ -1,0 +1,72 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.page {
+  background-color: $background;
+  padding-bottom: 80px;
+}
+
+.pageHeader {
+  padding-bottom: 20px !important;
+}
+
+.heroSection {
+  position: relative;
+  margin-bottom: 120px;
+
+  @media (min-width: 1024px) {
+    margin-bottom: 180px;
+  }
+}
+
+.galleryWrap {
+  @include container;
+  padding: 0;
+  position: relative;
+}
+
+.heroOverlay {
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  width: calc(100% - 48px);
+  z-index: 10;
+
+  @media (min-width: 1024px) {
+    left: calc(40px + (100% - 80px - 148px) / 2);
+    width: calc(100% - 80px - 148px - 32px);
+    max-width: 999px;
+    transform: translate(-50%, 50%);
+  }
+}
+
+.container {
+  @include container;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 40px;
+  align-items: flex-start;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mainContent {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.sidebar {
+  flex-shrink: 0;
+
+  @media (max-width: 992px) {
+    width: 100%;
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { SectionHeader, Button, CustomDatePicker } from "@/components/shared";
 import Image from "next/image";
 import styles from "./TransportationSection.module.scss";
@@ -13,8 +14,14 @@ const VEHICLES = [
 ];
 
 export default function TransportationSection() {
+  const router = useRouter();
   const [selected, setSelected] = useState("sedan");
   const [pickupDate, setPickupDate] = useState("08/29/2026");
+
+  const handleSearch = () => {
+    // Basic date formatting/passthrough for demo purposes
+    router.push(`/transportation?vehicle=${selected}&date=${encodeURIComponent(pickupDate)}`);
+  };
 
   return (
     <section className={styles.section}>
@@ -75,6 +82,7 @@ export default function TransportationSection() {
               <Button
                 variant="secondary"
                 fullWidth
+                onClick={handleSearch}
                 icon={
                   <Image
                     src="/images/arrows/arrow-right.svg"

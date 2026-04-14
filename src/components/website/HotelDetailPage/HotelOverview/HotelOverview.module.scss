@@ -2,8 +2,7 @@
 @use "@/styles/mixins" as *;
 
 .section {
-  @include section-padding;
-  padding-bottom: 0;
+  margin-top: 24px;
 }
 
 .layout {

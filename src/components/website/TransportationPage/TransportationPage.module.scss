@@ -20,6 +20,82 @@
   gap: 24px;
 }
 
+/* NEW SEARCH SUMMARY */
+.searchSummaryBox {
+  display: flex;
+  align-items: center;
+  background: rgba(234, 241, 253, 0.2);
+  border: 1px solid #EAF1FD;
+  border-radius: 32px;
+  min-height: 88px;
+  padding: 0;
+}
+
+.summaryItem {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 12px;
+  padding: 0 24px;
+  height: 40px; // Centers lines and divider
+
+  &:first-child {
+    border-right: 1px solid #EAF1FD;
+  }
+
+  @media (max-width: 600px) {
+    padding: 16px 24px;
+    height: auto;
+    border-right: none !important;
+    border-bottom: 1px solid #EAF1FD;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.summaryText {
+  display: flex;
+  flex-direction: column;
+}
+
+.summaryLabel {
+  font-size: 12px;
+  font-weight: 400;
+  color: #9CA3AF;
+  line-height: 16px;
+}
+
+.summaryValue {
+  font-size: 16px;
+  font-weight: 500;
+  color: $dark;
+  line-height: 24px;
+}
+
+/* END SEARCH SUMMARY */
+
+.toolbarTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.availableVehicles {
+  font-size: 24px;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0;
+}
+
+.vehiclesCount {
+  font-size: 14px;
+  color: $text-light;
+}
+
+/* END SEARCH SUMMARY */
+
 .resultsCount {
   font-size: 18px;
   font-weight: $font-weight-medium;
@@ -68,6 +144,13 @@
   @media (max-width: 600px) {
     grid-template-columns: 1fr;
   }
+}
+
+.vehicleList {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin-bottom: 48px;
 }
 
 /* PAGINATION */
@@ -146,18 +229,13 @@
 }
 
 .featureIconWrap {
-  width: 80px;
-  height: 80px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 24px;
-
-  img {
-    width: 32px;
-    height: 32px;
-  }
 }
 
 .featureTitle {
@@ -169,7 +247,8 @@
 
 .featureDesc {
   font-size: 14px;
-  color: $text-muted;
+  color: #4A5565;
+  width: 270px;
   margin: 0;
   line-height: 1.5;
 }

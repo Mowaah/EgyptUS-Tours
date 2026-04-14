@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import TransportationPage from "@/components/website/TransportationPage/TransportationPage";
 
 export const metadata = {
@@ -6,5 +7,9 @@ export const metadata = {
 };
 
 export default function Page() {
-  return <TransportationPage />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <TransportationPage />
+    </Suspense>
+  );
 }

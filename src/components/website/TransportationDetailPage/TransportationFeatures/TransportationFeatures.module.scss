@@ -1,0 +1,62 @@
+@use "@/styles/variables" as *;
+
+.section {
+  background: white;
+  border-radius: 24px;
+}
+
+.title {
+  font-size: 30px;
+  font-weight: 700;
+  color: #0E2851;
+  margin-bottom: 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  max-width: 628px;
+}
+
+.featureItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 12px;
+  gap: 16px;
+  background: #F9FAFB;
+  border: 1px solid #EAF1FD;
+  border-radius: 24px;
+}
+
+.iconBox {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background: #DFEAFB;
+  border: 2px solid rgba(21, 93, 252, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.featureTitle {
+  font-size: 16px;
+  font-weight: 500;
+  color: #0E2851;
+  margin: 0;
+}
+
+.featureDesc {
+  font-size: 14px;
+  color: #4A5565;
+  margin: 0;
+}

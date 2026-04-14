@@ -160,7 +160,6 @@
   border-radius: $radius-full;
   font-size: 11px;
   color: #0CA572;
-  border: 1.16px solid #10B981;
 }
 
 .footerWrapper {
@@ -197,4 +196,133 @@
   font-weight: $font-weight-bold;
   color: $primary;
   letter-spacing: 0.01em;
+}
+
+/* LIST VIEW EXTENSIONS */
+.listCard {
+  flex-direction: row;
+  padding: 32px;
+  margin-top: 0;
+  min-height: 349px;
+  align-items: flex-start;
+  gap: 16px;
+
+  .title {
+    font-size: 24px;
+    line-height: 33px;
+  }
+
+  .badge {
+    font-size: 13px;
+    padding: 2px 13px;
+  }
+
+  .description {
+    max-width: 380px; // Prevents text from running into the car image
+  }
+
+  .priceValue {
+    font-size: 36px;
+    line-height: 49px;
+  }
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+    padding: 80px 16px 24px;
+    margin-top: 80px;
+    align-items: stretch;
+
+    .title {
+      font-size: 18px;
+    }
+
+    .priceValue {
+      font-size: 24px;
+    }
+
+    .description {
+      max-width: 100%;
+    }
+  }
+}
+
+.listImageArea {
+  position: absolute;
+  top: 28px;
+  right: 140px; // Exact positioning based on Figma
+  left: auto;
+  transform: none;
+  width: 250px;
+  height: 187px;
+  z-index: 3;
+
+  @media (max-width: 900px) {
+    top: -80px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: 304px;
+    height: 205px;
+  }
+}
+
+.listContent {
+  flex: 1;
+  max-width: 100%;
+  padding: 0;
+}
+
+.listRating {
+  position: absolute;
+  top: 32px;
+  right: 32px; // Pinned to the top right of the whole card
+  background: #F9FAFB;
+  border-radius: 33px;
+  padding: 8px 12px;
+
+  span {
+    font-size: 16px;
+  }
+
+  .reviews {
+    font-size: 14px;
+  }
+
+  @media (max-width: 900px) {
+    position: static;
+    padding: 4px 8px;
+
+    span {
+      font-size: 12px;
+    }
+
+    .reviews {
+      font-size: 10px;
+    }
+  }
+}
+
+.listSpecs {
+  justify-content: flex-start;
+  gap: 80px;
+  margin-top: 8px;
+
+  @media (max-width: 600px) {
+    gap: 16px;
+    justify-content: space-between;
+  }
+}
+
+.listFooterWrapper {
+  border-top: 1px solid #E5E7EB;
+  padding-top: 12px;
+  margin-top: auto;
+  width: 100%;
+
+  .footer {
+    width: 100%;
+    max-width: 100%; // Stretches across the entire bottom
+    height: 86px;
+    padding: 8px 24px;
+  }
 }

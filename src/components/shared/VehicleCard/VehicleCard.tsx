@@ -19,12 +19,15 @@ export interface Vehicle {
 
 interface VehicleCardProps {
   vehicle: Vehicle;
+  view?: "grid" | "list";
 }
+export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps) {
+  const isList = view === "list";
+  const vehicleDetailsHref = `/transportation/${vehicle.id}`;
 
-export default function VehicleCard({ vehicle }: VehicleCardProps) {
   return (
-    <div className={styles.card}>
-      <div className={styles.imageArea}>
+    <div className={`${styles.card} ${isList ? styles.listCard : ""}`}>
+      <Link href={vehicleDetailsHref} className={`${styles.imageArea} ${isList ? styles.listImageArea : ""}`}>
         <Image
           src={vehicle.image}
           alt={vehicle.title}
@@ -32,10 +35,10 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           className={styles.image}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
-      </div>
+      </Link>
 
-      <div className={styles.content}>
-        <div className={styles.header}>
+      <div className={`${styles.content} ${isList ? styles.listContent : ""}`}>
+        <Link href={vehicleDetailsHref} className={`${styles.header} ${isList ? styles.listHeader : ""}`}>
           <div className={styles.titleWrapper}>
             <div className={styles.titleRow}>
               <h3 className={styles.title}>{vehicle.title}</h3>
@@ -46,16 +49,16 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
             </div>
             <p className={styles.description}>{vehicle.description}</p>
           </div>
-          <div className={styles.rating}>
-            <Image src="/images/star-yellow.svg" alt="" width={10} height={10} />
+          <div className={`${styles.rating} ${isList ? styles.listRating : ""}`}>
+            <Image src="/images/star-yellow.svg" alt="" width={12} height={12} />
             <span>{vehicle.rating}</span>
             <span className={styles.reviews}>({vehicle.reviews})</span>
           </div>
-        </div>
+        </Link>
 
-        <div className={styles.divider} />
+        {!isList && <div className={styles.divider} />}
 
-        <div className={styles.specs}>
+        <div className={`${styles.specs} ${isList ? styles.listSpecs : ""}`}>
           <div className={styles.specItem}>
             <span className={styles.specLabel}>Passengers</span>
             <span className={styles.specValue}>{vehicle.passengers} seats</span>
@@ -79,10 +82,10 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           ))}
         </div>
 
-        <div className={styles.footerWrapper}>
+        <div className={`${styles.footerWrapper} ${isList ? styles.listFooterWrapper : ""}`}>
           <div className={styles.footer}>
             <div className={styles.priceCol}>
-              <span className={styles.priceLabel}>Starting from</span>
+              <span className={styles.priceLabel}>Total Price</span>
               <span className={styles.priceValue}>{vehicle.price}</span>
             </div>
             {/* Defaulting to a placeholder booking action for now */}
