@@ -137,8 +137,8 @@
   max-height: min(280px, 42vh);
   overflow-x: hidden;
   overflow-y: auto;
-  border: 1px solid $border-strong;
-  box-shadow: $shadow-lg;
+  border: 1px solid #F4F4F4;
+  box-shadow: 0px 8px 16px rgba(0, 0, 77, 0.08);
 }
 
 .prefOptionRow {

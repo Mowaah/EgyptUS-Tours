@@ -1,0 +1,128 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Vehicle, TransportationBookingData, INITIAL_TRANSPORT_BOOKING } from "@/types";
+import { PageHeader, SuccessModal, StepIndicator } from "@/components/shared";
+
+import planPageStyles from "../PlanYourTripPage/PlanYourTripPage.module.scss";
+import styles from "./BookTransportationPage.module.scss";
+
+import StepTripDetails from "./steps/TripDetails/StepTripDetails";
+import StepPersonalInfo from "./steps/PersonalInfo/StepPersonalInfo";
+import StepPayment from "./steps/Payment/StepPayment";
+import BookingSummary from "./BookingSummary/BookingSummary";
+
+const STEPS = [
+  { number: 1, label: "Trip Details" },
+  { number: 2, label: "Personal Info" },
+  { number: 3, label: "Payment" },
+];
+
+interface BookTransportationPageProps {
+  vehicle: Vehicle;
+}
+
+export default function BookTransportationPage({ vehicle }: BookTransportationPageProps) {
+  const router = useRouter();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [formData, setFormData] = useState<TransportationBookingData>(INITIAL_TRANSPORT_BOOKING);
+
+  const handleChange = (patch: Partial<TransportationBookingData>) => {
+    setFormData((prev) => ({ ...prev, ...patch }));
+  };
+
+  const handleContinue = () => {
+    if (currentStep < 3) setCurrentStep((s) => s + 1);
+    else setShowSuccess(true);
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 1) setCurrentStep((s) => s - 1);
+  };
+
+  const sharedProps = {
+    vehicle,
+    formData,
+    onChange: handleChange,
+    onPrevious: handlePrevious,
+    onContinue: handleContinue,
+  };
+
+  return (
+    <div className={planPageStyles.page}>
+      <PageHeader
+        className={styles.header}
+        breadcrumbs={[
+          { label: "Home", href: "/" },
+          { label: "Transportation", href: "/transportation" },
+          { label: "Details", href: `/transportation/${vehicle.id}` },
+          { label: "Booking", isCurrent: true },
+        ]}
+        title="Your Car Awaits"
+        subtitle="Enter your details to complete your car booking easily and securely"
+        backButton={{ text: "Back To Transportation", href: "/transportation" }}
+        decorationSrc="/images/dotted-line3.svg"
+      />
+
+      <div className={styles.stepperWrap}>
+        <StepIndicator steps={STEPS} currentStep={currentStep} />
+      </div>
+
+      <main className={planPageStyles.mainContent}>
+        <div className={styles.container}>
+          <div className={styles.layout}>
+            {/* Left Column: Form Steps */}
+            <div className={styles.formArea}>
+              {currentStep === 1 && (
+                <StepTripDetails {...sharedProps} />
+              )}
+              {currentStep === 2 && (
+                <StepPersonalInfo {...sharedProps} />
+              )}
+              {currentStep === 3 && (
+                <StepPayment {...sharedProps} />
+              )}
+            </div>
+
+            {/* Right Column: Summary Sidebar */}
+            <div className={styles.sidebarArea}>
+              <BookingSummary vehicle={vehicle} formData={formData} />
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {showSuccess && (
+        <SuccessModal
+          title="Booking Confirmed!"
+          message="Your vehicle has been successfully booked. Confirmation details have been sent to your email."
+          primaryButtonText="View Booking"
+          buttonText="Back to Home"
+          onPrimaryClick={() => router.push("/")}
+          onClose={() => router.push("/")}
+        >
+          <div className={styles.successGrid}>
+            <div className={styles.successItem}>
+               <span className={styles.successLabel}>Booking Reference</span>
+               <strong className={styles.successVal}>#BK{Math.floor(Math.random() * 90000000 + 10000000)}</strong>
+            </div>
+            <div className={styles.successItem}>
+               <span className={styles.successLabel}>Vehicle</span>
+               <strong className={styles.successVal}>{vehicle.type} - {vehicle.name}</strong>
+            </div>
+            <div className={styles.successItem}>
+               <span className={styles.successLabel}>Pickup Date</span>
+               <strong className={styles.successVal}>{formData.pickupDate || "2026-01-22"}</strong>
+            </div>
+            <div className={styles.successItem}>
+               <span className={styles.successLabel}>Total Paid</span>
+               <strong className={styles.successVal}>$110.42</strong>
+            </div>
+          </div>
+        </SuccessModal>
+      )}
+    </div>
+  );
+}

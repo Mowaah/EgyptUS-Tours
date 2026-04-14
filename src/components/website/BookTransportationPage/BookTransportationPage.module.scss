@@ -1,0 +1,76 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.header {
+  padding-bottom: 24px !important;
+}
+
+.stepperWrap {
+  background: $white;
+  padding: 0 0 32px;
+}
+
+.container {
+  @include container;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 851px) 401px;
+  gap: 40px;
+  justify-content: center;
+  align-items: flex-start;
+
+  @media (max-width: 1280px) {
+    grid-template-columns: 1fr 401px;
+    padding: 0 40px;
+  }
+
+  @media (max-width: 1100px) {
+    grid-template-columns: 1fr;
+    padding: 0 20px;
+  }
+}
+
+.formArea {
+  min-width: 0;
+}
+
+.sidebarArea {
+  position: sticky;
+  top: 100px;
+
+  @media (max-width: 1100px) {
+    order: -1;
+    position: static;
+  }
+}
+
+// Success Modal Styles
+.successGrid {
+  background: #F8FAFD;
+  border-radius: 24px;
+  padding: 32px;
+  margin: 32px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  text-align: left;
+}
+
+.successItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.successLabel {
+  font-size: 13px;
+  color: #6B7280;
+}
+
+.successVal {
+  font-size: 15px;
+  font-weight: 700;
+  color: $dark;
+}

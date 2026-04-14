@@ -43,7 +43,7 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
             <div className={styles.titleRow}>
               <h3 className={styles.title}>{vehicle.title}</h3>
               <div className={styles.badge}>
-                <Image src="/images/profile2.svg" alt="" width={12} height={12} />
+                <Image src="/images/profile2-orange.svg" alt="" width={12} height={12} />
                 <span>1-{vehicle.passengers}</span>
               </div>
             </div>
@@ -56,7 +56,6 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
           </div>
         </Link>
 
-        {!isList && <div className={styles.divider} />}
 
         <div className={`${styles.specs} ${isList ? styles.listSpecs : ""}`}>
           <div className={styles.specItem}>

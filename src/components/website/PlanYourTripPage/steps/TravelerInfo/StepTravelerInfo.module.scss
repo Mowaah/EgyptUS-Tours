@@ -6,30 +6,6 @@
   align-items: stretch;
 }
 
-.phonePrefix {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 12px 14px;
-  border: 1px solid $border-strong;
-  border-radius: $radius-xl;
-  font-size: $font-size-sm;
-  color: $dark;
-  white-space: nowrap;
-  flex-shrink: 0;
-  background: $white;
-  cursor: default;
-
-  span {
-    font-weight: $font-weight-medium;
-  }
-
-  svg {
-    color: $text-light;
-    flex-shrink: 0;
-  }
-}
-
 .inputPhone {
   flex: 1;
   min-width: 0;

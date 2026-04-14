@@ -9,7 +9,7 @@
   flex-direction: column;
   padding: 80px 16px 24px;
   position: relative;
-  margin-top: 80px; // Space for the cutout image
+  margin-top: 100px;
   isolation: isolate;
 
   &:hover {
@@ -20,11 +20,11 @@
 
 .imageArea {
   position: absolute;
-  top: -80px;
+  top: -150px;
   left: 50%;
   transform: translateX(-50%);
-  width: 304px;
-  height: 205px;
+  width: 350px;
+  height: 300px;
   z-index: 1;
 }
 
@@ -80,10 +80,6 @@
   font-size: 12px;
   font-weight: $font-weight-bold;
   color: $secondary;
-
-  img {
-    filter: invert(53%) sepia(85%) saturate(2250%) hue-rotate(1deg) brightness(101%) contrast(106%); // FF6600
-  }
 }
 
 .rating {
@@ -110,13 +106,7 @@
   margin: 0;
   line-height: 15px;
   letter-spacing: 0.01em;
-}
-
-.divider {
-  width: 100%;
-  height: 1px;
-  background: rgba(0, 0, 0, 0.1);
-  margin: 0;
+  max-width: 400px;
 }
 
 .specs {
@@ -149,6 +139,8 @@
   flex-wrap: wrap;
   gap: 8px;
   width: 100%;
+  border-top: 1px solid #E5E7EB;
+  padding-top: 16px;
 }
 
 .featureTag {

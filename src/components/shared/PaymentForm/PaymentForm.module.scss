@@ -1,0 +1,131 @@
+@use "@/styles/variables" as *;
+
+// ─── Two-column wrapper (card + sidebar) ─────────────────────────────────────
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 32px;
+  align-items: flex-start;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ─── Payment card ─────────────────────────────────────────────────────────────
+.card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px;
+  background: #ffffff;
+  border: 1px solid #eaf1fd;
+  border-radius: 32px;
+}
+
+.cardHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cardTitle {
+  font-family: "Trip Sans";
+  font-weight: 800;
+  font-size: 24px;
+  color: #0e2851;
+  margin: 0;
+}
+
+.cardSubtitle {
+  font-family: "Trip Sans";
+  font-size: 14px;
+  color: $text-light;
+  margin: 0;
+}
+
+// ─── Fields ───────────────────────────────────────────────────────────────────
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.twoFields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ─── Secure badge ─────────────────────────────────────────────────────────────
+.secureBadge {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #f8fafd;
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  color: $text-light;
+
+  strong {
+    display: block;
+    font-family: "Trip Sans";
+    font-size: 14px;
+    color: #0e2851;
+    margin-bottom: 2px;
+  }
+}
+
+// ─── Footer ───────────────────────────────────────────────────────────────────
+.footer {
+  display: flex;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.prevBtn {
+  flex: 1;
+  height: 52px;
+  border: 1px solid #bdd3f7;
+  border-radius: 100px;
+  background: transparent;
+  color: #2971e6;
+  font-family: "Trip Sans";
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #f8fafd;
+  }
+}
+
+.confirmBtn {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 52px;
+  border: none;
+  border-radius: 100px;
+  background: #2971e6;
+  color: #ffffff;
+  font-family: "Trip Sans";
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: color-mix(in srgb, #2971e6 90%, black);
+  }
+}

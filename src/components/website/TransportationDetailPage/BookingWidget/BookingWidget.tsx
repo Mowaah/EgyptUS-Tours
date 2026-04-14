@@ -1,9 +1,21 @@
+"use client";
+
 import React from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/shared';
 import styles from './BookingWidget.module.scss';
 
-export default function BookingWidget() {
+interface BookingWidgetProps {
+  vehicleId: string;
+}
+
+export default function BookingWidget({ vehicleId }: BookingWidgetProps) {
+  const router = useRouter();
+
+  const handleBook = () => {
+    router.push(`/transportation/${vehicleId}/book`);
+  };
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
@@ -45,6 +57,7 @@ export default function BookingWidget() {
           className={styles.bookBtn}
           icon={<Image src="/images/money-send.svg" alt="" width={20} height={20} />}
           iconPosition="right"
+          onClick={handleBook}
         >
           Book Now
         </Button>

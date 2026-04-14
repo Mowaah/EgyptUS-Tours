@@ -3,23 +3,25 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   width: 100%;
 }
 
 .fieldLabel {
+  font-family: 'Trip Sans', sans-serif;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
-  color: $dark;
+  color: #0E2851;
 }
 
 .input {
   width: 100%;
   padding: 12px 16px;
-  border: 1px solid $border-strong;
+  min-height: 48px;
+  border: 1px solid #E5E7EB;
   border-radius: $radius-xl;
   font-size: $font-size-sm;
-  color: $text;
+  color: $dark;
   background: $white;
   outline: none;
   transition: border-color $transition-fast;

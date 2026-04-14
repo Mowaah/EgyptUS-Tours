@@ -2,9 +2,9 @@ import React from "react";
 import {
   FormField,
   CustomDatePicker,
-  RoomViewDropdown,
+  SelectDropdown,
 } from "@/components/shared";
-import type { RoomViewOption } from "@/components/shared";
+import type { SelectOption } from "@/components/shared";
 import planPage from "../../../PlanYourTripPage/PlanYourTripPage.module.scss";
 import travelerStyles from "../../../PlanYourTripPage/steps/TravelerInfo/StepTravelerInfo.module.scss";
 import formStyles from "@/components/shared/FormField/FormField.module.scss";
@@ -13,8 +13,8 @@ import { BookingData } from "../../BookHotelPage";
 import { IconMinus, IconPlus } from "../../../PlanYourTripPage/PlanYourTripIcons";
 import { Hotel } from "@/types";
 
-const ROOM_VIEW_OPTIONS: RoomViewOption[] = [
-  { label: "Garden View (Included)", value: "garden" },
+const ROOM_VIEW_OPTIONS: SelectOption[] = [
+  { label: "Garden View (Included)", value: "garden", price: "Free", isFree: true },
   { label: "Nile View", value: "nile", price: "+$ 456" },
   { label: "Sea View", value: "sea", price: "+$ 456" },
 ];
@@ -157,7 +157,7 @@ export default function StepRoomDates({ formData, onChange, onContinue }: StepRo
               {Array.from({ length: formData.rooms.double }).map((_, i) => (
                 <div key={i} className={planPage.formGroup}>
                   <label className={formStyles.fieldLabel}>Room {i + 1}</label>
-                  <RoomViewDropdown id={`double-room-${i}`} options={ROOM_VIEW_OPTIONS} value="garden" onChange={() => {}} />
+                  <SelectDropdown id={`double-room-${i}`} options={ROOM_VIEW_OPTIONS} value="garden" onChange={() => {}} />
                 </div>
               ))}
             </div>
@@ -172,7 +172,7 @@ export default function StepRoomDates({ formData, onChange, onContinue }: StepRo
               {Array.from({ length: formData.rooms.triple }).map((_, i) => (
                 <div key={i} className={planPage.formGroup}>
                   <label className={formStyles.fieldLabel}>Room {i + 1}</label>
-                  <RoomViewDropdown id={`triple-room-${i}`} options={ROOM_VIEW_OPTIONS} value="garden" onChange={() => {}} />
+                  <SelectDropdown id={`triple-room-${i}`} options={ROOM_VIEW_OPTIONS} value="garden" onChange={() => {}} />
                 </div>
               ))}
             </div>

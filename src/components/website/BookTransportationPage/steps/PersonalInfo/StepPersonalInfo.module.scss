@@ -1,0 +1,74 @@
+@use "@/styles/variables" as *;
+
+.stepCard {
+  background: white;
+  border: 1px solid #EAF1FD;
+  border-radius: 32px;
+  padding: 40px;
+}
+
+.header {
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: $dark;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+.formSection {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.twoColumn {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  margin-top: 16px;
+}
+
+.checkboxLabel {
+  font-size: 14px;
+  color: #4A5565;
+  line-height: 1.5;
+}
+
+.link {
+  color: $primary;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer {
+  display: flex;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid #EAF1FD;
+}
+
+.prevBtn, .contBtn {
+  flex: 1;
+  height: 56px !important;
+  border-radius: $radius-full !important;
+}

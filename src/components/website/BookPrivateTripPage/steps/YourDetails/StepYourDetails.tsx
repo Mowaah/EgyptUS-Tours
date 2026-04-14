@@ -4,9 +4,9 @@ import {
   FormField,
   PhonePrefixSelect,
   CustomDatePicker,
-  RoomViewDropdown,
+  SelectDropdown,
 } from "@/components/shared";
-import type { RoomViewOption } from "@/components/shared";
+import type { SelectOption } from "@/components/shared";
 
 import planPage from "../../../PlanYourTripPage/PlanYourTripPage.module.scss";
 import travelerStyles from "../../../PlanYourTripPage/steps/TravelerInfo/StepTravelerInfo.module.scss";
@@ -15,8 +15,8 @@ import stepStyles from "./StepYourDetails.module.scss";
 import { BookingData } from "../../BookPrivateTripPage";
 import { IconMinus, IconPlus } from "../../../PlanYourTripPage/PlanYourTripIcons";
 
-const ROOM_VIEW_OPTIONS: RoomViewOption[] = [
-  { label: "Garden View", value: "garden" },
+const ROOM_VIEW_OPTIONS: SelectOption[] = [
+  { label: "Garden View", value: "garden", price: "Free", isFree: true },
   { label: "Nile View", value: "nile", price: "+$ 456" },
   { label: "Sea View", value: "sea", price: "+$ 456" },
 ];
@@ -337,7 +337,7 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
               {Array.from({ length: formData.rooms.double }).map((_, i) => (
                 <div key={i} className={planPage.formGroup}>
                   <label className={formStyles.fieldLabel}>Room {i + 1}</label>
-                  <RoomViewDropdown
+                  <SelectDropdown
                     id={`double-room-${i}`}
                     options={ROOM_VIEW_OPTIONS}
                     value="garden"
@@ -356,7 +356,7 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
               {Array.from({ length: formData.rooms.triple }).map((_, i) => (
                 <div key={i} className={planPage.formGroup}>
                   <label className={formStyles.fieldLabel}>Room {i + 1}</label>
-                  <RoomViewDropdown
+                  <SelectDropdown
                     id={`triple-room-${i}`}
                     options={ROOM_VIEW_OPTIONS}
                     value="garden"

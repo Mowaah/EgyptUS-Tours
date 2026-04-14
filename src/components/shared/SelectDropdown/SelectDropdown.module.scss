@@ -1,0 +1,42 @@
+@use "@/styles/variables" as *;
+
+.option {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.optionMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.optionName {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $dark;
+}
+
+.optionSub {
+  font-size: 11px;
+  color: $text-light;
+}
+
+.optionPrice {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  flex-shrink: 0;
+}
+
+.optionFree {
+  font-size: $font-size-sm;
+  font-weight: 800;
+  color: #15C023;
+  flex-shrink: 0;
+}

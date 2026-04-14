@@ -1,0 +1,277 @@
+@use "@/styles/variables" as *;
+
+// ─── Card ─────────────────────────────────────────────────────────────────────
+.stepCard {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 32px;
+  gap: 32px;
+  background: #ffffff;
+  border: 1px solid #eaf1fd;
+  border-radius: 32px;
+  max-width: 851px;
+  width: 100%;
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  width: 100%;
+}
+
+.title {
+  font-family: "Trip Sans";
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 36px;
+  color: #0e2851;
+  margin: 0;
+}
+
+.subtitle {
+  font-family: "Trip Sans";
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  color: #6b7280;
+  margin: 0;
+}
+
+// ─── Form layout ──────────────────────────────────────────────────────────────
+.formSection {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-family: "Trip Sans";
+  font-weight: 500;
+  font-size: 14px;
+  color: #0e2851;
+}
+
+.twoColumn {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  width: 100%;
+
+  > * {
+    flex: 1;
+    min-width: 0;
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
+}
+
+// ─── Input overrides ────────────────────────────────────────────────────────────
+// Inherits border/radius/padding from formStyles.input; only override height.
+.tallInput {
+  height: 52px !important;
+}
+
+// ─── SelectDropdown height override ───────────────────────────────────────────
+// The shared trigger default is 48px; transportation uses 52px.
+.selectTrigger {
+  min-height: 52px !important;
+}
+
+// ─── Trip-type selector ───────────────────────────────────────────────────────
+.typeSelector {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.typeChoices {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  width: 100%;
+}
+
+.typeBtn {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 16px 0 22px;
+  gap: 22px;
+  flex: 1;
+  height: 53px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+
+  &.active {
+    border-color: $secondary;
+  }
+}
+
+.radioIndicator {
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  border: 1.5px solid #c2c2c2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.typeBtn.active .radioIndicator {
+  background: $secondary;
+  border-color: $secondary;
+}
+
+.typeLabel {
+  font-family: "Trip Sans";
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: #0e2851;
+}
+
+// ─── Additional Services ──────────────────────────────────────────────────────
+.servicesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.serviceList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.serviceItem {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 16px 0 22px;
+  gap: 22px;
+  width: 100%;
+  height: 80px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+
+  &.checked {
+    border-color: $secondary;
+  }
+}
+
+.checkbox {
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  border: 1px solid #c7c7c7;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.serviceItem.checked .checkbox {
+  background: $secondary;
+  border-color: darken(#ff6600, 5%);
+}
+
+.serviceInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.serviceLabel {
+  font-family: "Trip Sans";
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: #0e2851;
+}
+
+.servicePrice {
+  font-family: "Trip Sans";
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #6a7282;
+}
+
+// ─── Footer ───────────────────────────────────────────────────────────────────
+.footer {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 32px 0 0;
+  gap: 16px;
+  width: 100%;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.prevBtn,
+.contBtn {
+  flex: 1;
+  height: 56px;
+  border-radius: 100px;
+  font-family: "Trip Sans";
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.prevBtn {
+  border: 1px solid #bdd3f7;
+  color: #bdd3f7;
+  background: white;
+
+  &:hover:not(:disabled) {
+    background: #f8fafd;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.contBtn {
+  background: #2971e6;
+  border: none;
+  color: white;
+
+  &:hover {
+    background: color-mix(in srgb, #2971e6 90%, black);
+  }
+}

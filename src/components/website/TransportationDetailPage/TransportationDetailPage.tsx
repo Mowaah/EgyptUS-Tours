@@ -94,7 +94,7 @@ export default function TransportationDetailPage({ vehicleId }: TransportationDe
           </div>
 
           <aside className={styles.sidebar}>
-            <BookingWidget />
+            <BookingWidget vehicleId={vehicleId} />
           </aside>
         </div>
       </div>
