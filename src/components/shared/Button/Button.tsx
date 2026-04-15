@@ -12,6 +12,8 @@ interface ButtonProps {
   href?: string;
   onClick?: () => void;
   className?: string;
+  disabled?: boolean;
+  type?: "button" | "submit" | "reset";
 }
 
 export default function Button({
@@ -24,6 +26,8 @@ export default function Button({
   href,
   onClick,
   className = "",
+  disabled,
+  type = "button",
 }: ButtonProps) {
   const classes = [
     styles.button,
@@ -50,7 +54,12 @@ export default function Button({
   }
 
   return (
-    <button className={classes} onClick={onClick}>
+    <button 
+      className={classes} 
+      onClick={onClick} 
+      disabled={disabled}
+      type={type}
+    >
       {icon && iconPosition === "left" && (
         <span className={styles.icon}>{icon}</span>
       )}
