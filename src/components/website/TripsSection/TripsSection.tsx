@@ -52,7 +52,7 @@ const DEMO_TRIPS: Trip[] = Array.from({ length: 6 }, (_, i) => ({
   title: "Luxury 5 days Luxor and Aswan Nile Cruise",
   description:
     "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
-  image: "/images/home/hero-bg.jpg",
+  image: "/images/home/hero-bg.png",
   location: "Luxor & Aswan",
   price: 2000,
   currency: "$",

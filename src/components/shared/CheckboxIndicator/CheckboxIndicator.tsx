@@ -5,7 +5,7 @@ import type { HTMLAttributes } from "react";
 import styles from "./CheckboxIndicator.module.scss";
 
 export type CheckboxIndicatorVariant = "radio" | "square";
-export type CheckboxIndicatorSize = "sm" | "md";
+export type CheckboxIndicatorSize = "sm" | "md" | "lg";
 
 export interface CheckboxIndicatorProps extends HTMLAttributes<HTMLSpanElement> {
   selected: boolean;
@@ -31,6 +31,7 @@ function indicatorClass(
     return selected ? styles.squareOverlaySelected : styles.squareOverlayEmpty;
   }
   if (variant === "radio") {
+    if (size === "lg") return selected ? styles.radioLgSelected : styles.radioLgEmpty;
     if (size === "md") {
       if (emphasis === "filter") {
         return selected ? styles.radioMdSelectedFilter : styles.radioMdEmptyFilter;
@@ -39,6 +40,7 @@ function indicatorClass(
     }
     return selected ? styles.radioSmSelected : styles.radioSmEmpty;
   }
+  if (size === "lg") return selected ? styles.squareLgSelected : styles.squareLgEmpty;
   if (size === "md") {
     return selected ? styles.squareMdSelected : styles.squareMdEmpty;
   }

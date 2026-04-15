@@ -75,16 +75,14 @@ export default function StepPersonalInfo({
         </div>
 
         <div className={styles.row}>
-           <div className={formStyles.field}>
-              <label className={formStyles.fieldLabel}>Special Requests (Optional)</label>
-              <textarea 
-                className={formStyles.textarea}
-                placeholder="Any special requirements or requests for your trip..."
-                value={formData.specialRequests}
-                onChange={(e) => onChange({ specialRequests: e.target.value })}
-                rows={4}
-              />
-           </div>
+          <FormField
+            label="Special Requests (Optional)"
+            isTextarea
+            placeholder="Any special requirements or requests for your trip..."
+            value={formData.specialRequests}
+            onChange={(e) => onChange({ specialRequests: (e.target as HTMLTextAreaElement).value })}
+            rows={4}
+          />
         </div>
 
         <label className={styles.checkboxRow} onClick={() => onChange({ termsAccepted: !formData.termsAccepted })}>

@@ -5,7 +5,7 @@ export const mockTrips: Trip[] = Array.from({ length: 6 }, (_, i) => ({
   title: "Luxury 5 days Luxor and Aswan Nile Cruise",
   description:
     "Explore the wonders of ancient Egypt on our luxury Nile cruise. Visit the Valley of the Kings, Karnak Temple, and more in style.",
-  image: "/images/home/hero-bg.jpg",
+  image: "/images/home/hero-bg.png",
   location: "Luxor & Aswan",
   price: 2000,
   currency: "$",

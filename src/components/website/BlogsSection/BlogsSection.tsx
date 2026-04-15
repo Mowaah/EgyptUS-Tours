@@ -15,7 +15,7 @@ const BLOGS: Blog[] = [
     excerpt:
       "Lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
     date: "03 March 2026",
-    image: "/images/home/hero-bg.jpg",
+    image: "/images/home/hero-bg.png",
   },
   {
     id: "2",
@@ -25,7 +25,7 @@ const BLOGS: Blog[] = [
     excerpt:
       "Lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
     date: "03 March 2026",
-    image: "/images/home/hero-bg.jpg",
+    image: "/images/home/hero-bg.png",
   },
   {
     id: "3",
@@ -35,7 +35,7 @@ const BLOGS: Blog[] = [
     excerpt:
       "Lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
     date: "10 March 2026",
-    image: "/images/home/hero-bg.jpg",
+    image: "/images/home/hero-bg.png",
   },
   {
     id: "4",
@@ -45,7 +45,7 @@ const BLOGS: Blog[] = [
     excerpt:
       "Lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
     date: "15 March 2026",
-    image: "/images/home/hero-bg.jpg",
+    image: "/images/home/hero-bg.png",
   },
 ];
 

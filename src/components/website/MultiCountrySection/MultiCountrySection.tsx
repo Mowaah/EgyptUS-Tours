@@ -9,7 +9,7 @@ const DEMO_TRIPS: Trip[] = [
     title: "8-Day Road From Petra to Cairo",
     description:
       "Lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
-    image: "/images/home/hero-bg.jpg",
+    image: "/images/home/hero-bg.png",
     location: "Saudi Arabia & Egypt",
     price: 1245,
     currency: "$",

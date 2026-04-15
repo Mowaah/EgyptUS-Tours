@@ -4,6 +4,15 @@
   flex-shrink: 0;
   box-sizing: border-box;
   display: block;
+
+  // When parent label or button is hovered, trigger hover styles in child indicators
+  :global(label):hover &,
+  :global(button):hover & {
+    &[class*="Empty"] {
+      border-color: $secondary;
+      background-color: $secondary-light;
+    }
+  }
 }
 
 .radioSmEmpty {
@@ -11,6 +20,12 @@
   height: 16px;
   border-radius: 50%;
   border: 1.5px solid $border-input;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $secondary;
+    background-color: $secondary-light;
+  }
 }
 
 .radioSmSelected {
@@ -21,11 +36,38 @@
   background: $secondary url("/images/check.svg") no-repeat center / 8px 8px;
 }
 
+.radioLgEmpty {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid $border-input;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $secondary;
+    background-color: $secondary-light;
+  }
+}
+
+.radioLgSelected {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid $secondary;
+  background: $secondary url("/images/check.svg") no-repeat center / 15px 15px;
+}
+
 .radioMdEmpty {
   width: 20px;
   height: 20px;
   border-radius: 50%;
   border: 1.5px solid $border-input;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $secondary;
+    background-color: $secondary-light;
+  }
 }
 
 .radioMdSelected {
@@ -42,6 +84,12 @@
   height: 20px;
   border-radius: 50%;
   border: 1px solid $border-input;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $secondary;
+    background-color: $secondary-light;
+  }
 }
 
 .radioMdSelectedFilter {
@@ -58,6 +106,12 @@
   height: 16px;
   border-radius: 4px;
   border: 1.5px solid $border-input;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $secondary;
+    background-color: $secondary-light;
+  }
 }
 
 .squareSmSelected {
@@ -73,7 +127,13 @@
   height: 20px;
   border-radius: 4px;
   border: 1.5px solid $border-input;
+  transition: all $transition-fast;
   background: transparent;
+
+  &:hover {
+    border-color: $secondary;
+    background-color: $secondary-light;
+  }
 }
 
 .squareMdSelected {
@@ -84,6 +144,27 @@
   background: $secondary url("/images/check.svg") no-repeat center / 14px 14px;
 }
 
+.squareLgEmpty {
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  border: 1.5px solid #C7C7C7;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $secondary;
+    background-color: $secondary-light;
+  }
+}
+
+.squareLgSelected {
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  border: 1.5px solid $secondary;
+  background: $secondary url("/images/check-white.svg") no-repeat center / 14px 14px;
+}
+
 .squareOverlayEmpty {
   width: 24px;
   height: 24px;
@@ -91,6 +172,12 @@
   border: 1.5px solid rgba(14, 40, 81, 0.2);
   background-color: rgba(255, 255, 255, 0.92);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $secondary;
+    background-color: $secondary-light;
+  }
 }
 
 .squareOverlaySelected {

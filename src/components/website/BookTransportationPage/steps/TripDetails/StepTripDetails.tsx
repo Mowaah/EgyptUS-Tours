@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { TransportationBookingData, Vehicle } from "@/types";
-import { FormField, Button, CustomDatePicker, SelectDropdown } from "@/components/shared";
+import { FormField, Button, CustomDatePicker, SelectDropdown, CheckboxIndicator } from "@/components/shared";
 import formStyles from "@/components/shared/FormField/FormField.module.scss";
 import styles from "./StepTripDetails.module.scss";
 
@@ -18,8 +18,8 @@ const LUGGAGE_OPTIONS = [1, 2, 3, 4].map((n) => ({
 }));
 
 const ADDITIONAL_SERVICES = [
-  { key: "childSeat" as const,    label: "Child Seat",           price: "+$10.00" },
-  { key: "extraLuggage" as const, label: "Extra Luggage Space",  price: "+$15.00" },
+  { key: "childSeat" as const, label: "Child Seat", price: "+$10.00" },
+  { key: "extraLuggage" as const, label: "Extra Luggage Space", price: "+$15.00" },
   { key: "meetAndGreet" as const, label: "Meet & Greet Service", price: "+$20.00" },
 ];
 
@@ -50,11 +50,12 @@ function TripTypeSelector({
             className={`${styles.typeBtn} ${value === type ? styles.active : ""}`}
             onClick={() => onChange(type)}
           >
-            <div className={styles.radioIndicator}>
-              {value === type && (
-                <Image src="/images/check-white.svg" alt="" width={15} height={15} />
-              )}
-            </div>
+            <CheckboxIndicator
+              variant="radio"
+              size="lg"
+              selected={value === type}
+              aria-hidden
+            />
             <span className={styles.typeLabel}>{type}</span>
           </button>
         ))}
@@ -75,18 +76,22 @@ function ServiceItem({
   onChange: (checked: boolean) => void;
 }) {
   return (
-    <div
+    <button
+      type="button"
       className={`${styles.serviceItem} ${checked ? styles.checked : ""}`}
       onClick={() => onChange(!checked)}
     >
-      <div className={styles.checkbox}>
-        {checked && <Image src="/images/check-white.svg" alt="" width={14} height={14} />}
-      </div>
+      <CheckboxIndicator
+        variant="square"
+        size="lg"
+        selected={checked}
+        aria-hidden
+      />
       <div className={styles.serviceInfo}>
         <span className={styles.serviceLabel}>{label}</span>
         <span className={styles.servicePrice}>{price}</span>
       </div>
-    </div>
+    </button>
   );
 }
 

@@ -119,29 +119,15 @@
   border-radius: 16px;
   background: white;
   cursor: pointer;
-  transition: border-color 0.2s ease;
+  transition: all 0.2s ease;
 
   &.active {
     border-color: $secondary;
   }
-}
 
-.radioIndicator {
-  box-sizing: border-box;
-  width: 24px;
-  height: 24px;
-  border: 1.5px solid #c2c2c2;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.typeBtn.active .radioIndicator {
-  background: $secondary;
-  border-color: $secondary;
+  &:hover {
+    border-color: $secondary;
+  }
 }
 
 .typeLabel {
@@ -180,29 +166,15 @@
   border-radius: 16px;
   background: white;
   cursor: pointer;
-  transition: border-color 0.2s ease;
+  transition: all 0.2s ease;
 
   &.checked {
     border-color: $secondary;
   }
-}
 
-.checkbox {
-  box-sizing: border-box;
-  width: 24px;
-  height: 24px;
-  border: 1px solid #c7c7c7;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.2s ease;
-}
-
-.serviceItem.checked .checkbox {
-  background: $secondary;
-  border-color: darken(#ff6600, 5%);
+  &:hover {
+    border-color: $secondary;
+  }
 }
 
 .serviceInfo {
