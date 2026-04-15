@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  border: 1px solid $border-strong;
+  border: 1px solid #E5E7EB;
   border-radius: $radius-xl;
   background: $white;
   cursor: pointer;
@@ -20,7 +20,7 @@
   font-family: inherit;
 
   // same height as standard inputs
-  min-height: 46px;
+  min-height: 48px;
 
   &:hover {
     border-color: $border-input;
@@ -28,8 +28,11 @@
 
   &.open {
     border-color: $primary;
-    // Exactly matches the blue active glow in the mockup
-    box-shadow: 0 0 0 1px $primary;
+    box-shadow: 0px 0px 0px 4px #E6F4FF, 0px 1px 2px 0px rgba(217, 217, 234, 0.05);
+  }
+
+  &.error {
+    border-color: $danger;
   }
 }
 
@@ -43,7 +46,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  color: $dark; // dark text from mockup
+  color: $dark;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
 }
@@ -51,10 +54,7 @@
 .flag {
   width: 20px;
   height: 20px;
-  border-radius: 50%;
-  object-fit: cover;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
-  display: block; // fixes inline img spacing
+  object-fit: contain;
   flex-shrink: 0;
 }
 
@@ -73,7 +73,6 @@
   left: 0;
   width: 100%;
   background: $white;
-  // Border and shadow exact to mockup
   border: 1px solid $border-strong;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
@@ -119,6 +118,7 @@
   font-size: $font-size-sm;
   font-weight: $font-weight-normal;
   transition: background $transition-fast;
+  text-align: left;
 
   &:hover {
     background: $background-alt;

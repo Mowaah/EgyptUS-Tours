@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { FormField, PhonePrefixSelect, CustomDatePicker } from "@/components/shared";
+import { FormField, PhonePrefixSelect, CustomDatePicker, NationalitySelect } from "@/components/shared";
 
 import pageStyles from "../../PlanYourTripPage.module.scss";
 import styles from "./StepTravelerInfo.module.scss";
@@ -88,21 +88,13 @@ export default function StepTravelerInfo({
             </div>
           </div>
 
-          <FormField
-            id="pti-nationality"
-            label="Select Your Nationality"
-            isSelect
-            className={pageStyles.formInput}
-            value={travelerInfo.nationality || ""}
-            onChange={(e) => onTravelerChange("nationality", e.target.value)}
-          >
-            <option value="">Your Nationality</option>
-            <option value="US">United States</option>
-            <option value="UK">United Kingdom</option>
-            <option value="CA">Canada</option>
-            <option value="AU">Australia</option>
-            <option value="AE">United Arab Emirates</option>
-          </FormField>
+          <div className={formStyles.field}>
+            <label className={formStyles.fieldLabel}>Select Your Nationality</label>
+            <NationalitySelect 
+              value={travelerInfo.nationality}
+              onChange={(val) => onTravelerChange("nationality", val)}
+            />
+          </div>
 
           <div className={formStyles.field}>
             <label className={formStyles.fieldLabel}>Start Date</label>

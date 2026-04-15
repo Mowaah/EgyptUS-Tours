@@ -3,6 +3,7 @@ import {
   FormField,
   PhonePrefixSelect,
   CheckboxIndicator,
+  NationalitySelect,
 } from "@/components/shared";
 import planPage from "../../../PlanYourTripPage/PlanYourTripPage.module.scss";
 import travelerStyles from "../../../PlanYourTripPage/steps/TravelerInfo/StepTravelerInfo.module.scss";
@@ -76,21 +77,13 @@ export default function StepPersonalInfo({
                   />
                 </div>
               </div>
-              <FormField
-                id="pi-nationality"
-                label="Select Your Nationality"
-                isSelect
-                className={planPage.formInput}
-                value={formData.nationality}
-                onChange={(e) => onChange({ nationality: e.target.value })}
-              >
-                <option value="">Your Nationality</option>
-                <option value="Egyptian">Egyptian</option>
-                <option value="USA">USA</option>
-                <option value="UK">UK</option>
-                <option value="French">French</option>
-                <option value="German">German</option>
-              </FormField>
+              <div className={formStyles.field}>
+                <label className={formStyles.fieldLabel}>Select Your Nationality</label>
+                <NationalitySelect 
+                  value={formData.nationality}
+                  onChange={(val) => onChange({ nationality: val })}
+                />
+              </div>
             </div>
 
             {/* Terms */}

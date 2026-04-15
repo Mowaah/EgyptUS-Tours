@@ -14,6 +14,7 @@ export { default as SuccessModal } from "./SuccessModal/SuccessModal";
 export { default as FormField } from "./FormField/FormField";
 export { default as PhonePrefixSelect } from "./PhonePrefixSelect/PhonePrefixSelect";
 export { default as CustomDatePicker } from "./CustomDatePicker/CustomDatePicker";
+export { default as NationalitySelect } from "./NationalitySelect/NationalitySelect";
 export { default as CheckboxDropdown } from "./CheckboxDropdown/CheckboxDropdown";
 export { default as CheckboxIndicator } from "./CheckboxIndicator/CheckboxIndicator";
 export type {

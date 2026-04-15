@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { SectionHeader, Button, FormField, PhonePrefixSelect } from "@/components/shared";
+import { SectionHeader, Button, FormField, PhonePrefixSelect, NationalitySelect } from "@/components/shared";
 import Image from "next/image";
-import CountrySelect from "./CountrySelect";
 import styles from "./B2BSection.module.scss";
 import formStyles from "@/components/shared/FormField/FormField.module.scss";
 
 export default function B2BSection() {
   const [phone, setPhone] = useState("");
+  const [country, setCountry] = useState("");
 
   return (
     <section className={styles.section}>
@@ -104,7 +104,7 @@ export default function B2BSection() {
 
               <div className={formStyles.field}>
                 <label className={formStyles.fieldLabel}>Country</label>
-                <CountrySelect />
+                <NationalitySelect value={country} onChange={setCountry} useCountryName={true} />
               </div>
 
               <FormField label="Contact Person" type="text" placeholder="Full Name" />

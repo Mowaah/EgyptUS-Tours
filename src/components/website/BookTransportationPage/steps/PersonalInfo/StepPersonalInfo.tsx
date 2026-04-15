@@ -7,7 +7,8 @@ import {
   FormField, 
   PhonePrefixSelect, 
   CheckboxIndicator, 
-  Button 
+  Button,
+  NationalitySelect
 } from "@/components/shared";
 import styles from "./StepPersonalInfo.module.scss";
 import travelerStyles from "../../../PlanYourTripPage/steps/TravelerInfo/StepTravelerInfo.module.scss";
@@ -61,17 +62,13 @@ export default function StepPersonalInfo({
               />
             </div>
           </div>
-          <FormField
-            label="Select Your Nationality"
-            isSelect
-            value={formData.nationality}
-            onChange={(e) => onChange({ nationality: e.target.value })}
-          >
-            <option value="">Your Nationality</option>
-            <option value="Egyptian">Egyptian</option>
-            <option value="USA">USA</option>
-            <option value="UK">UK</option>
-          </FormField>
+          <div className={formStyles.field}>
+            <label className={formStyles.fieldLabel}>Select Your Nationality</label>
+            <NationalitySelect 
+              value={formData.nationality}
+              onChange={(val) => onChange({ nationality: val })}
+            />
+          </div>
         </div>
 
         <div className={styles.row}>
@@ -80,7 +77,7 @@ export default function StepPersonalInfo({
             isTextarea
             placeholder="Any special requirements or requests for your trip..."
             value={formData.specialRequests}
-            onChange={(e) => onChange({ specialRequests: (e.target as HTMLTextAreaElement).value })}
+            onChange={(e) => onChange({ specialRequests: e.target.value })}
             rows={4}
           />
         </div>

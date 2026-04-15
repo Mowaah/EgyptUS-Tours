@@ -5,6 +5,7 @@ import {
   PhonePrefixSelect,
   CustomDatePicker,
   SelectDropdown,
+  NationalitySelect,
 } from "@/components/shared";
 import type { SelectOption } from "@/components/shared";
 
@@ -102,19 +103,13 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
             </div>
           </div>
 
-          <FormField
-            id="pti-nationality"
-            label="Select Your Nationality"
-            isSelect
-            className={planPage.formInput}
-            value={formData.nationality}
-            onChange={(e) => onChange({ nationality: e.target.value })}
-          >
-            <option value="">Your Nationality</option>
-            <option value="Egyptian">Egyptian</option>
-            <option value="USA">USA</option>
-            <option value="UK">UK</option>
-          </FormField>
+          <div className={formStyles.field}>
+            <label className={formStyles.fieldLabel}>Select Your Nationality</label>
+            <NationalitySelect 
+              value={formData.nationality}
+              onChange={(val) => onChange({ nationality: val })}
+            />
+          </div>
 
           {isGroupTrip ? (
             <div className={planPage.formGroupFull}>

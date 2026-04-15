@@ -2,45 +2,57 @@
 @use "@/styles/mixins" as *;
 
 .topbar {
-  background: linear-gradient(90deg, #205AB7, #0E2851);
+  background: linear-gradient(270deg, #0E2851 -1.74%, #205AB7 118.85%);
   height: 40px;
   color: $white;
   font-size: 11px;
   position: relative;
   z-index: 105;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 0px;
 }
 
 .container {
-  @include container;
-  @include flex-between;
-  height: 100%;
-  padding: 0 $spacing-xl;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 24px;
+  width: 100%;
+  max-width: 1280px;
+  height: 32px;
 }
 
 .socials {
   display: flex;
-  gap: $spacing-sm;
+  align-items: center;
+  padding: 0px;
+  gap: 5.3px;
 }
 
 .socialIcon {
   width: 20px;
   height: 20px;
-  border-radius: $radius-full;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 43px;
   display: flex;
-  background: rgba(255, 255, 255, 0.1);
   align-items: center;
   justify-content: center;
   transition: all $transition-fast;
+  flex: none;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
   }
 }
 
 .settings {
   display: flex;
   align-items: center;
-  gap: $spacing-xs;
+  gap: 8px;
   height: 100%;
 }
 
@@ -49,37 +61,29 @@
   display: flex;
   align-items: center;
   height: 100%;
-
-  >div {
-    height: 100%;
-    align-items: center;
-  }
-}
-
-.langWrapper {
-  width: 98px;
-}
-
-.currWrapper {
-  width: 105px;
 }
 
 .dropdownToggle {
   display: flex;
+  flex-direction: row;
+  justify-content: center;
   align-items: center;
-  gap: 4px;
-  cursor: pointer;
+  padding: 8px 12px;
+  gap: 6px;
+  width: 100%;
+  height: 32px;
   background: transparent;
   border: none;
+  cursor: pointer;
   color: $white;
+  font-weight: 500;
   font-size: 11px;
-  font-weight: $font-weight-medium;
-  padding: 16px 12px;
-  border-radius: 16px;
+  line-height: 15px;
+  letter-spacing: 0.01em;
   transition: all $transition-fast;
 
   &:hover {
-    opacity: 0.8;
+    opacity: 0.9;
   }
 
   &.open .chevron {
@@ -87,47 +91,34 @@
   }
 
   span {
-    line-height: 1;
+    line-height: 15px;
   }
 }
 
 .langToggle {
-  width: 100%;
-  justify-content: center;
-  padding: 4px;
-  background: transparent;
-
-  span {
-    font-size: 11px;
-  }
+  border-radius: 16px;
+  width: 98px;
 
   &:hover,
   &.open {
-    background: rgba(0, 0, 0, 0.10);
-    opacity: 1;
+    background: #11356D;
   }
 }
 
 .currToggle {
-  width: 100%;
-  justify-content: center;
-  padding: 4px;
-  background: transparent;
-
-  span {
-    font-size: 11px;
-  }
+  border-radius: 16px;
+  width: 100px;
 
   &:hover,
   &.open {
-    background: rgba(0, 0, 0, 0.10);
-    opacity: 1;
+    background: #11356D;
   }
 }
 
 .flagIcon {
   border-radius: 50%;
   object-fit: cover;
+  flex-shrink: 0;
 }
 
 .chevron {
@@ -136,32 +127,93 @@
   transition: transform $transition-fast;
 }
 
-.dropdownMenu {
-  width: 100%;
-  min-width: unset;
-  box-shadow: $shadow-md;
+/* Custom Dropdown Menu */
+.customMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: $white;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   padding: 4px;
-  top: 100% !important;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
 
-  button {
-    gap: 8px !important;
+.menuLang {
+  width: 98px;
+  height: 128px;
+}
+
+.menuCurr {
+  width: 100px;
+  height: 88px;
+}
+
+.menuItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all $transition-fast;
+  padding: 0 0 0 8px;
+  border-radius: 8px;
+
+  &:hover {
+    background: #f4f4f4;
+  }
+
+  &.selected {
+    background: #f4f4f4;
   }
 }
 
-.menuItemText {
-  color: $text-muted;
+.menuLang .menuItem {
+  padding: 0 0 0 16px;
+}
+
+.menuText {
+  color: #606978;
   font-size: 11px;
-  font-weight: $font-weight-normal;
-  flex: 1;
-  text-align: left;
+  font-weight: 400;
+  line-height: 15px;
+  white-space: nowrap;
 }
 
-.customRadio {
-  width: 14px !important;
-  height: 14px !important;
-  border-width: 1px !important;
+.simpleCheckbox {
+  width: 12px;
+  height: 12px;
+  background: #FFFFFF;
+  border: 1px solid #C2C2C2;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all $transition-fast;
 
-  &[class*="Selected"] {
-    background-size: 8px 8px !important;
+  .menuItem:hover & {
+    border-color: $secondary;
+    background-color: $secondary-light;
+    box-shadow: 0 0 0 4px #FFF3EB;
   }
+
+  &.checked {
+    background: #FF6600;
+    border-color: #FF6600;
+  }
+}
+
+.miniFlag {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
 }
