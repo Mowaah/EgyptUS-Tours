@@ -18,12 +18,12 @@ export default function RatingBadge({
 
   return (
     <div className={`${styles.badge} ${styles[`size-${size}`]} ${className}`.trim()}>
-      <Image 
-        src="/images/star-yellow.svg" 
-        alt="" 
-        width={iconSize} 
-        height={iconSize} 
-        aria-hidden="true" 
+      <Image
+        src="/images/star-yellow3.svg"
+        alt=""
+        width={iconSize}
+        height={iconSize}
+        aria-hidden="true"
       />
       <span>{rating}</span>
       <span className={styles.reviewCount}>({reviews.toLocaleString()})</span>

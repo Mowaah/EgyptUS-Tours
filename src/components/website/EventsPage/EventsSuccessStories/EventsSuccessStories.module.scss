@@ -1,0 +1,205 @@
+@use "@/styles/variables" as *;
+
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  background: #FFFFFF;
+  box-sizing: border-box;
+  padding-top: 64px;
+}
+
+.topBadge {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 7px 24px;
+  background: linear-gradient(90deg, rgba(41, 113, 230, 0.1) 0%, rgba(255, 102, 0, 0.1) 100%);
+  border-radius: 100px;
+  margin-bottom: 30px;
+
+  span {
+    font-family: 'Trip Sans';
+    font-weight: 500;
+    font-size: 13px;
+    color: #0E2851;
+  }
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 64px;
+  text-align: center;
+}
+
+.title {
+  font-family: 'Trip Sans';
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 48px;
+  color: #0E2851;
+  margin: 0;
+}
+
+.subtitle {
+  font-family: 'Trip Sans';
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 28px;
+  color: #4A5565;
+  margin: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 48px;
+  width: 100%;
+  max-width: 1280px;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  border: 1px solid #EAF1FD;
+  border-radius: 24px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  height: 256px;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(40.91deg, rgba(0, 37, 98, 0.7) 22.41%, rgba(41, 113, 230, 0) 79.91%);
+}
+
+.playBtn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 52px;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px 18px;
+  gap: 16px;
+}
+
+.storyTitle {
+  font-family: 'Trip Sans';
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 32px;
+  color: #0E2851;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.statsRow {
+  display: flex;
+  align-items: center;
+  gap: 75px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statLabel {
+  font-family: 'Trip Sans';
+  font-size: 14px;
+  color: #6A7282;
+}
+
+.statValueOrange {
+  font-family: 'Trip Sans';
+  font-weight: 700;
+  font-size: 18px;
+  color: #FF6600;
+}
+
+.statValueBlue {
+  font-family: 'Trip Sans';
+  font-weight: 700;
+  font-size: 18px;
+  color: #2971E6;
+}
+
+.testimonial {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 16px 0px 20px;
+  gap: 8px;
+  border-left: 4px solid rgba(255, 102, 0, 0.63);
+  background: #F9FAFB;
+  border-radius: 14px;
+}
+
+.stars {
+  display: flex;
+  gap: 4px;
+}
+
+.quote {
+  font-family: 'Trip Sans';
+  font-size: 16px;
+  line-height: 26px;
+  color: #364153;
+  margin: 0;
+  padding-bottom: 16px;
+}

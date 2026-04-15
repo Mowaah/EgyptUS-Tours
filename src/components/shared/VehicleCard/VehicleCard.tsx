@@ -50,7 +50,7 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
             <p className={styles.description}>{vehicle.description}</p>
           </div>
           <div className={`${styles.rating} ${isList ? styles.listRating : ""}`}>
-            <Image src="/images/star-yellow.svg" alt="" width={12} height={12} />
+            <Image src="/images/star-yellow3.svg" alt="" width={12} height={12} />
             <span>{vehicle.rating}</span>
             <span className={styles.reviews}>({vehicle.reviews})</span>
           </div>

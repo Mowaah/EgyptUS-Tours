@@ -1,0 +1,23 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.page {
+  background: white;
+}
+
+.heroSection {
+  margin-bottom: 48px;
+}
+
+.galleryWrap {
+  @include container;
+  padding: 0;
+  position: relative;
+}
+
+.container {
+  @include container;
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+}

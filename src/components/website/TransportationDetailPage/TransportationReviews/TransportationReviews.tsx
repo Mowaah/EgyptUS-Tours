@@ -20,35 +20,35 @@ export default function TransportationReviews() {
         {REVIEWS.map((review) => (
           <div key={review.id} className={styles.reviewCard}>
             <div className={styles.cardHeader}>
-               <h3 className={styles.authorTitle}>{review.text.length > 30 ? review.text.substring(0, 30) + '...' : review.text}</h3>
-               <div className={styles.ratingBox}>
-                  <Image src="/images/star-yellow.svg" alt="" width={12} height={12} />
-                  <span>{review.rating}</span>
-               </div>
+              <h3 className={styles.authorTitle}>{review.text.length > 30 ? review.text.substring(0, 30) + '...' : review.text}</h3>
+              <div className={styles.ratingBox}>
+                <Image src="/images/star-yellow3.svg" alt="" width={12} height={12} />
+                <span>{review.rating}</span>
+              </div>
             </div>
             <p className={styles.reviewContent}>{review.text}</p>
             <div className={styles.cardFooter}>
-               <div className={styles.reviewerInfo}>
-                  <div className={styles.avatar}>
-                    {review.avatar ? (
-                      <Image src={review.avatar} alt={review.author} width={32} height={32} />
-                    ) : (
-                      <div className={styles.avatarPlaceholder} />
-                    )}
-                  </div>
-                  <div className={styles.reviewerText}>
-                    <p className={styles.reviewerName}>{review.author}</p>
-                    <p className={styles.reviewDate}>{review.date}</p>
-                  </div>
-               </div>
+              <div className={styles.reviewerInfo}>
+                <div className={styles.avatar}>
+                  {review.avatar ? (
+                    <Image src={review.avatar} alt={review.author} width={32} height={32} />
+                  ) : (
+                    <div className={styles.avatarPlaceholder} />
+                  )}
+                </div>
+                <div className={styles.reviewerText}>
+                  <p className={styles.reviewerName}>{review.author}</p>
+                  <p className={styles.reviewDate}>{review.date}</p>
+                </div>
+              </div>
             </div>
           </div>
         ))}
       </div>
       <div className={styles.loadMore}>
-         <Button variant="outline" icon={<Image src="/images/arrows/arrow-down-blue.svg" alt="" width={16} height={16} />} iconPosition="right">
-            Load More
-         </Button>
+        <Button variant="outline" icon={<Image src="/images/arrows/arrow-down-blue.svg" alt="" width={16} height={16} />} iconPosition="right">
+          Load More
+        </Button>
       </div>
     </section>
   );

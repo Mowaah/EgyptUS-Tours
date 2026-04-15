@@ -1,0 +1,123 @@
+@use "@/styles/variables" as *;
+
+.section {
+  padding: 0;
+  margin-top: 48px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 403px;
+  gap: 113px;
+  align-items: flex-start;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 747.33px;
+  max-width: 100%;
+}
+
+.title {
+  font-family: 'Trip Sans';
+  font-style: normal;
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 32px;
+  color: #0E2851;
+  margin: 0;
+}
+
+.descriptionWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.description {
+  font-family: 'Trip Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+  color: #364153;
+  margin: 0;
+  max-width: 722px;
+}
+
+.stats {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.statCard {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  gap: 6px;
+  width: 238.44px;
+  height: 136px;
+  background: #EFF6FF;
+  border-radius: 16px;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+.iconWrap {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  img {
+    // Ensuring the icon color matches the 2.5px solid #2971E6 spec
+    filter: brightness(0) saturate(100%) invert(35%) sepia(85%) saturate(1915%) hue-rotate(204deg) brightness(97%) contrast(93%);
+  }
+}
+
+.statValue {
+  font-family: 'Trip Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 32px;
+  text-align: center;
+  color: #0E2851;
+  margin: 0;
+}
+
+.statLabel {
+  font-family: 'Trip Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  color: #4A5565;
+  margin: 0;
+}
+
+.sidebar {
+  width: 100%;
+}

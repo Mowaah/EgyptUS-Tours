@@ -23,7 +23,7 @@ export default function BookingSummary({ vehicle, formData }: BookingSummaryProp
             <h2 className={styles.title}>Booking Summary</h2>
             <div className={styles.ratingBox}>
               <div className={styles.starIcon}>
-                <Image src="/images/star-yellow.svg" alt="" width={18} height={18} />
+                <Image src="/images/star-yellow3.svg" alt="" width={18} height={18} />
               </div>
               <span className={styles.ratingVal}>{vehicle.rating}</span>
               <span className={styles.reviews}>({vehicle.reviews})</span>
@@ -35,10 +35,10 @@ export default function BookingSummary({ vehicle, formData }: BookingSummaryProp
               <div className={styles.vehicleImage}>
                 <Image src={vehicle.image} alt={vehicle.name} fill style={{ objectFit: 'contain' }} />
               </div>
-              
+
               <div className={styles.vehicleDetails}>
                 <h3 className={styles.vehicleName}>{vehicle.type} - {vehicle.name}</h3>
-                
+
                 <div className={styles.priceTable}>
                   <div className={styles.priceRow}>
                     <span className={styles.priceLabel}>Base Price</span>
@@ -75,19 +75,19 @@ export default function BookingSummary({ vehicle, formData }: BookingSummaryProp
             <div className={styles.trustBadges}>
               <div className={styles.badge}>
                 <div className={styles.badgeIcon}>
-                   <Image src="/images/check-green.svg" alt="" width={16} height={16} />
+                  <Image src="/images/check-green.svg" alt="" width={16} height={16} />
                 </div>
                 <span className={styles.badgeText}>Free cancellation</span>
               </div>
               <div className={styles.badge}>
                 <div className={styles.badgeIcon}>
-                   <Image src="/images/check-green.svg" alt="" width={16} height={16} />
+                  <Image src="/images/check-green.svg" alt="" width={16} height={16} />
                 </div>
                 <span className={styles.badgeText}>24/7 support</span>
               </div>
               <div className={styles.badge}>
                 <div className={styles.badgeIcon}>
-                   <Image src="/images/check-green.svg" alt="" width={16} height={16} />
+                  <Image src="/images/check-green.svg" alt="" width={16} height={16} />
                 </div>
                 <span className={styles.badgeText}>Secure Payment</span>
               </div>

@@ -1,0 +1,258 @@
+@use "@/styles/variables" as *;
+
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 64px;
+  width: 100%;
+  background: #FFFFFF;
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.title {
+  font-family: 'Trip Sans';
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 48px;
+  color: #0E2851;
+  margin: 0;
+}
+
+.subtitle {
+  font-family: 'Trip Sans';
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 28px;
+  color: #6B7280;
+  max-width: 682px;
+  margin: 0;
+}
+
+.card {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1280px;
+  background: #FFFFFF;
+  border: 1.2px solid #E5E7EB;
+  border-radius: 29px;
+  padding: 12px 24px 12px 30px;
+  height: 616px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.layout {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+}
+
+.imageStack {
+  position: relative;
+  width: 694px;
+  height: 543px;
+  flex-shrink: 0;
+}
+
+.imageLayer1,
+.imageLayer2,
+.imageLayer3 {
+  position: absolute;
+  width: 660px;
+  height: 520px;
+  border-radius: 29px;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+}
+
+.imageLayer1 {
+  z-index: 3;
+  background-image: linear-gradient(180deg, rgba(10, 10, 10, 0) 0%, rgba(0, 0, 0, 0.55) 100%), url('/images/el-gouna.jpg');
+  top: 13.5px;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.imageLayer2 {
+  z-index: 2;
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('/images/poolday1.jpg');
+  top: 5px;
+  left: 7px;
+  transform: rotate(1.95deg);
+}
+
+.imageLayer3 {
+  z-index: 1;
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('/images/infinity-pool.jpg');
+  top: 7px;
+  left: 15px;
+  transform: rotate(-3.68deg);
+}
+
+.tag {
+  background: #FBBF24;
+  border-radius: 100px;
+  padding: 11px 16px;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  width: fit-content;
+  letter-spacing: 0.325px;
+}
+
+.imageInfo {
+  color: #FFFFFF;
+}
+
+.day {
+  font-weight: 700;
+  font-size: 29px;
+  line-height: 36px;
+  margin: 0;
+}
+
+.venue {
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 29px;
+  margin: 0;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  padding: 31px 0 20px;
+  gap: 26px;
+  flex: 1;
+}
+
+.eventHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.eventTitle {
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 27px;
+  color: #FF6600;
+  margin: 0;
+}
+
+.eventSubtitle {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 27px;
+  color: #4A5565;
+  margin: 0;
+}
+
+.highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.highlightsHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.highlightsTitle {
+  font-weight: 700;
+  font-size: 18.11px;
+  line-height: 27px;
+  color: #0E2851;
+}
+
+.pills {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.pill {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: 18px 22px;
+  gap: 10px;
+  background: #F9FAFB;
+  border: 1px solid #EAF1FD;
+  border-radius: 24px;
+
+  span {
+    font-size: 16px;
+    color: #4A5565;
+  }
+}
+
+.checkList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.checkIcon {
+  width: 20px;
+  height: 20px;
+  background: #DFEAFB;
+  border: 1px solid rgba(21, 93, 252, 0.04);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkText {
+  font-size: 18px;
+  line-height: 28px;
+  color: #364153;
+}
+
+@media (max-width: 1024px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .imageStack {
+    width: 100%;
+    height: 400px;
+  }
+
+  .imageLayer1,
+  .imageLayer2,
+  .imageLayer3 {
+    width: 100%;
+    height: 100%;
+  }
+}

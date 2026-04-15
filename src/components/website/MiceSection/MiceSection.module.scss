@@ -13,8 +13,9 @@
 .features {
   display: grid;
   grid-template-columns: 1fr;
-  gap: $spacing-lg;
+  gap: 24px;
   margin-bottom: $spacing-3xl;
+  padding: 0 54px;
 
   @media (min-width: 640px) {
     grid-template-columns: repeat(2, 1fr);

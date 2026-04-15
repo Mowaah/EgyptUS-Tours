@@ -1,0 +1,111 @@
+@use "@/styles/variables" as *;
+
+.section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 80px;
+  width: 100%;
+  background: #FFFFFF;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  width: 100%;
+  max-width: 1280px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 100%;
+  max-width: 1128px;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  height: 140px;
+  padding: 0 32px;
+  text-align: center;
+  border-left: 1px solid #E5E7EB;
+
+  &:first-child {
+    border-left: none;
+  }
+}
+
+.value {
+  font-family: 'Trip Sans';
+  font-weight: 700;
+  font-size: 60px;
+  line-height: 60px;
+  color: #FF6600;
+}
+
+.label {
+  font-family: 'Trip Sans';
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 23px;
+  color: #6B7280;
+}
+
+.trustTitle {
+  font-family: 'Trip Sans';
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #6A7282;
+  text-align: center;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1024px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .statItem {
+    border-left: none;
+    border-bottom: 1px solid #E5E7EB;
+
+    &:nth-child(even) {
+      border-left: 1px solid #E5E7EB;
+    }
+
+    &:nth-last-child(-n+2) {
+      border-bottom: none;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .statItem {
+    border-left: none !important;
+    border-bottom: 1px solid #E5E7EB;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .value {
+    font-size: 40px;
+  }
+}

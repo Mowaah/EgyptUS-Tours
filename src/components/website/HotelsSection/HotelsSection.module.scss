@@ -17,7 +17,7 @@
 
 .toolbar {
   @include flex-between;
-  margin-bottom: $spacing-xl;
+  margin: $spacing-xl 0;
 }
 
 

@@ -57,7 +57,7 @@ function ReviewCard({ review }: { review: Review }) {
       <div className={styles.cardTop}>
         <h3 className={styles.cardTitle}>{review.title}</h3>
         <div className={styles.cardRating}>
-          <Image src="/images/star-yellow.svg" alt="star" width={14} height={14} />
+          <Image src="/images/star-yellow3.svg" alt="star" width={14} height={14} />
           <span className={styles.ratingNum}>{review.rating}</span>
         </div>
       </div>

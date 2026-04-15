@@ -55,8 +55,8 @@ export default function MiceSection() {
                 <Image
                   src={feature.iconSrc}
                   alt=""
-                  width={24}
-                  height={24}
+                  width={28}
+                  height={28}
                 />
               }
               title={feature.title}
