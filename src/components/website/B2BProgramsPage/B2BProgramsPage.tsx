@@ -12,11 +12,11 @@ import styles from "./B2BProgramsPage.module.scss";
 
 // Reusing MOCK_IMAGES or replacing with actual B2B images
 const MOCK_IMAGES = [
-  "/images/events4.jpg",
-  "/images/events2.jpg",
-  "/images/events3.jpg",
-  "/images/events1.png",
-  "/images/events5.jpg",
+  "/images/b2bpage/b2b1.jpg",
+  "/images/b2bpage/b2b2.jpg",
+  "/images/b2bpage/b2b3.jpg",
+  "/images/b2bpage/b2b4.jpg",
+  "/images/b2bpage/b2b5.jpg",
 ];
 
 export default function B2BProgramsPage() {
