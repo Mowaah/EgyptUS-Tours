@@ -4,28 +4,33 @@ interface FeatureCardProps {
   icon: React.ReactNode;
   title: string;
   description: string;
-  color?: string;
-  backgroundColor?: string;
+  cardBg?: string;
+  borderColor?: string;
+  iconBg?: string;
+  color?: string; // fallback
 }
 
 export default function FeatureCard({
   icon,
   title,
   description,
+  cardBg,
+  borderColor,
+  iconBg,
   color = "#2563EB",
-  backgroundColor,
 }: FeatureCardProps) {
-  const cardBackground = backgroundColor ?? `${color}10`;
-  const borderColor = `${color}26`;
+  const finalCardBg = cardBg ?? `${color}10`;
+  const finalBorderColor = borderColor ?? `${color}26`;
+  const finalIconBg = iconBg ?? `${color}10`;
 
   return (
     <div
       className={styles.card}
-      style={{ backgroundColor: cardBackground, borderColor }}
+      style={{ backgroundColor: finalCardBg, borderColor: finalBorderColor }}
     >
       <div
         className={styles.iconWrapper}
-        style={{ backgroundColor: `${color}10`, color }}
+        style={{ backgroundColor: finalIconBg, color }} // text color still driven by `color` if svg uses currentColor
       >
         {icon}
       </div>

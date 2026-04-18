@@ -1,0 +1,57 @@
+@use "@/styles/variables" as *;
+
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 64px 0;
+  gap: 40px;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.title {
+  font-family: 'Trip Sans';
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 44px;
+  color: #0E2851;
+  margin: 0;
+}
+
+.subtitle {
+  font-family: 'Trip Sans';
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 27px;
+  color: #6B7280;
+  margin: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  width: 100%;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.loadMoreWrap {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}

@@ -20,7 +20,7 @@ const NAV_LINKS = [
   { label: "About Us", href: "/about" },
 ];
 
-const LIGHT_NAV_PATHS = ["/booking"];
+const LIGHT_NAV_PATHS = ["/booking", "/b2b-programs"];
 
 const DESTINATION_LINKS = [
   { label: "Saudi Arabia", href: "/destinations/saudi-arabia" },
@@ -180,7 +180,7 @@ export default function Navbar() {
         </ul>
 
         <div className={styles.cta}>
-          {lightNavBackground ? (
+          {isBookingPage ? (
             <div className={styles.ctaGhost} aria-hidden="true" inert>
               {planTripButton}
             </div>

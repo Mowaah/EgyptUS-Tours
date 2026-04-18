@@ -1,36 +1,37 @@
 import React from "react";
-import Image from "next/image";
 import { FeatureCard } from "@/components/shared";
-import styles from "./EventsFeatures.module.scss";
+import styles from "./B2BFeatures.module.scss";
+
+import Image from "next/image";
 
 const FEATURES = [
   {
-    title: "Meetings",
-    description: "Executive boardrooms and strategic gatherings",
+    title: "Corporate Retreats",
+    description: "Leadership & strategy-focused escapes.",
     cardBg: "#F8FCFF",
     borderColor: "#EAF1FD",
     iconBg: "#EAF6FF",
     iconSrc: "/images/mice/meetings.svg",
   },
   {
-    title: "Incentives",
-    description: "Luxury reward trips and curated team experiences",
+    title: "Team Building Programs",
+    description: "Engaging activities that strengthen teams.",
     cardBg: "rgba(255, 240, 230, 0.22)",
     borderColor: "#FFF1E8",
     iconBg: "#FFF0E6",
     iconSrc: "/images/mice/incentives.svg",
   },
   {
-    title: "Conferences",
-    description: "Large-scale conferences with full technical support",
+    title: "Corporate Events",
+    description: "Gala dinners, company celebrations, award nights.",
     cardBg: "rgba(240, 253, 244, 0.28)",
     borderColor: "#EDFBF3",
     iconBg: "#F0FDF4",
     iconSrc: "/images/mice/conferences.svg",
   },
   {
-    title: "Exhibitions",
-    description: "Professional exhibition spaces and event management",
+    title: "Incentive Travel",
+    description: "Reward top performers in unforgettable destinations.",
     cardBg: "rgba(223, 234, 251, 0.17)",
     borderColor: "#EAF1FD",
     iconBg: "#DFEAFB",
@@ -38,7 +39,7 @@ const FEATURES = [
   },
 ];
 
-export default function EventsFeatures() {
+export default function B2BFeatures() {
   return (
     <section id="features" className={styles.section}>
       <div className={styles.header}>

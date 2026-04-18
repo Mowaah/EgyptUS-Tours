@@ -4,7 +4,7 @@ const STATS = [
   { value: "120+", label: "Corporate Events" },
   { value: "97%", label: "Client Satisfaction" },
   { value: "+15", label: "Countries Covered" },
-  { value: "+10K", label: "Atendees Managed" },
+  { value: "+10K", label: "Attendees Managed" },
 ];
 
 export default function EventsStats() {
