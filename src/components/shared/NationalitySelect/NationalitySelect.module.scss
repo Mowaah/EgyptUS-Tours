@@ -61,6 +61,7 @@
 .chevron {
   transition: transform $transition-fast;
   flex-shrink: 0;
+  margin-right: 8px;
 }
 
 .open .chevron {

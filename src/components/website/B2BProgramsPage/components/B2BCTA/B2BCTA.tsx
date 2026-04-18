@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import styles from './B2BCTA.module.scss';
 
 export default function B2BCTA() {
@@ -14,10 +15,10 @@ export default function B2BCTA() {
           <p className={styles.subtitle}>And your leadership will appreciate.</p>
         </div>
 
-        <button className={styles.ctaButton}>
+        <Link href="/b2b-programs/request-proposal" className={styles.ctaButton}>
           Schedule a Strategy Call
           <Image src="/images/calendar-orange.svg" alt="" width={24} height={24} style={{ filter: "brightness(0) invert(1)" }} />
-        </button>
+        </Link>
       </div>
 
       {/* Decorative background image */}

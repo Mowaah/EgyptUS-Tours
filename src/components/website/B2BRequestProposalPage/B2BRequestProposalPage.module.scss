@@ -1,0 +1,173 @@
+@use "@/styles/variables" as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: $background;
+  position: relative;
+  overflow: hidden;
+}
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: $background;
+  padding: 0 20px 80px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.content {
+  max-width: $container-max;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.formCard {
+  background: $white;
+  border: 1px solid $border-strong;
+  border-radius: 32px;
+  padding: $spacing-xl;
+  margin-inline: clamp(1.5rem, 8vw, 6rem);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.formHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formTitle {
+  font-family: 'Trip Sans';
+  font-weight: 700;
+  font-size: 24px;
+  color: #0E2851;
+  margin: 0;
+}
+
+.formSubtitle {
+  font-family: 'Trip Sans';
+  font-weight: 400;
+  font-size: 16px;
+  color: #6B7280;
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fieldLabel {
+  font-family: 'Trip Sans';
+  font-weight: 700;
+  font-size: 14px;
+  color: #374151;
+  margin: 0;
+}
+
+.fullWidthField {
+  grid-column: 1 / -1;
+  width: 50%;
+  padding-right: 12px;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding-right: 0;
+  }
+}
+
+.textareaField {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 120px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 16px;
+  font-family: 'Trip Sans';
+  font-size: 16px;
+  color: #111827;
+  resize: vertical;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: #2971E6;
+  }
+
+  &::placeholder {
+    color: #9CA3AF;
+  }
+}
+
+.phoneRow {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.input {
+  flex: 1;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 0 16px;
+  height: 48px;
+  font-family: 'Trip Sans';
+  font-size: 16px;
+  color: #111827;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: #2971E6;
+  }
+
+  &::placeholder {
+    color: #9CA3AF;
+  }
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #E5E7EB;
+  margin: 0;
+  width: 100%;
+}
+
+.submitBtn {
+  width: 100%;
+  height: 56px;
+  justify-content: center;
+}

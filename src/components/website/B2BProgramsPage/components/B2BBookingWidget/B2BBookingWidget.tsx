@@ -25,7 +25,7 @@ export default function B2BBookingWidget() {
             className={styles.primaryBtn}
             icon={<Image src="/images/arrows/arrow-right.svg" alt="" width={24} height={24} style={{ filter: "brightness(0) invert(1)" }} />}
             iconPosition="right"
-            href="/proposal"
+            href="/b2b-programs/request-proposal"
           >
             Request Proposal
           </Button>
