@@ -1,0 +1,10 @@
+@use "@/styles/variables" as *;
+
+.phoneRow {
+  display: flex;
+  gap: 8px;
+}
+
+.phoneInput {
+  flex: 1;
+}

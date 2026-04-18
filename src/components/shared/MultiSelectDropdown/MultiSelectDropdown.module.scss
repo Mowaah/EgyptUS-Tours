@@ -1,0 +1,90 @@
+@use "@/styles/variables" as *;
+
+.chipList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: #fff6f3;
+  box-sizing: border-box;
+}
+
+.chipLabel {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $dark;
+  line-height: 1.3;
+  word-break: break-word;
+  min-width: 0;
+}
+
+.chipClear {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0 2px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: opacity $transition-fast;
+
+  &:hover {
+    opacity: 0.75;
+  }
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  width: 100%;
+}
+
+.summaryText {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $dark;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.moreBadge {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: $secondary-light;
+  color: $secondary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  line-height: 1.2;
+}
+
+.triggerContent {
+  flex: 0 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  text-align: left;
+  overflow: hidden;
+}
+
+.triggerContentMultiline {
+  align-items: flex-start;
+  overflow: visible;
+  white-space: normal;
+}

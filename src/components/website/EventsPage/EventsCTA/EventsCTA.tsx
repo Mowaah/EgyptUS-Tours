@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import styles from './EventsCTA.module.scss';
 
 export default function EventsCTA() {
@@ -14,10 +15,10 @@ export default function EventsCTA() {
           </p>
         </div>
 
-        <button className={styles.ctaButton}>
+        <Link href="/events/request-proposal" className={styles.ctaButton}>
           Request Proposal
           <Image src="/images/arrows/arrow-right.svg" alt="" width={24} height={24} />
-        </button>
+        </Link>
       </div>
 
       {/* Decorative background image */}

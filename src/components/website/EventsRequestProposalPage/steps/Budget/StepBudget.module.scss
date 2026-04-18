@@ -1,0 +1,61 @@
+@use "@/styles/variables" as *;
+
+.infoBoxWrapper {
+  margin-top: 4px;
+}
+
+.infoBox {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 26px 26px 14px;
+  gap: 12px;
+  background: #F3F9FF;
+  border: 1px solid #DBEAFE;
+  border-radius: 16px;
+}
+
+.infoBoxTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0E2851;
+  margin: 0;
+  line-height: 28px;
+  font-family: 'Trip Sans', sans-serif;
+}
+
+.infoList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.infoListItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: #364153;
+}
+
+.infoListIcon {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2px;
+  width: 16px;
+  height: 16px;
+  background: #DFEAFB;
+  border: 1px solid rgba(21, 93, 252, 0.04);
+  border-radius: 8px;
+  box-sizing: border-box;
+}

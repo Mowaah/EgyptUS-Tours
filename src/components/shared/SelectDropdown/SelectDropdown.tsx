@@ -1,7 +1,6 @@
 "use client";
 
 import CheckboxDropdown from "@/components/shared/CheckboxDropdown/CheckboxDropdown";
-import prefStyles from "@/components/website/PlanYourTripPage/steps/Preferences/StepPreferences.module.scss";
 import styles from "./SelectDropdown.module.scss";
 
 export interface SelectOption {
@@ -10,26 +9,33 @@ export interface SelectOption {
   sublabel?: string;
   price?: string;
   isFree?: boolean;
+  [key: string]: any; // Allow for custom properties like starCount
 }
 
-interface SelectDropdownProps {
+interface SelectDropdownProps<T extends SelectOption = SelectOption> {
   id?: string;
   label?: string;
-  options: SelectOption[];
+  options: T[];
   value: string;
   onChange: (val: string) => void;
   /** Extra class applied to the trigger wrapper (e.g. to set a custom height) */
   triggerClassName?: string;
+  /** Custom renderer for the value shown in the trigger */
+  renderValue?: (value: string) => React.ReactNode;
+  /** Custom renderer for each option in the list */
+  renderOption?: (option: T, isSelected: boolean) => React.ReactNode;
 }
 
-export default function SelectDropdown({
+export default function SelectDropdown<T extends SelectOption = SelectOption>({
   id,
   label,
   options,
   value,
   onChange,
   triggerClassName = "",
-}: SelectDropdownProps) {
+  renderValue,
+  renderOption,
+}: SelectDropdownProps<T>) {
   const selectedOption = options.find((o) => o.value === value) ?? options[0];
 
   return (
@@ -38,8 +44,8 @@ export default function SelectDropdown({
       value={value}
       onChange={onChange}
       checkboxStyle="radio"
-      dropdownClassName={prefStyles.prefPanel}
-      renderOption={(opt) => (
+      dropdownClassName={styles.dropdownPanel}
+      renderOption={renderOption || ((opt) => (
         <div className={styles.option}>
           <div className={styles.optionMain}>
             <span className={styles.optionName}>{opt.label}</span>
@@ -53,11 +59,11 @@ export default function SelectDropdown({
             </span>
           )}
         </div>
-      )}
+      ))}
       renderTrigger={(isOpen, setIsOpen) => (
         <div
           id={id}
-          className={`${prefStyles.prefTrigger} ${isOpen ? prefStyles.prefTriggerOpen : ""} ${triggerClassName}`}
+          className={`${styles.dropdownTrigger} ${isOpen ? styles.dropdownTriggerOpen : ""} ${triggerClassName}`}
           tabIndex={0}
           role="combobox"
           aria-expanded={isOpen}
@@ -70,11 +76,15 @@ export default function SelectDropdown({
             }
           }}
         >
-          <span className={prefStyles.prefTriggerValue}>
-            {selectedOption?.label}
-          </span>
+          {renderValue && value ? (
+            renderValue(value)
+          ) : (
+            <span className={value ? styles.dropdownValue : styles.placeholder}>
+              {selectedOption?.label}
+            </span>
+          )}
           <svg
-            className={`${prefStyles.multiSelectChevron} ${isOpen ? prefStyles.multiSelectChevronOpen : ""}`}
+            className={`${styles.multiSelectChevron} ${isOpen ? styles.multiSelectChevronOpen : ""}`}
             width={12}
             height={8}
             viewBox="0 0 10 6"

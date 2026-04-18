@@ -1,0 +1,249 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.page {
+  min-height: 100vh;
+  background: $background;
+}
+
+.page :global(*) {
+  box-sizing: border-box;
+}
+
+
+.mainContent {
+  background: $background;
+  width: 100%;
+  padding: 40px 80px;
+  min-height: 600px;
+}
+
+.content {
+  max-width: $container-max;
+  margin: 0 auto;
+}
+
+.formHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  gap: 16px;
+}
+
+.formHeaderColumn {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 32px;
+}
+
+.formTitle {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0 0 8px 0;
+}
+
+.formSubtitle {
+  font-size: $font-size-base;
+  color: $text-light;
+  margin: 0;
+  max-width: 604px;
+}
+
+// Steps 2–3: same white card shell as StepDestination
+.stepFormCard {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  margin-bottom: 32px;
+  margin-inline: clamp(1.5rem, 8vw, 6rem);
+  background-color: $white;
+  padding: $spacing-xl;
+  border-radius: 32px;
+  border: 1px solid $border-strong;
+}
+
+.stepFormCardHeader {
+  flex-shrink: 0;
+}
+
+.stepFormCard .formHeaderColumn {
+  margin-bottom: 0;
+}
+
+.stepFormCard .formGrid {
+  margin-bottom: 0;
+}
+
+.stepFormCardScroll {
+  min-width: 0;
+}
+
+.stepFormCardDivider {
+  flex-shrink: 0;
+  margin: 0;
+  border: none;
+  height: 1px;
+  background: $border-strong;
+}
+
+.stepFormCardFooter {
+  flex-shrink: 0;
+
+  .previousButton,
+  .continueButton {
+    height: auto;
+  }
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.formGroup,
+.formGroupFull {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $dark;
+  }
+}
+
+.formGroupFull {
+  grid-column: 1 / -1;
+}
+
+// Matches ContactSection / B2BSection form fields
+
+// public/images/calendar.svg — shared by Plan Your Trip date fields
+.dateInput {
+  position: relative;
+  padding-left: 42px;
+  background-color: $white;
+  background-image: url("/images/calendar3.svg");
+  background-repeat: no-repeat;
+  background-position: left 14px center;
+  background-size: 20px 20px;
+
+  // Hide native calendar glyph if actual date input is used instead of CustomDatePicker
+  &::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+}
+
+select.formInput {
+  appearance: none;
+  background-image: url("/images/chevron-down.svg");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 10px 6px;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.formActions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.previousButton {
+  flex: 1;
+  padding: 14px;
+  background: $white;
+  border: 1px solid $primary;
+  border-radius: $radius-full;
+  color: $primary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: $primary-soft;
+  }
+}
+
+.continueButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  padding: 14px;
+  background: $primary;
+  border: none;
+  border-radius: $radius-full;
+  color: $white;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: background $transition-fast, opacity $transition-fast;
+
+  &:hover:not(:disabled) {
+    background: $primary-hover;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+
+
+@media (max-width: 1024px) {
+
+  .breadcrumb,
+  .stepIndicator,
+  .mainContent {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .formHeader {
+    flex-direction: column;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .formActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .previousButton,
+  .continueButton {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .stepLine {
+    width: 48px;
+  }
+
+  .breadcrumbTitle {
+    font-size: $font-size-3xl;
+  }
+}

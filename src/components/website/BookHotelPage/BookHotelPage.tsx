@@ -102,30 +102,15 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
           buttonText="Back to Home"
           onPrimaryClick={() => router.push("/")}
           onClose={() => router.push("/")}
-        >
-          <div style={{ background: "#F8FAFD", borderRadius: "16px", padding: "24px", margin: "24px 0", textAlign: "left" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
-              <div>
-                <span style={{ fontSize: "12px", color: "#666", display: "block" }}>Booking Reference</span>
-                <strong style={{ fontSize: "14px", color: "#1A1A1A" }}>#HB{Math.floor(Math.random() * 90000000 + 10000000)}</strong>
-              </div>
-              <div>
-                <span style={{ fontSize: "12px", color: "#666", display: "block" }}>Hotel Name</span>
-                <strong style={{ fontSize: "14px", color: "#1A1A1A" }}>{hotel.name}</strong>
-              </div>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-              <div>
-                <span style={{ fontSize: "12px", color: "#666", display: "block" }}>Check-in</span>
-                <strong style={{ fontSize: "14px", color: "#1A1A1A" }}>{formData.startDate || "—"}</strong>
-              </div>
-              <div>
-                <span style={{ fontSize: "12px", color: "#666", display: "block" }}>Deposit Paid</span>
-                <strong style={{ fontSize: "14px", color: "#FF6600" }}>${depositAmount.toFixed(2)}</strong>
-              </div>
-            </div>
-          </div>
-        </SuccessModal>
+          metadata={[
+            { label: "Booking Reference", value: `#HB${Math.floor(Math.random() * 90000000 + 10000000)}` },
+            { label: "Hotel", value: hotel.name },
+            { label: "Check-in", value: formData.startDate || "—" },
+            { label: "Check-out", value: formData.endDate || "—" },
+            { label: "Total Price", value: `$${totalAmount.toFixed(2)}`, valueColor: "#FF6600" },
+            { label: "Paid Now", value: `$${depositAmount.toFixed(2)}`, valueColor: "#FF6600" },
+          ]}
+        />
       )}
     </div>
   );

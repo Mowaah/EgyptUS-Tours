@@ -14,9 +14,12 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
-  max-width: 628px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .featureItem {
@@ -49,14 +52,18 @@
 }
 
 .featureTitle {
+  font-family: 'Trip Sans', sans-serif;
   font-size: 16px;
   font-weight: 500;
+  line-height: 24px;
   color: #0E2851;
   margin: 0;
 }
 
 .featureDesc {
+  font-family: 'Trip Sans', sans-serif;
   font-size: 14px;
+  line-height: 20px;
   color: #4A5565;
   margin: 0;
 }

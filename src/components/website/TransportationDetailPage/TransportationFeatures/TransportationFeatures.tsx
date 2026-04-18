@@ -19,7 +19,7 @@ export default function TransportationFeatures() {
         {FEATURES.map((feature) => (
           <div key={feature.id} className={styles.featureItem}>
             <div className={styles.iconBox}>
-               <Image src="/images/check-blue.svg" alt="" width={16} height={16} />
+               <Image src="/images/check-blue.svg" alt="" width={20} height={20} />
             </div>
             <div className={styles.content}>
                <h3 className={styles.featureTitle}>{feature.title}</h3>

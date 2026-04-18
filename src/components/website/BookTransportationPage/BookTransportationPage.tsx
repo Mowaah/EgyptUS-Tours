@@ -102,26 +102,13 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
           buttonText="Back to Home"
           onPrimaryClick={() => router.push("/")}
           onClose={() => router.push("/")}
-        >
-          <div className={styles.successGrid}>
-            <div className={styles.successItem}>
-               <span className={styles.successLabel}>Booking Reference</span>
-               <strong className={styles.successVal}>#BK{Math.floor(Math.random() * 90000000 + 10000000)}</strong>
-            </div>
-            <div className={styles.successItem}>
-               <span className={styles.successLabel}>Vehicle</span>
-               <strong className={styles.successVal}>{vehicle.type} - {vehicle.name}</strong>
-            </div>
-            <div className={styles.successItem}>
-               <span className={styles.successLabel}>Pickup Date</span>
-               <strong className={styles.successVal}>{formData.pickupDate || "2026-01-22"}</strong>
-            </div>
-            <div className={styles.successItem}>
-               <span className={styles.successLabel}>Total Paid</span>
-               <strong className={styles.successVal}>$110.42</strong>
-            </div>
-          </div>
-        </SuccessModal>
+          metadata={[
+            { label: "Booking Reference", value: `#BK${Math.floor(Math.random() * 90000000 + 10000000)}` },
+            { label: "Vehicle", value: `${vehicle.type} - ${vehicle.name}` },
+            { label: "Pickup Date", value: formData.pickupDate || "2026-01-22" },
+            { label: "Total Paid", value: "$110.42", valueColor: "#FF6600" },
+          ]}
+        />
       )}
     </div>
   );

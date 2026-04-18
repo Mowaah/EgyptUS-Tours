@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 import Image from "next/image";
 import styles from "./SuccessModal.module.scss";
 
@@ -9,6 +10,7 @@ export interface SuccessModalProps {
   onClose: () => void;
   primaryButtonText?: string;
   onPrimaryClick?: () => void;
+  metadata?: { label: string; value: string; valueColor?: string }[];
   children?: React.ReactNode;
 }
 
@@ -19,8 +21,19 @@ export default function SuccessModal({
   onClose,
   primaryButtonText,
   onPrimaryClick,
+  metadata,
   children,
 }: SuccessModalProps) {
+  useEffect(() => {
+    // Lock scroll
+    document.body.style.overflow = "hidden";
+    
+    // Unlock scroll on unmount
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
+
   return (
     <div className={styles.modalOverlay} role="dialog" aria-modal="true">
       <div className={styles.modal}>
@@ -36,6 +49,22 @@ export default function SuccessModal({
 
         <h2 className={styles.modalTitle}>{title}</h2>
         <p className={styles.modalMessage}>{message}</p>
+
+        {metadata && metadata.length > 0 && (
+          <div className={styles.metaGrid}>
+            {metadata.map((item) => (
+              <div key={item.label} className={styles.metaCol}>
+                <span className={styles.metaLabel}>{item.label}</span>
+                <strong
+                  className={styles.metaValue}
+                  style={item.valueColor ? { color: item.valueColor } : undefined}
+                >
+                  {item.value}
+                </strong>
+              </div>
+            ))}
+          </div>
+        )}
 
         {children}
 

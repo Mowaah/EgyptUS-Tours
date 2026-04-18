@@ -1,0 +1,47 @@
+@use "@/styles/variables" as *;
+
+.formGroupFull {
+  grid-column: 1 / -1;
+}
+
+.additionalServicesRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  grid-column: 1 / -1;
+}
+
+.serviceGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.serviceCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #EAF1FD;
+  border-radius: 16px;
+  cursor: pointer;
+  background: #FFFFFF;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+
+  &:hover {
+    border-color: rgba(#FF6600, 0.4);
+    box-shadow: 0 4px 12px rgba(#0E2851, 0.05);
+  }
+}
+
+.serviceCardText {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0E2851;
+  user-select: none;
+}

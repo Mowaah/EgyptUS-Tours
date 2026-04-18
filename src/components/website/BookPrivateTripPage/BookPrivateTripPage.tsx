@@ -115,30 +115,13 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
           buttonText="Back to Home"
           onPrimaryClick={() => router.push("/")}
           onClose={() => router.push("/")}
-        >
-          <div style={{ background: '#F8FAFD', borderRadius: '16px', padding: '24px', margin: '24px 0', textAlign: 'left' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-              <div>
-                <span style={{ fontSize: '12px', color: '#666', display: 'block' }}>Booking Reference</span>
-                <strong style={{ fontSize: '14px', color: '#1A1A1A' }}>#BK53602205</strong>
-              </div>
-              <div>
-                <span style={{ fontSize: '12px', color: '#666', display: 'block' }}>Trip Name</span>
-                <strong style={{ fontSize: '14px', color: '#1A1A1A' }}>{trip.title}</strong>
-              </div>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div>
-                <span style={{ fontSize: '12px', color: '#666', display: 'block' }}>Pickup Date</span>
-                <strong style={{ fontSize: '14px', color: '#1A1A1A' }}>{formData.startDate || "2026-03-15"}</strong>
-              </div>
-              <div>
-                <span style={{ fontSize: '12px', color: '#666', display: 'block' }}>Total Paid</span>
-                <strong style={{ fontSize: '14px', color: '#FF6600' }}>${depositAmount.toLocaleString()}</strong>
-              </div>
-            </div>
-          </div>
-        </SuccessModal>
+          metadata={[
+            { label: "Booking Reference", value: `#BK${Math.floor(Math.random() * 90000000 + 10000000)}` },
+            { label: "Trip Name", value: trip.title },
+            { label: "Pickup Date", value: formData.startDate || "2026-03-15" },
+            { label: "Total Paid", value: `$${depositAmount.toLocaleString()}`, valueColor: "#FF6600" },
+          ]}
+        />
       )}
     </div>
   );

@@ -10,7 +10,7 @@
   width: fit-content;
   max-width: 100%;
   margin: 0 auto; // Removed bottom margin here too as it's cleaner
-  
+
   &::-webkit-scrollbar {
     display: none;
   }
@@ -38,6 +38,8 @@
   border-radius: 80px;
   font-size: 14px;
   font-weight: 500;
+  line-height: 19px;
+  letter-spacing: 0.01em;
   color: #9CA3AF;
   border: 1px solid rgba(26, 26, 26, 0.06);
   background: #FFFFFF;
@@ -45,8 +47,8 @@
   transition: all $transition-fast;
 
   &:hover {
-    background: #F9FAFB;
-    color: #2971E6;
+    background: #fcfcfc;
+    color: #0E2851;
   }
 
   &.active {

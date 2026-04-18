@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, DetailGallery, DetailTabNav } from "@/components/shared";
+import { PageHeader, DetailGallery } from "@/components/shared";
 import EventsOverview from "./EventsOverview/EventsOverview";
 import EventsFeatures from "./EventsFeatures/EventsFeatures";
 import EventsProcess from "./EventsProcess/EventsProcess";
@@ -9,12 +9,6 @@ import EventsFeatured from "./EventsFeatured/EventsFeatured";
 import EventsSuccessStories from "./EventsSuccessStories/EventsSuccessStories";
 import EventsCTA from "./EventsCTA/EventsCTA";
 import styles from "./EventsPage.module.scss";
-
-const TABS = [
-  { id: "overview", label: "Overview" },
-  { id: "features", label: "Features" },
-  { id: "accessibility", label: "Accessibility" },
-];
 
 const MOCK_IMAGES = [
   "/images/events4.jpg",
@@ -45,8 +39,6 @@ export default function EventsPage() {
           <DetailGallery images={MOCK_IMAGES} title="Corporate Events in Egypt" />
         </div>
       </div>
-
-      <DetailTabNav tabs={TABS} />
 
       <div className={styles.container}>
         <EventsOverview />

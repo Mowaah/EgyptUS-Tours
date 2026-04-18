@@ -44,3 +44,4 @@ export { default as VehicleCard } from "./VehicleCard/VehicleCard";
 export type { Vehicle } from "./VehicleCard/VehicleCard";
 export { default as ReviewSection } from "./ReviewSection/ReviewSection";
 export type { Review } from "./ReviewSection/ReviewSection";
+export { default as MultiSelectDropdown } from "./MultiSelectDropdown/MultiSelectDropdown";

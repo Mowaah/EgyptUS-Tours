@@ -6,7 +6,7 @@ import {
   type ReactNode,
 } from "react";
 
-import { StarRating } from "@/components/shared";
+import { StarRating, SelectDropdown, MultiSelectDropdown } from "@/components/shared";
 import CheckboxDropdown from "@/components/shared/CheckboxDropdown/CheckboxDropdown";
 
 import {
@@ -24,73 +24,12 @@ type Preferences = {
   experiences: string[];
 };
 
-function Chevron({ open }: { open: boolean }) {
-  return (
-    <img
-      src="/images/arrows/chevron-down2.svg"
-      alt=""
-      width={20}
-      height={20}
-      className={`${styles.multiSelectChevron} ${open ? styles.multiSelectChevronOpen : ""}`}
-      aria-hidden
-    />
-  );
-}
 
 function starsFromHotelValue(value: string): 3 | 4 | 5 | null {
   if (value === "5.0") return 5;
   if (value === "4.0") return 4;
   if (value === "3.0") return 3;
   return null;
-}
-
-function ClearIcon() {
-  return (
-    <img
-      src="/images/x-close.svg"
-      alt=""
-      width={12}
-      height={12}
-      className={styles.clearIcon}
-    />
-  );
-}
-
-function Cluster({
-  hasValue,
-  showClear,
-  clearLabel,
-  onClear,
-  children,
-}: {
-  hasValue: boolean;
-  showClear: boolean;
-  clearLabel: string;
-  onClear: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <div
-      className={styles.prefTriggerValueCluster}
-      {...(hasValue ? { "data-pref-has-value": "" } : {})}
-    >
-      <div className={styles.prefTriggerMain}>{children}</div>
-      {showClear ? (
-        <button
-          type="button"
-          data-pref-clear
-          className={styles.prefClear}
-          aria-label={clearLabel}
-          onClick={(e) => {
-            e.stopPropagation();
-            onClear();
-          }}
-        >
-          <ClearIcon />
-        </button>
-      ) : null}
-    </div>
-  );
 }
 
 export default function StepPreferences({
@@ -109,24 +48,6 @@ export default function StepPreferences({
   onContinue: () => void;
 }) {
 
-  const v = preferences.hotelCategory;
-  const hotelStars = starsFromHotelValue(v);
-  const hotelTrigger =
-    hotelStars !== null ? (
-      <StarRating
-        className={styles.hotelCategoryStarRating}
-        filled={hotelStars}
-        value={hotelStars}
-        formatDisplayValue={(n) => n.toFixed(1)}
-        valueClassName={styles.hotelCategoryValue}
-        size={14}
-      />
-    ) : v ? (
-      <span className={styles.prefTriggerValue}>{v}</span>
-    ) : (
-      <span className={styles.multiSelectPlaceholder}>Select hotel category</span>
-    );
-
   const exp = preferences.experiences;
 
   return (
@@ -144,43 +65,27 @@ export default function StepPreferences({
             <label id="pti-hotel-label" htmlFor="pti-hotel-trigger">
               Preferred hotel category
             </label>
-            <CheckboxDropdown
+            <SelectDropdown
+              id="pti-hotel-trigger"
               options={HOTEL_CATEGORY_OPTIONS.map(opt => ({ ...opt, label: opt.value, value: opt.value }))}
               value={preferences.hotelCategory}
               onChange={(val) => onSetPreferences({ hotelCategory: val })}
-              dropdownClassName={styles.prefPanel}
-              checkboxStyle="radio"
-              renderTrigger={(isOpen, setIsOpen) => (
-                <div
-                  id="pti-hotel-trigger"
-                  className={`${styles.prefTrigger} ${isOpen ? styles.prefTriggerOpen : ""}`}
-                  role="combobox"
-                  aria-expanded={isOpen}
-                  aria-controls="pti-hotel-listbox"
-                  aria-labelledby="pti-hotel-label"
-                  tabIndex={0}
-                  onClick={(e) => {
-                    if ((e.target as HTMLElement).closest("[data-pref-clear]")) return;
-                    setIsOpen(!isOpen);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setIsOpen(!isOpen);
-                    }
-                  }}
-                >
-                  <Cluster
-                    hasValue={!!preferences.hotelCategory}
-                    showClear={isOpen && !!preferences.hotelCategory}
-                    clearLabel="Clear hotel category"
-                    onClear={() => onSetPreferences({ hotelCategory: "" })}
-                  >
-                    {hotelTrigger}
-                  </Cluster>
-                  <Chevron open={isOpen} />
-                </div>
-              )}
+              label="Select hotel category"
+              renderValue={(v) => {
+                const stars = starsFromHotelValue(v);
+                return stars !== null ? (
+                  <StarRating
+                    className={styles.hotelCategoryStarRating}
+                    filled={stars}
+                    value={stars}
+                    formatDisplayValue={(n) => n.toFixed(1)}
+                    valueClassName={styles.hotelCategoryValue}
+                    size={14}
+                  />
+                ) : (
+                  <span className={styles.dropdownValue}>{v}</span>
+                );
+              }}
               renderOption={(opt) => (
                 <span className={styles.prefOptionRow}>
                   {opt.starCount !== null ? (
@@ -205,47 +110,12 @@ export default function StepPreferences({
             <label id="pti-room-label" htmlFor="pti-room-trigger">
               Ideal room type
             </label>
-            <CheckboxDropdown
+            <SelectDropdown
+              id="pti-room-trigger"
               options={ROOM_TYPE_OPTIONS.map(opt => ({ label: opt, value: opt }))}
               value={preferences.roomType}
               onChange={(val) => onSetPreferences({ roomType: val })}
-              dropdownClassName={styles.prefPanel}
-              checkboxStyle="radio"
-              renderTrigger={(isOpen, setIsOpen) => (
-                <div
-                  id="pti-room-trigger"
-                  className={`${styles.prefTrigger} ${isOpen ? styles.prefTriggerOpen : ""}`}
-                  role="combobox"
-                  aria-expanded={isOpen}
-                  aria-controls="pti-room-listbox"
-                  aria-labelledby="pti-room-label"
-                  tabIndex={0}
-                  onClick={(e) => {
-                    if ((e.target as HTMLElement).closest("[data-pref-clear]")) return;
-                    setIsOpen(!isOpen);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setIsOpen(!isOpen);
-                    }
-                  }}
-                >
-                  <Cluster
-                    hasValue={!!preferences.roomType}
-                    showClear={isOpen && !!preferences.roomType}
-                    clearLabel="Clear room type"
-                    onClear={() => onSetPreferences({ roomType: "" })}
-                  >
-                    {preferences.roomType ? (
-                      <span className={styles.prefTriggerValue}>{preferences.roomType}</span>
-                    ) : (
-                      <span className={styles.multiSelectPlaceholder}>Select room type</span>
-                    )}
-                  </Cluster>
-                  <Chevron open={isOpen} />
-                </div>
-              )}
+              label="Select room type"
             />
           </div>
 
@@ -253,47 +123,12 @@ export default function StepPreferences({
             <label id="pti-transport-label" htmlFor="pti-transport-trigger">
               Transportation Preferences
             </label>
-            <CheckboxDropdown
+            <SelectDropdown
+              id="pti-transport-trigger"
               options={transportOptions.map(opt => ({ label: opt, value: opt }))}
               value={preferences.transportation}
               onChange={(val) => onSetPreferences({ transportation: val })}
-              dropdownClassName={styles.prefPanel}
-              checkboxStyle="radio"
-              renderTrigger={(isOpen, setIsOpen) => (
-                <div
-                  id="pti-transport-trigger"
-                  className={`${styles.prefTrigger} ${isOpen ? styles.prefTriggerOpen : ""}`}
-                  role="combobox"
-                  aria-expanded={isOpen}
-                  aria-controls="pti-transport-listbox"
-                  aria-labelledby="pti-transport-label"
-                  tabIndex={0}
-                  onClick={(e) => {
-                    if ((e.target as HTMLElement).closest("[data-pref-clear]")) return;
-                    setIsOpen(!isOpen);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setIsOpen(!isOpen);
-                    }
-                  }}
-                >
-                  <Cluster
-                    hasValue={!!preferences.transportation}
-                    showClear={isOpen && !!preferences.transportation}
-                    clearLabel="Clear transportation"
-                    onClear={() => onSetPreferences({ transportation: "" })}
-                  >
-                    {preferences.transportation ? (
-                      <span className={styles.prefTriggerValue}>{preferences.transportation}</span>
-                    ) : (
-                      <span className={styles.multiSelectPlaceholder}>Select Transportation</span>
-                    )}
-                  </Cluster>
-                  <Chevron open={isOpen} />
-                </div>
-              )}
+              label="Select Transportation"
             />
           </div>
 
@@ -301,79 +136,12 @@ export default function StepPreferences({
             <label id="pti-experience-label" htmlFor="pti-experience-trigger">
               Enhance Your Experience
             </label>
-            <CheckboxDropdown
+            <MultiSelectDropdown
+              id="pti-experience-trigger"
               options={experienceOptions.map(opt => ({ label: opt, value: opt }))}
               value={preferences.experiences}
               onChange={(val) => onSetPreferences({ experiences: val })}
-              multiple={true}
-              dropdownClassName={styles.prefPanel}
-              checkboxStyle="checkbox"
-              renderTrigger={(isOpen, setIsOpen) => (
-                <div
-                  id="pti-experience-trigger"
-                  className={`${styles.prefTrigger} ${isOpen ? styles.prefTriggerOpen : ""}`}
-                  role="combobox"
-                  aria-expanded={isOpen}
-                  aria-controls="pti-experience-listbox"
-                  aria-labelledby="pti-experience-label"
-                  title={exp.length > 0 ? exp.join(", ") : undefined}
-                  tabIndex={0}
-                  onClick={(e) => {
-                    if ((e.target as HTMLElement).closest("[data-experience-chip-clear]")) return;
-                    setIsOpen(!isOpen);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setIsOpen(!isOpen);
-                    }
-                  }}
-                >
-                  <div
-                    className={`${styles.prefTriggerValueCluster}${isOpen && exp.length > 0 ? ` ${styles.prefTriggerValueClusterMultiline}` : ""
-                      }`}
-                  >
-                    <div
-                      className={`${styles.prefTriggerMain}${isOpen && exp.length > 0 ? ` ${styles.prefTriggerMainMultiline}` : ""
-                        }`}
-                    >
-                      {exp.length === 0 ? (
-                        <span className={styles.multiSelectPlaceholder}>Select Experiences</span>
-                      ) : isOpen ? (
-                        <div className={styles.experienceChipList}>
-                          {exp.map((item) => (
-                            <span key={item} className={styles.experienceChip}>
-                              <span className={styles.experienceChipLabel}>{item}</span>
-                              <button
-                                type="button"
-                                className={styles.experienceChipClear}
-                                data-experience-chip-clear
-                                aria-label={`Remove ${item}`}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onSetPreferences({
-                                    experiences: exp.filter((x) => x !== item),
-                                  });
-                                }}
-                              >
-                                <ClearIcon />
-                              </button>
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className={styles.experienceSummary}>
-                          <span className={styles.experienceSummaryFirst}>{exp[0]}</span>
-                          {exp.length > 1 ? (
-                            <span className={styles.experienceMoreBadge}>+{exp.length - 1}</span>
-                          ) : null}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <Chevron open={isOpen} />
-                </div>
-              )}
+              placeholder="Select Experiences"
             />
           </div>
         </div>

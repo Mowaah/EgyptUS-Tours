@@ -9,6 +9,7 @@ interface CategoryTabsProps {
   active?: number;
   onTabChange?: (tab: string, index: number) => void;
   wrap?: boolean;
+  className?: string; // Add optional className
 }
 
 export default function CategoryTabs({
@@ -17,6 +18,7 @@ export default function CategoryTabs({
   active,
   onTabChange,
   wrap = false,
+  className = "",
 }: CategoryTabsProps) {
   const [internalActiveIndex, setInternalActiveIndex] = useState(defaultActive);
   const activeIndex = active !== undefined ? active : internalActiveIndex;
@@ -70,7 +72,7 @@ export default function CategoryTabs({
       // Pass 1: Invisible flex-wrap render to legally calculate browser wrapping
       return (
         <div 
-          className={styles.wrapEnabled} 
+          className={`${styles.wrapEnabled} ${className}`} 
           style={{ opacity: 0, pointerEvents: "none" }}
         >
           <div className={styles.tabsWrapped} ref={measureRef}>
@@ -87,7 +89,7 @@ export default function CategoryTabs({
     // Pass 2: Accurately render chunked rows with the desired distinct pill backgrounds
     let runningIndex = 0;
     return (
-      <div className={styles.wrapRows}>
+      <div className={`${styles.wrapRows} ${className}`}>
         {measuredRows.map((row, rowIdx) => {
           const rowStart = runningIndex;
           runningIndex += row.length;
@@ -116,7 +118,7 @@ export default function CategoryTabs({
 
   // Default: single scrollable pill row
   return (
-    <div className={styles.wrapper}>
+    <div className={`${styles.wrapper} ${className}`}>
       <div className={styles.tabs}>
         {tabs.map((tab, index) => (
           <button

@@ -25,6 +25,7 @@ export default function EventsBookingWidget() {
             className={styles.primaryBtn}
             icon={<Image src="/images/arrows/arrow-right.svg" alt="" width={24} height={24} style={{ filter: "brightness(0) invert(1)" }} />}
             iconPosition="right"
+            href="/events/request-proposal"
           >
             Request Proposal
           </Button>
