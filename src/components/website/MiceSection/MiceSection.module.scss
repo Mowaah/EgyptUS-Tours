@@ -31,14 +31,17 @@
   align-items: center;
   gap: $spacing-lg;
   justify-content: center;
+  width: 100%;
+  padding: 0 $spacing-xl;
 }
 
 .galleryGrid {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  height: 450px;
-  padding-top: 480px;
+  height: 500px;
+  margin-top: 80px;
+  padding-bottom: 20px;
 }
 
 .viewAll {
@@ -53,7 +56,7 @@
   border-radius: 24px;
   overflow: hidden;
   flex-shrink: 0;
-  transition: transform $transition-base;
+  transition: all $transition-base;
 
   &::after {
     content: "";
@@ -65,12 +68,18 @@
     z-index: 1;
   }
 
+  // Common transition for hover
+  &:hover {
+    z-index: 10 !important;
+    transform: translateY(-20px) !important;
+  }
+
+  // Desktop offsets 
   &:nth-child(1) {
     transform: rotate(2deg) translateY(-80px);
     width: 240px;
     height: 390px;
     margin-right: -35px;
-    margin-top: -200px;
     z-index: 1;
   }
 
@@ -106,8 +115,94 @@
     z-index: 1;
   }
 
-  &:hover {
-    z-index: 6;
+  // Responsiveness
+  @media (max-width: 1024px) {
+    width: 200px !important;
+    height: 320px !important;
+
+    &:nth-child(1) {
+      margin-right: -100px;
+      transform: rotate(2deg) translateY(-40px);
+    }
+
+    &:nth-child(2) {
+      margin-right: -20px;
+      transform: rotate(2deg) translateY(-20px);
+    }
+
+    &:nth-child(3) {
+      width: 230px !important;
+      height: 360px !important;
+      margin: 0 -20px;
+    }
+
+    &:nth-child(4) {
+      margin-left: -20px;
+      transform: rotate(-2deg) translateY(-20px);
+    }
+
+    &:nth-child(5) {
+      margin-left: -100px;
+      transform: rotate(-2deg) translateY(-40px);
+    }
+  }
+
+  @media (max-width: 768px) {
+    width: 130px !important;
+    height: 200px !important;
+
+    &:nth-child(1) {
+      margin-right: -90px;
+      transform: rotate(3deg) translateY(-20px);
+    }
+
+    &:nth-child(2) {
+      margin-right: -40px;
+      transform: rotate(2deg) translateY(-10px);
+    }
+
+    &:nth-child(3) {
+      width: 160px !important;
+      height: 240px !important;
+      margin: 0 -30px;
+    }
+
+    &:nth-child(4) {
+      margin-left: -40px;
+      transform: rotate(-2deg) translateY(-10px);
+    }
+
+    &:nth-child(5) {
+      margin-left: -90px;
+      transform: rotate(-3deg) translateY(-20px);
+    }
+  }
+
+  @media (max-width: 480px) {
+    width: 100px !important;
+    height: 160px !important;
+
+    &:nth-child(1) {
+      margin-right: -80px;
+    }
+
+    &:nth-child(2) {
+      margin-right: -55px;
+    }
+
+    &:nth-child(3) {
+      width: 130px !important;
+      height: 200px !important;
+      margin: 0 -50px;
+    }
+
+    &:nth-child(4) {
+      margin-left: -55px;
+    }
+
+    &:nth-child(5) {
+      margin-left: -80px;
+    }
   }
 }
 

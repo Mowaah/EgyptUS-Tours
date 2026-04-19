@@ -3,6 +3,11 @@
 @mixin container {
   max-width: $container-max;
   margin: 0 auto;
+  padding: 0 24px;
+
+  @media (max-width: 768px) {
+    padding: 0 20px;
+  }
 }
 
 @mixin flex-center {
@@ -18,10 +23,10 @@
 }
 
 @mixin section-padding {
-  padding: 0 0;
+  padding: 64px 0;
 
   @media (min-width: 1024px) {
-    padding: $spacing-3xl 0;
+    padding: 96px 0;
   }
 }
 

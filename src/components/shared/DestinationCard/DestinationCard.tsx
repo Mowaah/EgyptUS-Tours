@@ -6,7 +6,6 @@ interface DestinationCardProps {
   description: string;
   image: string;
   href?: string;
-  isExpanded?: boolean;
 }
 
 export default function DestinationCard({
@@ -14,12 +13,11 @@ export default function DestinationCard({
   description,
   image,
   href = "#",
-  isExpanded = false,
 }: DestinationCardProps) {
   return (
     <a
       href={href}
-      className={`${styles.card} ${isExpanded ? styles.expanded : ""}`}
+      className={styles.card}
     >
       <Image
         src={image}
@@ -28,7 +26,7 @@ export default function DestinationCard({
         sizes="(max-width: 768px) 100vw, 300px"
         className={styles.image}
       />
-      <div className={`${styles.overlay} ${isExpanded ? styles.overlayExpanded : ""}`} />
+      <div className={styles.overlay} />
       <span className={styles.arrow}>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
           <path d="M7 7h8.586L5.293 17.293l1.414 1.414L17 8.414V17h2V5H7v2z" />

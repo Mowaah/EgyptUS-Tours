@@ -7,7 +7,6 @@ const DESERTS = [
     description:
       "Experience the thrill of the Egyptian desert with camel rides and sandboarding adventures.",
     image: "/images/desert/western.jpg",
-    isExpanded: true,
   },
   {
     title: "Eastern Desert",
@@ -53,7 +52,6 @@ export default function DesertSection() {
               title={desert.title}
               description={desert.description}
               image={desert.image}
-              isExpanded={desert.isExpanded}
             />
           ))}
         </div>
