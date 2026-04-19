@@ -1,0 +1,98 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.section {
+  padding: 24px 0 64px 0;
+  background: $white;
+
+  @media (min-width: 1024px) {
+    padding: 0px 0 40px 0;
+  }
+}
+
+.container {
+  @include container;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.tabsWrapper {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: $spacing-lg;
+}
+
+.leftAlignTabs {
+  margin: 0 !important;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-2xl;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 60px;
+  }
+}
+
+.textContent {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.mainTitle {
+  font-family: 'Trip Sans';
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 45px;
+  color: #0E2851;
+  margin: 0;
+}
+
+.paragraphGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.paragraphTitle {
+  font-family: 'Trip Sans';
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0.16px;
+  color: #FF6600;
+  margin: 0;
+}
+
+.paragraphLine {
+  font-family: 'Trip Sans';
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+  color: #364153;
+  padding-left: 16px;
+  border-left: 3px solid #EBEBEB;
+  max-width: 550px;
+}
+
+.imageContent {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  border-radius: 24px;
+  overflow: hidden;
+
+  @media (min-width: 1024px) {
+    height: 100%;
+    min-height: 500px;
+  }
+}
+
+.image {
+  object-fit: cover;
+}

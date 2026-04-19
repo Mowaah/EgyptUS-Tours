@@ -1,0 +1,151 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.section {
+  position: relative;
+  overflow: hidden;
+  padding: 64px 20px;
+  background: $white;
+
+  @media (min-width: 1024px) {
+    padding: 96px 0;
+  }
+}
+
+.decoration {
+  position: absolute;
+  top: -140;
+  left: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.decorationImg {
+  max-width: 100%;
+  height: auto;
+}
+
+.container {
+  @include container;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  margin-top: 90px;
+  margin-bottom: 90px;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.customFeatureCard {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 24px;
+  min-height: 138px;
+  gap: 24px;
+  background: #F9FAFB;
+  border: 1px solid #EAF1FD;
+  border-radius: 32px;
+}
+
+.iconBox {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 56px;
+  height: 56px;
+  background: rgba(41, 113, 230, 0.1);
+  border-radius: 14px;
+  flex: none;
+}
+
+.featureTextContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 1;
+}
+
+.featureTitle {
+  font-family: 'Trip Sans';
+  font-weight: 500;
+  font-size: 20px;
+  color: #0E2851;
+  margin: 0;
+  line-height: 28px;
+}
+
+.featureDesc {
+  font-family: 'Trip Sans';
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+  color: #4B5563;
+  margin: 0;
+}
+
+.badgesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.badgeCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 6px;
+  border-radius: 22px;
+  gap: 8px;
+  transition: transform $transition-fast;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+.badgeIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 8px;
+  color: currentcolor;
+}
+
+.badgeTitle {
+  font-family: 'Trip Sans';
+  font-size: 16px;
+  font-weight: 500;
+  color: #0E2851;
+  margin: 0;
+}
+
+.badgeDesc {
+  font-family: 'Trip Sans';
+  font-size: 14px;
+  color: #4A5565;
+  line-height: 20px;
+}

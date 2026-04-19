@@ -1,0 +1,156 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.section {
+  padding: 56px 20px;
+  background: $white;
+
+  @media (min-width: 1024px) {
+    padding: 56px 0;
+  }
+}
+
+.container {
+  @include container;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: center;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 583px 615px;
+    justify-content: space-between;
+    gap: 48px;
+  }
+}
+
+.imagesGrid {
+  display: flex;
+  gap: 16px;
+  height: 423px;
+  width: 100%;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 257px;
+}
+
+.rightColumn {
+  width: 310px;
+}
+
+.imageWrapSm {
+  position: relative;
+  flex: 1;
+  /* Height naturally divides to roughly 203px based on gap */
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.imageWrapLg {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.textGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  color: #FF6600;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 22px;
+  margin-bottom: 8px;
+}
+
+.heading {
+  color: #0E2851;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 41px;
+  margin: 0;
+}
+
+.paragraphs {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  p {
+    color: #364153;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 26px;
+    margin: 0;
+  }
+}
+
+.statsRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 15px;
+
+  @media (max-width: 640px) {
+    flex-wrap: wrap;
+    gap: 24px;
+
+    .statItem {
+      border-left: none !important;
+      padding-left: 0 !important;
+    }
+  }
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: 192px;
+  height: 108px;
+
+  &:not(:first-child) {
+    border-left: 1px solid #E5E7EB;
+    padding: 0 24px;
+    width: auto;
+    flex: 1;
+  }
+}
+
+.statValue {
+  color: #FF6600;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 45px;
+}
+
+.statDesc {
+  color: #6B7280;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 17px;
+  text-align: center;
+}

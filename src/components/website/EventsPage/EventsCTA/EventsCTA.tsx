@@ -1,36 +1,13 @@
 import React from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import styles from './EventsCTA.module.scss';
+import { SecondaryCta } from '@/components/shared';
 
 export default function EventsCTA() {
   return (
-    <section className={styles.section}>
-      <div className={styles.container}>
-        <div className={styles.content}>
-          <h2 className={styles.title}>Ready to Plan Your Corporate Event in Egypt?</h2>
-          <p className={styles.subtitle}>
-            Our expert MICE team will create a customized proposal tailored to your
-            organization's specific requirements and objectives.
-          </p>
-        </div>
-
-        <Link href="/events/request-proposal" className={styles.ctaButton}>
-          Request Proposal
-          <Image src="/images/arrows/arrow-right.svg" alt="" width={24} height={24} />
-        </Link>
-      </div>
-
-      {/* Decorative background image */}
-      <div className={styles.decoration}>
-        <Image
-          src="/images/dotted-line5.svg"
-          alt=""
-          width={250}
-          height={200}
-          className={styles.decorationImg}
-        />
-      </div>
-    </section>
+    <SecondaryCta 
+      heading="Ready to Plan Your Corporate Event in Egypt?"
+      description="Our expert MICE team will create a customized proposal tailored to your organization's specific requirements and objectives."
+      buttonText="Request Proposal"
+      buttonHref="/events/request-proposal"
+    />
   );
 }
