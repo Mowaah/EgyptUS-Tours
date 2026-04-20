@@ -46,3 +46,5 @@ export type { Vehicle } from "./VehicleCard/VehicleCard";
 export { default as ReviewSection } from "./ReviewSection/ReviewSection";
 export type { Review } from "./ReviewSection/ReviewSection";
 export { default as MultiSelectDropdown } from "./MultiSelectDropdown/MultiSelectDropdown";
+export { default as Pagination } from "./Pagination/Pagination";
+export { default as SearchContainer } from "./SearchContainer/SearchContainer";

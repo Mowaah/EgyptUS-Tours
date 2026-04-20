@@ -101,7 +101,6 @@ export default function EventsRequestProposalPage() {
     <div className={styles.page}>
       <PageHeader
         breadcrumbs={[
-          { label: "Home", href: "/" },
           { label: "MICE & Corporate Events", href: "/events" },
           { label: "Requesting Proposal", isCurrent: true },
         ]}

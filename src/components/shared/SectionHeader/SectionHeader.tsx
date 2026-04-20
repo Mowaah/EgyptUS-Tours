@@ -14,6 +14,7 @@ interface SectionHeaderProps {
   headingMaxWidth?: string;
   descriptionMaxWidth?: string;
   showLabel?: boolean;
+  size?: "normal" | "large";
 }
 
 export default function SectionHeader({
@@ -28,7 +29,9 @@ export default function SectionHeader({
   headingMaxWidth,
   descriptionMaxWidth,
   showLabel = true,
+  size = "normal",
 }: SectionHeaderProps) {
+  const sizeClass = size === "large" ? styles.headingLarge : "";
   return (
     <div
       className={`${styles.header} ${styles[align]}`}
@@ -55,7 +58,7 @@ export default function SectionHeader({
         </>
       )}
       <h2
-        className={`${styles.heading} ${headingClassName || ""}`}
+        className={`${styles.heading} ${sizeClass} ${headingClassName || ""}`}
         style={headingMaxWidth ? { maxWidth: headingMaxWidth } : undefined}
       >
         {heading}

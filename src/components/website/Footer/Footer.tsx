@@ -1,15 +1,37 @@
 import Image from "next/image";
 import styles from "./Footer.module.scss";
 
-const NAV_LINKS = {
-  "Egypt Us": ["Home", "Trips", "Destination", "Hotels", "Events", "Transportation", "B2B Programs", "About Us", "Contact Us"],
-  "Travel Guides": ["Blogs", "Articles"],
+import Link from "next/link";
+
+type NavLinkItem = { label: string; href?: string; value?: string };
+type NavLinksType = Record<string, NavLinkItem[]>;
+
+const NAV_LINKS: NavLinksType = {
+  "Egypt Us": [
+    { label: "Home", href: "/" },
+    { label: "Trips", href: "/trips" },
+    { label: "Destinations", href: "/destinations" },
+    { label: "Hotels", href: "/hotels" },
+    { label: "Events", href: "/events" },
+    { label: "Transportation", href: "/transportation" },
+    { label: "B2B Programs", href: "/b2b-programs" },
+    { label: "About Us", href: "/about" },
+    { label: "Contact Us", href: "/contact" },
+  ],
+  "Travel Guides": [
+    { label: "Blogs", href: "/blogs" },
+    { label: "Articles", href: "/articles" },
+  ],
   Contact: [
     { label: "Phone:", value: "+201526874984" },
     { label: "Email:", value: "info@Yosra.com" },
     { label: "Address:", value: "Nasar City, Egypt" },
   ],
-  "Customer Support": ["Terms & Conditions", "Privacy & Policy", "FAQs"],
+  "Customer Support": [
+    { label: "Terms & Conditions", href: "/terms" },
+    { label: "Privacy & Policy", href: "/privacy" },
+    { label: "FAQs", href: "/faqs" },
+  ],
 };
 
 const SOCIALS = [
@@ -67,10 +89,12 @@ export default function Footer() {
               <div key={title} className={styles.linkGroup}>
                 <h4 className={styles.linkGroupTitle}>{title}</h4>
                 <ul className={styles.linkList}>
-                  {(links as (string | { label: string; value: string })[]).map((link, i) =>
-                    typeof link === "string" ? (
+                  {links.map((link, i) =>
+                    link.href ? (
                       <li key={i}>
-                        <a href="#" className={styles.link}>{link}</a>
+                        <Link href={link.href} className={styles.link}>
+                          {link.label}
+                        </Link>
                       </li>
                     ) : (
                       <li key={i} className={styles.contactItem}>

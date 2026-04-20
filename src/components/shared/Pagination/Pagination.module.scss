@@ -1,0 +1,112 @@
+@use "@/styles/variables" as *;
+
+.root {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  height: 32px;
+  width: 100%;
+}
+
+.arrow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  box-sizing: border-box;
+  border-radius: 1000px;
+  border: 0.64px solid #FF6600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  line-height: 0;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.prevArrow {
+  background: #FFFFFF;
+  color: #FF6600;
+
+  &:hover:not(:disabled) {
+    background: #FFF0E8;
+  }
+}
+
+.nextArrow {
+  background: #FF6600;
+  color: #FFFFFF;
+  border-color: #FF6600;
+
+  img {
+    margin-left: 2px;
+  }
+
+  &:hover:not(:disabled) {
+    background: #E55A00;
+  }
+}
+
+.pages {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 6px;
+  height: 32px;
+}
+
+.pageBtn {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 12px;
+  width: 36px;
+  min-width: 36px;
+  height: 32px;
+  border-radius: 12px;
+  background: #FFFFFF;
+  border: 1px solid #F4F4F4;
+  opacity: 0.8;
+  font-family: 'Trip Sans';
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.01em;
+  color: #ACACAC;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(.active):not(.dots):not(:disabled) {
+    border-color: #FFD0B0;
+    color: #FF6600;
+    opacity: 1;
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.active {
+  background: #FFE8D9;
+  border: 1px solid #FFD0B0;
+  color: #FF6600;
+  opacity: 1;
+  cursor: default;
+}
+
+.dots {
+  border: none;
+  background: transparent;
+  cursor: default;
+  opacity: 1;
+  color: #ACACAC;
+}

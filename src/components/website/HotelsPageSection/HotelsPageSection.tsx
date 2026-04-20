@@ -7,7 +7,7 @@ import {
   HotelCard,
   CategoryTabs,
   SortButton,
-  PaginationArrows,
+  Pagination,
   EmptyState,
   PageHeader,
   StarRating,
@@ -94,9 +94,6 @@ export default function HotelsPageSection() {
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= TOTAL_PAGES) setCurrentPage(page);
   };
-
-  // Build visible page numbers: 1 2 3 … 13 14 15
-  const pageNumbers: (number | "...")[] = [1, 2, 3, "...", TOTAL_PAGES - 2, TOTAL_PAGES - 1, TOTAL_PAGES];
 
   return (
     <section className={styles.section}>
@@ -229,31 +226,11 @@ export default function HotelsPageSection() {
 
                 {/* Pagination */}
                 <div className={styles.pagination}>
-                  <PaginationArrows
-                    layout="inline"
-                    size={30}
-                    iconWidth={15}
-                    iconHeight={15}
-                    onPrev={() => handlePageChange(currentPage - 1)}
-                    onNext={() => handlePageChange(currentPage + 1)}
-                    prevDisabled={currentPage === 1}
-                    nextDisabled={currentPage === TOTAL_PAGES}
-                  >
-                    <div className={styles.pages}>
-                      {pageNumbers.map((page, i) => (
-                        <button
-                          key={i}
-                          className={`${styles.pageBtn} ${page === currentPage ? styles.active : ""} ${page === "..." ? styles.dots : ""}`}
-                          disabled={page === "..."}
-                          onClick={() =>
-                            typeof page === "number" && handlePageChange(page)
-                          }
-                        >
-                          {page}
-                        </button>
-                      ))}
-                    </div>
-                  </PaginationArrows>
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={TOTAL_PAGES}
+                    onPageChange={handlePageChange}
+                  />
                 </div>
               </>
             ) : (

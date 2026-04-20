@@ -48,7 +48,6 @@ export default function TransportationDetailPage({ vehicleId }: TransportationDe
       <PageHeader
         className={styles.pageHeader}
         breadcrumbs={[
-          { label: "Home", href: "/" },
           { label: "Transportation", href: "/transportation" },
           { label: "Details", isCurrent: true },
         ]}

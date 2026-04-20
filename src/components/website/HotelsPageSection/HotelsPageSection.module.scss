@@ -1,7 +1,9 @@
 @use "@/styles/variables" as *;
 @use "@/styles/mixins" as *;
 
-.section {}
+.section {
+  padding-bottom: 64px;
+}
 
 .container {
   @include container;

@@ -2,7 +2,7 @@
 @use "@/styles/mixins" as *;
 
 .section {
-  @include section-padding;
+  padding: 40px 80px;
   background: $white;
 }
 

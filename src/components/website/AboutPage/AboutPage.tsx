@@ -13,7 +13,6 @@ export default function AboutPage() {
     <div className={styles.page}>
       <PageHeader
         breadcrumbs={[
-          { label: "Home", href: "/" },
           { label: "About Us", isCurrent: true },
         ]}
         title="Where Corporate Vision Becomes Experience"

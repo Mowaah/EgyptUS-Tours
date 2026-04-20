@@ -55,7 +55,6 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
       <PageHeader
         className={styles.header}
         breadcrumbs={[
-          { label: "Home", href: "/" },
           { label: "Transportation", href: "/transportation" },
           { label: "Details", href: `/transportation/${vehicle.id}` },
           { label: "Booking", isCurrent: true },

@@ -7,9 +7,13 @@ import styles from "./BlogCard.module.scss";
 
 interface BlogCardProps {
   blog: Blog;
+  readText?: string;
+  href?: string;
 }
 
-export default function BlogCard({ blog }: BlogCardProps) {
+export default function BlogCard({ blog, readText = "Read blog", href }: BlogCardProps) {
+  const linkHref = href || `/blogs/${blog.id}`;
+
   return (
     <article className={styles.card}>
       <div className={styles.imageWrap}>
@@ -30,8 +34,8 @@ export default function BlogCard({ blog }: BlogCardProps) {
         <p className={styles.excerpt}>{blog.excerpt}</p>
       </div>
       <div className={styles.footer}>
-        <Link href={`/blogs/${blog.id}`} className={styles.read}>
-          Read blog
+        <Link href={linkHref} className={styles.read}>
+          {readText}
           <Image
             src="/images/arrows/arrow-right-blue3.svg"
             alt=""

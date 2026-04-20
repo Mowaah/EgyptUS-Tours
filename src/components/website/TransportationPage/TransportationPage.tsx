@@ -7,7 +7,7 @@ import {
   PageHeader,
   CategoryTabs,
   SearchInput,
-  PaginationArrows,
+  Pagination,
   EmptyState,
   VehicleCard,
   Vehicle,
@@ -124,7 +124,6 @@ export default function TransportationPage() {
     <div className={styles.page}>
       <PageHeader
         breadcrumbs={[
-          { label: "Home", href: "/" },
           { label: "Transportation", isCurrent: true }
         ]}
         title={isSearchResults ? "Search Results" : "Travel in Comfort"}
@@ -202,19 +201,11 @@ export default function TransportationPage() {
               </div>
 
               <div className={styles.pagination}>
-                <PaginationArrows layout="inline" size={30} iconWidth={15} iconHeight={15}>
-                  <div className={styles.pages}>
-                    {[1, 2, 3, "...", 13, 14, 15].map((page, i) => (
-                      <button
-                        key={i}
-                        className={`${styles.pageBtn} ${page === 1 ? styles.active : ""} ${page === "..." ? styles.dots : ""}`}
-                        disabled={page === "..."}
-                      >
-                        {page}
-                      </button>
-                    ))}
-                  </div>
-                </PaginationArrows>
+                <Pagination
+                  currentPage={1}
+                  totalPages={15}
+                  onPageChange={() => {}}
+                />
               </div>
             </>
           ) : (

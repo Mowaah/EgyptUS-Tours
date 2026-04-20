@@ -1,4 +1,7 @@
-import { SectionHeader, PaginationArrows, TestimonialCard } from "@/components/shared";
+"use client";
+
+import { useState } from "react";
+import { SectionHeader, Pagination, TestimonialCard } from "@/components/shared";
 import type { Testimonial } from "@/components/shared/TestimonialCard/TestimonialCard";
 import styles from "./TestimonialsSection.module.scss";
 
@@ -34,6 +37,8 @@ const TESTIMONIALS: Testimonial[] = [
 ];
 
 export default function TestimonialsSection() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = 15;
   return (
     <section className={styles.section}>
       <div className={styles.container}>
@@ -42,7 +47,7 @@ export default function TestimonialsSection() {
           heading="What Travelers Say"
           description="Don't just take our word for it—hear from those who've experienced the magic"
           descriptionMaxWidth="600px"
-          headingClassName={styles.largeHeading}
+          size="large"
         />
 
         <div className={styles.cards}>
@@ -52,19 +57,11 @@ export default function TestimonialsSection() {
         </div>
 
         <div className={styles.paginationRow}>
-          <PaginationArrows layout="inline" size={32} iconWidth={14} iconHeight={14}>
-            <div className={styles.pages}>
-              {[1, 2, 3, "...", 13, 14, 15].map((p, i) => (
-                <button
-                  key={i}
-                  className={`${styles.pageBtn} ${p === 1 ? styles.active : ""} ${p === "..." ? styles.dots : ""}`}
-                  disabled={p === "..."}
-                >
-                  {p}
-                </button>
-              ))}
-            </div>
-          </PaginationArrows>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </div>
     </section>

@@ -66,7 +66,6 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
     <div className={planPageStyles.page}>
       <PageHeader
         breadcrumbs={[
-          { label: "Home", href: "/" },
           { label: "Hotels", href: "/hotels" },
           { label: "Hotel Details", href: `/hotels/${hotel.id}` },
           { label: "Booking", isCurrent: true },

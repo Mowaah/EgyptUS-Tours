@@ -1,8 +1,6 @@
 @use "@/styles/variables" as *;
 
-.header {
-  margin: 0 0 $spacing-md;
-}
+.header {}
 
 .center {
   text-align: center;
@@ -39,6 +37,13 @@
 
   @media (min-width: 1024px) {
     font-size: $font-size-4xl;
+  }
+
+  &.headingLarge {
+    @media (min-width: 1024px) {
+      margin-bottom: 24px;
+      font-size: $font-size-5xl;
+    }
   }
 
   .center & {

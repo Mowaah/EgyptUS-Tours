@@ -16,6 +16,7 @@ export interface PageHeaderProps {
   className?: string; // Appended to the outer wrapper
   titleMaxWidth?: string;
   subtitleMaxWidth?: string;
+  children?: React.ReactNode;
 }
 
 export default function PageHeader({
@@ -27,6 +28,7 @@ export default function PageHeader({
   className = "",
   titleMaxWidth,
   subtitleMaxWidth,
+  children,
 }: PageHeaderProps) {
   return (
     <div className={`${styles.headerWrapper} ${className}`}>
@@ -78,6 +80,8 @@ export default function PageHeader({
             {subtitle}
           </p>
         )}
+
+        {children}
       </div>
     </div>
   );

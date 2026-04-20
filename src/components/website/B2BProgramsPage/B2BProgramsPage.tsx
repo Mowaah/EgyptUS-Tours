@@ -25,7 +25,6 @@ export default function B2BProgramsPage() {
       <PageHeader
         className={styles.pageHeader}
         breadcrumbs={[
-          { label: "Home", href: "/" },
           { label: "B2B Programs", isCurrent: true },
         ]}
         title="Corporate Travel & Event Experiences Designed for Results"

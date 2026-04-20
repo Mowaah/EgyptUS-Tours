@@ -1,0 +1,175 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.searchBox {
+  position: relative;
+  background: rgba(41, 113, 230, 0.03);
+  border-radius: 32px;
+  height: 271px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 10px 20px;
+  max-width: 1280px;
+  margin: 0 auto;
+  overflow: hidden;
+
+  @media (min-width: 768px) {
+    padding: 10px 80px;
+  }
+}
+
+.planeDecoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 160px;
+  height: 73px;
+  pointer-events: none;
+  z-index: 0;
+
+  @media (min-width: 1280px) {
+    left: -20px;
+  }
+}
+
+.bubblesDecoration {
+  position: absolute;
+  top: -30px;
+  right: 25%;
+  width: 22px;
+  height: 19px;
+  pointer-events: none;
+}
+
+.dottedDecoration {
+  position: absolute;
+  top: 90px;
+  left: -70px;
+  width: 315px;
+  height: 175px;
+  pointer-events: none;
+}
+
+.blueCircle {
+  position: absolute;
+  top: 210px;
+  right: 0;
+  width: 130px;
+  height: 130px;
+  background: rgba(41, 113, 230, 0.5);
+  opacity: 0.32;
+  border-radius: 50%;
+  pointer-events: none;
+
+  @media (min-width: 1280px) {
+    right: 60px;
+  }
+}
+
+.imageContain {
+  object-fit: contain;
+}
+
+.searchContentBox {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 13px;
+  width: 100%;
+  max-width: 1162px;
+}
+
+.searchInputRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 64px;
+}
+
+.inputOuterWrap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px;
+  background: rgba(234, 241, 253, 0.4);
+  border-radius: 80px;
+  flex: 1;
+  height: 100%;
+}
+
+.inputInnerWrap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 24px;
+  background: #FFFFFF;
+  border: 1px solid rgba(26, 26, 26, 0.06);
+  border-radius: 80px;
+  flex: 1;
+  height: 100%;
+}
+
+.searchIcon {
+  margin-right: 12px;
+  opacity: 0.5;
+}
+
+.input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: 'Trip Sans';
+  font-size: 14px;
+  font-weight: 500;
+  color: #0E2851;
+  background: transparent;
+
+  &::placeholder {
+    color: #9CA3AF;
+  }
+}
+
+.searchBtnWrap {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.searchBtn {
+  background: #2971E6;
+  color: #FFFFFF;
+  font-family: 'Trip Sans';
+  font-weight: 500;
+  font-size: 14px;
+  padding: 0 24px;
+  height: 56px;
+  min-width: 97px;
+  border-radius: 40px;
+  border: none;
+  cursor: pointer;
+  transition: opacity $transition-fast;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.searchDesc {
+  color: #6B7280;
+  font-family: 'Trip Sans';
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+  text-align: left;
+  letter-spacing: 0.01em;
+  margin: 0;
+  max-width: 814px;
+  padding-left: 10px;
+}

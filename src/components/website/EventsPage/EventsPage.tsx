@@ -24,7 +24,6 @@ export default function EventsPage() {
       <PageHeader
         className={styles.pageHeader}
         breadcrumbs={[
-          { label: "Home", href: "/" },
           { label: "MICE & Corporate Events", isCurrent: true },
         ]}
         title="Professional Corporate Events & MICE Solutions in Egypt"

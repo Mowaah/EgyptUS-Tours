@@ -40,9 +40,13 @@ const FAQ_ITEMS: FaqItem[] = [
 
 interface FaqSectionProps {
   items?: FaqItem[];
+  description?: string;
 }
 
-export default function FaqSection({ items = FAQ_ITEMS }: FaqSectionProps) {
+export default function FaqSection({
+  items = FAQ_ITEMS,
+  description = "We've got answers. Find everything you need to know to plan your perfect trip."
+}: FaqSectionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
@@ -53,9 +57,10 @@ export default function FaqSection({ items = FAQ_ITEMS }: FaqSectionProps) {
         <SectionHeader
           label="Frequently Asked Questions"
           heading="Got questions?"
-          description="We've got answers. Find everything you need to know to plan your perfect trip."
+          description={description}
           align="center"
           maxWidth="500px"
+          size="large"
         />
 
         <div className={styles.accordion}>

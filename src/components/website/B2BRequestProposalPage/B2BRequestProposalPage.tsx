@@ -37,7 +37,6 @@ export default function B2BRequestProposalPage() {
     <div className={styles.page}>
       <PageHeader
         breadcrumbs={[
-          { label: "Home", href: "/" },
           { label: "B2B Programs", href: "/b2b-programs" },
           { label: "Corporate Proposal", isCurrent: true },
         ]}

@@ -10,10 +10,6 @@
   @include container;
 }
 
-.largeHeading {
-  font-size: $font-size-5xl !important;
-}
-
 .cards {
   display: grid;
   grid-template-columns: 1fr;
@@ -34,44 +30,4 @@
   display: flex;
   justify-content: center;
   margin-top: $spacing-2xl;
-}
-
-.pages {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.pageBtn {
-  width: 32px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
-  color: $text-lighter;
-  border: 1px solid $border;
-  background: rgba($white, 0.8);
-  cursor: pointer;
-  transition: all $transition-fast;
-
-  &:hover:not(:disabled) {
-    background: $secondary-light;
-    color: $secondary;
-    border-color: $secondary-border;
-  }
-
-  &.active {
-    background: $secondary-light;
-    color: $secondary;
-    border-color: $secondary-border;
-  }
-
-  &.dots {
-    border: none;
-    background: transparent;
-    cursor: default;
-  }
 }

@@ -8,7 +8,7 @@ import {
   TripCard,
   CategoryTabs,
   SortButton,
-  PaginationArrows,
+  Pagination,
   EmptyState,
   PageHeader,
   SearchInput,
@@ -109,6 +109,8 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
   const [offersFilter, setOffersFilter] = useState(SPECIAL_OFFERS[0]);
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = 15;
   const [trips, setTrips] = useState<Trip[]>(DEMO_TRIPS);
 
   const filteredTrips = trips.filter(
@@ -321,19 +323,11 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
                 </div>
 
                 <div className={styles.pagination}>
-                  <PaginationArrows layout="inline" size={30} iconWidth={15} iconHeight={15}>
-                    <div className={styles.pages}>
-                      {[1, 2, 3, "...", 13, 14, 15].map((page, i) => (
-                        <button
-                          key={i}
-                          className={`${styles.pageBtn} ${page === 1 ? styles.active : ""} ${page === "..." ? styles.dots : ""}`}
-                          disabled={page === "..."}
-                        >
-                          {page}
-                        </button>
-                      ))}
-                    </div>
-                  </PaginationArrows>
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                  />
                 </div>
               </>
             ) : (
