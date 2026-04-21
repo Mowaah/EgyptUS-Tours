@@ -21,8 +21,10 @@
 
   @media (min-width: 1024px) {
     padding: 24px;
-    width: 274.5px;
-    height: 208px;
+    // Let the card fill whatever column width its grid/flex parent gives it
+    // instead of forcing 274.5px, which used to overflow the 4-col grid on
+    // viewports roughly between 1024–1300px.
+    min-height: 208px;
   }
 
   &:hover {

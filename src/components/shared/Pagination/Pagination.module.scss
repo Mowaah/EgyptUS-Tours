@@ -5,17 +5,22 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 16px;
-  height: 32px;
+  gap: 8px;
   width: 100%;
+  flex-wrap: wrap;
+
+  @media (min-width: 640px) {
+    gap: 16px;
+    flex-wrap: nowrap;
+  }
 }
 
 .arrow {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   padding: 0;
   box-sizing: border-box;
   border-radius: 1000px;
@@ -24,6 +29,21 @@
   transition: all 0.2s ease;
   flex-shrink: 0;
   line-height: 0;
+
+  img {
+    width: 12px;
+    height: 12px;
+  }
+
+  @media (min-width: 640px) {
+    width: 32px;
+    height: 32px;
+
+    img {
+      width: 15px;
+      height: 15px;
+    }
+  }
 
   &:disabled {
     opacity: 0.4;
@@ -57,9 +77,14 @@
 .pages {
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
-  gap: 6px;
-  height: 32px;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 1;
+  min-width: 0;
+
+  @media (min-width: 640px) {
+    gap: 6px;
+  }
 }
 
 .pageBtn {
@@ -67,22 +92,32 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 8px 12px;
-  width: 36px;
-  min-width: 36px;
-  height: 32px;
-  border-radius: 12px;
+  padding: 0 6px;
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
+  border-radius: 8px;
   background: #FFFFFF;
   border: 1px solid #F4F4F4;
   opacity: 0.8;
   font-family: 'Trip Sans';
   font-weight: 500;
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 11px;
+  line-height: 1;
   letter-spacing: 0.01em;
   color: #ACACAC;
   cursor: pointer;
   transition: all 0.2s ease;
+
+  @media (min-width: 640px) {
+    padding: 8px 12px;
+    width: 36px;
+    min-width: 36px;
+    height: 32px;
+    border-radius: 12px;
+    font-size: 12px;
+    line-height: 16px;
+  }
 
   &:hover:not(.active):not(.dots):not(:disabled) {
     border-color: #FFD0B0;

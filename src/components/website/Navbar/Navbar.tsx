@@ -164,7 +164,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`${styles.navbar}${shouldShowScrolled ? ` ${styles.scrolled}` : ""}${lightNavBackground ? ` ${styles.lightPage}` : ""}${isStatic ? ` ${styles.static}` : ""}`}
+      className={`${styles.navbar}${shouldShowScrolled ? ` ${styles.scrolled}` : ""}${lightNavBackground ? ` ${styles.lightPage}` : ""}${isStatic ? ` ${styles.static}` : ""}${mobileOpen ? ` ${styles.drawerOpen}` : ""}`}
     >
       <div className={styles.container}>
         <Link href="/" className={styles.logo} aria-label="EgyptUS Tours — Home">

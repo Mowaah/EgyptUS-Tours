@@ -4,12 +4,30 @@
 
 $navbar-height-mobile: 72px;
 
+// Breakpoint where the hamburger is replaced by the full desktop nav.
+// Kept local so we can tune it independently of the global `lg` (1024px).
+$nav-desktop: 1150px;
+
 .navbar {
   background: transparent;
   position: sticky;
   top: 0;
-  z-index: 110;
+  // Mobile / tablet: sit ABOVE the TopBar (z-index: 105) so the hamburger
+  // drawer renders over the whole page.
+  z-index: 120;
   transition: background $transition-base;
+
+  // Desktop: drop BELOW the TopBar so its language/currency dropdowns
+  // (EN, USD, etc.) can overflow on top of the Navbar.
+  @media (min-width: $nav-desktop) {
+    z-index: 100;
+  }
+
+  // If the mobile drawer is somehow open at desktop widths, keep the Navbar
+  // above the TopBar so it covers the page correctly.
+  &.drawerOpen {
+    z-index: 120;
+  }
 
   &.static {
     position: relative;
@@ -76,7 +94,7 @@ $navbar-height-mobile: 72px;
     padding: 0 $spacing-xl;
   }
 
-  @include lg {
+  @media (min-width: $nav-desktop) {
     height: $navbar-height-desktop;
     padding: 0 $spacing-2xl;
   }
@@ -96,7 +114,7 @@ $navbar-height-mobile: 72px;
     width: auto;
     height: 44px;
 
-    @include lg {
+    @media (min-width: $nav-desktop) {
       height: 62px;
     }
   }
@@ -106,7 +124,7 @@ $navbar-height-mobile: 72px;
   display: none;
   gap: $spacing-sm;
 
-  @include lg {
+  @media (min-width: $nav-desktop) {
     display: flex;
     align-items: center;
   }
@@ -143,7 +161,7 @@ $navbar-height-mobile: 72px;
 .cta {
   display: none;
 
-  @include lg {
+  @media (min-width: $nav-desktop) {
     display: flex;
     align-items: center;
     gap: $spacing-md;
@@ -170,7 +188,7 @@ $navbar-height-mobile: 72px;
   cursor: pointer;
   border-radius: $radius-md;
 
-  @include lg {
+  @media (min-width: $nav-desktop) {
     display: none;
   }
 
@@ -212,7 +230,7 @@ $navbar-height-mobile: 72px;
   z-index: 100;
   pointer-events: none;
 
-  @media (max-width: 1023px) {
+  @media (max-width: 1250px) {
     display: none;
   }
 }
@@ -295,7 +313,7 @@ $navbar-height-mobile: 72px;
   transition: opacity $transition-base, visibility $transition-base;
   z-index: 110;
 
-  @include lg {
+  @media (min-width: $nav-desktop) {
     display: none;
   }
 }
@@ -319,13 +337,17 @@ $navbar-height-mobile: 72px;
   display: flex;
   flex-direction: column;
 
-  @include lg {
+  // Scope the open state to the drawer only. If this rule lived at the top
+  // level the <nav> element (which also carries `.drawerOpen` for its z-index
+  // tweak) would receive `transform`, creating a containing block that pulls
+  // the fixed drawer under the TopBar.
+  &.drawerOpen {
+    transform: translateX(0);
+  }
+
+  @media (min-width: $nav-desktop) {
     display: none;
   }
-}
-
-.drawerOpen {
-  transform: translateX(0);
 }
 
 .drawerHeader {

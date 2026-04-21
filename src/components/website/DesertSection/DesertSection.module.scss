@@ -2,9 +2,9 @@
 @use "@/styles/mixins" as *;
 
 .section {
-  @include section-padding;
   background: $white;
   overflow: hidden;
+  @include section-padding;
 }
 
 .container {
