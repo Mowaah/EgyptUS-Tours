@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { SectionHeader } from "@/components/shared";
-import Image from "next/image";
+import ChevronIcon from "@public/images/arrows/chevron-blue.svg";
 import styles from "./FaqSection.module.scss";
 
 export interface FaqItem {
@@ -81,11 +81,7 @@ export default function FaqSection({
                   </span>
                   <span className={styles.questionText}>{item.question}</span>
                   <span className={styles.icon}>
-                    <Image
-                      src="/images/arrows/chevron-blue.svg"
-                      alt="Toggle"
-                      width={14}
-                      height={8}
+                    <ChevronIcon
                       className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ""}`}
                     />
                   </span>

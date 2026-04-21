@@ -18,6 +18,8 @@ export default function AboutPage() {
         title="Where Corporate Vision Becomes Experience"
         subtitle="We transform strategic objectives into seamless travel and event solutions tailored for modern organizations."
         decorationSrc="/images/dotted-line3.svg"
+        titleMaxWidth="950px"
+        subtitleMaxWidth="900px"
       />
 
       <AboutStory />

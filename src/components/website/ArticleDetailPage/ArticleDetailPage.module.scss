@@ -1,0 +1,473 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+// ── PAGE SHELL ──────────────────────────────────────────────
+.page {
+  background: $white;
+  min-height: 100vh;
+}
+
+// ── HERO SECTION ────────────────────────────────────────────
+.heroSection {
+  background: $white;
+  padding: 40px 20px 32px;
+
+  @media (min-width: 1024px) {
+    padding: 60px 80px 32px;
+  }
+}
+
+.heroInner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.breadcrumbWrap {
+  margin-bottom: 32px;
+}
+
+// ── BADGE ───────────────────────────────────────────────────
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 22px;
+  border-radius: 45px;
+  font-size: 18px;
+  font-weight: $font-weight-medium;
+  line-height: 25px;
+  width: fit-content;
+  box-sizing: border-box;
+}
+
+.badgeBlue {
+  background: #EBF3FF;
+  border: 1.5px solid $primary;
+  color: $primary;
+}
+
+.badgeOrange {
+  background: #FFF0E6;
+  border: 1.5px solid $secondary;
+  color: $secondary;
+}
+
+// ── TITLE BLOCK ─────────────────────────────────────────────
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 27px;
+}
+
+.title {
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.18;
+  color: #0D1B3E;
+  max-width: 1028px;
+
+  @media (min-width: 1024px) {
+    font-size: 64px;
+    line-height: 76px;
+  }
+}
+
+// ── META ROW ────────────────────────────────────────────────
+.meta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 20px 0;
+  border-top: 1.5px solid #EAF1FD;
+  border-bottom: 1.5px solid #EAF1FD;
+
+  @media (min-width: 768px) {
+    gap: 28.54px;
+    padding: 25.5px 0;
+  }
+}
+
+.authorAvatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: $secondary;
+  color: $white;
+  font-size: 19.5px;
+  font-weight: $font-weight-bold;
+  flex-shrink: 0;
+}
+
+.authorInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.authorName {
+  font-size: 19.5px;
+  font-weight: $font-weight-medium;
+  color: #123367;
+  line-height: 1.4;
+}
+
+.authorRole {
+  font-size: 13px;
+  color: $text-light;
+}
+
+.divider {
+  width: 1.5px;
+  height: 42px;
+  background: #EEF0F5;
+  flex-shrink: 0;
+  display: none;
+
+  @media (min-width: 640px) {
+    display: block;
+  }
+}
+
+.metaItem {
+  font-size: 18px;
+  font-weight: $font-weight-medium;
+  color: #123367;
+}
+
+.shareBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46.57px;
+  height: 46.57px;
+  border: 1.5px solid #EEF0F5;
+  border-radius: 22.5px;
+  background: transparent;
+  cursor: pointer;
+  color: #6B7A99;
+  transition: border-color $transition-fast, background $transition-fast, color $transition-fast;
+  flex-shrink: 0;
+
+  &:hover {
+    border-color: $primary;
+    background: #EBF3FF;
+    color: $primary;
+  }
+}
+
+// ── HERO IMAGE ──────────────────────────────────────────────
+.heroImageBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+}
+
+.heroImageWrap {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  border-radius: 20px;
+  overflow: hidden;
+
+  @media (min-width: 768px) {
+    height: 480px;
+    border-radius: 32px;
+  }
+
+  @media (min-width: 1024px) {
+    height: 630px;
+  }
+}
+
+.heroImage {
+  object-fit: cover;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(91, 96, 104, 0.2), rgba(91, 96, 104, 0.2));
+}
+
+.heroCaption {
+  font-size: 18px;
+  font-weight: $font-weight-normal;
+  color: #9AA3B8;
+  text-align: center;
+  line-height: 1.5;
+}
+
+// ── BODY SECTION ────────────────────────────────────────────
+.bodySection {
+  background: $white;
+  padding: 32px 20px;
+
+  @media (min-width: 1024px) {
+    padding: 32px 80px;
+  }
+}
+
+.bodyInner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+  align-items: flex-start;
+
+  @media (min-width: 1024px) {
+    flex-direction: row;
+  }
+}
+
+// ── CONTENT COLUMN ──────────────────────────────────────────
+.contentCol {
+  display: flex;
+  flex-direction: column;
+  gap: 52px;
+  width: 100%;
+  max-width: 836px;
+  flex-shrink: 0;
+}
+
+.intro {
+  font-size: 18px;
+  font-weight: $font-weight-normal;
+  color: #3D4A6B;
+  line-height: 42px;
+
+  @media (min-width: 768px) {
+    font-size: 22px;
+  }
+}
+
+// ── BLOCKQUOTES ─────────────────────────────────────────────
+.blockquoteBlue {
+  display: flex;
+  align-items: center;
+  padding: 25.5px 28.33px;
+  background: #F4F7FF;
+  border-right: 4px solid $primary;
+  font-size: 22px;
+  font-weight: $font-weight-medium;
+  line-height: 44px;
+  color: #0E2851;
+  margin: 0;
+}
+
+.blockquoteOrange {
+  display: flex;
+  align-items: center;
+  padding: 25.5px 28.33px;
+  background: #FFF0E6;
+  border-right: 4px solid $secondary;
+  font-size: 22px;
+  font-weight: $font-weight-medium;
+  line-height: 44px;
+  color: #BF4D00;
+  margin: 0;
+}
+
+// ── SECTION BLOCKS ──────────────────────────────────────────
+.contentSection {
+  display: flex;
+  flex-direction: column;
+  gap: 31px;
+}
+
+.h2 {
+  font-size: 28px;
+  font-weight: $font-weight-bold;
+  color: #0D1B3E;
+  line-height: 44px;
+
+  @media (min-width: 768px) {
+    font-size: 32px;
+  }
+}
+
+.h3 {
+  font-size: 20px;
+  font-weight: $font-weight-medium;
+  color: #0D1B3E;
+  line-height: 33px;
+
+  @media (min-width: 768px) {
+    font-size: 24px;
+  }
+}
+
+.body {
+  font-size: 18px;
+  font-weight: $font-weight-normal;
+  color: #3D4A6B;
+  line-height: 42px;
+
+  @media (min-width: 768px) {
+    font-size: 22px;
+  }
+}
+
+// ── TAGS ────────────────────────────────────────────────────
+.tagsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 11.33px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8.5px 19.83px;
+  background: #F4F6FB;
+  border-radius: 28.33px;
+  font-size: 17px;
+  font-weight: $font-weight-normal;
+  color: #6B7A99;
+}
+
+// ── AUTHOR CARD ─────────────────────────────────────────────
+.authorCard {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 22.66px;
+  padding: 28.33px;
+  background: #F9FAFC;
+  border-radius: 19.83px;
+}
+
+.authorCardAvatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 73.65px;
+  height: 73.65px;
+  border-radius: 50%;
+  background: #E8622A;
+  color: $white;
+  font-size: 22.66px;
+  font-weight: $font-weight-medium;
+  flex-shrink: 0;
+}
+
+.authorCardInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 5.67px;
+}
+
+.authorCardName {
+  font-size: 21.25px;
+  font-weight: $font-weight-medium;
+  color: #0D1B3E;
+  line-height: 29px;
+}
+
+.authorCardBio {
+  font-size: 18.41px;
+  font-weight: $font-weight-normal;
+  color: #6B7A99;
+  line-height: 29px;
+  margin: 0;
+}
+
+// ── SIDEBAR ──────────────────────────────────────────────────
+.sidebar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 26.44px;
+
+  @media (min-width: 1024px) {
+    width: 400px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 120px;
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+  }
+}
+
+.relatedTitle {
+  font-size: 24.23px;
+  font-weight: $font-weight-medium;
+  color: #9AA3B8;
+  text-transform: capitalize;
+  margin: 0;
+  line-height: 33px;
+}
+
+.relatedList {
+  display: flex;
+  flex-direction: column;
+  gap: 35.25px;
+}
+
+.relatedItem {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 22px;
+  text-decoration: none;
+  transition: opacity $transition-fast;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.relatedImageWrap {
+  position: relative;
+  width: 123.37px;
+  height: 105.75px;
+  border-radius: 17.6px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: $background-alt;
+}
+
+.relatedImage {
+  object-fit: cover;
+}
+
+.relatedMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 8.81px;
+  flex: 1;
+}
+
+.relatedItemTitle {
+  font-size: 20px;
+  font-weight: $font-weight-medium;
+  color: #0D1B3E;
+  line-height: 1.54;
+  margin: 0;
+
+  @media (min-width: 768px) {
+    font-size: 24px;
+  }
+}
+
+.relatedDate {
+  font-size: 18px;
+  font-weight: $font-weight-normal;
+  color: #9AA3B8;
+  line-height: 30px;
+
+  @media (min-width: 768px) {
+    font-size: 22px;
+  }
+}

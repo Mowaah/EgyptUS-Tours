@@ -25,7 +25,26 @@
   border-radius: 32px;
   overflow: hidden;
   background: $white;
-  transition: box-shadow $transition-base;
+  transition: box-shadow $transition-base, border-color $transition-base;
+
+  &:hover {
+    border-color: rgba($primary, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+
+    .icon {
+      background: $primary;
+      border-color: $primary;
+      color: $white;
+    }
+  }
+
+  &.open {
+    .icon {
+      background: $primary;
+      border-color: $primary;
+      color: $white;
+    }
+  }
 }
 
 .question {
@@ -60,14 +79,21 @@
   border-radius: 50%;
   border: 1px solid $border-strong;
   background: $white;
+  color: $primary;
   @include flex-center;
   flex-shrink: 0;
-  transition: background $transition-fast, border-color $transition-fast;
+  transition: all $transition-base;
 }
 
 .chevron {
-  transition: transform $transition-base;
+  display: block;
+  width: 12px;
+  height: auto;
+  transition: transform $transition-base, color $transition-base;
   transform: rotate(0deg);
+  transform-origin: center;
+  margin-top: 1px; // Visually balance the "top-heavy" chevron
+  overflow: visible;
 }
 
 .chevronOpen {
