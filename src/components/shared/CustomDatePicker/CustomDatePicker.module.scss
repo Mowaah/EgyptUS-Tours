@@ -46,21 +46,33 @@
 
 .dropdown {
   position: absolute;
-  top: calc(100% + 12px);
+  top: calc(100% + 8px);
   left: 0;
-  width: 320px;
+  width: 280px;
+  max-width: calc(100vw - 24px);
   background: $white;
-  border-radius: $radius-2xl;
+  border-radius: $radius-xl;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-  padding: 24px;
+  padding: 14px;
   z-index: 100;
+
+  @media (min-width: 768px) {
+    width: 320px;
+    border-radius: $radius-2xl;
+    padding: 24px;
+    top: calc(100% + 12px);
+  }
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
+
+  @media (min-width: 768px) {
+    margin-bottom: 24px;
+  }
 }
 
 .monthYear {
@@ -83,6 +95,18 @@
   &:hover {
     opacity: 1;
   }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  @media (min-width: 768px) {
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
 }
 
 .flipIcon {
@@ -92,7 +116,11 @@
 .weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  margin-bottom: 16px;
+  margin-bottom: 8px;
+
+  @media (min-width: 768px) {
+    margin-bottom: 16px;
+  }
 }
 
 .weekdayName {
@@ -106,24 +134,35 @@
 .daysGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  row-gap: 12px;
-  column-gap: 4px;
+  row-gap: 4px;
+  column-gap: 2px;
+
+  @media (min-width: 768px) {
+    row-gap: 12px;
+    column-gap: 4px;
+  }
 }
 
 .dayBtn {
   background: transparent;
   border: none;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: $font-size-base;
+  font-size: $font-size-sm;
   color: #4A5660;
   cursor: pointer;
   transition: all $transition-fast;
   margin: 0 auto;
+
+  @media (min-width: 768px) {
+    width: 32px;
+    height: 32px;
+    font-size: $font-size-base;
+  }
 
   &:hover:not(.daySelected) {
     background: $background-alt;

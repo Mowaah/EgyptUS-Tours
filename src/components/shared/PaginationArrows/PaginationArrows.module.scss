@@ -3,7 +3,11 @@
 .root {
   display: flex;
   align-items: center;
-  gap: $spacing-lg;
+  gap: $spacing-md;
+
+  @media (min-width: 768px) {
+    gap: $spacing-lg;
+  }
 }
 
 .sides {
@@ -18,11 +22,32 @@
 
 .content {
   flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   justify-content: center;
 }
 
 .button {
+  // Override the inline-set custom property on smaller screens so arrows
+  // scale down regardless of what `size` prop callers passed.
+  --pa-size: 34px;
+  --pa-icon-w: 16px;
+  --pa-icon-h: 16px;
+
+  @media (min-width: 640px) {
+    --pa-size: 40px;
+    --pa-icon-w: 20px;
+    --pa-icon-h: 20px;
+  }
+
+  @media (min-width: 1024px) {
+    // Hand control back to the inline `size` prop (JS sets --pa-size on root,
+    // which cascades down) by falling through to the default.
+    --pa-size: initial;
+    --pa-icon-w: initial;
+    --pa-icon-h: initial;
+  }
+
   width: var(--pa-size, 44px);
   height: var(--pa-size, 44px);
   border-radius: $radius-full;

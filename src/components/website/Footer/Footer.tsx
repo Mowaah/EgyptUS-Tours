@@ -68,7 +68,7 @@ export default function Footer() {
       <div className={styles.container}>
         <div className={styles.top}>
           <div className={styles.brand}>
-            <Image src="/images/logo.svg" alt="Logo" width={84} height={84} />
+            <Image src="/images/logo.svg" alt="Logo" width={84} height={84} className={styles.logo} />
             <p className={styles.tagline}>
               Discover unforgettable travel experiences across Egypt and worldwide, designed with care, comfort, and local expertise.
             </p>

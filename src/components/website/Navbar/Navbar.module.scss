@@ -1,11 +1,14 @@
 @use "@/styles/variables" as *;
 @use "@/styles/mixins" as *;
+@use "@/styles/breakpoints" as *;
+
+$navbar-height-mobile: 72px;
 
 .navbar {
   background: transparent;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 110;
   transition: background $transition-base;
 
   &.static {
@@ -58,25 +61,52 @@
 
 .container {
   @include flex-between;
-  height: $navbar-height-desktop;
+  height: $navbar-height-mobile;
   max-width: 1440px;
   width: 100%;
   margin: 0 auto;
-  padding: 0 $spacing-4xl;
+  padding: 0 $spacing-md;
+  gap: $spacing-sm;
+
+  @include sm {
+    padding: 0 $spacing-lg;
+  }
+
+  @include md {
+    padding: 0 $spacing-xl;
+  }
+
+  @include lg {
+    height: $navbar-height-desktop;
+    padding: 0 $spacing-2xl;
+  }
+
+  @include xl {
+    padding: 0 $spacing-4xl;
+  }
 }
 
 .logo {
   display: flex;
   align-items: center;
   gap: $spacing-sm;
-}
+  flex-shrink: 0;
 
+  img {
+    width: auto;
+    height: 44px;
+
+    @include lg {
+      height: 62px;
+    }
+  }
+}
 
 .links {
   display: none;
   gap: $spacing-sm;
 
-  @media (min-width: 1024px) {
+  @include lg {
     display: flex;
     align-items: center;
   }
@@ -113,7 +143,7 @@
 .cta {
   display: none;
 
-  @media (min-width: 1024px) {
+  @include lg {
     display: flex;
     align-items: center;
     gap: $spacing-md;
@@ -129,10 +159,18 @@
 .hamburger {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 5px;
+  width: 44px;
+  height: 44px;
   padding: $spacing-sm;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: $radius-md;
 
-  @media (min-width: 1024px) {
+  @include lg {
     display: none;
   }
 
@@ -142,39 +180,26 @@
     height: 2px;
     background: $white;
     border-radius: 2px;
-    transition: all $transition-fast;
+    transition: transform $transition-fast, opacity $transition-fast, background $transition-fast;
+    transform-origin: center;
   }
 }
 
-.open {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  top: $navbar-height-desktop;
-  left: 0;
-  right: 0;
-  background: $white;
-  border-bottom: 1px solid $border;
-  padding: $spacing-lg;
-  box-shadow: $shadow-lg;
-  z-index: 99;
+.hamburgerOpen {
+  span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
 
-  .link {
-    color: $nav-link-on-light;
+  span:nth-child(2) {
+    opacity: 0;
+  }
 
-    &:hover {
-      color: $dark;
-      background: $background-alt;
-    }
-
-    &.active {
-      color: $white;
-      background: $primary;
-    }
+  span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
   }
 }
 
-// Mega Menu Dropdowns
+// Desktop mega-menu dropdowns
 .dropdownWrapper {
   position: absolute;
   top: 100%;
@@ -257,4 +282,222 @@
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   color: $primary-dark;
+}
+
+// Mobile drawer
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(14, 40, 81, 0.55);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity $transition-base, visibility $transition-base;
+  z-index: 110;
+
+  @include lg {
+    display: none;
+  }
+}
+
+.backdropOpen {
+  opacity: 1;
+  visibility: visible;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100dvh;
+  width: min(360px, 88vw);
+  background: $white;
+  box-shadow: -20px 0 40px rgba(0, 0, 0, 0.15);
+  transform: translateX(100%);
+  transition: transform $transition-base;
+  z-index: 120;
+  display: flex;
+  flex-direction: column;
+
+  @include lg {
+    display: none;
+  }
+}
+
+.drawerOpen {
+  transform: translateX(0);
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 1px solid $border;
+}
+
+.drawerTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $dark;
+}
+
+.drawerClose {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $background-alt;
+  border: none;
+  border-radius: $radius-full;
+  color: $dark;
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: $border;
+  }
+}
+
+.drawerNav {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-sm 0;
+}
+
+.drawerLinks {
+  list-style: none;
+  margin: 0;
+  padding: 0 $spacing-sm;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.drawerLinkItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.drawerLinkRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-sm;
+}
+
+.drawerLink {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 $spacing-md;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $text;
+  border-radius: $radius-md;
+  text-decoration: none;
+  transition: background $transition-fast, color $transition-fast;
+
+  &:hover {
+    background: $background-alt;
+    color: $dark;
+  }
+}
+
+.drawerLinkActive {
+  color: $primary;
+  background: rgba(41, 113, 230, 0.08);
+}
+
+.drawerExpand {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: $radius-md;
+  color: $text-muted;
+  cursor: pointer;
+  transition: transform $transition-fast, background $transition-fast;
+
+  &:hover {
+    background: $background-alt;
+  }
+}
+
+.drawerExpandOpen {
+  transform: rotate(180deg);
+}
+
+.drawerSubLinks {
+  list-style: none;
+  margin: $spacing-xs 0 $spacing-sm;
+  padding: 0 $spacing-sm 0 $spacing-xl;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-left: 2px solid $border;
+  margin-left: $spacing-lg;
+}
+
+.drawerSubLink {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 $spacing-md;
+  font-size: $font-size-sm;
+  color: $text-muted;
+  border-radius: $radius-md;
+  text-decoration: none;
+  transition: background $transition-fast, color $transition-fast;
+
+  &:hover {
+    background: $background-alt;
+    color: $primary-dark;
+  }
+}
+
+.drawerDivider {
+  height: 1px;
+  background: $border;
+  margin: $spacing-md $spacing-lg;
+}
+
+.drawerUserLinks {
+  list-style: none;
+  margin: 0;
+  padding: 0 $spacing-sm;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.drawerUserLink {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  min-height: 48px;
+  padding: 0 $spacing-md;
+  font-size: $font-size-base;
+  color: $text-muted;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-md;
+  text-decoration: none;
+  transition: background $transition-fast, color $transition-fast;
+
+  &:hover {
+    background: $background-alt;
+    color: $text;
+  }
+}
+
+.drawerFooter {
+  padding: $spacing-md $spacing-lg calc(#{$spacing-lg} + env(safe-area-inset-bottom));
+  border-top: 1px solid $border;
+  display: flex;
+  flex-direction: column;
 }

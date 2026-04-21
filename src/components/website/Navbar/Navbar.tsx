@@ -78,9 +78,16 @@ const TRIP_LINKS = [
   { label: "Nile Cruises", href: "/trips/nile-cruises" },
 ];
 
+const MOBILE_USER_LINKS = [
+  { label: "Favorites", href: "/favorites", icon: "/images/heart-outline.svg" },
+  { label: "Requests", href: "/requests", icon: "/images/archive-book.svg" },
+  { label: "Bookings", href: "/bookings", icon: "/images/message-2.svg" },
+];
+
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [expandedDropdown, setExpandedDropdown] = useState<string | null>(null);
   const pathname = usePathname();
   const isBookingPage = pathname === "/booking";
   const isStatic =
@@ -101,33 +108,66 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Close drawer on route change
+  useEffect(() => {
+    setMobileOpen(false);
+    setExpandedDropdown(null);
+  }, [pathname]);
+
+  // Lock body scroll while drawer is open
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileOpen]);
+
+  // Close on Escape
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mobileOpen]);
+
+  const planTripIcon = (
+    <Image
+      src="/images/arrows/arrow-right.svg"
+      alt=""
+      width={24}
+      height={24}
+      style={{ marginTop: "4px" }}
+    />
+  );
+
   const planTripButton = (
-    <Button
-      variant="primary"
-      size="md"
-      href="/booking"
-      icon={
-        <Image
-          src="/images/arrows/arrow-right.svg"
-          alt=""
-          width={24}
-          height={24}
-          style={{ marginTop: "4px" }}
-        />
-      }
-    >
+    <Button variant="primary" size="md" href="/booking" icon={planTripIcon}>
+      Plan your trip
+    </Button>
+  );
+
+  const planTripButtonMobile = (
+    <Button variant="primary" size="md" href="/booking" icon={planTripIcon} fullWidth>
       Plan your trip
     </Button>
   );
 
   const shouldShowScrolled = scrolled || pathname !== "/";
 
+  const toggleMobileDropdown = (label: string) => {
+    setExpandedDropdown((prev) => (prev === label ? null : label));
+  };
+
   return (
     <nav
       className={`${styles.navbar}${shouldShowScrolled ? ` ${styles.scrolled}` : ""}${lightNavBackground ? ` ${styles.lightPage}` : ""}${isStatic ? ` ${styles.static}` : ""}`}
     >
       <div className={styles.container}>
-        <Link href="/" className={styles.logo}>
+        <Link href="/" className={styles.logo} aria-label="EgyptUS Tours — Home">
           <Image
             src="/images/logo.svg"
             alt="EgyptUS Tours"
@@ -139,9 +179,11 @@ export default function Navbar() {
 
         {!isBookingPage && (
           <button
-            className={styles.hamburger}
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
+            className={`${styles.hamburger} ${mobileOpen ? styles.hamburgerOpen : ""}`}
+            onClick={() => setMobileOpen((o) => !o)}
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-drawer"
           >
             <span />
             <span />
@@ -149,12 +191,13 @@ export default function Navbar() {
           </button>
         )}
 
-        <ul className={`${styles.links} ${mobileOpen ? styles.open : ""}`}>
+        {/* Desktop links */}
+        <ul className={styles.links}>
           {NAV_LINKS.map((link) => {
             const isActive = pathname === link.href;
             const usePrimaryDropdownArrow = isActive && shouldShowScrolled;
             const useDarkDropdownArrow = !isActive && (shouldShowScrolled || lightNavBackground);
-            const useGlass = isActive && !shouldShowScrolled && !lightNavBackground && !mobileOpen;
+            const useGlass = isActive && !shouldShowScrolled && !lightNavBackground;
 
             const content = (
               <>
@@ -226,6 +269,101 @@ export default function Navbar() {
           )}
         </div>
       </div>
+
+      {/* Mobile drawer + backdrop */}
+      {!isBookingPage && (
+        <>
+          <div
+            className={`${styles.backdrop} ${mobileOpen ? styles.backdropOpen : ""}`}
+            onClick={() => setMobileOpen(false)}
+            aria-hidden="true"
+          />
+          <aside
+            id="mobile-drawer"
+            className={`${styles.drawer} ${mobileOpen ? styles.drawerOpen : ""}`}
+            aria-hidden={!mobileOpen}
+          >
+            <div className={styles.drawerHeader}>
+              <span className={styles.drawerTitle}>Menu</span>
+              <button
+                className={styles.drawerClose}
+                onClick={() => setMobileOpen(false)}
+                aria-label="Close menu"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
+
+            <nav className={styles.drawerNav} aria-label="Mobile primary">
+              <ul className={styles.drawerLinks}>
+                {NAV_LINKS.map((link) => {
+                  const isActive = pathname === link.href;
+                  const expanded = expandedDropdown === link.label;
+                  const subLinks = link.hasDropdown
+                    ? link.label === "Destinations"
+                      ? DESTINATION_LINKS
+                      : TRIP_LINKS
+                    : [];
+
+                  return (
+                    <li key={link.href} className={styles.drawerLinkItem}>
+                      <div className={styles.drawerLinkRow}>
+                        <Link
+                          href={link.href}
+                          className={`${styles.drawerLink} ${isActive ? styles.drawerLinkActive : ""}`}
+                        >
+                          {link.label}
+                        </Link>
+                        {link.hasDropdown && (
+                          <button
+                            type="button"
+                            className={`${styles.drawerExpand} ${expanded ? styles.drawerExpandOpen : ""}`}
+                            onClick={() => toggleMobileDropdown(link.label)}
+                            aria-label={`${expanded ? "Collapse" : "Expand"} ${link.label}`}
+                            aria-expanded={expanded}
+                          >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                              <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                      {link.hasDropdown && expanded && (
+                        <ul className={styles.drawerSubLinks}>
+                          {subLinks.map((opt, i) => (
+                            <li key={`${opt.href}-${i}`}>
+                              <Link href={opt.href} className={styles.drawerSubLink}>
+                                {opt.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+
+              <div className={styles.drawerDivider} />
+
+              <ul className={styles.drawerUserLinks}>
+                {MOBILE_USER_LINKS.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className={styles.drawerUserLink}>
+                      <Image src={link.icon} alt="" width={22} height={22} />
+                      <span>{link.label}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            <div className={styles.drawerFooter}>{planTripButtonMobile}</div>
+          </aside>
+        </>
+      )}
     </nav>
   );
 }

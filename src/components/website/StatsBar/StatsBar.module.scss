@@ -1,48 +1,76 @@
 @use "@/styles/variables" as *;
 @use "@/styles/mixins" as *;
+@use "@/styles/breakpoints" as *;
 
 .wrapper {
   position: relative;
   z-index: 2;
-  margin-top: -5rem; /* Pull up to overlap hero */
-  padding-bottom: $spacing-3xl;
+  margin-top: -$spacing-xl; /* Pull up to overlap hero */
+  padding-bottom: $spacing-xl;
+
+  @include md {
+    margin-top: -4rem;
+    padding-bottom: $spacing-2xl;
+  }
+
+  @include lg {
+    margin-top: -5rem;
+    padding-bottom: $spacing-3xl;
+  }
 }
 
 .stats {
   @include container;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: $spacing-xl;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $spacing-md;
 
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(4, 1fr);
+  @include sm {
+    gap: $spacing-lg;
+  }
+
+  @include md {
+    gap: $spacing-xl;
+  }
+
+  @include lg {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
 .stat {
   background: $white;
-  border-radius: $radius-2xl;
-  padding: $spacing-xl $spacing-lg;
+  border-radius: $radius-xl;
+  padding: $spacing-lg $spacing-md;
   text-align: center;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 140px;
+  min-height: 104px;
+  min-width: 0;
+
+  @include md {
+    border-radius: $radius-2xl;
+    padding: $spacing-xl $spacing-lg;
+    min-height: 140px;
+  }
 }
 
 .value {
   display: block;
-  font-size: $font-size-4xl;
+  font-size: clamp(1.5rem, 6vw, #{$font-size-4xl});
   font-weight: $font-weight-bold;
   color: $primary-light;
   line-height: 1.2;
   margin-bottom: $spacing-xs;
+  word-break: break-word;
 }
 
 .label {
-  font-size: $font-size-sm;
+  font-size: clamp(0.75rem, 2.8vw, #{$font-size-sm});
   color: $text-light;
   font-weight: $font-weight-medium;
+  line-height: 1.35;
 }

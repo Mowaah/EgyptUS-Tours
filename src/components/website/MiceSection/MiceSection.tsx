@@ -67,7 +67,7 @@ export default function MiceSection() {
         </div>
 
         <div className={styles.gallery}>
-          <PaginationArrows>
+          <PaginationArrows size={46} nextClassName={styles.arrowNext}>
             <div className={styles.galleryGrid}>
               {GALLERY_IMAGES.map((img, i) => (
                 <div key={i} className={styles.galleryItem}>

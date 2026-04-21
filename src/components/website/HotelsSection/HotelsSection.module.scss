@@ -9,46 +9,68 @@
   @include container;
 }
 
-
-
 .tabsRow {
-  margin-top: $spacing-2xl;
+  margin-top: $spacing-xl;
+
+  @media (min-width: 768px) {
+    margin-top: $spacing-2xl;
+  }
 }
 
 .toolbar {
   @include flex-between;
-  margin: $spacing-xl 0;
+  margin: $spacing-lg 0;
+  gap: $spacing-md;
+  flex-wrap: wrap;
+
+  @media (min-width: 768px) {
+    margin: $spacing-xl 0;
+  }
 }
 
-
 .arrows {
-  display: flex;
+  display: none; // Touch-first — rely on swipe/scroll on small screens.
   align-items: center;
+
+  @media (min-width: 768px) {
+    display: flex;
+  }
 }
 
 .slider {
   display: flex;
-  gap: 16px;
+  gap: $spacing-md;
   overflow-x: auto;
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
-  padding-bottom: 24px;
-  /* hide scrollbar */
+  padding-bottom: $spacing-lg;
+  // Bleed the rail into the container side-padding so cards can peek off-edge.
+  margin-inline: -20px;
+  padding-inline: 20px;
   scrollbar-width: none;
 
   &::-webkit-scrollbar {
     display: none;
   }
+
+  @media (min-width: 768px) {
+    gap: 16px;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
 }
 
 .slide {
-  flex: 0 0 calc(100% - 32px);
+  flex: 0 0 calc(100% - 48px);
   max-width: 360px;
   scroll-snap-align: start;
 
+  @media (min-width: 480px) {
+    flex: 0 0 320px;
+  }
+
   @media (min-width: 640px) {
     flex: 0 0 380px;
-    /* Force card width slightly longer as requested */
   }
 }
 

@@ -1,13 +1,22 @@
 @use "@/styles/variables" as *;
+@use "@/styles/breakpoints" as *;
 
 .wrapper {
   width: 100%;
   max-width: 987px;
-  margin: 0 auto;
-  margin-top: $spacing-2xl;
-  padding: 0 20px;
+  margin: $spacing-lg auto 0;
+  padding: 0 16px;
   position: relative;
   z-index: 50;
+
+  @include sm {
+    padding: 0 20px;
+    margin-top: $spacing-xl;
+  }
+
+  @include lg {
+    margin-top: $spacing-2xl;
+  }
 }
 
 .tabs {
@@ -15,19 +24,25 @@
   gap: $spacing-sm;
   margin-bottom: 12px;
   padding-left: $spacing-sm;
+  flex-wrap: wrap;
 }
 
 .tab {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: $spacing-sm;
-  padding: 0.7rem 1.9rem;
+  padding: 0.55rem 1.25rem;
   border-radius: $radius-full;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   color: $white;
   transition: all $transition-fast;
   position: relative;
+  min-height: 40px;
+
+  @include md {
+    padding: 0.7rem 1.9rem;
+  }
 
   &.active {
     background: $primary;
@@ -46,11 +61,9 @@
     }
   }
 
-
   &:hover {
     background: rgba(255, 255, 255, 0.18);
   }
-
 
   svg {
     width: 18px;
@@ -58,29 +71,70 @@
   }
 }
 
-.searchBar {
-  display: flex;
-  align-items: center;
-  border-radius: $radius-full;
-  padding: 6px 24px;
+// --- Search bar layout ---------------------------------------------------
+// Mobile (<640px): vertical stack with subtle horizontal dividers.
+// Tablet (640-1023px): 2x2 grid of filters + full-width button below.
+// Desktop (>=1024px): single horizontal pill row with vertical dividers.
 
-  @media (max-width: 900px) {
-    flex-direction: column;
-    border-radius: 32px;
-    padding: 16px;
-    gap: 4px;
-    align-items: stretch;
+.searchBar {
+  display: grid;
+  grid-template-columns: 1fr;
+  border-radius: 24px;
+  padding: 10px;
+  gap: 2px;
+
+  @include sm {
+    grid-template-columns: 1fr 1fr;
+    border-radius: 28px;
+    padding: 12px;
+    gap: 6px;
+  }
+
+  @include lg {
+    display: flex;
+    align-items: center;
+    border-radius: $radius-full;
+    padding: 6px 24px;
+    gap: 0;
   }
 }
 
 .filterWrapper {
-  flex: 1;
   display: flex;
   align-items: center;
   position: relative;
+  min-width: 0;
+  width: 100%;
 
-  @media (max-width: 900px) {
-    width: 100%;
+  // Mobile: horizontal divider under every filter except the last
+  &:not(:last-of-type) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  @include sm {
+    // Tablet 2x2 grid: no horizontal borders; use vertical border on left items
+    &:not(:last-of-type) {
+      border-bottom: none;
+    }
+    // Right column gets a left border as divider
+    &:nth-of-type(2n) {
+      border-left: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    // Bottom row gets a top border as divider (filter 3 & 4)
+    &:nth-of-type(n + 3) {
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+    }
+  }
+
+  @include lg {
+    flex: 1;
+    width: auto;
+
+    &:not(:last-of-type),
+    &:nth-of-type(2n),
+    &:nth-of-type(n + 3) {
+      border: none;
+    }
   }
 }
 
@@ -89,24 +143,24 @@
   display: flex;
   align-items: center;
   gap: $spacing-sm;
-  padding: 16px 24px;
+  padding: 12px 14px;
   color: $white;
   cursor: pointer;
   transition: background $transition-fast;
-  border-radius: $radius-lg;
+  border-radius: 14px;
   width: 100%;
+  min-height: 48px;
 
   &:hover {
-    border-radius: $radius-full;
     background: rgba(255, 255, 255, 0.1);
   }
 
-  @media (max-width: 900px) {
-    padding: 14px 16px;
-    border-radius: 16px;
+  @include lg {
+    padding: 16px 24px;
+    border-radius: $radius-lg;
 
     &:hover {
-      border-radius: 16px;
+      border-radius: $radius-full;
     }
   }
 }
@@ -115,19 +169,23 @@
   color: $white;
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .label {
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
+  margin-right: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
-  margin-right: auto;
-  margin-right: auto;
+  min-width: 0;
 }
 
 .chevron {
   transition: transform $transition-fast;
   opacity: 0.8;
+  flex-shrink: 0;
 
   &.chevronOpen {
     transform: rotate(180deg);
@@ -135,13 +193,14 @@
 }
 
 .separator {
-  width: 1px;
-  height: 24px;
-  background: rgba(255, 255, 255, 0.2);
-  margin: 0 $spacing-xs;
+  display: none;
 
-  @media (max-width: 900px) {
-    display: none;
+  @include lg {
+    display: block;
+    width: 1px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 0 $spacing-xs;
   }
 }
 
@@ -159,17 +218,28 @@
   white-space: nowrap;
   flex-shrink: 0;
   transition: all $transition-fast;
-  margin-left: $spacing-sm;
+
+  // Mobile: full-width below the stack
+  width: 100%;
+  margin-top: 12px;
+  height: 48px;
 
   &:hover {
     background: $background;
   }
 
-  @media (max-width: 900px) {
-    width: 100%;
-    margin-left: 0;
-    margin-top: 12px;
+  @include sm {
+    // Tablet: stretches across both columns
+    grid-column: 1 / -1;
     height: 52px;
+  }
+
+  @include lg {
+    width: auto;
+    margin-top: 0;
+    margin-left: $spacing-sm;
+    height: auto;
+    grid-column: auto;
   }
 
   svg {

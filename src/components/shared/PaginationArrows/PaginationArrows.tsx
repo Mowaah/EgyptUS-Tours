@@ -11,6 +11,8 @@ type Props = {
   prevDisabled?: boolean;
   nextDisabled?: boolean;
   className?: string;
+  prevClassName?: string;
+  nextClassName?: string;
 };
 
 export default function PaginationArrows({
@@ -24,6 +26,8 @@ export default function PaginationArrows({
   prevDisabled,
   nextDisabled,
   className,
+  prevClassName,
+  nextClassName,
 }: Props) {
   const resolvedLayout: "inline" | "sides" =
     layout ?? (children ? "sides" : "inline");
@@ -43,7 +47,7 @@ export default function PaginationArrows({
     >
       <button
         type="button"
-        className={`${styles.button} ${styles.prev}`}
+        className={[styles.button, styles.prev, prevClassName ?? ""].join(" ")}
         aria-label="Previous"
         onClick={onPrev}
         disabled={prevDisabled}
@@ -55,7 +59,7 @@ export default function PaginationArrows({
 
       <button
         type="button"
-        className={`${styles.button} ${styles.next}`}
+        className={[styles.button, styles.next, nextClassName ?? ""].join(" ")}
         aria-label="Next"
         onClick={onNext}
         disabled={nextDisabled}

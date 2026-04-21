@@ -10,23 +10,37 @@
   @include container;
 }
 
+// ── Top: heading + description/CTA ───────────────────────────
 .top {
   display: flex;
-  flex-wrap: wrap;
-  gap: 100px;
-  margin-bottom: $spacing-2xl;
+  flex-direction: column;
+  gap: $spacing-xl;
+  margin-bottom: $spacing-xl;
   align-items: flex-start;
+
+  @media (min-width: 1024px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 100px;
+    margin-bottom: $spacing-2xl;
+    align-items: flex-start;
+  }
 }
 
 .left {
   flex-shrink: 0;
+  width: 100%;
+
+  @media (min-width: 1024px) {
+    width: auto;
+  }
 }
 
 .largeHeading {
-  font-size: 36px !important;
+  font-size: clamp(1.75rem, 5vw, 2.25rem) !important; // 28px → 36px
 
   @media (min-width: 1024px) {
-    font-size: 48px !important;
+    font-size: clamp(2.25rem, 4.5vw, 3rem) !important; // 36px → 48px
     line-height: 1.4;
   }
 }
@@ -36,22 +50,38 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: $spacing-lg;
-  padding-top: 70px;
+  gap: $spacing-md;
+  padding-top: 0;
+  width: 100%;
+
+  @media (min-width: 1024px) {
+    gap: $spacing-lg;
+    padding-top: 70px;
+  }
 }
 
 .description {
   color: $text-light;
-  font-size: $font-size-lg;
-  line-height: 1.4;
+  font-size: $font-size-base;
+  line-height: 1.5;
   max-width: 670px;
+
+  @media (min-width: 768px) {
+    font-size: $font-size-lg;
+    line-height: 1.4;
+  }
 }
 
+// ── Bottom: decoration + cards ───────────────────────────────
 .bottom {
   display: flex;
-  gap: $spacing-4xl;
+  gap: $spacing-lg;
   align-items: stretch;
   position: relative;
+
+  @media (min-width: 1024px) {
+    gap: $spacing-4xl;
+  }
 }
 
 .decoration {
@@ -78,13 +108,31 @@
   object-fit: contain;
 }
 
+// ── Horizontal-scroll card rail ──────────────────────────────
 .grid {
   flex: 1;
   display: flex;
-  gap: $spacing-xl;
+  gap: $spacing-md;
   overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 4px;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  // Negative margin + matching padding lets the rail bleed into the side
+  // padding on mobile so users see a "peek" of the next card.
+  margin-inline: -20px;
+  padding-inline: 20px;
+  padding-bottom: 4px;
+
+  @media (min-width: 768px) {
+    margin-inline: 0;
+    padding-inline: 0;
+    gap: $spacing-lg;
+  }
+
+  @media (min-width: 1024px) {
+    gap: $spacing-xl;
+  }
 
   &::-webkit-scrollbar {
     display: none;
@@ -92,6 +140,19 @@
 
   > * {
     flex-shrink: 0;
-    width: 370px;
+    width: 280px;
+    scroll-snap-align: start;
+
+    @media (min-width: 480px) {
+      width: 320px;
+    }
+
+    @media (min-width: 768px) {
+      width: 340px;
+    }
+
+    @media (min-width: 1024px) {
+      width: 370px;
+    }
   }
 }

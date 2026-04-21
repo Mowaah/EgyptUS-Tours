@@ -1,9 +1,14 @@
 @use "@/styles/variables" as *;
 @use "@/styles/mixins" as *;
+@use "@/styles/breakpoints" as *;
 
 .footer {
   background: $primary-dark;
-  padding: $spacing-3xl 0 $spacing-xl;
+  padding: $spacing-2xl 0 $spacing-lg;
+
+  @include md {
+    padding: $spacing-3xl 0 $spacing-xl;
+  }
 }
 
 .container {
@@ -13,33 +18,55 @@
 .top {
   display: grid;
   grid-template-columns: 1fr;
-  gap: $spacing-4xl;
+  gap: $spacing-2xl;
 
-  @media (min-width: 1024px) {
+  @include md {
+    gap: $spacing-3xl;
+  }
+
+  @include lg {
     grid-template-columns: 320px 1fr;
+    gap: $spacing-4xl;
   }
 }
 
 .brand {
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: $spacing-md;
+
+  @include md {
+    gap: $spacing-lg;
+  }
+}
+
+.logo {
+  width: clamp(64px, 10vw, 84px);
+  height: auto;
 }
 
 .tagline {
   font-size: $font-size-sm;
   font-weight: $font-weight-normal;
   color: $white;
-  line-height: 1.4;
+  line-height: 1.5;
   margin: 0;
-  max-width: 320px;
+  max-width: 420px;
 }
 
 .socialBlock {
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
-  margin-top: $spacing-4xl;
+  margin-top: $spacing-lg;
+
+  @include md {
+    margin-top: $spacing-2xl;
+  }
+
+  @include lg {
+    margin-top: $spacing-4xl;
+  }
 }
 
 .followLabel {
@@ -50,22 +77,21 @@
 
 .socials {
   display: flex;
+  flex-wrap: wrap;
   gap: $spacing-sm;
 }
 
 .socialIcon {
-  width: 40px;
-  height: 40px;
-  border-radius: $radius-full;
-  background: rgba($white, 0.05);
-  display: flex;
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: background $transition-fast;
   color: $white;
+  transition: opacity $transition-fast;
 
   &:hover {
-    background: rgba($white, 0.2);
+    opacity: 0.8;
   }
 
   img {
@@ -75,25 +101,40 @@
 
 .linksGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: $spacing-2xl;
+  grid-template-columns: 1fr;
+  gap: $spacing-xl;
 
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(4, 1fr);
+  @include sm {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $spacing-2xl $spacing-xl;
+  }
+
+  @include md {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: $spacing-2xl;
   }
 }
 
 .linkGroup {
   display: flex;
   flex-direction: column;
-  gap: $spacing-md;
+  gap: $spacing-sm;
+  min-width: 0;
+
+  @include md {
+    gap: $spacing-md;
+  }
 }
 
 .linkGroupTitle {
-  font-size: $font-size-lg;
+  font-size: $font-size-base;
   font-weight: $font-weight-semibold;
   color: $white;
   margin: 0;
+
+  @include md {
+    font-size: $font-size-lg;
+  }
 }
 
 .linkList {
@@ -102,24 +143,29 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: $spacing-sm;
 }
 
 .link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
   font-size: $font-size-sm;
   color: $white;
   text-decoration: none;
-  transition: color $transition-fast;
+  transition: opacity $transition-fast;
+  word-break: break-word;
 
   &:hover {
-    color: $white;
+    opacity: 0.8;
   }
 }
 
 .contactItem {
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
   gap: 4px;
+  min-width: 0;
 }
 
 .contactLabel {
@@ -131,12 +177,18 @@
 .contactValue {
   font-size: $font-size-sm;
   color: $white;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .divider {
   height: 1px;
   background: rgba($white, 0.12);
-  margin: $spacing-2xl 0 $spacing-lg;
+  margin: $spacing-xl 0 $spacing-md;
+
+  @include md {
+    margin: $spacing-2xl 0 $spacing-lg;
+  }
 }
 
 .copyright {
@@ -145,4 +197,5 @@
   color: $white;
   text-align: center;
   margin: 0;
+  line-height: 1.5;
 }

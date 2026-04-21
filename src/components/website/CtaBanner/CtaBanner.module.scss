@@ -12,8 +12,8 @@
 
 .card {
   background: linear-gradient(to bottom, #EAF5FF 0%, #FFFFFF 100%);
-  border-radius: 32px;
-  padding: $spacing-xl;
+  border-radius: clamp(20px, 3.5vw, 32px);
+  padding: clamp(1.75rem, 5vw, 3rem) clamp(1.25rem, 4vw, 3rem);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -22,19 +22,19 @@
 }
 
 .heading {
-  font-size: $font-size-2xl;
+  font-size: clamp(1.5rem, 4.5vw, 2.25rem);
   font-weight: $font-weight-bold;
   color: $dark;
+  line-height: 1.25;
   margin: 0;
-
-  @media (min-width: 768px) {
-    font-size: $font-size-xl;
-  }
+  max-width: 760px;
+  text-wrap: balance;
 }
 
 .description {
-  font-size: $font-size-sm;
+  font-size: clamp($font-size-sm, 2.4vw, $font-size-base);
   color: $text-light;
   line-height: 1.6;
   margin: 0;
+  max-width: 640px;
 }
