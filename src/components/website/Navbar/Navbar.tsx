@@ -20,7 +20,33 @@ const NAV_LINKS = [
   { label: "About Us", href: "/about" },
 ];
 
-const LIGHT_NAV_PATHS = ["/booking", "/b2b-programs"];
+const LIGHT_NAV_PATHS = [
+  "/booking",
+  "/b2b-programs",
+  "/faq",
+  "/terms",
+  "/privacy",
+  "/proposal",
+  "/contact",
+  "/trips-booking",
+  "/hotels-booking",
+  "/transportation-booking",
+  "/b2b-proposals",
+  "/events-proposals"
+];
+const STATIC_NAV_PATHS = [
+  "/faq",
+  "/terms",
+  "/privacy",
+  "/proposal",
+  "/contact",
+  "/booking",
+  "/trips-booking",
+  "/hotels-booking",
+  "/transportation-booking",
+  "/b2b-proposals",
+  "/events-proposals"
+];
 
 const DESTINATION_LINKS = [
   { label: "Saudi Arabia", href: "/destinations/saudi-arabia" },
@@ -56,9 +82,17 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const lightNavBackground =
-    LIGHT_NAV_PATHS.includes(pathname) || LIGHT_NAV_PATHS.some((p) => pathname.startsWith(`${p}/`));
   const isBookingPage = pathname === "/booking";
+  const isStatic =
+    STATIC_NAV_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`)) ||
+    pathname.includes("book") ||
+    pathname.includes("proposal");
+
+  const lightNavBackground =
+    LIGHT_NAV_PATHS.includes(pathname) ||
+    LIGHT_NAV_PATHS.some((p) => pathname.startsWith(`${p}/`)) ||
+    pathname.includes("book") ||
+    pathname.includes("proposal");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -90,7 +124,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`${styles.navbar}${shouldShowScrolled ? ` ${styles.scrolled}` : ""}${lightNavBackground ? ` ${styles.lightPage}` : ""}`}
+      className={`${styles.navbar}${shouldShowScrolled ? ` ${styles.scrolled}` : ""}${lightNavBackground ? ` ${styles.lightPage}` : ""}${isStatic ? ` ${styles.static}` : ""}`}
     >
       <div className={styles.container}>
         <Link href="/" className={styles.logo}>

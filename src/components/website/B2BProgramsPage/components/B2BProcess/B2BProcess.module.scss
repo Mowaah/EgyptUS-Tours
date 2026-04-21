@@ -39,10 +39,11 @@
 
 .timelineContainer {
   position: relative;
-  width: 1275px; // Based on Figma 1274.96px
-  max-width: 95%;
+  width: 100%;
+  max-width: 1275px;
   height: auto;
   min-height: 220px;
+  padding: 0 20px;
 }
 
 .lineBase {

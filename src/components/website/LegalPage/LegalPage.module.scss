@@ -1,0 +1,226 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.page {
+  background: $white;
+  min-height: 100vh;
+  position: relative; // Create a stacking context for children
+}
+
+// ── HEADER ───────────────────────────────────────────────────
+
+.headerSection {
+  background: $white;
+  padding: 32px 20px 0;
+  position: relative;
+  z-index: 1; // Lower than stickyNav so text goes under tabs
+
+  @media (min-width: 1024px) {
+    padding: 32px 80px 0;
+  }
+}
+
+.decorationWrapper {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1440px;
+  height: 247px;
+  pointer-events: none;
+  z-index: 11; // Highest z-index to overlap EVERYTHING (tabs + text)
+  overflow: visible;
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
+}
+
+.decoration {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: auto;
+}
+
+.headerInner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+  position: relative;
+  z-index: 1;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 49px;
+  color: #0E2851;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.subtitle {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  color: #6B7280;
+  margin: 0;
+  max-width: 755px;
+}
+
+// ── NAV / TABS ───────────────────────────────────────────────
+
+.stickyNav {
+  position: sticky;
+  top: 0;
+  background: $white;
+  z-index: 10; // Ensure it's above content
+  margin-top: 64px;
+}
+
+.navInner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+  border-bottom: 1px solid #D8DDE4;
+
+  @media (min-width: 1024px) {
+    padding: 0;
+  }
+}
+
+.tabList {
+  display: flex;
+  gap: 24px;
+}
+
+.tabItem {
+  position: relative;
+  padding: 14px 0;
+  background: transparent;
+  border: none;
+  font-family: 'Trip Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #6B7280;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: #0E2851;
+  }
+
+  &.activeTab {
+    color: #0E2851;
+    font-weight: 500;
+    // font-family: 'Inter', sans-serif; // As per Figma Inter for general terms
+  }
+}
+
+.activeLine {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #1B8FFE;
+}
+
+// ── CONTENT ──────────────────────────────────────────────────
+
+.contentSection {
+  padding: 40px 20px 96px;
+
+  @media (min-width: 1024px) {
+    padding: 40px 80px 96px;
+  }
+}
+
+.contentInner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+.legalBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sectionHeading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.blueDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #2971E6;
+  flex-shrink: 0;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px;
+  color: #0E2851;
+  margin: 0;
+}
+
+.para {
+  font-size: 16px;
+  line-height: 24px;
+  color: #364153;
+  margin: 0 0 16px;
+  max-width: 1068px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.subsections {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.subBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.subTitle {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: #FF6600;
+  margin: 0;
+}
+
+.subContent {
+  border-left: 1px solid #EEEEEE;
+  padding-left: 12px;
+
+  p {
+    font-size: 16px;
+    line-height: 24px;
+    color: #364153;
+    margin: 0;
+    max-width: 821px;
+    white-space: pre-line; // Support for newlines in content
+  }
+}

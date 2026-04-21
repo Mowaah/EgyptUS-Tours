@@ -41,27 +41,33 @@ const FAQ_ITEMS: FaqItem[] = [
 interface FaqSectionProps {
   items?: FaqItem[];
   description?: string;
+  hideHeader?: boolean;
+  noPadding?: boolean;
 }
 
 export default function FaqSection({
   items = FAQ_ITEMS,
-  description = "We've got answers. Find everything you need to know to plan your perfect trip."
+  description = "We've got answers. Find everything you need to know to plan your perfect trip.",
+  hideHeader = false,
+  noPadding = false
 }: FaqSectionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
 
   return (
-    <section className={styles.section}>
+    <section className={`${styles.section} ${noPadding ? styles.noPadding : ""}`}>
       <div className={styles.container}>
-        <SectionHeader
-          label="Frequently Asked Questions"
-          heading="Got questions?"
-          description={description}
-          align="center"
-          maxWidth="500px"
-          size="large"
-        />
+        {!hideHeader && (
+          <SectionHeader
+            label="Frequently Asked Questions"
+            heading="Got questions?"
+            description={description}
+            align="center"
+            maxWidth="500px"
+            size="large"
+          />
+        )}
 
         <div className={styles.accordion}>
           {items.map((item, i) => {

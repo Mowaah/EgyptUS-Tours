@@ -6,6 +6,10 @@
   background: $white;
 }
 
+.noPadding {
+  padding: 0 !important;
+}
+
 .container {
   @include container;
 }

@@ -1,0 +1,84 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.page {
+  background: $white;
+  min-height: 100vh;
+}
+
+.headerSection {
+  background: $white;
+  padding: 32px 20px 0;
+  position: relative;
+  z-index: 2; // Keep header above following sections
+
+  @media (min-width: 1024px) {
+    padding: 32px 80px 0;
+  }
+}
+
+.decorationWrapper {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1440px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
+}
+
+.decoration {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: auto;
+}
+
+.headerInner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+  position: relative;
+  z-index: 1;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 49px;
+  color: #0E2851;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  color: #6B7280;
+  margin: 0;
+  max-width: 755px;
+}
+
+.contentSection {
+  padding: 16px 20px 80px;
+
+  @media (min-width: 1024px) {
+    padding: 16px 80px 80px;
+  }
+}
+
+.contentInner {
+  max-width: 1280px;
+  margin: 0 auto;
+}

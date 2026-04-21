@@ -30,7 +30,7 @@ const NAV_LINKS: NavLinksType = {
   "Customer Support": [
     { label: "Terms & Conditions", href: "/terms" },
     { label: "Privacy & Policy", href: "/privacy" },
-    { label: "FAQs", href: "/faqs" },
+    { label: "FAQs", href: "/faq" },
   ],
 };
 

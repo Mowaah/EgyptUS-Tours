@@ -8,6 +8,10 @@
   z-index: 100;
   transition: background $transition-base;
 
+  &.static {
+    position: relative;
+  }
+
   &.lightPage:not(.scrolled) {
     .link {
       color: $nav-link-on-light;
