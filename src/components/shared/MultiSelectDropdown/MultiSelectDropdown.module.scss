@@ -3,8 +3,12 @@
 .chipList {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
+
+  @media (min-width: 768px) {
+    gap: 8px;
+  }
 }
 
 .chip {
@@ -12,19 +16,40 @@
   align-items: center;
   gap: 4px;
   max-width: 100%;
-  padding: 2px 8px;
-  border-radius: 20px;
+  padding: 2px 6px;
+  border-radius: 16px;
   background: #fff6f3;
   box-sizing: border-box;
+
+  @media (min-width: 768px) {
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
 }
 
 .chipLabel {
-  font-size: $font-size-sm;
+  font-size: 12px;
   font-weight: $font-weight-medium;
   color: $dark;
   line-height: 1.3;
-  word-break: break-word;
   min-width: 0;
+  // On mobile a single chip shouldn't be allowed to wrap across lines; it
+  // makes the trigger grow uncontrollably when multiple items are selected.
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
+
+  @media (min-width: 640px) {
+    max-width: 200px;
+  }
+
+  @media (min-width: 768px) {
+    font-size: $font-size-sm;
+    max-width: none;
+    white-space: normal;
+    word-break: break-word;
+  }
 }
 
 .chipClear {
@@ -48,30 +73,44 @@
 .summary {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   min-width: 0;
   width: 100%;
+
+  @media (min-width: 768px) {
+    gap: 8px;
+  }
 }
 
 .summaryText {
-  font-size: $font-size-sm;
+  font-size: 13px;
   font-weight: $font-weight-medium;
   color: $dark;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  @media (min-width: 768px) {
+    font-size: $font-size-sm;
+  }
 }
 
 .moreBadge {
   flex-shrink: 0;
-  padding: 2px 8px;
-  border-radius: 20px;
+  padding: 1px 6px;
+  border-radius: 16px;
   background: $secondary-light;
   color: $secondary;
-  font-size: $font-size-sm;
+  font-size: 11px;
   font-weight: $font-weight-bold;
   line-height: 1.2;
+
+  @media (min-width: 768px) {
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: $font-size-sm;
+  }
 }
 
 .triggerContent {

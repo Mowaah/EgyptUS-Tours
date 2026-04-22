@@ -1,35 +1,55 @@
 @use "@/styles/variables" as *;
 
 .breadcrumb {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .list {
   display: flex;
   align-items: center;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 4px 6px;
   list-style: none;
   padding: 0;
   margin: 0;
   color: #c6cbd2;
-  font-size: $font-size-sm;
+  font-size: 12px;
+  min-width: 0;
+
+  @media (min-width: 768px) {
+    flex-wrap: nowrap;
+    gap: 8px;
+    font-size: $font-size-sm;
+  }
 }
 
 .item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
+  min-width: 0;
+
+  @media (min-width: 768px) {
+    gap: 8px;
+  }
 }
 
 .link {
   display: flex;
   align-items: center;
   gap: 4px;
-  color: #c6cbd2; // Grayish unselected
+  color: #c6cbd2;
   text-decoration: none;
   font-weight: $font-weight-medium;
   transition: color $transition-fast;
+  // Long segment labels shouldn't force the row to overflow.
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 
   &:hover {
     color: $primary;
@@ -37,15 +57,27 @@
 }
 
 .homeIcon {
-  margin-top: -1px; // Align icon visually
+  margin-top: -1px;
+  width: 14px;
+  height: 14px;
+
+  @media (min-width: 768px) {
+    width: 16px;
+    height: 16px;
+  }
 }
 
 .separator {
   color: #c6cbd2;
   user-select: none;
+  flex-shrink: 0;
 }
 
 .current {
-  color: $secondary; // Orange for active/current
+  color: $secondary;
   font-weight: $font-weight-medium;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }

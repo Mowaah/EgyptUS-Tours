@@ -15,9 +15,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   width: 100%;
-  min-height: 48px;
+  min-height: 44px;
+
+  @media (min-width: 768px) {
+    gap: 16px;
+    min-height: 48px;
+  }
 }
 
 .counterRowLabel {
@@ -48,27 +53,40 @@
   display: inline-flex;
   align-items: center;
   flex-shrink: 0;
-  gap: 10px;
-  padding: 8px;
+  gap: 8px;
+  padding: 6px;
   border: 1px solid $counter-pill-border;
-  border-radius: 16px;
+  border-radius: 14px;
   background: $white;
   box-sizing: border-box;
+
+  @media (min-width: 768px) {
+    gap: 10px;
+    padding: 8px;
+    border-radius: 16px;
+  }
 }
 
 .counterPillButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
-  min-width: 34px;
-  min-height: 34px;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
   padding: 0;
   border: none;
   border-radius: $radius-md;
   cursor: pointer;
   transition: opacity $transition-fast, transform $transition-fast;
+
+  @media (min-width: 768px) {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    min-height: 34px;
+  }
 
   &:hover {
     opacity: 0.9;
@@ -115,16 +133,24 @@
 .formTextarea {
   width: 100%;
   box-sizing: border-box;
-  padding: 12px 16px;
+  padding: 10px 14px;
   border: 1px solid $border-strong;
-  border-radius: $radius-xl;
-  font-size: $font-size-sm;
+  border-radius: 14px;
+  font-size: 14px;
   color: $text;
   font-family: inherit;
   resize: vertical;
+  min-height: 96px;
   background: $white;
   outline: none;
-  transition: border-color $transition-fast;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+
+  @media (min-width: 768px) {
+    padding: 12px 16px;
+    border-radius: $radius-xl;
+    font-size: $font-size-sm;
+    min-height: 120px;
+  }
 
   &::placeholder {
     color: $text-placeholder;

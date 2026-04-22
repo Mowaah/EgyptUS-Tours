@@ -70,22 +70,14 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
       </div>
 
       <main className={planPageStyles.mainContent}>
-        <div className={styles.container}>
+        <div className={planPageStyles.content}>
           <div className={styles.layout}>
-            {/* Left Column: Form Steps */}
             <div className={styles.formArea}>
-              {currentStep === 1 && (
-                <StepTripDetails {...sharedProps} />
-              )}
-              {currentStep === 2 && (
-                <StepPersonalInfo {...sharedProps} />
-              )}
-              {currentStep === 3 && (
-                <StepPayment {...sharedProps} />
-              )}
+              {currentStep === 1 && <StepTripDetails {...sharedProps} />}
+              {currentStep === 2 && <StepPersonalInfo {...sharedProps} />}
+              {currentStep === 3 && <StepPayment {...sharedProps} />}
             </div>
 
-            {/* Right Column: Summary Sidebar */}
             <div className={styles.sidebarArea}>
               <BookingSummary vehicle={vehicle} formData={formData} />
             </div>

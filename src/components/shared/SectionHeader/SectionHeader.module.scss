@@ -1,6 +1,9 @@
 @use "@/styles/variables" as *;
 
-.header {}
+.header {
+  max-width: 100%;
+  min-width: 0;
+}
 
 .center {
   text-align: center;
@@ -16,30 +19,52 @@
   align-items: center;
   gap: $spacing-xs;
   color: $secondary;
-  font-size: $font-size-base;
+  font-size: 13px;
   font-weight: $font-weight-bold;
   letter-spacing: 0.05em;
-  margin-bottom: $spacing-lg;
+  margin-bottom: $spacing-md;
+
+  @media (min-width: 768px) {
+    font-size: $font-size-base;
+    margin-bottom: $spacing-lg;
+  }
 }
 
 .labelIcon {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   margin-right: 2px;
+
+  @media (min-width: 768px) {
+    width: 22px;
+    height: 22px;
+  }
 }
 
+// Fluid headline that feels in proportion on every screen. Falls back to the
+// exact design-system size at desktop.
 .heading {
   color: $primary-dark;
-  font-size: $font-size-4xl;
+  font-size: clamp(1.5rem, 5vw, #{$font-size-4xl});
   font-weight: $font-weight-bold;
-  line-height: 1;
-  margin: 0 0 $spacing-md;
+  line-height: 1.15;
+  margin: 0 0 $spacing-sm;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+
+  @media (min-width: 768px) {
+    line-height: 1.1;
+    margin-bottom: $spacing-md;
+  }
 
   @media (min-width: 1024px) {
+    line-height: 1;
     font-size: $font-size-4xl;
   }
 
   &.headingLarge {
+    font-size: clamp(1.625rem, 6vw, #{$font-size-5xl});
+
     @media (min-width: 1024px) {
       margin-bottom: 24px;
       font-size: $font-size-5xl;
@@ -47,18 +72,24 @@
   }
 
   .center & {
-    margin: 0 auto $spacing-md;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
 .description {
   color: $text-light;
-  font-size: $font-size-base;
+  font-size: clamp(0.875rem, 2.3vw, #{$font-size-base});
   font-weight: $font-weight-normal;
-  line-height: 1.4;
+  line-height: 1.5;
   max-width: 545px;
 
+  @media (min-width: 768px) {
+    line-height: 1.4;
+  }
+
   .center & {
-    margin: 0 auto;
+    margin-left: auto;
+    margin-right: auto;
   }
 }

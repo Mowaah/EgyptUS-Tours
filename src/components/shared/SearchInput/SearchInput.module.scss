@@ -4,6 +4,8 @@
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
+  min-width: 0;
 }
 
 .searchIcon {
@@ -12,20 +14,33 @@
   color: $text-light;
   pointer-events: none;
   opacity: 0.5;
+  width: 16px;
+  height: 16px;
+
+  @media (min-width: 768px) {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 .searchInput {
   height: 40px;
-  min-width: 360px;
   width: 100%;
+  min-width: 0;
   border: 1px solid $border-strong;
-  border-radius: 16px;
-  padding: 0 16px 0 38px;
+  border-radius: 14px;
+  padding: 0 12px 0 34px;
   font-size: 14px;
   color: $text;
   background: $white;
   outline: none;
   transition: border-color $transition-fast, box-shadow $transition-fast;
+
+  @media (min-width: 768px) {
+    border-radius: 16px;
+    padding: 0 16px 0 38px;
+    min-width: 360px;
+  }
 
   &::placeholder {
     color: #B1B1B1;

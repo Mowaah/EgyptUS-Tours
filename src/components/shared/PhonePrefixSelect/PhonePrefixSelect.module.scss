@@ -10,18 +10,25 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 12px 14px;
+  padding: 10px 12px;
   border: 1px solid #E5E7EB;
-  border-radius: $radius-xl;
+  border-radius: 14px;
   background: $white;
-  font-size: $font-size-sm;
+  font-size: 14px;
   color: $dark;
   white-space: nowrap;
   font-family: inherit;
   cursor: pointer;
-  height: 48px;
+  height: 44px;
   box-sizing: border-box;
   transition: all $transition-fast;
+
+  @media (min-width: 768px) {
+    padding: 12px 14px;
+    border-radius: $radius-xl;
+    font-size: $font-size-sm;
+    height: 48px;
+  }
 
   &:hover {
     border-color: $border-input;

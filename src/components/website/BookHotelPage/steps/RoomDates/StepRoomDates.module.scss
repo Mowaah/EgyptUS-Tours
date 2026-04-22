@@ -28,22 +28,36 @@
 
 .roomRowWrapper {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 32px;
+  gap: 12px;
+
+  @media (min-width: 640px) {
+    gap: 20px;
+  }
+
+  @media (min-width: 1024px) {
+    gap: 32px;
+  }
 }
 
 .roomInfoBox {
-  width: 100%;
-  max-width: 380px;
+  flex: 1;
+  min-width: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 7px 16px;
+  padding: 10px 12px;
   border-radius: 12px;
   background: $white;
   border: 1px solid $border-strong;
   transition: border-color $transition-fast;
   cursor: pointer;
+
+  @media (min-width: 640px) {
+    max-width: 380px;
+    padding: 7px 16px;
+  }
 }
 
 .selected {
@@ -111,5 +125,12 @@
 }
 
 .roomCounter {
-  height: 55.98px !important;
+  flex-shrink: 0;
+  // Match the info-box height on mobile without forcing a fixed px value
+  // (the pill sets its own height via padding).
+  height: auto !important;
+
+  @media (min-width: 640px) {
+    height: 55.98px !important;
+  }
 }

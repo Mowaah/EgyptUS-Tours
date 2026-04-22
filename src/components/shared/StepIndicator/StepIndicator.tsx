@@ -11,8 +11,29 @@ interface StepIndicatorProps {
 }
 
 export default function StepIndicator({ steps, currentStep }: StepIndicatorProps) {
+  const currentIndex = Math.max(0, currentStep - 1);
+  const currentLabel = steps[currentIndex]?.label ?? "";
+  const progressPct = steps.length > 1 ? (currentIndex / (steps.length - 1)) * 100 : 100;
+
   return (
     <div className={styles.stepIndicator}>
+      {/* Mobile: compact "Step X of Y" + progress bar. Hidden on md+. */}
+      <div className={styles.compact} aria-hidden="true">
+        <div className={styles.compactRow}>
+          <span className={styles.compactCounter}>
+            Step {currentStep} of {steps.length}
+          </span>
+          <span className={styles.compactLabel}>{currentLabel}</span>
+        </div>
+        <div className={styles.compactTrack}>
+          <div
+            className={styles.compactFill}
+            style={{ width: `${progressPct}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Desktop pill stepper. Hidden below md. */}
       <div className={styles.stepContainer}>
         {steps.map((step, index) => {
           const isCurrent = currentStep === step.number;

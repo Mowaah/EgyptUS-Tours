@@ -14,9 +14,17 @@
   flex-direction: column;
   align-items: center;
   background: $background;
-  padding: 0 20px 80px;
+  padding: 0 16px 32px;
   width: 100%;
   box-sizing: border-box;
+
+  @media (min-width: 640px) {
+    padding: 0 24px 48px;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 0 48px 80px;
+  }
 }
 
 .content {
@@ -25,28 +33,43 @@
   width: 100%;
 }
 
+// Mobile drops the card chrome so the form flows directly on the page.
 .formCard {
-  background: $white;
-  border: 1px solid $border-strong;
-  border-radius: 32px;
-  padding: $spacing-xl;
-  margin-inline: clamp(1.5rem, 8vw, 6rem);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin-inline: 0;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: $spacing-md;
+
+  @media (min-width: 768px) {
+    background: $white;
+    border: 1px solid $border-strong;
+    border-radius: 24px;
+    padding: $spacing-lg;
+    gap: $spacing-lg;
+  }
+
+  @media (min-width: 1024px) {
+    border-radius: 32px;
+    padding: $spacing-xl;
+    margin-inline: clamp(1.5rem, 8vw, 6rem);
+  }
 }
 
 .formHeader {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .formTitle {
   font-family: 'Trip Sans';
   font-weight: 700;
-  font-size: 24px;
+  font-size: clamp(1.25rem, 3.5vw, 24px);
   color: #0E2851;
   margin: 0;
 }
@@ -54,24 +77,30 @@
 .formSubtitle {
   font-family: 'Trip Sans';
   font-weight: 400;
-  font-size: 16px;
+  font-size: clamp(0.8125rem, 2.3vw, 16px);
   color: #6B7280;
+  line-height: 1.5;
   margin: 0;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 20px;
+
+  @media (min-width: 768px) {
+    gap: 32px;
+  }
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
+  grid-template-columns: 1fr;
+  gap: 16px;
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
   }
 }
 
@@ -89,15 +118,17 @@
   margin: 0;
 }
 
+// On mobile full-width fields are truly full-width; on desktop they occupy
+// half the two-column grid to keep the existing visual rhythm.
 .fullWidthField {
   grid-column: 1 / -1;
-  width: 50%;
-  padding-right: 12px;
+  width: 100%;
+  padding-right: 0;
   box-sizing: border-box;
 
-  @media (max-width: 768px) {
-    width: 100%;
-    padding-right: 0;
+  @media (min-width: 768px) {
+    width: 50%;
+    padding-right: 12px;
   }
 }
 
@@ -110,20 +141,28 @@
 
 .textarea {
   width: 100%;
-  min-height: 120px;
+  min-height: 96px;
   background: #FFFFFF;
   border: 1px solid #E5E7EB;
   border-radius: 12px;
-  padding: 16px;
+  padding: 12px 14px;
   font-family: 'Trip Sans';
-  font-size: 16px;
+  font-size: 14px;
   color: #111827;
   resize: vertical;
   box-sizing: border-box;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+
+  @media (min-width: 768px) {
+    min-height: 120px;
+    padding: 16px;
+    font-size: 16px;
+  }
 
   &:focus {
     outline: none;
     border-color: #2971E6;
+    box-shadow: 0 0 0 4px #E6F4FF;
   }
 
   &::placeholder {
@@ -133,25 +172,38 @@
 
 .phoneRow {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   width: 100%;
+
+  @media (min-width: 480px) {
+    gap: 12px;
+  }
 }
 
 .input {
   flex: 1;
+  min-width: 0;
   background: #FFFFFF;
   border: 1px solid #E5E7EB;
   border-radius: 12px;
-  padding: 0 16px;
-  height: 48px;
+  padding: 0 12px;
+  height: 44px;
   font-family: 'Trip Sans';
-  font-size: 16px;
+  font-size: 14px;
   color: #111827;
   box-sizing: border-box;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+
+  @media (min-width: 768px) {
+    padding: 0 16px;
+    height: 48px;
+    font-size: 16px;
+  }
 
   &:focus {
     outline: none;
     border-color: #2971E6;
+    box-shadow: 0 0 0 4px #E6F4FF;
   }
 
   &::placeholder {
@@ -164,10 +216,19 @@
   border-top: 1px solid #E5E7EB;
   margin: 0;
   width: 100%;
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+  }
 }
 
 .submitBtn {
   width: 100%;
-  height: 56px;
+  height: 52px;
   justify-content: center;
+
+  @media (min-width: 768px) {
+    height: 56px;
+  }
 }

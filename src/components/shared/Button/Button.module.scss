@@ -4,13 +4,21 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: $spacing-sm;
+  gap: 6px;
   border-radius: $radius-full;
   font-weight: $font-weight-normal;
   transition: all $transition-base;
   cursor: pointer;
   white-space: nowrap;
   border: none;
+  // Keep tap targets finger-friendly on touch devices while still letting the
+  // visual padding below define the actual height.
+  min-height: 40px;
+
+  @media (min-width: 768px) {
+    gap: $spacing-sm;
+    min-height: 0;
+  }
 
   &:disabled {
     opacity: 0.6;
@@ -20,19 +28,34 @@
   }
 
   &.sm {
-    padding: 10px 24px;
-    font-size: $font-size-sm;
+    padding: 8px 18px;
+    font-size: 13px;
     font-weight: $font-weight-medium;
+
+    @media (min-width: 768px) {
+      padding: 10px 24px;
+      font-size: $font-size-sm;
+    }
   }
 
   &.md {
-    padding: 10px 28px;
-    font-size: 16px;
+    padding: 10px 20px;
+    font-size: 14px;
+
+    @media (min-width: 768px) {
+      padding: 10px 28px;
+      font-size: 16px;
+    }
   }
 
   &.lg {
-    padding: 12px 20px;
-    font-size: 16px;
+    padding: 11px 18px;
+    font-size: 14px;
+
+    @media (min-width: 768px) {
+      padding: 12px 20px;
+      font-size: 16px;
+    }
   }
 
   &.fullWidth {

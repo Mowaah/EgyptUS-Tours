@@ -1,5 +1,4 @@
 @use "@/styles/variables" as *;
-@use "@/styles/mixins" as *;
 
 .header {
   padding-bottom: 24px !important;
@@ -10,25 +9,19 @@
   padding: 0 0 32px;
 }
 
-.container {
-  @include container;
-}
-
+// Two-column layout: form | summary
+// Mirrors the hotel/trip booking pattern — no extra container or padding
+// stacking; planPageStyles.mainContent + planPageStyles.content handle all
+// the outer spacing.
 .layout {
   display: grid;
-  grid-template-columns: minmax(0, 851px) 401px;
-  gap: 40px;
-  justify-content: center;
+  grid-template-columns: 1fr;
+  gap: 24px;
   align-items: flex-start;
 
-  @media (max-width: 1280px) {
-    grid-template-columns: 1fr 401px;
-    padding: 0 40px;
-  }
-
-  @media (max-width: 1100px) {
-    grid-template-columns: 1fr;
-    padding: 0 20px;
+  @media (min-width: 1280px) {
+    grid-template-columns: 1fr 400px;
+    gap: 40px;
   }
 }
 
@@ -37,12 +30,10 @@
 }
 
 .sidebarArea {
-  position: sticky;
-  top: 100px;
-
-  @media (max-width: 1100px) {
-    order: -1;
-    position: static;
+  @media (min-width: 1280px) {
+    position: sticky;
+    top: 100px;
+    align-self: start;
   }
 }
 

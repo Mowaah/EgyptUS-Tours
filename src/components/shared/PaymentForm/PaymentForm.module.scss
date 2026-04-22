@@ -3,62 +3,92 @@
 // ─── Two-column wrapper (card + sidebar) ─────────────────────────────────────
 .twoCol {
   display: grid;
-  grid-template-columns: 1fr 400px;
-  gap: 32px;
+  grid-template-columns: 1fr;
+  gap: 20px;
   align-items: flex-start;
 
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
+  @media (min-width: 768px) {
+    gap: 24px;
+  }
+
+  @media (min-width: 1280px) {
+    grid-template-columns: 1fr 400px;
+    gap: 32px;
   }
 }
 
 // ─── Payment card ─────────────────────────────────────────────────────────────
+// Mobile: drop the white card shell. Inputs sit directly on the page bg.
 .card {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 32px;
-  background: #ffffff;
-  border: 1px solid #eaf1fd;
-  border-radius: 32px;
+  gap: 16px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+
+  @media (min-width: 768px) {
+    gap: 20px;
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #eaf1fd;
+    border-radius: 24px;
+  }
+
+  @media (min-width: 1024px) {
+    gap: 24px;
+    padding: 32px;
+    border-radius: 32px;
+  }
 }
 
 .cardHeader {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .cardTitle {
   font-family: "Trip Sans";
   font-weight: 800;
-  font-size: 24px;
+  font-size: clamp(1.125rem, 3vw, 24px);
   color: #0e2851;
   margin: 0;
 }
 
 .cardSubtitle {
   font-family: "Trip Sans";
-  font-size: 14px;
+  font-size: 13px;
   color: $text-light;
+  line-height: 1.5;
   margin: 0;
+
+  @media (min-width: 768px) {
+    font-size: 14px;
+  }
 }
 
 // ─── Fields ───────────────────────────────────────────────────────────────────
 .fields {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+
+  @media (min-width: 768px) {
+    gap: 16px;
+  }
 }
 
 .twoFields {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: 1fr;
+  gap: 12px;
 
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
+  @media (min-width: 480px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
   }
 }
 
@@ -66,42 +96,85 @@
 .secureBadge {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 10px;
   background: #f8fafd;
-  padding: 14px 16px;
+  padding: 12px 14px;
   border-radius: 12px;
-  font-size: 13px;
+  font-size: 12px;
+  line-height: 1.5;
   color: $text-light;
+
+  @media (min-width: 768px) {
+    gap: 12px;
+    padding: 14px 16px;
+    font-size: 13px;
+  }
 
   strong {
     display: block;
     font-family: "Trip Sans";
-    font-size: 14px;
+    font-size: 13px;
     color: #0e2851;
     margin-bottom: 2px;
+
+    @media (min-width: 768px) {
+      font-size: 14px;
+    }
   }
 }
 
 // ─── Footer ───────────────────────────────────────────────────────────────────
+// Sticky action bar on mobile.
 .footer {
   display: flex;
-  gap: 16px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  gap: 12px;
+  position: sticky;
+  bottom: 0;
+  margin: 16px -16px 0;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: rgba($white, 0.96);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid $border;
+  z-index: 20;
+
+  @media (min-width: 640px) {
+    margin-inline: -24px;
+    padding-inline: 24px;
+  }
+
+  @media (min-width: 768px) {
+    position: static;
+    margin: 0;
+    padding: 20px 0 0;
+    gap: 16px;
+    background: transparent;
+    backdrop-filter: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    z-index: auto;
+  }
+
+  @media (min-width: 1024px) {
+    padding-top: 24px;
+  }
 }
 
 .prevBtn {
   flex: 1;
-  height: 52px;
+  min-height: 48px;
   border: 1px solid #bdd3f7;
   border-radius: 100px;
   background: transparent;
   color: #2971e6;
   font-family: "Trip Sans";
   font-weight: 500;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
   transition: background 0.2s ease;
+
+  @media (min-width: 768px) {
+    min-height: 52px;
+    font-size: 16px;
+  }
 
   &:hover {
     background: #f8fafd;
@@ -109,21 +182,31 @@
 }
 
 .confirmBtn {
-  flex: 1;
+  flex: 2 1 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  height: 52px;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 12px;
   border: none;
   border-radius: 100px;
   background: #2971e6;
   color: #ffffff;
   font-family: "Trip Sans";
   font-weight: 700;
-  font-size: 16px;
+  font-size: 14px;
+  line-height: 1.2;
+  text-align: center;
   cursor: pointer;
   transition: background 0.2s ease;
+
+  @media (min-width: 768px) {
+    flex: 1;
+    gap: 10px;
+    min-height: 52px;
+    font-size: 16px;
+  }
 
   &:hover {
     background: color-mix(in srgb, #2971e6 90%, black);

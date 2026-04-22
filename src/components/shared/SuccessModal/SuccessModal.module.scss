@@ -24,13 +24,25 @@
 
 .modal {
   background: $white;
-  border-radius: $radius-2xl;
-  padding: 36px 48px;
+  border-radius: $radius-xl;
+  padding: 24px 20px;
   max-width: 672px;
-  width: 96%;
+  width: calc(100% - 24px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
   text-align: center;
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1);
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+  @media (min-width: 640px) {
+    padding: 32px 32px;
+    border-radius: $radius-2xl;
+    width: 96%;
+  }
+
+  @media (min-width: 768px) {
+    padding: 36px 48px;
+  }
 }
 
 @keyframes slideUp {
@@ -46,15 +58,27 @@
 }
 
 .modalIcon {
-  width: 96px;
-  height: 96px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   background: #05DF72;
   box-shadow: 0 0 6.3px 0 rgba(5, 223, 114, 0.76);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 24px;
+  margin: 0 auto 16px;
+
+  @media (min-width: 640px) {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+  }
+
+  @media (min-width: 768px) {
+    width: 96px;
+    height: 96px;
+    margin-bottom: 24px;
+  }
 }
 
 .modalCheckIcon {
@@ -62,43 +86,64 @@
 }
 
 .modalTitle {
-  font-size: $font-size-4xl;
+  font-size: clamp(1.25rem, 5vw, #{$font-size-4xl});
   font-weight: 700;
   color: $dark;
-  margin: 0 0 16px 0;
+  margin: 0 0 12px 0;
+
+  @media (min-width: 768px) {
+    margin-bottom: 16px;
+  }
 }
 
 .modalMessage {
-  font-size: $font-size-xl;
+  font-size: clamp(0.875rem, 3vw, #{$font-size-xl});
   color: $text-lighter;
   line-height: 1.6;
-  margin: 0 auto 32px auto;
+  margin: 0 auto 20px auto;
   max-width: 550px;
+
+  @media (min-width: 768px) {
+    margin-bottom: 32px;
+  }
 }
 
 .modalActions {
   display: flex;
-  gap: 16px;
-  flex-direction: row;
-  align-items: center;
+  gap: 12px;
+  flex-direction: column;
+  align-items: stretch;
   justify-content: center;
-  margin: 24px auto 0;
+  margin: 20px auto 0;
   width: 100%;
   max-width: 576px;
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+  }
 }
 
 .modalSecondaryButton {
-  padding: 16px 24px;
+  padding: 12px 20px;
   flex: 1;
   width: 100%;
+  min-height: 44px;
   background: $white;
   border: 1px solid $primary;
   border-radius: 59px;
   color: $primary;
-  font-size: $font-size-base;
+  font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   cursor: pointer;
   transition: all $transition-fast;
+
+  @media (min-width: 640px) {
+    padding: 16px 24px;
+    font-size: $font-size-base;
+  }
 
   &:hover {
     background: $primary-soft;
@@ -106,17 +151,23 @@
 }
 
 .modalPrimaryButton {
-  padding: 16px 24px;
+  padding: 12px 20px;
   flex: 1;
   width: 100%;
+  min-height: 44px;
   background: $primary;
   border: none;
   border-radius: 100px;
   color: $white;
-  font-size: $font-size-base;
+  font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   cursor: pointer;
   transition: all $transition-fast;
+
+  @media (min-width: 640px) {
+    padding: 16px 24px;
+    font-size: $font-size-base;
+  }
 
   &:hover {
     background: $primary-hover;
@@ -125,14 +176,24 @@
 
 .metaGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px 16px;
+  grid-template-columns: 1fr;
+  gap: 16px 12px;
   background: #F9FAFB;
-  padding: 24px;
-  border-radius: 16px;
+  padding: 16px;
+  border-radius: 12px;
   width: 100%;
   text-align: left;
   margin-bottom: 8px;
+
+  @media (min-width: 480px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (min-width: 640px) {
+    gap: 24px 16px;
+    padding: 24px;
+    border-radius: 16px;
+  }
 }
 
 .metaCol {
@@ -142,13 +203,23 @@
 }
 
 .metaLabel {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
   color: #6A7282;
+  overflow-wrap: anywhere;
+
+  @media (min-width: 640px) {
+    font-size: 14px;
+  }
 }
 
 .metaValue {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   color: #0E2851;
+  overflow-wrap: anywhere;
+
+  @media (min-width: 640px) {
+    font-size: 16px;
+  }
 }

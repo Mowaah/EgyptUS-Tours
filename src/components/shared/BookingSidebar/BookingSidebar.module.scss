@@ -3,10 +3,167 @@
 .sidebarCard {
   background: $white;
   border: 1px solid $border-strong;
-  border-radius: 32px;
-  padding: 16px;
-  position: sticky;
-  top: 40px;
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+
+  @media (min-width: 768px) {
+    border-radius: 20px;
+    padding: 16px;
+    overflow: visible;
+  }
+
+  @media (min-width: 1280px) {
+    border-radius: 32px;
+    position: sticky;
+    top: 40px;
+  }
+}
+
+// ── Mobile compact summary (title • dates • total) ───────────────────────────
+// The whole strip is a button so tapping anywhere toggles the details.
+.compactSummaryHidden {
+  display: none !important;
+}
+
+.compactSummary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover,
+  &:focus-visible {
+    background: #FAFBFC;
+    outline: none;
+  }
+
+  // Hidden from tablet/desktop — the full sidebar is always visible there.
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.compactText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.compactTitle {
+  font-size: 15px;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compactDates {
+  font-size: 13px;
+  font-weight: $font-weight-medium;
+  color: $text-light;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.compactArrow {
+  color: $secondary;
+  font-weight: $font-weight-bold;
+}
+
+.compactTotal {
+  font-size: 14px;
+  line-height: 1.3;
+  margin-top: 2px;
+  color: $dark;
+}
+
+.compactTotalLabel {
+  color: $text-light;
+  font-weight: $font-weight-medium;
+}
+
+.compactTotalValue {
+  color: $secondary;
+  font-weight: $font-weight-bold;
+  font-variant-numeric: tabular-nums;
+}
+
+.compactChevron {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: $background-alt;
+  color: $secondary;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  .sidebarCardExpanded & {
+    transform: rotate(180deg);
+  }
+}
+
+// ── Collapse button (inside details, phones only) ────────────────────────────
+.collapseBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6A7282;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+// ── Expandable details ───────────────────────────────────────────────────────
+.details {
+  padding: 0 16px 16px;
+  border-top: 1px solid $border;
+
+  // Override the native `hidden` attribute from tablet upward so the full
+  // sidebar always renders regardless of the mobile toggle state.
+  @media (min-width: 768px) {
+    padding: 0;
+    border-top: none;
+
+    &[hidden] {
+      display: block;
+    }
+  }
+}
+
+// The image sits flush to the card edge when details are first shown on mobile.
+.details .sidebarImage {
+  margin-top: 14px;
+
+  @media (min-width: 768px) {
+    margin-top: 0;
+  }
 }
 
 .sidebarImage {
@@ -263,11 +420,16 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 5px 20px;
-  width: 190px;
+  padding: 5px 16px;
+  max-width: 100%;
   background: #EAFCF1;
   border-radius: 999px;
   color: #10B981;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: $font-weight-normal;
+
+  @media (min-width: 768px) {
+    padding: 5px 20px;
+    font-size: 14px;
+  }
 }

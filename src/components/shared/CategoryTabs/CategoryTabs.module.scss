@@ -6,10 +6,19 @@
   scrollbar-width: none;
   background: rgba(234, 241, 253, 0.4);
   border-radius: 80px;
-  padding: 8px;
+  padding: 6px;
   width: fit-content;
   max-width: 100%;
-  margin: 0 auto; // Removed bottom margin here too as it's cleaner
+  margin: 0 auto;
+  // Lets touch users flick between tabs and land on a pill edge.
+  scroll-snap-type: x proximity;
+  scroll-padding: 6px;
+  -webkit-overflow-scrolling: touch;
+
+  @media (min-width: 768px) {
+    padding: 8px;
+    scroll-padding: 8px;
+  }
 
   &::-webkit-scrollbar {
     display: none;
@@ -18,33 +27,49 @@
 
 .tabs {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   white-space: nowrap;
+
+  @media (min-width: 768px) {
+    gap: 8px;
+  }
 }
 
 .wrapRows {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-bottom: 0; // Removed margin for sticky usage
+  margin-bottom: 0;
 
   .wrapper {
-    margin: 0; // Align to left side
+    margin: 0;
   }
 }
 
 .tab {
-  padding: 12px 24px;
+  padding: 8px 16px;
   border-radius: 80px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
-  line-height: 19px;
+  line-height: 1.4;
   letter-spacing: 0.01em;
   color: #9CA3AF;
   border: 1px solid rgba(26, 26, 26, 0.06);
   background: #FFFFFF;
   cursor: pointer;
   transition: all $transition-fast;
+  scroll-snap-align: start;
+  flex-shrink: 0;
+
+  @media (min-width: 640px) {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 12px 24px;
+    line-height: 19px;
+  }
 
   &:hover {
     background: #fcfcfc;

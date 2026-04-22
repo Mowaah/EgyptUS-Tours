@@ -4,10 +4,14 @@
 .headerWrapper {
   position: relative;
   width: 100%;
-  padding: 40px 0 40px;
+  padding: 24px 0;
+
+  @media (min-width: 640px) {
+    padding: 32px 0;
+  }
 
   @media (min-width: 1024px) {
-    padding: 60px 0 60px;
+    padding: 60px 0;
   }
 }
 
@@ -36,33 +40,53 @@
   height: auto;
 }
 
+// Horizontal padding mirrors the booking shell's .mainContent scale so the
+// header title aligns with the form content underneath on every breakpoint.
 .container {
-  @include container;
-  padding-left: 0;
-  padding-right: 0;
+  max-width: $container-max;
+  margin: 0 auto;
+  padding: 0 16px;
   position: relative;
   z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 0;
+
+  @media (min-width: 640px) {
+    padding: 0 24px;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 0 48px;
+  }
+
+  @media (min-width: 1280px) {
+    padding: 0 80px;
+  }
 }
 
 .backButton {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 14px;
+  padding: 8px 12px;
   background: $white;
   border: 1px solid $primary;
   border-radius: $radius-full;
   color: $primary;
-  font-size: $font-size-sm;
+  font-size: $font-size-xs;
   font-weight: $font-weight-medium;
   cursor: pointer;
   transition: background $transition-fast;
   text-decoration: none;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
+
+  @media (min-width: 768px) {
+    padding: 10px 14px;
+    font-size: $font-size-sm;
+    margin-bottom: 24px;
+  }
 
   &:hover {
     background: $primary-soft;
@@ -80,16 +104,20 @@
 
 .title {
   color: $primary-dark;
-  font-size: 36px;
+  font-size: clamp(1.5rem, 4.5vw, 36px);
   font-weight: $font-weight-bold;
   line-height: 1.2;
-  margin: 0 0 $spacing-md;
+  margin: 0 0 $spacing-sm;
   max-width: 700px;
+
+  @media (min-width: 768px) {
+    margin-bottom: $spacing-md;
+  }
 }
 
 .subtitle {
   color: $text-light;
-  font-size: $font-size-base;
+  font-size: clamp(0.875rem, 2.5vw, #{$font-size-base});
   line-height: 1.6;
   max-width: 600px;
   margin: 0;
