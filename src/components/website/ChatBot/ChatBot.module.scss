@@ -21,6 +21,17 @@
   }
 }
 
+.dragHandle {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  cursor: grab;
+}
+
+.dragging {
+  cursor: grabbing !important;
+}
+
 .chatWindow {
   width: 515px;
   max-width: calc(100vw - 32px);
@@ -54,6 +65,10 @@
   }
 }
 
+.chatWindowClosing {
+  animation: pullIn 0.5s ease-in forwards;
+}
+
 @keyframes spitOut {
   0% {
     opacity: 0;
@@ -62,6 +77,17 @@
   100% {
     opacity: 1;
     transform: scale(1) translateY(0) translateX(0);
+  }
+}
+
+@keyframes pullIn {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0) translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.01) translateY(50px) translateX(20px);
   }
 }
 
