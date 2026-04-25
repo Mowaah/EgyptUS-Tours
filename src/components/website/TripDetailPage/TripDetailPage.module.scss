@@ -28,12 +28,7 @@
 
 .galleryWrap {
   @include container;
-  padding: 0;
   position: relative;
-
-  @media (min-width: 1024px) {
-    padding: 0;
-  }
 }
 
 .heroOverlay {

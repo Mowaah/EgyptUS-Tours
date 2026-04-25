@@ -7,6 +7,7 @@
   gap: 32px;
   width: 100%;
   box-sizing: border-box;
+  padding: 0 0 8px;
 }
 
 .header {
@@ -16,24 +17,25 @@
   gap: 10px;
   text-align: center;
   max-width: 710px;
+  padding: 0 12px;
 }
 
 .title {
-  font-family: 'Trip Sans';
+  font-family: "Trip Sans", system-ui, sans-serif;
   font-weight: 700;
-  font-size: 32px;
-  line-height: 44px;
-  color: #0E2851;
+  font-size: clamp(1.375rem, 3vw, 2rem);
+  line-height: 1.3;
+  color: #0e2851;
   margin: 0;
 }
 
 .subtitle {
-  font-family: 'Trip Sans';
+  font-family: "Trip Sans", system-ui, sans-serif;
   font-weight: 400;
-  font-size: 20px;
-  line-height: 27px;
+  font-size: clamp(0.9375rem, 2vw, 1.25rem);
+  line-height: 1.4;
   letter-spacing: 0.01em;
-  color: #6B7280;
+  color: #6b7280;
   margin: 0;
 }
 
@@ -42,13 +44,22 @@
   box-sizing: border-box;
   width: 100%;
   max-width: 1280px;
-  background: #FFFFFF;
-  border: 1.2px solid #E5E7EB;
+  background: #ffffff;
+  border: 1.2px solid #e5e7eb;
   border-radius: 29px;
-  padding: 24px;
+  padding: 16px 18px;
   display: flex;
   justify-content: center;
   align-items: center;
+
+  @media (min-width: 768px) {
+    padding: 24px;
+  }
+
+  @media (max-width: 1024px) {
+    justify-content: flex-start;
+    align-items: stretch;
+  }
 }
 
 .layout {
@@ -60,6 +71,7 @@
 
   @media (max-width: 1024px) {
     flex-direction: column;
+    align-items: stretch;
   }
 }
 
@@ -74,7 +86,8 @@
 
   @media (max-width: 1024px) {
     width: 100%;
-    height: 300px;
+    height: min(300px, 50vw);
+    min-height: 200px;
   }
 }
 
@@ -89,12 +102,21 @@
   padding: 16px 0;
   gap: 26px;
   flex: 1;
+  min-width: 0;
+
+  @media (max-width: 1024px) {
+    text-align: left;
+    align-items: flex-start;
+  }
 }
 
 .eventHeader {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  align-items: flex-start;
+  text-align: left;
+  width: 100%;
 }
 
 .eventTitle {
@@ -117,11 +139,14 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  width: 100%;
+  align-items: flex-start;
 }
 
 .highlightsHeader {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 10px;
 }
 
@@ -136,6 +161,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
+  width: 100%;
 }
 
 .pill {
@@ -161,6 +187,8 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  width: 100%;
+  text-align: left;
 }
 
 .checkItem {
@@ -185,4 +213,20 @@
   font-size: 18px;
   line-height: 28px;
   color: #364153;
+}
+
+@media (max-width: 600px) {
+  .eventTitle {
+    font-size: 1.25rem;
+    line-height: 1.3;
+  }
+
+  .pills {
+    grid-template-columns: 1fr;
+  }
+
+  .checkText {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
 }

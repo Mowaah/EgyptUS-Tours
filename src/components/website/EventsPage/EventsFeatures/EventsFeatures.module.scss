@@ -25,37 +25,41 @@
 }
 
 .title {
-  font-family: 'Trip Sans';
+  font-family: "Trip Sans", system-ui, sans-serif;
   font-weight: 700;
-  font-size: 32px;
-  line-height: 44px;
+  font-size: clamp(1.375rem, 3vw, 2rem);
+  line-height: 1.3;
   text-align: center;
-  color: #0E2851;
+  color: #0e2851;
   margin: 0;
+  padding: 0 8px;
 }
 
 .subtitle {
-  font-family: 'Trip Sans';
+  font-family: "Trip Sans", system-ui, sans-serif;
   font-weight: 400;
-  font-size: 20px;
-  line-height: 27px;
+  font-size: clamp(0.9375rem, 2vw, 1.25rem);
+  line-height: 1.4;
   text-align: center;
   letter-spacing: 0.01em;
-  color: #6B7280;
+  color: #6b7280;
   margin: 0;
+  padding: 0 12px;
+  max-width: 56ch;
 }
 
 .features {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-start;
-  align-content: flex-start;
+  // Grid, not flex: FeatureCard uses width:100% and would fill each flex row alone.
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 24px;
   width: 100%;
 
-  @media (max-width: 1024px) {
-    justify-content: center;
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }

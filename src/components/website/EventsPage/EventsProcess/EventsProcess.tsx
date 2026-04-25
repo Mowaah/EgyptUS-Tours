@@ -1,5 +1,5 @@
-import React from 'react';
-import styles from './EventsProcess.module.scss';
+import React from "react";
+import styles from "./EventsProcess.module.scss";
 
 const STEPS = [
   {
@@ -50,8 +50,11 @@ export default function EventsProcess() {
         <div className={styles.steps}>
           {STEPS.map((step, idx) => (
             <div key={idx} className={styles.stepItem}>
-              <div className={`${styles.circle} ${!step.active ? styles.inactive : ""}`}>
-                <span className={styles.number}>{step.number}</span>
+              <div className={styles.stepAside}>
+                <div className={`${styles.circle} ${!step.active ? styles.inactive : ""}`}>
+                  <span className={styles.number}>{step.number}</span>
+                </div>
+                {idx < STEPS.length - 1 && <div className={styles.vLine} aria-hidden />}
               </div>
               <div className={styles.content}>
                 <h3 className={styles.stepTitle}>{step.title}</h3>
