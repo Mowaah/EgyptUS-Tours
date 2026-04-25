@@ -5,11 +5,26 @@ import styles from "./SearchInput.module.scss";
 
 interface SearchInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   wrapperClassName?: string;
+  /**
+   * `toolbar` — next to sort/filters: flexes in a row (no fixed min-width);
+   * use in page toolbars. `default` — full width of parent.
+   */
+  variant?: "default" | "toolbar";
 }
 
-export default function SearchInput({ wrapperClassName = "", className = "", ...props }: SearchInputProps) {
+export default function SearchInput({
+  wrapperClassName = "",
+  className = "",
+  variant = "default",
+  ...props
+}: SearchInputProps) {
+  const wrapClass =
+    variant === "toolbar"
+      ? `${styles.searchWrap} ${styles.wrapToolbar} ${wrapperClassName}`.trim()
+      : `${styles.searchWrap} ${wrapperClassName}`.trim();
+
   return (
-    <div className={`${styles.searchWrap} ${wrapperClassName}`}>
+    <div className={wrapClass}>
       <Image
         src="/images/search.svg"
         alt="Search"

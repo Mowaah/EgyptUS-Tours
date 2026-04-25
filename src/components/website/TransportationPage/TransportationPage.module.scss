@@ -1,23 +1,79 @@
 @use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
 
 .page {
   min-height: 100vh;
 }
 
 .container {
-  max-width: $container-max;
-  margin: 0 auto;
+  @include container;
 }
 
-/* SEARCH & FILTER BAR */
-.filterBar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+// ── Toolbar (aligned with Hotels / Trips) ─────────────────────
+.toolbar {
+  @include flex-between;
   margin-top: 40px;
-  margin-bottom: 24px;
+  margin-bottom: $spacing-lg;
   flex-wrap: wrap;
-  gap: 24px;
+  gap: $spacing-md;
+  min-width: 0;
+
+  @media (max-width: 639px) {
+    align-items: flex-start;
+
+    > * {
+      width: 100%;
+    }
+  }
+}
+
+.toolbarRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-width: 0;
+
+  @media (min-width: 768px) {
+    flex-wrap: nowrap;
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: flex-end;
+  }
+
+  @media (max-width: 639px) {
+    width: 100%;
+
+    > * {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+  }
+}
+
+.filterSortRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 16px;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.filterSortRowSort {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.listingBlock {
+  margin-top: 32px;
 }
 
 /* NEW SEARCH SUMMARY */
@@ -107,23 +163,11 @@
   margin-bottom: 32px;
 }
 
-.controlsWrap {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-
 .sortWrap {
   display: flex;
   align-items: center;
   gap: 8px;
-
-  .sortLabel {
-    font-size: 14px;
-    font-weight: $font-weight-bold;
-    color: $dark;
-  }
+  flex: 0 0 auto;
 }
 
 /* VEHICLE GRID */
@@ -136,6 +180,7 @@
 
   @media (max-width: 1200px) {
     grid-template-columns: repeat(3, 1fr);
+    padding-right: 0;
   }
 
   @media (max-width: 900px) {
@@ -210,16 +255,17 @@
 
 .featuresGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  // minmax(0, 1fr) lets columns shrink and wrap; plain 1fr can refuse to shrink
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 32px;
   text-align: center;
 
-  @media (max-width: 900px) {
-    grid-template-columns: repeat(2, 1fr);
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   @media (max-width: 600px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -227,6 +273,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-width: 0; // allow grid child to narrow so text can wrap
 }
 
 .featureIconWrap {
@@ -249,7 +296,8 @@
 .featureDesc {
   font-size: 14px;
   color: #4A5565;
-  width: 270px;
+  max-width: 270px;
+  width: 100%;
   margin: 0;
   line-height: 1.5;
 }

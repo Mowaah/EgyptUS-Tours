@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import {
@@ -93,6 +93,15 @@ export default function TransportationPage() {
   const [activeTab, setActiveTab] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("recommended");
+  const [isLg, setIsLg] = useState(false);
+
+  useLayoutEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const apply = () => setIsLg(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
 
   // Fake filtering logic for demonstration
   const filteredVehicles = MOCK_VEHICLES.filter(v => {
@@ -151,31 +160,33 @@ export default function TransportationPage() {
           </div>
         )}
 
-        <div className={styles.filterBar}>
+        <div className={styles.toolbar}>
           {isSearchResults ? (
             <div className={styles.toolbarTitle}>
               <h2 className={styles.availableVehicles}>Available Vehicles</h2>
               <span className={styles.vehiclesCount}>{filteredVehicles.length} vehicles found for your route</span>
             </div>
           ) : (
-             <h2 className={styles.resultsCount}>
+            <h2 className={styles.resultsCount}>
               {filteredVehicles.length} Vehicles Founded
             </h2>
           )}
-          
-          <div className={styles.controlsWrap}>
-            <div className={styles.sortWrap}>
-              <span className={styles.sortLabel}>Sort by:</span>
-              <SortButton
-                options={SORT_OPTIONS}
-                defaultValue={sortOption}
-                onChange={setSortOption}
-              />
-            </div>
+
+          <div className={styles.toolbarRight}>
+            {isLg && (
+              <div className={styles.sortWrap}>
+                <SortButton
+                  options={SORT_OPTIONS}
+                  defaultValue={sortOption}
+                  onChange={setSortOption}
+                />
+              </div>
+            )}
             <SearchInput
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search vehicles, transport option..."
+              variant="toolbar"
             />
           </div>
         </div>
@@ -191,7 +202,20 @@ export default function TransportationPage() {
           </div>
         )}
 
-        <div style={{ marginTop: 32 }}>
+        {!isLg && (
+          <div className={styles.filterSortRow}>
+            <div className={styles.filterSortRowSort}>
+              <SortButton
+                options={SORT_OPTIONS}
+                defaultValue={sortOption}
+                onChange={setSortOption}
+                showLabel={false}
+              />
+            </div>
+          </div>
+        )}
+
+        <div className={styles.listingBlock}>
           {filteredVehicles.length > 0 ? (
             <>
               <div className={isSearchResults ? styles.vehicleList : styles.vehicleGrid}>

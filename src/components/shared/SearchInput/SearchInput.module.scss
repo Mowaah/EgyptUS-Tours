@@ -6,6 +6,16 @@
   align-items: center;
   width: 100%;
   min-width: 0;
+  box-sizing: border-box;
+}
+
+// Search + sort in one row (tablet+): grow into free space; no fixed min-width on the input
+.wrapToolbar {
+  @media (min-width: 768px) {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: min(400px, 100%);
+  }
 }
 
 .searchIcon {
@@ -27,6 +37,7 @@
   height: 40px;
   width: 100%;
   min-width: 0;
+  max-width: 100%;
   border: 1px solid $border-strong;
   border-radius: 14px;
   padding: 0 12px 0 34px;
@@ -39,7 +50,6 @@
   @media (min-width: 768px) {
     border-radius: 16px;
     padding: 0 16px 0 38px;
-    min-width: 360px;
   }
 
   &::placeholder {

@@ -35,7 +35,7 @@ const DEMO_TRIPS: Trip[] = [
     title: "Best Tour of Egypt and Turkey",
     description:
       "Lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
-    image: "/images/home/hero-bg.jpg",
+    image: "/images/home/hero-bg.png",
     location: "Saudi Arabia & Egypt",
     price: 3690,
     currency: "$",

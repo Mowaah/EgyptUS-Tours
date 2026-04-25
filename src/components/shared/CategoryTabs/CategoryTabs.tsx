@@ -8,8 +8,12 @@ interface CategoryTabsProps {
   defaultActive?: number;
   active?: number;
   onTabChange?: (tab: string, index: number) => void;
+  /**
+   * When true, uses measured multi-row layout on viewports `≥ 1024px` only.
+   * Below that, tabs stay on one line and scroll horizontally.
+   */
   wrap?: boolean;
-  className?: string; // Add optional className
+  className?: string;
 }
 
 export default function CategoryTabs({
@@ -23,7 +27,19 @@ export default function CategoryTabs({
   const [internalActiveIndex, setInternalActiveIndex] = useState(defaultActive);
   const activeIndex = active !== undefined ? active : internalActiveIndex;
   const [measuredRows, setMeasuredRows] = useState<string[][]>([]);
+  const [isWide, setIsWide] = useState(false);
   const measureRef = useRef<HTMLDivElement>(null);
+
+  /** Multi-row "wrap" layout is desktop-only; phones/tablets use horizontal scroll */
+  const useWrapLayout = wrap && isWide;
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const update = () => setIsWide(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   const handleClick = (tab: string, index: number) => {
     if (active === undefined) {
@@ -33,7 +49,7 @@ export default function CategoryTabs({
   };
 
   const measureTabs = () => {
-    if (!wrap || !measureRef.current) return;
+    if (!useWrapLayout || !measureRef.current) return;
     const container = measureRef.current;
     const children = Array.from(container.children) as HTMLElement[];
     const rows: string[][] = [];
@@ -56,18 +72,22 @@ export default function CategoryTabs({
   };
 
   useLayoutEffect(() => {
+    if (!useWrapLayout) {
+      setMeasuredRows([]);
+      return;
+    }
     measureTabs();
-  }, [tabs, wrap]);
+  }, [tabs, useWrapLayout]);
 
   // Re-measure on window resize to ensure fluid wrapping exactly like CSS
   useEffect(() => {
-    if (!wrap) return;
+    if (!useWrapLayout) return;
     const handleResize = () => measureTabs();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [tabs, wrap]);
+  }, [tabs, useWrapLayout]);
 
-  if (wrap) {
+  if (useWrapLayout) {
     if (measuredRows.length === 0) {
       // Pass 1: Invisible flex-wrap render to legally calculate browser wrapping
       return (

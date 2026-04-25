@@ -25,15 +25,22 @@
 
 .favorite {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 35px;
-  height: 35px;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
   border-radius: 100px;
   background: $white;
   @include flex-center;
   transition: all $transition-fast;
   z-index: 2;
+
+  @media (min-width: 640px) {
+    top: 20px;
+    right: 20px;
+    width: 35px;
+    height: 35px;
+  }
 
   &:hover {
     transform: scale(1.1);
@@ -98,13 +105,24 @@
 .meta {
   margin-bottom: 0;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 8px;
+  min-width: 0;
+
+  @media (min-width: 400px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
 }
 
 .price {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 4px;
 }
 
@@ -140,7 +158,12 @@
   align-items: center;
   gap: 6px;
   color: $text-light;
-  font-size: 9px;
+  font-size: 10px;
+  min-width: 0;
+
+  @media (min-width: 400px) {
+    font-size: 9px;
+  }
 
   span {
     display: inline-flex;

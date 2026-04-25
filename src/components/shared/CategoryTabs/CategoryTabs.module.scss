@@ -1,5 +1,22 @@
 @use "@/styles/variables" as *;
 
+// Invisible pass: match real wrap width so row measurement is accurate
+.wrapEnabled {
+  width: 100%;
+  max-width: 100%;
+}
+
+.tabsWrapped {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    gap: 8px;
+  }
+}
+
 .wrapper {
   overflow-x: auto;
   -ms-overflow-style: none;
@@ -7,9 +24,12 @@
   background: rgba(234, 241, 253, 0.4);
   border-radius: 80px;
   padding: 6px;
+  // Hug tab labels; don’t stretch the pill background when there’s free space
   width: fit-content;
+  min-width: 0;
   max-width: 100%;
-  margin: 0 auto;
+  margin: 0;
+  box-sizing: border-box;
   // Lets touch users flick between tabs and land on a pill edge.
   scroll-snap-type: x proximity;
   scroll-padding: 6px;

@@ -12,16 +12,21 @@ interface SortButtonProps {
   options: SortOption[];
   defaultValue?: string;
   onChange?: (value: string) => void;
+  /** When false, hides the "Sort by:" label (e.g. tight mobile toolbars) */
+  showLabel?: boolean;
 }
 
 export default function SortButton({
   options,
   defaultValue,
   onChange,
+  showLabel = true,
 }: SortButtonProps) {
   return (
-    <div className={styles.sort}>
-      <span>Sort by:</span>
+    <div
+      className={[styles.sort, !showLabel && styles.compact].filter(Boolean).join(" ")}
+    >
+      {showLabel && <span>Sort by:</span>}
       <div className={styles.selectWrapper}>
         <select
           className={styles.select}

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useLayoutEffect, useMemo } from "react";
 import Image from "next/image";
 import {
+  Button,
   CheckboxIndicator,
   HotelCard,
   CategoryTabs,
@@ -53,6 +54,13 @@ const RATING_OPTIONS = [
   { label: "1.0", value: "1" },
 ];
 
+const SORT_OPTIONS = [
+  { value: "recommended", label: "Recommended" },
+  { value: "price-low", label: "Price: Low to High" },
+  { value: "price-high", label: "Price: High to Low" },
+  { value: "rating", label: "Rating" },
+];
+
 const DEMO_HOTELS: Hotel[] = Array.from({ length: 8 }, (_, i) => ({
   id: `hotel-${i + 1}`,
   name: "Pyramids View Luxury Hotel",
@@ -77,6 +85,46 @@ export default function HotelsPageSection() {
   const [ratingExpanded, setRatingExpanded] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [isLg, setIsLg] = useState(false);
+
+  const activeFilterCount = useMemo(() => {
+    let n = 0;
+    if (ratingFilter !== "any") n += 1;
+    if (priceRange.min !== 1 || priceRange.max !== 12000) n += 1;
+    return n;
+  }, [ratingFilter, priceRange.min, priceRange.max]);
+
+  // useLayoutEffect: align JS with CSS before paint. Initial isLg=false + useEffect
+  // would briefly show the mobile "Filters" row while the sidebar is in-flow (≥768px).
+  useLayoutEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const apply = () => {
+      setIsLg(mq.matches);
+      if (mq.matches) setFiltersOpen(false);
+    };
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
+  useEffect(() => {
+    if (!filtersOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [filtersOpen]);
+
+  useEffect(() => {
+    if (!filtersOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setFiltersOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [filtersOpen]);
 
   const filteredHotels = DEMO_HOTELS.filter(
     (h) =>
@@ -89,6 +137,9 @@ export default function HotelsPageSection() {
     currentPage * ITEMS_PER_PAGE
   );
 
+  // List/Grid control is hidden below 768px; always use list layout there.
+  const cardView: "list" | "grid" = isLg ? view : "list";
+
   const handleResetSearch = () => setSearchQuery("");
 
   const handlePageChange = (page: number) => {
@@ -97,7 +148,6 @@ export default function HotelsPageSection() {
 
   return (
     <section className={styles.section}>
-      {/* ── Page Header ── */}
       <PageHeader
         breadcrumbs={[{ label: "Hotels", isCurrent: true }]}
         title="Find the perfect hotel for your trip"
@@ -107,38 +157,94 @@ export default function HotelsPageSection() {
       />
 
       <div className={styles.container}>
-        {/* ── Toolbar ── */}
         <div className={styles.toolbar}>
-          <span className={styles.countSearch}>
-            Found {filteredHotels.length} Tours
-          </span>
+          <div>
+            <h2 className={styles.availableHotelsTitle}>Available Hotels</h2>
+            <span className={styles.countSearch}>
+              {filteredHotels.length} hotel{filteredHotels.length === 1 ? "" : "s"} found
+            </span>
+          </div>
 
           <div className={styles.toolbarRight}>
-            <SortButton
-              options={[
-                { value: "recommended", label: "Recommended" },
-                { value: "price-low", label: "Price: Low to High" },
-                { value: "price-high", label: "Price: High to Low" },
-                { value: "rating", label: "Rating" },
-              ]}
-              defaultValue="recommended"
-            />
+            {isLg && <SortButton options={SORT_OPTIONS} defaultValue="recommended" />}
             <SearchInput
-              placeholder="Search hotels, cities, or countries..."
+              placeholder="Search hotels, cities, or countries…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              variant="toolbar"
             />
           </div>
         </div>
 
-        {/* ── Category Tabs – two rows ── */}
         <CategoryTabs tabs={ALL_TABS} wrap />
 
-        {/* ── Layout: sidebar + main ── */}
+        {filtersOpen && (
+          <button
+            type="button"
+            className={styles.filterBackdrop}
+            aria-label="Close filters"
+            onClick={() => setFiltersOpen(false)}
+          />
+        )}
+
+        {!isLg && (
+          <div className={styles.filterSortRow}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className={styles.filtersOpenBtn}
+              onClick={() => setFiltersOpen(true)}
+              icon={
+                <span className={styles.filtersIcon} aria-hidden>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 6h2M9 6h12M3 12h2M6 12h12M3 18h2M9 18h12" />
+                    <circle cx="7" cy="6" r="1.5" fill="currentColor" stroke="none" />
+                    <circle cx="17" cy="12" r="1.5" fill="currentColor" stroke="none" />
+                    <circle cx="7" cy="18" r="1.5" fill="currentColor" stroke="none" />
+                  </svg>
+                </span>
+              }
+              iconPosition="left"
+            >
+              <span className={styles.filtersBtnLabel}>
+                Filters
+                {activeFilterCount > 0 && (
+                  <span className={styles.filterBadge} aria-label={`${activeFilterCount} active filters`}>
+                    {activeFilterCount}
+                  </span>
+                )}
+              </span>
+            </Button>
+            <div className={styles.filterSortRowSort}>
+              <SortButton options={SORT_OPTIONS} defaultValue="recommended" showLabel={false} />
+            </div>
+          </div>
+        )}
+
         <div className={styles.layout}>
-          {/* Sidebar */}
-          <aside className={styles.sidebar}>
-            {/* Rating */}
+          <aside
+            className={`${styles.sidebar} ${filtersOpen ? styles.sidebarOpen : ""}`}
+            id="hotels-filters-panel"
+            role={isLg ? undefined : "dialog"}
+            aria-modal={!isLg && filtersOpen}
+            aria-label="Hotel filters"
+            aria-hidden={!isLg && !filtersOpen ? true : undefined}
+          >
+            <div className={styles.sidebarMobileHeader}>
+              <h2 className={styles.sidebarMobileTitle}>Filters</h2>
+              <button
+                type="button"
+                className={styles.sidebarCloseBtn}
+                onClick={() => setFiltersOpen(false)}
+                aria-label="Close filters"
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+              </button>
+            </div>
+
             <FilterGroup
               title="Rating"
               isExpanded={ratingExpanded}
@@ -174,7 +280,6 @@ export default function HotelsPageSection() {
               </div>
             </FilterGroup>
 
-            {/* Price Range */}
             <FilterGroup
               title="Price Range"
               isExpanded={priceExpanded}
@@ -188,43 +293,46 @@ export default function HotelsPageSection() {
                 onChange={(min, max) => setPriceRange({ min, max })}
               />
             </FilterGroup>
+
+            <div className={styles.sidebarMobileFooter}>
+              <Button type="button" variant="primary" size="md" fullWidth onClick={() => setFiltersOpen(false)}>
+                Show results
+              </Button>
+            </div>
           </aside>
 
-          {/* ── Main content ── */}
           <div className={styles.main}>
-            {/* View toggle */}
-            <div className={styles.viewToggle}>
-              <button
-                className={`${styles.viewBtn} ${view === "list" ? styles.viewActive : ""}`}
-                onClick={() => setView("list")}
-                aria-label="List view"
-              >
-                <Image src="/images/list-view.svg" alt="" width={15} height={15} />
-                List
-              </button>
-              <button
-                className={`${styles.viewBtn} ${view === "grid" ? styles.viewActive : ""}`}
-                onClick={() => setView("grid")}
-                aria-label="Grid view"
-              >
-                <Image src="/images/grid-view.svg" alt="" width={16} height={16} />
-                Grid
-              </button>
-            </div>
+            {isLg && (
+              <div className={styles.viewToggle}>
+                <button
+                  className={`${styles.viewBtn} ${view === "list" ? styles.viewActive : ""}`}
+                  onClick={() => setView("list")}
+                  aria-label="List view"
+                  type="button"
+                >
+                  <Image src="/images/list-view.svg" alt="" width={15} height={15} />
+                  List
+                </button>
+                <button
+                  className={`${styles.viewBtn} ${view === "grid" ? styles.viewActive : ""}`}
+                  onClick={() => setView("grid")}
+                  aria-label="Grid view"
+                  type="button"
+                >
+                  <Image src="/images/grid-view.svg" alt="" width={16} height={16} />
+                  Grid
+                </button>
+              </div>
+            )}
 
             {filteredHotels.length > 0 ? (
               <>
-                <div
-                  className={
-                    view === "grid" ? styles.gridView : styles.listView
-                  }
-                >
+                <div className={cardView === "grid" ? styles.gridView : styles.listView}>
                   {paginatedHotels.map((hotel) => (
-                    <HotelCard key={hotel.id} hotel={hotel} view={view} showRouteBtn />
+                    <HotelCard key={hotel.id} hotel={hotel} view={cardView} showRouteBtn />
                   ))}
                 </div>
 
-                {/* Pagination */}
                 <div className={styles.pagination}>
                   <Pagination
                     currentPage={currentPage}
@@ -247,5 +355,3 @@ export default function HotelsPageSection() {
     </section>
   );
 }
-
-

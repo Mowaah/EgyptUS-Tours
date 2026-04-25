@@ -3,6 +3,11 @@
 
 .section {
   min-height: 100vh;
+  padding-bottom: 48px;
+
+  @media (min-width: 768px) {
+    padding-bottom: 64px;
+  }
 }
 
 .container {
@@ -122,6 +127,96 @@
   font-weight: $font-weight-medium;
   color: $dark;
   display: block;
+  line-height: 1.35;
+}
+
+// ── Mobile: off-canvas filters (sidebar in-flow from tablet up, ≥768px) ─
+.filterBackdrop {
+  display: none;
+
+  @media (max-width: 767px) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 199;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    background: rgba(14, 40, 81, 0.45);
+    cursor: pointer;
+  }
+}
+
+.filterSortRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  margin: 16px 0;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.filterSortRowSort {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.toolbarSortHome {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+}
+
+// Same visual scale as SortButton compact <select> (10px + 13px + line-height, 16px radius)
+.filtersOpenBtn {
+  flex: 0 0 auto;
+  width: max-content;
+  max-width: 100%;
+  box-sizing: border-box;
+  align-self: center;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  padding: 10px 14px 10px 10px !important;
+  font-size: 13px !important;
+  line-height: 1.2 !important;
+  font-weight: 500;
+  border: 1px solid $primary !important;
+  border-radius: 16px !important;
+}
+
+.filtersIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $primary-dark;
+}
+
+.filtersBtnLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filterBadge {
+  min-width: 1.4em;
+  height: 1.4em;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: $secondary;
+  color: $white;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+  @include flex-center;
 }
 
 // ── Toolbar ──────────────────────────────────────────────────
@@ -148,6 +243,14 @@
   gap: 12px;
   flex-wrap: wrap;
 
+  // Tablet/desktop: one row — sort + search (search flexes; avoid SearchInput 360px min-width forcing wrap)
+  @media (min-width: 768px) {
+    flex-wrap: nowrap;
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: flex-end;
+  }
+
   @media (max-width: 639px) {
     width: 100%;
 
@@ -165,12 +268,13 @@
 }
 
 .layout {
-  display: flex;
+  display: block;
   gap: 16px;
   margin-top: $spacing-xl;
   align-items: flex-start;
 
-  @media (min-width: 1024px) {
+  @media (min-width: 768px) {
+    display: flex;
     margin-top: 40px;
   }
 }
@@ -183,14 +287,102 @@
 }
 
 .sidebar {
-  display: none;
   width: 265px;
   flex-shrink: 0;
-
-  @media (min-width: 1024px) {
+  // Tablet and up: static column
+  @media (min-width: 768px) {
     display: block;
     max-height: 100vh;
     overflow-y: auto;
+  }
+
+  // Mobile: off-canvas panel (layout is display:block so main stays full width)
+  @media (max-width: 767px) {
+    display: block;
+    position: fixed;
+    z-index: 200;
+    top: 0;
+    right: 0;
+    width: min(100vw - 40px, 400px);
+    max-width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    background: $white;
+    box-shadow: -8px 0 32px rgba(14, 40, 81, 0.15);
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0 16px calc(16px + env(safe-area-inset-bottom, 0));
+    margin: 0;
+    transform: translateX(100%);
+    transition: transform 0.28s ease;
+    will-change: transform;
+    pointer-events: none;
+  }
+
+  &.sidebarOpen {
+    @media (max-width: 767px) {
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+  }
+}
+
+.sidebarMobileHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0 14px;
+  margin-bottom: 4px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: $white;
+  border-bottom: 1px solid $border;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.sidebarMobileTitle {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: $font-weight-bold;
+  color: $dark;
+}
+
+.sidebarCloseBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(14, 40, 81, 0.06);
+  color: $dark;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: rgba(14, 40, 81, 0.1);
+  }
+}
+
+.sidebarMobileFooter {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  margin-top: 8px;
+  padding: 12px 0 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0, $white 12px);
+  border-top: 1px solid $border;
+  display: block;
+
+  @media (min-width: 768px) {
+    display: none;
   }
 }
 
@@ -206,7 +398,8 @@
     gap: 24px;
   }
 
-  @media (min-width: 1024px) {
+  // Third column when there is room beside the in-flow filter sidebar
+  @media (min-width: 1200px) {
     grid-template-columns: repeat(3, 1fr);
   }
 }

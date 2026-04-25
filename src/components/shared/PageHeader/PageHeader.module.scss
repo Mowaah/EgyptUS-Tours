@@ -52,18 +52,6 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 0;
-
-  @media (min-width: 640px) {
-    padding: 0 24px;
-  }
-
-  @media (min-width: 1024px) {
-    padding: 0 48px;
-  }
-
-  @media (min-width: 1280px) {
-    padding: 0 80px;
-  }
 }
 
 .backButton {

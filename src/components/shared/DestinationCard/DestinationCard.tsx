@@ -21,7 +21,9 @@ export default function DestinationCard({
           src={image}
           alt={title}
           fill
-          sizes="(max-width: 768px) 140px, 300px"
+          unoptimized
+          quality={100}
+          sizes="(max-width: 479px) 140px, (max-width: 1023px) 180px, 420px"
           className={styles.image}
         />
         <div className={styles.overlay} />

@@ -21,7 +21,7 @@ export default function TripCard({ trip, onFavoriteToggle }: TripCardProps) {
           src={trip.image}
           alt={trip.title}
           fill
-          sizes="(max-width: 768px) 100vw, 400px"
+          sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, (max-width: 1279px) 33vw, 400px"
           className={styles.image}
         />
         {onFavoriteToggle && (

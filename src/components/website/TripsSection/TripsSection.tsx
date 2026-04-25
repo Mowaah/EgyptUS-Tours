@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useLayoutEffect, useMemo } from "react";
 import Image from "next/image";
 import {
-  CheckboxIndicator,
+  Button,
   SectionHeader,
   TripCard,
   CategoryTabs,
@@ -68,6 +68,12 @@ const SPECIAL_OFFERS = [
   "Easter Offers",
 ];
 
+const SORT_OPTIONS = [
+  { value: "recommended", label: "Recommended" },
+  { value: "price-low", label: "Price: Low to High" },
+  { value: "price-high", label: "Price: High to Low" },
+];
+
 export interface SearchParams {
   date?: string;
   destination?: string;
@@ -110,8 +116,48 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
 
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const totalPages = 15;
   const [trips, setTrips] = useState<Trip[]>(DEMO_TRIPS);
+
+  const activeFilterCount = useMemo(() => {
+    let n = 0;
+    if (durationFilter !== DURATION_OPTIONS[0]) n += 1;
+    if (offersFilter !== SPECIAL_OFFERS[0]) n += 1;
+    if (expanded.priceRange.min !== 1 || expanded.priceRange.max !== 12000) n += 1;
+    return n;
+  }, [durationFilter, offersFilter, expanded.priceRange.min, expanded.priceRange.max]);
+
+  const [isLg, setIsLg] = useState(false);
+
+  useLayoutEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const apply = () => {
+      setIsLg(mq.matches);
+      if (mq.matches) setFiltersOpen(false);
+    };
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
+  useEffect(() => {
+    if (!filtersOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [filtersOpen]);
+
+  useEffect(() => {
+    if (!filtersOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setFiltersOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [filtersOpen]);
 
   const filteredTrips = trips.filter(
     (trip) =>
@@ -230,37 +276,93 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
 
           {isPage ? (
             <div className={styles.toolbarRight}>
-              <SortButton
-                options={[
-                  { value: "recommended", label: "Recommended" },
-                  { value: "price-low", label: "Price: Low to High" },
-                  { value: "price-high", label: "Price: High to Low" },
-                ]}
-                defaultValue="recommended"
-              />
+              {isLg && <SortButton options={SORT_OPTIONS} defaultValue="recommended" />}
               <SearchInput
-                placeholder="Search vehicles, transport option..."
+                placeholder="Search trips, destinations, or keywords…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                variant="toolbar"
               />
             </div>
           ) : (
-            <SortButton
-              options={[
-                { value: "recommended", label: "Recommended" },
-                { value: "price-low", label: "Price: Low to High" },
-                { value: "price-high", label: "Price: High to Low" },
-              ]}
-              defaultValue="recommended"
-            />
+            isLg && (
+              <div className={styles.toolbarSortHome}>
+                <SortButton options={SORT_OPTIONS} defaultValue="recommended" />
+              </div>
+            )
           )}
         </div>
 
         <CategoryTabs tabs={isPage ? PAGE_CATEGORIES : HOME_CATEGORIES} wrap={isPage} />
 
+        {filtersOpen && (
+          <button
+            type="button"
+            className={styles.filterBackdrop}
+            aria-label="Close filters"
+            onClick={() => setFiltersOpen(false)}
+          />
+        )}
+
+        {!isLg && (
+          <div className={styles.filterSortRow}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className={styles.filtersOpenBtn}
+              onClick={() => setFiltersOpen(true)}
+              icon={
+                <span className={styles.filtersIcon} aria-hidden>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 6h2M9 6h12M3 12h2M6 12h12M3 18h2M9 18h12" />
+                    <circle cx="7" cy="6" r="1.5" fill="currentColor" stroke="none" />
+                    <circle cx="17" cy="12" r="1.5" fill="currentColor" stroke="none" />
+                    <circle cx="7" cy="18" r="1.5" fill="currentColor" stroke="none" />
+                  </svg>
+                </span>
+              }
+              iconPosition="left"
+            >
+              <span className={styles.filtersBtnLabel}>
+                Filters
+                {activeFilterCount > 0 && (
+                  <span className={styles.filterBadge} aria-label={`${activeFilterCount} active filters`}>
+                    {activeFilterCount}
+                  </span>
+                )}
+              </span>
+            </Button>
+            <div className={styles.filterSortRowSort}>
+              <SortButton options={SORT_OPTIONS} defaultValue="recommended" showLabel={false} />
+            </div>
+          </div>
+        )}
+
         <div className={styles.layout}>
-          {/* ── Sidebar ── */}
-          <aside className={styles.sidebar}>
+          {/* ── Sidebar (desktop) / off-canvas panel (mobile) ── */}
+          <aside
+            className={`${styles.sidebar} ${filtersOpen ? styles.sidebarOpen : ""}`}
+            id="trips-filters-panel"
+            role={isLg ? undefined : "dialog"}
+            aria-modal={!isLg && filtersOpen}
+            aria-label="Trip filters"
+            aria-hidden={!isLg && !filtersOpen ? true : undefined}
+          >
+            <div className={styles.sidebarMobileHeader}>
+              <h2 className={styles.sidebarMobileTitle}>Filters</h2>
+              <button
+                type="button"
+                className={styles.sidebarCloseBtn}
+                onClick={() => setFiltersOpen(false)}
+                aria-label="Close filters"
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+              </button>
+            </div>
+
             {/* Duration */}
             <FilterGroup
               title="Duration"
@@ -306,6 +408,18 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
                 }))}
               />
             </FilterGroup>
+
+            <div className={styles.sidebarMobileFooter}>
+              <Button
+                type="button"
+                variant="primary"
+                size="md"
+                fullWidth
+                onClick={() => setFiltersOpen(false)}
+              >
+                Show results
+              </Button>
+            </div>
           </aside>
 
           {/* ── Trip grid ── */}
