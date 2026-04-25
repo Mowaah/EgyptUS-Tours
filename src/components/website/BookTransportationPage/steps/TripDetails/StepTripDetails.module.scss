@@ -6,7 +6,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   padding: 0;
   gap: 20px;
   background: transparent;
@@ -24,7 +24,7 @@
   }
 
   @media (min-width: 1024px) {
-    padding: 32px;
+    padding: 40px;
     gap: 32px;
     border-radius: 32px;
   }
@@ -95,19 +95,14 @@
 }
 
 .twoColumn {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
   width: 100%;
 
-  > * {
-    flex: 1;
-    min-width: 0;
-  }
-
   @media (min-width: 640px) {
-    flex-direction: row;
-    gap: 16px;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
   }
 }
 
@@ -278,12 +273,8 @@
 // ─── Footer ───────────────────────────────────────────────────────────────────
 // Sticky action bar on mobile; inline at the bottom of the card on desktop.
 .footer {
-  box-sizing: border-box;
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
   gap: 12px;
-  width: 100%;
   position: sticky;
   bottom: 0;
   margin: 16px -16px 0;
@@ -301,11 +292,11 @@
   @media (min-width: 768px) {
     position: static;
     margin: 0;
-    padding: 32px 0 0;
+    padding: 24px 0 0;
     gap: 16px;
     background: transparent;
     backdrop-filter: none;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 1px solid #EAF1FD;
     z-index: auto;
   }
 }
@@ -313,17 +304,13 @@
 .prevBtn,
 .contBtn {
   flex: 1;
-  min-height: 48px;
-  border-radius: 100px;
-  font-family: "Trip Sans";
-  font-weight: 500;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.2s ease;
+  min-height: 48px !important;
+  height: auto !important;
+  border-radius: $radius-full !important;
 
   @media (min-width: 768px) {
-    min-height: 56px;
-    font-size: 16px;
+    min-height: 56px !important;
+    height: 56px !important;
   }
 }
 

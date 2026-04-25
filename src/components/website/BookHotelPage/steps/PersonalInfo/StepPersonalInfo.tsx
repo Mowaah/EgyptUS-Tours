@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  BookingStepFooter,
   FormField,
   PhonePrefixSelect,
   CheckboxIndicator,
@@ -12,7 +13,6 @@ import styles from "./StepPersonalInfo.module.scss";
 import { BookingData } from "../../BookHotelPage";
 import { Hotel } from "@/types";
 import BookingSidebar from "@/components/shared/BookingSidebar/BookingSidebar";
-import Image from "next/image";
 
 interface StepPersonalInfoProps {
   hotel: Hotel;
@@ -32,7 +32,7 @@ export default function StepPersonalInfo({
   totalAmount, vatAmount, depositAmount, totalRooms, totalGuests,
 }: StepPersonalInfoProps) {
   return (
-    <div className={styles.root}>
+    <div>
       <div className={styles.twoColumnLayout}>
         <div className={styles.leftCol}>
           <div className={styles.infoCard}>
@@ -86,6 +86,19 @@ export default function StepPersonalInfo({
               </div>
             </div>
 
+            <div className={styles.mobileSummary}>
+              <BookingSidebar
+                detailsId="hotel-step2-summary-mobile"
+                hotel={hotel}
+                formData={formData}
+                totalAmount={totalAmount}
+                vatAmount={vatAmount}
+                depositAmount={depositAmount}
+                totalRooms={totalRooms}
+                totalGuests={totalGuests}
+              />
+            </div>
+
             {/* Terms */}
             <label className={styles.checkboxRow}>
               <input
@@ -98,27 +111,28 @@ export default function StepPersonalInfo({
               <span>I have read and agree to the <a href="#">Terms &amp; Conditions and Cancellation</a> Policy.</span>
             </label>
 
-            <hr className={planPage.stepFormCardDivider} aria-hidden="true" style={{ margin: '8px 0' }} />
-
-            <div className={planPage.formActions}>
-              <button className={planPage.previousButton} onClick={onPrevious} type="button">Previous</button>
-              <button className={planPage.continueButton} onClick={onContinue} type="button" disabled={!formData.termsAccepted}>
-                Continue To Payment
-                <Image src="/images/money-send.svg" width={24} height={24} alt="" />
-              </button>
-            </div>
+            <BookingStepFooter
+              onPrevious={onPrevious}
+              onContinue={onContinue}
+              continueLabel="Continue To Payment"
+              continueDisabled={!formData.termsAccepted}
+              showMoneyIcon
+            />
           </div>
         </div>
 
-        <BookingSidebar
-          hotel={hotel}
-          formData={formData}
-          totalAmount={totalAmount}
-          vatAmount={vatAmount}
-          depositAmount={depositAmount}
-          totalRooms={totalRooms}
-          totalGuests={totalGuests}
-        />
+        <div className={styles.desktopSummary}>
+          <BookingSidebar
+            detailsId="hotel-step2-summary-desktop"
+            hotel={hotel}
+            formData={formData}
+            totalAmount={totalAmount}
+            vatAmount={vatAmount}
+            depositAmount={depositAmount}
+            totalRooms={totalRooms}
+            totalGuests={totalGuests}
+          />
+        </div>
       </div>
     </div>
   );

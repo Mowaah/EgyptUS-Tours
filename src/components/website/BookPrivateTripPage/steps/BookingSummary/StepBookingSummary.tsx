@@ -6,7 +6,7 @@ import stepStyles from "./StepBookingSummary.module.scss";
 import { BookingData } from "../../BookPrivateTripPage";
 import { Trip } from "@/types";
 import RightSidebar from "@/components/shared/BookingSidebar/BookingSidebar";
-import { CheckboxIndicator } from "@/components/shared";
+import { BookingStepFooter, CheckboxIndicator } from "@/components/shared";
 
 interface StepBookingSummaryProps {
   trip: Trip;
@@ -131,19 +131,13 @@ export default function StepBookingSummary({
         <span>I have read and agree to the <a href="#">Terms & Conditions and Cancellation</a> Policy.</span>
       </label>
 
-      <hr className={planPage.stepFormCardDivider} aria-hidden="true" />
-
-      <div className={planPage.stepFormCardFooter}>
-        <div className={planPage.formActions}>
-          <button className={planPage.previousButton} onClick={onPrevious} type="button">
-            Previous
-          </button>
-          <button className={planPage.continueButton} onClick={onContinue} type="button" disabled={!formData.termsAccepted}>
-            Continue To Payment
-            <Image src="/images/money-send.svg" width={24} height={24} alt="" />
-          </button>
-        </div>
-      </div>
+      <BookingStepFooter
+        onPrevious={onPrevious}
+        onContinue={onContinue}
+        continueLabel="Continue To Payment"
+        continueDisabled={!formData.termsAccepted}
+        showMoneyIcon
+      />
     </div>
   );
 }

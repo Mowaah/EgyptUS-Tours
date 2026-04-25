@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  BookingStepFooter,
   FormField,
   CustomDatePicker,
   SelectDropdown,
@@ -198,15 +199,10 @@ export default function StepRoomDates({ formData, onChange, onContinue }: StepRo
         />
       </div>
 
-      <hr className={planPage.stepFormCardDivider} aria-hidden="true" style={{ margin: "24px 0" }} />
-
-      <div className={planPage.stepFormCardFooter}>
-        <div className={planPage.formActions}>
-          <button className={planPage.continueButton} onClick={onContinue} type="button" style={{ width: "100%" }}>
-            Continue
-          </button>
-        </div>
-      </div>
+      <BookingStepFooter
+        onContinue={onContinue}
+        continueLabel="Continue"
+      />
     </div>
   );
 }

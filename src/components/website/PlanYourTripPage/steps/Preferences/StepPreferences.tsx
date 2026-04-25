@@ -6,7 +6,7 @@ import {
   type ReactNode,
 } from "react";
 
-import { StarRating, SelectDropdown, MultiSelectDropdown } from "@/components/shared";
+import { BookingStepFooter, StarRating, SelectDropdown, MultiSelectDropdown } from "@/components/shared";
 import CheckboxDropdown from "@/components/shared/CheckboxDropdown/CheckboxDropdown";
 
 import {
@@ -147,18 +147,11 @@ export default function StepPreferences({
         </div>
       </div>
 
-      <hr className={planPage.stepFormCardDivider} aria-hidden="true" />
-
-      <div className={planPage.stepFormCardFooter}>
-        <div className={planPage.formActions}>
-          <button className={planPage.previousButton} onClick={onPrevious} type="button">
-            Previous
-          </button>
-          <button className={planPage.continueButton} onClick={onContinue} type="button">
-            Continue
-          </button>
-        </div>
-      </div>
+      <BookingStepFooter
+        onPrevious={onPrevious}
+        onContinue={onContinue}
+        continueLabel="Continue"
+      />
     </div>
   );
 }

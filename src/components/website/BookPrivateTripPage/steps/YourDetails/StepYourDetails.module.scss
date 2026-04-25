@@ -1,7 +1,10 @@
 @use "@/styles/variables" as *;
 
 .divider {
+  border: none;
+  height: 1px;
   margin: 24px 0;
+  background: $border-strong;
 }
 
 .sectionTitle {
@@ -25,13 +28,11 @@
 
 .roomRowWrapper {
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
+  flex-direction: row;
+  align-items: center;
   gap: 12px;
 
   @media (min-width: 640px) {
-    flex-direction: row;
-    align-items: center;
     gap: 20px;
   }
 
@@ -41,8 +42,8 @@
 }
 
 .roomInfoBox {
-  width: 100%;
-  max-width: none;
+  flex: 1;
+  min-width: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -57,6 +58,10 @@
     max-width: 380px;
     padding: 7px 16px;
   }
+}
+
+.selected {
+  border-color: $primary;
 }
 
 .roomRadioGroup {
@@ -113,7 +118,12 @@
 
 
 .roomCounterPill {
-  height: 55.98px !important;
+  flex-shrink: 0;
+  height: auto !important;
+
+  @media (min-width: 640px) {
+    height: 55.98px !important;
+  }
 }
 
 .priceContainer {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -43,6 +43,7 @@ export default function PlanYourTripPage() {
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState("");
   const [tripData, setTripData] = useState<TripData>(initialTripData);
+  const stepIndicatorRef = useRef<HTMLDivElement | null>(null);
 
   const filteredDestinations = useMemo(
     () => filterDestinations(DESTINATIONS, search),
@@ -105,6 +106,10 @@ export default function PlanYourTripPage() {
     router.push("/");
   };
 
+  useEffect(() => {
+    stepIndicatorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [currentStep]);
+
   return (
     <div className={styles.page}>
       <PageHeader
@@ -116,7 +121,9 @@ export default function PlanYourTripPage() {
         subtitleMaxWidth="750px"
       />
 
-      <StepIndicator steps={STEPS} currentStep={currentStep} />
+      <div ref={stepIndicatorRef}>
+        <StepIndicator steps={STEPS} currentStep={currentStep} />
+      </div>
 
       <main className={styles.mainContent}>
         <div className={styles.content}>

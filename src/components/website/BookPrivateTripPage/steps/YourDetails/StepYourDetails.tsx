@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  BookingStepFooter,
   CheckboxIndicator,
   FormField,
   PhonePrefixSelect,
@@ -175,7 +176,7 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
           )}
         </div>
 
-        <hr className={`${planPage.stepFormCardDivider} ${stepStyles.divider}`} aria-hidden="true" />
+        <hr className={stepStyles.divider} aria-hidden="true" />
 
         <div className={planPage.formGrid}>
           <div className={planPage.formGroup}>
@@ -275,15 +276,15 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
           </div>
         </div>
 
-        <hr className={`${planPage.stepFormCardDivider} ${stepStyles.divider}`} aria-hidden="true" />
+        <hr className={stepStyles.divider} aria-hidden="true" />
 
         <h3 className={stepStyles.sectionTitle}>Type of Room</h3>
         
         <div className={stepStyles.roomList}>
           {[
-            { id: "single", label: "Single Room - Garden View", price: "EGP 5,800", count: formData.rooms.single },
-            { id: "double", label: "Double Room - Garden View", price: "EGP 4,100", count: formData.rooms.double },
-            { id: "triple", label: "Triple Room - Garden View", price: "EGP 3,500", count: formData.rooms.triple }
+            { id: "single", label: "Single Room", price: "EGP 5,800", count: formData.rooms.single },
+            { id: "double", label: "Double Room", price: "EGP 4,100", count: formData.rooms.double },
+            { id: "triple", label: "Triple Room", price: "EGP 3,500", count: formData.rooms.triple }
           ].map((room) => (
             <div key={room.id} className={stepStyles.roomRowWrapper}>
               <label className={`${stepStyles.roomInfoBox} ${room.count > 0 ? stepStyles.selected : ''}`}>
@@ -381,15 +382,10 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
         />
       </div>
 
-      <hr className={planPage.stepFormCardDivider} aria-hidden="true" />
-
-      <div className={planPage.stepFormCardFooter}>
-        <div className={planPage.formActions}>
-          <button className={planPage.continueButton} onClick={onContinue} type="button" style={{ width: '100%' }}>
-            Continue
-          </button>
-        </div>
-      </div>
+      <BookingStepFooter
+        onContinue={onContinue}
+        continueLabel="Continue"
+      />
     </div>
   );
 }

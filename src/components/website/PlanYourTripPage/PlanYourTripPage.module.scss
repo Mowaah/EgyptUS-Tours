@@ -139,6 +139,29 @@
 
 .stepFormCardFooter {
   flex-shrink: 0;
+  position: sticky;
+  bottom: 0;
+  margin: 24px -16px 0;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: rgba($white, 0.96);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid $border;
+  z-index: 20;
+
+  @media (min-width: 640px) {
+    margin-inline: -24px;
+    padding-inline: 24px;
+  }
+
+  @media (min-width: 768px) {
+    position: static;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    backdrop-filter: none;
+    border-top: none;
+    z-index: auto;
+  }
 
   .previousButton,
   .continueButton {
@@ -218,31 +241,9 @@ select.formInput {
   display: flex;
   gap: 12px;
   align-items: center;
-  position: sticky;
-  bottom: 0;
-  // Visually extend edge-to-edge by cancelling the parent's 16px horizontal
-  // padding, then add our own padding so the bar has a clean white plate.
-  margin: 24px -16px 0;
-  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-  background: rgba($white, 0.96);
-  backdrop-filter: blur(8px);
-  border-top: 1px solid $border;
-  z-index: 20;
-
-  @media (min-width: 640px) {
-    margin-inline: -24px;
-    padding-inline: 24px;
-  }
 
   @media (min-width: 768px) {
-    position: static;
-    margin: 0;
-    padding: 0;
-    background: transparent;
-    backdrop-filter: none;
-    border-top: none;
     gap: 16px;
-    z-index: auto;
   }
 }
 

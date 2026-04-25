@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { FormField, PhonePrefixSelect, CustomDatePicker, NationalitySelect } from "@/components/shared";
+import { BookingStepFooter, FormField, PhonePrefixSelect, CustomDatePicker, NationalitySelect } from "@/components/shared";
 
 import pageStyles from "../../PlanYourTripPage.module.scss";
 import styles from "./StepTravelerInfo.module.scss";
@@ -226,18 +226,11 @@ export default function StepTravelerInfo({
         </div>
       </div>
 
-      <hr className={pageStyles.stepFormCardDivider} aria-hidden="true" />
-
-      <div className={pageStyles.stepFormCardFooter}>
-        <div className={pageStyles.formActions}>
-          <button className={pageStyles.previousButton} onClick={onPrevious} type="button">
-            Previous
-          </button>
-          <button className={pageStyles.continueButton} onClick={onContinue} type="button">
-            Continue
-          </button>
-        </div>
-      </div>
+      <BookingStepFooter
+        onPrevious={onPrevious}
+        onContinue={onContinue}
+        continueLabel="Continue"
+      />
     </div>
   );
 }

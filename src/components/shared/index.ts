@@ -38,6 +38,7 @@ export { default as SelectDropdown } from "./SelectDropdown/SelectDropdown";
 export type { SelectOption } from "./SelectDropdown/SelectDropdown";
 export { default as PaymentForm } from "./PaymentForm/PaymentForm";
 export type { PaymentFormData } from "./PaymentForm/PaymentForm";
+export { default as BookingStepFooter } from "./BookingStepFooter/BookingStepFooter";
 export { default as SearchInput } from "./SearchInput/SearchInput";
 export * from "./DetailLayout";
 export * from "./SidebarFilter";

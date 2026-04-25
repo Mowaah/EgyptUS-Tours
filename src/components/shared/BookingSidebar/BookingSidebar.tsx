@@ -10,6 +10,7 @@ interface BookingSidebarProps {
   formData: BookingData;
   totalAmount: number;
   depositAmount: number;
+  detailsId?: string;
   // Pass either a trip or a hotel — not both
   trip?: Trip;
   hotel?: Hotel;
@@ -33,6 +34,7 @@ export default function BookingSidebar({
   formData,
   totalAmount,
   depositAmount,
+  detailsId = "booking-summary-details",
   vatAmount = 0,
   totalRooms = 0,
   totalGuests = 0,
@@ -54,6 +56,7 @@ export default function BookingSidebar({
 
   const shortStart = formatShortDate(formData.startDate, "Start");
   const shortEnd = formatShortDate(formData.endDate, "End");
+  const compactGuests = totalGuests || formData.adults + formData.children + formData.infants;
 
   // Night count for hotel
   const nights = (() => {
@@ -74,36 +77,51 @@ export default function BookingSidebar({
           className={`${styles.compactSummary} ${expanded ? styles.compactSummaryHidden : ""}`}
           onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
-          aria-controls="booking-summary-details"
+          aria-controls={detailsId}
         >
-          <div className={styles.compactText}>
-            <div className={styles.compactTitle}>{title}</div>
+          <div className={styles.compactThumbWrap}>
+            <Image src={image} width={92} height={92} alt="" className={styles.compactThumb} />
+          </div>
+
+          <div className={styles.compactMain}>
+            <div className={styles.compactTopRow}>
+              <div className={styles.compactTitle}>{title}</div>
+              <div className={styles.compactRating}>
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+                  <path d="M8 1.5l1.9 3.85 4.25.62-3.07 2.99.72 4.23L8 11.22 4.2 13.2l.73-4.23L1.86 5.97l4.25-.62L8 1.5Z" fill="#FDC700" />
+                </svg>
+                <span>{rating}</span>
+                <span className={styles.compactReviews}>({reviews?.toLocaleString()})</span>
+              </div>
+            </div>
+
             <div className={styles.compactDates}>
               {shortStart} <span className={styles.compactArrow} aria-hidden="true">→</span> {shortEnd}
             </div>
-            <div className={styles.compactTotal}>
-              <span className={styles.compactTotalLabel}>Total:</span>{" "}
-              <span className={styles.compactTotalValue}>
-                ${totalAmount.toLocaleString()}
+
+            <div className={styles.compactMeta}>
+              {isHotel ? `${nights} Night` : `${formData.adults} Adults`} <span aria-hidden="true">•</span> {totalRooms} Room <span aria-hidden="true">•</span> {compactGuests} Guests
+            </div>
+            <div className={styles.compactBottomRow}>
+              <span className={styles.compactTotalValue}>Total: ${totalAmount.toLocaleString()}.00</span>
+              <span className={styles.compactChevron} aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M6 9l6 6 6-6"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </span>
             </div>
           </div>
-          <span className={styles.compactChevron} aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M6 9l6 6 6-6"
-                stroke="currentColor"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </span>
         </button>
 
         {/* Full details — always visible at ≥768px; on mobile only when expanded */}
         <div
-          id="booking-summary-details"
+          id={detailsId}
           className={styles.details}
           hidden={!expanded}
         >

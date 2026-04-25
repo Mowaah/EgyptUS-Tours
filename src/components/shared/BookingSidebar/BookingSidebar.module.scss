@@ -28,12 +28,13 @@
 
 .compactSummary {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 12px;
   width: 100%;
-  padding: 14px 16px;
-  background: transparent;
-  border: none;
+  padding: 12px;
+  background: $white;
+  border: 1px solid $border-strong;
+  border-radius: 16px;
   cursor: pointer;
   text-align: left;
   font: inherit;
@@ -52,56 +53,126 @@
   }
 }
 
-.compactText {
+.compactThumbWrap {
+  flex-shrink: 0;
+}
+
+.compactThumb {
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+  object-fit: cover;
+
+  @media (max-width: 480px) {
+    width: 84px;
+    height: 84px;
+  }
+}
+
+.compactMain {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
+}
+
+.compactTopRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .compactTitle {
-  font-size: 15px;
+  font-size: 18px;
   font-weight: $font-weight-bold;
   color: $dark;
   line-height: 1.3;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  flex: 1;
+
+  @media (max-width: 480px) {
+    font-size: 16px;
+  }
+}
+
+.compactRating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 16px;
+  line-height: 1;
+  color: $primary;
+  font-weight: $font-weight-bold;
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+  }
+}
+
+.compactReviews {
+  color: $text-light;
+  font-size: 14px;
+  font-weight: $font-weight-medium;
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
 }
 
 .compactDates {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: $font-weight-medium;
-  color: $text-light;
+  color: $dark;
   line-height: 1.3;
   display: flex;
   align-items: center;
   gap: 6px;
-  flex-wrap: wrap;
+
+  @media (max-width: 480px) {
+    font-size: 13px;
+  }
 }
 
 .compactArrow {
-  color: $secondary;
+  color: $text-light;
   font-weight: $font-weight-bold;
 }
 
-.compactTotal {
+.compactMeta {
   font-size: 14px;
-  line-height: 1.3;
-  margin-top: 2px;
-  color: $dark;
+  color: $text-light;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+    gap: 6px;
+  }
 }
 
-.compactTotalLabel {
-  color: $text-light;
-  font-weight: $font-weight-medium;
+.compactBottomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .compactTotalValue {
   color: $secondary;
   font-weight: $font-weight-bold;
+  font-size: 18px;
+  line-height: 1.2;
   font-variant-numeric: tabular-nums;
+
+  @media (max-width: 480px) {
+    font-size: 16px;
+  }
 }
 
 .compactChevron {
@@ -109,11 +180,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
-  background: $background-alt;
-  color: $secondary;
+  color: #1f3a68;
   transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 
   .sidebarCardExpanded & {

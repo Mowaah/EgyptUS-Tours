@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { FormField } from "@/components/shared";
+import BookingStepFooter from "../BookingStepFooter/BookingStepFooter";
 import styles from "./PaymentForm.module.scss";
 
 export interface PaymentFormData {
@@ -93,24 +94,12 @@ export default function PaymentForm({
           </div>
         </div>
 
-        {/* Footer */}
-        <div className={styles.footer}>
-          <button
-            type="button"
-            className={styles.prevBtn}
-            onClick={onPrevious}
-          >
-            Previous
-          </button>
-          <button
-            type="button"
-            className={styles.confirmBtn}
-            onClick={onConfirm}
-          >
-            {confirmLabel}
-            <Image src="/images/money-send.svg" width={20} height={20} alt="" />
-          </button>
-        </div>
+        <BookingStepFooter
+          onPrevious={onPrevious}
+          onContinue={onConfirm}
+          continueLabel={confirmLabel}
+          showMoneyIcon
+        />
       </div>
 
       {/* ── Optional sidebar ── */}
