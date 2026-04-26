@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ScrollToTop from "@/components/shared/ScrollToTop/ScrollToTop";
+import ScrollAnimationProvider from "@/components/shared/ScrollAnimationProvider/ScrollAnimationProvider";
 import "./globals.scss";
 
 export const metadata: Metadata = {
@@ -16,6 +17,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <ScrollToTop />
+        <ScrollAnimationProvider />
         {children}
       </body>
     </html>

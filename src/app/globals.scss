@@ -80,3 +80,72 @@ textarea {
   border: none;
   outline: none;
 }
+
+// ─── Global Hover Micro-animations ───────────────────────────────────────────
+// These apply to every button, link, and image across the entire site.
+// No per-component changes needed.
+
+button {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+a {
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+img {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+// ─── Global Scroll-Reveal Animation System ────────────────────────────────────
+// Elements opt-in by receiving data-animate="hidden" (set by ScrollAnimationProvider).
+// The IntersectionObserver flips them to data-animate="visible".
+// Override per-element with CSS custom properties:
+//   --anim-delay    (default 0ms)
+//   --anim-duration (default 600ms)
+//   --anim-distance (default 32px vertical offset)
+
+[data-animate] {
+  opacity: 0;
+  transform: translateY(var(--anim-distance, 32px));
+  transition:
+    opacity var(--anim-duration, 600ms) cubic-bezier(0.22, 1, 0.36, 1) var(--anim-delay, 0ms),
+    transform var(--anim-duration, 600ms) cubic-bezier(0.22, 1, 0.36, 1) var(--anim-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+[data-animate="visible"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+// Stagger children inside a container automatically
+[data-animate-stagger] > * {
+  opacity: 0;
+  transform: translateY(var(--anim-distance, 24px));
+  transition:
+    opacity var(--anim-duration, 550ms) cubic-bezier(0.22, 1, 0.36, 1),
+    transform var(--anim-duration, 550ms) cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+[data-animate-stagger="visible"] > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@for $i from 1 through 12 {
+  [data-animate-stagger="visible"] > *:nth-child(#{$i}) {
+    transition-delay: #{($i - 1) * 80}ms;
+  }
+}
+
