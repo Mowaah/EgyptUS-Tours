@@ -9,6 +9,7 @@ const SKIP_SELECTORS = [
   "[data-no-animate]",    // escape hatch: add this attr to opt any element out
   ".chatbot",
   ".scrollToTop",
+  "section:first-of-type", // hero has its own CSS keyframe animation
 ].join(", ");
 
 /**

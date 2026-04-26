@@ -43,7 +43,9 @@ export default function HeroSection() {
           </Button>
         </div>
 
-        <SearchBar />
+        <div className={styles.searchBarWrapper}>
+          <SearchBar />
+        </div>
       </div>
     </section>
   );

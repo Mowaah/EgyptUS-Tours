@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useLayoutEffect, useEffect } from "react";
+import { useState, useRef, useLayoutEffect, useEffect, useCallback } from "react";
 import styles from "./CategoryTabs.module.scss";
 
 interface CategoryTabsProps {
@@ -30,6 +30,18 @@ export default function CategoryTabs({
   const [isWide, setIsWide] = useState(false);
   const measureRef = useRef<HTMLDivElement>(null);
 
+  // Sliding pill indicator
+  const tabsContainerRef = useRef<HTMLDivElement>(null);
+  const tabButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [indicator, setIndicator] = useState<{ left: number; top: number; width: number; height: number; ready: boolean }>({
+    left: 0,
+    top: 0,
+    width: 0,
+    height: 0,
+    ready: false,
+  });
+  const isFirstRender = useRef(true);
+
   /** Multi-row "wrap" layout is desktop-only; phones/tablets use horizontal scroll */
   const useWrapLayout = wrap && isWide;
 
@@ -40,6 +52,31 @@ export default function CategoryTabs({
     mq.addEventListener("change", update);
     return () => mq.removeEventListener("change", update);
   }, []);
+
+  const updateIndicator = useCallback(() => {
+    const activeEl = tabButtonRefs.current[activeIndex];
+    const container = tabsContainerRef.current;
+    if (!activeEl || !container) return;
+    const containerRect = container.getBoundingClientRect();
+    const activeRect = activeEl.getBoundingClientRect();
+    // Account for horizontal/vertical scroll offset inside the tabs strip
+    const left = activeRect.left - containerRect.left + container.scrollLeft;
+    const top = activeRect.top - containerRect.top + container.scrollTop;
+    setIndicator({ left, top, width: activeRect.width, height: activeRect.height, ready: true });
+  }, [activeIndex]);
+
+  // Snap on first render (no CSS transition), animate on subsequent changes
+  useLayoutEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      updateIndicator();
+    }
+  });
+
+  useEffect(() => {
+    if (isFirstRender.current) return; // handled by layout effect above
+    updateIndicator();
+  }, [activeIndex, updateIndicator]);
 
   const handleClick = (tab: string, index: number) => {
     if (active === undefined) {
@@ -109,7 +146,20 @@ export default function CategoryTabs({
     // Pass 2: Accurately render chunked rows with the desired distinct pill backgrounds
     let runningIndex = 0;
     return (
-      <div className={`${styles.wrapRows} ${className}`}>
+      <div className={`${styles.wrapRows} ${className}`} ref={tabsContainerRef}>
+        {/* Sliding indicator pill — floats freely across rows */}
+        {indicator.ready && (
+          <span
+            className={styles.indicator}
+            style={{
+              left: indicator.left,
+              top: indicator.top,
+              width: indicator.width,
+              height: indicator.height,
+            }}
+            aria-hidden
+          />
+        )}
         {measuredRows.map((row, rowIdx) => {
           const rowStart = runningIndex;
           runningIndex += row.length;
@@ -121,6 +171,7 @@ export default function CategoryTabs({
                   return (
                     <button
                       key={`${tab}-${absIdx}`}
+                      ref={(el) => { tabButtonRefs.current[absIdx] = el; }}
                       className={`${styles.tab} ${absIdx === activeIndex ? styles.active : ""}`}
                       onClick={() => handleClick(tab, absIdx)}
                     >
@@ -139,10 +190,24 @@ export default function CategoryTabs({
   // Default: single scrollable pill row
   return (
     <div className={`${styles.wrapper} ${className}`}>
-      <div className={styles.tabs}>
+      <div className={styles.tabs} ref={tabsContainerRef}>
+        {/* Sliding indicator pill — snaps on mount, animates on switch */}
+        {indicator.ready && (
+          <span
+            className={styles.indicator}
+            style={{
+              left: indicator.left,
+              top: indicator.top,
+              width: indicator.width,
+              height: indicator.height,
+            }}
+            aria-hidden
+          />
+        )}
         {tabs.map((tab, index) => (
           <button
             key={`${tab}-${index}`}
+            ref={(el) => { tabButtonRefs.current[index] = el; }}
             className={`${styles.tab} ${index === activeIndex ? styles.active : ""}`}
             onClick={() => handleClick(tab, index)}
           >

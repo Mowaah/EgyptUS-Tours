@@ -34,6 +34,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 html,
@@ -129,7 +130,7 @@ img {
 }
 
 // Stagger children inside a container automatically
-[data-animate-stagger] > * {
+[data-animate-stagger]>* {
   opacity: 0;
   transform: translateY(var(--anim-distance, 24px));
   transition:
@@ -138,14 +139,13 @@ img {
   will-change: opacity, transform;
 }
 
-[data-animate-stagger="visible"] > * {
+[data-animate-stagger="visible"]>* {
   opacity: 1;
   transform: translateY(0);
 }
 
 @for $i from 1 through 12 {
-  [data-animate-stagger="visible"] > *:nth-child(#{$i}) {
+  [data-animate-stagger="visible"]>*:nth-child(#{$i}) {
     transition-delay: #{($i - 1) * 80}ms;
   }
 }
-
