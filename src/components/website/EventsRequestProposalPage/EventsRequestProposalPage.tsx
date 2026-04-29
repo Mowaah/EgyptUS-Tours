@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import styles from "./EventsRequestProposalPage.module.scss";
@@ -49,6 +49,7 @@ export default function EventsRequestProposalPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<EventStep>(1);
   const [showModal, setShowModal] = useState(false);
+  const stepIndicatorRef = useRef<HTMLDivElement | null>(null);
   const [proposalData, setProposalData] = useState<EventProposalData>(initialData);
 
   const updateOrganization = (patch: Partial<EventProposalData["organization"]>) => {
@@ -97,6 +98,10 @@ export default function EventsRequestProposalPage() {
     router.push("/");
   };
 
+  useEffect(() => {
+    stepIndicatorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [currentStep]);
+
   return (
     <div className={styles.page}>
       <PageHeader
@@ -111,7 +116,9 @@ export default function EventsRequestProposalPage() {
         subtitleMaxWidth="750px"
       />
 
-      <StepIndicator steps={STEPS} currentStep={currentStep} />
+      <div ref={stepIndicatorRef}>
+        <StepIndicator steps={STEPS} currentStep={currentStep} />
+      </div>
 
       <main className={styles.mainContent}>
         <div className={styles.content}>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { FormField, CheckboxIndicator } from "@/components/shared";
+import { BookingStepFooter, FormField, CheckboxIndicator } from "@/components/shared";
 import SelectDropdown from "@/components/shared/SelectDropdown/SelectDropdown";
 import pageStyles from "../../EventsRequestProposalPage.module.scss";
 import formStyles from "@/components/shared/FormField/FormField.module.scss";
@@ -103,16 +103,7 @@ export default function StepRequirements({
 
       <hr className={pageStyles.stepFormCardDivider} aria-hidden="true" />
 
-      <div className={pageStyles.stepFormCardFooter}>
-        <div className={pageStyles.formActions}>
-          <button className={pageStyles.previousButton} onClick={onPrevious} type="button">
-            Previous
-          </button>
-          <button className={pageStyles.continueButton} onClick={onContinue} type="button">
-            Continue
-          </button>
-        </div>
-      </div>
+      <BookingStepFooter onPrevious={onPrevious} onContinue={onContinue} />
     </div>
   );
 }

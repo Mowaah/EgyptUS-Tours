@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Hotel } from "@/types";
 import { BookingData, INITIAL_BOOKING_DATA } from "@/types";
@@ -28,6 +28,7 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [showSuccess, setShowSuccess] = useState(false);
+  const stepIndicatorRef = useRef<HTMLDivElement | null>(null);
   const [formData, setFormData] = useState<BookingData>(INITIAL_BOOKING_DATA);
 
   const handleChange = (patch: Partial<BookingData>) => {
@@ -48,6 +49,10 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
   const handlePrevious = () => {
     if (currentStep > 1) setCurrentStep((s) => s - 1);
   };
+
+  useEffect(() => {
+    stepIndicatorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [currentStep]);
 
   const sharedProps = {
     hotel,
@@ -76,7 +81,9 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
         decorationSrc="/images/dotted-line3.svg"
       />
 
-      <StepIndicator steps={STEPS} currentStep={currentStep} />
+      <div ref={stepIndicatorRef}>
+        <StepIndicator steps={STEPS} currentStep={currentStep} />
+      </div>
 
       <main className={planPageStyles.mainContent}>
         <div className={planPageStyles.content}>

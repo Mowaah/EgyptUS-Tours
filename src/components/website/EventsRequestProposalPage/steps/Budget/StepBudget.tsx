@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { FormField } from "@/components/shared";
+import { BookingStepFooter, FormField } from "@/components/shared";
 import SelectDropdown from "@/components/shared/SelectDropdown/SelectDropdown";
 import pageStyles from "../../EventsRequestProposalPage.module.scss";
 import formStyles from "@/components/shared/FormField/FormField.module.scss";
@@ -98,16 +98,7 @@ export default function StepBudget({
 
       <hr className={pageStyles.stepFormCardDivider} aria-hidden="true" />
 
-      <div className={pageStyles.stepFormCardFooter}>
-        <div className={pageStyles.formActions}>
-          <button className={pageStyles.previousButton} onClick={onPrevious} type="button">
-            Previous
-          </button>
-          <button className={pageStyles.continueButton} onClick={onContinue} type="button">
-            Continue
-          </button>
-        </div>
-      </div>
+      <BookingStepFooter onPrevious={onPrevious} onContinue={onContinue} continueLabel="Submit Request" />
     </div>
   );
 }

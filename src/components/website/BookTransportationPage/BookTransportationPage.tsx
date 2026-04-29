@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Vehicle, TransportationBookingData, INITIAL_TRANSPORT_BOOKING } from "@/types";
 import { PageHeader, SuccessModal, StepIndicator } from "@/components/shared";
@@ -27,6 +27,7 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [showSuccess, setShowSuccess] = useState(false);
+  const stepIndicatorRef = useRef<HTMLDivElement | null>(null);
   const [formData, setFormData] = useState<TransportationBookingData>(INITIAL_TRANSPORT_BOOKING);
 
   const handleChange = (patch: Partial<TransportationBookingData>) => {
@@ -41,6 +42,10 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
   const handlePrevious = () => {
     if (currentStep > 1) setCurrentStep((s) => s - 1);
   };
+
+  useEffect(() => {
+    stepIndicatorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [currentStep]);
 
   const sharedProps = {
     vehicle,
@@ -65,7 +70,7 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
         decorationSrc="/images/dotted-line3.svg"
       />
 
-      <div className={styles.stepperWrap}>
+      <div ref={stepIndicatorRef} className={styles.stepperWrap}>
         <StepIndicator steps={STEPS} currentStep={currentStep} />
       </div>
 

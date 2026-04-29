@@ -1,6 +1,6 @@
 "use client";
 
-import { FormField, PhonePrefixSelect } from "@/components/shared";
+import { BookingStepFooter, FormField, PhonePrefixSelect } from "@/components/shared";
 import SelectDropdown from "@/components/shared/SelectDropdown/SelectDropdown";
 import pageStyles from "../../EventsRequestProposalPage.module.scss";
 import formStyles from "@/components/shared/FormField/FormField.module.scss";
@@ -19,7 +19,6 @@ export default function StepOrganization({
   data,
   onChange,
   onContinue,
-  onPrevious,
 }: StepOrganizationProps) {
   return (
     <div className={pageStyles.stepFormCard}>
@@ -125,16 +124,7 @@ export default function StepOrganization({
 
       <hr className={pageStyles.stepFormCardDivider} aria-hidden="true" />
 
-      <div className={pageStyles.stepFormCardFooter}>
-        <div className={pageStyles.formActions}>
-          <button className={pageStyles.previousButton} onClick={onPrevious} type="button" disabled>
-            Previous
-          </button>
-          <button className={pageStyles.continueButton} onClick={onContinue} type="button">
-            Continue
-          </button>
-        </div>
-      </div>
+      <BookingStepFooter onContinue={onContinue} />
     </div>
   );
 }
