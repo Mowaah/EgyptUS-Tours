@@ -16,6 +16,7 @@ import {
   FilterGroup,
   PriceRangeFilter,
 } from "@/components/shared";
+import { useScrollLock } from "@/hooks/useScrollLock";
 import { Hotel } from "@/types";
 import styles from "./HotelsPageSection.module.scss";
 
@@ -108,14 +109,7 @@ export default function HotelsPageSection() {
     return () => mq.removeEventListener("change", apply);
   }, []);
 
-  useEffect(() => {
-    if (!filtersOpen) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [filtersOpen]);
+  useScrollLock(filtersOpen);
 
   useEffect(() => {
     if (!filtersOpen) return;

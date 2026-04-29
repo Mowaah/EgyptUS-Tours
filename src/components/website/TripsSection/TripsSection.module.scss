@@ -133,6 +133,7 @@
 // ── Mobile: off-canvas filters (sidebar in-flow from tablet up, ≥768px) ─
 .filterBackdrop {
   display: none;
+  touch-action: none;
 
   @media (max-width: 767px) {
     display: block;
@@ -303,7 +304,7 @@
     position: fixed;
     z-index: 200;
     top: 0;
-    right: 0;
+    right: -120%;
     width: min(100vw - 40px, 400px);
     max-width: 100%;
     height: 100dvh;
@@ -314,15 +315,13 @@
     overflow-y: auto;
     padding: 0 16px calc(16px + env(safe-area-inset-bottom, 0));
     margin: 0;
-    transform: translateX(100%);
-    transition: transform 0.28s ease;
-    will-change: transform;
+    transition: right 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     pointer-events: none;
   }
 
   &.sidebarOpen {
     @media (max-width: 767px) {
-      transform: translateX(0);
+      right: 0;
       pointer-events: auto;
     }
   }
@@ -374,11 +373,11 @@
 
 .sidebarMobileFooter {
   position: sticky;
-  bottom: 0;
-  z-index: 1;
-  margin-top: 8px;
-  padding: 12px 0 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0, $white 12px);
+  bottom: calc(-16px - env(safe-area-inset-bottom, 0)); // Offset the sidebar's padding so it sticks perfectly to the bottom
+  z-index: 10;
+  margin-top: 16px;
+  padding: 16px 0 calc(16px + env(safe-area-inset-bottom, 0)); // Re-apply safe area to the footer itself
+  background: $white;
   border-top: 1px solid $border;
   display: block;
 

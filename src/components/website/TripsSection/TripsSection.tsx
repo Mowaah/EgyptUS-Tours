@@ -16,6 +16,7 @@ import {
   RadioFilterList,
   PriceRangeFilter,
 } from "@/components/shared";
+import { useScrollLock } from "@/hooks/useScrollLock";
 import { Trip } from "@/types";
 import styles from "./TripsSection.module.scss";
 
@@ -141,14 +142,7 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
     return () => mq.removeEventListener("change", apply);
   }, []);
 
-  useEffect(() => {
-    if (!filtersOpen) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [filtersOpen]);
+  useScrollLock(filtersOpen);
 
   useEffect(() => {
     if (!filtersOpen) return;

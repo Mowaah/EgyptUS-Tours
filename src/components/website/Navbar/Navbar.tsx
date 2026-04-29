@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import Button from "@/components/shared/Button/Button";
 import { GlassCard } from "@/components/shared";
 import UserMenu from "./UserMenu";
+import { useScrollLock } from "@/hooks/useScrollLock";
 import styles from "./Navbar.module.scss";
 
 const NAV_LINKS = [
@@ -114,15 +115,7 @@ export default function Navbar() {
     setExpandedDropdown(null);
   }, [pathname]);
 
-  // Lock body scroll while drawer is open
-  useEffect(() => {
-    if (!mobileOpen) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [mobileOpen]);
+  useScrollLock(mobileOpen);
 
   // Close on Escape
   useEffect(() => {
