@@ -231,7 +231,7 @@
   @media (max-width: 639px) {
     align-items: flex-start;
 
-    > * {
+    >* {
       width: 100%;
     }
   }
@@ -254,7 +254,7 @@
   @media (max-width: 639px) {
     width: 100%;
 
-    > * {
+    >* {
       flex: 1 1 auto;
       min-width: 0;
     }
@@ -289,6 +289,7 @@
 .sidebar {
   width: 265px;
   flex-shrink: 0;
+
   // Tablet and up: static column
   @media (min-width: 768px) {
     display: block;

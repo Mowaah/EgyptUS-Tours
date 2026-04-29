@@ -314,7 +314,7 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
               onClick={() => setFiltersOpen(true)}
               icon={
                 <span className={styles.filtersIcon} aria-hidden>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M3 6h2M9 6h12M3 12h2M6 12h12M3 18h2M9 18h12" />
                     <circle cx="7" cy="6" r="1.5" fill="currentColor" stroke="none" />
                     <circle cx="17" cy="12" r="1.5" fill="currentColor" stroke="none" />

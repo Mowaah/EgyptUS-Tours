@@ -123,7 +123,7 @@
   @media (max-width: 639px) {
     align-items: flex-start;
 
-    > * {
+    >* {
       width: 100%;
     }
   }
@@ -145,7 +145,7 @@
   @media (max-width: 639px) {
     width: 100%;
 
-    > * {
+    >* {
       flex: 1 1 auto;
       min-width: 0;
     }
