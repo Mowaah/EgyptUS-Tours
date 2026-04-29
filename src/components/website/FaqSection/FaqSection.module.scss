@@ -104,7 +104,7 @@
 }
 
 .number {
-  font-size: 15px;
+  font-size: $font-size-15;
   font-weight: $font-weight-bold;
   color: #0E1835;
   flex-shrink: 0;
@@ -112,19 +112,19 @@
   padding-top: 2px;
 
   @media (min-width: 640px) {
-    font-size: 18px;
+    font-size: $font-size-lg;
     padding-top: 0;
   }
 
   @media (min-width: 1024px) {
-    font-size: 20px;
+    font-size: $font-size-xl;
   }
 }
 
 .questionText {
   flex: 1;
   min-width: 0;
-  font-size: 15px;
+  font-size: $font-size-15;
   font-weight: $font-weight-normal;
   line-height: 1.4;
   color: $dark;
@@ -132,12 +132,12 @@
   text-wrap: balance;
 
   @media (min-width: 640px) {
-    font-size: 18px;
+    font-size: $font-size-lg;
     line-height: 1.35;
   }
 
   @media (min-width: 1024px) {
-    font-size: 20px;
+    font-size: $font-size-xl;
   }
 }
 
@@ -192,18 +192,18 @@
   }
 
   p {
-    font-size: 14px;
+    font-size: $font-size-sm;
     line-height: 1.65;
     color: #6B7280;
     margin: 0;
     overflow-wrap: break-word;
 
     @media (min-width: 640px) {
-      font-size: 15px;
+      font-size: $font-size-15;
     }
 
     @media (min-width: 1024px) {
-      font-size: 16px;
+      font-size: $font-size-base;
       line-height: 1.7;
     }
   }

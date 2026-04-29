@@ -5,7 +5,7 @@
 }
 
 .title {
-  font-size: 28px;
+  font-size: $font-size-28;
   font-weight: 700;
   color: $dark;
   margin-bottom: 32px;
@@ -43,7 +43,7 @@
 }
 
 .authorTitle {
-  font-size: 16px;
+  font-size: $font-size-base;
   font-weight: 700;
   color: $dark;
   flex: 1;
@@ -54,13 +54,13 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: 700;
   color: $primary;
 }
 
 .reviewContent {
-  font-size: 14px;
+  font-size: $font-size-sm;
   line-height: 1.5;
   color: $text-light;
   margin-bottom: 24px;
@@ -99,13 +99,13 @@
 }
 
 .reviewerName {
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: 500;
   color: $primary;
 }
 
 .reviewDate {
-  font-size: 12px;
+  font-size: $font-size-xs;
   color: $text-muted;
 }
 

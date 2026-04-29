@@ -56,12 +56,12 @@
 }
 
 .successLabel {
-  font-size: 13px;
+  font-size: $font-size-13;
   color: #6B7280;
 }
 
 .successVal {
-  font-size: 15px;
+  font-size: $font-size-15;
   font-weight: 700;
   color: $dark;
 }

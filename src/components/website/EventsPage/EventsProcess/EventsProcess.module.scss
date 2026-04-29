@@ -184,11 +184,11 @@
 .number {
   font-family: "Trip Sans", system-ui, sans-serif;
   font-weight: 700;
-  font-size: 26px;
+  font-size: $font-size-26;
   color: #19448a;
 
   @media (max-width: 1024px) {
-    font-size: 14px;
+    font-size: $font-size-sm;
     font-weight: 800;
   }
 }
@@ -230,7 +230,7 @@
 .stepDescription {
   font-family: "Trip Sans", system-ui, sans-serif;
   font-weight: 400;
-  font-size: 13px;
+  font-size: $font-size-13;
   line-height: 1.55;
   color: #4a5565;
   margin: 0;

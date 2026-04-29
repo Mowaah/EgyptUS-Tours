@@ -6,7 +6,7 @@
 }
 
 .container {
-  width: fit-content;
+  width: 100%;
 }
 
 .heading {
@@ -19,6 +19,27 @@
 .grid {
   display: flex;
   gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 24px;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #E2E8F0;
+    border-radius: 4px;
+  }
+  &:hover::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+  }
+  scrollbar-width: thin;
+  scrollbar-color: #E2E8F0 transparent;
 }
 
 .photo {
@@ -28,6 +49,12 @@
   border-radius: $radius-xl;
   overflow: hidden;
   flex-shrink: 0;
+  scroll-snap-align: start;
+
+  @media (max-width: 640px) {
+    width: 240px;
+    height: 240px;
+  }
 }
 
 .img {
@@ -37,25 +64,4 @@
   &:hover {
     transform: scale(1.04);
   }
-}
-
-.dots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 20px;
-}
-
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: $border-input;
-  border: none;
-  cursor: pointer;
-  transition: background $transition-fast;
-}
-
-.dotActive {
-  background: $primary;
 }

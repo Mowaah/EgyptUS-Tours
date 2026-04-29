@@ -14,6 +14,7 @@
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
+    gap: 40px;
   }
 }
 
@@ -53,7 +54,7 @@
 }
 
 .bookTitle {
-  font-size: 22px;
+  font-size: $font-size-22;
   font-weight: $font-weight-bold;
   color: $dark;
   margin: 0 0 4px;
@@ -95,13 +96,13 @@
 
 .tierSub {
   display: block;
-  font-size: 13px;
+  font-size: $font-size-13;
   color: $text-light;
   margin-top: 2px;
 }
 
 .tierPrice {
-  font-size: 26px;
+  font-size: $font-size-26;
   font-weight: $font-weight-bold;
   color: $primary;
   white-space: nowrap;

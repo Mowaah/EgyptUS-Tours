@@ -81,7 +81,7 @@
 .featureTitle {
   font-family: 'Trip Sans';
   font-weight: 500;
-  font-size: 20px;
+  font-size: $font-size-xl;
   color: #0E2851;
   margin: 0;
   line-height: 28px;
@@ -90,7 +90,7 @@
 .featureDesc {
   font-family: 'Trip Sans';
   font-weight: 400;
-  font-size: 16px;
+  font-size: $font-size-base;
   line-height: 26px;
   color: #4B5563;
   margin: 0;
@@ -137,7 +137,7 @@
 
 .badgeTitle {
   font-family: 'Trip Sans';
-  font-size: 16px;
+  font-size: $font-size-base;
   font-weight: 500;
   color: #0E2851;
   margin: 0;
@@ -145,7 +145,7 @@
 
 .badgeDesc {
   font-family: 'Trip Sans';
-  font-size: 14px;
+  font-size: $font-size-sm;
   color: #4A5565;
   line-height: 20px;
 }

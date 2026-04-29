@@ -61,7 +61,7 @@
   background: #FFFFFF;
   color: #4B5563;
   font-family: 'Trip Sans';
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: 500;
   cursor: pointer;
   transition: all $transition-fast;
@@ -98,7 +98,7 @@
 
 .searchResultsCount {
   color: $primary-dark;
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: $font-weight-medium;
   margin-bottom: $spacing-md;
 }

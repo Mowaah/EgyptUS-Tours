@@ -76,18 +76,18 @@
   font-family: 'Trip Sans';
   font-style: normal;
   font-weight: 500;
-  font-size: 15px;
+  font-size: $font-size-15;
   line-height: 1.3;
   color: #0E2851;
   margin: 0;
 
   @media (min-width: 768px) {
-    font-size: 17px;
+    font-size: $font-size-17;
     line-height: 1.35;
   }
 
   @media (min-width: 1024px) {
-    font-size: 20px;
+    font-size: $font-size-xl;
     line-height: 28px;
   }
 }
@@ -103,11 +103,11 @@
   margin: 0;
 
   @media (min-width: 768px) {
-    font-size: 13px;
+    font-size: $font-size-13;
   }
 
   @media (min-width: 1024px) {
-    font-size: 14px;
+    font-size: $font-size-sm;
     line-height: 23px;
   }
 }

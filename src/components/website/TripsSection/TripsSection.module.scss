@@ -95,13 +95,13 @@
 }
 
 .filterSummaryLabel {
-  font-size: 12px;
+  font-size: $font-size-xs;
   color: #9CA3AF;
   font-weight: $font-weight-normal;
 }
 
 .filterSummaryValue {
-  font-size: 15px;
+  font-size: $font-size-15;
   font-weight: $font-weight-medium;
   color: $dark;
   white-space: nowrap;
@@ -109,7 +109,7 @@
   text-overflow: ellipsis;
 
   @media (min-width: 768px) {
-    font-size: 16px;
+    font-size: $font-size-base;
   }
 }
 
@@ -187,7 +187,7 @@
   height: auto !important;
   max-height: none !important;
   padding: 10px 14px 10px 10px !important;
-  font-size: 13px !important;
+  font-size: $font-size-13 !important;
   line-height: 1.2 !important;
   font-weight: 500;
   border: 1px solid $primary !important;
@@ -214,7 +214,7 @@
   border-radius: 999px;
   background: $secondary;
   color: $white;
-  font-size: 12px;
+  font-size: $font-size-xs;
   font-weight: 700;
   line-height: 1.4;
   @include flex-center;
@@ -429,7 +429,7 @@
   height: 36px;
   @include flex-center;
   border-radius: 12px;
-  font-size: 12px;
+  font-size: $font-size-xs;
   font-weight: 500;
   color: $text-lighter;
   border: 1px solid $border;

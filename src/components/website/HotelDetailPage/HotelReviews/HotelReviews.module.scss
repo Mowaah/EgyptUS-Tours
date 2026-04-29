@@ -49,7 +49,7 @@
 }
 
 .cardTitle {
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: $font-weight-medium;
   color: #0E2851;
   margin: 0;
@@ -64,13 +64,13 @@
 }
 
 .ratingNum {
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: $font-weight-bold;
   color: $primary;
 }
 
 .cardBody {
-  font-size: 14px;
+  font-size: $font-size-sm;
   color: #364153;
   line-height: 1.6;
   margin: 0;
@@ -101,13 +101,13 @@
 }
 
 .authorName {
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   color: $primary;
 }
 
 .authorDate {
-  font-size: 12px;
+  font-size: $font-size-xs;
   color: #6A7282;
 }
 

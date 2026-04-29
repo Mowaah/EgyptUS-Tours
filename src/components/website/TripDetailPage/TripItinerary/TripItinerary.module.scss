@@ -13,7 +13,7 @@
   display: inline-block;
   background: linear-gradient(to right, rgba(41, 113, 230, 0.1), rgba(255, 102, 0, 0.1));
   color: $dark;
-  font-size: 13px;
+  font-size: $font-size-13;
   font-weight: $font-weight-medium;
   padding: 7px 24px;
   border-radius: $radius-full;
@@ -21,10 +21,14 @@
 }
 
 .heading {
-  font-size: 40px;
+  font-size: $font-size-40;
   font-weight: $font-weight-bold;
   color: $dark;
   margin: 0 0 12px;
+
+  @media (max-width: 768px) {
+    font-size: $font-size-28;
+  }
 }
 
 .subtitle {
@@ -69,7 +73,7 @@
 }
 
 .dayLabel {
-  font-size: 16px;
+  font-size: $font-size-base;
   color: $dark;
   font-weight: $font-weight-medium;
   transition: color $transition-fast;
@@ -163,7 +167,7 @@
 }
 
 .dayTitle {
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   color: $dark;
   text-align: center;
@@ -172,7 +176,7 @@
 }
 
 .daySubtitle {
-  font-size: 11px;
+  font-size: $font-size-2xs;
   color: $text-lighter;
   font-weight: $font-weight-normal;
   text-align: center;
@@ -201,6 +205,10 @@
   height: 527px;
   border-radius: 24px;
   overflow: hidden;
+
+  @media (max-width: 991px) {
+    height: 300px;
+  }
 }
 
 .detailImgInner {
@@ -233,7 +241,7 @@
 }
 
 .overlayDay {
-  font-size: 29px;
+  font-size: $font-size-29;
   font-weight: $font-weight-bold;
   color: $white;
   margin: 0;
@@ -269,7 +277,7 @@
 }
 
 .detailDesc {
-  font-size: 17px;
+  font-size: $font-size-17;
   color: $text-lighter;
   line-height: 1.8;
   margin: 0;
@@ -285,7 +293,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: $font-weight-bold;
   color: $dark;
   margin: 0;

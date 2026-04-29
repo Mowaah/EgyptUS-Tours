@@ -65,7 +65,7 @@
   line-height: 1.2;
 
   @media (min-width: 1024px) {
-    font-size: 46px !important;
+    font-size: $font-size-46 !important;
     line-height: 1.4;
   }
 }

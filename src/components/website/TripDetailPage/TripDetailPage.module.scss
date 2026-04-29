@@ -19,7 +19,7 @@
 .heroSection {
   position: relative;
   // increase bottom margin so the card doesn't overlap the content below
-  margin-bottom: 120px;
+  margin-bottom: 40px;
 
   @media (min-width: 1024px) {
     margin-bottom: 180px;
@@ -32,14 +32,13 @@
 }
 
 .heroOverlay {
-  position: absolute;
-  bottom: 0px;
-  left: 50%;
-  transform: translate(-50%, 50%);
-  width: calc(100% - 48px);
+  position: relative;
   z-index: 10;
 
   @media (min-width: 1024px) {
+    position: absolute;
+    margin: 0;
+    bottom: 0px;
     left: calc(40px + (100% - 80px - 148px) / 2);
     width: calc(100% - 80px - 148px - 32px);
     max-width: 999px;

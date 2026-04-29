@@ -78,7 +78,7 @@
 
 .label {
   color: #FF6600;
-  font-size: 16px;
+  font-size: $font-size-base;
   font-weight: 700;
   line-height: 22px;
   margin-bottom: 8px;
@@ -86,7 +86,7 @@
 
 .heading {
   color: #0E2851;
-  font-size: 30px;
+  font-size: $font-size-3xl;
   font-weight: 700;
   line-height: 41px;
   margin: 0;
@@ -99,7 +99,7 @@
 
   p {
     color: #364153;
-    font-size: 16px;
+    font-size: $font-size-base;
     font-weight: 400;
     line-height: 26px;
     margin: 0;
@@ -142,14 +142,14 @@
 
 .statValue {
   color: #FF6600;
-  font-size: 32px;
+  font-size: $font-size-32;
   font-weight: 700;
   line-height: 45px;
 }
 
 .statDesc {
   color: #6B7280;
-  font-size: 12px;
+  font-size: $font-size-xs;
   font-weight: 400;
   line-height: 17px;
   text-align: center;

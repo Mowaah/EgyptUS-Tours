@@ -126,7 +126,7 @@
   border: none;
   outline: none;
   font-family: 'Trip Sans';
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: 500;
   color: #0E2851;
   background: transparent;
@@ -147,7 +147,7 @@
   color: #FFFFFF;
   font-family: 'Trip Sans';
   font-weight: 500;
-  font-size: 14px;
+  font-size: $font-size-sm;
   padding: 0 24px;
   height: 56px;
   min-width: 97px;
@@ -165,7 +165,7 @@
   color: #6B7280;
   font-family: 'Trip Sans';
   font-weight: 400;
-  font-size: 14px;
+  font-size: $font-size-sm;
   line-height: 19px;
   text-align: left;
   letter-spacing: 0.01em;

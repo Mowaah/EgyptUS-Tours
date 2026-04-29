@@ -38,7 +38,7 @@
 }
 
 .compactCounter {
-  font-size: 12px;
+  font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
   color: $secondary;
   text-transform: uppercase;
@@ -46,7 +46,7 @@
 }
 
 .compactLabel {
-  font-size: 15px;
+  font-size: $font-size-15;
   font-weight: $font-weight-semibold;
   color: $dark;
   min-width: 0;

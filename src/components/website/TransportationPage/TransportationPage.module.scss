@@ -117,14 +117,14 @@
 }
 
 .summaryLabel {
-  font-size: 12px;
+  font-size: $font-size-xs;
   font-weight: 400;
   color: #9CA3AF;
   line-height: 16px;
 }
 
 .summaryValue {
-  font-size: 16px;
+  font-size: $font-size-base;
   font-weight: 500;
   color: $dark;
   line-height: 24px;
@@ -139,21 +139,21 @@
 }
 
 .availableVehicles {
-  font-size: 24px;
+  font-size: $font-size-2xl;
   font-weight: $font-weight-bold;
   color: $dark;
   margin: 0;
 }
 
 .vehiclesCount {
-  font-size: 14px;
+  font-size: $font-size-sm;
   color: $text-light;
 }
 
 /* END SEARCH SUMMARY */
 
 .resultsCount {
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: $font-weight-medium;
   color: $dark;
   margin: 0;
@@ -220,7 +220,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 12px;
-  font-size: 12px;
+  font-size: $font-size-xs;
   font-weight: 500;
   color: $text-lighter;
   border: 1px solid $border;
@@ -287,14 +287,14 @@
 }
 
 .featureTitle {
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: $font-weight-bold;
   color: $dark;
   margin: 0 0 12px 0;
 }
 
 .featureDesc {
-  font-size: 14px;
+  font-size: $font-size-sm;
   color: #4A5565;
   max-width: 270px;
   width: 100%;

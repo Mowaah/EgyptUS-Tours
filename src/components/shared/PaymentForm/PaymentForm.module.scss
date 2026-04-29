@@ -60,13 +60,13 @@
 
 .cardSubtitle {
   font-family: "Trip Sans";
-  font-size: 13px;
+  font-size: $font-size-13;
   color: $text-light;
   line-height: 1.5;
   margin: 0;
 
   @media (min-width: 768px) {
-    font-size: 14px;
+    font-size: $font-size-sm;
   }
 }
 
@@ -100,25 +100,25 @@
   background: #f8fafd;
   padding: 12px 14px;
   border-radius: 12px;
-  font-size: 12px;
+  font-size: $font-size-xs;
   line-height: 1.5;
   color: $text-light;
 
   @media (min-width: 768px) {
     gap: 12px;
     padding: 14px 16px;
-    font-size: 13px;
+    font-size: $font-size-13;
   }
 
   strong {
     display: block;
     font-family: "Trip Sans";
-    font-size: 13px;
+    font-size: $font-size-13;
     color: #0e2851;
     margin-bottom: 2px;
 
     @media (min-width: 768px) {
-      font-size: 14px;
+      font-size: $font-size-sm;
     }
   }
 }

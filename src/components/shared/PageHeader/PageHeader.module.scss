@@ -54,6 +54,88 @@
   gap: 0;
 }
 
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 16px;
+
+  @media (min-width: 768px) {
+    margin-bottom: 24px;
+  }
+}
+
+.breadcrumbRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.mobileActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+}
+
+.iconBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: $background-alt;
+  }
+}
+
+.shareBtn {
+  background: $primary;
+  border-color: $primary;
+
+  img {
+    filter: brightness(0) invert(1);
+  }
+
+  &:hover {
+    background: $primary-dark;
+    border-color: $primary-dark;
+  }
+}
+
+.favoriteIcon path {
+  fill: none;
+  stroke: $text-light;
+  stroke-width: 1.5;
+  transition: all $transition-fast;
+}
+
+.iconBtn:has(.favoriteIcon):hover .favoriteIcon path {
+  fill: $danger;
+  stroke: $danger;
+}
+
+.favoriteActive {
+  &:hover .favoriteIcon path,
+  .favoriteIcon path {
+    fill: $danger;
+    stroke: $danger;
+  }
+}
+
 .backButton {
   display: inline-flex;
   align-items: center;
@@ -68,12 +150,11 @@
   cursor: pointer;
   transition: background $transition-fast;
   text-decoration: none;
-  margin-bottom: 16px;
+  margin-bottom: 0;
 
   @media (min-width: 768px) {
     padding: 10px 14px;
     font-size: $font-size-sm;
-    margin-bottom: 24px;
   }
 
   &:hover {

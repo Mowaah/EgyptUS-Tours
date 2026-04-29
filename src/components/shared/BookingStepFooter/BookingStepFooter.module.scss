@@ -42,13 +42,13 @@
   color: #2971e6;
   font-family: "Trip Sans";
   font-weight: 500;
-  font-size: 14px;
+  font-size: $font-size-sm;
   cursor: pointer;
   transition: background 0.2s ease;
 
   @media (min-width: 768px) {
     min-height: 52px;
-    font-size: 16px;
+    font-size: $font-size-base;
   }
 
   &:hover {
@@ -70,7 +70,7 @@
   color: #ffffff;
   font-family: "Trip Sans";
   font-weight: 700;
-  font-size: 14px;
+  font-size: $font-size-sm;
   line-height: 1.2;
   text-align: center;
   cursor: pointer;
@@ -80,7 +80,7 @@
     flex: 1;
     gap: 10px;
     min-height: 52px;
-    font-size: 16px;
+    font-size: $font-size-base;
   }
 
   &:hover:not(:disabled) {

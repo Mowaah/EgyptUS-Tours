@@ -36,7 +36,7 @@
   justify-content: center;
   padding: 9px 22px;
   border-radius: 45px;
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: $font-weight-medium;
   line-height: 25px;
   width: fit-content;
@@ -63,14 +63,14 @@
 }
 
 .title {
-  font-size: 40px;
+  font-size: $font-size-40;
   font-weight: 800;
   line-height: 1.18;
   color: #0D1B3E;
   max-width: 1028px;
 
   @media (min-width: 1024px) {
-    font-size: 64px;
+    font-size: $font-size-64;
     line-height: 76px;
   }
 }
@@ -120,7 +120,7 @@
 }
 
 .authorRole {
-  font-size: 13px;
+  font-size: $font-size-13;
   color: $text-light;
 }
 
@@ -137,7 +137,7 @@
 }
 
 .metaItem {
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: $font-weight-medium;
   color: #123367;
 }
@@ -200,7 +200,7 @@
 }
 
 .heroCaption {
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: $font-weight-normal;
   color: #9AA3B8;
   text-align: center;
@@ -241,13 +241,13 @@
 }
 
 .intro {
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: $font-weight-normal;
   color: #3D4A6B;
   line-height: 42px;
 
   @media (min-width: 768px) {
-    font-size: 22px;
+    font-size: $font-size-22;
   }
 }
 
@@ -258,7 +258,7 @@
   padding: 25.5px 28.33px;
   background: #F4F7FF;
   border-right: 4px solid $primary;
-  font-size: 22px;
+  font-size: $font-size-22;
   font-weight: $font-weight-medium;
   line-height: 44px;
   color: #0E2851;
@@ -271,7 +271,7 @@
   padding: 25.5px 28.33px;
   background: #FFF0E6;
   border-right: 4px solid $secondary;
-  font-size: 22px;
+  font-size: $font-size-22;
   font-weight: $font-weight-medium;
   line-height: 44px;
   color: #BF4D00;
@@ -286,35 +286,35 @@
 }
 
 .h2 {
-  font-size: 28px;
+  font-size: $font-size-28;
   font-weight: $font-weight-bold;
   color: #0D1B3E;
   line-height: 44px;
 
   @media (min-width: 768px) {
-    font-size: 32px;
+    font-size: $font-size-32;
   }
 }
 
 .h3 {
-  font-size: 20px;
+  font-size: $font-size-xl;
   font-weight: $font-weight-medium;
   color: #0D1B3E;
   line-height: 33px;
 
   @media (min-width: 768px) {
-    font-size: 24px;
+    font-size: $font-size-2xl;
   }
 }
 
 .body {
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: $font-weight-normal;
   color: #3D4A6B;
   line-height: 42px;
 
   @media (min-width: 768px) {
-    font-size: 22px;
+    font-size: $font-size-22;
   }
 }
 
@@ -332,7 +332,7 @@
   padding: 8.5px 19.83px;
   background: #F4F6FB;
   border-radius: 28.33px;
-  font-size: 17px;
+  font-size: $font-size-17;
   font-weight: $font-weight-normal;
   color: #6B7A99;
 }
@@ -450,24 +450,24 @@
 }
 
 .relatedItemTitle {
-  font-size: 20px;
+  font-size: $font-size-xl;
   font-weight: $font-weight-medium;
   color: #0D1B3E;
   line-height: 1.54;
   margin: 0;
 
   @media (min-width: 768px) {
-    font-size: 24px;
+    font-size: $font-size-2xl;
   }
 }
 
 .relatedDate {
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: $font-weight-normal;
   color: #9AA3B8;
   line-height: 30px;
 
   @media (min-width: 768px) {
-    font-size: 22px;
+    font-size: $font-size-22;
   }
 }

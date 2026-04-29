@@ -94,13 +94,13 @@
   border-radius: 32px;
   color: #2971E6;
   font-family: 'Trip Sans';
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: 400;
 
   @media (min-width: 1024px) {
     padding: 8px 17px;
     height: 32px;
-    font-size: 18px;
+    font-size: $font-size-lg;
   }
 }
 
@@ -108,14 +108,14 @@
   color: #0E2851;
   font-family: 'Trip Sans';
   font-weight: 500;
-  font-size: 24px;
+  font-size: $font-size-2xl;
   line-height: 1.3;
   letter-spacing: -0.02em;
   margin: 0;
   white-space: pre-wrap;
 
   @media (min-width: 1024px) {
-    font-size: 40px;
+    font-size: $font-size-40;
     line-height: 55px;
     max-width: 475px;
   }
@@ -125,12 +125,12 @@
   color: #6B7280;
   font-family: 'Trip Sans';
   font-weight: 400;
-  font-size: 14px;
+  font-size: $font-size-sm;
   letter-spacing: 0.01em;
   margin: 0;
 
   @media (min-width: 1024px) {
-    font-size: 16px;
+    font-size: $font-size-base;
     padding: 0 7px;
     max-width: 517px;
   }
@@ -206,7 +206,7 @@
   border-radius: 12px;
   color: #2971E6;
   font-family: 'Trip Sans';
-  font-size: 7px;
+  font-size: $font-size-7;
   font-weight: 400;
 
   @media (min-width: 1200px) {
@@ -221,7 +221,7 @@
   color: #0E2851;
   font-family: 'Trip Sans';
   font-weight: 500;
-  font-size: 14px;
+  font-size: $font-size-sm;
   line-height: 1.3;
   letter-spacing: -0.02em;
   margin: 0;
@@ -238,7 +238,7 @@
   color: #6B7280;
   font-family: 'Trip Sans';
   font-weight: 400;
-  font-size: 6px;
+  font-size: $font-size-6;
   letter-spacing: 0.01em;
   margin: 0;
 
@@ -259,7 +259,7 @@
 
 .searchResultsCount {
   color: $primary-dark;
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: $font-weight-medium;
 }
 

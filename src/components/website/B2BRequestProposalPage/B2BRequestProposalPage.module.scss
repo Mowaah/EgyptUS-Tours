@@ -113,7 +113,7 @@
 .fieldLabel {
   font-family: 'Trip Sans';
   font-weight: 700;
-  font-size: 14px;
+  font-size: $font-size-sm;
   color: #374151;
   margin: 0;
 }
@@ -147,7 +147,7 @@
   border-radius: 12px;
   padding: 12px 14px;
   font-family: 'Trip Sans';
-  font-size: 14px;
+  font-size: $font-size-sm;
   color: #111827;
   resize: vertical;
   box-sizing: border-box;
@@ -156,7 +156,7 @@
   @media (min-width: 768px) {
     min-height: 120px;
     padding: 16px;
-    font-size: 16px;
+    font-size: $font-size-base;
   }
 
   &:focus {
@@ -189,7 +189,7 @@
   padding: 0 12px;
   height: 44px;
   font-family: 'Trip Sans';
-  font-size: 14px;
+  font-size: $font-size-sm;
   color: #111827;
   box-sizing: border-box;
   transition: border-color $transition-fast, box-shadow $transition-fast;
@@ -197,7 +197,7 @@
   @media (min-width: 768px) {
     padding: 0 16px;
     height: 48px;
-    font-size: 16px;
+    font-size: $font-size-base;
   }
 
   &:focus {

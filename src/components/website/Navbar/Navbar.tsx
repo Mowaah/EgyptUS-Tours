@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -87,7 +88,9 @@ const MOBILE_USER_LINKS = [
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hideSticky, setHideSticky] = useState(false);
   const [expandedDropdown, setExpandedDropdown] = useState<string | null>(null);
   const pathname = usePathname();
   const isBookingPage = pathname === "/booking";
@@ -96,6 +99,9 @@ export default function Navbar() {
     pathname.includes("book") ||
     pathname.includes("proposal");
 
+  // Portal requires the client DOM — track mount to avoid SSR mismatch.
+  useEffect(() => { setMounted(true); }, []);
+
   const lightNavBackground =
     LIGHT_NAV_PATHS.includes(pathname) ||
     LIGHT_NAV_PATHS.some((p) => pathname.startsWith(`${p}/`)) ||
@@ -103,10 +109,33 @@ export default function Navbar() {
     pathname.includes("proposal");
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 20);
+      if (window.innerWidth >= 1150) {
+        setHideSticky(y > 600); // Stop being sticky after 600px
+      } else {
+        setHideSticky(false);
+      }
+    };
     onScroll();
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Close drawer when viewport widens to desktop; reset hideSticky when
+  // narrowing so a stale transform never breaks the portal's fixed position.
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 1150) {
+        setMobileOpen(false);
+        setExpandedDropdown(null);
+      } else {
+        setHideSticky(false);
+      }
+    };
+    window.addEventListener("resize", onResize, { passive: true });
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   // Close drawer on route change
@@ -156,8 +185,9 @@ export default function Navbar() {
   };
 
   return (
+    <>
     <nav
-      className={`${styles.navbar}${shouldShowScrolled ? ` ${styles.scrolled}` : ""}${lightNavBackground ? ` ${styles.lightPage}` : ""}${isStatic ? ` ${styles.static}` : ""}${mobileOpen ? ` ${styles.drawerOpen}` : ""}`}
+      className={`${styles.navbar}${shouldShowScrolled ? ` ${styles.scrolled}` : ""}${lightNavBackground ? ` ${styles.lightPage}` : ""}${isStatic ? ` ${styles.static}` : ""}${mobileOpen ? ` ${styles.drawerOpen}` : ""}${hideSticky ? ` ${styles.hideSticky}` : ""}`}
     >
       <div className={styles.container}>
         <Link href="/" className={styles.logo} aria-label="EgyptUS Tours — Home">
@@ -263,8 +293,11 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile drawer + backdrop */}
-      {!isBookingPage && (
+    </nav>
+
+      {/* Drawer + backdrop via portal — outside <nav> so no parent transform
+          can affect their position:fixed anchoring. */}
+      {!isBookingPage && mounted && createPortal(
         <>
           <div
             className={`${styles.backdrop} ${mobileOpen ? styles.backdropOpen : ""}`}
@@ -355,8 +388,9 @@ export default function Navbar() {
 
             <div className={styles.drawerFooter}>{planTripButtonMobile}</div>
           </aside>
-        </>
+        </>,
+        document.body
       )}
-    </nav>
+    </>
   );
 }

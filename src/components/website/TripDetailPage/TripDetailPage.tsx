@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Trip } from "@/types";
 import { PageHeader, DetailGallery, DetailHeroBar, DetailTabNav } from "@/components/shared";
 import Image from "next/image";
@@ -34,6 +37,9 @@ const TRIP_TABS = [
 ];
 
 export default function TripDetailPage({ trip }: TripDetailPageProps) {
+  const [isFavorite, setIsFavorite] = useState(trip.isFavorite ?? false);
+  const toggleFavorite = () => setIsFavorite((prev) => !prev);
+
   return (
     <div className={styles.page}>
       <PageHeader
@@ -42,13 +48,22 @@ export default function TripDetailPage({ trip }: TripDetailPageProps) {
           { label: "Trips", href: "/trips" },
           { label: "Trip Details", isCurrent: true },
         ]}
-        backButton={{ text: "Back To Trips", href: "/trips" }}
+        backButton={{ text: "Back to Trips", href: "/trips" }}
+        showMobileActions={true}
+        isFavorite={isFavorite}
+        onFavoriteToggle={toggleFavorite}
       />
 
       {/* ── Gallery & Hero Bar ── */}
       <div className={styles.heroSection}>
         <div className={styles.galleryWrap}>
-          <DetailGallery images={trip.images || [trip.image]} title={trip.title} />
+          <DetailGallery 
+            images={trip.images || [trip.image]} 
+            title={trip.title} 
+            rating={trip.rating ?? 0}
+            reviewCount={trip.reviewCount ?? 0}
+            description={trip.description}
+          />
 
           <div className={styles.heroOverlay}>
             <DetailHeroBar
@@ -56,7 +71,20 @@ export default function TripDetailPage({ trip }: TripDetailPageProps) {
               description={trip.description}
               rating={trip.rating ?? 0}
               reviewCount={trip.reviewCount ?? 0}
-              isFavorite={trip.isFavorite}
+              isFavorite={isFavorite}
+              onFavoriteToggle={toggleFavorite}
+              location={trip.location || "Luxor & Aswan"}
+              duration={`${trip.duration.days} days / ${trip.duration.nights} nights`}
+              mobileBrochureButton={
+                <Button
+                  variant="primary"
+                  size="lg"
+                  icon={<Image src="/images/brochure.svg" alt="" width={18} height={18} style={{filter: 'brightness(0) invert(1)'}} />}
+                  iconPosition="left"
+                >
+                  Get the Brochure
+                </Button>
+              }
             >
               <Button
                 variant="outline"

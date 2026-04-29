@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
+  font-size: $font-size-sm;
   color: $primary-dark;
   font-weight: 500;
 }
@@ -21,7 +21,7 @@
     min-width: 0;
     padding-left: 12px;
     padding-right: 32px;
-    font-size: 13px;
+    font-size: $font-size-13;
   }
 }
 
@@ -34,7 +34,7 @@
   background: $white;
   padding: 10px 38px 10px 20px;
   color: $text-placeholder;
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: 500;
   cursor: pointer;
   outline: none;

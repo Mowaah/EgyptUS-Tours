@@ -26,7 +26,7 @@
   span {
     font-family: 'Trip Sans';
     font-weight: 500;
-    font-size: 13px;
+    font-size: $font-size-13;
     color: #0E2851;
   }
 }
@@ -175,21 +175,21 @@
 
 .statLabel {
   font-family: 'Trip Sans';
-  font-size: 14px;
+  font-size: $font-size-sm;
   color: #6A7282;
 }
 
 .statValueOrange {
   font-family: 'Trip Sans';
   font-weight: 700;
-  font-size: 18px;
+  font-size: $font-size-lg;
   color: #FF6600;
 }
 
 .statValueBlue {
   font-family: 'Trip Sans';
   font-weight: 700;
-  font-size: 18px;
+  font-size: $font-size-lg;
   color: #2971E6;
 }
 
@@ -211,7 +211,7 @@
 
 .quote {
   font-family: 'Trip Sans';
-  font-size: 16px;
+  font-size: $font-size-base;
   line-height: 26px;
   color: #364153;
   margin: 0;

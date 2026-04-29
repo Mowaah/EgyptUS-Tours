@@ -59,7 +59,7 @@
 }
 
 .duration {
-  font-size: 13px;
+  font-size: $font-size-13;
   color: #6B7280;
   margin: 0;
 }
@@ -95,7 +95,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: $font-size-xs;
   font-weight: $font-weight-medium;
   margin: 0;
 }
@@ -124,7 +124,7 @@
   border: 1px solid #DFEAFB;
   border-radius: 12px;
   padding: 14px 20px;
-  font-size: 14px;
+  font-size: $font-size-sm;
   color: $text-lighter;
   text-align: center;
 }

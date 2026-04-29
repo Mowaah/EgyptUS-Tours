@@ -191,7 +191,7 @@
   }
 
   @media (min-width: 1024px) {
-    font-size: 11px;
+    font-size: $font-size-2xs;
     color: $white;
     letter-spacing: 0.01em;
     opacity: 0;
@@ -234,7 +234,7 @@
     background: $white;
     border-radius: 24px;
     font-weight: 500;
-    font-size: 14px;
+    font-size: $font-size-sm;
     line-height: 19px;
     color: $primary;
     align-self: auto;

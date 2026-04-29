@@ -2,9 +2,13 @@
 
 .tabNav {
   position: sticky;
-  top: 0;
+  top: 72px; // Mobile navbar height
   z-index: 50;
   background: $white;
+
+  @media (min-width: 1150px) {
+    top: 0; // Navbar is absolute now, so no offset needed
+  }
 }
 
 .inner {

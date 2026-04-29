@@ -203,23 +203,23 @@
 }
 
 .metaLabel {
-  font-size: 13px;
+  font-size: $font-size-13;
   font-weight: 400;
   color: #6A7282;
   overflow-wrap: anywhere;
 
   @media (min-width: 640px) {
-    font-size: 14px;
+    font-size: $font-size-sm;
   }
 }
 
 .metaValue {
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: 700;
   color: #0E2851;
   overflow-wrap: anywhere;
 
   @media (min-width: 640px) {
-    font-size: 16px;
+    font-size: $font-size-base;
   }
 }

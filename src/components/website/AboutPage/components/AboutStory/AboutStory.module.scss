@@ -47,7 +47,7 @@
 .mainTitle {
   font-family: 'Trip Sans';
   font-weight: 800;
-  font-size: 30px;
+  font-size: $font-size-3xl;
   line-height: 45px;
   color: #0E2851;
   margin: 0;
@@ -62,7 +62,7 @@
 .paragraphTitle {
   font-family: 'Trip Sans';
   font-weight: 700;
-  font-size: 18px;
+  font-size: $font-size-lg;
   line-height: 24px;
   letter-spacing: 0.16px;
   color: #FF6600;
@@ -72,7 +72,7 @@
 .paragraphLine {
   font-family: 'Trip Sans';
   font-weight: 400;
-  font-size: 16px;
+  font-size: $font-size-base;
   line-height: 26px;
   color: #364153;
   padding-left: 16px;

@@ -121,7 +121,7 @@
 
 .eventTitle {
   font-weight: 700;
-  font-size: 30px;
+  font-size: $font-size-3xl;
   line-height: 27px;
   color: #FF6600;
   margin: 0;
@@ -129,7 +129,7 @@
 
 .eventSubtitle {
   font-weight: 400;
-  font-size: 14px;
+  font-size: $font-size-sm;
   line-height: 27px;
   color: #4A5565;
   margin: 0;
@@ -175,7 +175,7 @@
   border-radius: 24px;
 
   span {
-    font-size: 16px;
+    font-size: $font-size-base;
     color: #4A5565;
   }
 }
@@ -210,7 +210,7 @@
 }
 
 .checkText {
-  font-size: 18px;
+  font-size: $font-size-lg;
   line-height: 28px;
   color: #364153;
 }

@@ -13,7 +13,7 @@
 
 .fieldLabel {
   font-family: 'Trip Sans', sans-serif;
-  font-size: 13px;
+  font-size: $font-size-13;
   font-weight: $font-weight-medium;
   color: #0E2851;
 
@@ -28,7 +28,7 @@
   min-height: 44px;
   border: 1px solid #E5E7EB;
   border-radius: 14px;
-  font-size: 14px;
+  font-size: $font-size-sm;
   color: $dark;
   background: $white;
   outline: none;
@@ -72,7 +72,7 @@
   align-items: center;
   gap: 6px;
   color: #D32F2F;
-  font-size: 12px;
+  font-size: $font-size-xs;
   margin-top: 2px;
 
   svg {

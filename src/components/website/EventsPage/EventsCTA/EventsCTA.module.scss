@@ -37,7 +37,7 @@
 .title {
   font-family: 'Trip Sans';
   font-weight: 700;
-  font-size: 40px;
+  font-size: $font-size-40;
   line-height: 60px;
   color: #0E2851;
   margin: 0;
@@ -47,7 +47,7 @@
 .subtitle {
   font-family: 'Trip Sans';
   font-weight: 400;
-  font-size: 20px;
+  font-size: $font-size-xl;
   line-height: 32px;
   color: rgba(76, 76, 76, 0.9);
   margin: 0;
@@ -71,7 +71,7 @@
 
   font-family: 'Trip Sans';
   font-weight: 700;
-  font-size: 16px;
+  font-size: $font-size-base;
   color: #FFFFFF;
   transition: background 0.3s ease;
 
@@ -106,12 +106,12 @@
   }
 
   .title {
-    font-size: 32px;
+    font-size: $font-size-32;
     line-height: 48px;
   }
 
   .subtitle {
-    font-size: 18px;
+    font-size: $font-size-lg;
   }
 }
 
@@ -121,7 +121,7 @@
   }
 
   .title {
-    font-size: 28px;
+    font-size: $font-size-28;
     line-height: 40px;
   }
 

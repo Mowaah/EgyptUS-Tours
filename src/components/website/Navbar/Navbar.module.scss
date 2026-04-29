@@ -12,21 +12,27 @@ $nav-desktop: 1150px;
   background: transparent;
   position: sticky;
   top: 0;
-  // Mobile / tablet: sit ABOVE the TopBar (z-index: 105) so the hamburger
-  // drawer renders over the whole page.
   z-index: 120;
   transition: background $transition-base;
 
-  // Desktop: drop BELOW the TopBar so its language/currency dropdowns
-  // (EN, USD, etc.) can overflow on top of the Navbar.
+  // Desktop: restore transform transition for the hide-on-scroll effect.
+  // Safe here because the drawer is display:none at this width.
   @media (min-width: $nav-desktop) {
     z-index: 100;
+    transition: background $transition-base, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  // If the mobile drawer is somehow open at desktop widths, keep the Navbar
-  // above the TopBar so it covers the page correctly.
+  &.hideSticky {
+    transform: translateY(-100%);
+  }
+
   &.drawerOpen {
     z-index: 120;
+
+    @media (max-width: calc($nav-desktop - 1px)) {
+      opacity: 0;
+      pointer-events: none;
+    }
   }
 
   &.static {
@@ -332,17 +338,14 @@ $nav-desktop: 1150px;
   background: $white;
   box-shadow: -20px 0 40px rgba(0, 0, 0, 0.15);
   transform: translateX(100%);
-  transition: transform $transition-base;
+  transition: none;
   z-index: 120;
   display: flex;
   flex-direction: column;
 
-  // Scope the open state to the drawer only. If this rule lived at the top
-  // level the <nav> element (which also carries `.drawerOpen` for its z-index
-  // tweak) would receive `transform`, creating a containing block that pulls
-  // the fixed drawer under the TopBar.
   &.drawerOpen {
     transform: translateX(0);
+    transition: transform $transition-base;
   }
 
   @media (min-width: $nav-desktop) {

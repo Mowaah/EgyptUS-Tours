@@ -10,7 +10,7 @@
 .sectionTitle {
   margin-top: 24px;
   margin-bottom: 16px;
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   color: $dark;
 
@@ -104,13 +104,13 @@
 }
 
 .roomTitle {
-  font-size: 13px;
+  font-size: $font-size-13;
   font-weight: $font-weight-medium;
   color: #0D1B3E;
 }
 
 .roomSubtitle {
-  font-size: 11px;
+  font-size: $font-size-2xs;
   font-weight: $font-weight-normal;
   color: $text-muted;
 }
@@ -134,7 +134,7 @@
 }
 
 .priceValue {
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: $font-weight-bold;
   color: #0D1B3E;
 }
@@ -229,12 +229,12 @@
 }
 
 .departureDate {
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: $font-weight-bold;
   color: #0D1B3E;
 }
 
 .departureDuration {
-  font-size: 13px;
+  font-size: $font-size-13;
   color: #6B7280;
 }

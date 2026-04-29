@@ -54,7 +54,7 @@
 }
 
 .title {
-  font-size: 36px;
+  font-size: $font-size-4xl;
   font-weight: 700;
   line-height: 49px;
   color: #0E2851;
@@ -62,7 +62,7 @@
 }
 
 .subtitle {
-  font-size: 16px;
+  font-size: $font-size-base;
   font-weight: 400;
   line-height: 22px;
   color: #6B7280;

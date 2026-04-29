@@ -131,7 +131,7 @@
   border-radius: 100px;
   padding: 11px 16px;
   font-weight: 700;
-  font-size: 13px;
+  font-size: $font-size-13;
   text-transform: uppercase;
   color: #FFFFFF;
   width: fit-content;
@@ -144,14 +144,14 @@
 
 .day {
   font-weight: 700;
-  font-size: 29px;
+  font-size: $font-size-29;
   line-height: 36px;
   margin: 0;
 }
 
 .venue {
   font-weight: 400;
-  font-size: 19px;
+  font-size: $font-size-19;
   line-height: 29px;
   margin: 0;
 }
@@ -181,7 +181,7 @@
 
 .eventTitle {
   font-weight: 700;
-  font-size: 30px;
+  font-size: $font-size-3xl;
   line-height: 27px;
   color: #FF6600;
   margin: 0;
@@ -189,7 +189,7 @@
 
 .eventSubtitle {
   font-weight: 400;
-  font-size: 14px;
+  font-size: $font-size-sm;
   line-height: 27px;
   color: #4A5565;
   margin: 0;
@@ -235,7 +235,7 @@
   border-radius: 24px;
 
   span {
-    font-size: 16px;
+    font-size: $font-size-base;
     color: #4A5565;
   }
 }
@@ -270,7 +270,7 @@
 }
 
 .checkText {
-  font-size: 18px;
+  font-size: $font-size-lg;
   line-height: 28px;
   color: #364153;
 }

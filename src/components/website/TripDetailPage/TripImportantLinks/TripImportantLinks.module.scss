@@ -11,7 +11,7 @@
   background: #FEF2F2;
   border-radius: 12px;
   padding: 16px;
-  font-size: 14px;
+  font-size: $font-size-sm;
   color: #EF4444;
   font-weight: $font-weight-medium;
   margin-bottom: 28px;
@@ -47,7 +47,7 @@
   border-radius: $radius-full;
   color: $primary;
   background-color: #EAF1FD;
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   font-family: inherit;
   cursor: pointer;

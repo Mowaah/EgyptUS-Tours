@@ -11,7 +11,7 @@
 }
 
 .heading {
-  font-size: 36px;
+  font-size: $font-size-4xl;
   font-weight: $font-weight-bold;
   color: $dark;
   margin: 0 0 12px;
@@ -19,6 +19,12 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
+  text-align: center;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    font-size: $font-size-28;
+  }
 }
 
 .sparkle {
@@ -39,7 +45,7 @@
   gap: 8px;
   background: #FFF4E6;
   color: $secondary;
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   padding: 8px 16px;
   border-radius: $radius-full;
@@ -79,7 +85,7 @@
   left: 14px;
   background: $secondary;
   color: $white;
-  font-size: 13px;
+  font-size: $font-size-13;
   font-weight: $font-weight-bold;
   padding: 10px 14px;
   text-transform: uppercase;
@@ -119,7 +125,7 @@
 
 .originalPrice {
   display: block;
-  font-size: 12px;
+  font-size: $font-size-xs;
   color: #99A1AF;
   text-decoration: line-through;
 }
@@ -137,7 +143,7 @@
   left: 14px;
   background: $secondary;
   color: $white;
-  font-size: 12px;
+  font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
   padding: 6px 10px;
   border-radius: $radius-full;
@@ -160,18 +166,18 @@
 
 .ratingVal {
   font-weight: 700;
-  font-size: 14px;
+  font-size: $font-size-sm;
   color: #2971E6;
   margin-left: 4px;
 }
 
 .reviewCount {
-  font-size: 13px;
+  font-size: $font-size-13;
   color: #64748B;
 }
 
 .title {
-  font-size: 20px;
+  font-size: $font-size-xl;
   font-weight: $font-weight-bold;
   color: $dark;
   margin: 0;
@@ -179,7 +185,7 @@
 }
 
 .description {
-  font-size: 15px;
+  font-size: $font-size-15;
   font-weight: $font-weight-normal;
   color: $text-lighter;
   line-height: 1.6;
@@ -197,7 +203,7 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  font-size: 14px;
+  font-size: $font-size-sm;
   color: $text-lighter;
   font-weight: $font-weight-medium;
   line-height: 1.45;
@@ -220,7 +226,7 @@
   height: 48px;
   border-radius: $radius-full;
   font-weight: 700;
-  font-size: 15px;
+  font-size: $font-size-15;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -236,7 +242,7 @@
   }
 
   .plus {
-    font-size: 20px;
+    font-size: $font-size-xl;
     margin-right: -2px;
   }
 }
@@ -256,7 +262,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: $font-size-xs;
   color: #6B7280;
   margin: 0;
   font-weight: $font-weight-normal;
@@ -328,14 +334,14 @@
 }
 
 .statLabel {
-  font-size: 16px;
+  font-size: $font-size-base;
   font-weight: $font-weight-bold;
   color: $dark;
   margin: 0;
 }
 
 .statSub {
-  font-size: 13px;
+  font-size: $font-size-13;
   font-weight: $font-weight-normal;
   color: #6B7280;
   margin: 0;

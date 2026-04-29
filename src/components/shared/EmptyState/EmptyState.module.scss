@@ -46,14 +46,14 @@
 
 
 .title {
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: $font-weight-medium;
   color: $text-light;
   margin-bottom: $spacing-sm;
 }
 
 .description {
-  font-size: 16px;
+  font-size: $font-size-base;
   color: #9CA3AF;
   line-height: 1.6;
   margin-bottom: $spacing-xl;

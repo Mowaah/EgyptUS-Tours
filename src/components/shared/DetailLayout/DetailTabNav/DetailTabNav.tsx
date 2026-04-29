@@ -34,7 +34,10 @@ export default function DetailTabNav({ tabs }: DetailTabNavProps) {
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      const offset = 120; // sticky nav height
+      const isDesktop = window.innerWidth >= 1150;
+      const navHeight = isDesktop ? 0 : 72; // Desktop navbar is no longer sticky
+      const tabNavHeight = 60; 
+      const offset = navHeight + tabNavHeight + 20;
       const top = el.getBoundingClientRect().top + window.scrollY - offset;
       window.scrollTo({ top, behavior: "smooth" });
     }

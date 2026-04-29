@@ -67,9 +67,9 @@
   // When the element first appears it snaps to position (no prior state to animate from).
   // All subsequent left/top/width/height changes are animated by CSS.
   transition: left 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-              top 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-              width 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-              height 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    top 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .wrapRows {
@@ -87,7 +87,7 @@
 .tab {
   padding: 8px 16px;
   border-radius: 80px;
-  font-size: 13px;
+  font-size: $font-size-13;
   font-weight: 500;
   line-height: 1.4;
   letter-spacing: 0.01em;
@@ -103,7 +103,7 @@
 
   @media (min-width: 640px) {
     padding: 10px 20px;
-    font-size: 14px;
+    font-size: $font-size-sm;
   }
 
   @media (min-width: 1024px) {
@@ -118,11 +118,19 @@
   }
 
   &.active {
-    // Background handled by the sliding .indicator
-    background: transparent;
+    // CSS fallback so the active tab always looks correct even before
+    // the JS indicator has measured & positioned itself.
+    background: #DFEAFB;
     color: #0E2851;
-    border-color: transparent;
+    border-color: #2971E6;
     position: relative;
     z-index: 2;
+  }
+
+  // Once the indicator is ready the parent receives [data-indicator-ready].
+  // Hide the CSS fallback and let the sliding pill handle the visual.
+  [data-indicator-ready] &.active {
+    background: transparent;
+    border-color: transparent;
   }
 }

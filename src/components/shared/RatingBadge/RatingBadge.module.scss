@@ -12,11 +12,11 @@
     background: $white;
     padding: 4px 10px;
     gap: 5px;
-    font-size: 14px;
+    font-size: $font-size-sm;
     box-shadow: $shadow-sm;
 
     .reviewCount {
-      font-size: 12px;
+      font-size: $font-size-xs;
     }
   }
 
@@ -24,10 +24,10 @@
     background: rgba(255, 255, 255, 0.95);
     padding: 6px 12px;
     gap: 4px;
-    font-size: 18px;
+    font-size: $font-size-lg;
 
     .reviewCount {
-      font-size: 14px;
+      font-size: $font-size-sm;
     }
   }
 }

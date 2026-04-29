@@ -19,7 +19,7 @@
 }
 
 .cardTitle {
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: 700;
   color: #0E2851;
   margin: 0;
@@ -27,7 +27,7 @@
 }
 
 .cardDesc {
-  font-size: 14px;
+  font-size: $font-size-sm;
   color: #606978;
   margin: 0;
   letter-spacing: 0.01em;
@@ -53,13 +53,13 @@
 }
 
 .label {
-  font-size: 16px;
+  font-size: $font-size-base;
   font-weight: 400;
   color: #606978;
 }
 
 .value {
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: 700;
   color: #0E2851;
   letter-spacing: 0.01em;
@@ -84,21 +84,21 @@
 }
 
 .totalLabel {
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: 700;
   color: #0E2851;
   line-height: 27px;
 }
 
 .perDay {
-  font-size: 13px;
+  font-size: $font-size-13;
   font-weight: 400;
   color: $text-light;
   line-height: 20px;
 }
 
 .totalPrice {
-  font-size: 26px;
+  font-size: $font-size-26;
   font-weight: 700;
   color: $primary;
   line-height: 39px;
@@ -115,7 +115,7 @@
   border-radius: 40px !important;
   height: 48px !important;
   font-weight: 500;
-  font-size: 16px;
+  font-size: $font-size-base;
 
   &:hover {
     background: $secondary-dark !important;

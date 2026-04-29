@@ -86,11 +86,11 @@
 .label {
   font-family: "Trip Sans";
   font-weight: 500;
-  font-size: 13px;
+  font-size: $font-size-13;
   color: #0e2851;
 
   @media (min-width: 768px) {
-    font-size: 14px;
+    font-size: $font-size-sm;
   }
 }
 
@@ -173,12 +173,12 @@
 .typeLabel {
   font-family: "Trip Sans";
   font-weight: 500;
-  font-size: 13px;
+  font-size: $font-size-13;
   line-height: 1.4;
   color: #0e2851;
 
   @media (min-width: 640px) {
-    font-size: 16px;
+    font-size: $font-size-base;
     line-height: 24px;
   }
 }
@@ -246,14 +246,14 @@
 .serviceLabel {
   font-family: "Trip Sans";
   font-weight: 500;
-  font-size: 13px;
+  font-size: $font-size-13;
   color: #0e2851;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 
   @media (min-width: 640px) {
-    font-size: 15px;
+    font-size: $font-size-15;
     white-space: normal;
   }
 }
@@ -261,12 +261,12 @@
 .servicePrice {
   font-family: "Trip Sans";
   font-weight: 600;
-  font-size: 12px;
+  font-size: $font-size-xs;
   color: $secondary;
   flex-shrink: 0;
 
   @media (min-width: 640px) {
-    font-size: 14px;
+    font-size: $font-size-sm;
   }
 }
 

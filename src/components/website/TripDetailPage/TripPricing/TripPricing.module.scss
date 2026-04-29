@@ -27,7 +27,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(354px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 354px), 1fr));
   gap: 32px;
 }
 
@@ -42,7 +42,7 @@
 }
 
 .season {
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: 700;
   color: $dark;
   margin: -4px -20px 12px;
@@ -70,14 +70,14 @@
 }
 
 .tierPrice {
-  font-size: 20px;
+  font-size: $font-size-xl;
   font-weight: $font-weight-bold;
   color: $secondary;
   margin: 0;
 }
 
 .tierLabel {
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: $font-weight-bold;
   color: $dark;
   margin: 0;

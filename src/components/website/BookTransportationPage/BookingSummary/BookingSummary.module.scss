@@ -40,7 +40,7 @@
 .compactTitle {
   display: block;
   max-width: 100%;
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: 700;
   color: #0E2851;
   overflow: hidden;
@@ -48,7 +48,7 @@
   white-space: nowrap;
 
   @media (max-width: 480px) {
-    font-size: 16px;
+    font-size: $font-size-base;
   }
 
   @media (max-width: 360px) {
@@ -64,14 +64,14 @@
 .compactRoute {
   display: block;
   max-width: 100%;
-  font-size: 14px;
+  font-size: $font-size-sm;
   color: #6A7282;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 
   @media (max-width: 480px) {
-    font-size: 13px;
+    font-size: $font-size-13;
   }
 }
 
@@ -83,12 +83,12 @@
 }
 
 .compactTotal {
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: 800;
   color: #FF6600;
 
   @media (max-width: 480px) {
-    font-size: 16px;
+    font-size: $font-size-base;
   }
 }
 
@@ -111,7 +111,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 13px;
+  font-size: $font-size-13;
   font-weight: 500;
   color: #6A7282;
   width: 100%;
@@ -210,22 +210,22 @@
 }
 
 .ratingVal {
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: 700;
   color: #2971E6;
 
   @media (min-width: 640px) {
-    font-size: 16px;
+    font-size: $font-size-base;
   }
 }
 
 .reviews {
-  font-size: 13px;
+  font-size: $font-size-13;
   font-weight: 400;
   color: #6A7282;
 
   @media (min-width: 640px) {
-    font-size: 14px;
+    font-size: $font-size-sm;
   }
 }
 
@@ -311,22 +311,22 @@
 }
 
 .priceLabel {
-  font-size: 13px;
+  font-size: $font-size-13;
   font-weight: 400;
   color: #4A5565;
 
   @media (min-width: 640px) {
-    font-size: 14px;
+    font-size: $font-size-sm;
   }
 }
 
 .priceValue {
-  font-size: 13px;
+  font-size: $font-size-13;
   font-weight: 700;
   color: #0E2851;
 
   @media (min-width: 640px) {
-    font-size: 14px;
+    font-size: $font-size-sm;
   }
 }
 
@@ -378,12 +378,12 @@
 }
 
 .depositLabel {
-  font-size: 13px;
+  font-size: $font-size-13;
   font-weight: 800;
   color: #0E2851;
 
   @media (min-width: 640px) {
-    font-size: 14px;
+    font-size: $font-size-sm;
   }
 }
 
@@ -405,25 +405,25 @@
 }
 
 .remainingNote {
-  font-size: 11px;
+  font-size: $font-size-2xs;
   font-weight: 400;
   color: #6B7280;
   line-height: 1.5;
   max-width: 193px;
 
   @media (min-width: 640px) {
-    font-size: 12px;
+    font-size: $font-size-xs;
   }
 }
 
 .remainingVal {
-  font-size: 11px;
+  font-size: $font-size-2xs;
   font-weight: 400;
   color: #6B7280;
   flex-shrink: 0;
 
   @media (min-width: 640px) {
-    font-size: 12px;
+    font-size: $font-size-xs;
   }
 }
 
@@ -465,11 +465,11 @@
 }
 
 .badgeText {
-  font-size: 13px;
+  font-size: $font-size-13;
   font-weight: 400;
   color: #10B981;
 
   @media (min-width: 640px) {
-    font-size: 14px;
+    font-size: $font-size-sm;
   }
 }

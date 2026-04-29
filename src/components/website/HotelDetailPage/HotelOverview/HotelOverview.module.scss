@@ -41,7 +41,7 @@
 
 .text {
   color: $text-lighter;
-  font-size: 15px;
+  font-size: $font-size-15;
   line-height: 1.8;
   margin: 0;
   border-left: 3px solid #EBEBEB;
@@ -61,14 +61,14 @@
 
 
 .bookTitle {
-  font-size: 20px;
+  font-size: $font-size-xl;
   font-weight: $font-weight-bold;
   color: $dark;
   margin: 0 0 8px;
 }
 
 .bookSubtitle {
-  font-size: 14px;
+  font-size: $font-size-sm;
   color: $text-light;
   line-height: 1.5;
   margin: 0;
@@ -95,19 +95,19 @@
 
 .priceLabel {
   display: block;
-  font-size: 15px;
+  font-size: $font-size-15;
   font-weight: $font-weight-bold;
   color: $dark;
 }
 
 .priceSub {
   display: block;
-  font-size: 12px;
+  font-size: $font-size-xs;
   color: $text-light;
 }
 
 .priceValue {
-  font-size: 24px;
+  font-size: $font-size-2xl;
   font-weight: $font-weight-bold;
   color: $primary;
 }
@@ -118,7 +118,7 @@
 
 .cancelPolicy {
   text-align: center;
-  font-size: 12px;
+  font-size: $font-size-xs;
   color: $text-light;
   margin: 0;
 }
