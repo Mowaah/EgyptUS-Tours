@@ -277,6 +277,12 @@
   gap: 32px;
   padding-bottom: 16px;
   border-bottom: 1px solid #F1F5F9;
+
+  @media (max-width: 768px) {
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
 }
 
 .metaItem {
@@ -285,6 +291,16 @@
   gap: 8px;
   font-size: 15.7px;
   color: $text-lighter;
+
+  @media (max-width: 768px) {
+    font-size: $font-size-13;
+    gap: 4px;
+    
+    img {
+      width: 14px;
+      height: 14px;
+    }
+  }
 }
 
 .detailDesc {
@@ -298,6 +314,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  margin-top: 8px;
 }
 
 .highlightsTitle {
