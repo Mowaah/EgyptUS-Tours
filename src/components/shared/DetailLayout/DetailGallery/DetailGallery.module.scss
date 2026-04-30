@@ -58,12 +58,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2;
+  z-index: 10;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   transition: background $transition-fast;
 
-  &:hover {
+  &:hover,
+  &:hover:not(:disabled) {
     background: $secondary;
+    transform: translateY(calc(-50% - 1px)) !important;
 
     img {
       filter: brightness(0) invert(1);
