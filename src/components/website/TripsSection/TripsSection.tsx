@@ -254,7 +254,7 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
       )}
 
 
-      <div className={styles.container}>
+      <div className={styles.container} data-no-animate>
         {/* ── Toolbar ── */}
         <div className={styles.toolbar}>
           <div>
