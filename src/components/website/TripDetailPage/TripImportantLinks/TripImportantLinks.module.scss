@@ -34,19 +34,25 @@
 
 .pills {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 12px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
 }
 
 .pill {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  border: 1px solid $primary;
-  border-radius: $radius-full;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #C4D6F9;
+  border-radius: 24px;
   color: $primary;
-  background-color: #EAF1FD;
+  background-color: transparent;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   font-family: inherit;
@@ -54,9 +60,18 @@
   text-decoration: none;
   transition: all $transition-base;
 
+  @media (min-width: 768px) {
+    width: auto;
+    padding: 8px 14px;
+    background-color: #EAF1FD;
+    border-color: $primary;
+    border-radius: $radius-full;
+  }
+
   &:hover {
     background: $primary;
     color: $white;
+    border-color: $primary;
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(41, 113, 230, 0.25);
 

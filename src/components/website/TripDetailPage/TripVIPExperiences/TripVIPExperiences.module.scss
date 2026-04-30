@@ -280,7 +280,8 @@
   margin-top: 64px;
 
   @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 }
 
@@ -292,6 +293,14 @@
   gap: 8px;
   padding: 24px;
   border-radius: 24px;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+    
+    &:last-child {
+      grid-column: span 2;
+    }
+  }
 }
 
 .blueBg {

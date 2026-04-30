@@ -44,7 +44,7 @@ $font-size-xs: 0.75rem; // 12px
 $font-size-13: 0.8125rem; // 13px
 $font-size-sm: 0.875rem; // 14px
 $font-size-15: 0.9375rem; // 15px
-$font-size-base: 1rem; // 16px
+$font-size-base: clamp(0.875rem, 1.2vw + 0.5rem, 1rem); // 14px -> 16px
 $font-size-17: 1.0625rem; // 17px
 $font-size-lg: clamp(1rem, 2vw, 1.125rem); // 16px -> 18px
 $font-size-19: clamp(1.125rem, 2.25vw, 1.1875rem); // 18px -> 19px

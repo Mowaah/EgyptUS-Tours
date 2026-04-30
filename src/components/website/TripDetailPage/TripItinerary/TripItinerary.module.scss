@@ -70,6 +70,17 @@
   cursor: pointer;
   position: relative;
   flex: 1;
+
+  &:hover,
+  &:hover:not(:disabled) {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  &:hover:not(.dayBtnActive) .thumbCircle {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  }
 }
 
 .dayLabel {
@@ -327,4 +338,201 @@
     color: $primary;
     flex-shrink: 0;
   }
+}
+
+// ── Layout Toggles ──────────────────────────────────────────────
+.desktopLayout {
+  display: none;
+
+  @media (min-width: 992px) {
+    display: block;
+  }
+}
+
+.mobileLayout {
+  display: block;
+
+  @media (min-width: 992px) {
+    display: none;
+  }
+}
+
+// ── MOBILE LAYOUT (Vertical Accordion) ──────────────────────────
+.mobileTimelineContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileDayWrapper {
+  display: flex;
+  gap: 16px;
+  position: relative;
+}
+
+.mobileTimelineGraphics {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.mobileLine {
+  position: absolute;
+  top: 10px;
+  bottom: -30px; // Connect to the next item
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  background: #E2E8F0;
+  z-index: 1;
+}
+
+// Remove the line extension on the last item
+.mobileDayWrapper:last-child .mobileLine {
+  bottom: auto;
+  height: 100%;
+}
+
+.mobileDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #CBD5E1;
+  position: relative;
+  z-index: 2;
+  margin-top: 5px;
+}
+
+.mobileDotActive {
+  background: $secondary;
+  transform: scale(1.2);
+  box-shadow: 0 0 0 4px rgba(255, 102, 0, 0.1);
+}
+
+.mobileDayContent {
+  flex: 1;
+  min-width: 0;
+  padding-bottom: 24px;
+}
+
+.mobileDayLabel {
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.mobileDayLabelActive {
+  color: $secondary;
+}
+
+.mobileCard {
+  background: $white;
+  border: 1px solid #F1F5F9;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all $transition-base;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.mobileCardActive {
+  border-color: $secondary;
+  box-shadow: 0 8px 24px rgba(255, 102, 0, 0.08);
+  cursor: default;
+}
+
+// Collapsed View
+.mobileCollapsed {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  gap: 12px;
+}
+
+.mobileCollapsedThumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.mobileCollapsedText {
+  flex: 1;
+  min-width: 0;
+}
+
+.mobileCollapsedTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobileCollapsedSubtitle {
+  font-size: $font-size-xs;
+  color: $text-lighter;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobileChevron {
+  color: #9CA3AF;
+  flex-shrink: 0;
+  transition: transform $transition-fast;
+}
+
+// Expanded View
+.mobileExpanded {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileExpandedImg {
+  position: relative;
+  height: 200px;
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
+}
+
+.mobileValueBadge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: $primary;
+  color: $white;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  padding: 6px 12px;
+  border-radius: $radius-full;
+  z-index: 2;
+}
+
+.mobileImgOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px 16px 16px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+}
+
+.mobileImgTitle {
+  font-size: $font-size-lg;
+  color: $white;
+  font-weight: $font-weight-bold;
+  margin: 0;
+}
+
+.mobileExpandedInfo {
+  padding: 16px;
 }
