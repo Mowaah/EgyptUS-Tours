@@ -186,114 +186,114 @@ export default function Navbar() {
 
   return (
     <>
-    <nav
-      className={`${styles.navbar}${shouldShowScrolled ? ` ${styles.scrolled}` : ""}${lightNavBackground ? ` ${styles.lightPage}` : ""}${isStatic ? ` ${styles.static}` : ""}${mobileOpen ? ` ${styles.drawerOpen}` : ""}${hideSticky ? ` ${styles.hideSticky}` : ""}`}
-    >
-      <div className={styles.container}>
-        <Link href="/" className={styles.logo} aria-label="EgyptUS Tours — Home">
-          <Image
-            src="/images/logo.svg"
-            alt="EgyptUS Tours"
-            width={51}
-            height={62}
-            priority
-          />
-        </Link>
+      <nav
+        className={`${styles.navbar}${shouldShowScrolled ? ` ${styles.scrolled}` : ""}${lightNavBackground ? ` ${styles.lightPage}` : ""}${isStatic ? ` ${styles.static}` : ""}${mobileOpen ? ` ${styles.drawerOpen}` : ""}${hideSticky ? ` ${styles.hideSticky}` : ""}`}
+      >
+        <div className={styles.container}>
+          <Link href="/" className={styles.logo} aria-label="EgyptUS Tours — Home">
+            <Image
+              src={shouldShowScrolled || lightNavBackground ? "/images/logo-black.svg" : "/images/logo-white.svg"}
+              alt="EgyptUS Tours"
+              width={150}
+              height={30}
+              priority
+            />
+          </Link>
 
-        {!isBookingPage && (
-          <button
-            className={`${styles.hamburger} ${mobileOpen ? styles.hamburgerOpen : ""}`}
-            onClick={() => setMobileOpen((o) => !o)}
-            aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileOpen}
-            aria-controls="mobile-drawer"
-          >
-            <span />
-            <span />
-            <span />
-          </button>
-        )}
+          {!isBookingPage && (
+            <button
+              className={`${styles.hamburger} ${mobileOpen ? styles.hamburgerOpen : ""}`}
+              onClick={() => setMobileOpen((o) => !o)}
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-drawer"
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+          )}
 
-        {/* Desktop links */}
-        <ul className={styles.links}>
-          {NAV_LINKS.map((link) => {
-            const isActive = pathname === link.href;
-            const usePrimaryDropdownArrow = isActive && shouldShowScrolled;
-            const useDarkDropdownArrow = !isActive && (shouldShowScrolled || lightNavBackground);
-            const useGlass = isActive && !shouldShowScrolled && !lightNavBackground;
+          {/* Desktop links */}
+          <ul className={styles.links}>
+            {NAV_LINKS.map((link) => {
+              const isActive = pathname === link.href;
+              const usePrimaryDropdownArrow = isActive && shouldShowScrolled;
+              const useDarkDropdownArrow = !isActive && (shouldShowScrolled || lightNavBackground);
+              const useGlass = isActive && !shouldShowScrolled && !lightNavBackground;
 
-            const content = (
-              <>
-                {link.label}
-                {link.hasDropdown && (
-                  <Image
-                    src={
-                      usePrimaryDropdownArrow
-                        ? "/images/arrows/chevron-blue.svg"
-                        : useDarkDropdownArrow
-                          ? "/images/arrows/arrow-down2.svg"
-                          : "/images/arrows/arrow-down2-white.svg"
-                    }
-                    alt=""
-                    width={10}
-                    height={10}
-                  />
-                )}
-              </>
-            );
+              const content = (
+                <>
+                  {link.label}
+                  {link.hasDropdown && (
+                    <Image
+                      src={
+                        usePrimaryDropdownArrow
+                          ? "/images/arrows/chevron-blue.svg"
+                          : useDarkDropdownArrow
+                            ? "/images/arrows/arrow-down2.svg"
+                            : "/images/arrows/arrow-down2-white.svg"
+                      }
+                      alt=""
+                      width={10}
+                      height={10}
+                    />
+                  )}
+                </>
+              );
 
-            return (
-              <li key={link.href} className={styles.linkItem}>
-                {useGlass ? (
-                  <GlassCard
-                    as={Link}
-                    href={link.href}
-                    className={`${styles.link} ${styles.active}`}
-                  >
-                    {content}
-                  </GlassCard>
-                ) : (
-                  <Link
-                    href={link.href}
-                    className={`${styles.link} ${isActive ? styles.active : ""} ${link.hasDropdown ? styles.hasDropdownLink : ""}`}
-                  >
-                    {content}
-                  </Link>
-                )}
-                {link.hasDropdown && (
-                  <div className={styles.dropdownWrapper}>
-                    <div className={styles.dropdownCard}>
-                      <div className={styles.dropdownGrid}>
-                        {(link.label === "Destinations" ? DESTINATION_LINKS : TRIP_LINKS).map((opt, i) => (
-                          <Link key={i} href={opt.href} className={styles.dropdownOption}>
-                            <Image src="/images/➢.svg" alt="" width={15} height={12} className={styles.dropdownIcon} />
-                            <span className={styles.dropdownText}>{opt.label}</span>
-                          </Link>
-                        ))}
+              return (
+                <li key={link.href} className={styles.linkItem}>
+                  {useGlass ? (
+                    <GlassCard
+                      as={Link}
+                      href={link.href}
+                      className={`${styles.link} ${styles.active}`}
+                    >
+                      {content}
+                    </GlassCard>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className={`${styles.link} ${isActive ? styles.active : ""} ${link.hasDropdown ? styles.hasDropdownLink : ""}`}
+                    >
+                      {content}
+                    </Link>
+                  )}
+                  {link.hasDropdown && (
+                    <div className={styles.dropdownWrapper}>
+                      <div className={styles.dropdownCard}>
+                        <div className={styles.dropdownGrid}>
+                          {(link.label === "Destinations" ? DESTINATION_LINKS : TRIP_LINKS).map((opt, i) => (
+                            <Link key={i} href={opt.href} className={styles.dropdownOption}>
+                              <Image src="/images/➢.svg" alt="" width={15} height={12} className={styles.dropdownIcon} />
+                              <span className={styles.dropdownText}>{opt.label}</span>
+                            </Link>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
-              </li>
-            );
-          })}
-        </ul>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
 
-        <div className={styles.cta}>
-          {isBookingPage ? (
-            <div className={styles.ctaGhost} aria-hidden="true" inert>
-              {planTripButton}
-            </div>
-          ) : (
-            planTripButton
-          )}
-          {!isBookingPage && (
-            <UserMenu scrolled={shouldShowScrolled} lightNavBackground={lightNavBackground} />
-          )}
+          <div className={styles.cta}>
+            {isBookingPage ? (
+              <div className={styles.ctaGhost} aria-hidden="true" inert>
+                {planTripButton}
+              </div>
+            ) : (
+              planTripButton
+            )}
+            {!isBookingPage && (
+              <UserMenu scrolled={shouldShowScrolled} lightNavBackground={lightNavBackground} />
+            )}
+          </div>
         </div>
-      </div>
 
-    </nav>
+      </nav>
 
       {/* Drawer + backdrop via portal — outside <nav> so no parent transform
           can affect their position:fixed anchoring. */}

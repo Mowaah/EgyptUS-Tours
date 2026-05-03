@@ -2,7 +2,7 @@
 @use "@/styles/mixins" as *;
 
 .section {
-  padding: 64px 0;
+  @include section-padding;
 }
 
 .header {
@@ -29,15 +29,13 @@
   gap: 32px;
   align-items: flex-start;
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1023px) {
     grid-template-columns: 1fr;
   }
 }
 
-// ── Sidebar Filters ──
 .sidebar {
-  display: flex;
-  flex-direction: column;
+  width: 100%;
 }
 
 // ── Rooms List ──
@@ -65,6 +63,9 @@
 
   @media (max-width: 768px) {
     flex-direction: column;
+    padding: 16px;
+    gap: 16px;
+    align-items: stretch;
   }
 }
 
@@ -220,7 +221,15 @@
     padding-top: 16px;
     width: 100%;
     align-self: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
+}
+
+.priceInfo {
+  display: flex;
+  flex-direction: column;
 }
 
 .priceLabel {

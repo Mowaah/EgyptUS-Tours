@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Hotel } from "@/types";
 import { PageHeader, DetailGallery, DetailHeroBar, DetailTabNav, ReviewSection } from "@/components/shared";
 import Image from "next/image";
@@ -21,6 +24,9 @@ const HOTEL_TABS = [
 ];
 
 export default function HotelDetailPage({ hotel }: HotelDetailPageProps) {
+  const [isFavorite, setIsFavorite] = useState(hotel.isFavorite ?? false);
+  const toggleFavorite = () => setIsFavorite((prev) => !prev);
+
   return (
     <div className={styles.page}>
       <PageHeader
@@ -30,20 +36,30 @@ export default function HotelDetailPage({ hotel }: HotelDetailPageProps) {
           { label: "Hotel Details", isCurrent: true },
         ]}
         backButton={{ text: "Back To Hotels", href: "/hotels" }}
+        showMobileActions={true}
+        isFavorite={isFavorite}
+        onFavoriteToggle={toggleFavorite}
       />
 
       {/* ── Gallery & Hero Bar ── */}
       <div className={styles.heroSection}>
         <div className={styles.galleryWrap}>
-          <DetailGallery images={hotel.images ?? [hotel.image]} title={hotel.name} />
+          <DetailGallery 
+            images={hotel.images ?? [hotel.image]} 
+            title={hotel.name}
+            rating={hotel.rating ?? 0}
+            reviewCount={hotel.reviews ?? 0}
+            description={hotel.description}
+          />
 
           <div className={styles.heroOverlay}>
             <DetailHeroBar
               title={hotel.name}
               description={hotel.description}
-              rating={hotel.rating}
-              reviewCount={hotel.reviews}
-              isFavorite={hotel.isFavorite}
+              rating={hotel.rating ?? 0}
+              reviewCount={hotel.reviews ?? 0}
+              isFavorite={isFavorite}
+              onFavoriteToggle={toggleFavorite}
             >
               <Button
                 variant="primary"

@@ -21,18 +21,18 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 $spacing-md;
+  padding: 0 $spacing-sm;
   width: 100%;
-  max-width: 1280px;
+  max-width: 1600px;
   min-height: 32px;
   gap: $spacing-sm;
 
-  @include sm {
+  @include md {
     padding: 0 $spacing-lg;
   }
 
-  @include md {
-    padding: 0 $spacing-xl;
+  @include lg {
+    padding: 0 $spacing-md;
   }
 }
 

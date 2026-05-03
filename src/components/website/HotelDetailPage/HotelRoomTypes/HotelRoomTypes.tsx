@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
 import { Hotel, HotelRoom } from "@/types";
-import { FilterGroup, RadioFilterList, PriceRangeFilter } from "@/components/shared";
+import { FilterGroup, RadioFilterList, PriceRangeFilter, EmptyState, Button, FilterSidebar } from "@/components/shared";
 import styles from "./HotelRoomTypes.module.scss";
 
 interface HotelRoomTypesProps {
@@ -24,13 +24,28 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
     price: true,
   });
 
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (roomType !== "All") count++;
+    if (roomView !== "Sea View") count++;
+    if (priceRange.min !== 1 || priceRange.max !== 12000) count++;
+    return count;
+  }, [roomType, roomView, priceRange]);
+
+  const handleReset = () => {
+    setRoomType("All");
+    setRoomView("Sea View");
+    setPriceRange({ min: 1, max: 12000 });
+  };
+
   const rooms = hotel.hotelRooms ?? [];
 
   // Filtering logic
   const filteredRooms = rooms.filter(room => {
     const matchesType = roomType === "All" || room.type === roomType;
-    const matchesView = roomView === "" || room.view === roomView; // For simplicity, just one view for now
-    return matchesType && matchesView;
+    const matchesView = roomView === "" || room.view === roomView;
+    const matchesPrice = room.pricePerNight >= priceRange.min && room.pricePerNight <= priceRange.max;
+    return matchesType && matchesView && matchesPrice;
   });
 
   const toggleExpand = (key: keyof typeof expanded) => {
@@ -48,7 +63,13 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
 
       <div className={styles.layout}>
         {/* ── Sidebar Filters ── */}
-        <aside className={styles.sidebar}>
+        <FilterSidebar
+          activeCount={activeFilterCount}
+          totalResults={filteredRooms.length}
+          resultsLabel="rooms"
+          onReset={handleReset}
+          id="hotel-rooms-sidebar"
+        >
           {/* Type of Room */}
           <FilterGroup
             title="Type Of Room"
@@ -91,13 +112,22 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
               onChange={(newMin, newMax) => setPriceRange({ min: newMin, max: newMax })}
             />
           </FilterGroup>
-        </aside>
+        </FilterSidebar>
 
         {/* ── Rooms List ── */}
         <div className={styles.roomsList}>
-          {filteredRooms.map(room => (
-            <RoomCard key={room.id} room={room} />
-          ))}
+          {filteredRooms.length > 0 ? (
+            filteredRooms.map(room => (
+              <RoomCard key={room.id} room={room} />
+            ))
+          ) : (
+            <EmptyState 
+              title="No rooms found"
+              description="Try adjusting your filters to find available rooms."
+              onButtonClick={handleReset}
+              buttonText="Reset all filters"
+            />
+          )}
         </div>
       </div>
     </section>
@@ -151,10 +181,12 @@ function RoomCard({ room }: { room: HotelRoom }) {
 
       {/* ── Price ── */}
       <div className={styles.roomPrice}>
-        <span className={styles.priceLabel}>Price</span>
-        <div className={styles.priceValue}>
-          <span className={styles.amount}>${room.pricePerNight}</span>
-          <span className={styles.per}>/per night</span>
+        <div className={styles.priceInfo}>
+          <span className={styles.priceLabel}>Start From</span>
+          <div className={styles.priceValue}>
+            <span className={styles.amount}>${room.pricePerNight?.toLocaleString()}</span>
+            <span className={styles.per}>Per Night</span>
+          </div>
         </div>
       </div>
     </div>

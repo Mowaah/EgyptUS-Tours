@@ -23,9 +23,9 @@ const NAV_LINKS: NavLinksType = {
     { label: "Articles", href: "/articles" },
   ],
   Contact: [
-    { label: "Phone:", value: "+201526874984" },
-    { label: "Email:", value: "info@Yosra.com" },
-    { label: "Address:", value: "Nasar City, Egypt" },
+    { label: "Phone:", value: "+201111400212" },
+    { label: "Email:", value: "info@egyptustours.com" },
+    { label: "Address:", value: "643 Hadayk October, Giza" },
   ],
   "Customer Support": [
     { label: "Terms & Conditions", href: "/terms" },
@@ -53,7 +53,7 @@ const SOCIALS = [
   {
     href: "#",
     label: "Facebook",
-    icon: <Image src="/images/facebook.svg" alt="Facebook" width={18} height={18} />,
+    icon: <Image src="/images/facebook.svg" alt="Facebook" width={19} height={19} />,
   },
   {
     href: "#",
@@ -68,7 +68,9 @@ export default function Footer() {
       <div className={styles.container}>
         <div className={styles.top}>
           <div className={styles.brand}>
-            <Image src="/images/logo.svg" alt="Logo" width={84} height={84} className={styles.logo} />
+            <Link href="/" className={styles.logoLink}>
+              <Image src="/images/logo-blue.svg" alt="Logo" width={150} height={30} className={styles.logo} />
+            </Link>
             <p className={styles.tagline}>
               Discover unforgettable travel experiences across Egypt and worldwide, designed with care, comfort, and local expertise.
             </p>
@@ -110,7 +112,17 @@ export default function Footer() {
         </div>
 
         <div className={styles.divider} />
-        <p className={styles.copyright}>Copyright © 2026 All Rights Reserved.</p>
+        <p className={styles.copyright}>
+          © 2026 All Rights Reserved | Powered by{" "}
+          <a
+            href="https://devoraa.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.poweredBy}
+          >
+            Devora
+          </a>
+        </p>
       </div>
     </footer>
   );

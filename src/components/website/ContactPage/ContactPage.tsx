@@ -8,19 +8,19 @@ export default function ContactPage() {
   const contactInfo = [
     {
       type: "Address",
-      value: "Nasr City, Cairo",
+      value: "643 Hadayk October, Giza",
       subtitle: "Egypt — 11371",
       icon: "/images/location-blue.svg",
     },
     {
       type: "Phone",
-      value: "+20 152 6874 984",
-      subtitle: "Sun – Thu, 9am – 6pm",
+      value: "+201111400212",
+      subtitle: "Sun - Thu, 9am - 6pm",
       icon: "/images/phone.svg",
     },
     {
       type: "Email",
-      value: "info@egyptus.io",
+      value: "info@egyptustours.com",
       subtitle: "We reply within 24 hours",
       icon: "/images/email.svg",
     },
@@ -66,10 +66,9 @@ export default function ContactPage() {
 
           <div className={styles.mapSide}>
             <div className={styles.mapContainer}>
-              {/* Using a placeholder for map but it looks real */}
               <iframe
                 title="Map"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d110502.60389656463!2d31.188423450000003!3d30.0594838!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14583e232145781d%3A0x67396116827054f!2sNasr%20City%2C%20Cairo%20Governorate!5e0!3m2!1sen!2seg!4v1713650000000!5m2!1sen!2seg"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3455.6087802888314!2d31.1292966!3d29.9906713!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1458459cf6d44e31%3A0x181b3a68212ce95c!2s643%20Hadayek%20Al%20Ahram%2C%20Kafr%20Nassar%2C%20Al%20Haram%2C%20Giza%20Governorate%203515001%2C%20Egypt!5e0!3m2!1sen!2sus!4v1777836437669!5m2!1sen!2sus"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
@@ -78,9 +77,9 @@ export default function ContactPage() {
               ></iframe>
 
               <div className={styles.mapOverlay}>
-                <span className={styles.overlayText}>Nasr City, Cairo Egypt — 11371</span>
+                <span className={styles.overlayText}>643 Hadayk October, Giza — Egypt</span>
                 <a
-                  href="https://www.google.com/maps/search/?api=1&query=Nasr+City,+Cairo,+Egypt"
+                  href="https://www.google.com/maps/search/?api=1&query=643+Hadayk+October,+Giza,+Egypt"
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.openMapsBtn}

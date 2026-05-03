@@ -1,0 +1,180 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.mobileToggleBar {
+  display: none;
+
+  @media (max-width: 1023px) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 4px;
+  }
+}
+
+.toggleBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $primary;
+  border: 1px solid $primary;
+  border-radius: 16px;
+  background: transparent;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: rgba(41, 113, 230, 0.06);
+  }
+}
+
+.badge {
+  min-width: 1.4em;
+  height: 1.4em;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: $secondary;
+  color: $white;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.resultsCount {
+  font-size: $font-size-sm;
+  color: $text-light;
+  margin: 0;
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 199;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+
+  @media (max-width: 1023px) {
+    &.overlayOpen {
+      display: block;
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}
+
+.sidebar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 1023px) {
+    position: fixed;
+    z-index: 200;
+    top: 0;
+    right: -120%;
+    width: min(100vw - 40px, 400px);
+    max-width: 100%;
+    height: 100dvh;
+    background: $white;
+    box-shadow: -8px 0 32px rgba(14, 40, 81, 0.15);
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0 16px;
+    transition: right 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+
+    &.sidebarOpen {
+      right: 0;
+      pointer-events: auto;
+    }
+  }
+}
+
+.mobileHeader {
+  display: none;
+
+  @media (max-width: 1023px) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 0 14px;
+    margin-bottom: 4px;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: $white;
+    border-bottom: 1px solid $border;
+  }
+}
+
+.mobileTitle {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: $font-weight-bold;
+  color: $dark;
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(14, 40, 81, 0.06);
+  color: $dark;
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: rgba(14, 40, 81, 0.1);
+  }
+}
+
+.content {
+  flex: 1;
+}
+
+.mobileFooter {
+  display: none;
+
+  @media (max-width: 1023px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    margin-top: 24px;
+    padding: 16px 0 calc(16px + env(safe-area-inset-bottom, 0));
+    background: $white;
+    border-top: 1px solid $border;
+  }
+}
+
+.resetBtn {
+  border: none;
+  background: none;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $text-muted;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px;
+
+  &:hover {
+    color: $dark;
+  }
+}

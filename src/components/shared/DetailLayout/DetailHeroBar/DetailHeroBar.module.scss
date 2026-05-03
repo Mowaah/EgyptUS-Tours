@@ -7,7 +7,6 @@
   box-shadow: $shadow-card;
   display: flex;
   flex-direction: column;
-  gap: 16px;
 
   @media (max-width: 1023px) {
     display: none;
@@ -24,8 +23,6 @@
   align-items: flex-start;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 18px;
 }
 
 .meta {
@@ -152,12 +149,12 @@
 .mobileBrochureBtn {
   margin-top: 16px;
   width: 100%;
-  
+
   @media (min-width: 1024px) {
     display: none;
   }
-  
-  > * {
+
+  >* {
     width: 100%;
   }
 }

@@ -18,15 +18,24 @@
 .top {
   display: grid;
   grid-template-columns: 1fr;
-  gap: $spacing-2xl;
+  gap: $spacing-xl;
 
   @include md {
-    gap: $spacing-3xl;
+    gap: $spacing-2xl;
   }
 
   @include lg {
     grid-template-columns: 320px 1fr;
-    gap: $spacing-4xl;
+    gap: $spacing-3xl;
+  }
+}
+
+.logoLink {
+  display: block;
+  transition: opacity $transition-fast;
+
+  &:hover {
+    opacity: 0.8;
   }
 }
 
@@ -41,8 +50,12 @@
 }
 
 .logo {
-  width: clamp(64px, 10vw, 84px);
-  height: auto;
+  display: block;
+  width: 150px;
+  height: 30px;
+  margin: 0;
+  object-fit: contain;
+  object-position: left center;
 }
 
 .tagline {
@@ -82,21 +95,20 @@
 }
 
 .socialIcon {
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 40px;
+  min-height: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: $white;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 80px;
   transition: opacity $transition-fast;
 
   &:hover {
     opacity: 0.8;
   }
 
-  img {
-    filter: brightness(0) invert(1);
-  }
 }
 
 .linksGrid {
@@ -110,8 +122,9 @@
   }
 
   @include md {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: $spacing-2xl;
+    grid-template-columns: repeat(4, auto);
+    justify-content: space-between;
+    gap: $spacing-xl;
   }
 }
 
@@ -163,8 +176,9 @@
 
 .contactItem {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px;
   min-width: 0;
 }
 
@@ -192,10 +206,22 @@
 }
 
 .copyright {
-  font-size: $font-size-2xs;
+  font-size: $font-size-xs;
   font-weight: $font-weight-normal;
   color: $white;
   text-align: center;
   margin: 0;
   line-height: 1.5;
+
+  .poweredBy {
+    color: $primary;
+    font-weight: $font-weight-semibold;
+    text-decoration: none;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $primary-light;
+      text-decoration: underline;
+    }
+  }
 }

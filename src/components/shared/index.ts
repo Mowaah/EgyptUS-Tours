@@ -49,3 +49,4 @@ export type { Review } from "./ReviewSection/ReviewSection";
 export { default as MultiSelectDropdown } from "./MultiSelectDropdown/MultiSelectDropdown";
 export { default as Pagination } from "./Pagination/Pagination";
 export { default as SearchContainer } from "./SearchContainer/SearchContainer";
+export { default as FilterSidebar } from "./FilterSidebar/FilterSidebar";
