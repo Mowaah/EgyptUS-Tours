@@ -29,6 +29,7 @@ export default function ContactPage() {
   return (
     <div className={styles.page}>
       <PageHeader
+        className={styles.pageHeader}
         title="Contact Us"
         subtitle="Please read carefully to understand your rights, responsibilities, and the rules of using our services."
         subtitleMaxWidth="750px"
