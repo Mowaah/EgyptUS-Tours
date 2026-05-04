@@ -16,7 +16,9 @@
 }
 
 .pageHeader {
-  padding-bottom: 20px !important;
+  @media (min-width: 640px) {
+    padding-bottom: 10px;
+  }
 }
 
 .heroSection {

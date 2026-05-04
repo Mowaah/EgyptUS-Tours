@@ -84,7 +84,13 @@ export default function HotelModal({ hotel, onClose }: HotelModalProps) {
                 const isLast = i === 5 && remainingPhotos > 0;
                 return (
                   <div key={i} className={styles.photoWrap}>
-                    <Image src={photo} alt={`${hotel.name} photo ${i + 1}`} fill sizes="(max-width: 768px) 50vw, 33vw" className={styles.photo} />
+                    <Image 
+                      src={photo} 
+                      alt={`${hotel.name} photo ${i + 1}`} 
+                      fill 
+                      sizes="(max-width: 480px) 100vw, (max-width: 860px) 50vw, 300px" 
+                      className={styles.photo} 
+                    />
                     {isLast && (
                       <div className={styles.moreOverlay}>
                         +{remainingPhotos}

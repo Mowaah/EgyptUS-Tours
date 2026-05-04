@@ -4,14 +4,14 @@
 .headerWrapper {
   position: relative;
   width: 100%;
-  padding: 24px 0;
+  padding: 18px 0;
 
   @media (min-width: 640px) {
-    padding: 32px 0;
+    padding: 24px 0;
   }
 
   @media (min-width: 1024px) {
-    padding: 60px 0;
+    padding: 36px 0;
   }
 }
 
@@ -59,7 +59,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 
   @media (min-width: 768px) {
     margin-bottom: 24px;
@@ -71,7 +71,11 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
+
+  @media (min-width: 768px) {
+    margin-bottom: 12px;
+  }
 }
 
 .mobileActions {
@@ -129,6 +133,7 @@
 }
 
 .favoriteActive {
+
   &:hover .favoriteIcon path,
   .favoriteIcon path {
     fill: $danger;
@@ -139,21 +144,28 @@
 .backButton {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
+  gap: 6px;
+  padding: 6px 10px;
   background: $white;
   border: 1px solid $primary;
   border-radius: $radius-full;
   color: $primary;
-  font-size: $font-size-xs;
+  font-size: 0.75rem;
   font-weight: $font-weight-medium;
   cursor: pointer;
   transition: background $transition-fast;
   text-decoration: none;
   margin-bottom: 0;
+  white-space: nowrap;
+
+  @media (min-width: 640px) {
+    gap: 8px;
+    padding: 8px 14px;
+    font-size: $font-size-xs;
+  }
 
   @media (min-width: 768px) {
-    padding: 10px 14px;
+    padding: 10px 16px;
     font-size: $font-size-sm;
   }
 
@@ -165,10 +177,22 @@
 .backArrow {
   transform: rotate(180deg);
   display: block;
+  width: 18px;
+  height: 18px;
+
+  @media (min-width: 640px) {
+    width: 20px;
+    height: 20px;
+  }
+
+  @media (min-width: 768px) {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .breadcrumbComp {
-  margin-bottom: 12px;
+  margin-bottom: 0;
 }
 
 .title {

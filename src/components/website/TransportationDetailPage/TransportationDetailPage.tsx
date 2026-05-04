@@ -52,12 +52,19 @@ export default function TransportationDetailPage({ vehicleId }: TransportationDe
           { label: "Details", isCurrent: true },
         ]}
         backButton={{ text: "Transportation", href: "/transportation" }}
+        showMobileActions={true}
       />
 
       {/* ── Gallery & Hero Bar ── */}
       <div className={styles.heroSection}>
         <div className={styles.galleryWrap}>
-          <DetailGallery images={vehicle.images} title={vehicle.title} />
+          <DetailGallery 
+            images={vehicle.images} 
+            title={vehicle.title} 
+            rating={vehicle.rating}
+            reviewCount={vehicle.reviews}
+            description={vehicle.description}
+          />
 
           <div className={styles.heroOverlay}>
             <DetailHeroBar

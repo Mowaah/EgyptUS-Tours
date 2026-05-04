@@ -3,19 +3,27 @@
 .wrapper {
   background: white;
   border: 1px solid #F4F4F4;
-  border-radius: 24px;
+  border-radius: 16px;
   width: 100%;
   max-width: 403px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+
+  @media (min-width: 768px) {
+    border-radius: 24px;
+  }
 }
 
 .header {
-  padding: 24px 24px 20px;
+  padding: 20px 20px 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  @media (min-width: 768px) {
+    padding: 24px 24px 20px;
+  }
 }
 
 .cardTitle {
@@ -40,10 +48,14 @@
 }
 
 .rowsSection {
-  padding: 24px 42px 16px;
+  padding: 20px 24px 12px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  @media (min-width: 768px) {
+    padding: 24px 42px 16px;
+  }
 }
 
 .row {
@@ -66,16 +78,25 @@
 }
 
 .totalContainer {
-  padding: 0 24px;
+  padding: 0 16px;
+
+  @media (min-width: 768px) {
+    padding: 0 24px;
+  }
 }
 
 .totalBox {
   background: #F9FAFB;
-  border-radius: 24px;
-  padding: 12px;
+  border-radius: 16px;
+  padding: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  @media (min-width: 768px) {
+    border-radius: 24px;
+    padding: 12px;
+  }
 }
 
 .totalLabelWrap {
@@ -105,9 +126,14 @@
 }
 
 .footer {
-  padding: 16px 24px 24px;
+  padding: 16px 20px 20px;
   border-top: 1px solid rgba(102, 107, 109, 0.12);
-  margin-top: 16px;
+  margin-top: 12px;
+
+  @media (min-width: 768px) {
+    padding: 16px 24px 24px;
+    margin-top: 16px;
+  }
 }
 
 .bookBtn {

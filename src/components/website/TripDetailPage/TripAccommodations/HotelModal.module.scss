@@ -13,34 +13,44 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 16px;
+
+  @media (min-width: 768px) {
+    padding: 24px;
+  }
 }
 
 .dialog {
   background: $white;
-  border-radius: 20px;
+  border-radius: 16px;
   width: 100%;
   max-width: 896px;
-  max-height: calc(100vh - 48px);
+  max-height: calc(100vh - 32px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   position: relative;
   box-shadow: 0px 20px 25px -5px rgba(0, 0, 0, 0.1), 0px 8px 10px -6px rgba(0, 0, 0, 0.1);
   transform: translateZ(0);
+
+  @media (min-width: 768px) {
+    border-radius: 20px;
+    max-height: calc(100vh - 48px);
+  }
 }
 
 .hero {
   position: relative;
-  height: 260px;
+  height: 200px;
   width: 100%;
   flex-shrink: 0;
   display: flex;
   align-items: flex-end;
-  padding: 16px 32px;
+  padding: 16px 20px;
 
   @media (min-width: 768px) {
     height: 320px;
+    padding: 16px 32px;
   }
 }
 
@@ -53,8 +63,12 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 160px;
+  height: 120px;
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(23, 63, 128, 0.26) 50%, rgba(23, 63, 128, 0.8) 100%);
+
+  @media (min-width: 768px) {
+    height: 160px;
+  }
 }
 
 .heroContent {
@@ -64,7 +78,11 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 16px;
+  gap: 12px;
+
+  @media (min-width: 768px) {
+    gap: 16px;
+  }
 }
 
 .heroText {
@@ -73,12 +91,13 @@
 }
 
 .hotelName {
-  font-size: $font-size-3xl;
+  font-size: $font-size-2xl;
   font-weight: $font-weight-bold;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 
   @media (min-width: 768px) {
     font-size: $font-size-28;
+    margin-bottom: 8px;
   }
 }
 
@@ -92,10 +111,10 @@
 
 .closeBtn {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 48px;
-  height: 48px;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: $white;
   border: none;
@@ -107,18 +126,39 @@
   box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1);
   transition: background-color 0.2s;
 
+  @media (min-width: 768px) {
+    top: 16px;
+    right: 16px;
+    width: 48px;
+    height: 48px;
+  }
+
+  img {
+    width: 18px;
+    height: 18px;
+    @media (min-width: 768px) {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
   &:hover {
     background: #f3f4f6;
   }
 }
 
 .body {
-  padding: 32px;
+  padding: 20px;
   overflow-y: auto;
   overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
+
+  @media (min-width: 768px) {
+    padding: 32px;
+    gap: 32px;
+  }
 
   /* Custom Scrollbar */
   &::-webkit-scrollbar {
@@ -169,31 +209,39 @@
 }
 
 .sectionTitle {
-  font-size: $font-size-xl;
+  font-size: $font-size-lg;
   font-weight: $font-weight-bold;
   color: $dark;
+
+  @media (min-width: 768px) {
+    font-size: $font-size-xl;
+  }
 }
 
 .photoGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   gap: 12px;
-  justify-content: center;
+
+  @media (min-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
   @media (min-width: 860px) {
-    grid-template-columns: repeat(3, 270px);
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 .photoWrap {
   position: relative;
   width: 100%;
-  height: 244px;
-  border-radius: 16px;
+  height: 200px;
+  border-radius: 12px;
   overflow: hidden;
 
   @media (min-width: 768px) {
-    width: 270px;
+    height: 244px;
+    border-radius: 16px;
   }
 }
 
@@ -230,39 +278,57 @@
 
 .amenityGrid {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 16px;
-
-  @media (min-width: 640px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
 
   @media (min-width: 768px) {
     grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
   }
 }
 
 .amenityItem {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   background: rgba(249, 252, 255, 0.79);
   border: 1px solid #F3F4F6;
   border-radius: 100px;
-  padding: 13px;
+  padding: 8px 10px;
   font-weight: $font-weight-medium;
-  font-size: $font-size-sm;
+  font-size: $font-size-xs;
   color: #364153;
+
+  @media (min-width: 768px) {
+    padding: 13px;
+    font-size: $font-size-sm;
+    gap: 12px;
+  }
 }
 
 .amenityIcon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   background-color: #EAF1FD;
   border: 2px solid #C7DBFF;
   border-radius: 50%;
   flex-shrink: 0;
+
+  img {
+    width: 10px;
+    height: 10px;
+
+    @media (min-width: 768px) {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    width: 24px;
+    height: 24px;
+  }
 }

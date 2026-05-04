@@ -3,16 +3,26 @@
 
 .page {
   background-color: $background;
-  padding-bottom: 80px;
+  padding-bottom: 60px;
+
+  @media (min-width: 768px) {
+    padding-bottom: 80px;
+  }
+}
+
+.container {
+  @include container;
 }
 
 .pageHeader {
-  padding-bottom: 20px !important;
+  @media (min-width: 640px) {
+    padding-bottom: 10px;
+  }
 }
 
 .heroSection {
   position: relative;
-  margin-bottom: 120px;
+  margin-bottom: 40px;
 
   @media (min-width: 1024px) {
     margin-bottom: 180px;
@@ -25,14 +35,14 @@
 }
 
 .heroOverlay {
-  position: absolute;
-  bottom: 0px;
-  left: 50%;
-  transform: translate(-50%, 50%);
-  width: calc(100% - 48px);
+  position: relative;
   z-index: 10;
 
   @media (min-width: 1024px) {
+    position: absolute;
+    margin-top: 0;
+    padding: 0;
+    bottom: 0px;
     left: calc(40px + (100% - 80px - 148px) / 2);
     width: calc(100% - 80px - 148px - 32px);
     max-width: 999px;
@@ -40,18 +50,15 @@
   }
 }
 
-.container {
-  @include container;
-}
-
 .layout {
   display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 40px;
+  grid-template-columns: 1fr;
+  gap: 32px;
   align-items: flex-start;
 
-  @media (max-width: 992px) {
-    grid-template-columns: 1fr;
+  @media (min-width: 992px) {
+    grid-template-columns: 1fr 380px;
+    gap: 40px;
   }
 }
 
@@ -59,13 +66,18 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: 32px;
+
+  @media (min-width: 768px) {
+    gap: 48px;
+  }
 }
 
 .sidebar {
   flex-shrink: 0;
+  width: 100%;
 
-  @media (max-width: 992px) {
-    width: 100%;
+  @media (min-width: 992px) {
+    width: auto;
   }
 }
