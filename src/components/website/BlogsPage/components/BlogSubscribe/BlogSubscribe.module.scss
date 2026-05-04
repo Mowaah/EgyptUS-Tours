@@ -5,12 +5,22 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  padding: 80px;
+  align-items: center;
+  padding: 40px 20px;
   background: #FFFFFF;
   overflow: hidden;
-  min-height: 402px;
+  min-height: auto;
   box-sizing: border-box;
+
+  @media (min-width: 640px) {
+    padding: 56px 32px;
+    align-items: flex-end;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 80px;
+    min-height: 402px;
+  }
 }
 
 /* Paper plane: absolutely positioned, left side, rotated */
@@ -37,18 +47,27 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 24px;
-  width: 492px;
+  gap: 20px;
+  width: 100%;
+
+  @media (min-width: 640px) {
+    gap: 24px;
+    max-width: 492px;
+  }
 }
 
 .title {
   color: #0E2851;
   font-family: 'Trip Sans';
   font-weight: 500;
-  font-size: $font-size-4xl;
-  line-height: 49px;
+  font-size: clamp(1.4rem, 5vw, #{$font-size-4xl});
+  line-height: 1.3;
   margin: 0;
   width: 100%;
+
+  @media (min-width: 1024px) {
+    line-height: 49px;
+  }
 }
 
 .formGroup {
@@ -93,9 +112,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 249px;
-  height: 56px;
-  padding: 8px;
+  width: 100%;
+  height: 48px;
+  padding: 8px 16px;
   background: #2971E6;
   border-radius: 40px;
   border: none;
@@ -109,7 +128,12 @@
   text-align: center;
   transition: background $transition-fast;
 
+  @media (min-width: 640px) {
+    width: 249px;
+    height: 56px;
+  }
+
   &:hover {
-    background: darken(#2971E6, 8%);
+    background: color-mix(in srgb, #2971E6 85%, black);
   }
 }

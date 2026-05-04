@@ -10,7 +10,11 @@
 // ── HERO SECTION ────────────────────────────────────────────
 .heroSection {
   background: $white;
-  padding: 40px 20px 32px;
+  padding: 20px 16px 24px;
+
+  @media (min-width: 640px) {
+    padding: 28px 20px 28px;
+  }
 
   @media (min-width: 1024px) {
     padding: 60px 80px 32px;
@@ -22,11 +26,23 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
+
+  @media (min-width: 768px) {
+    gap: 20px;
+  }
 }
 
 .breadcrumbWrap {
-  margin-bottom: 32px;
+  margin-bottom: 8px;
+
+  @media (min-width: 768px) {
+    margin-bottom: 20px;
+  }
+
+  @media (min-width: 1024px) {
+    margin-bottom: 32px;
+  }
 }
 
 // ── BADGE ───────────────────────────────────────────────────
@@ -34,13 +50,24 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 9px 22px;
+  padding: 6px 14px;
   border-radius: 45px;
-  font-size: $font-size-lg;
+  font-size: $font-size-sm;
   font-weight: $font-weight-medium;
-  line-height: 25px;
+  line-height: 1.4;
   width: fit-content;
   box-sizing: border-box;
+
+  @media (min-width: 640px) {
+    padding: 7px 18px;
+    font-size: $font-size-base;
+  }
+
+  @media (min-width: 768px) {
+    padding: 9px 22px;
+    font-size: $font-size-lg;
+    line-height: 25px;
+  }
 }
 
 .badgeBlue {
@@ -59,11 +86,15 @@
 .titleBlock {
   display: flex;
   flex-direction: column;
-  gap: 27px;
+  gap: 16px;
+
+  @media (min-width: 768px) {
+    gap: 27px;
+  }
 }
 
 .title {
-  font-size: $font-size-40;
+  font-size: clamp(1.5rem, 6vw, #{$font-size-40});
   font-weight: 800;
   line-height: 1.18;
   color: #0D1B3E;
@@ -78,13 +109,20 @@
 // ── META ROW ────────────────────────────────────────────────
 .meta {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding: 20px 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 0;
   border-top: 1.5px solid #EAF1FD;
   border-bottom: 1.5px solid #EAF1FD;
+  width: 100%;
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 0;
+  }
 
   @media (min-width: 768px) {
     gap: 28.54px;
@@ -92,36 +130,115 @@
   }
 }
 
+.topRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+
+  @media (min-width: 640px) {
+    display: contents;
+  }
+}
+
+.authorWrap, .statsWrap, .shareWrap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  @media (min-width: 768px) {
+    gap: 28.54px;
+    flex-wrap: nowrap;
+  }
+}
+
+.authorWrap {
+  @media (min-width: 640px) {
+    order: 1;
+  }
+}
+
+.statsWrap {
+  justify-content: space-between;
+  width: 100%;
+
+  @media (min-width: 640px) {
+    order: 3;
+    width: auto;
+    justify-content: flex-start;
+    gap: 16px;
+  }
+}
+
+.shareWrap {
+  gap: 12px;
+  
+  @media (min-width: 640px) {
+    order: 5;
+  }
+
+  @media (min-width: 768px) {
+    gap: 12px;
+  }
+}
+
 .authorAvatar {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 54px;
-  height: 54px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: $secondary;
   color: $white;
-  font-size: 19.5px;
+  font-size: 14px;
   font-weight: $font-weight-bold;
   flex-shrink: 0;
+
+  @media (min-width: 640px) {
+    width: 48px;
+    height: 48px;
+    font-size: 17px;
+  }
+
+  @media (min-width: 768px) {
+    width: 54px;
+    height: 54px;
+    font-size: 19.5px;
+  }
 }
 
 .authorInfo {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .authorName {
-  font-size: 19.5px;
+  font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   color: #123367;
   line-height: 1.4;
+
+  @media (min-width: 640px) {
+    font-size: $font-size-base;
+  }
+
+  @media (min-width: 768px) {
+    font-size: 19.5px;
+  }
 }
 
 .authorRole {
-  font-size: $font-size-13;
+  font-size: $font-size-xs;
   color: $text-light;
+
+  @media (min-width: 768px) {
+    font-size: $font-size-13;
+  }
 }
 
 .divider {
@@ -133,28 +250,88 @@
 
   @media (min-width: 640px) {
     display: block;
+    height: 32px;
+    order: 2;
+  }
+
+  @media (min-width: 768px) {
+    height: 42px;
+  }
+}
+
+.dividerInner {
+  width: 1.5px;
+  height: 32px;
+  background: #EEF0F5;
+  flex-shrink: 0;
+  display: none;
+
+  @media (min-width: 640px) {
+    display: block;
+  }
+
+  @media (min-width: 768px) {
+    height: 42px;
+  }
+}
+
+.dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #9AA3B8;
+  flex-shrink: 0;
+  display: block;
+
+  @media (min-width: 640px) {
+    display: none;
   }
 }
 
 .metaItem {
-  font-size: $font-size-lg;
+  font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   color: #123367;
+
+  @media (min-width: 768px) {
+    font-size: $font-size-lg;
+  }
 }
 
 .shareBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 46.57px;
-  height: 46.57px;
+  width: 36px;
+  height: 36px;
   border: 1.5px solid #EEF0F5;
-  border-radius: 22.5px;
+  border-radius: 50%;
   background: transparent;
   cursor: pointer;
   color: #6B7A99;
   transition: border-color $transition-fast, background $transition-fast, color $transition-fast;
   flex-shrink: 0;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  @media (min-width: 640px) {
+    width: 42px;
+    height: 42px;
+
+    svg {
+      width: auto;
+      height: auto;
+    }
+  }
+
+  @media (min-width: 768px) {
+    width: 46.57px;
+    height: 46.57px;
+    border-radius: 22.5px;
+  }
 
   &:hover {
     border-color: $primary;
@@ -168,16 +345,24 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  gap: 12px;
   width: 100%;
+
+  @media (min-width: 768px) {
+    gap: 18px;
+  }
 }
 
 .heroImageWrap {
   position: relative;
   width: 100%;
-  height: 320px;
-  border-radius: 20px;
+  height: 220px;
+  border-radius: 16px;
   overflow: hidden;
+
+  @media (min-width: 480px) {
+    height: 280px;
+  }
 
   @media (min-width: 768px) {
     height: 480px;
@@ -200,17 +385,25 @@
 }
 
 .heroCaption {
-  font-size: $font-size-lg;
+  font-size: $font-size-sm;
   font-weight: $font-weight-normal;
   color: #9AA3B8;
   text-align: center;
   line-height: 1.5;
+
+  @media (min-width: 768px) {
+    font-size: $font-size-lg;
+  }
 }
 
 // ── BODY SECTION ────────────────────────────────────────────
 .bodySection {
   background: $white;
-  padding: 32px 20px;
+  padding: 24px 16px;
+
+  @media (min-width: 640px) {
+    padding: 28px 20px;
+  }
 
   @media (min-width: 1024px) {
     padding: 32px 80px;
@@ -222,8 +415,12 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 44px;
+  gap: 32px;
   align-items: flex-start;
+
+  @media (min-width: 768px) {
+    gap: 44px;
+  }
 
   @media (min-width: 1024px) {
     flex-direction: row;
@@ -234,20 +431,38 @@
 .contentCol {
   display: flex;
   flex-direction: column;
-  gap: 52px;
+  gap: 28px;
   width: 100%;
   max-width: 836px;
-  flex-shrink: 0;
+
+  @media (min-width: 640px) {
+    gap: 36px;
+  }
+
+  @media (min-width: 768px) {
+    gap: 52px;
+  }
+
+  @media (min-width: 1024px) {
+    flex: 1;
+    min-width: 0;
+  }
 }
 
 .intro {
-  font-size: $font-size-lg;
+  font-size: $font-size-base;
   font-weight: $font-weight-normal;
   color: #3D4A6B;
-  line-height: 42px;
+  line-height: 1.75;
+
+  @media (min-width: 640px) {
+    font-size: $font-size-lg;
+    line-height: 1.8;
+  }
 
   @media (min-width: 768px) {
     font-size: $font-size-22;
+    line-height: 42px;
   }
 }
 
@@ -255,66 +470,118 @@
 .blockquoteBlue {
   display: flex;
   align-items: center;
-  padding: 25.5px 28.33px;
+  padding: 16px 18px;
   background: #F4F7FF;
-  border-right: 4px solid $primary;
-  font-size: $font-size-22;
+  border-right: 3px solid $primary;
+  font-size: $font-size-base;
   font-weight: $font-weight-medium;
-  line-height: 44px;
+  line-height: 1.75;
   color: #0E2851;
   margin: 0;
+  border-radius: 8px 0 0 8px;
+
+  @media (min-width: 640px) {
+    padding: 20px 24px;
+    font-size: $font-size-lg;
+    border-right-width: 4px;
+  }
+
+  @media (min-width: 768px) {
+    padding: 25.5px 28.33px;
+    font-size: $font-size-22;
+    line-height: 44px;
+    border-radius: 0;
+  }
 }
 
 .blockquoteOrange {
   display: flex;
   align-items: center;
-  padding: 25.5px 28.33px;
+  padding: 16px 18px;
   background: #FFF0E6;
-  border-right: 4px solid $secondary;
-  font-size: $font-size-22;
+  border-right: 3px solid $secondary;
+  font-size: $font-size-base;
   font-weight: $font-weight-medium;
-  line-height: 44px;
+  line-height: 1.75;
   color: #BF4D00;
   margin: 0;
+  border-radius: 8px 0 0 8px;
+
+  @media (min-width: 640px) {
+    padding: 20px 24px;
+    font-size: $font-size-lg;
+    border-right-width: 4px;
+  }
+
+  @media (min-width: 768px) {
+    padding: 25.5px 28.33px;
+    font-size: $font-size-22;
+    line-height: 44px;
+    border-radius: 0;
+  }
 }
 
 // ── SECTION BLOCKS ──────────────────────────────────────────
 .contentSection {
   display: flex;
   flex-direction: column;
-  gap: 31px;
+  gap: 18px;
+
+  @media (min-width: 640px) {
+    gap: 24px;
+  }
+
+  @media (min-width: 768px) {
+    gap: 31px;
+  }
 }
 
 .h2 {
-  font-size: $font-size-28;
+  font-size: $font-size-xl;
   font-weight: $font-weight-bold;
   color: #0D1B3E;
-  line-height: 44px;
+  line-height: 1.3;
+
+  @media (min-width: 640px) {
+    font-size: $font-size-28;
+  }
 
   @media (min-width: 768px) {
     font-size: $font-size-32;
+    line-height: 44px;
   }
 }
 
 .h3 {
-  font-size: $font-size-xl;
+  font-size: $font-size-lg;
   font-weight: $font-weight-medium;
   color: #0D1B3E;
-  line-height: 33px;
+  line-height: 1.4;
+
+  @media (min-width: 640px) {
+    font-size: $font-size-xl;
+  }
 
   @media (min-width: 768px) {
     font-size: $font-size-2xl;
+    line-height: 33px;
   }
 }
 
 .body {
-  font-size: $font-size-lg;
+  font-size: $font-size-base;
   font-weight: $font-weight-normal;
   color: #3D4A6B;
-  line-height: 42px;
+  line-height: 1.75;
+
+  @media (min-width: 640px) {
+    font-size: $font-size-lg;
+    line-height: 1.8;
+  }
 
   @media (min-width: 768px) {
     font-size: $font-size-22;
+    line-height: 42px;
   }
 }
 
@@ -322,65 +589,120 @@
 .tagsRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 11.33px;
+  gap: 8px;
+
+  @media (min-width: 768px) {
+    gap: 11.33px;
+  }
 }
 
 .tag {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8.5px 19.83px;
+  padding: 6px 14px;
   background: #F4F6FB;
   border-radius: 28.33px;
-  font-size: $font-size-17;
+  font-size: $font-size-sm;
   font-weight: $font-weight-normal;
   color: #6B7A99;
+
+  @media (min-width: 768px) {
+    padding: 8.5px 19.83px;
+    font-size: $font-size-17;
+  }
 }
 
 // ── AUTHOR CARD ─────────────────────────────────────────────
 .authorCard {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: flex-start;
-  gap: 22.66px;
-  padding: 28.33px;
+  gap: 14px;
+  padding: 20px;
   background: #F9FAFC;
-  border-radius: 19.83px;
+  border-radius: 16px;
+
+  @media (min-width: 480px) {
+    flex-direction: row;
+    gap: 18px;
+    padding: 24px;
+  }
+
+  @media (min-width: 768px) {
+    gap: 22.66px;
+    padding: 28.33px;
+    border-radius: 19.83px;
+  }
 }
 
 .authorCardAvatar {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 73.65px;
-  height: 73.65px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: #E8622A;
   color: $white;
-  font-size: 22.66px;
+  font-size: 18px;
   font-weight: $font-weight-medium;
   flex-shrink: 0;
+
+  @media (min-width: 640px) {
+    width: 64px;
+    height: 64px;
+    font-size: 20px;
+  }
+
+  @media (min-width: 768px) {
+    width: 73.65px;
+    height: 73.65px;
+    font-size: 22.66px;
+  }
 }
 
 .authorCardInfo {
   display: flex;
   flex-direction: column;
-  gap: 5.67px;
+  gap: 4px;
+
+  @media (min-width: 768px) {
+    gap: 5.67px;
+  }
 }
 
 .authorCardName {
-  font-size: 21.25px;
+  font-size: $font-size-base;
   font-weight: $font-weight-medium;
   color: #0D1B3E;
-  line-height: 29px;
+  line-height: 1.4;
+
+  @media (min-width: 640px) {
+    font-size: $font-size-lg;
+  }
+
+  @media (min-width: 768px) {
+    font-size: 21.25px;
+    line-height: 29px;
+  }
 }
 
 .authorCardBio {
-  font-size: 18.41px;
+  font-size: $font-size-sm;
   font-weight: $font-weight-normal;
   color: #6B7A99;
-  line-height: 29px;
+  line-height: 1.6;
   margin: 0;
+
+  @media (min-width: 640px) {
+    font-size: $font-size-base;
+  }
+
+  @media (min-width: 768px) {
+    font-size: 18.41px;
+    line-height: 29px;
+  }
 }
 
 // ── SIDEBAR ──────────────────────────────────────────────────
@@ -388,40 +710,61 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 26.44px;
+  gap: 20px;
+
+  @media (min-width: 768px) {
+    gap: 26.44px;
+  }
 
   @media (min-width: 1024px) {
-    width: 400px;
+    width: 300px;
     flex-shrink: 0;
     position: sticky;
     top: 120px;
     max-height: calc(100vh - 140px);
     overflow-y: auto;
   }
+
+  @media (min-width: 1280px) {
+    width: 400px;
+  }
 }
 
 .relatedTitle {
-  font-size: 24.23px;
+  font-size: $font-size-lg;
   font-weight: $font-weight-medium;
   color: #9AA3B8;
   text-transform: capitalize;
   margin: 0;
-  line-height: 33px;
+  line-height: 1.4;
+
+  @media (min-width: 768px) {
+    font-size: 24.23px;
+    line-height: 33px;
+  }
 }
 
 .relatedList {
   display: flex;
   flex-direction: column;
-  gap: 35.25px;
+  gap: 20px;
+
+  @media (min-width: 768px) {
+    gap: 35.25px;
+  }
 }
 
 .relatedItem {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 22px;
+  gap: 14px;
   text-decoration: none;
   transition: opacity $transition-fast;
+
+  @media (min-width: 768px) {
+    gap: 22px;
+  }
 
   &:hover {
     opacity: 0.8;
@@ -430,12 +773,24 @@
 
 .relatedImageWrap {
   position: relative;
-  width: 123.37px;
-  height: 105.75px;
-  border-radius: 17.6px;
+  width: 90px;
+  height: 78px;
+  border-radius: 12px;
   overflow: hidden;
   flex-shrink: 0;
   background: $background-alt;
+
+  @media (min-width: 480px) {
+    width: 110px;
+    height: 92px;
+    border-radius: 14px;
+  }
+
+  @media (min-width: 768px) {
+    width: 123.37px;
+    height: 105.75px;
+    border-radius: 17.6px;
+  }
 }
 
 .relatedImage {
@@ -445,16 +800,25 @@
 .relatedMeta {
   display: flex;
   flex-direction: column;
-  gap: 8.81px;
+  gap: 6px;
   flex: 1;
+
+  @media (min-width: 768px) {
+    gap: 8.81px;
+  }
 }
 
 .relatedItemTitle {
-  font-size: $font-size-xl;
+  font-size: $font-size-base;
   font-weight: $font-weight-medium;
   color: #0D1B3E;
-  line-height: 1.54;
+  line-height: 1.4;
   margin: 0;
+
+  @media (min-width: 640px) {
+    font-size: $font-size-xl;
+    line-height: 1.54;
+  }
 
   @media (min-width: 768px) {
     font-size: $font-size-2xl;
@@ -462,12 +826,17 @@
 }
 
 .relatedDate {
-  font-size: $font-size-lg;
+  font-size: $font-size-sm;
   font-weight: $font-weight-normal;
   color: #9AA3B8;
-  line-height: 30px;
+  line-height: 1.5;
+
+  @media (min-width: 640px) {
+    font-size: $font-size-lg;
+  }
 
   @media (min-width: 768px) {
     font-size: $font-size-22;
+    line-height: 30px;
   }
 }

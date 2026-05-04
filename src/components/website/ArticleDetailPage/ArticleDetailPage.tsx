@@ -74,30 +74,38 @@ export default function ArticleDetailPage({ content }: ArticleDetailPageProps) {
             <h1 className={styles.title}>{content.title}</h1>
 
             <div className={styles.meta}>
-              {/* Author avatar */}
-              <div className={styles.authorAvatar}>{initials}</div>
+              <div className={styles.topRow}>
+                <div className={styles.authorWrap}>
+                  <div className={styles.authorAvatar}>{initials}</div>
+                  <div className={styles.authorInfo}>
+                    <span className={styles.authorName}>{content.author}</span>
+                    <span className={styles.authorRole}>{content.authorRole}</span>
+                  </div>
+                </div>
 
-              {/* Author info */}
-              <div className={styles.authorInfo}>
-                <span className={styles.authorName}>{content.author}</span>
-                <span className={styles.authorRole}>{content.authorRole}</span>
+                <div className={styles.shareWrap}>
+                  <button className={styles.shareBtn} aria-label="Share on Facebook">
+                    <FacebookIcon />
+                  </button>
+                  <button className={styles.shareBtn} aria-label="Copy link">
+                    <CopyLinkIcon />
+                  </button>
+                </div>
               </div>
 
               <div className={styles.divider} />
-              <span className={styles.metaItem}>{content.date}</span>
-              <div className={styles.divider} />
-              <span className={styles.metaItem}>{content.readTime} read</span>
-              <div className={styles.divider} />
-              <span className={styles.metaItem}>{content.views} views</span>
-              <div className={styles.divider} />
 
-              {/* Share buttons */}
-              <button className={styles.shareBtn} aria-label="Share on Facebook">
-                <FacebookIcon />
-              </button>
-              <button className={styles.shareBtn} aria-label="Copy link">
-                <CopyLinkIcon />
-              </button>
+              <div className={styles.statsWrap}>
+                <span className={styles.metaItem}>{content.date}</span>
+                <div className={styles.dividerInner} />
+                <span className={styles.dot} />
+                <span className={styles.metaItem}>{content.readTime} read</span>
+                <div className={styles.dividerInner} />
+                <span className={styles.dot} />
+                <span className={styles.metaItem}>{content.views} views</span>
+              </div>
+
+              <div className={styles.divider} style={{ order: 4 }} />
             </div>
           </div>
 

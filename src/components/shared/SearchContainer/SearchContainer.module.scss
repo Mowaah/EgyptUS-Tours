@@ -4,23 +4,31 @@
 .searchBox {
   position: relative;
   background: rgba(41, 113, 230, 0.03);
-  border-radius: 32px;
-  height: 271px;
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
-  padding: 10px 20px;
+  padding: 28px 16px 20px;
   max-width: 1280px;
   margin: 0 auto;
   overflow: hidden;
 
+  @media (min-width: 640px) {
+    border-radius: 28px;
+    padding: 36px 32px 28px;
+  }
+
   @media (min-width: 768px) {
-    padding: 10px 80px;
+    border-radius: 32px;
+    padding: 40px 80px;
+    min-height: 271px;
   }
 }
 
+// ── Decorations ──
+// Hidden on mobile to keep things clean, shown on tablet+
 .planeDecoration {
   position: absolute;
   top: 0;
@@ -29,6 +37,11 @@
   height: 73px;
   pointer-events: none;
   z-index: 0;
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+  }
 
   @media (min-width: 1280px) {
     left: -20px;
@@ -42,6 +55,11 @@
   width: 22px;
   height: 19px;
   pointer-events: none;
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+  }
 }
 
 .dottedDecoration {
@@ -51,6 +69,11 @@
   width: 315px;
   height: 175px;
   pointer-events: none;
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+  }
 }
 
 .blueCircle {
@@ -63,6 +86,11 @@
   opacity: 0.32;
   border-radius: 50%;
   pointer-events: none;
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+  }
 
   @media (min-width: 1280px) {
     right: 60px;
@@ -73,63 +101,108 @@
   object-fit: contain;
 }
 
+// ── Content ──
 .searchContentBox {
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 13px;
+  gap: 10px;
   width: 100%;
   max-width: 1162px;
+
+  @media (min-width: 768px) {
+    gap: 13px;
+  }
 }
 
+// Always a single row — input + button side by side
 .searchInputRow {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   width: 100%;
-  height: 64px;
+  height: 44px;
+
+  @media (min-width: 640px) {
+    height: 52px;
+    gap: 10px;
+  }
+
+  @media (min-width: 768px) {
+    height: 64px;
+    gap: 12px;
+  }
 }
 
 .inputOuterWrap {
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 8px;
+  padding: 4px;
   background: rgba(234, 241, 253, 0.4);
   border-radius: 80px;
   flex: 1;
   height: 100%;
+
+  @media (min-width: 640px) {
+    padding: 6px;
+  }
+
+  @media (min-width: 768px) {
+    padding: 8px;
+  }
 }
 
 .inputInnerWrap {
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 0 24px;
+  padding: 0 12px;
   background: #FFFFFF;
   border: 1px solid rgba(26, 26, 26, 0.06);
   border-radius: 80px;
   flex: 1;
   height: 100%;
+
+  @media (min-width: 640px) {
+    padding: 0 16px;
+  }
+
+  @media (min-width: 768px) {
+    padding: 0 24px;
+  }
 }
 
 .searchIcon {
-  margin-right: 12px;
+  margin-right: 8px;
   opacity: 0.5;
+  width: 18px;
+  height: 18px;
+
+  @media (min-width: 768px) {
+    margin-right: 12px;
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .input {
   flex: 1;
+  min-width: 0;
   border: none;
   outline: none;
   font-family: 'Trip Sans';
-  font-size: $font-size-sm;
+  font-size: $font-size-xs;
   font-weight: 500;
   color: #0E2851;
   background: transparent;
+
+  @media (min-width: 640px) {
+    font-size: $font-size-sm;
+  }
 
   &::placeholder {
     color: #9CA3AF;
@@ -140,6 +213,7 @@
   display: flex;
   align-items: center;
   height: 100%;
+  flex-shrink: 0;
 }
 
 .searchBtn {
@@ -147,14 +221,24 @@
   color: #FFFFFF;
   font-family: 'Trip Sans';
   font-weight: 500;
-  font-size: $font-size-sm;
-  padding: 0 24px;
-  height: 56px;
-  min-width: 97px;
+  font-size: $font-size-xs;
+  padding: 0 16px;
+  height: 100%;
+  white-space: nowrap;
   border-radius: 40px;
   border: none;
   cursor: pointer;
   transition: opacity $transition-fast;
+
+  @media (min-width: 640px) {
+    font-size: $font-size-sm;
+    padding: 0 20px;
+  }
+
+  @media (min-width: 768px) {
+    min-width: 97px;
+    padding: 0 24px;
+  }
 
   &:hover {
     opacity: 0.9;
@@ -165,11 +249,16 @@
   color: #6B7280;
   font-family: 'Trip Sans';
   font-weight: 400;
-  font-size: $font-size-sm;
-  line-height: 19px;
+  font-size: $font-size-xs;
+  line-height: 1.5;
   text-align: left;
   letter-spacing: 0.01em;
   margin: 0;
   max-width: 814px;
-  padding-left: 10px;
+
+  @media (min-width: 640px) {
+    font-size: $font-size-sm;
+    line-height: 19px;
+    padding-left: 10px;
+  }
 }
