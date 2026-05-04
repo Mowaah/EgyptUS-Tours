@@ -13,10 +13,10 @@
   background: $white;
   padding: 32px 20px 0;
   position: relative;
-  z-index: 1; // Lower than stickyNav so text goes under tabs
+  z-index: 1;
 
-  @media (min-width: 1024px) {
-    padding: 32px 80px 0;
+  @media (min-width: 1150px) {
+    padding: 48px 80px 0;
   }
 }
 
@@ -29,7 +29,7 @@
   max-width: 1440px;
   height: 247px;
   pointer-events: none;
-  z-index: 11; // Highest z-index to overlap EVERYTHING (tabs + text)
+  z-index: 110; // Higher than stickyNav (100) to overlap everything
   overflow: visible;
 
   @media (max-width: 1024px) {
@@ -57,12 +57,17 @@
 }
 
 .title {
-  font-size: $font-size-4xl;
+  font-size: 28px;
   font-weight: 700;
-  line-height: 49px;
+  line-height: 1.2;
   color: #0E2851;
   margin: 0;
   text-transform: capitalize;
+
+  @media (min-width: 1024px) {
+    font-size: $font-size-4xl;
+    line-height: 49px;
+  }
 }
 
 .subtitle {
@@ -80,24 +85,31 @@
   position: sticky;
   top: 0;
   background: $white;
-  z-index: 10; // Ensure it's above content
-  margin-top: 64px;
+  z-index: 100;
+  margin-top: 32px;
+  padding: 0 20px;
+
+  @media (min-width: 1150px) {
+    margin-top: 64px;
+    padding: 0 80px;
+  }
 }
 
 .navInner {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0;
   border-bottom: 1px solid #D8DDE4;
-
-  @media (min-width: 1024px) {
-    padding: 0;
-  }
 }
 
 .tabList {
   display: flex;
   gap: 24px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .tabItem {
@@ -173,18 +185,23 @@
 
 .sectionTitle {
   font-size: $font-size-base;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 22px;
   color: #0E2851;
   margin: 0;
 }
 
 .para {
-  font-size: $font-size-base;
-  line-height: 24px;
+  font-size: $font-size-sm;
+  line-height: 1.6;
   color: #364153;
   margin: 0 0 16px;
   max-width: 1068px;
+
+  @media (min-width: 640px) {
+    font-size: $font-size-base;
+    line-height: 24px;
+  }
 
   &:last-child {
     margin-bottom: 0;
@@ -216,11 +233,16 @@
   padding-left: 12px;
 
   p {
-    font-size: $font-size-base;
-    line-height: 24px;
+    font-size: $font-size-sm;
+    line-height: 1.6;
     color: #364153;
     margin: 0;
     max-width: 821px;
-    white-space: pre-line; // Support for newlines in content
+    white-space: pre-line;
+
+    @media (min-width: 640px) {
+      font-size: $font-size-base;
+      line-height: 24px;
+    }
   }
 }

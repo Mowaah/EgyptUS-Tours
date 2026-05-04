@@ -14,15 +14,23 @@
 
 .decoration {
   position: absolute;
-  top: -140;
+  top: -140px;
   left: 0;
   pointer-events: none;
   z-index: 0;
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
 }
 
 .decorationImg {
   max-width: 100%;
   height: auto;
+
+  @media (max-width: 1024px) {
+    width: 180px;
+  }
 }
 
 .container {
@@ -36,12 +44,15 @@
 .featuresGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 32px;
-  margin-top: 90px;
-  margin-bottom: 90px;
+  gap: 24px;
+  margin-top: 48px;
+  margin-bottom: 48px;
 
   @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    margin-top: 90px;
+    margin-bottom: 90px;
   }
 }
 
@@ -50,12 +61,19 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  padding: 24px;
-  min-height: 138px;
-  gap: 24px;
+  padding: 16px;
+  min-height: 120px;
+  gap: 16px;
   background: #F9FAFB;
   border: 1px solid #EAF1FD;
-  border-radius: 32px;
+  border-radius: 20px;
+
+  @media (min-width: 640px) {
+    padding: 24px;
+    min-height: 138px;
+    gap: 24px;
+    border-radius: 32px;
+  }
 }
 
 .iconBox {
@@ -98,11 +116,11 @@
 
 .badgesGrid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 28px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
 
   @media (min-width: 640px) {
-    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
   }
 
   @media (min-width: 1024px) {
@@ -115,10 +133,15 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 6px;
-  border-radius: 22px;
+  padding: 12px 6px;
+  border-radius: 16px;
   gap: 8px;
   transition: transform $transition-fast;
+
+  @media (min-width: 640px) {
+    padding: 24px;
+    border-radius: 22px;
+  }
 
   &:hover {
     transform: translateY(-5px);

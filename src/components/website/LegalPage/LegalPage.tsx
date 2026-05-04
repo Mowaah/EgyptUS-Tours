@@ -19,7 +19,9 @@ export default function LegalPage({ data }: LegalPageProps) {
   // Simple scroll spy logic
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPos = window.scrollY + 200;
+      const offset = 80; // trigger early but not too early
+      const scrollPos = window.scrollY + offset;
+
       for (const section of data.sections) {
         const el = document.getElementById(section.id);
         if (el && el.offsetTop <= scrollPos && el.offsetTop + el.offsetHeight > scrollPos) {
@@ -36,7 +38,8 @@ export default function LegalPage({ data }: LegalPageProps) {
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      const offset = 100;
+      const offset = 60; // tabs height + buffer
+      
       const bodyRect = document.body.getBoundingClientRect().top;
       const elementRect = el.getBoundingClientRect().top;
       const elementPosition = elementRect - bodyRect;

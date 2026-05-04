@@ -54,11 +54,16 @@
 }
 
 .title {
-  font-size: $font-size-4xl;
+  font-size: 28px;
   font-weight: 700;
-  line-height: 49px;
+  line-height: 1.2;
   color: #0E2851;
   margin: 0;
+
+  @media (min-width: 1024px) {
+    font-size: $font-size-4xl;
+    line-height: 49px;
+  }
 }
 
 .subtitle {
@@ -71,7 +76,7 @@
 }
 
 .contentSection {
-  padding: 16px 20px 80px;
+  padding: 16px 0 80px;
 
   @media (min-width: 1024px) {
     padding: 16px 80px 80px;
