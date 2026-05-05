@@ -17,7 +17,7 @@ export default function DesertBannerSection() {
       <div className={styles.overlay} />
       <div className={styles.content}>
         <h2 className={styles.heading}>
-          Experience the Thrill of<br />Desert Adventures
+          Experience the Thrill of <br />Desert Adventures
         </h2>
         <p className={styles.description}>
           Join exciting desert trips and explore the dunes with ease
@@ -25,6 +25,7 @@ export default function DesertBannerSection() {
         <Button
           variant="secondary"
           href="/desert"
+          className={styles.ctaButton}
           icon={
             <Image src="/images/arrows/arrow-right.svg" alt="" width={16} height={16} />
           }

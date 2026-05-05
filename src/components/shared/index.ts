@@ -7,6 +7,8 @@ export type {
   TripBookingDetails,
   HotelBookingDetails,
   TransportBookingDetails,
+  MiceRequestDetails,
+  B2BRequestDetails,
   TripBookingStatus,
 } from "./TripBookingCard/TripBookingCard";
 export { default as HotelCard } from "./HotelCard/HotelCard";

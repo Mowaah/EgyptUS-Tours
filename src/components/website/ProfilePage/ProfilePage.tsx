@@ -19,9 +19,12 @@ import {
   mockUpcomingTrip,
   mockFavoriteTrips,
   profileBookingCategoryTabs,
+  profileRequestCategoryTabs,
   mockTripBookings,
   mockHotelBookings,
   mockTransportBookings,
+  mockMiceRequests,
+  mockB2BRequests,
 } from "@/data/profilePageMocks";
 import styles from "./ProfilePage.module.scss";
 
@@ -48,8 +51,8 @@ export default function ProfilePage() {
   );
 
   const [favoriteTrips, setFavoriteTrips] = useState<Trip[]>(mockFavoriteTrips);
-  const [requests] = useState<Trip[]>([]);
   const [bookingCategoryIndex, setBookingCategoryIndex] = useState(0);
+  const [requestCategoryIndex, setRequestCategoryIndex] = useState(0);
 
   const handleFavoriteToggle = (id: string) => {
     setFavoriteTrips((prev) =>
@@ -156,21 +159,50 @@ export default function ProfilePage() {
           </div>
         );
       case "requests":
-        if (requests.length === 0) {
+        if (requestCategoryIndex === 0) {
+          if (mockMiceRequests.length === 0) {
+            return (
+              <EmptyState
+                framedIcon
+                iconSrc="/images/profile/glyphs/requests.svg"
+                iconWidth={150}
+                iconHeight={150}
+                title="No MICE requests yet"
+                description="Create your first event or corporate experience and get a tailored proposal."
+                buttonText="Request a proposal"
+                buttonHref="/events/request-proposal"
+              />
+            );
+          }
+          return (
+            <div className={styles.bookingsList}>
+              {mockMiceRequests.map((request, index) => (
+                <TripBookingCard key={`mice-request-${index}`} {...request} />
+              ))}
+            </div>
+          );
+        }
+        if (mockB2BRequests.length === 0) {
           return (
             <EmptyState
               framedIcon
               iconSrc="/images/profile/glyphs/requests.svg"
               iconWidth={150}
               iconHeight={150}
-              title="No trip requests yet"
-              description="Tell us what you're looking for and we'll follow up with a tailored proposal."
-              buttonText="Explore Trips"
-              buttonHref="/trips"
+              title="No business requests yet"
+              description="Partner with us to create tailored travel experiences for your company."
+              buttonText="Request a proposal"
+              buttonHref="/b2b-programs/request-proposal"
             />
           );
         }
-        return null;
+        return (
+          <div className={styles.bookingsList}>
+            {mockB2BRequests.map((request, index) => (
+              <TripBookingCard key={`b2b-request-${index}`} {...request} />
+            ))}
+          </div>
+        );
       default:
         return null;
     }
@@ -249,18 +281,27 @@ export default function ProfilePage() {
 
           {/* Content Area */}
           <main className={styles.content}>
-            {activeTab === "bookings" ? (
+            {activeTab === "bookings" || activeTab === "requests" ? (
               <div className={styles.contentHeaderBookings}>
                 <div className={styles.contentHeaderText}>
                   <h2 className={styles.contentTitle}>{getTabTitle()}</h2>
                   <p className={styles.contentSubtitle}>{getTabSubtitle()}</p>
                 </div>
-                <CategoryTabs
-                  tabs={profileBookingCategoryTabs}
-                  active={bookingCategoryIndex}
-                  onTabChange={(_, index) => setBookingCategoryIndex(index)}
-                  className={styles.bookingCategoryTabs}
-                />
+                {activeTab === "bookings" ? (
+                  <CategoryTabs
+                    tabs={profileBookingCategoryTabs}
+                    active={bookingCategoryIndex}
+                    onTabChange={(_, index) => setBookingCategoryIndex(index)}
+                    className={styles.bookingCategoryTabs}
+                  />
+                ) : (
+                  <CategoryTabs
+                    tabs={profileRequestCategoryTabs}
+                    active={requestCategoryIndex}
+                    onTabChange={(_, index) => setRequestCategoryIndex(index)}
+                    className={styles.bookingCategoryTabs}
+                  />
+                )}
               </div>
             ) : (
               <div className={styles.contentHeader}>

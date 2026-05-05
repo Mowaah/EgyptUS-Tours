@@ -1,0 +1,47 @@
+export const bookingCardIcons = {
+  trip: {
+    tripName: "/images/profile/booking/trip-name.svg",
+    destination: "/images/profile/booking/destination.svg",
+    returnDate: "/images/profile/booking/return.svg",
+    departureDate: "/images/profile/booking/return.svg",
+    travelType: "/images/profile/booking/travel-type.svg",
+    duration: "/images/profile/booking/duration.svg",
+    roomType: "/images/profile/booking/room-type.svg",
+    travelers: "/images/profile/booking/travelers.svg",
+  },
+  hotel: {
+    clock: "/images/summary/clock.svg",
+    nights: "/images/profile/booking/duration.svg",
+    roomType: "/images/profile/booking/room-type.svg",
+    roomNumber: "/images/profile/booking/room-number.svg",
+    guests: "/images/profile/booking/travelers.svg",
+  },
+  transport: {
+    location: "/images/profile/booking/destination.svg",
+    calendar: "/images/profile/booking/return.svg",
+    clock: "/images/profile/booking/duration.svg",
+    duration: "/images/profile/booking/timer.svg",
+    passengers: "/images/profile/booking/passengers.svg",
+    tripType: "/images/profile/booking/travel-type.svg",
+    luggage: "/images/profile/booking/luggage.svg",
+  },
+  mice: {
+    organization: "/images/profile/booking/trip-name.svg",
+    city: "/images/profile/booking/destination.svg",
+    eventType: "/images/profile/booking/travel-type.svg",
+    attendees: "/images/profile/booking/passengers.svg",
+    startDate: "/images/profile/booking/return.svg",
+    endDate: "/images/profile/booking/return.svg",
+    eventTime: "/images/profile/booking/timer.svg",
+    duration: "/images/profile/booking/duration.svg",
+  },
+  b2b: {
+    companyName: "/images/profile/booking/trip-name.svg",
+    country: "/images/profile/booking/destination.svg",
+    contactPerson: "/images/profile/booking/travelers.svg",
+    email: "/images/email.svg",
+    phone: "/images/phone.svg",
+    website: "/images/languages.svg",
+  },
+} as const;
+

@@ -8,6 +8,8 @@ import type {
   TripBookingDetails,
   HotelBookingDetails,
   TransportBookingDetails,
+  MiceRequestDetails,
+  B2BRequestDetails,
 } from "@/components/shared";
 import type { Trip } from "@/types";
 
@@ -79,6 +81,7 @@ export const mockFavoriteTrips: Trip[] = [
 ];
 
 export const profileBookingCategoryTabs = ["Trips", "Hotels", "Transportation"];
+export const profileRequestCategoryTabs = ["Events (MICE)", "B2B"];
 
 const sharedTripBookingDetails: TripBookingDetails = {
   tripName: "Mediterranean",
@@ -215,5 +218,71 @@ export const mockTransportBookings: TripBookingCardProps[] = [
     cancelledLabel: "Cancelled by Admin — Apr 1, 2026",
     primaryLabel: "View Details",
     primaryHref: "/transportation",
+  },
+];
+
+const sharedMiceRequestDetails: MiceRequestDetails = {
+  organization: "AUS Agency",
+  preferredCity: "Cairo",
+  eventType: "Incentive",
+  expectedAttendees: "180-200",
+  startDate: "April 22, 2026",
+  endDate: "April 28, 2026",
+  eventTime: "At 2:20 AM",
+  durationLabel: "4 Hours",
+};
+
+export const mockMiceRequests: TripBookingCardProps[] = [
+  {
+    variant: "mice",
+    imageSrc: "/images/events1.png",
+    tripTitle: "Blue Horizon Summit Event",
+    status: "proposal_in_progress",
+    details: sharedMiceRequestDetails,
+    primaryLabel: "View Details",
+    primaryHref: "/events",
+    infoMessage: "Proposal expected within 24-48 hrs",
+  },
+  {
+    variant: "mice",
+    imageSrc: "/images/events1.png",
+    tripTitle: "Blue Horizon Summit Event",
+    status: "proposal_sent",
+    details: sharedMiceRequestDetails,
+    primaryLabel: "View Details",
+    primaryHref: "/events",
+    infoMessage: "Proposal has been sent to your email",
+  },
+];
+
+const sharedB2BRequestDetails: B2BRequestDetails = {
+  companyName: "AUS Agency",
+  country: "Cairo",
+  contactPerson: "Ziad Ahmed",
+  emailAddress: "zeidawel179@gmail.com",
+  phoneNumber: "0100402855",
+  website: "www.egyptus.com",
+};
+
+export const mockB2BRequests: TripBookingCardProps[] = [
+  {
+    variant: "b2b",
+    imageSrc: "/images/contact1.jpg",
+    tripTitle: "Blue Horizon Summit Event",
+    status: "proposal_in_progress",
+    details: sharedB2BRequestDetails,
+    primaryLabel: "View Details",
+    primaryHref: "/b2b-programs",
+    infoMessage: "Proposal expected within 24-48 hrs",
+  },
+  {
+    variant: "b2b",
+    imageSrc: "/images/contact1.jpg",
+    tripTitle: "Blue Horizon Summit Event",
+    status: "proposal_sent",
+    details: sharedB2BRequestDetails,
+    primaryLabel: "View Details",
+    primaryHref: "/b2b-programs",
+    infoMessage: "Proposal has been sent to your email",
   },
 ];

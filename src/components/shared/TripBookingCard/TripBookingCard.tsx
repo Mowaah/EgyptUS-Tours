@@ -3,9 +3,15 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Button from "@/components/shared/Button/Button";
+import { bookingCardIcons } from "@/data/bookingCardIcons";
 import styles from "./TripBookingCard.module.scss";
 
-export type TripBookingStatus = "partially_paid" | "confirmed" | "cancelled";
+export type TripBookingStatus =
+  | "partially_paid"
+  | "confirmed"
+  | "cancelled"
+  | "proposal_in_progress"
+  | "proposal_sent";
 
 export interface TripBookingDetails {
   tripName: string;
@@ -43,6 +49,28 @@ export interface TransportBookingDetails {
   luggageLabel: string;
 }
 
+/** MICE request grid (4×2) */
+export interface MiceRequestDetails {
+  organization: string;
+  preferredCity: string;
+  eventType: string;
+  expectedAttendees: string;
+  startDate: string;
+  endDate: string;
+  eventTime: string;
+  durationLabel: string;
+}
+
+/** B2B request grid (3×2) */
+export interface B2BRequestDetails {
+  companyName: string;
+  country: string;
+  contactPerson: string;
+  emailAddress: string;
+  phoneNumber: string;
+  website: string;
+}
+
 type BookingCardShared = {
   imageSrc: string;
   imageAlt?: string;
@@ -55,6 +83,8 @@ type BookingCardShared = {
   remainingAmount?: number;
   totalAmount?: number;
   cancelledLabel?: string;
+  /** Optional neutral footer message for request cards */
+  infoMessage?: string;
   primaryLabel: string;
   primaryHref?: string;
 };
@@ -71,38 +101,21 @@ export type TripBookingCardProps =
   | (BookingCardShared & {
       variant: "transport";
       details: TransportBookingDetails;
+    })
+  | (BookingCardShared & {
+      variant: "mice";
+      details: MiceRequestDetails;
+    })
+  | (BookingCardShared & {
+      variant: "b2b";
+      details: B2BRequestDetails;
     });
 
-const TRIP_ICONS = {
-  tripName: "/images/profile/booking/trip-name.svg",
-  destination: "/images/profile/booking/destination.svg",
-  returnDate: "/images/profile/booking/return.svg",
-  departureDate: "/images/profile/booking/return.svg",
-  travelType: "/images/profile/booking/travel-type.svg",
-  duration: "/images/profile/booking/duration.svg",
-  roomType: "/images/profile/booking/room-type.svg",
-  travelers: "/images/profile/booking/travelers.svg",
-} as const;
-
-/** Icons for hotel variant — clock/building from shared assets */
-const HOTEL_ICONS = {
-  clock: "/images/summary/clock.svg",
-  nights: "/images/profile/booking/duration.svg",
-  roomType: "/images/profile/booking/room-type.svg",
-  roomNumber: "/images/profile/booking/room-number.svg",
-  guests: "/images/profile/booking/travelers.svg",
-} as const;
-
-/** Transportation detail icons — booking set + luggage asset */
-const TRANSPORT_ICONS = {
-  location: "/images/profile/booking/destination.svg",
-  calendar: "/images/profile/booking/return.svg",
-  clock: "/images/profile/booking/duration.svg",
-  duration: "/images/profile/booking/timer.svg",
-  passengers: "/images/profile/booking/passengers.svg",
-  tripType: "/images/profile/booking/travel-type.svg",
-  luggage: "/images/profile/booking/luggage.svg",
-} as const;
+const TRIP_ICONS = bookingCardIcons.trip;
+const HOTEL_ICONS = bookingCardIcons.hotel;
+const TRANSPORT_ICONS = bookingCardIcons.transport;
+const MICE_ICONS = bookingCardIcons.mice;
+const B2B_ICONS = bookingCardIcons.b2b;
 
 function formatUsd(n: number) {
   return `$${n.toLocaleString("en-US")}`;
@@ -144,6 +157,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
     remainingAmount,
     totalAmount,
     cancelledLabel,
+    infoMessage,
     primaryLabel,
     primaryHref = "/trips",
   } = props;
@@ -153,6 +167,10 @@ export default function TripBookingCard(props: TripBookingCardProps) {
       ? "Hotel Booking"
       : props.variant === "transport"
         ? "Transportation Booking"
+        : props.variant === "mice"
+          ? "MICE Event"
+          : props.variant === "b2b"
+            ? "B2B Event"
         : "Trip Booking";
 
   return (
@@ -182,14 +200,18 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                   <span className={styles.timerText}>{timerLabel}</span>
                 </span>
               )}
-              {status === "partially_paid" && (
+              {(status === "partially_paid" || status === "proposal_in_progress") && (
                 <span className={styles.statusPartial}>
                   <LoadingGlyph />
-                  <span>Partially Paid</span>
+                  <span>
+                    {status === "proposal_in_progress" ? "Proposal In progress" : "Partially Paid"}
+                  </span>
                 </span>
               )}
-              {status === "confirmed" && (
-                <span className={styles.statusConfirmed}>✓ Confirmed</span>
+              {(status === "confirmed" || status === "proposal_sent") && (
+                <span className={styles.statusConfirmed}>
+                  ✓ {status === "proposal_sent" ? "Proposal Sent" : "Confirmed"}
+                </span>
               )}
               {status === "cancelled" && (
                 <span className={styles.statusCancelled}>
@@ -306,6 +328,82 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                 iconSize={16}
               />
             </div>
+          ) : props.variant === "mice" ? (
+            <div className={styles.detailGrid}>
+              <DetailCell
+                icon={MICE_ICONS.organization}
+                label="Organization"
+                value={props.details.organization}
+              />
+              <DetailCell
+                icon={MICE_ICONS.city}
+                label="Preferred City"
+                value={props.details.preferredCity}
+              />
+              <DetailCell
+                icon={MICE_ICONS.eventType}
+                label="Event Type"
+                value={props.details.eventType}
+              />
+              <DetailCell
+                icon={MICE_ICONS.attendees}
+                label="Expected Attendees"
+                value={props.details.expectedAttendees}
+              />
+              <DetailCell
+                icon={MICE_ICONS.startDate}
+                label="Start Date"
+                value={props.details.startDate}
+              />
+              <DetailCell
+                icon={MICE_ICONS.endDate}
+                label="End Date"
+                value={props.details.endDate}
+              />
+              <DetailCell
+                icon={MICE_ICONS.eventTime}
+                label="Event time"
+                value={props.details.eventTime}
+              />
+              <DetailCell
+                icon={MICE_ICONS.duration}
+                label="Duration"
+                value={props.details.durationLabel}
+              />
+            </div>
+          ) : props.variant === "b2b" ? (
+            <div className={styles.detailGridHotel}>
+              <DetailCell
+                icon={B2B_ICONS.companyName}
+                label="Company name"
+                value={props.details.companyName}
+              />
+              <DetailCell
+                icon={B2B_ICONS.country}
+                label="Country"
+                value={props.details.country}
+              />
+              <DetailCell
+                icon={B2B_ICONS.contactPerson}
+                label="Contact Person"
+                value={props.details.contactPerson}
+              />
+              <DetailCell
+                icon={B2B_ICONS.email}
+                label="Email Address"
+                value={props.details.emailAddress}
+              />
+              <DetailCell
+                icon={B2B_ICONS.phone}
+                label="Phone Number"
+                value={props.details.phoneNumber}
+              />
+              <DetailCell
+                icon={B2B_ICONS.website}
+                label="Website"
+                value={props.details.website}
+              />
+            </div>
           ) : (
             <div className={styles.detailGrid}>
               <DetailCell
@@ -384,6 +482,9 @@ export default function TripBookingCard(props: TripBookingCardProps) {
               )}
               {status === "cancelled" && cancelledLabel && (
                 <p className={styles.metaCancelled}>{cancelledLabel}</p>
+              )}
+              {(status === "proposal_in_progress" || status === "proposal_sent") && infoMessage && (
+                <p className={styles.metaInfo}>• {infoMessage}</p>
               )}
             </div>
             <Button

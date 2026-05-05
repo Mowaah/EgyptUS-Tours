@@ -51,7 +51,7 @@
   width: 20px;
   height: 20px;
   fill: transparent;
-  stroke: $border-strong;
+  stroke: $primary;
   stroke-width: 1.5;
   transition: fill $transition-fast, stroke $transition-fast;
 }
@@ -59,6 +59,12 @@
 .heartActive {
   fill: $danger;
   stroke: $danger;
+}
+
+.heartBlue {
+  width: 20px;
+  height: 20px;
+  display: block;
 }
 
 .location {
