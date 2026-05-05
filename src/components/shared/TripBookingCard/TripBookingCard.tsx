@@ -209,19 +209,19 @@ export default function TripBookingCard(props: TripBookingCardProps) {
           {props.variant === "hotel" ? (
             <div className={styles.detailGridHotel}>
               <DetailCell
-                icon={HOTEL_ICONS.clock}
+                icon={HOTEL_ICONS.nights}
                 label="Check-In"
                 value={props.details.checkIn}
                 iconSize={16}
               />
               <DetailCell
-                icon={HOTEL_ICONS.clock}
+                icon={HOTEL_ICONS.nights}
                 label="Check-Out"
                 value={props.details.checkOut}
                 iconSize={16}
               />
               <DetailCell
-                icon={HOTEL_ICONS.nights}
+                icon={TRIP_ICONS.returnDate}
                 label="Nights"
                 value={props.details.nights}
                 iconSize={16}

@@ -81,9 +81,9 @@ const TRIP_LINKS = [
 ];
 
 const MOBILE_USER_LINKS = [
-  { label: "Favorites", href: "/favorites", icon: "/images/heart-outline.svg" },
-  { label: "Requests", href: "/requests", icon: "/images/archive-book.svg" },
-  { label: "Bookings", href: "/bookings", icon: "/images/message-2.svg" },
+  { label: "Favorites", href: "/profile?tab=favorites", icon: "/images/heart-outline.svg" },
+  { label: "Requests", href: "/profile?tab=requests", icon: "/images/archive-book.svg" },
+  { label: "Bookings", href: "/profile?tab=bookings", icon: "/images/message-2.svg" },
 ];
 
 export default function Navbar() {
