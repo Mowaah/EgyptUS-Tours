@@ -1,0 +1,279 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.premiumBanner {
+  position: relative;
+  width: 100%;
+  min-height: 171px;
+  background: #123367;
+  border-radius: 32px;
+  overflow: hidden;
+  isolation: isolate;
+
+  @media (min-width: 768px) {
+    min-height: 171px;
+  }
+}
+
+.bannerDecorations {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.grayPlane {
+  position: absolute;
+  width: 105px;
+  height: 118px;
+  right: 0;
+  top: 55px;
+  opacity: 0.8;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  @media (max-width: 768px) {
+    width: 80px;
+    height: 80px;
+    right: -5px;
+    top: 5px;
+    opacity: 0.5;
+  }
+}
+
+.grayDottedLine {
+  position: absolute;
+  width: 220px;
+  height: 120px;
+  left: -80px;
+  bottom: 0;
+  opacity: 0.6;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  @media (max-width: 768px) {
+    width: 140px;
+    height: 80px;
+    left: -50px;
+    bottom: 0;
+  }
+}
+
+.gradientOverlay {
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(80% 60% at 15.23% 53.07%, rgba(37, 99, 235, 0.35) 0%, rgba(37, 99, 235, 0) 60%),
+    radial-gradient(60% 80% at 85.23% 23.07%, rgba(124, 58, 237, 0.25) 0%, rgba(124, 58, 237, 0) 55%),
+    radial-gradient(50% 50% at 70.23% 83.07%, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0) 50%);
+  opacity: 0.8;
+  z-index: 1;
+}
+
+.bannerContent {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px max(16px, env(safe-area-inset-right)) 20px max(16px, env(safe-area-inset-left));
+  gap: 24px;
+  min-height: 171px;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+    padding: 20px 40px;
+    gap: 46px;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 20px 80px;
+  }
+}
+
+// Trip Info Section
+.tripInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    width: auto;
+    flex: 1;
+  }
+}
+
+.upcomingBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.55px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    background: #34D399;
+    border-radius: 50%;
+  }
+}
+
+.tripTitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-size: clamp(1.125rem, 4vw + 0.75rem, 24px);
+  font-weight: 900;
+  line-height: 1.2;
+  color: $white;
+  margin: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.tripMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.metaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 20px;
+  color: rgba(255, 255, 255, 0.8);
+
+  svg {
+    flex-shrink: 0;
+    opacity: 0.8;
+  }
+}
+
+// Countdown Section — on narrow screens, equal flex columns so nothing clips
+.countdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(3px, 1.5vw, 10px);
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  align-self: stretch;
+
+  @media (min-width: 768px) {
+    align-self: center;
+    width: auto;
+    flex-shrink: 0;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+}
+
+.countdownItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 12px;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 32px;
+  box-sizing: border-box;
+
+  // Desktop / tablet: fixed pill size
+  @media (min-width: 768px) {
+    width: 90px;
+    height: 86px;
+    min-width: 64px;
+    flex: 0 0 auto;
+  }
+
+  // Mobile: share row width so Days–Secs all stay visible
+  @media (max-width: 767px) {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+    height: auto;
+    min-height: 64px;
+    padding: clamp(8px, 2vw, 12px) clamp(4px, 1.5vw, 8px);
+  }
+}
+
+.countdownValue {
+  font-family: 'Trip Sans', sans-serif;
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  color: $white;
+
+  @media (max-width: 767px) {
+    font-size: clamp(1.125rem, 6.5vw, 1.5rem);
+  }
+
+  @media (max-width: 480px) {
+    font-size: clamp(1rem, 5.5vw, 1.35rem);
+  }
+}
+
+.countdownLabel {
+  font-family: 'Trip Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+
+  @media (max-width: 380px) {
+    font-size: 8px;
+    letter-spacing: 0.04em;
+  }
+}
+
+.separator {
+  flex: 0 0 auto;
+  font-family: 'Trip Sans', sans-serif;
+  font-size: clamp(1rem, 4vw, 28px);
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.2);
+  padding: 0 1px;
+
+  @media (min-width: 768px) {
+    font-size: 28px;
+    line-height: 28px;
+  }
+}

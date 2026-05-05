@@ -1,0 +1,397 @@
+@use "@/styles/variables" as *;
+
+.card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  border-radius: 32px;
+  border: 1px solid rgba(241, 241, 241, 0.7);
+  overflow: hidden;
+  background: $white;
+
+  @media (min-width: 769px) {
+    flex-direction: row;
+    align-items: stretch;
+    min-height: 323px;
+  }
+}
+
+.imageCol {
+  position: relative;
+  width: 100%;
+  min-height: 200px;
+  flex-shrink: 0;
+  border-radius: 32px 32px 0 0;
+  overflow: hidden;
+
+  @media (min-width: 769px) {
+    width: 263px;
+    min-height: 323px;
+    border-radius: 32px 0 0 32px;
+  }
+}
+
+.image {
+  object-fit: cover;
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    0deg,
+    rgba(0, 32, 85, 0.28),
+    rgba(0, 32, 85, 0.28)
+  );
+  pointer-events: none;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0 0 32px 32px;
+
+  @media (min-width: 769px) {
+    border-radius: 0 32px 32px 0;
+  }
+}
+
+.cardHeader {
+  padding: 24px 16px 0 24px;
+}
+
+.headerTop {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+  }
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Trip Sans", sans-serif;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-base;
+  line-height: 22px;
+  letter-spacing: 0.01em;
+  color: $dark;
+}
+
+.sectionDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: #1b4fd8;
+  flex-shrink: 0;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.timerBadge {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid #bfdbfe;
+  background: linear-gradient(104.23deg, #eff6ff 0%, #ede9fe 100%);
+}
+
+.timerDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #1b4fd8;
+}
+
+.timerText {
+  font-family: "Trip Sans", sans-serif;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-2xs;
+  line-height: 16px;
+  color: #1b4fd8;
+}
+
+.statusPartial {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: #fef3c7;
+  font-family: "Trip Sans", sans-serif;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-2xs;
+  line-height: 16px;
+  letter-spacing: 0.22px;
+  color: #b45309;
+}
+
+.loadingGlyph {
+  display: inline-flex;
+  color: #b45309;
+}
+
+.spinnerSvg {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.statusConfirmed {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: #dcfce7;
+  font-family: "Trip Sans", sans-serif;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-2xs;
+  line-height: 16px;
+  letter-spacing: 0.22px;
+  color: #15803d;
+}
+
+.statusCancelled {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: #fef2f2;
+  font-family: "Trip Sans", sans-serif;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-2xs;
+  line-height: 16px;
+  letter-spacing: 0.22px;
+  color: #d80027;
+}
+
+.cancelX {
+  font-weight: 900;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.divider {
+  height: 1px;
+  margin-top: 16px;
+  background: rgba(102, 107, 109, 0.12);
+  align-self: stretch;
+}
+
+.main {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+.tripTitle {
+  margin: 0;
+  padding-left: 12px;
+  font-family: "Trip Sans", sans-serif;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-sm;
+  line-height: 24px;
+  color: #0f172a;
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 12px;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.detailGridHotel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 12px;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.detailCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.iconWrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 100px;
+  background: #fff9f5;
+}
+
+.iconBgPlane {
+  background: rgba(255, 240, 230, 0.4);
+}
+
+.detailIcon {
+  display: block;
+  flex-shrink: 0;
+}
+
+.detailText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.detailLabel {
+  font-family: "Trip Sans", sans-serif;
+  font-weight: $font-weight-normal;
+  font-size: $font-size-10;
+  line-height: 10px;
+  letter-spacing: 0.01em;
+  color: $text-light;
+}
+
+.detailValue {
+  font-family: "Trip Sans", sans-serif;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-xs;
+  line-height: 1.2;
+  color: $dark;
+}
+
+.roomRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.roomTag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: #fff6f3;
+  font-size: $font-size-10;
+  font-weight: $font-weight-medium;
+  line-height: 14px;
+  letter-spacing: 0.01em;
+  color: $secondary;
+}
+
+.footer {
+  padding: 8px 24px 24px;
+  margin-top: auto;
+}
+
+.footerInner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 24px;
+  background: #f9fafb;
+
+  @media (min-width: 520px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+}
+
+.footerMeta {
+  flex: 1;
+  min-width: 0;
+}
+
+.metaPartial,
+.metaConfirmed {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-family: "Trip Sans", sans-serif;
+}
+
+.metaMuted {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-normal;
+  line-height: 150%;
+  color: $text-light;
+}
+
+.metaBullet {
+  font-size: $font-size-sm;
+  color: $text-light;
+}
+
+.metaStrong {
+  font-size: 20px;
+  font-weight: $font-weight-bold;
+  line-height: 150%;
+  color: $primary;
+}
+
+.metaPrice {
+  font-size: 20px;
+  font-weight: $font-weight-normal;
+  line-height: 150%;
+  color: $primary;
+}
+
+.metaCancelled {
+  margin: 0;
+  font-family: "Trip Sans", sans-serif;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-xs;
+  line-height: 150%;
+  color: #d80027;
+}
+
+.cta {
+  flex-shrink: 0;
+  padding: 10px 28px !important;
+  min-height: 39px;
+  font-size: $font-size-xs !important;
+  font-weight: $font-weight-medium !important;
+  line-height: 24px !important;
+}

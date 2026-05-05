@@ -1,0 +1,185 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+// Main page wrapper
+.profilePage {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: $white;
+  padding-bottom: $spacing-4xl;
+}
+
+// Container
+.container {
+  max-width: $container-max;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+// Main Layout
+.mainLayout {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  position: relative;
+
+  @media (min-width: 1024px) {
+    flex-direction: row;
+    gap: 48px;
+  }
+}
+
+// Sidebar column - contains sidebar and decoration
+.sidebarColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  align-items: flex-start;
+
+  @media (min-width: 1024px) {
+    width: 332px;
+    flex-shrink: 0;
+  }
+}
+
+// Content Area
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.contentHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contentHeaderBookings {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+}
+
+.contentHeaderText {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.bookingCategoryTabs {
+  flex-shrink: 0;
+  align-self: stretch;
+
+  @media (min-width: 768px) {
+    align-self: center;
+  }
+}
+
+.contentTitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 44px;
+  color: $dark;
+  margin: 0;
+
+  @media (max-width: 640px) {
+    font-size: 24px;
+    line-height: 32px;
+  }
+}
+
+.contentSubtitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0.01em;
+  color: #6B7280;
+  margin: 0;
+
+  @media (max-width: 640px) {
+    font-size: 16px;
+  }
+}
+
+.bookingsList {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 24px;
+  width: 100%;
+}
+
+// Trips Grid
+.tripsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  > * {
+    min-width: 0;
+  }
+}
+
+// Orange dotted line — directly under sidebar, left edge flush with viewport
+.decorationBottom {
+  display: none;
+  flex-shrink: 0;
+  width: min(359px, 100vw);
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+  // Pull left so graphic aligns with screen edge (matches .container padding + centering)
+  margin-left: calc(-16px - max(0px, (100vw - #{$container-max}) / 2));
+
+  @media (min-width: 1024px) {
+    display: block;
+    margin-top: $spacing-xl;
+  }
+}
+
+.decorationLineWrap {
+  position: relative;
+  width: 100%;
+  line-height: 0;
+}
+
+.decorationImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  object-position: left top;
+}
+
+.decorationEndIcon {
+  position: absolute;
+  top: 5px;
+  right: -15px;
+  rotate: -20deg;
+  z-index: 1;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}

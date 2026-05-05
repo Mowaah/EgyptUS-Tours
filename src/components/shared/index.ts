@@ -1,6 +1,14 @@
 export { default as Button } from "./Button/Button";
 export { default as SectionHeader } from "./SectionHeader/SectionHeader";
 export { default as TripCard } from "./TripCard/TripCard";
+export { default as TripBookingCard } from "./TripBookingCard/TripBookingCard";
+export type {
+  TripBookingCardProps,
+  TripBookingDetails,
+  HotelBookingDetails,
+  TransportBookingDetails,
+  TripBookingStatus,
+} from "./TripBookingCard/TripBookingCard";
 export { default as HotelCard } from "./HotelCard/HotelCard";
 export { default as BlogCard } from "./BlogCard/BlogCard";
 export { default as CategoryTabs } from "./CategoryTabs/CategoryTabs";
@@ -50,3 +58,7 @@ export { default as MultiSelectDropdown } from "./MultiSelectDropdown/MultiSelec
 export { default as Pagination } from "./Pagination/Pagination";
 export { default as SearchContainer } from "./SearchContainer/SearchContainer";
 export { default as FilterSidebar } from "./FilterSidebar/FilterSidebar";
+export { default as UpcomingTripBanner } from "./UpcomingTripBanner/UpcomingTripBanner";
+export type { UpcomingTripBannerProps } from "./UpcomingTripBanner/UpcomingTripBanner";
+export { default as ProfileSidebar } from "./ProfileSidebar/ProfileSidebar";
+export type { ProfileSidebarProps, UserProfile, TabType } from "./ProfileSidebar/ProfileSidebar";

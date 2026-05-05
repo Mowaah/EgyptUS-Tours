@@ -58,25 +58,29 @@ export default function UserMenu({ scrolled, lightNavBackground }: UserMenuProps
 
       {/* Dropdown Menu */}
       <div className={`${styles.dropdown} ${isOpen ? styles.open : ""}`}>
-        <div className={styles.header}>
+        <Link
+          href="/profile"
+          className={`${styles.header} ${styles.headerProfileLink}`}
+          onClick={() => setIsOpen(false)}
+        >
           <div className={styles.avatarWrapper}>
             <Image src="/images/profile-orange.svg" alt="" width={22} height={22} className={styles.avatarIcon} />
           </div>
           <span className={styles.username}>Username</span>
-        </div>
+        </Link>
 
         <div className={styles.divider} />
 
         <div className={styles.menuLinks}>
-          <Link href="/favorites" className={styles.menuItem} onClick={() => setIsOpen(false)}>
+          <Link href="/profile?tab=favorites" className={styles.menuItem} onClick={() => setIsOpen(false)}>
             <Image src="/images/heart-outline.svg" alt="" width={24} height={24} className={styles.menuIcon} />
             <span>Favorites</span>
           </Link>
-          <Link href="/requests" className={styles.menuItem} onClick={() => setIsOpen(false)}>
+          <Link href="/profile?tab=requests" className={styles.menuItem} onClick={() => setIsOpen(false)}>
             <Image src="/images/archive-book.svg" alt="" width={24} height={24} className={styles.menuIcon} />
             <span>Requests</span>
           </Link>
-          <Link href="/bookings" className={styles.menuItem} onClick={() => setIsOpen(false)}>
+          <Link href="/profile?tab=bookings" className={styles.menuItem} onClick={() => setIsOpen(false)}>
             <Image src="/images/message-2.svg" alt="" width={24} height={24} className={styles.menuIcon} />
             <span>Bookings</span>
           </Link>

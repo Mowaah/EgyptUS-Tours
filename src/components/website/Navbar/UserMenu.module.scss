@@ -98,6 +98,17 @@
   padding: $spacing-xs $spacing-xs $spacing-sm;
 }
 
+.headerProfileLink {
+  text-decoration: none;
+  color: inherit;
+  border-radius: $radius-md;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: $background-alt;
+  }
+}
+
 .avatarWrapper {
   width: 44px;
   height: 44px;
