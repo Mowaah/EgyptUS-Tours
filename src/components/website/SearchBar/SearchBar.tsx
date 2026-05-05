@@ -58,7 +58,7 @@ export default function SearchBar() {
     <div className={styles.wrapper}>
       <div className={styles.tabs}>
         <button className={`${styles.tab} ${styles.active}`}>
-          <Image src="/images/search/trips.svg" alt="" width={21.92} height={20} />
+          <Image src="/images/search/trips.svg" alt="" width={22.5} height={19.5} />
           <span>trips</span>
         </button>
       </div>

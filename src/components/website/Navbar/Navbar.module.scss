@@ -298,8 +298,7 @@ $nav-desktop: 1150px;
 
 .dropdownIcon {
   flex-shrink: 0;
-  // If the SVG is solid black, this CSS filter manually pushes it to our exact $primary #2971E6 bounds visually:
-  filter: invert(34%) sepia(85%) saturate(2250%) hue-rotate(204deg) brightness(97%) contrast(89%);
+  transform: scaleX(-1);
 }
 
 .dropdownText {
