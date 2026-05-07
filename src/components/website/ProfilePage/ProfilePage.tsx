@@ -239,7 +239,6 @@ export default function ProfilePage() {
       {/* Header */}
       <PageHeader
         breadcrumbs={[
-          { label: "Home", href: "/" },
           { label: "Profile", isCurrent: true },
         ]}
         title="Your Travel Space"

@@ -1,12 +1,11 @@
 import React from "react";
-import Image from "next/image";
 import planPage from "../../../PlanYourTripPage/PlanYourTripPage.module.scss";
 import localStyles from "../../BookPrivateTripPage.module.scss";
 import stepStyles from "./StepBookingSummary.module.scss";
 import { BookingData } from "../../BookPrivateTripPage";
 import { Trip } from "@/types";
 import RightSidebar from "@/components/shared/BookingSidebar/BookingSidebar";
-import { BookingStepFooter, CheckboxIndicator } from "@/components/shared";
+import { BookingDetailsSections, BookingStepFooter, CheckboxIndicator } from "@/components/shared";
 
 interface StepBookingSummaryProps {
   trip: Trip;
@@ -30,6 +29,49 @@ export default function StepBookingSummary({
   const specialRequestItems = formData.specialRequests
     ? formData.specialRequests.split(",").map((s) => s.trim()).filter(Boolean)
     : [];
+  const rooms = [
+    formData.rooms.single > 0 ? `${formData.rooms.single} × Single Room - Garden View` : null,
+    formData.rooms.double > 0 ? `${formData.rooms.double} × Double Room - Sea View` : null,
+    formData.rooms.triple > 0 ? `${formData.rooms.triple} × Triple Room - Garden View` : null,
+  ].filter((room): room is string => Boolean(room));
+
+  const sections = [
+    {
+      title: "Contact Info",
+      icon: "/images/summary/contact.svg",
+      fields: [
+        { label: "Name", value: formData.name },
+        { label: "Email", value: formData.email },
+        { label: "Phone Number", value: formData.phone },
+        { label: "Nationality", value: formData.nationality },
+      ],
+    },
+    {
+      title: "Trip Info",
+      icon: "/images/summary/trip.svg",
+      fields: [
+        { label: "Trip Name", value: trip.title },
+        { label: "Destination", value: "Santorini, Greece" },
+        { label: "Travel Type", value: "Private" },
+        { label: "Duration", value: "7 Nights / 8 Days" },
+      ],
+    },
+    ...(rooms.length > 0
+      ? [
+          {
+            title: "Rooms",
+            icon: "/images/summary/rooms.svg",
+            listItems: rooms,
+          },
+        ]
+      : []),
+    {
+      title: "Special Requests",
+      icon: "/images/summary/special.svg",
+      listItems: specialRequestItems,
+      emptyStateText: "None",
+    },
+  ];
 
   return (
     <div className={planPage.stepFormCard}>
@@ -41,75 +83,7 @@ export default function StepBookingSummary({
       </header>
 
       <div className={localStyles.twoColumnLayout}>
-        <div className={stepStyles.leftColumnCards}>
-
-          {/* Contact Info */}
-          <div className={stepStyles.reviewSection}>
-            <div className={stepStyles.reviewSectionHeader}>
-              <div className={stepStyles.reviewSectionIcon}>
-                <Image src="/images/summary/contact.svg" width={16} height={16} alt="" />
-              </div>
-              <span className={stepStyles.reviewSectionTitle}>Contact Info</span>
-            </div>
-            <div className={stepStyles.reviewGrid}>
-              <div className={stepStyles.reviewItem}><label>Name</label><span>{formData.name}</span></div>
-              <div className={stepStyles.reviewItem}><label>Email</label><span>{formData.email}</span></div>
-              <div className={stepStyles.reviewItem}><label>Phone Number</label><span>{formData.phone}</span></div>
-              <div className={stepStyles.reviewItem}><label>Nationality</label><span>{formData.nationality}</span></div>
-            </div>
-          </div>
-
-          {/* Trip Info */}
-          <div className={stepStyles.reviewSection}>
-            <div className={stepStyles.reviewSectionHeader}>
-              <div className={stepStyles.reviewSectionIcon}>
-                <Image src="/images/summary/trip.svg" width={16} height={16} alt="" />
-              </div>
-              <span className={stepStyles.reviewSectionTitle}>Trip Info</span>
-            </div>
-            <div className={stepStyles.reviewGrid}>
-              <div className={stepStyles.reviewItem}><label>Trip Name</label><span>{trip.title}</span></div>
-              <div className={stepStyles.reviewItem}><label>Destination</label><span>Santorini, Greece</span></div>
-              <div className={stepStyles.reviewItem}><label>Travel Type</label><span>Private</span></div>
-              <div className={stepStyles.reviewItem}><label>Duration</label><span>7 Nights / 8 Days</span></div>
-            </div>
-          </div>
-
-          {/* Rooms */}
-          {(formData.rooms.single > 0 || formData.rooms.double > 0 || formData.rooms.triple > 0) && (
-            <div className={stepStyles.reviewSection}>
-              <div className={stepStyles.reviewSectionHeader}>
-                <div className={stepStyles.reviewSectionIcon}>
-                  <Image src="/images/summary/rooms.svg" width={16} height={16} alt="" />
-                </div>
-                <span className={stepStyles.reviewSectionTitle}>Rooms</span>
-              </div>
-              <ul className={stepStyles.reviewRoomsList}>
-                {formData.rooms.single > 0 && <li>•&nbsp;&nbsp;&nbsp;{formData.rooms.single} × Single Room - Garden View</li>}
-                {formData.rooms.double > 0 && <li>•&nbsp;&nbsp;&nbsp;{formData.rooms.double} × Double Room - Sea View</li>}
-                {formData.rooms.triple > 0 && <li>•&nbsp;&nbsp;&nbsp;{formData.rooms.triple} × Triple Room - Garden View</li>}
-              </ul>
-            </div>
-          )}
-
-          {/* Special Requests */}
-          <div className={stepStyles.reviewSection}>
-            <div className={stepStyles.reviewSectionHeader}>
-              <div className={stepStyles.reviewSectionIcon}>
-                <Image src="/images/summary/special.svg" width={16} height={16} alt="" />
-              </div>
-              <span className={stepStyles.reviewSectionTitle}>Special Requests</span>
-            </div>
-            {specialRequestItems.length > 0 ? (
-              <ul className={stepStyles.reviewSpecialList}>
-                {specialRequestItems.map((item, i) => <li key={i}>•&nbsp;&nbsp;&nbsp;{item}</li>)}
-              </ul>
-            ) : (
-              <p style={{ fontSize: '14px', color: '#999', margin: 0 }}>None</p>
-            )}
-          </div>
-
-        </div>
+        <BookingDetailsSections sections={sections} className={stepStyles.leftColumnCards} />
 
         <RightSidebar
           trip={trip}

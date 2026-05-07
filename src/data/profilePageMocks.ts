@@ -105,7 +105,7 @@ export const mockTripBookings: TripBookingCardProps[] = [
     paidAmount: 1470,
     remainingAmount: 3430,
     primaryLabel: "Complete Payment",
-    primaryHref: "/trips",
+    primaryHref: "/profile/bookings-details?status=partially_paid",
   },
   {
     imageSrc: "/images/home/hero-bg.png",
@@ -115,7 +115,7 @@ export const mockTripBookings: TripBookingCardProps[] = [
     details: sharedTripBookingDetails,
     totalAmount: 4900,
     primaryLabel: "View Details",
-    primaryHref: "/trips",
+    primaryHref: "/profile/bookings-details?status=confirmed",
   },
   {
     imageSrc: "/images/home/hero-bg.png",
@@ -124,7 +124,7 @@ export const mockTripBookings: TripBookingCardProps[] = [
     details: sharedTripBookingDetails,
     cancelledLabel: "Cancelled by You — Apr 1, 2026",
     primaryLabel: "View Details",
-    primaryHref: "/trips",
+    primaryHref: "/profile/bookings-details?status=cancelled",
   },
 ];
 
@@ -149,7 +149,7 @@ export const mockHotelBookings: TripBookingCardProps[] = [
     paidAmount: 1470,
     remainingAmount: 3430,
     primaryLabel: "Complete Payment",
-    primaryHref: "/hotels",
+    primaryHref: "/profile/bookings-details?type=hotel&status=partially_paid",
   },
   {
     variant: "hotel",
@@ -160,7 +160,7 @@ export const mockHotelBookings: TripBookingCardProps[] = [
     details: sharedHotelBookingDetails,
     totalAmount: 4900,
     primaryLabel: "View Details",
-    primaryHref: "/hotels",
+    primaryHref: "/profile/bookings-details?type=hotel&status=confirmed",
   },
   {
     variant: "hotel",
@@ -170,7 +170,7 @@ export const mockHotelBookings: TripBookingCardProps[] = [
     details: sharedHotelBookingDetails,
     cancelledLabel: "Cancelled by You — Apr 1, 2026",
     primaryLabel: "View Details",
-    primaryHref: "/hotels",
+    primaryHref: "/profile/bookings-details?type=hotel&status=cancelled",
   },
 ];
 
@@ -196,7 +196,7 @@ export const mockTransportBookings: TripBookingCardProps[] = [
     paidAmount: 1470,
     remainingAmount: 3430,
     primaryLabel: "Complete Payment",
-    primaryHref: "/transportation",
+    primaryHref: "/profile/bookings-details?type=transport&status=partially_paid",
   },
   {
     variant: "transport",
@@ -207,7 +207,7 @@ export const mockTransportBookings: TripBookingCardProps[] = [
     details: sharedTransportBookingDetails,
     totalAmount: 4900,
     primaryLabel: "View Details",
-    primaryHref: "/transportation",
+    primaryHref: "/profile/bookings-details?type=transport&status=confirmed",
   },
   {
     variant: "transport",
@@ -217,7 +217,7 @@ export const mockTransportBookings: TripBookingCardProps[] = [
     details: sharedTransportBookingDetails,
     cancelledLabel: "Cancelled by Admin — Apr 1, 2026",
     primaryLabel: "View Details",
-    primaryHref: "/transportation",
+    primaryHref: "/profile/bookings-details?type=transport&status=cancelled",
   },
 ];
 
@@ -240,7 +240,7 @@ export const mockMiceRequests: TripBookingCardProps[] = [
     status: "proposal_in_progress",
     details: sharedMiceRequestDetails,
     primaryLabel: "View Details",
-    primaryHref: "/events",
+    primaryHref: "/profile/requests-details?type=events&status=proposal_in_progress",
     infoMessage: "Proposal expected within 24-48 hrs",
   },
   {
@@ -250,7 +250,7 @@ export const mockMiceRequests: TripBookingCardProps[] = [
     status: "proposal_sent",
     details: sharedMiceRequestDetails,
     primaryLabel: "View Details",
-    primaryHref: "/events",
+    primaryHref: "/profile/requests-details?type=events&status=proposal_sent",
     infoMessage: "Proposal has been sent to your email",
   },
 ];
@@ -272,7 +272,7 @@ export const mockB2BRequests: TripBookingCardProps[] = [
     status: "proposal_in_progress",
     details: sharedB2BRequestDetails,
     primaryLabel: "View Details",
-    primaryHref: "/b2b-programs",
+    primaryHref: "/profile/requests-details?type=b2b&status=proposal_in_progress",
     infoMessage: "Proposal expected within 24-48 hrs",
   },
   {
@@ -282,7 +282,7 @@ export const mockB2BRequests: TripBookingCardProps[] = [
     status: "proposal_sent",
     details: sharedB2BRequestDetails,
     primaryLabel: "View Details",
-    primaryHref: "/b2b-programs",
+    primaryHref: "/profile/requests-details?type=b2b&status=proposal_sent",
     infoMessage: "Proposal has been sent to your email",
   },
 ];

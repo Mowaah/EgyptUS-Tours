@@ -1,0 +1,234 @@
+@use "@/styles/variables" as *;
+
+.page {
+  background: $background;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: $container-max;
+  margin: 0 auto;
+  padding: 20px 16px 32px;
+
+  @media (min-width: 640px) {
+    padding: 28px 24px 32px;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 40px 48px;
+  }
+
+  @media (min-width: 1280px) {
+    padding: 40px 80px;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  margin-bottom: 24px;
+  margin-inline: 0;
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  border: none;
+
+  @media (min-width: 768px) {
+    gap: $spacing-lg;
+    background-color: $white;
+    padding: $spacing-lg;
+    border-radius: 24px;
+    border: 1px solid $border-strong;
+  }
+
+  @media (min-width: 1024px) {
+    margin-bottom: 32px;
+    padding: $spacing-xl;
+    border-radius: 32px;
+  }
+}
+
+.warningBanner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 10px;
+  background: #fff8ef;
+  color: #f28c28;
+  font-size: 14px;
+  font-weight: $font-weight-medium;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+
+.warningDot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #f4a340;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.warningDotIcon {
+  width: 12px;
+  height: 12px;
+  object-fit: contain;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+
+  h2 {
+    margin: 0;
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    color: #172b4d;
+    line-height: 1.2;
+  }
+
+  p {
+    margin: 6px 0 0;
+    color: #7a8597;
+    font-size: clamp(0.8125rem, 2.3vw, #{$font-size-base});
+    line-height: 1.5;
+  }
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 14px 14px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  white-space: nowrap;
+}
+
+.statusIcon {
+  font-weight: $font-weight-bold;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loadingGlyph {
+  display: inline-flex;
+  color: inherit;
+  width: 14px;
+  height: 14px;
+}
+
+.spinnerSvg {
+  animation: spin 0.8s linear infinite;
+  width: 14px;
+  height: 14px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.statusConfirmed {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.statusPartiallyPaid {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.statusCancelled {
+  background: #fef2f2;
+  color: #d80027;
+}
+
+.content {
+  display: grid;
+  gap: 32px;
+  grid-template-columns: 1fr 400px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebarWrap {
+  @media (max-width: 1023px) {
+    margin-top: 4px;
+  }
+}
+
+.footer {
+  border-top: 1px solid rgba(221, 226, 235, 0.9);
+  margin-top: 16px;
+  padding-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.footerSplit {
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+
+.cancelLink {
+  color: $primary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.footerSplit .cancelLink {
+  flex: 0 0 25%;
+  min-width: 0;
+  text-align: center;
+}
+
+.payButton {
+  border: none;
+  background: $primary;
+  color: #fff;
+  border-radius: 999px;
+  padding: 12px 32px;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  line-height: 1.5;
+  min-width: min(100%, 470px);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.footerSplit .payButton {
+  flex: 1 1 75%;
+  min-width: 0;
+}
