@@ -8,8 +8,7 @@
   overflow-y: visible;
 
   @media (max-width: 1023px) {
-    overflow-x: visible;
-    // Match the layout viewport width (avoids 100vw vs scrollbar mismatch on children)
+    overflow-x: clip;
     width: 100%;
     max-width: 100%;
   }
@@ -160,13 +159,14 @@
 
   @media (max-width: 1023px) {
     margin-top: $spacing-lg;
-    height: clamp(280px, 72vw, 480px);
+    // Shorter frame ⇒ cover scales down slightly ⇒ less horizontal clipping on left/right
+    height: clamp(248px, 62vw, 420px);
     overflow: hidden;
   }
 
   @media (min-width: 1024px) {
     margin-top: -50px;
-    aspect-ratio: 1122 / 526;
+    aspect-ratio: 1158 / 526;
   }
 
   & > :global(span) {
@@ -184,12 +184,11 @@
   object-position: center;
   z-index: 1;
 
-  // Lower % = anchor toward the left of the bitmap ⇒ frame shifts right on screen (high % was backwards)
   @media (max-width: 1023px) {
-    object-position: 32% center;
+    object-position: 15% center;
   }
 
   @media (min-width: 1024px) {
-    object-position: 44% center;
+    object-position: center;
   }
 }
