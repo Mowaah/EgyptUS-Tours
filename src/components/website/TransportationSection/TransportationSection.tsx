@@ -102,14 +102,8 @@ export default function TransportationSection() {
 
       <div className={styles.mapBleed}>
         <div className={styles.mapStretch}>
-          <Image
-            src="/images/map.svg"
-            alt="Map"
-            fill
-            className={styles.mapImage}
-            sizes="(max-width: 1023px) 100vw, min(1280px, 100vw)"
-            priority
-          />
+          {/* Plain img: SVG stays vector. next/Image often rasterizes for srcset → soft/pixelated on 3× iPhones */}
+          <img src="/images/map.svg" alt="Map" className={styles.mapImage} loading="eager" fetchPriority="high" />
         </div>
       </div>
     </section>
