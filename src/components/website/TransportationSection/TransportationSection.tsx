@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SectionHeader, Button, CustomDatePicker } from "@/components/shared";
 import Image from "next/image";
@@ -98,16 +98,19 @@ export default function TransportationSection() {
             </div>
           </div>
         </div>
+      </div>
 
-        <Image
-          src="/images/map.svg"
-          alt="Map"
-          width={500}
-          height={600}
-          className={styles.mapImage}
-          sizes="100vw"
-          priority
-        />
+      <div className={styles.mapBleed}>
+        <div className={styles.mapStretch}>
+          <Image
+            src="/images/map.svg"
+            alt="Map"
+            fill
+            className={styles.mapImage}
+            sizes="(max-width: 1023px) 100vw, min(1280px, 100vw)"
+            priority
+          />
+        </div>
       </div>
     </section>
   );

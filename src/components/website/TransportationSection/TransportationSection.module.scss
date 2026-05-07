@@ -4,7 +4,15 @@
 .section {
   @include section-padding;
   background: $background;
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
+
+  @media (max-width: 1023px) {
+    overflow-x: visible;
+    // Match the layout viewport width (avoids 100vw vs scrollbar mismatch on children)
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 .container {
@@ -127,18 +135,61 @@
   color: $text-light;
 }
 
-.mapImage {
-  display: block;
+// Sibling of .container: full section width on mobile (no container padding).
+// Desktop: same horizontal band as `.container` content.
+.mapBleed {
   width: 100%;
-  max-width: 500px;
-  height: auto;
-  margin: $spacing-lg auto 0;
+  max-width: $container-max;
+  margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
+
+  @media (max-width: 1023px) {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+// fill + fixed height; map.svg viewBox trims built-in whitespace so content reaches edges
+.mapStretch {
   position: relative;
+  width: 100%;
   z-index: 1;
-  pointer-events: none;
+
+  @media (max-width: 1023px) {
+    margin-top: $spacing-lg;
+    height: clamp(280px, 72vw, 480px);
+    overflow: hidden;
+  }
 
   @media (min-width: 1024px) {
-    max-width: none;
-    margin: -50px 0 0;
+    margin-top: -50px;
+    aspect-ratio: 1122 / 526;
+  }
+
+  & > :global(span) {
+    position: absolute !important;
+    inset: 0 !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+.mapImage {
+  pointer-events: none;
+  object-fit: cover !important;
+  object-position: center;
+  z-index: 1;
+
+  // Lower % = anchor toward the left of the bitmap ⇒ frame shifts right on screen (high % was backwards)
+  @media (max-width: 1023px) {
+    object-position: 32% center;
+  }
+
+  @media (min-width: 1024px) {
+    object-position: 44% center;
   }
 }
