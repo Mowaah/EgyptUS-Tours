@@ -239,6 +239,7 @@
   justify-content: center;
   align-items: center;
   margin-bottom: 4px;
+  overflow: hidden;
 
   @media (min-width: 640px) {
     display: none;
@@ -246,11 +247,9 @@
 }
 
 .statIcon {
-  filter: invert(47%) sepia(87%) saturate(2250%) hue-rotate(352deg) brightness(101%) contrast(106%);
-}
-
-.statIcon {
-  filter: invert(47%) sepia(87%) saturate(2250%) hue-rotate(352deg) brightness(101%) contrast(106%);
+  // Using drop-shadow trick to reliably recolor icons to orange across all browsers
+  transform: translateY(-100px);
+  filter: drop-shadow(0 100px 0 $secondary);
 }
 
 .statValue {

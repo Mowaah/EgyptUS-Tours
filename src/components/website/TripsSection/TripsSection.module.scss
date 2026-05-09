@@ -50,6 +50,7 @@
   flex: 1;
   padding: 14px 18px;
   position: relative;
+  overflow: hidden;
 
   &:not(:last-child)::after {
     content: "";
@@ -82,8 +83,9 @@
 
 .filterSummaryIcon {
   flex-shrink: 0;
-  // Convert white SVG strokes → orange (#FF6600)
-  filter: brightness(0) saturate(100%) invert(47%) sepia(97%) saturate(1200%) hue-rotate(2deg) brightness(102%) contrast(104%);
+  // Using drop-shadow trick to reliably recolor icons to orange across all browsers
+  transform: translateY(-100px);
+  filter: drop-shadow(0 100px 0 $secondary);
 }
 
 .filterSummaryText {
