@@ -1,4 +1,6 @@
 @use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+@use "@/styles/breakpoints" as *;
 
 .tabNav {
   position: sticky;
@@ -12,12 +14,8 @@
 }
 
 .inner {
+  @include container;
   display: flex;
-  max-width: $container-max;
-  margin: 0 auto;
-  padding: 8px $spacing-lg;
-
-  @media (min-width: 1024px) {
-    padding: 8px 0;
-  }
+  padding-top: 8px;
+  padding-bottom: 8px;
 }

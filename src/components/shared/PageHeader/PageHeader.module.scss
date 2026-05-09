@@ -21,7 +21,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-width: 1440px;
+  max-width: $container-max;
   height: 100%;
   pointer-events: none;
   z-index: 0;
@@ -43,9 +43,7 @@
 // Horizontal padding mirrors the booking shell's .mainContent scale so the
 // header title aligns with the form content underneath on every breakpoint.
 .container {
-  max-width: $container-max;
-  margin: 0 auto;
-  padding: 0 16px;
+  @include container;
   position: relative;
   z-index: 1;
   display: flex;

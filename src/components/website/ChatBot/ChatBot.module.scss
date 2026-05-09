@@ -3,34 +3,20 @@
 
 .chatbotContainer {
   position: fixed;
-  bottom: 100px;
-  right: 24px;
+  bottom: 16px;
+  right: 10px;
   z-index: 1000;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
 
-  @media (min-width: 1328px) {
-    // 1280 + 24*2
-    right: calc((100vw - #{$container-max}) / 2 + 24px);
-  }
-
   @media (max-width: 768px) {
-    bottom: 24px;
-    right: 16px;
+    bottom: 12px;
+    right: 8px;
   }
 }
 
-.dragHandle {
-  touch-action: none;
-  user-select: none;
-  -webkit-user-drag: none;
-  cursor: grab;
-}
 
-.dragging {
-  cursor: grabbing !important;
-}
 
 .chatWindow {
   width: 515px;
@@ -74,6 +60,7 @@
     opacity: 0;
     transform: scale(0.01) translateY(50px) translateX(20px);
   }
+
   100% {
     opacity: 1;
     transform: scale(1) translateY(0) translateX(0);
@@ -85,6 +72,7 @@
     opacity: 1;
     transform: scale(1) translateY(0) translateX(0);
   }
+
   100% {
     opacity: 0;
     transform: scale(0.01) translateY(50px) translateX(20px);

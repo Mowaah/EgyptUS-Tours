@@ -8,11 +8,6 @@
 
 .container {
   @include container;
-  padding: 0 $spacing-lg;
-
-  @media (min-width: 1024px) {
-    padding: 0;
-  }
 }
 
 .pageHeader {

@@ -13,8 +13,6 @@ type Message = {
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -23,79 +21,7 @@ export default function ChatBot() {
     },
   ]);
 
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const dragPointerId = useRef<number | null>(null);
-  const dragOrigin = useRef({ x: 0, y: 0, startX: 0, startY: 0 });
-  const didDrag = useRef(false);
-  const suppressClick = useRef(false);
   const closeTimerRef = useRef<number | null>(null);
-
-  const clampPosition = (nextX: number, nextY: number) => {
-    const container = containerRef.current;
-    if (!container) return { x: nextX, y: nextY };
-
-    const rect = container.getBoundingClientRect();
-    const baseLeft = rect.left - position.x;
-    const baseTop = rect.top - position.y;
-    const minX = -baseLeft;
-    const maxX = window.innerWidth - (baseLeft + rect.width);
-    const minY = -baseTop;
-    const maxY = window.innerHeight - (baseTop + rect.height);
-
-    return {
-      x: Math.min(Math.max(nextX, minX), maxX),
-      y: Math.min(Math.max(nextY, minY), maxY),
-    };
-  };
-
-  const handleDragStart = (e: React.PointerEvent<HTMLElement>) => {
-    if (e.button !== 0) return;
-    e.preventDefault();
-
-    dragPointerId.current = e.pointerId;
-    didDrag.current = false;
-    setIsDragging(true);
-
-    dragOrigin.current = {
-      x: e.clientX,
-      y: e.clientY,
-      startX: position.x,
-      startY: position.y,
-    };
-
-    e.currentTarget.setPointerCapture(e.pointerId);
-  };
-
-  const handleDragMove = (e: React.PointerEvent<HTMLElement>) => {
-    if (dragPointerId.current !== e.pointerId) return;
-
-    const deltaX = e.clientX - dragOrigin.current.x;
-    const deltaY = e.clientY - dragOrigin.current.y;
-    if (Math.abs(deltaX) > 3 || Math.abs(deltaY) > 3) {
-      didDrag.current = true;
-    }
-
-    const next = clampPosition(
-      dragOrigin.current.startX + deltaX,
-      dragOrigin.current.startY + deltaY
-    );
-    setPosition(next);
-  };
-
-  const handleDragEnd = (e: React.PointerEvent<HTMLElement>) => {
-    if (dragPointerId.current !== e.pointerId) return;
-
-    e.currentTarget.releasePointerCapture(e.pointerId);
-    dragPointerId.current = null;
-    setIsDragging(false);
-
-    if (didDrag.current) {
-      suppressClick.current = true;
-      window.setTimeout(() => {
-        suppressClick.current = false;
-      }, 0);
-    }
-  };
 
   useEffect(() => {
     return () => {
@@ -132,11 +58,6 @@ export default function ChatBot() {
     }
   };
 
-  const handleToggleChat = () => {
-    if (suppressClick.current) return;
-    toggleChat();
-  };
-
   const handleSuggestion = (suggestion: string) => {
     const userMsg: Message = { id: Date.now(), sender: "user", text: suggestion };
     setMessages((prev) => [...prev, userMsg]);
@@ -161,11 +82,7 @@ export default function ChatBot() {
   ];
 
   return (
-    <div
-      ref={containerRef}
-      className={styles.chatbotContainer}
-      style={{ transform: `translate(${position.x}px, ${position.y}px)` }}
-    >
+    <div className={styles.chatbotContainer}>
       {/* Chat Window */}
       {isOpen && (
         <div className={`${styles.chatWindow} ${isClosing ? styles.chatWindowClosing : ""}`}>
@@ -235,12 +152,8 @@ export default function ChatBot() {
 
       {/* Trigger Button */}
       <button
-        className={`${styles.trigger} ${styles.dragHandle} ${isDragging ? styles.dragging : ""}`}
-        onClick={handleToggleChat}
-        onPointerDown={handleDragStart}
-        onPointerMove={handleDragMove}
-        onPointerUp={handleDragEnd}
-        onPointerCancel={handleDragEnd}
+        className={styles.trigger}
+        onClick={toggleChat}
         aria-label="Open chat"
       >
         <Image
