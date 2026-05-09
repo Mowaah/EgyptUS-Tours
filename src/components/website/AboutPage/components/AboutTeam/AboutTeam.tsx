@@ -42,11 +42,15 @@ export default function AboutTeam() {
   const scrollTo = (index: number) => {
     const el = scrollRef.current;
     if (el && el.children[index]) {
+      const child = el.children[index] as HTMLElement;
       isScrollingRef.current = true;
-      el.children[index].scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-        inline: "center"
+      
+      // Cleanly scroll only the horizontal container without affecting the page's vertical scroll
+      const targetLeft = child.offsetLeft + (child.clientWidth / 2) - (el.clientWidth / 2);
+      
+      el.scrollTo({
+        left: targetLeft,
+        behavior: "smooth"
       });
       
       setActiveIndex(index);
