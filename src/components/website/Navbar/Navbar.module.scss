@@ -84,29 +84,14 @@ $nav-desktop: 1150px;
 }
 
 .container {
+  @include container;
   @include flex-between;
   height: $navbar-height-mobile;
-  max-width: 1800px;
   width: 100%;
-  margin: 0 auto;
-  padding: 0 $spacing-sm;
   gap: $spacing-sm;
-
-  @include sm {
-    padding: 0 $spacing-sm;
-  }
-
-  @include md {
-    padding: 0 $spacing-md;
-  }
 
   @media (min-width: $nav-desktop) {
     height: $navbar-height-desktop;
-    padding: 0 $spacing-lg;
-  }
-
-  @include xl {
-    padding: 0 $spacing-2xl;
   }
 }
 
