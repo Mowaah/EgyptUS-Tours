@@ -118,6 +118,7 @@ export default function ProfileRequestDetailsPage() {
       <PageHeader
         breadcrumbs={[
           { label: "Profile", href: "/profile?tab=requests" },
+          { label: "Requests Details", isCurrent: true },
         ]}
         title="Your Travel Space"
         subtitle="Easily access all your travel bookings and submitted requests in one organized place, with clear details about your trips, hotel stays, transportation, and upcoming plans."

@@ -57,6 +57,7 @@ export default function DetailTabNav({ tabs }: DetailTabNavProps) {
             scrollTo(id);
           }}
           wrap
+          disableAnimation
         />
       </div>
     </div>

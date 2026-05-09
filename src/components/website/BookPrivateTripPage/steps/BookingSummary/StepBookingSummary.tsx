@@ -58,12 +58,12 @@ export default function StepBookingSummary({
     },
     ...(rooms.length > 0
       ? [
-          {
-            title: "Rooms",
-            icon: "/images/summary/rooms.svg",
-            listItems: rooms,
-          },
-        ]
+        {
+          title: "Rooms",
+          icon: "/images/summary/rooms.svg",
+          listItems: rooms,
+        },
+      ]
       : []),
     {
       title: "Special Requests",

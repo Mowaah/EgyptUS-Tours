@@ -13,6 +13,7 @@ interface CategoryTabsProps {
    * Below that, tabs stay on one line and scroll horizontally.
    */
   wrap?: boolean;
+  disableAnimation?: boolean;
   className?: string;
 }
 
@@ -22,6 +23,7 @@ export default function CategoryTabs({
   active,
   onTabChange,
   wrap = false,
+  disableAnimation = false,
   className = "",
 }: CategoryTabsProps) {
   const [internalActiveIndex, setInternalActiveIndex] = useState(defaultActive);
@@ -180,7 +182,7 @@ export default function CategoryTabs({
     top: indicator.top,
     width: indicator.width,
     height: indicator.height,
-    ...(animate ? {} : { transition: "none" }),
+    ...(animate && !disableAnimation ? {} : { transition: "none" }),
   };
 
   /** Data attribute to tell CSS the indicator is positioned */
