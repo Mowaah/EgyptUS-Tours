@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
+import CheckboxDropdown from "@/components/shared/CheckboxDropdown/CheckboxDropdown";
 import styles from "./SortButton.module.scss";
 
 interface SortOption {
@@ -22,31 +24,41 @@ export default function SortButton({
   onChange,
   showLabel = true,
 }: SortButtonProps) {
+  const [selectedValue, setSelectedValue] = useState(defaultValue || options[0]?.value);
+
+  const selectedLabel = options.find((o) => o.value === selectedValue)?.label || options[0]?.label;
+
+  const handleSelect = (value: string) => {
+    setSelectedValue(value);
+    onChange?.(value);
+  };
+
   return (
-    <div
-      className={[styles.sort, !showLabel && styles.compact].filter(Boolean).join(" ")}
-    >
-      {showLabel && <span>Sort by:</span>}
-      <div className={styles.selectWrapper}>
-        <select
-          className={styles.select}
-          defaultValue={defaultValue || options[0]?.value}
-          onChange={(e) => onChange?.(e.target.value)}
-        >
-          {options.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-        <Image
-          src="/images/arrows/arrow-down2.svg"
-          alt=""
-          width={12}
-          height={7}
-          className={styles.arrow}
-        />
-      </div>
+    <div className={[styles.sort, !showLabel && styles.compact].filter(Boolean).join(" ")}>
+      {showLabel && <span className={styles.label}>Sort by:</span>}
+      <CheckboxDropdown
+        options={options}
+        value={selectedValue}
+        onChange={handleSelect}
+        checkboxStyle="radio"
+        dropdownClassName={styles.dropdownOverride}
+        renderTrigger={(isOpen, setIsOpen) => (
+          <button
+            type="button"
+            className={`${styles.selectBtn} ${isOpen ? styles.selectBtnOpen : ""}`}
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <span className={styles.selectText}>{selectedLabel}</span>
+            <Image
+              src="/images/arrows/arrow-down2.svg"
+              alt=""
+              width={12}
+              height={7}
+              className={styles.arrow}
+            />
+          </button>
+        )}
+      />
     </div>
   );
 }

@@ -7,6 +7,11 @@
   font-size: $font-size-sm;
   color: $primary-dark;
   font-weight: 500;
+  position: relative;
+}
+
+.label {
+  white-space: nowrap;
 }
 
 .selectWrapper {
@@ -17,7 +22,7 @@
 .compact {
   gap: 0;
 
-  .select {
+  .selectBtn {
     min-width: 0;
     padding-left: 12px;
     padding-right: 32px;
@@ -25,31 +30,34 @@
   }
 }
 
-.select {
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
+.selectBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
   border: 1px solid $border-strong;
   border-radius: 16px;
-  background: $white;
-  padding: 10px 38px 10px 20px;
-  color: $text-placeholder;
+  padding: 10px 16px 10px 20px;
+  color: #B1B1B1;
   font-size: $font-size-sm;
-  font-weight: 500;
+  font-weight: $font-weight-normal;
   cursor: pointer;
   outline: none;
   line-height: 1.2;
   min-width: 160px;
+  text-align: left;
 
-  &::-ms-expand {
-    display: none;
-  }
+}
+
+.selectText {
+  flex: 1;
 }
 
 .arrow {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
+  margin-left: 8px;
   pointer-events: none;
+}
+
+.dropdownOverride {
+  min-width: 220px;
 }

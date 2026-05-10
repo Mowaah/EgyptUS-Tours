@@ -36,20 +36,6 @@ const LIGHT_NAV_PATHS = [
   "/b2b-proposals",
   "/events-proposals"
 ];
-const STATIC_NAV_PATHS = [
-  "/faq",
-  "/terms",
-  "/privacy",
-  "/proposal",
-  "/contact",
-  "/booking",
-  "/trips-booking",
-  "/hotels-booking",
-  "/transportation-booking",
-  "/b2b-proposals",
-  "/events-proposals"
-];
-
 const DESTINATION_LINKS = [
   { label: "Saudi Arabia", href: "/destinations/saudi-arabia" },
   { label: "Turkey", href: "/destinations/turkey" },
@@ -90,14 +76,9 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [hideSticky, setHideSticky] = useState(false);
   const [expandedDropdown, setExpandedDropdown] = useState<string | null>(null);
   const pathname = usePathname();
   const isBookingPage = pathname === "/booking";
-  const isStatic =
-    STATIC_NAV_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`)) ||
-    pathname.includes("book") ||
-    pathname.includes("proposal");
 
   // Portal requires the client DOM — track mount to avoid SSR mismatch.
   useEffect(() => { setMounted(true); }, []);
@@ -113,9 +94,7 @@ export default function Navbar() {
       const y = window.scrollY;
       setScrolled(y > 20);
       if (window.innerWidth >= 1150) {
-        setHideSticky(y > 600); // Stop being sticky after 600px
-      } else {
-        setHideSticky(false);
+        // Stop being sticky after 600px was removed per user request
       }
     };
     onScroll();
@@ -130,8 +109,6 @@ export default function Navbar() {
       if (window.innerWidth >= 1150) {
         setMobileOpen(false);
         setExpandedDropdown(null);
-      } else {
-        setHideSticky(false);
       }
     };
     window.addEventListener("resize", onResize, { passive: true });
@@ -187,7 +164,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`${styles.navbar}${shouldShowScrolled ? ` ${styles.scrolled}` : ""}${lightNavBackground ? ` ${styles.lightPage}` : ""}${isStatic ? ` ${styles.static}` : ""}${mobileOpen ? ` ${styles.drawerOpen}` : ""}${hideSticky ? ` ${styles.hideSticky}` : ""}`}
+        className={`${styles.navbar}${shouldShowScrolled ? ` ${styles.scrolled}` : ""}${lightNavBackground ? ` ${styles.lightPage}` : ""}${mobileOpen ? ` ${styles.drawerOpen}` : ""}`}
       >
         <div className={styles.container}>
           <Link href="/" className={styles.logo} aria-label="EgyptUS Tours — Home">

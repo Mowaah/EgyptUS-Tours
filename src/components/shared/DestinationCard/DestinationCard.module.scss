@@ -1,103 +1,74 @@
 @use "@/styles/variables" as *;
 
-// =========================================================================
-// MOBILE / TABLET (<1024px): horizontal "list item" card — image on the
-// left, title + description + "Explore more" on the right. No hover needed;
-// all content is always visible. Cards stack vertically.
-//
-// DESKTOP (>=1024px): preserves the original Figma collapsed/expanded hover
-// interaction (198px -> 320px on hover, description reveals).
-// =========================================================================
-
 .card {
   position: relative;
   display: flex;
-  flex-direction: row;
-  gap: 12px;
-  width: 100%;
-  padding: 10px;
+  flex-direction: column;
+  justify-content: flex-end;
+  
+  // Responsive sizing for mobile/tablet (default)
+  width: 75vw;
+  max-width: 320px;
+  height: 480px;
+  
+  padding: 0;
+  gap: 0;
+  border: none;
+  background: transparent;
   border-radius: 16px;
-  background: $white;
-  border: 1px solid $border-card;
+  flex-shrink: 0;
   overflow: hidden;
   cursor: pointer;
   text-decoration: none;
-  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:active {
     transform: scale(0.99);
   }
 
-  &:hover {
-    border-color: $primary;
-    box-shadow: $shadow-md;
-  }
-
-  // Reset things the desktop variant adds that shouldn't apply in list mode
-  height: auto;
-  aspect-ratio: auto;
-  flex-shrink: 1;
-
-  // ---- Desktop: restore the Figma hover expand/collapse card -------------
+  // Desktop sizes and hover
   @media (min-width: 1024px) {
-    flex-direction: column;
-    justify-content: flex-end;
     width: 198px;
+    max-width: none;
     height: 536px;
-    padding: 0;
-    gap: 0;
-    border: none;
-    background: transparent;
-    border-radius: 16px;
-    flex-shrink: 0;
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-
+    
     &:hover {
-      width: 320px;
-      border-color: transparent;
-      box-shadow: none;
+      width: 432px;
     }
   }
 }
 
-// ---- Image ---------------------------------------------------------------
 .imageWrap {
-  position: relative;
-  flex-shrink: 0;
-  width: 120px;
-  aspect-ratio: 1;
-  border-radius: 12px;
-  overflow: hidden;
-
-  @media (min-width: 480px) {
-    width: 140px;
-  }
-
-  @media (min-width: 1024px) {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    aspect-ratio: auto;
-    border-radius: 0;
-  }
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .image {
   object-fit: cover;
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Default expanded look for mobile
+  transform: scale(1.05);
+
+  @media (min-width: 1024px) {
+    transform: none; // Unscaled on desktop initially
+  }
 }
 
-// ---- Overlay (desktop hover tint) ---------------------------------------
 .overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  display: none;
+  transition: background 0.4s ease;
+  
+  // Default expanded look for mobile
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #001D4C 100%);
+  mix-blend-mode: normal;
 
   @media (min-width: 1024px) {
-    display: block;
-    transition: background 0.4s ease;
     background:
       linear-gradient(175.75deg, rgba(21, 54, 110, 0.77) 7.54%, rgba(19, 51, 103, 0.3773) 18.86%, rgba(0, 0, 0, 0) 41.31%),
       linear-gradient(0deg, rgba(41, 113, 230, 0.2), rgba(41, 113, 230, 0.2));
@@ -105,155 +76,110 @@
   }
 }
 
-// ---- Arrow badge (desktop only) -----------------------------------------
 .arrow {
-  display: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  position: absolute;
+  top: 14px;
+  right: 15px;
+  z-index: 3;
+  transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
+
+  // Default expanded look for mobile
+  background: #FF6600;
+  color: $white;
+  transform: rotate(45deg);
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
 
   @media (min-width: 1024px) {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
     background: $white;
     color: #0E2851;
-    position: absolute;
-    top: 14px;
-    right: 15px;
-    z-index: 3;
-    transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
-
-    svg {
-      width: 20px;
-      height: 20px;
-    }
+    transform: none;
   }
 }
 
-// ---- Content -------------------------------------------------------------
 .content {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 6px;
-  flex: 1;
-  min-width: 0;
-
-  @media (min-width: 1024px) {
-    position: relative;
-    z-index: 2;
-    padding: 14px;
-    gap: 10px;
-    justify-content: flex-end;
-  }
+  position: relative;
+  z-index: 2;
+  padding: 14px;
+  gap: 10px;
+  justify-content: flex-end;
 }
 
 .title {
   font-family: 'Trip Sans';
-  font-size: $font-size-lg;
-  font-weight: $font-weight-semibold;
-  line-height: 1.2;
-  color: $dark;
+  font-weight: 500;
+  font-size: 2.25rem;
+  line-height: 95%;
+  color: $white;
+  white-space: pre-wrap;
+  display: block;
   margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-
-  @media (min-width: 1024px) {
-    font-weight: 500;
-    font-size: 2.25rem;
-    line-height: 95%;
-    color: $white;
-    white-space: pre-wrap;
-    display: block;
-    overflow: visible;
-    transition: opacity 0.3s ease;
-  }
+  transition: opacity 0.3s ease;
 }
 
 .description {
   font-family: 'Trip Sans';
-  font-size: $font-size-xs;
-  line-height: 1.45;
-  color: $text-light;
+  font-size: $font-size-2xs;
+  color: $white;
+  letter-spacing: 0.01em;
   margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  transition: opacity 0.3s ease, height 0.3s ease, margin-top 0.3s ease;
 
-  @media (min-width: 480px) {
-    font-size: $font-size-sm;
-    -webkit-line-clamp: 3;
-  }
+  // Default expanded look for mobile
+  opacity: 1;
+  height: auto;
+  margin-top: 8px;
 
   @media (min-width: 1024px) {
-    font-size: $font-size-2xs;
-    color: $white;
-    letter-spacing: 0.01em;
     opacity: 0;
     height: 0;
-    -webkit-line-clamp: initial;
-    transition: opacity 0.3s ease, height 0.3s ease, margin-top 0.3s ease;
+    margin-top: 0;
   }
 }
 
 .cta {
-  display: inline-flex;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
   align-items: center;
-  gap: 4px;
+  padding: 9.6px 16px;
+  gap: 5px;
+  width: 100%;
+  min-height: 44px;
+  border-radius: 24px;
+  font-weight: 500;
   font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  color: $primary;
-  margin-top: 2px;
-  align-self: flex-start;
+  line-height: 19px;
+  transition: background 0.3s ease, color 0.3s ease;
+
+  // Default expanded look for mobile
+  background: #FF6600;
+  color: $white;
 
   svg {
-    width: 14px;
-    height: 14px;
-    transition: transform 0.2s ease;
-  }
-
-  .card:hover & svg {
-    transform: translateX(2px);
+    width: 16px;
+    height: 16px;
   }
 
   @media (min-width: 1024px) {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 9.6px 16px;
-    gap: 5px;
-    width: 100%;
-    min-height: 44px;
-    margin-top: 0;
     background: $white;
-    border-radius: 24px;
-    font-weight: 500;
-    font-size: $font-size-sm;
-    line-height: 19px;
     color: $primary;
-    align-self: auto;
-    transition: background 0.3s ease, color 0.3s ease;
-
-    svg {
-      width: 16px;
-      height: 16px;
-    }
-
-    .card:hover & svg {
-      transform: none;
-    }
   }
 }
 
-// ---- Desktop hover reveal ------------------------------------------------
-@media (min-width: 1024px) {
-  .card:hover {
+.card:hover {
+  @media (min-width: 1024px) {
     .image {
       transform: scale(1.05);
     }

@@ -14,15 +14,14 @@
 .top {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xl;
-  margin-bottom: $spacing-xl;
+  gap: $spacing-md;
   align-items: flex-start;
+  margin-bottom: $spacing-xl;
 
   @media (min-width: 1024px) {
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 100px;
-    margin-bottom: $spacing-2xl;
+    gap: 40px;
     align-items: flex-start;
   }
 }
@@ -30,6 +29,10 @@
 .left {
   flex-shrink: 0;
   width: 100%;
+
+  h2 {
+    margin-bottom: 0 !important;
+  }
 
   @media (min-width: 1024px) {
     width: auto;
@@ -42,6 +45,14 @@
   @media (min-width: 1024px) {
     font-size: clamp(2.25rem, 4.5vw, 3rem) !important; // 36px → 48px
     line-height: 1.4;
+  }
+}
+
+.desktopBreak {
+  display: none;
+
+  @media (min-width: 1024px) {
+    display: initial;
   }
 }
 
@@ -64,10 +75,11 @@
   color: $text-light;
   font-size: $font-size-base;
   line-height: 1.5;
-  max-width: 670px;
+  max-width: 600px;
+  margin-top: 0.5rem;
 
   @media (min-width: 768px) {
-    font-size: $font-size-lg;
+    font-size: $font-size-base;
     line-height: 1.4;
   }
 }
@@ -138,7 +150,7 @@
     display: none;
   }
 
-  > * {
+  >* {
     flex-shrink: 0;
     width: 280px;
     scroll-snap-align: start;

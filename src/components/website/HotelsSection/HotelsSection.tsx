@@ -115,7 +115,7 @@ export default function HotelsSection() {
               />
             }
           >
-            View Details
+            Explore More Hotels
           </Button>
         </div>
       </div>

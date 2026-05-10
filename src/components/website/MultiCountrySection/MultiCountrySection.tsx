@@ -32,16 +32,55 @@ const DEMO_TRIPS: Trip[] = [
   },
   {
     id: "mc-3",
-    title: "Best Tour of Egypt and Turkey",
+    title: "10-Day Egypt and Jordan Adventure",
     description:
-      "Lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
+      "Explore the pyramids of Giza and the ancient rose city of Petra in one incredible journey.",
     image: "/images/home/hero-bg.png",
-    location: "Saudi Arabia & Egypt",
-    price: 3690,
+    location: "Egypt & Jordan",
+    price: 2450,
     currency: "$",
     priceLabel: "From",
-    duration: { days: 14, nights: 13 },
+    duration: { days: 10, nights: 9 },
     countries: 2,
+  },
+  {
+    id: "mc-4",
+    title: "Ultimate Middle East Explorer",
+    description:
+      "A comprehensive tour spanning the historical wonders of Egypt, Jordan, and Saudi Arabia.",
+    image: "/images/desert/eastern.jpg",
+    location: "Egypt, Jordan & KSA",
+    price: 4200,
+    currency: "$",
+    priceLabel: "From",
+    duration: { days: 18, nights: 17 },
+    countries: 3,
+  },
+  {
+    id: "mc-5",
+    title: "Morocco & Egypt Cultural Immersion",
+    description:
+      "From the bustling souks of Marrakech to the timeless Nile river.",
+    image: "/images/turkey.png",
+    location: "Morocco & Egypt",
+    price: 3100,
+    currency: "$",
+    priceLabel: "From",
+    duration: { days: 12, nights: 11 },
+    countries: 2,
+  },
+  {
+    id: "mc-6",
+    title: "The Grand Mediterranean Tour",
+    description:
+      "Experience the Mediterranean coast through Turkey, Greece, and Egypt.",
+    image: "/images/home/hero-bg.png",
+    location: "Turkey, Greece & Egypt",
+    price: 5800,
+    currency: "$",
+    priceLabel: "From",
+    duration: { days: 21, nights: 20 },
+    countries: 3,
   },
 ];
 
@@ -53,10 +92,16 @@ export default function MultiCountrySection() {
           <div className={styles.left}>
             <SectionHeader
               label="Multi country Tours"
-              heading="Bridge Cultures In A Single Journey"
+              heading={
+                <>
+                  Bridge <br className={styles.desktopBreak} />
+                  Cultures In A <br className={styles.desktopBreak} />
+                  Single <br className={styles.desktopBreak} />
+                  Journey
+                </>
+              }
               align="left"
               headingClassName={styles.largeHeading}
-              headingMaxWidth="350px"
             />
           </div>
 

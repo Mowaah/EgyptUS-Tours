@@ -5,7 +5,7 @@ import styles from "./SectionHeader.module.scss";
 interface SectionHeaderProps {
   label?: string;
   breadcrumbItems?: { label: string; href?: string; isCurrent?: boolean }[];
-  heading: string;
+  heading: React.ReactNode;
   description?: string;
   align?: "left" | "center";
   icon?: React.ReactNode;

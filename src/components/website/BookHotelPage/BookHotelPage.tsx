@@ -51,7 +51,7 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
   };
 
   useEffect(() => {
-    stepIndicatorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentStep]);
 
   const sharedProps = {

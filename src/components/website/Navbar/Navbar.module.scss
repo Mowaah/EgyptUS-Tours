@@ -15,15 +15,9 @@ $nav-desktop: 1150px;
   z-index: 120;
   transition: background $transition-base;
 
-  // Desktop: restore transform transition for the hide-on-scroll effect.
-  // Safe here because the drawer is display:none at this width.
   @media (min-width: $nav-desktop) {
     z-index: 100;
-    transition: background $transition-base, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  &.hideSticky {
-    transform: translateY(-100%);
+    transition: background $transition-base;
   }
 
   &.drawerOpen {
@@ -33,10 +27,6 @@ $nav-desktop: 1150px;
       opacity: 0;
       pointer-events: none;
     }
-  }
-
-  &.static {
-    position: relative;
   }
 
   &.lightPage:not(.scrolled) {

@@ -21,7 +21,12 @@ export default function ContactSection() {
       <div className={styles.container}>
         <div className={styles.grid}>
           <div className={styles.infoCard}>
-            <span className={styles.label}>Contact</span>
+            <div className={styles.headerRow}>
+              <div className={styles.whatsappIcon}>
+                <Image src="/images/whatsapp.svg" alt="WhatsApp" width={19.79} height={19.79} />
+              </div>
+              <span className={styles.label}>Contact</span>
+            </div>
             <h2 className={styles.heading}>
               Still not sure where to start? Contact us and fill out the form.
             </h2>

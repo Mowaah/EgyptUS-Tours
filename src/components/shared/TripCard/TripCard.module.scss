@@ -138,6 +138,12 @@
   display: none; 
 }
 
+.priceFrom {
+  color: $text-light;
+  font-size: $font-size-10;
+}
+
+
 .priceValue {
   color: $primary;
   font-size: $font-size-base;
@@ -146,7 +152,7 @@
 
 .pricePer {
   color: $text-light;
-  font-size: $font-size-9;
+  font-size: $font-size-10;
 }
 
 .viewTripBtn {
@@ -168,7 +174,7 @@
   min-width: 0;
 
   @media (min-width: 400px) {
-    font-size: $font-size-9;
+    font-size: $font-size-10;
   }
 
   span {

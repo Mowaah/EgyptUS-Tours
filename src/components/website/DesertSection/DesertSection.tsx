@@ -45,15 +45,17 @@ export default function DesertSection() {
           descriptionMaxWidth="830px"
         />
 
-        <div className={styles.cards}>
-          {DESERTS.map((desert) => (
-            <DestinationCard
-              key={desert.title}
-              title={desert.title}
-              description={desert.description}
-              image={desert.image}
-            />
-          ))}
+        <div className={styles.cardsWrapper}>
+          <div className={styles.cards}>
+            {DESERTS.map((desert) => (
+              <DestinationCard
+                key={desert.title}
+                title={desert.title}
+                description={desert.description}
+                image={desert.image}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>

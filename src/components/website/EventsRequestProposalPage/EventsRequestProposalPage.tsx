@@ -99,7 +99,7 @@ export default function EventsRequestProposalPage() {
   };
 
   useEffect(() => {
-    stepIndicatorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentStep]);
 
   return (

@@ -7,7 +7,7 @@ import styles from "./StatsBar.module.scss";
 const STATS = [
   { end: 10, suffix: "M+", label: "Total Customers" },
   { end: 9, suffix: "+", label: "Years Of Experience", formattingFn: (n: number) => `0${n}+` },
-  { end: 12, suffix: "K", label: "Total Destinations" },
+  { end: 12, suffix: "K+", label: "Total Destinations" },
   { end: 4.9, suffix: "", label: "Average Rating", decimals: 1 },
 ];
 

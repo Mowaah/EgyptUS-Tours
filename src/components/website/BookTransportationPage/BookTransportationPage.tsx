@@ -44,7 +44,7 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
   };
 
   useEffect(() => {
-    stepIndicatorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentStep]);
 
   const sharedProps = {
