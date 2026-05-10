@@ -214,11 +214,12 @@
   transition: all $transition-fast;
 
   &:hover {
-    border-color: $primary;
+    border-color: $secondary;
   }
 
   &.departureSelected {
-    border-color: $primary;
+    background-color: $secondary-light;
+    border-color: $secondary;
   }
 }
 

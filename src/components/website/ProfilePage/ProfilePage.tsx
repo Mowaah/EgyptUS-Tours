@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   PageHeader,
   TripCard,
+  HotelCard,
   TripBookingCard,
   UpcomingTripBanner,
   ProfileSidebar,
@@ -13,11 +14,13 @@ import {
   CategoryTabs,
 } from "@/components/shared";
 import type { TabType } from "@/components/shared";
-import { Trip } from "@/types";
+import { Trip, Hotel } from "@/types";
 import {
   mockProfileUser,
   mockUpcomingTrip,
   mockFavoriteTrips,
+  mockFavoriteHotels,
+  profileFavoriteCategoryTabs,
   profileBookingCategoryTabs,
   profileRequestCategoryTabs,
   mockTripBookings,
@@ -51,10 +54,12 @@ export default function ProfilePage() {
   );
 
   const [favoriteTrips, setFavoriteTrips] = useState<Trip[]>(mockFavoriteTrips);
+  const [favoriteHotels, setFavoriteHotels] = useState<Hotel[]>(mockFavoriteHotels);
+  const [favoriteCategoryIndex, setFavoriteCategoryIndex] = useState(0);
   const [bookingCategoryIndex, setBookingCategoryIndex] = useState(0);
   const [requestCategoryIndex, setRequestCategoryIndex] = useState(0);
 
-  const handleFavoriteToggle = (id: string) => {
+  const handleTripFavoriteToggle = (id: string) => {
     setFavoriteTrips((prev) =>
       prev.map((trip) =>
         trip.id === id ? { ...trip, isFavorite: !trip.isFavorite } : trip
@@ -62,34 +67,70 @@ export default function ProfilePage() {
     );
   };
 
+  const handleHotelFavoriteToggle = (id: string) => {
+    setFavoriteHotels((prev) =>
+      prev.map((hotel) =>
+        hotel.id === id ? { ...hotel, isFavorite: !hotel.isFavorite } : hotel
+      )
+    );
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
       case "favorites":
-        if (favoriteTrips.length === 0) {
+        if (favoriteCategoryIndex === 0) {
+          if (favoriteTrips.length === 0) {
+            return (
+              <EmptyState
+                framedIcon
+                iconSrc="/images/profile/glyphs/heart.svg"
+                iconWidth={150}
+                iconHeight={150}
+                title="Your favorite trips list is empty"
+                description="Save trips you're interested in and come back anytime to complete your booking."
+                buttonText="Explore Trips"
+                buttonHref="/trips"
+              />
+            );
+          }
           return (
-            <EmptyState
-              framedIcon
-              iconSrc="/images/profile/glyphs/heart.svg"
-              iconWidth={150}
-              iconHeight={150}
-              title="Your favorites list is empty"
-              description="Save trips you're interested in and come back anytime to complete your booking."
-              buttonText="Explore Trips"
-              buttonHref="/trips"
-            />
+            <div className={styles.tripsGrid}>
+              {favoriteTrips.map((trip) => (
+                <TripCard
+                  key={trip.id}
+                  trip={trip}
+                  onFavoriteToggle={handleTripFavoriteToggle}
+                />
+              ))}
+            </div>
+          );
+        } else {
+          if (favoriteHotels.length === 0) {
+            return (
+              <EmptyState
+                framedIcon
+                iconSrc="/images/profile/glyphs/heart.svg"
+                iconWidth={150}
+                iconHeight={150}
+                title="Your favorite hotels list is empty"
+                description="Save hotels you're interested in and come back anytime to complete your booking."
+                buttonText="Browse Hotels"
+                buttonHref="/hotels"
+              />
+            );
+          }
+          return (
+            <div className={styles.tripsGrid}>
+              {favoriteHotels.map((hotel) => (
+                <HotelCard
+                  key={hotel.id}
+                  hotel={hotel}
+                  onFavoriteToggle={handleHotelFavoriteToggle}
+                />
+              ))}
+            </div>
           );
         }
-        return (
-          <div className={styles.tripsGrid}>
-            {favoriteTrips.map((trip) => (
-              <TripCard
-                key={trip.id}
-                trip={trip}
-                onFavoriteToggle={handleFavoriteToggle}
-              />
-            ))}
-          </div>
-        );
       case "bookings":
         if (bookingCategoryIndex === 0) {
           if (mockTripBookings.length === 0) {
@@ -224,7 +265,9 @@ export default function ProfilePage() {
   const getTabSubtitle = () => {
     switch (activeTab) {
       case "favorites":
-        return "All your favorite trips in one place";
+        return favoriteCategoryIndex === 0
+          ? "All your favorite trips in one place"
+          : "All your favorite hotels in one place";
       case "bookings":
         return "All your reservations in one place";
       case "requests":
@@ -280,7 +323,7 @@ export default function ProfilePage() {
 
           {/* Content Area */}
           <main className={styles.content}>
-            {activeTab === "bookings" || activeTab === "requests" ? (
+            {activeTab === "bookings" || activeTab === "requests" || activeTab === "favorites" ? (
               <div className={styles.contentHeaderBookings}>
                 <div className={styles.contentHeaderText}>
                   <h2 className={styles.contentTitle}>{getTabTitle()}</h2>
@@ -293,11 +336,18 @@ export default function ProfilePage() {
                     onTabChange={(_, index) => setBookingCategoryIndex(index)}
                     className={styles.bookingCategoryTabs}
                   />
-                ) : (
+                ) : activeTab === "requests" ? (
                   <CategoryTabs
                     tabs={profileRequestCategoryTabs}
                     active={requestCategoryIndex}
                     onTabChange={(_, index) => setRequestCategoryIndex(index)}
+                    className={styles.bookingCategoryTabs}
+                  />
+                ) : (
+                  <CategoryTabs
+                    tabs={profileFavoriteCategoryTabs}
+                    active={favoriteCategoryIndex}
+                    onTabChange={(_, index) => setFavoriteCategoryIndex(index)}
                     className={styles.bookingCategoryTabs}
                   />
                 )}

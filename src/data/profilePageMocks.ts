@@ -11,7 +11,7 @@ import type {
   MiceRequestDetails,
   B2BRequestDetails,
 } from "@/components/shared";
-import type { Trip } from "@/types";
+import type { Trip, Hotel } from "@/types";
 
 export const mockProfileUser = {
   name: "Username",
@@ -76,10 +76,37 @@ export const mockFavoriteTrips: Trip[] = [
     price: 1599,
     currency: "$",
     duration: { days: 7, nights: 6 },
+  },
+];
+
+export const mockFavoriteHotels: Hotel[] = [
+  {
+    id: "hotel-1",
+    name: "Pyramids View Luxury Hotel",
+    location: "Giza",
+    image: "/images/hotels/hotel5.jpg",
+    stars: 5,
+    rating: 4.8,
+    rooms: 245,
+    pricePerNight: 180,
+    reviews: 1847,
+    isFavorite: true,
+  },
+  {
+    id: "hotel-2",
+    name: "Steigenberger Nile Palace",
+    location: "Luxor",
+    image: "/images/hotels/hotel1.jpg",
+    stars: 5,
+    rating: 4.6,
+    rooms: 304,
+    pricePerNight: 150,
+    reviews: 924,
     isFavorite: true,
   },
 ];
 
+export const profileFavoriteCategoryTabs = ["Trips", "Hotels"];
 export const profileBookingCategoryTabs = ["Trips", "Hotels", "Transportation"];
 export const profileRequestCategoryTabs = ["Events (MICE)", "B2B"];
 

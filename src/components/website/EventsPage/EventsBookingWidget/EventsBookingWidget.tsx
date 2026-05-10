@@ -29,15 +29,6 @@ export default function EventsBookingWidget() {
           >
             Request Proposal
           </Button>
-          <Button
-            variant="outline"
-            size="lg"
-            className={styles.secondaryBtn}
-            icon={<Image src="/images/calendar-orange2.svg" alt="" width={24} height={24} style={{ filter: "brightness(0) saturate(100%) invert(43%) sepia(91%) saturate(1637%) hue-rotate(2deg) brightness(101%) contrast(106%)" }} />}
-            iconPosition="right"
-          >
-            Schedule Strategy Call
-          </Button>
         </div>
       </div>
     </div>

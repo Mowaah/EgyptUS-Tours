@@ -38,10 +38,19 @@ const DEMO_HOTELS: Hotel[] = Array.from({ length: 4 }, (_, i) => ({
   reviews: 1847,
 }));
 
-import { useRef } from "react";
+import { useState, useRef } from "react";
 
 export default function HotelsSection() {
+  const [hotels, setHotels] = useState<Hotel[]>(DEMO_HOTELS);
   const sliderRef = useRef<HTMLDivElement>(null);
+
+  const handleFavoriteToggle = (id: string) => {
+    setHotels((prev) =>
+      prev.map((hotel) =>
+        hotel.id === id ? { ...hotel, isFavorite: !hotel.isFavorite } : hotel
+      )
+    );
+  };
 
   const scrollLeft = () => {
     if (sliderRef.current) {
@@ -94,9 +103,9 @@ export default function HotelsSection() {
         {/* Removed margin/padding bleed logic if tracking within container, 
             but kept the slider robust */}
         <div className={styles.slider} ref={sliderRef}>
-          {DEMO_HOTELS.map((hotel) => (
+          {hotels.map((hotel) => (
             <div key={hotel.id} className={styles.slide}>
-              <HotelCard hotel={hotel} />
+              <HotelCard hotel={hotel} onFavoriteToggle={handleFavoriteToggle} />
             </div>
           ))}
         </div>

@@ -79,6 +79,7 @@ const TOTAL_PAGES = 15;
 
 // ── Component ───────────────────────────────────────────────────
 export default function HotelsPageSection() {
+  const [hotels, setHotels] = useState<Hotel[]>(DEMO_HOTELS);
   const [view, setView] = useState<"list" | "grid">("list");
   const [ratingFilter, setRatingFilter] = useState("any");
   const [priceRange, setPriceRange] = useState({ min: 1, max: 12000 });
@@ -88,6 +89,14 @@ export default function HotelsPageSection() {
   const [currentPage, setCurrentPage] = useState(1);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [isLg, setIsLg] = useState(false);
+
+  const handleFavoriteToggle = (id: string) => {
+    setHotels((prev) =>
+      prev.map((hotel) =>
+        hotel.id === id ? { ...hotel, isFavorite: !hotel.isFavorite } : hotel
+      )
+    );
+  };
 
   const activeFilterCount = useMemo(() => {
     let n = 0;
@@ -120,7 +129,7 @@ export default function HotelsPageSection() {
     return () => window.removeEventListener("keydown", onKey);
   }, [filtersOpen]);
 
-  const filteredHotels = DEMO_HOTELS.filter(
+  const filteredHotels = hotels.filter(
     (h) =>
       h.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       h.location.toLowerCase().includes(searchQuery.toLowerCase())
@@ -323,7 +332,7 @@ export default function HotelsPageSection() {
               <>
                 <div className={cardView === "grid" ? styles.gridView : styles.listView}>
                   {paginatedHotels.map((hotel) => (
-                    <HotelCard key={hotel.id} hotel={hotel} view={cardView} showRouteBtn />
+                    <HotelCard key={hotel.id} hotel={hotel} view={cardView} onFavoriteToggle={handleFavoriteToggle} />
                   ))}
                 </div>
 

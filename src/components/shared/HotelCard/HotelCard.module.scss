@@ -25,6 +25,53 @@
   object-fit: cover;
 }
 
+.favorite {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 100px;
+  background: $white;
+  @include flex-center;
+  transition: all $transition-fast;
+  z-index: 2;
+
+  @media (min-width: 640px) {
+    top: 20px;
+    right: 20px;
+    width: 35px;
+    height: 35px;
+  }
+
+  cursor: pointer;
+  border: none;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.heartIcon {
+  width: 20px;
+  height: 20px;
+  fill: transparent;
+  stroke: $primary;
+  stroke-width: 1.5;
+  transition: fill $transition-fast, stroke $transition-fast;
+}
+
+.heartActive {
+  fill: $danger;
+  stroke: $danger;
+}
+
+.heartBlue {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
 .overlay {
   position: absolute;
   bottom: 0;
@@ -141,26 +188,4 @@
   width: 100%;
 }
 
-// "Start Route" pill overlaid on the image bottom-right
-.routeBtn {
-  position: absolute;
-  bottom: 16px;
-  right: 16px;
-  z-index: 10;
-  background: rgba(255, 255, 255, 0.1);
-  border: 0.5px solid rgba(255, 255, 255, 1);
-  border-radius: 250px;
-  padding: 8px 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
-  color: $white;
-  cursor: pointer;
-  transition: background $transition-fast;
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.2);
-  }
-}

@@ -10,20 +10,19 @@
 // ── HERO SECTION ────────────────────────────────────────────
 .heroSection {
   background: $white;
-  padding: 20px 16px 24px;
+  padding: 20px 0 24px;
 
   @media (min-width: 640px) {
-    padding: 28px 20px 28px;
+    padding: 28px 0 28px;
   }
 
   @media (min-width: 1024px) {
-    padding: 60px 80px 32px;
+    padding: 60px 0 32px;
   }
 }
 
 .heroInner {
-  max-width: 1280px;
-  margin: 0 auto;
+  @include container;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -399,20 +398,19 @@
 // ── BODY SECTION ────────────────────────────────────────────
 .bodySection {
   background: $white;
-  padding: 24px 16px;
+  padding: 24px 0;
 
   @media (min-width: 640px) {
-    padding: 28px 20px;
+    padding: 28px 0;
   }
 
   @media (min-width: 1024px) {
-    padding: 32px 80px;
+    padding: 32px 0;
   }
 }
 
 .bodyInner {
-  max-width: 1280px;
-  margin: 0 auto;
+  @include container;
   display: flex;
   flex-direction: column;
   gap: 32px;

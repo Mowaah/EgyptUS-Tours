@@ -2,20 +2,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { Hotel } from "@/types";
 import Button from "../Button/Button";
-import { StarRating, GlassCard } from "@/components/shared";
+import { StarRating } from "@/components/shared";
 import styles from "./HotelCard.module.scss";
 
 interface HotelCardProps {
   hotel: Hotel;
   /** Grid (default) or list view */
   view?: "grid" | "list";
-  /** Whether to show the Start Route button (default false) */
-  showRouteBtn?: boolean;
   /** Override image height (default 288px) */
   imageHeight?: number;
+  onFavoriteToggle?: (id: string) => void;
 }
 
-export default function HotelCard({ hotel, view = "grid", showRouteBtn = false, imageHeight }: HotelCardProps) {
+export default function HotelCard({ hotel, view = "grid", imageHeight, onFavoriteToggle }: HotelCardProps) {
   const isList = view === "list";
   const hotelDetailsHref = `/hotels/${hotel.id}`;
 
@@ -34,11 +33,38 @@ export default function HotelCard({ hotel, view = "grid", showRouteBtn = false, 
           <h3 className={styles.name}>{hotel.name}</h3>
           <span className={styles.location}>{hotel.location}</span>
         </div>
-        {!isList && showRouteBtn && (
-          <GlassCard as="button" className={styles.routeBtn} type="button">
-            Start Route
-          </GlassCard>
+        {onFavoriteToggle && (
+          <button
+            className={`${styles.favorite} ${hotel.isFavorite ? styles.active : ""}`}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onFavoriteToggle(hotel.id);
+            }}
+            aria-label="Toggle favorite"
+          >
+            {hotel.isFavorite ? (
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+                className={`${styles.heartIcon} ${styles.heartActive}`}
+              >
+                <path d="M13.7001 2.58203C12.1917 2.58203 10.8417 3.31536 10.0001 4.44036C9.15841 3.31536 7.80841 2.58203 6.30008 2.58203C3.74175 2.58203 1.66675 4.66536 1.66675 7.24036C1.66675 8.23203 1.82508 9.1487 2.10008 9.9987C3.41675 14.1654 7.47508 16.657 9.48341 17.3404C9.76675 17.4404 10.2334 17.4404 10.5167 17.3404C12.5251 16.657 16.5834 14.1654 17.9001 9.9987C18.1751 9.1487 18.3334 8.23203 18.3334 7.24036C18.3334 4.66536 16.2584 2.58203 13.7001 2.58203Z" />
+              </svg>
+            ) : (
+              <Image
+                src="/images/heart-blue.svg"
+                alt=""
+                width={20}
+                height={20}
+                className={styles.heartBlue}
+              />
+            )}
+          </button>
         )}
+
       </Link>
 
       {/* ── Content ── */}
