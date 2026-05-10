@@ -3,7 +3,9 @@
 @use "@/styles/breakpoints" as *;
 
 .footer {
-  background: $primary-dark;
+  position: relative;
+  overflow: hidden;
+  background: #123367;
   padding: $spacing-2xl 0 $spacing-lg;
 
   @include md {
@@ -74,11 +76,11 @@
   margin-top: $spacing-lg;
 
   @include md {
-    margin-top: $spacing-2xl;
+    margin-top: $spacing-xl;
   }
 
   @include lg {
-    margin-top: $spacing-4xl;
+    margin-top: 7rem;
   }
 }
 
@@ -224,4 +226,29 @@
       text-decoration: underline;
     }
   }
+}
+
+.shapeWrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
+}
+
+.shape {
+  position: absolute;
+  top: -10rem;
+  right: -5rem;
+  width: 1050px;
+  height: 800px;
+  object-fit: cover;
+  object-position: top right;
+  transform-origin: top right;
 }

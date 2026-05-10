@@ -4,6 +4,7 @@ import {
   FormField,
   CustomDatePicker,
   SelectDropdown,
+  CounterPill,
 } from "@/components/shared";
 import type { SelectOption } from "@/components/shared";
 import planPage from "../../../PlanYourTripPage/PlanYourTripPage.module.scss";
@@ -11,7 +12,6 @@ import travelerStyles from "../../../PlanYourTripPage/steps/TravelerInfo/StepTra
 import formStyles from "@/components/shared/FormField/FormField.module.scss";
 import styles from "./StepRoomDates.module.scss";
 import { BookingData } from "../../BookHotelPage";
-import { IconMinus, IconPlus } from "../../../PlanYourTripPage/PlanYourTripIcons";
 import { Hotel } from "@/types";
 
 const ROOM_VIEW_OPTIONS: SelectOption[] = [
@@ -86,23 +86,13 @@ export default function StepRoomDates({ formData, onChange, onContinue }: StepRo
             };
             return (
               <div key={type} className={planPage.formGroup}>
-                <div className={travelerStyles.numberFieldRow}>
-                  <p className={travelerStyles.counterRowLabel} id={`rd-${type}-label`}>
-                    <span className={travelerStyles.counterRowTitle}>{meta[type].title}</span>
-                    <span className={travelerStyles.counterRowHint}>{meta[type].hint}</span>
-                  </p>
-                  <div className={travelerStyles.counterPill} role="group" aria-labelledby={`rd-${type}-label`}>
-                    <button type="button" onClick={() => handleGuestChange(type, false)}
-                      className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonMinus}`}>
-                      <IconMinus size={16} />
-                    </button>
-                    <span className={travelerStyles.counterPillValue}>{formData[type]}</span>
-                    <button type="button" onClick={() => handleGuestChange(type, true)}
-                      className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonPlus}`}>
-                      <IconPlus size={16} />
-                    </button>
-                  </div>
-                </div>
+                <CounterPill
+                  label={meta[type].title}
+                  subLabel={meta[type].hint}
+                  value={formData[type]}
+                  onIncrease={() => handleGuestChange(type, true)}
+                  onDecrease={() => handleGuestChange(type, false)}
+                />
               </div>
             );
           })}
@@ -117,34 +107,22 @@ export default function StepRoomDates({ formData, onChange, onContinue }: StepRo
             return (
               <div key={room.id} className={styles.roomRowWrapper}>
                 <label className={`${styles.roomInfoBox} ${count > 0 ? styles.selected : ""}`}>
-                  <div className={styles.roomRadioGroup}>
-                    <div className={`${styles.radioCircle} ${count > 0 ? styles.checked : ""}`}>
-                      <input type="radio" name="roomType" checked={count > 0}
-                        onChange={() => handleRoomChange(room.id, true)}
-                        className={styles.radioInputHidden} />
-                    </div>
-                    <div className={styles.roomTexts}>
-                      <span className={styles.roomTitle}>{room.label}</span>
-                      <span className={styles.roomSub}>{room.sub}</span>
-                    </div>
+                  <div className={styles.roomTexts}>
+                    <span className={styles.roomTitle}>{room.label}</span>
+                    <span className={styles.roomSub}>{room.sub}</span>
                   </div>
                   <div className={styles.priceCol}>
                     <span className={styles.priceVal}>{room.price}</span>
                     <span className={styles.roomSub}>{room.per}</span>
                   </div>
                 </label>
-                <div className={`${travelerStyles.counterPill} ${styles.roomCounter}`} role="group">
-                  <button type="button" onClick={() => handleRoomChange(room.id, false)}
-                    className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonMinus}`}
-                    style={{ opacity: count === 0 ? 0.4 : 1 }}>
-                    <IconMinus size={16} />
-                  </button>
-                  <span className={travelerStyles.counterPillValue}>{count}</span>
-                  <button type="button" onClick={() => handleRoomChange(room.id, true)}
-                    className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonPlus}`}>
-                    <IconPlus size={16} />
-                  </button>
-                </div>
+                <CounterPill
+                  value={count}
+                  onIncrease={() => handleRoomChange(room.id, true)}
+                  onDecrease={() => handleRoomChange(room.id, false)}
+                  className={styles.roomCounter}
+                  pillOnly
+                />
               </div>
             );
           })}

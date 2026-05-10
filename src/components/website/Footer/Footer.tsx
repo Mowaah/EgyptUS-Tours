@@ -22,43 +22,48 @@ const NAV_LINKS: NavLinksType = {
     { label: "Blogs", href: "/blogs" },
     { label: "Articles", href: "/articles" },
   ],
-  Contact: [
-    { label: "Phone:", value: "+201111400212" },
-    { label: "Email:", value: "info@egyptustours.com" },
-    { label: "Address:", value: "643 Hadayk October, Giza" },
-  ],
   "Customer Support": [
     { label: "Terms & Conditions", href: "/terms" },
     { label: "Privacy & Policy", href: "/privacy" },
     { label: "FAQs", href: "/faq" },
+  ],
+  Contact: [
+    { label: "Phone:", value: "+201111400212" },
+    { label: "Email:", value: "info@egyptustours.com" },
+    { label: "Address:", value: "643 Hadayk October, Giza" },
   ],
 };
 
 const SOCIALS = [
   {
     href: "#",
-    label: "LinkedIn",
-    icon: <Image src="/images/linkedin.svg" alt="LinkedIn" width={18} height={18} />,
+    label: "Facebook",
+    icon: <Image src="/images/footer/facebook.svg" alt="Facebook" width={19} height={19} />,
+  },
+  {
+    href: "#",
+    label: "Instagram",
+    icon: <Image src="/images/footer/instagram.svg" alt="Instagram" width={18} height={18} />,
+  },
+  {
+    href: "#",
+    label: "TikTok",
+    icon: <Image src="/images/footer/tiktok.svg" alt="TikTok" width={18} height={18} />,
   },
   {
     href: "#",
     label: "YouTube",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
-        <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0E2851" />
-      </svg>
-    ),
-  },
-  {
-    href: "#",
-    label: "Facebook",
-    icon: <Image src="/images/facebook.svg" alt="Facebook" width={19} height={19} />,
+    icon: <Image src="/images/footer/youtube.svg" alt="YouTube" width={18} height={18} />,
   },
   {
     href: "#",
     label: "X",
-    icon: <Image src="/images/x.svg" alt="X" width={18} height={18} />,
+    icon: <Image src="/images/footer/x.svg" alt="X" width={18} height={18} />,
+  },
+  {
+    href: "#",
+    label: "LinkedIn",
+    icon: <Image src="/images/footer/linkedin.svg" alt="LinkedIn" width={18} height={18} />,
   },
 ];
 
@@ -123,6 +128,16 @@ export default function Footer() {
             Devora
           </a>
         </p>
+      </div>
+      <div className={styles.shapeWrapper}>
+        <Image
+          src="/images/footer/shape.svg"
+          alt=""
+          width={1050}
+          height={800}
+          className={styles.shape}
+          priority
+        />
       </div>
     </footer>
   );

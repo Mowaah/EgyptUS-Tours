@@ -5,37 +5,37 @@ export const DESTINATIONS: PlanDestination[] = [
     id: "egypt",
     name: "Egypt",
     image:
-      "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1200&q=80",
+      "/images/planyourtrip/egypt.jpg",
   },
   {
-    id: "dubai-1",
+    id: "spain",
+    name: "Spain",
+    image:
+      "/images/planyourtrip/spain.jpg",
+  },
+  {
+    id: "dubai",
     name: "Dubai",
     image:
-      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1200&q=80",
+      "/images/planyourtrip/dubai.jpg",
   },
   {
-    id: "saudi-1",
-    name: "Saudi Arabia",
+    id: "italy",
+    name: "Italy",
     image:
-      "https://images.unsplash.com/photo-1614071403589-1e5d37b04b2d?auto=format&fit=crop&w=1200&q=80",
+      "/images/planyourtrip/italy.jpg",
   },
   {
-    id: "qatar-1",
-    name: "Qatar",
+    id: "brazil",
+    name: "Brazil",
     image:
-      "https://images.unsplash.com/photo-1614003488101-4fe3b4a6f4f8?auto=format&fit=crop&w=1200&q=80",
+      "/images/planyourtrip/brazil.jpg",
   },
   {
-    id: "turkey-1",
-    name: "Turkey",
-    image:
-      "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    id: "greece-1",
+    id: "greece",
     name: "Greece",
     image:
-      "https://images.unsplash.com/photo-1505735454785-337d7d3f7c2b?auto=format&fit=crop&w=1200&q=80",
+      "/images/planyourtrip/greece.jpg",
   },
 ];
 

@@ -80,16 +80,16 @@ function SimpleDropdown({ options, value, onChange, className, type }: SimpleDro
                   <div className={`${styles.simpleCheckbox} ${isSelected ? styles.checked : ""}`}>
                     {isSelected && (
                       <svg width="6" height="6" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                         <path d="M1 5L4 8L9 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M1 5L4 8L9 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     )}
                   </div>
                 )}
-                
+
                 {type === "lang" && (
                   <Image src={opt.icon} alt="" width={16} height={16} className={styles.miniFlag} />
                 )}
-                
+
                 <span className={styles.menuText}>{type === "lang" ? opt.name : `${opt.code} (${opt.symbol})`}</span>
               </button>
             );
@@ -113,14 +113,14 @@ export default function TopBar() {
     <div className={styles.topbar}>
       <div className={styles.container}>
         <div className={styles.socials}>
-          <a href="#" aria-label="LinkedIn" className={styles.socialIcon}>
-            <Image src="/images/linkedin.svg" alt="LinkedIn" width={9.67} height={9.67} />
-          </a>
           <a href="#" aria-label="Facebook" className={styles.socialIcon}>
-            <Image src="/images/facebook.svg" alt="Facebook" width={12.6} height={12.6} />
+            <Image src="/images/footer/facebook.svg" alt="Facebook" width={12.6} height={12.6} />
           </a>
-          <a href="#" aria-label="X" className={styles.socialIcon}>
-            <Image src="/images/x.svg" alt="X" width={9.78} height={10} />
+          <a href="#" aria-label="Instagram" className={styles.socialIcon}>
+            <Image src="/images/footer/instagram.svg" alt="Instagram" width={12} height={12} />
+          </a>
+          <a href="#" aria-label="Tiktok" className={styles.socialIcon}>
+            <Image src="/images/footer/tiktok.svg" alt="Tiktok" width={12} height={12} />
           </a>
         </div>
 

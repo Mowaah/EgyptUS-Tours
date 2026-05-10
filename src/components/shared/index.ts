@@ -70,3 +70,4 @@ export { default as UpcomingTripBanner } from "./UpcomingTripBanner/UpcomingTrip
 export type { UpcomingTripBannerProps } from "./UpcomingTripBanner/UpcomingTripBanner";
 export { default as ProfileSidebar } from "./ProfileSidebar/ProfileSidebar";
 export type { ProfileSidebarProps, UserProfile, TabType } from "./ProfileSidebar/ProfileSidebar";
+export { default as CounterPill } from "./CounterPill/CounterPill";

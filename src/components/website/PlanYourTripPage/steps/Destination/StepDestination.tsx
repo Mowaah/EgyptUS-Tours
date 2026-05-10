@@ -9,16 +9,12 @@ import type { PlanDestination } from "../../planYourTripTypes";
 import styles from "./StepDestination.module.scss";
 
 export default function StepDestination({
-  search,
-  onSearchChange,
   destinations,
   selectedDestinationIds,
   onToggleDestination,
   onContinue,
   continueDisabled,
 }: {
-  search: string;
-  onSearchChange: (value: string) => void;
   destinations: PlanDestination[];
   selectedDestinationIds: string[];
   onToggleDestination: (id: string) => void;
@@ -26,35 +22,17 @@ export default function StepDestination({
   continueDisabled: boolean;
 }) {
   return (
-    <div className={styles.destinationGrid}>
-      <header className={styles.destinationGridHeader}>
-        <div>
+    <div className={sharedStyles.stepFormCard}>
+      <header className={sharedStyles.stepFormCardHeader}>
+        <div className={sharedStyles.formHeaderColumn}>
           <h2 className={sharedStyles.formTitle}>Destination</h2>
           <p className={sharedStyles.formSubtitle}>
             Feel free to choose more than one destination.
           </p>
         </div>
-
-        <div className={styles.searchBox}>
-          <Image
-            src="/images/search.svg"
-            alt=""
-            width={20}
-            height={20}
-            className={styles.searchIcon}
-            aria-hidden
-          />
-          <input
-            className={styles.searchInput}
-            type="text"
-            placeholder="Search destinations…"
-            value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
-          />
-        </div>
       </header>
 
-      <div className={styles.destinationScroll}>
+      <div className={sharedStyles.stepFormCardScroll}>
         <div className={styles.destinationCards}>
           {destinations.map((destination) => {
             const selected = selectedDestinationIds.includes(destination.id);
@@ -82,17 +60,19 @@ export default function StepDestination({
         </div>
       </div>
 
-      <hr className={styles.destinationGridDivider} aria-hidden="true" />
+      <hr className={sharedStyles.stepFormCardDivider} aria-hidden="true" />
 
-      <div className={styles.destinationGridFooter}>
-        <button
-          className={sharedStyles.continueButton}
-          onClick={onContinue}
-          disabled={continueDisabled}
-          type="button"
-        >
-          Continue
-        </button>
+      <div className={sharedStyles.stepFormCardFooter}>
+        <div className={sharedStyles.formActions}>
+          <button
+            className={sharedStyles.continueButton}
+            onClick={onContinue}
+            disabled={continueDisabled}
+            type="button"
+          >
+            Continue
+          </button>
+        </div>
       </div>
     </div>
   );

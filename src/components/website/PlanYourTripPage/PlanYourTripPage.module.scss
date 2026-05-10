@@ -100,7 +100,8 @@
 
   @media (min-width: 1024px) {
     margin-bottom: 32px;
-    margin-inline: clamp(1.5rem, 8vw, 6rem);
+    margin-inline: auto;
+    max-width: 1073px;
     padding: $spacing-xl;
     border-radius: 32px;
   }

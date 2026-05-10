@@ -7,6 +7,7 @@ import {
   CustomDatePicker,
   SelectDropdown,
   NationalitySelect,
+  CounterPill,
 } from "@/components/shared";
 import type { SelectOption } from "@/components/shared";
 
@@ -15,7 +16,6 @@ import travelerStyles from "../../../PlanYourTripPage/steps/TravelerInfo/StepTra
 import formStyles from "@/components/shared/FormField/FormField.module.scss";
 import stepStyles from "./StepYourDetails.module.scss";
 import { BookingData } from "../../BookPrivateTripPage";
-import { IconMinus, IconPlus } from "../../../PlanYourTripPage/PlanYourTripIcons";
 
 const ROOM_VIEW_OPTIONS: SelectOption[] = [
   { label: "Garden View", value: "garden", price: "Free", isFree: true },
@@ -180,99 +180,33 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
 
         <div className={planPage.formGrid}>
           <div className={planPage.formGroup}>
-            <div className={travelerStyles.numberFieldRow}>
-              <p className={travelerStyles.counterRowLabel} id="pti-adults-label">
-                <span className={travelerStyles.counterRowTitle}>No of Adults</span>
-                <span className={travelerStyles.counterRowHint}>( +12 years )</span>
-              </p>
-              <div
-                className={travelerStyles.counterPill}
-                role="group"
-                aria-labelledby="pti-adults-label"
-              >
-                <button
-                  type="button"
-                  onClick={() => handleGuestChange("adults", false)}
-                  className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonMinus}`}
-                  aria-label="Decrease adults"
-                >
-                  <IconMinus size={16} />
-                </button>
-                <span className={travelerStyles.counterPillValue}>{formData.adults}</span>
-                <button
-                  type="button"
-                  onClick={() => handleGuestChange("adults", true)}
-                  className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonPlus}`}
-                  aria-label="Increase adults"
-                >
-                  <IconPlus size={16} />
-                </button>
-              </div>
-            </div>
+            <CounterPill
+              label="No of Adults"
+              subLabel="( +12 years )"
+              value={formData.adults}
+              onIncrease={() => handleGuestChange("adults", true)}
+              onDecrease={() => handleGuestChange("adults", false)}
+            />
           </div>
 
           <div className={planPage.formGroup}>
-            <div className={travelerStyles.numberFieldRow}>
-              <p className={travelerStyles.counterRowLabel} id="pti-children-label">
-                <span className={travelerStyles.counterRowTitle}>No of Children</span>
-                <span className={travelerStyles.counterRowHint}>( 2 to 11 years )</span>
-              </p>
-              <div
-                className={travelerStyles.counterPill}
-                role="group"
-                aria-labelledby="pti-children-label"
-              >
-                <button
-                  type="button"
-                  onClick={() => handleGuestChange("children", false)}
-                  className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonMinus}`}
-                  aria-label="Decrease children"
-                >
-                  <IconMinus size={16} />
-                </button>
-                <span className={travelerStyles.counterPillValue}>{formData.children}</span>
-                <button
-                  type="button"
-                  onClick={() => handleGuestChange("children", true)}
-                  className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonPlus}`}
-                  aria-label="Increase children"
-                >
-                  <IconPlus size={16} />
-                </button>
-              </div>
-            </div>
+            <CounterPill
+              label="No of Children"
+              subLabel="( 2 to 11 years )"
+              value={formData.children}
+              onIncrease={() => handleGuestChange("children", true)}
+              onDecrease={() => handleGuestChange("children", false)}
+            />
           </div>
 
           <div className={planPage.formGroup}>
-            <div className={travelerStyles.numberFieldRow}>
-              <p className={travelerStyles.counterRowLabel} id="pti-infants-label">
-                <span className={travelerStyles.counterRowTitle}>No of Infants</span>
-                <span className={travelerStyles.counterRowHint}>( 0 to 2 years )</span>
-              </p>
-              <div
-                className={travelerStyles.counterPill}
-                role="group"
-                aria-labelledby="pti-infants-label"
-              >
-                <button
-                  type="button"
-                  onClick={() => handleGuestChange("infants", false)}
-                  className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonMinus}`}
-                  aria-label="Decrease infants"
-                >
-                  <IconMinus size={16} />
-                </button>
-                <span className={travelerStyles.counterPillValue}>{formData.infants}</span>
-                <button
-                  type="button"
-                  onClick={() => handleGuestChange("infants", true)}
-                  className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonPlus}`}
-                  aria-label="Increase infants"
-                >
-                  <IconPlus size={16} />
-                </button>
-              </div>
-            </div>
+            <CounterPill
+              label="No of Infants"
+              subLabel="( 0 to 2 years )"
+              value={formData.infants}
+              onIncrease={() => handleGuestChange("infants", true)}
+              onDecrease={() => handleGuestChange("infants", false)}
+            />
           </div>
         </div>
 
@@ -288,14 +222,9 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
           ].map((room) => (
             <div key={room.id} className={stepStyles.roomRowWrapper}>
               <label className={`${stepStyles.roomInfoBox} ${room.count > 0 ? stepStyles.selected : ''}`}>
-                <div className={stepStyles.roomRadioGroup}>
-                  <div className={`${stepStyles.radioCircle} ${room.count > 0 ? stepStyles.checked : ''}`}>
-                    <input type="radio" name="roomTypeSelect" checked={room.count > 0} onChange={() => handleRoomChange(room.id as any, true)} className={stepStyles.radioInputHidden} />
-                  </div>
-                  <div className={stepStyles.roomTexts}>
-                    <span className={stepStyles.roomTitle}>{room.label}</span>
-                    <span className={stepStyles.roomSubtitle}>1 person</span>
-                  </div>
+                <div className={stepStyles.roomTexts}>
+                  <span className={stepStyles.roomTitle}>{room.label}</span>
+                  <span className={stepStyles.roomSubtitle}>1 person</span>
                 </div>
                 
                 <div className={stepStyles.priceContainer}>
@@ -304,24 +233,13 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
                 </div>
               </label>
               
-              <div className={`${travelerStyles.counterPill} ${stepStyles.roomCounterPill}`} role="group" style={{ margin: 0 }}>
-                <button
-                  type="button"
-                  onClick={() => handleRoomChange(room.id as any, false)}
-                  className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonMinus}`}
-                  style={{ opacity: room.count === 0 ? 0.4 : 1 }}
-                >
-                  <IconMinus size={16} />
-                </button>
-                <span className={travelerStyles.counterPillValue}>{room.count}</span>
-                <button
-                  type="button"
-                  onClick={() => handleRoomChange(room.id as any, true)}
-                  className={`${travelerStyles.counterPillButton} ${travelerStyles.counterPillButtonPlus}`}
-                >
-                  <IconPlus size={16} />
-                </button>
-              </div>
+              <CounterPill
+                value={room.count}
+                onIncrease={() => handleRoomChange(room.id as any, true)}
+                onDecrease={() => handleRoomChange(room.id as any, false)}
+                className={stepStyles.roomCounterPill}
+                pillOnly
+              />
             </div>
           ))}
         </div>

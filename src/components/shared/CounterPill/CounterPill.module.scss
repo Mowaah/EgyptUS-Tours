@@ -1,0 +1,118 @@
+@use "@/styles/variables" as *;
+
+.counterRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.labelWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $dark;
+  line-height: 1.3;
+}
+
+.subLabel {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-normal;
+  color: $text-placeholder;
+  line-height: 1.3;
+}
+
+.pill {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px;
+  gap: 8px;
+  width: 144px;
+  height: 48px;
+  border: 1px solid #DDDDDD;
+  border-radius: 16px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: filter $transition-fast, transform $transition-fast;
+
+  &:hover:not(:disabled) {
+    filter: brightness(0.9);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.minus {
+  background: $secondary;
+
+  &:disabled {
+    background: #FFD0B0;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+}
+
+.plus {
+  background: #FF6600;
+
+  &:active:not(:disabled) {
+    transform: scale(0.96);
+    opacity: 0.85;
+  }
+}
+
+.value {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  font-size: 14px;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  font-variant-numeric: tabular-nums;
+  line-height: 19px;
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+
+.plus img,
+.minus img {
+  display: block;
+  filter: drop-shadow(0 0 0.5px white);
+}

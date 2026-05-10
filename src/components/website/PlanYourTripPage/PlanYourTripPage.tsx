@@ -7,9 +7,8 @@ import { useRouter } from "next/navigation";
 
 import styles from "./PlanYourTripPage.module.scss";
 import { DESTINATIONS, EXPERIENCE_OPTIONS, STEPS, TRANSPORT_OPTIONS } from "./planYourTripData";
-import { IconArrowLeft, IconMinus, IconPlus } from "./PlanYourTripIcons";
 import type { PlanStep, TripData } from "./planYourTripTypes";
-import { clampMin0, filterDestinations, toggleInArray } from "./planYourTripUtils";
+import { clampMin0, toggleInArray } from "./planYourTripUtils";
 import { SuccessModal, Breadcrumb, PageHeader, StepIndicator } from "@/components/shared";
 import StepDestination from "./steps/Destination/StepDestination";
 import StepTravelerInfo from "./steps/TravelerInfo/StepTravelerInfo";
@@ -41,14 +40,8 @@ export default function PlanYourTripPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<PlanStep>(1);
   const [showModal, setShowModal] = useState(false);
-  const [search, setSearch] = useState("");
   const [tripData, setTripData] = useState<TripData>(initialTripData);
   const stepIndicatorRef = useRef<HTMLDivElement | null>(null);
-
-  const filteredDestinations = useMemo(
-    () => filterDestinations(DESTINATIONS, search),
-    [search],
-  );
 
   const toggleDestination = (id: string) => {
     setTripData((prev) => ({
@@ -129,9 +122,7 @@ export default function PlanYourTripPage() {
         <div className={styles.content}>
           {currentStep === 1 && (
             <StepDestination
-              search={search}
-              onSearchChange={setSearch}
-              destinations={filteredDestinations}
+              destinations={DESTINATIONS}
               selectedDestinationIds={tripData.destinations}
               onToggleDestination={toggleDestination}
               onContinue={handleContinue}
@@ -146,8 +137,6 @@ export default function PlanYourTripPage() {
               onNumberChange={handleNumberChange}
               onPrevious={handlePrevious}
               onContinue={handleContinue}
-              IconMinus={IconMinus}
-              IconPlus={IconPlus}
             />
           )}
 
