@@ -115,7 +115,7 @@
   }
 
   @media (min-width: 1024px) {
-    padding: 25px 28px;
+    padding: 23.57px 27.5px;
     gap: 18px;
     border-radius: 32px;
   }
@@ -306,14 +306,5 @@
     span {
       color: $white;
     }
-
-    .btnArrow {
-      filter: brightness(0) invert(1);
-    }
   }
-}
-
-.btnArrow {
-  transform: rotate(-45deg);
-  filter: invert(34%) sepia(85%) saturate(2250%) hue-rotate(204deg) brightness(97%) contrast(89%);
 }

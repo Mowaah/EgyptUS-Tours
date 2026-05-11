@@ -86,7 +86,7 @@ export default function ContactPage() {
                   className={styles.openMapsBtn}
                 >
                   <span>Open In Maps</span>
-                  <Image src="/images/arrows/arrow-right.svg" alt="" width={16} height={16} className={styles.btnArrow} />
+                  <Image src="/images/arrows/arrow-right.svg" alt="" width={16} height={16} />
                 </a>
               </div>
             </div>
