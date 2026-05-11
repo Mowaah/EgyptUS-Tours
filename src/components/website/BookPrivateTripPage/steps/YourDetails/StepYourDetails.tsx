@@ -74,6 +74,7 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
             placeholder="John Doe"
             value={formData.name}
             onChange={(e) => onChange({ name: e.target.value })}
+            required
           />
 
           <FormField
@@ -84,10 +85,14 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
             placeholder="example@gmail.com"
             value={formData.email}
             onChange={(e) => onChange({ email: e.target.value })}
+            required
           />
 
-          <div className={formStyles.field}>
-            <label htmlFor="pti-phone" className={formStyles.fieldLabel}>Phone Number</label>
+          <FormField
+            id="pti-phone"
+            label="Phone Number"
+            required
+          >
             <div className={travelerStyles.phoneRow}>
               <PhonePrefixSelect
                 phoneValue={formData.phone}
@@ -102,23 +107,23 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
                 placeholder="+1 555-0000"
               />
             </div>
-          </div>
+          </FormField>
 
-          <div className={formStyles.field}>
-            <label className={formStyles.fieldLabel}>Select Your Nationality</label>
-            <NationalitySelect 
+          <FormField label="Select Your Nationality" required>
+            <NationalitySelect
               value={formData.nationality}
               onChange={(val) => onChange({ nationality: val })}
             />
-          </div>
+          </FormField>
 
           {isGroupTrip ? (
             <div className={planPage.formGroupFull}>
               <div className={stepStyles.groupSection}>
-                <div className={formStyles.field}>
-                  <label htmlFor="pti-group-departure-month" className={formStyles.fieldLabel}>
-                    Select Month
-                  </label>
+                <FormField
+                  id="pti-group-departure-month"
+                  label="Select Month"
+                  required
+                >
                   <button
                     id="pti-group-departure-month"
                     type="button"
@@ -126,10 +131,9 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
                   >
                     {formData.departureMonth || "April 2026"}
                   </button>
-                </div>
+                </FormField>
 
-                <div className={formStyles.field}>
-                  <span className={formStyles.fieldLabel}>Choose Departure Date</span>
+                <FormField label="Choose Departure Date" required>
                   <div className={stepStyles.departureGrid}>
                     {GROUP_DEPARTURE_DATES.map((dep) => {
                       const isSelected = formData.departureDateId === dep.id;
@@ -148,30 +152,28 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
                       );
                     })}
                   </div>
-                </div>
+                </FormField>
               </div>
             </div>
           ) : (
             <>
-              <div className={formStyles.field}>
-                <label className={formStyles.fieldLabel}>Start Date</label>
+              <FormField label="Start Date" required>
                 <CustomDatePicker
                   variant="input"
                   className={`${formStyles.input} ${planPage.dateInput}`}
                   value={formData.startDate}
                   onChange={(date) => onChange({ startDate: date })}
                 />
-              </div>
+              </FormField>
 
-              <div className={formStyles.field}>
-                <label className={formStyles.fieldLabel}>End Date</label>
+              <FormField label="End Date" required>
                 <CustomDatePicker
                   variant="input"
                   className={`${formStyles.input} ${planPage.dateInput}`}
                   value={formData.endDate}
                   onChange={(date) => onChange({ endDate: date })}
                 />
-              </div>
+              </FormField>
             </>
           )}
         </div>
@@ -186,6 +188,7 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
               value={formData.adults}
               onIncrease={() => handleGuestChange("adults", true)}
               onDecrease={() => handleGuestChange("adults", false)}
+              required
             />
           </div>
 
@@ -196,6 +199,7 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
               value={formData.children}
               onIncrease={() => handleGuestChange("children", true)}
               onDecrease={() => handleGuestChange("children", false)}
+              required
             />
           </div>
 
@@ -206,14 +210,17 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
               value={formData.infants}
               onIncrease={() => handleGuestChange("infants", true)}
               onDecrease={() => handleGuestChange("infants", false)}
+              required
             />
           </div>
         </div>
 
         <hr className={stepStyles.divider} aria-hidden="true" />
 
-        <h3 className={stepStyles.sectionTitle}>Type of Room</h3>
-        
+        <h3 className={stepStyles.sectionTitle}>
+          Type of Room <span className={formStyles.required}>*</span>
+        </h3>
+
         <div className={stepStyles.roomList}>
           {[
             { id: "single", label: "Single Room", price: "EGP 5,800", count: formData.rooms.single },
@@ -226,13 +233,13 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
                   <span className={stepStyles.roomTitle}>{room.label}</span>
                   <span className={stepStyles.roomSubtitle}>1 person</span>
                 </div>
-                
+
                 <div className={stepStyles.priceContainer}>
                   <span className={stepStyles.priceValue}>{room.price}</span>
                   <span className={stepStyles.roomSubtitle}>/ person</span>
                 </div>
               </label>
-              
+
               <CounterPill
                 value={room.count}
                 onIncrease={() => handleRoomChange(room.id as any, true)}
@@ -249,15 +256,19 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
             <h3 className={stepStyles.sectionTitle}>Customize Your Double Rooms ( {formData.rooms.double} selected )</h3>
             <div className={planPage.formGrid}>
               {Array.from({ length: formData.rooms.double }).map((_, i) => (
-                <div key={i} className={planPage.formGroup}>
-                  <label className={formStyles.fieldLabel}>Room {i + 1}</label>
+                <FormField
+                  key={i}
+                  id={`double-room-${i}`}
+                  label={`Room ${i + 1}`}
+                  required
+                >
                   <SelectDropdown
                     id={`double-room-${i}`}
                     options={ROOM_VIEW_OPTIONS}
                     value="garden"
-                    onChange={() => {}}
+                    onChange={() => { }}
                   />
-                </div>
+                </FormField>
               ))}
             </div>
           </>
@@ -268,15 +279,19 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
             <h3 className={stepStyles.sectionTitle}>Customize Your Triple Rooms ( {formData.rooms.triple} selected )</h3>
             <div className={planPage.formGrid}>
               {Array.from({ length: formData.rooms.triple }).map((_, i) => (
-                <div key={i} className={planPage.formGroup}>
-                  <label className={formStyles.fieldLabel}>Room {i + 1}</label>
+                <FormField
+                  key={i}
+                  id={`triple-room-${i}`}
+                  label={`Room ${i + 1}`}
+                  required
+                >
                   <SelectDropdown
                     id={`triple-room-${i}`}
                     options={ROOM_VIEW_OPTIONS}
                     value="garden"
-                    onChange={() => {}}
+                    onChange={() => { }}
                   />
-                </div>
+                </FormField>
               ))}
             </div>
           </>

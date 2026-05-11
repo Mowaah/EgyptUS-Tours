@@ -53,6 +53,7 @@ export default function StepTravelerInfo({
             placeholder="John Doe"
             value={travelerInfo.name}
             onChange={(e) => onTravelerChange("name", e.target.value)}
+            required
           />
 
           <FormField
@@ -63,10 +64,14 @@ export default function StepTravelerInfo({
             placeholder="example@gmail.com"
             value={travelerInfo.email}
             onChange={(e) => onTravelerChange("email", e.target.value)}
+            required
           />
 
-          <div className={formStyles.field}>
-            <label htmlFor="pti-phone" className={formStyles.fieldLabel}>Phone Number</label>
+          <FormField
+            id="pti-phone"
+            label="Phone Number"
+            required
+          >
             <div className={styles.phoneRow}>
               <PhonePrefixSelect
                 phoneValue={travelerInfo.phone}
@@ -81,35 +86,32 @@ export default function StepTravelerInfo({
                 placeholder="+1 555-0000"
               />
             </div>
-          </div>
+          </FormField>
 
-          <div className={formStyles.field}>
-            <label className={formStyles.fieldLabel}>Select Your Nationality</label>
+          <FormField label="Select Your Nationality" required>
             <NationalitySelect 
               value={travelerInfo.nationality}
               onChange={(val) => onTravelerChange("nationality", val)}
             />
-          </div>
+          </FormField>
 
-          <div className={formStyles.field}>
-            <label className={formStyles.fieldLabel}>Start Date</label>
+          <FormField label="Start Date" required>
             <CustomDatePicker
               variant="input"
               className={`${formStyles.input} ${pageStyles.dateInput}`}
               value={travelerInfo.startDate}
               onChange={(date) => onTravelerChange("startDate", date)}
             />
-          </div>
+          </FormField>
 
-          <div className={formStyles.field}>
-            <label className={formStyles.fieldLabel}>End Date</label>
+          <FormField label="End Date" required>
             <CustomDatePicker
               variant="input"
               className={`${formStyles.input} ${pageStyles.dateInput}`}
               value={travelerInfo.endDate}
               onChange={(date) => onTravelerChange("endDate", date)}
             />
-          </div>
+          </FormField>
 
           <div className={pageStyles.formGroup}>
             <CounterPill
@@ -118,6 +120,7 @@ export default function StepTravelerInfo({
               value={travelerInfo.adults}
               onIncrease={() => onNumberChange("adults", true)}
               onDecrease={() => onNumberChange("adults", false)}
+              required
             />
           </div>
 
@@ -128,6 +131,7 @@ export default function StepTravelerInfo({
               value={travelerInfo.children}
               onIncrease={() => onNumberChange("children", true)}
               onDecrease={() => onNumberChange("children", false)}
+              required
             />
           </div>
 
@@ -138,6 +142,7 @@ export default function StepTravelerInfo({
               value={travelerInfo.infants}
               onIncrease={() => onNumberChange("infants", true)}
               onDecrease={() => onNumberChange("infants", false)}
+              required
             />
           </div>
 

@@ -71,13 +71,13 @@
 }
 
 .inProgress {
-  color: #b45309;
-  background: #fef3c7;
+  color: $status-warning-text;
+  background: $status-warning-bg;
 }
 
 .sent {
-  color: #15803d;
-  background: #dcfce7;
+  color: $status-success-text;
+  background: $status-success-bg;
 }
 
 .loadingGlyph {

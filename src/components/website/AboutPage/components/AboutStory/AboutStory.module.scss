@@ -49,7 +49,7 @@
   font-weight: 800;
   font-size: $font-size-3xl;
   line-height: 45px;
-  color: #0E2851;
+  color: $dark;
   margin: 0;
 }
 
@@ -65,7 +65,7 @@
   font-size: $font-size-lg;
   line-height: 24px;
   letter-spacing: 0.16px;
-  color: #FF6600;
+  color: $secondary;
   margin: 0;
 }
 
@@ -74,9 +74,9 @@
   font-weight: 400;
   font-size: $font-size-base;
   line-height: 26px;
-  color: #364153;
+  color: $text-heading;
   padding-left: 16px;
-  border-left: 3px solid #EBEBEB;
+  border-left: 3px solid $gray-200;
   max-width: 550px;
 }
 

@@ -30,8 +30,7 @@ export default function StepEventDetails({
 
       <div className={pageStyles.stepFormCardScroll}>
         <div className={pageStyles.formGrid}>
-          <div className={formStyles.field}>
-            <label id="evt-type-label" className={formStyles.fieldLabel}>Event Type</label>
+          <FormField label="Event Type" required>
             <SelectDropdown
               id="evt-type"
               label="Select Type"
@@ -40,20 +39,20 @@ export default function StepEventDetails({
               onChange={(val) => onChange({ eventType: val })}
               triggerClassName={pageStyles.formInput}
             />
-          </div>
+          </FormField>
 
           <FormField
             id="evt-name"
             label="Event Name"
             className={pageStyles.formInput}
             type="text"
+            required
             placeholder="ex. Annual sales conferences 2026"
             value={data.eventName}
             onChange={(e) => onChange({ eventName: e.target.value })}
           />
 
-          <div className={formStyles.field}>
-            <label id="evt-attendees-label" className={formStyles.fieldLabel}>Expected Attendees</label>
+          <FormField label="Expected Attendees" required>
             <SelectDropdown
               id="evt-attendees"
               label="Select Range"
@@ -62,10 +61,9 @@ export default function StepEventDetails({
               onChange={(val) => onChange({ expectedAttendees: val })}
               triggerClassName={pageStyles.formInput}
             />
-          </div>
+          </FormField>
 
-          <div className={formStyles.field}>
-            <label id="evt-city-label" className={formStyles.fieldLabel}>Preferred City</label>
+          <FormField label="Preferred City" required>
             <SelectDropdown
               id="evt-city"
               label="Select City"
@@ -74,27 +72,25 @@ export default function StepEventDetails({
               onChange={(val) => onChange({ preferredCity: val })}
               triggerClassName={pageStyles.formInput}
             />
-          </div>
+          </FormField>
 
-          <div className={formStyles.field}>
-            <label className={formStyles.fieldLabel}>Start Date</label>
+          <FormField label="Start Date" required>
             <CustomDatePicker
               variant="input"
               className={`${formStyles.input} ${pageStyles.dateInput}`}
               value={data.startDate}
               onChange={(date) => onChange({ startDate: date })}
             />
-          </div>
+          </FormField>
 
-          <div className={formStyles.field}>
-            <label className={formStyles.fieldLabel}>End Date</label>
+          <FormField label="End Date" required>
             <CustomDatePicker
               variant="input"
               className={`${formStyles.input} ${pageStyles.dateInput}`}
               value={data.endDate}
               onChange={(date) => onChange({ endDate: date })}
             />
-          </div>
+          </FormField>
 
           <FormField
             id="evt-desc"

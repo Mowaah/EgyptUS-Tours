@@ -12,7 +12,7 @@ export const ARTICLE_MOCK: ArticleContent = {
   date: "03 March 2026",
   readTime: "8 min",
   views: "2.4k",
-  heroImage: "/images/home/hero-bg.png",
+  heroImage: "/images/article.jpg",
   heroCaption:
     "The Great Pyramid of Giza — a timeless landmark that stands beautiful in every season.",
   intro:

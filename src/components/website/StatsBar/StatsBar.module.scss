@@ -5,7 +5,8 @@
 .wrapper {
   position: relative;
   z-index: 2;
-  margin-top: -$spacing-xl; /* Pull up to overlap hero */
+  margin-top: -$spacing-xl;
+  /* Pull up to overlap hero */
   padding-bottom: $spacing-xl;
 
   @include md {
@@ -24,17 +25,25 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: $spacing-md;
+  padding-left: 40px;
+  padding-right: 40px;
 
   @include sm {
     gap: $spacing-lg;
+    padding-left: 60px;
+    padding-right: 60px;
   }
 
   @include md {
     gap: $spacing-xl;
+    padding-left: 90px;
+    padding-right: 90px;
   }
 
   @include lg {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding-left: 150px;
+    padding-right: 150px;
   }
 }
 

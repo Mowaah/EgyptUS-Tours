@@ -11,7 +11,7 @@
   isolation: isolate;
   width: 100%;
   box-sizing: border-box;
-  background: #ffffff;
+  background: $background;
 
   @media (min-width: 768px) {
     padding: 56px 24px;
@@ -59,7 +59,7 @@
   font-size: clamp(1.375rem, 3vw, 2rem);
   line-height: 1.3;
   text-align: center;
-  color: #0e2851;
+  color: $dark;
   margin: 0;
 }
 
@@ -70,7 +70,7 @@
   line-height: 1.4;
   text-align: center;
   letter-spacing: 0.01em;
-  color: #6b7280;
+  color: $text-light;
   margin: 0;
   max-width: 56ch;
 }
@@ -116,14 +116,14 @@
   }
 
   &:not(:first-child) {
-    border-left: 1px solid #E5E7EB;
+    border-left: 1px solid $border-strong;
   }
 
   @media (max-width: 768px) {
     width: 100%;
     max-width: none;
     border-left: none !important;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid $border-strong;
     padding: 24px 0;
 
     &:first-child {
@@ -138,7 +138,7 @@
   font-weight: 700;
   font-size: $font-size-60;
   line-height: 60px;
-  color: #FF6600;
+  color: $secondary;
 }
 
 .label {
@@ -146,7 +146,7 @@
   font-weight: 400;
   font-size: $font-size-sm;
   line-height: 23px;
-  color: #6B7280;
+  color: $text-light;
   text-align: center;
 }
 
@@ -160,8 +160,8 @@
   padding: 24px 20px;
   gap: 12px;
   width: 100%;
-  background: #FFFFFF;
-  border: 1px solid #F4F4F4;
+  background: $background;
+  border: 1px solid $border;
   border-radius: 24px;
 
   @media (max-width: 768px) {
@@ -188,13 +188,13 @@
   padding: 8px;
   gap: 8px;
   height: 47.89px;
-  background: #EAF1FD;
-  border: 1px solid #BDD3F7;
+  background: $background-blue;
+  border: 1px solid $border-blue-deep;
   border-radius: 24px;
   transition: background 0.2s ease;
 
   &:hover {
-    background: #DFEAFB;
+    background: $border-card;
   }
 }
 
@@ -207,7 +207,7 @@
   padding: 8px;
   width: 32.67px;
   height: 31.89px;
-  background: #DFEAFB;
+  background: $border-card;
   border: 2px solid rgba(21, 93, 252, 0.04);
   border-radius: 16px;
   flex-shrink: 0;
@@ -219,6 +219,6 @@
   font-size: $font-size-xs;
   line-height: 16px;
   letter-spacing: 0.01em;
-  color: #0E2851;
+  color: $dark;
   padding-right: 4px;
 }

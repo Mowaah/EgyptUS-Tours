@@ -60,7 +60,7 @@
 
 .duration {
   font-size: $font-size-13;
-  color: #6B7280;
+  color: $text-light;
   margin: 0;
 }
 
@@ -88,7 +88,7 @@
 
 .green {
   background: rgba(16, 185, 129, 0.1);
-  color: #10B981;
+  color: $success;
 }
 
 .statusText {
@@ -109,7 +109,7 @@
 }
 
 .greenText {
-  color: #10B981;
+  color: $success;
 }
 
 .pctLabel {
@@ -120,8 +120,8 @@
 
 .note {
   margin-top: 28px;
-  background: #F6FBFF;
-  border: 1px solid #DFEAFB;
+  background: $background-info;
+  border: 1px solid $border-card;
   border-radius: 12px;
   padding: 14px 20px;
   font-size: $font-size-sm;

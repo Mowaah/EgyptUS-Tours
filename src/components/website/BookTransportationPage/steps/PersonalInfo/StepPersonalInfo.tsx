@@ -39,18 +39,19 @@ export default function StepPersonalInfo({
             placeholder="John Doe"
             value={formData.name}
             onChange={(e) => onChange({ name: e.target.value })}
+            required
           />
           <FormField
             label="Enter your E-mail"
             placeholder="Example@Gmail.Com"
             value={formData.email}
             onChange={(e) => onChange({ email: e.target.value })}
+            required
           />
         </div>
 
         <div className={styles.twoColumn}>
-          <div className={formStyles.field}>
-            <label className={formStyles.fieldLabel}>Enter your Phone Number</label>
+          <FormField label="Enter your Phone Number" required>
             <div className={travelerStyles.phoneRow}>
               <PhonePrefixSelect phoneValue={formData.phone} onPhoneChange={(val) => onChange({ phone: val })} />
               <input
@@ -61,14 +62,13 @@ export default function StepPersonalInfo({
                 placeholder="000-0000"
               />
             </div>
-          </div>
-          <div className={formStyles.field}>
-            <label className={formStyles.fieldLabel}>Select Your Nationality</label>
+          </FormField>
+          <FormField label="Select Your Nationality" required>
             <NationalitySelect 
               value={formData.nationality}
               onChange={(val) => onChange({ nationality: val })}
             />
-          </div>
+          </FormField>
         </div>
 
         <div className={styles.row}>

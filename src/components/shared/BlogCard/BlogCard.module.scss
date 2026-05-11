@@ -84,11 +84,6 @@
   font-weight: $font-weight-medium;
   color: $primary;
   text-decoration: none;
-  transition: gap $transition-fast;
-
-  &:hover {
-    gap: 10px;
-  }
 }
 
 .date {
@@ -96,5 +91,5 @@
   align-items: center;
   gap: 6px;
   font-size: $font-size-xs;
-  color: #6B7280;
+  color: $text-light;
 }

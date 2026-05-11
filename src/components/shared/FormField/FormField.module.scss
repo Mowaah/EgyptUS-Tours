@@ -15,18 +15,23 @@
   font-family: 'Trip Sans', sans-serif;
   font-size: $font-size-13;
   font-weight: $font-weight-medium;
-  color: #0E2851;
+  color: $dark;
 
   @media (min-width: 768px) {
     font-size: $font-size-sm;
   }
 }
 
+.required {
+  color: $dark;
+  margin-left: 2px;
+}
+
 .input {
   width: 100%;
   padding: 10px 14px;
   min-height: 44px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid $border-strong;
   border-radius: 14px;
   font-size: $font-size-sm;
   color: $dark;
@@ -49,7 +54,7 @@
 
   &:focus {
     border-color: $primary;
-    box-shadow: 0px 0px 0px 4px #E6F4FF, 0px 1px 2px 0px rgba(217, 217, 234, 0.05);
+    box-shadow: 0px 0px 0px 4px $background-blue-alt, 0px 1px 2px 0px rgba(217, 217, 234, 0.05);
   }
 }
 

@@ -50,6 +50,7 @@ export default function PaymentForm({
             id="pf-card-number"
             label="Card Number"
             type="text"
+            required
             placeholder="1234 5678 9012 3456"
             value={formData.cardNumber}
             onChange={(e) => onChange({ cardNumber: e.target.value })}
@@ -58,6 +59,7 @@ export default function PaymentForm({
             id="pf-card-name"
             label="Card Holder Name"
             type="text"
+            required
             placeholder="John Doe"
             value={formData.cardName}
             onChange={(e) => onChange({ cardName: e.target.value })}
@@ -69,6 +71,7 @@ export default function PaymentForm({
               id="pf-expiry"
               label="Expiry Date"
               type="text"
+              required
               placeholder="MM/YY"
               value={formData.expiry}
               onChange={(e) => onChange({ expiry: e.target.value })}
@@ -77,6 +80,7 @@ export default function PaymentForm({
               id="pf-cvv"
               label="CVV"
               type="text"
+              required
               placeholder="123"
               value={formData.cvv}
               onChange={(e) => onChange({ cvv: e.target.value })}

@@ -178,7 +178,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px 12px;
-  background: #F9FAFB;
+  background: $gray-50;
   padding: 16px;
   border-radius: 12px;
   width: 100%;
@@ -205,7 +205,7 @@
 .metaLabel {
   font-size: $font-size-13;
   font-weight: 400;
-  color: #6A7282;
+  color: $gray-500-alt;
   overflow-wrap: anywhere;
 
   @media (min-width: 640px) {
@@ -216,7 +216,7 @@
 .metaValue {
   font-size: $font-size-sm;
   font-weight: 700;
-  color: #0E2851;
+  color: $dark;
   overflow-wrap: anywhere;
 
   @media (min-width: 640px) {

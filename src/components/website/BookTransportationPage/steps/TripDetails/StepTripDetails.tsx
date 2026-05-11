@@ -40,8 +40,7 @@ function TripTypeSelector({
   onChange: (v: "One Way" | "Round Trip") => void;
 }) {
   return (
-    <div className={styles.typeSelector}>
-      <label className={styles.label}>Trip Type</label>
+    <FormField label="Trip Type" required>
       <div className={styles.typeChoices}>
         {(["One Way", "Round Trip"] as const).map((type) => (
           <button
@@ -60,7 +59,7 @@ function TripTypeSelector({
           </button>
         ))}
       </div>
-    </div>
+    </FormField>
   );
 }
 
@@ -120,6 +119,7 @@ export default function StepTripDetails({
           onChange={(e) => onChange({ pickupLocation: e.target.value })}
           wrapperClassName={styles.formField}
           className={styles.tallInput}
+          required
         />
         <FormField
           label="Drop-off Location"
@@ -128,6 +128,7 @@ export default function StepTripDetails({
           onChange={(e) => onChange({ dropoffLocation: e.target.value })}
           wrapperClassName={styles.formField}
           className={styles.tallInput}
+          required
         />
 
         {/* Trip Type */}
@@ -138,15 +139,14 @@ export default function StepTripDetails({
 
         {/* Date & Time */}
         <div className={styles.twoColumn}>
-          <div className={styles.formField}>
-            <label className={styles.label}>Pickup Date</label>
+          <FormField label="Pickup Date" required wrapperClassName={styles.formField}>
             <CustomDatePicker
               value={formData.pickupDate}
               onChange={(val) => onChange({ pickupDate: val })}
               variant="input"
               className={`${formStyles.input} ${styles.tallInput}`}
             />
-          </div>
+          </FormField>
           <FormField
             label="Pickup Time"
             type="time"
@@ -154,29 +154,28 @@ export default function StepTripDetails({
             onChange={(e) => onChange({ pickupTime: e.target.value })}
             wrapperClassName={styles.formField}
             className={styles.tallInput}
+            required
           />
         </div>
 
         {/* Passengers & Luggage */}
         <div className={styles.twoColumn}>
-          <div className={styles.formField}>
-            <label className={styles.label}>Passengers</label>
+          <FormField label="Passengers" required wrapperClassName={styles.formField}>
             <SelectDropdown
               options={PASSENGER_OPTIONS}
               value={formData.passengers.toString()}
               onChange={(val) => onChange({ passengers: parseInt(val) })}
               triggerClassName={styles.selectTrigger}
             />
-          </div>
-          <div className={styles.formField}>
-            <label className={styles.label}>Luggage</label>
+          </FormField>
+          <FormField label="Luggage" required wrapperClassName={styles.formField}>
             <SelectDropdown
               options={LUGGAGE_OPTIONS}
               value={formData.luggage.toString()}
               onChange={(val) => onChange({ luggage: parseInt(val) })}
               triggerClassName={styles.selectTrigger}
             />
-          </div>
+          </FormField>
         </div>
 
         {/* Additional Services */}

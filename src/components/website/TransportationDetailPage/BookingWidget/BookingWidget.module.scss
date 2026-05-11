@@ -2,7 +2,7 @@
 
 .wrapper {
   background: white;
-  border: 1px solid #F4F4F4;
+  border: 1px solid $border;
   border-radius: 16px;
   width: 100%;
   max-width: 403px;
@@ -29,14 +29,14 @@
 .cardTitle {
   font-size: $font-size-lg;
   font-weight: 700;
-  color: #0E2851;
+  color: $dark;
   margin: 0;
   letter-spacing: 0.01em;
 }
 
 .cardDesc {
   font-size: $font-size-sm;
-  color: #606978;
+  color: $text-muted;
   margin: 0;
   letter-spacing: 0.01em;
 }
@@ -67,13 +67,13 @@
 .label {
   font-size: $font-size-base;
   font-weight: 400;
-  color: #606978;
+  color: $text-muted;
 }
 
 .value {
   font-size: $font-size-sm;
   font-weight: 700;
-  color: #0E2851;
+  color: $dark;
   letter-spacing: 0.01em;
 }
 
@@ -86,7 +86,7 @@
 }
 
 .totalBox {
-  background: #F9FAFB;
+  background: $gray-50;
   border-radius: 16px;
   padding: 10px;
   display: flex;
@@ -107,7 +107,7 @@
 .totalLabel {
   font-size: $font-size-lg;
   font-weight: 700;
-  color: #0E2851;
+  color: $dark;
   line-height: 27px;
 }
 

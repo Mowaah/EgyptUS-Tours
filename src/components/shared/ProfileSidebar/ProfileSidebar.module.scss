@@ -15,7 +15,7 @@
 
 .profileCard {
   background: $white;
-  border: 1px solid #F4F4F4;
+  border: 1px solid $border;
   border-radius: 24px;
   padding: 24px 20px;
   display: flex;
@@ -65,7 +65,7 @@
   font-size: 24px;
   font-weight: 700;
   line-height: 33px;
-  color: #0E2851;
+  color: $dark;
   margin: 0;
   text-align: center;
 }
@@ -98,7 +98,7 @@
   font-size: 14px;
   font-weight: 500;
   line-height: 19px;
-  color: #0E2851;
+  color: $dark;
 }
 
 .emailValue {
@@ -106,7 +106,7 @@
   font-size: 14px;
   font-weight: 400;
   line-height: 14px;
-  color: #9CA3AF;
+  color: $gray-400;
 }
 
 .statsRow {
@@ -124,17 +124,17 @@
   min-width: 0;
   padding: 12px;
   background: $white;
-  border: 1px solid #F4F4F4;
+  border: 1px solid $border;
   border-radius: 24px;
 }
 
-// Outer + inner ring (#EAF1FD), white gap between — matches Figma double border
+// Outer + inner ring ($background-blue), white gap between — matches Figma double border
 .statIcon {
   box-sizing: border-box;
   width: 40px;
   height: 40px;
   padding: 2px;
-  border: 0.86px solid #EAF1FD;
+  border: 0.86px solid $background-blue;
   border-radius: 34.35px;
   display: flex;
   align-items: center;
@@ -147,9 +147,9 @@
   box-sizing: border-box;
   width: 100%;
   height: 100%;
-  border: 0.86px solid #EAF1FD;
+  border: 0.86px solid $background-blue;
   border-radius: 50%;
-  background: #EAF1FD;
+  background: $background-blue;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -176,7 +176,7 @@
   font-size: 14px;
   font-weight: 400;
   line-height: 16px;
-  color: #9CA3AF;
+  color: $gray-400;
   text-align: center;
 }
 
@@ -186,14 +186,14 @@
   font-weight: 700;
   line-height: 24px;
   text-align: center;
-  color: #2971E6;
+  color: $primary;
 }
 
 // Navigation Card (Figma: padding 24px 20px, gap 12px between rows)
 .navCard {
   box-sizing: border-box;
   background: $white;
-  border: 1px solid #F4F4F4;
+  border: 1px solid $border;
   border-radius: 24px;
   padding: 24px 20px;
   display: flex;
@@ -220,7 +220,7 @@
   font-size: 13px;
   font-weight: 500;
   line-height: 20px;
-  color: #9CA3AF;
+  color: $gray-400;
 
   &:hover {
     background: #FBFBFD;

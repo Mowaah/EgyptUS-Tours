@@ -8,7 +8,7 @@
   padding: 58px 0 64px;
   margin-top: 64px;
   width: 100%;
-  background: linear-gradient(180deg, #E8F1FF 0%, #FFFFFF 100%);
+  background: linear-gradient(180deg, #E8F1FF 0%, $background 100%);
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -38,7 +38,7 @@
   font-weight: 700;
   font-size: $font-size-40;
   line-height: 60px;
-  color: #0E2851;
+  color: $dark;
   margin: 0;
   max-width: 811px;
 }
@@ -63,18 +63,18 @@
   width: fit-content;
   min-width: 252px;
   height: 56px;
-  background: #FF6600;
+  background: $secondary;
   border-radius: 100px;
   border: none;
   cursor: pointer;
   text-decoration: none;
   font-weight: 700;
   font-size: $font-size-base;
-  color: #FFFFFF;
+  color: $background;
   transition: background 0.3s ease;
 
   &:hover {
-    background: #E65C00;
+    background: $secondary-dark;
   }
 }
 

@@ -29,7 +29,7 @@
 
 .subtitle {
   font-size: $font-size-base;
-  color: #4A5565;
+  color: $text-lighter;
   margin: 0;
   line-height: 1.6;
 }
@@ -51,12 +51,12 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #E2E8F0;
+    background: $gray-blue-200;
     border-radius: 4px;
   }
 
   scrollbar-width: thin;
-  scrollbar-color: #E2E8F0 transparent;
+  scrollbar-color: $gray-blue-200 transparent;
 
   &>* {
     flex: 0 0 calc(25% - 18px);

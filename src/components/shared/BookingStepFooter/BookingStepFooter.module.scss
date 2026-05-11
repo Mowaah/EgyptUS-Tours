@@ -36,10 +36,10 @@
 .prevBtn {
   flex: 1;
   min-height: 48px;
-  border: 1px solid #bdd3f7;
+  border: 1px solid $border-blue-deep;
   border-radius: 100px;
   background: transparent;
-  color: #2971e6;
+  color: $primary;
   font-family: "Trip Sans";
   font-weight: 500;
   font-size: $font-size-sm;
@@ -52,7 +52,7 @@
   }
 
   &:hover {
-    background: #f8fafd;
+    background: $gray-25;
   }
 }
 
@@ -66,8 +66,8 @@
   padding: 0 12px;
   border: none;
   border-radius: 100px;
-  background: #2971e6;
-  color: #ffffff;
+  background: $primary;
+  color: $background;
   font-family: "Trip Sans";
   font-weight: 700;
   font-size: $font-size-sm;
@@ -84,7 +84,7 @@
   }
 
   &:hover:not(:disabled) {
-    background: color-mix(in srgb, #2971e6 90%, black);
+    background: color-mix(in srgb, $primary 90%, black);
   }
 
   &:disabled {

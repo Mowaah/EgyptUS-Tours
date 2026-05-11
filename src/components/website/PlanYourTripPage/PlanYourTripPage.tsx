@@ -30,7 +30,7 @@ const initialTripData: TripData = {
   },
   preferences: {
     hotelCategory: "",
-    roomType: "",
+    roomType: [],
     transportation: "",
     experiences: [],
   },

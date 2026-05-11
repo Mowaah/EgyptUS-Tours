@@ -59,30 +59,28 @@ export default function StepRoomDates({ formData, onChange, onContinue }: StepRo
       <div className={planPage.stepFormCardScroll}>
         {/* ── Dates & Guests ── */}
         <div className={planPage.formGrid}>
-          <div className={formStyles.field}>
-            <label className={formStyles.fieldLabel}>Check-in</label>
+          <FormField label="Check-in" required>
             <CustomDatePicker
               variant="input"
               className={`${formStyles.input} ${planPage.dateInput}`}
               value={formData.startDate}
               onChange={(date) => onChange({ startDate: date })}
             />
-          </div>
-          <div className={formStyles.field}>
-            <label className={formStyles.fieldLabel}>Check-out</label>
+          </FormField>
+          <FormField label="Check-out" required>
             <CustomDatePicker
               variant="input"
               className={`${formStyles.input} ${planPage.dateInput}`}
               value={formData.endDate}
               onChange={(date) => onChange({ endDate: date })}
             />
-          </div>
+          </FormField>
 
           {(["adults", "children", "infants"] as const).map((type) => {
             const meta = {
-              adults:   { title: "No of Adults",   hint: "(+12 years)" },
+              adults: { title: "No of Adults", hint: "(+12 years)" },
               children: { title: "No of Children", hint: "(2 to 11 years)" },
-              infants:  { title: "No of Infants",  hint: "(0 to 2 years)" },
+              infants: { title: "No of Infants", hint: "(0 to 2 years)" },
             };
             return (
               <div key={type} className={planPage.formGroup}>
@@ -92,6 +90,7 @@ export default function StepRoomDates({ formData, onChange, onContinue }: StepRo
                   value={formData[type]}
                   onIncrease={() => handleGuestChange(type, true)}
                   onDecrease={() => handleGuestChange(type, false)}
+                  required
                 />
               </div>
             );
@@ -100,7 +99,7 @@ export default function StepRoomDates({ formData, onChange, onContinue }: StepRo
         <hr className={styles.divider} aria-hidden="true" />
 
         {/* ── Room Type ── */}
-        <h3 className={styles.sectionTitle}>Type of Room</h3>
+        <h3 className={styles.sectionTitle}>Type of Room <span style={{ color: '#0E2851' }}>*</span></h3>
         <div className={styles.roomList}>
           {ROOM_TYPES.map((room) => {
             const count = formData.rooms[room.id];
@@ -136,7 +135,7 @@ export default function StepRoomDates({ formData, onChange, onContinue }: StepRo
               {Array.from({ length: formData.rooms.double }).map((_, i) => (
                 <div key={i} className={planPage.formGroup}>
                   <label className={formStyles.fieldLabel}>Room {i + 1}</label>
-                  <SelectDropdown id={`double-room-${i}`} options={ROOM_VIEW_OPTIONS} value="garden" onChange={() => {}} />
+                  <SelectDropdown id={`double-room-${i}`} options={ROOM_VIEW_OPTIONS} value="garden" onChange={() => { }} />
                 </div>
               ))}
             </div>
@@ -151,7 +150,7 @@ export default function StepRoomDates({ formData, onChange, onContinue }: StepRo
               {Array.from({ length: formData.rooms.triple }).map((_, i) => (
                 <div key={i} className={planPage.formGroup}>
                   <label className={formStyles.fieldLabel}>Room {i + 1}</label>
-                  <SelectDropdown id={`triple-room-${i}`} options={ROOM_VIEW_OPTIONS} value="garden" onChange={() => {}} />
+                  <SelectDropdown id={`triple-room-${i}`} options={ROOM_VIEW_OPTIONS} value="garden" onChange={() => { }} />
                 </div>
               ))}
             </div>

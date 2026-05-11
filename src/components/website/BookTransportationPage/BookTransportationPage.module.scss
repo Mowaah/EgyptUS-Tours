@@ -39,7 +39,7 @@
 
 // Success Modal Styles
 .successGrid {
-  background: #F8FAFD;
+  background: $gray-25;
   border-radius: 24px;
   padding: 32px;
   margin: 32px 0;
@@ -57,7 +57,7 @@
 
 .successLabel {
   font-size: $font-size-13;
-  color: #6B7280;
+  color: $text-light;
 }
 
 .successVal {

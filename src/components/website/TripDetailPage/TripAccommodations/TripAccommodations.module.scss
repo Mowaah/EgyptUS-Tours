@@ -32,7 +32,7 @@
 
 .card {
   background: $white;
-  border: 1px solid #EAF1FD;
+  border: 1px solid $background-blue;
   border-radius: 24px;
   padding: 12px;
   display: flex;
@@ -64,7 +64,7 @@
   position: absolute;
   top: 14px;
   left: 14px;
-  background: #DFEFFF;
+  background: $background-blue-light;
   color: $primary;
   font-size: $font-size-xs;
   font-weight: $font-weight-bold;
@@ -130,7 +130,7 @@
   align-items: center;
   gap: 6px;
   background: #F8F9FA;
-  color: #364153;
+  color: $text-heading;
   font-size: $font-size-xs;
   font-weight: $font-weight-medium;
   padding: 5px 10px;

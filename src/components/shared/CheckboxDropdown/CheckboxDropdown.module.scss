@@ -13,8 +13,8 @@
   left: 0;
   min-width: 200px;
   max-width: calc(100vw - 24px);
-  background: #FFFFFF;
-  border: 1px solid #F4F4F4;
+  background: $background;
+  border: 1px solid $border;
   box-shadow: 0px 8px 16px rgba(0, 0, 77, 0.08);
   border-radius: 16px;
   padding: 4px 0px;
@@ -43,12 +43,12 @@
   box-sizing: border-box;
 
   &:hover {
-    background: #F4F4F4;
+    background: $border;
   }
 }
 
 .menuItemSelected {
-  background: #F4F4F4;
+  background: $border;
 }
 
 .menuItemText {

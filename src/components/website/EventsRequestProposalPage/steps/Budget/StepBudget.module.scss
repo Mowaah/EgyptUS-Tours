@@ -10,8 +10,8 @@
   align-items: flex-start;
   padding: 18px 18px 12px;
   gap: 10px;
-  background: #F3F9FF;
-  border: 1px solid #DBEAFE;
+  background: $background-blue-white;
+  border: 1px solid $background-blue-soft;
   border-radius: 14px;
 
   @media (min-width: 640px) {
@@ -24,7 +24,7 @@
 .infoBoxTitle {
   font-size: $font-size-lg;
   font-weight: 700;
-  color: #0E2851;
+  color: $dark;
   margin: 0;
   line-height: 28px;
 }
@@ -47,7 +47,7 @@
   font-size: $font-size-sm;
   font-weight: 400;
   line-height: 20px;
-  color: #364153;
+  color: $text-heading;
 }
 
 .infoListIcon {
@@ -59,7 +59,7 @@
   padding: 2px;
   width: 16px;
   height: 16px;
-  background: #DFEAFB;
+  background: $border-card;
   border: 1px solid rgba(21, 93, 252, 0.04);
   border-radius: 8px;
   box-sizing: border-box;

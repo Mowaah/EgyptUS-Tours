@@ -19,8 +19,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  background: #FFFFFF;
-  border: 1px solid #F4F4F4;
+  background: $background;
+  border: 1px solid $border;
   border-radius: 24px;
   padding: 24px 20px;
 }
@@ -29,8 +29,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #EAF1FD;
-  border: 1px solid #BDD3F7;
+  background: $background-blue;
+  border: 1px solid $border-blue-deep;
   border-radius: $radius-full;
   padding: 8px;
   transition: all $transition-fast;
@@ -48,7 +48,7 @@
   justify-content: center;
   border-radius: $radius-full;
   padding: 4px;
-  background: #DFEAFB;
+  background: $border-card;
   border: 2px solid rgba(21, 93, 252, 0.04);
 }
 

@@ -2,6 +2,7 @@
 $primary: #2971E6;
 $primary-light: #4B89F0;
 $primary-dark: #15366E;
+$primary-darker: #173F80;
 $primary-hover: #2566CF;
 $primary-soft: rgba(41, 113, 230, 0.11);
 
@@ -9,30 +10,92 @@ $secondary: #FF6600;
 $secondary-light: #FFF3EB;
 $secondary-dark: #E65C00;
 $secondary-border: #FFD0B0;
-$counter-minus-bg: #fed7aa;
-$counter-pill-border: #e2e8f0;
+
+$success: #10B981;
+$whatsapp-green: #1EAE2A;
+$warning: #FBBF24;
+$danger: #EF4444;
+$info: #2563EB;
+$info-light: #1B8FFE;
 
 $dark: #0E2851;
+$dark-navy: #0D1B3E;
+$dark-navy-deep: #0E1835;
 $text: #2B2B38;
+$text-heading: #364153;
 $text-light: #6B7280;
 $text-lighter: #4A5565;
 $text-muted: #606978;
 $text-placeholder: #B1B1B1;
 
-$nav-link-on-light: #4b5563;
+$gray-25: #F8FAFD;
+$gray-50: #F9FAFB;
+$gray-50-tailwind: #F3F4F6;
+$gray-50-alt: #f2f2f2;
+$gray-100: #F1F5F9;
+$gray-150: #EEEEEE;
+$gray-150-alt: #D8DDE4;
+$gray-200: #EBEBEB;
+$gray-200-zinc: #E5E5E5;
+$gray-300: #DADADA;
+$gray-tailwind-300: #D1D5DB;
+$gray-400: #9CA3AF;
+$gray-500: #6B7280;
+$gray-500-alt: #6A7282;
+$gray-600: #4B5563;
+$gray-700: #374151;
+$gray-900: #111827;
+$gray-blue-100: #EDF2F7;
+$gray-blue-200: #E2E8F0;
+$gray-blue-300: #CBD5E1;
+$gray-blue-400: #9AA3B8;
 
 $border: #F4F4F4;
 $border-card: #DFEAFB;
 $border-input: #C2C2C2;
-$border-strong: #EAF1FD;
+$border-strong: #E5E7EB;
+$border-light: #C7DBFF;
+$border-blue-light: #C4D6F9;
+$border-blue-deep: #BDD3F7;
+$border-danger-light: #FECACA;
 
 $background: #FFFFFF;
 $background-alt: #F4F4F4;
 $background-soft: rgba(244, 244, 244, 0.5);
 $background-input: #EDEEF1;
+$background-blue: #EAF1FD;
+$background-blue-light: #DFEFFF;
+$background-blue-lighter: #f6f9fe;
+$background-blue-alt: #E6F4FF;
+$background-blue-soft: #DBEAFE;
+$background-blue-white: #F3F9FF;
+$background-orange: #FFF4E6;
+$background-orange-lighter: #fff8ef;
+$background-green: #F0FDF4;
+$background-green-light: #CDF8E5;
+$background-danger: #FEF2F2;
+$background-danger-light: #FEE2E2;
+$background-info: #F6FBFF;
+
+// Semantic Status Colors
+$status-success-bg: #dcfce7;
+$status-success-text: #15803d;
+$status-warning-bg: #fef3c7;
+$status-warning-text: #b45309;
+$status-danger-text: #d80027;
+
+// Brand/Specific Colors
+$orange-500: #f4a340;
+$orange-600: #f28c28;
+$green-500: #06C270;
+$atlassian-dark: #172b4d;
+$atlassian-gray: #7a8597;
+$primary-deep: #123367;
+$primary-chatbot: #1f55ad;
+$background-chatbot: #f7fcff;
 
 $white: #FFFFFF;
-$danger: #EF4444;
+$black: #000000;
 
 // Typography - Fluid Responsive Scaling
 $font-size-6: 0.375rem; // 6px

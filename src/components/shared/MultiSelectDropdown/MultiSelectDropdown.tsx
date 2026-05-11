@@ -13,6 +13,7 @@ interface MultiSelectDropdownProps {
   onChange: (val: string[]) => void;
   placeholder?: string;
   dropdownClassName?: string;
+  checkboxStyle?: "radio" | "checkbox" | "none";
 }
 
 export default function MultiSelectDropdown({
@@ -23,6 +24,7 @@ export default function MultiSelectDropdown({
   onChange,
   placeholder = "Select options",
   dropdownClassName = "",
+  checkboxStyle = "checkbox",
 }: MultiSelectDropdownProps) {
   return (
     <CheckboxDropdown
@@ -30,7 +32,7 @@ export default function MultiSelectDropdown({
       value={value}
       onChange={onChange}
       multiple={true}
-      checkboxStyle="checkbox"
+      checkboxStyle={checkboxStyle}
       dropdownClassName={`${baseStyles.dropdownPanel} ${dropdownClassName}`}
       renderTrigger={(isOpen, setIsOpen) => (
         <div

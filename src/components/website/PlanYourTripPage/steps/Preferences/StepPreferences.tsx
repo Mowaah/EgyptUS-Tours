@@ -6,7 +6,7 @@ import {
   type ReactNode,
 } from "react";
 
-import { BookingStepFooter, StarRating, SelectDropdown, MultiSelectDropdown } from "@/components/shared";
+import { BookingStepFooter, StarRating, SelectDropdown, MultiSelectDropdown, FormField, CheckboxIndicator } from "@/components/shared";
 import CheckboxDropdown from "@/components/shared/CheckboxDropdown/CheckboxDropdown";
 
 import {
@@ -19,7 +19,7 @@ import styles from "./StepPreferences.module.scss";
 
 type Preferences = {
   hotelCategory: string;
-  roomType: string;
+  roomType: string[];
   transportation: string;
   experiences: string[];
 };
@@ -61,10 +61,11 @@ export default function StepPreferences({
 
       <div className={planPage.stepFormCardScroll}>
         <div className={`${planPage.formGrid} ${styles.prefGrid}`}>
-          <div className={planPage.formGroup}>
-            <label id="pti-hotel-label" htmlFor="pti-hotel-trigger">
-              Preferred hotel category
-            </label>
+          <FormField
+            id="pti-hotel-trigger"
+            label="Preferred hotel category"
+            required
+          >
             <SelectDropdown
               id="pti-hotel-trigger"
               options={HOTEL_CATEGORY_OPTIONS.map(opt => ({ ...opt, label: opt.value, value: opt.value }))}
@@ -104,25 +105,28 @@ export default function StepPreferences({
                 </span>
               )}
             />
-          </div>
+          </FormField>
 
-          <div className={planPage.formGroup}>
-            <label id="pti-room-label" htmlFor="pti-room-trigger">
-              Ideal room type
-            </label>
-            <SelectDropdown
+          <FormField
+            id="pti-room-trigger"
+            label="Ideal room type"
+            required
+          >
+            <MultiSelectDropdown
               id="pti-room-trigger"
               options={ROOM_TYPE_OPTIONS.map(opt => ({ label: opt, value: opt }))}
               value={preferences.roomType}
               onChange={(val) => onSetPreferences({ roomType: val })}
-              label="Select room type"
+              placeholder="Select room types"
+              checkboxStyle="radio"
             />
-          </div>
+          </FormField>
 
-          <div className={planPage.formGroup}>
-            <label id="pti-transport-label" htmlFor="pti-transport-trigger">
-              Transportation Preferences
-            </label>
+          <FormField
+            id="pti-transport-trigger"
+            label="Transportation Preferences"
+            required
+          >
             <SelectDropdown
               id="pti-transport-trigger"
               options={transportOptions.map(opt => ({ label: opt, value: opt }))}
@@ -130,12 +134,13 @@ export default function StepPreferences({
               onChange={(val) => onSetPreferences({ transportation: val })}
               label="Select Transportation"
             />
-          </div>
+          </FormField>
 
-          <div className={planPage.formGroup}>
-            <label id="pti-experience-label" htmlFor="pti-experience-trigger">
-              Enhance Your Experience
-            </label>
+          <FormField
+            id="pti-experience-trigger"
+            label="Enhance Your Experience"
+            required
+          >
             <MultiSelectDropdown
               id="pti-experience-trigger"
               options={experienceOptions.map(opt => ({ label: opt, value: opt }))}
@@ -143,7 +148,7 @@ export default function StepPreferences({
               onChange={(val) => onSetPreferences({ experiences: val })}
               placeholder="Select Experiences"
             />
-          </div>
+          </FormField>
         </div>
       </div>
 

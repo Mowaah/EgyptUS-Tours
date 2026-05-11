@@ -5,7 +5,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  background: #ffffff;
+  background: $background;
   box-sizing: border-box;
   padding: 40px 0 0;
 
@@ -27,7 +27,7 @@
     font-family: 'Trip Sans';
     font-weight: 500;
     font-size: $font-size-13;
-    color: #0E2851;
+    color: $dark;
   }
 }
 
@@ -50,7 +50,7 @@
   font-weight: 700;
   font-size: clamp(1.375rem, 3vw, 2rem);
   line-height: 1.25;
-  color: #0e2851;
+  color: $dark;
   margin: 0;
   padding: 0 8px;
 }
@@ -60,7 +60,7 @@
   font-weight: 400;
   font-size: clamp(0.9375rem, 2vw, 1.25rem);
   line-height: 1.4;
-  color: #4a5565;
+  color: $text-lighter;
   margin: 0;
   padding: 0 8px;
 }
@@ -85,8 +85,8 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  background: #FFFFFF;
-  border: 1px solid #EAF1FD;
+  background: $background;
+  border: 1px solid $background-blue;
   border-radius: 24px;
   overflow: hidden;
   transition: transform 0.3s ease;
@@ -150,7 +150,7 @@
   font-weight: 700;
   font-size: clamp(1.125rem, 2.2vw, 1.5rem);
   line-height: 1.3;
-  color: #0e2851;
+  color: $dark;
   margin: 0;
   width: 100%;
   min-width: 0;
@@ -176,21 +176,21 @@
 .statLabel {
   font-family: 'Trip Sans';
   font-size: $font-size-sm;
-  color: #6A7282;
+  color: $gray-500-alt;
 }
 
 .statValueOrange {
   font-family: 'Trip Sans';
   font-weight: 700;
   font-size: $font-size-lg;
-  color: #FF6600;
+  color: $secondary;
 }
 
 .statValueBlue {
   font-family: 'Trip Sans';
   font-weight: 700;
   font-size: $font-size-lg;
-  color: #2971E6;
+  color: $primary;
 }
 
 .testimonial {
@@ -200,7 +200,7 @@
   padding: 16px 16px 0px 20px;
   gap: 8px;
   border-left: 4px solid rgba(255, 102, 0, 0.63);
-  background: #F9FAFB;
+  background: $gray-50;
   border-radius: 14px;
 }
 
@@ -213,7 +213,7 @@
   font-family: 'Trip Sans';
   font-size: $font-size-base;
   line-height: 26px;
-  color: #364153;
+  color: $text-heading;
   margin: 0;
   padding-bottom: 16px;
 }

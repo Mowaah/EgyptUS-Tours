@@ -79,7 +79,7 @@
   background: $secondary;
 
   &:disabled {
-    background: #FFD0B0;
+    background: $secondary-border;
   }
 
   &:active:not(:disabled) {
@@ -88,7 +88,7 @@
 }
 
 .plus {
-  background: #FF6600;
+  background: $secondary;
 
   &:active:not(:disabled) {
     transform: scale(0.96);

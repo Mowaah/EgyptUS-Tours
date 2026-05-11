@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid $border-strong;
   border-radius: 14px;
   background: $white;
   cursor: pointer;
@@ -34,7 +34,7 @@
 
   &.open {
     border-color: $primary;
-    box-shadow: 0px 0px 0px 4px #E6F4FF, 0px 1px 2px 0px rgba(217, 217, 234, 0.05);
+    box-shadow: 0px 0px 0px 4px $background-blue-alt, 0px 1px 2px 0px rgba(217, 217, 234, 0.05);
   }
 
   &.error {
@@ -103,11 +103,11 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #E5E7EB;
+    background: $border-strong;
     border-radius: 6px;
 
     &:hover {
-      background: #D1D5DB;
+      background: $gray-tailwind-300;
     }
   }
 }

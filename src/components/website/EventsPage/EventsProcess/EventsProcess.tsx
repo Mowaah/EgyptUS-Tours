@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./EventsProcess.module.scss";
 
 const STEPS = [
@@ -35,10 +37,39 @@ const STEPS = [
 ];
 
 export default function EventsProcess() {
+  const stepsRef = useRef<HTMLDivElement>(null);
+  const [visibleSteps, setVisibleSteps] = useState<boolean[]>(Array(STEPS.length).fill(false));
+
+  useEffect(() => {
+    const el = stepsRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          STEPS.forEach((_, idx) => {
+            setTimeout(() => {
+              setVisibleSteps((prev) => {
+                const next = [...prev];
+                next[idx] = true;
+                return next;
+              });
+            }, idx * 160);
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section className={styles.section}>
       <div className={styles.header}>
-        <h2 className={styles.title}>Our Events’ Process</h2>
+        <h2 className={styles.title}>Our Events&apos; Process</h2>
         <p className={styles.subtitle}>Structured approach ensuring flawless execution</p>
       </div>
 
@@ -47,9 +78,12 @@ export default function EventsProcess() {
         <div className={styles.lineBase} />
         <div className={styles.lineProgress} />
 
-        <div className={styles.steps}>
+        <div className={styles.steps} ref={stepsRef}>
           {STEPS.map((step, idx) => (
-            <div key={idx} className={styles.stepItem}>
+            <div
+              key={idx}
+              className={`${styles.stepItem} ${visibleSteps[idx] ? styles.stepVisible : styles.stepHidden}`}
+            >
               <div className={styles.stepAside}>
                 <div className={`${styles.circle} ${!step.active ? styles.inactive : ""}`}>
                   <span className={styles.number}>{step.number}</span>

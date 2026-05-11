@@ -33,8 +33,8 @@ export default function AboutPage() {
       <SecondaryCta
         heading={<>Ready to Start Your <span style={{ color: "#FF6600" }}>Egyptian</span> Journey?</>}
         description="Let us create an unforgettable experience tailored to your dreams and goals."
-        buttonText="Explore Destinations"
-        buttonHref="/destinations"
+        buttonText="Explore Trips"
+        buttonHref="/trips"
         buttonIcon={<Image src="/images/search.svg" alt="" width={24} height={24} style={{ transform: "scaleX(-1)", filter: "brightness(0) invert(1)" }} />}
         titleClassName={styles.customCtaTitle}
       />

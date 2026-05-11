@@ -27,7 +27,7 @@ const getDaysInMonth = (year: number, month: number) => new Date(year, month + 1
 const getFirstDayOfMonth = (year: number, month: number) => new Date(year, month, 1).getDay();
 
 const parseDateString = (val: string) => {
-  if (!val) return new Date();
+  if (!val) return null;
 
   // 1. Try standard Date parsing (works for "12/25/2024", etc)
   const d = new Date(val);
@@ -35,17 +35,17 @@ const parseDateString = (val: string) => {
 
   // 2. Fallback to exact split for MM/DD/YYYY
   const parts = val.split("/").map(Number);
-  if (parts.length === 3 && parts.every(n => !Number.isNaN(n))) {
+  if (parts.length === 3 && parts.every((n) => !Number.isNaN(n))) {
     return new Date(parts[2], parts[0] - 1, parts[1]);
   }
 
-  // 3. Fallback to today if they are mid-typing invalid strings without crashing viewDate
-  return new Date();
+  // 3. Fallback to null if they are mid-typing invalid strings without crashing viewDate
+  return null;
 };
 
 export default function CustomDatePicker({ value, onChange, className, dropdownClassName = "", variant = "card", renderTrigger }: CustomDatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const initialDate = parseDateString(value);
+  const initialDate = parseDateString(value) || new Date();
 
   // ... rest remains same until the dropdown div renderer
   const [viewDate, setViewDate] = useState(initialDate);
@@ -121,7 +121,7 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
   const formattedMonthYear = viewDate.toLocaleDateString(undefined, { month: "long", year: "numeric" });
 
   const formattedPickup = (() => {
-    if (Number.isNaN(selectedDateObj.getTime())) return { main: "Select date", year: "" };
+    if (!selectedDateObj || Number.isNaN(selectedDateObj.getTime())) return { main: "Select date", year: "" };
 
     return {
       main: selectedDateObj.toLocaleDateString(undefined, {
@@ -177,7 +177,7 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
           placeholder="mm/dd/yyyy"
         />
       ) : variant === "custom" && renderTrigger ? (
-        renderTrigger(isOpen, setIsOpen, Number.isNaN(selectedDateObj.getTime()) ? "" : `${String(selectedDateObj.getDate()).padStart(2, '0')} - ${String(selectedDateObj.getMonth() + 1).padStart(2, '0')} - ${selectedDateObj.getFullYear()}`)
+        renderTrigger(isOpen, setIsOpen, !selectedDateObj || Number.isNaN(selectedDateObj.getTime()) ? "" : `${String(selectedDateObj.getDate()).padStart(2, '0')} - ${String(selectedDateObj.getMonth() + 1).padStart(2, '0')} - ${selectedDateObj.getFullYear()}`)
       ) : (
         <button
           type="button"
@@ -214,7 +214,7 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
 
           <div className={styles.daysGrid}>
             {calendarGrid.map((item, idx) => {
-              const isSelected =
+              const isSelected = selectedDateObj &&
                 item.date.getDate() === selectedDateObj.getDate() &&
                 item.date.getMonth() === selectedDateObj.getMonth() &&
                 item.date.getFullYear() === selectedDateObj.getFullYear();

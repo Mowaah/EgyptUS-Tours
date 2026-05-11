@@ -51,7 +51,7 @@ export default function ContactSection() {
           </div>
 
           <div className={styles.formCard}>
-            <FormField label="Full Name" type="text" placeholder="Full name here..." />
+            <FormField label="Full Name" type="text" placeholder="Full name here..." required />
 
             <FormField
               label="Email"
@@ -60,6 +60,7 @@ export default function ContactSection() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               error={isEmailInvalid ? "Please enter a valid email address." : undefined}
+              required
             />
 
             <FormField
@@ -67,6 +68,7 @@ export default function ContactSection() {
               isTextarea
               placeholder="How we can help you?"
               rows={5}
+              required
             />
 
             <Button

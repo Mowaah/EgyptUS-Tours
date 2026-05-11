@@ -99,7 +99,7 @@ export default function ChatBot() {
               <div className={styles.botInfo}>
                 <h3 className={styles.botName}>Egypt Us Bot</h3>
                 <div className={styles.statusRow}>
-                  <span>Your travel assistant</span>
+                  <span>Your Travel Assistant</span>
                   <div className={styles.onlineStatus}>
                     <div className={styles.onlineDot} />
                     <span>Online</span>

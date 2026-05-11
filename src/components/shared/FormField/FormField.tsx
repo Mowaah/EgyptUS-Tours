@@ -28,7 +28,12 @@ export default function FormField({
 
   return (
     <div className={`${styles.field} ${wrapperClassName || ""}`}>
-      <label className={styles.fieldLabel}>{label}</label>
+      {label && (
+        <label className={styles.fieldLabel} htmlFor={props.id}>
+          {label}
+          {props.required && <span className={styles.required}>*</span>}
+        </label>
+      )}
 
       {isTextarea ? (
         <textarea
@@ -46,6 +51,8 @@ export default function FormField({
         >
           {children}
         </select>
+      ) : children ? (
+        children
       ) : (
         <input
           className={`${styles.input} ${isInvalid ? styles.inputInvalid : ""} ${

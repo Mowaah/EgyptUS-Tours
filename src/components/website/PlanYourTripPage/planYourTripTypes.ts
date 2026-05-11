@@ -22,7 +22,7 @@ export type TripData = {
   };
   preferences: {
     hotelCategory: string;
-    roomType: string;
+    roomType: string[];
     transportation: string;
     experiences: string[];
   };

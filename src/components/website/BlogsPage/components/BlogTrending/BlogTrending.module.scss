@@ -77,9 +77,9 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1px solid #E5E7EB;
-  background: #FFFFFF;
-  color: #4B5563;
+  border: 1px solid $border-strong;
+  background: $background;
+  color: $gray-600;
   font-family: 'Trip Sans';
   font-size: $font-size-sm;
   font-weight: 500;
@@ -87,8 +87,8 @@
   transition: all $transition-fast;
 
   &:hover:not(.activeBtn):not(.dotsBtn):not(:disabled) {
-    border-color: #FF6600;
-    color: #FF6600;
+    border-color: $secondary;
+    color: $secondary;
   }
 
   &:disabled {
@@ -98,8 +98,8 @@
 
 .activeBtn {
   background: #FFF7ED;
-  border-color: #FFD0B0;
-  color: #FF6600;
+  border-color: $secondary-border;
+  color: $secondary;
 }
 
 .dotsBtn {

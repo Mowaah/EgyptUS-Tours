@@ -120,7 +120,7 @@
 
 // Applied to days after the active day (i > active)
 .thumbCircleInactive {
-  border-color: #DADADA;
+  border-color: $gray-300;
 }
 
 .connectorWrap {
@@ -146,7 +146,7 @@
 }
 
 .connectorTrack {
-  background: #EDF2F7;
+  background: $gray-blue-100;
   z-index: 0;
 }
 
@@ -159,7 +159,7 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #E2E8F0;
+  background: $gray-blue-200;
   border: 2px solid $white;
   position: relative;
   z-index: 10;
@@ -200,7 +200,7 @@
   grid-template-columns: 1.1fr 0.9fr;
   gap: 40px;
   background: $white;
-  border: 1px solid #F1F5F9;
+  border: 1px solid $gray-100;
   border-radius: 32px;
   padding: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
@@ -276,7 +276,7 @@
   display: flex;
   gap: 32px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #F1F5F9;
+  border-bottom: 1px solid $gray-100;
 
   @media (max-width: 768px) {
     justify-content: space-between;
@@ -342,13 +342,13 @@
   gap: 12px;
   font-size: 15.7px;
   color: $text-lighter;
-  background: #F8F9FA;
+  background: $gray-50;
   border-radius: $radius-full;
   padding: 12px 20px;
   transition: all $transition-fast;
 
   &:hover {
-    background: #F1F5F9;
+    background: $gray-100;
   }
 
   svg {
@@ -402,7 +402,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: 2px;
-  background: #E2E8F0;
+  background: $gray-blue-200;
   z-index: 1;
 }
 
@@ -416,7 +416,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #CBD5E1;
+  background: $gray-blue-300;
   position: relative;
   z-index: 2;
   margin-top: 5px;
@@ -448,7 +448,7 @@
 
 .mobileCard {
   background: $white;
-  border: 1px solid #F1F5F9;
+  border: 1px solid $gray-100;
   border-radius: 16px;
   cursor: pointer;
   transition: all $transition-base;
@@ -503,7 +503,7 @@
 }
 
 .mobileChevron {
-  color: #9CA3AF;
+  color: $gray-400;
   flex-shrink: 0;
   transition: transform $transition-fast;
 }

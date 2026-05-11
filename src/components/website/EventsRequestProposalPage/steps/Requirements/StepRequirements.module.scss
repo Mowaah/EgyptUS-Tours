@@ -27,21 +27,21 @@
   align-items: center;
   gap: 12px;
   padding: 16px;
-  border: 1px solid #EAF1FD;
+  border: 1px solid $background-blue;
   border-radius: 16px;
   cursor: pointer;
-  background: #FFFFFF;
+  background: $background;
   transition: border-color $transition-fast, box-shadow $transition-fast;
 
   &:hover {
-    border-color: rgba(#FF6600, 0.4);
-    box-shadow: 0 4px 12px rgba(#0E2851, 0.05);
+    border-color: rgba($secondary, 0.4);
+    box-shadow: 0 4px 12px rgba($dark, 0.05);
   }
 }
 
 .serviceCardText {
   font-size: $font-size-sm;
   font-weight: 600;
-  color: #0E2851;
+  color: $dark;
   user-select: none;
 }

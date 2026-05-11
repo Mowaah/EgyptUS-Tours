@@ -42,8 +42,7 @@ export default function StepRequirements({
 
       <div className={pageStyles.stepFormCardScroll}>
         <div className={pageStyles.formGrid}>
-          <div className={`${formStyles.field} ${styles.formGroupFull}`}>
-            <label id="req-venue-label" className={formStyles.fieldLabel}>Venue Type</label>
+          <FormField label="Venue Type" required wrapperClassName={styles.formGroupFull}>
             <div style={{ width: '100%', maxWidth: '344px' }}>
               <SelectDropdown
                 id="req-venue"
@@ -54,10 +53,10 @@ export default function StepRequirements({
                 triggerClassName={pageStyles.formInput}
               />
             </div>
-          </div>
+          </FormField>
 
           <div className={styles.additionalServicesRow}>
-            <label className={formStyles.fieldLabel}>Additional Services</label>
+            <label className={formStyles.fieldLabel}>Additional Services <span style={{ color: '#0E2851' }}>*</span></label>
             <div className={styles.serviceGrid}>
               {ADDITIONAL_SERVICES.map((service) => {
                 const isSelected = data.additionalServices.includes(service.id);

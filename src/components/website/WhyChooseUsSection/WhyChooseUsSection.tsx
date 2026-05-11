@@ -6,31 +6,31 @@ const FEATURES = [
   {
     title: "Local Experts",
     description: "Born and raised Egyptians who know every hidden gem",
-    color: "#10B981",
+    color: "#10B981", // $success
     icon: <Image src="/images/whychooseus/location.svg" alt="" width={24} height={24} />,
   },
   {
     title: "Flexible Custom Trips",
     description: "Design your dream journey with our personalized planning",
-    color: "#FF6600",
+    color: "#FF6600", // $secondary
     icon: <Image src="/images/whychooseus/airplane.svg" alt="" width={24} height={24} />,
   },
   {
     title: "24/7 Support",
     description: "Round-the-clock assistance wherever your adventure takes you",
-    color: "#FF6600",
+    color: "#FF6600", // $secondary
     icon: <Image src="/images/whychooseus/headphone.svg" alt="" width={24} height={24} />,
   },
   {
     title: "Multi-language Guides",
     description: "Expert guides fluent in 15+ languages, ensuring smooth communication.",
-    color: "#2563EB",
+    color: "#2563EB", // $info
     icon: <Image src="/images/whychooseus/language-circle.svg" alt="" width={24} height={24} />,
   },
   {
     title: "Trusted by Thousands",
     description: "4.9/5 rating from 10,000+ happy travelers",
-    color: "#19448A",
+    color: "#15366E", // $primary-dark
     icon: <Image src="/images/whychooseus/star.svg" alt="" width={24} height={24} />,
   },
 ];

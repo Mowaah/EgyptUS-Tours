@@ -3,7 +3,7 @@
 @use "@/styles/breakpoints" as *;
 
 .topbar {
-  background: linear-gradient(270deg, #0E2851 -1.74%, #205AB7 118.85%);
+  background: linear-gradient(270deg, $dark -1.74%, #205AB7 118.85%);
   min-height: 40px;
   color: $white;
   font-size: $font-size-2xs;
@@ -203,11 +203,11 @@
   border-radius: 8px;
 
   &:hover {
-    background: #f4f4f4;
+    background: $border;
   }
 
   &.selected {
-    background: #f4f4f4;
+    background: $border;
   }
 }
 
@@ -216,7 +216,7 @@
 }
 
 .menuText {
-  color: #606978;
+  color: $text-muted;
   font-size: $font-size-2xs;
   font-weight: 400;
   line-height: 15px;
@@ -226,8 +226,8 @@
 .simpleCheckbox {
   width: 12px;
   height: 12px;
-  background: #FFFFFF;
-  border: 1px solid #C2C2C2;
+  background: $background;
+  border: 1px solid $border-input;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -238,12 +238,12 @@
   .menuItem:hover & {
     border-color: $secondary;
     background-color: $secondary-light;
-    box-shadow: 0 0 0 4px #FFF3EB;
+    box-shadow: 0 0 0 4px $secondary-light;
   }
 
   &.checked {
-    background: #FF6600;
-    border-color: #FF6600;
+    background: $secondary;
+    border-color: $secondary;
   }
 }
 

@@ -11,7 +11,7 @@
   align-items: center;
   gap: 6px;
   padding: 10px 12px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid $border-strong;
   border-radius: 14px;
   background: $white;
   font-size: $font-size-sm;
@@ -38,7 +38,7 @@
   &.open {
     border-color: $primary;
     outline: none;
-    box-shadow: 0px 0px 0px 4px #E6F4FF, 0px 1px 2px 0px rgba(217, 217, 234, 0.05);
+    box-shadow: 0px 0px 0px 4px $background-blue-alt, 0px 1px 2px 0px rgba(217, 217, 234, 0.05);
   }
 
   .chevron {

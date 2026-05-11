@@ -129,7 +129,7 @@
 
 .description {
   font-size: clamp(#{$font-size-xs}, 1.2vw + 0.65rem, #{$font-size-base});
-  color: #9ca3af;
+  color: $gray-400;
   line-height: 1.6;
   margin: 0 0 $spacing-xl;
   max-width: 52ch;

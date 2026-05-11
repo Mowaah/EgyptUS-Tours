@@ -28,7 +28,7 @@
 
 .address {
   font-size: $font-size-base;
-  color: #4A5565;
+  color: $text-lighter;
   margin: 0;
 }
 
@@ -38,7 +38,7 @@
   height: 388px;
   border-radius: 24px;
   overflow: hidden;
-  border: 1px solid #F4F4F4;
+  border: 1px solid $border;
   padding: 16px;
   gap: 8px;
 }
@@ -88,7 +88,7 @@
     }
 
     &:hover {
-      background: #F9FAFB;
+      background: $gray-50;
     }
   }
 }
@@ -107,6 +107,6 @@
   transition: background $transition-fast;
 
   &:hover {
-    background: #F9FAFB;
+    background: $gray-50;
   }
 }

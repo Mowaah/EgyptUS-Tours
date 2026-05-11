@@ -32,8 +32,7 @@ export default function StepBudget({
 
       <div className={pageStyles.stepFormCardScroll}>
         <div className={pageStyles.formGrid}>
-          <div className={formStyles.field}>
-            <label id="bud-est-label" className={formStyles.fieldLabel}>Estimated Budget In USD</label>
+          <FormField label="Estimated Budget In USD" required>
             <SelectDropdown
               id="bud-est"
               label="Select Type"
@@ -42,10 +41,9 @@ export default function StepBudget({
               onChange={(val) => onChange({ estimatedBudget: val })}
               triggerClassName={pageStyles.formInput}
             />
-          </div>
+          </FormField>
 
-          <div className={formStyles.field}>
-            <label id="bud-flex-label" className={formStyles.fieldLabel}>Budget Flexibility</label>
+          <FormField label="Budget Flexibility" required>
             <SelectDropdown
               id="bud-flex"
               label="Select Type"
@@ -54,10 +52,9 @@ export default function StepBudget({
               onChange={(val) => onChange({ budgetFlexibility: val })}
               triggerClassName={pageStyles.formInput}
             />
-          </div>
+          </FormField>
 
-          <div className={formStyles.field}>
-            <label id="bud-source-label" className={formStyles.fieldLabel}>How did you hear about us?</label>
+          <FormField label="How did you hear about us?">
             <SelectDropdown
               id="bud-source"
               label="Select Source"
@@ -66,7 +63,7 @@ export default function StepBudget({
               onChange={(val) => onChange({ hearAboutUs: val })}
               triggerClassName={pageStyles.formInput}
             />
-          </div>
+          </FormField>
 
           <div className={`${pageStyles.formGroupFull} ${styles.infoBoxWrapper}`}>
             <div className={styles.infoBox}>

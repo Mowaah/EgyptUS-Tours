@@ -57,7 +57,7 @@
   font-size: 28px;
   font-weight: 700;
   line-height: 1.2;
-  color: #0E2851;
+  color: $dark;
   margin: 0;
 
   @media (min-width: 1024px) {
@@ -70,7 +70,7 @@
   font-size: $font-size-base;
   font-weight: 400;
   line-height: 22px;
-  color: #6B7280;
+  color: $text-light;
   margin: 0;
   max-width: 755px;
 }

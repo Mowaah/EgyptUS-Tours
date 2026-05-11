@@ -31,7 +31,7 @@
   flex-direction: column;
   gap: 12px;
   padding: 24px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid $border-strong;
   border-radius: 24px;
   background: $white;
   transition: box-shadow $transition-fast;
@@ -51,7 +51,7 @@
 .cardTitle {
   font-size: $font-size-lg;
   font-weight: $font-weight-medium;
-  color: #0E2851;
+  color: $dark;
   margin: 0;
   line-height: 1.5;
 }
@@ -71,7 +71,7 @@
 
 .cardBody {
   font-size: $font-size-sm;
-  color: #364153;
+  color: $text-heading;
   line-height: 1.6;
   margin: 0;
   flex: 1;
@@ -83,14 +83,14 @@
   align-items: center;
   gap: 12px;
   padding: 12px 0;
-  border-top: 1px solid #F3F4F6;
+  border-top: 1px solid $gray-50-tailwind;
 }
 
 .avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #E5E7EB;
+  background: $border-strong;
   flex-shrink: 0;
 }
 
@@ -108,7 +108,7 @@
 
 .authorDate {
   font-size: $font-size-xs;
-  color: #6A7282;
+  color: $gray-500-alt;
 }
 
 // ── Load More ──

@@ -18,7 +18,7 @@ const FEATURED_ARTICLE = {
   title: "The Seasonal Showdown\nChoosing Between Egypt’s Sun and Breeze.",
   author: "Ahmed Hassan",
   date: "03 March 2026",
-  image: "/images/home/hero-bg.png" // Placeholder image
+  image: "/images/article.jpg" // Placeholder image
 };
 
 const SMALL_ARTICLES = [
@@ -28,7 +28,7 @@ const SMALL_ARTICLES = [
     title: "10 Most Important Artifacts to See in the Egyptian Museum.",
     author: "Sara Ibrahim",
     date: "14 April 2026",
-    image: "/images/home/hero-bg.png"
+    image: "/images/article.jpg"
   },
   {
     id: "small-2",
@@ -36,7 +36,7 @@ const SMALL_ARTICLES = [
     title: "How to Haggle the Right Way at Khan el-Khalili Bazaar.",
     author: "Omar Youssef",
     date: "22 February 2026",
-    image: "/images/home/hero-bg.png"
+    image: "/images/article.jpg"
   },
   {
     id: "small-3",
@@ -44,7 +44,15 @@ const SMALL_ARTICLES = [
     title: "Cruising the Nile: A Review of the Top 5 Luxury Yachts.",
     author: "Nadine Safwat",
     date: "05 January 2026",
-    image: "/images/home/hero-bg.png"
+    image: "/images/article.jpg"
+  },
+  {
+    id: "small-4",
+    tag: "History",
+    title: "The Pharaohs’ Curse: Fact or Fiction? Unraveling the Myth.",
+    author: "Khaled Zaki",
+    date: "12 May 2026",
+    image: "/images/article.jpg"
   }
 ];
 
@@ -64,10 +72,10 @@ export default function LatestArticles({ searchQuery = "", onClearSearch }: Late
 
   const filteredSearch = isSearching
     ? ALL_ARTICLES.filter(
-        (a) =>
-          a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          a.category.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+      (a) =>
+        a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        a.category.toLowerCase().includes(searchQuery.toLowerCase())
+    )
     : [];
 
   const hasSearchResults = filteredSearch.length > 0;
@@ -92,9 +100,9 @@ export default function LatestArticles({ searchQuery = "", onClearSearch }: Late
                 <h3 className={styles.searchResultsCount}>{filteredSearch.length} Articles Founded</h3>
                 <div className={styles.searchResultsGrid}>
                   {filteredSearch.map(article => (
-                    <BlogCard 
-                      key={article.id} 
-                      blog={article} 
+                    <BlogCard
+                      key={article.id}
+                      blog={article}
                       readText="Read more"
                       href={`/articles/${article.id}`}
                     />

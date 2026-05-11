@@ -8,7 +8,7 @@
 
   @media (min-width: 768px) {
     background: white;
-    border: 1px solid #EAF1FD;
+    border: 1px solid $background-blue;
     border-radius: 24px;
     padding: 24px;
   }
@@ -36,7 +36,7 @@
 
 .subtitle {
   font-size: $font-size-13;
-  color: #6B7280;
+  color: $text-light;
   line-height: 1.5;
 
   @media (min-width: 768px) {
@@ -82,7 +82,7 @@
 
 .checkboxLabel {
   font-size: $font-size-13;
-  color: #4A5565;
+  color: $text-lighter;
   line-height: 1.5;
 
   @media (min-width: 768px) {
@@ -121,7 +121,7 @@
     gap: 16px;
     background: transparent;
     backdrop-filter: none;
-    border-top: 1px solid #EAF1FD;
+    border-top: 1px solid $background-blue;
     z-index: auto;
   }
 }

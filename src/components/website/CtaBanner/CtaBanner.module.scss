@@ -11,7 +11,7 @@
 }
 
 .card {
-  background: linear-gradient(to bottom, #EAF5FF 0%, #FFFFFF 100%);
+  background: linear-gradient(to bottom, #EAF5FF 0%, $background 100%);
   border-radius: clamp(20px, 3.5vw, 32px);
   padding: clamp(1.75rem, 5vw, 3rem) clamp(1.25rem, 4vw, 3rem);
   display: flex;

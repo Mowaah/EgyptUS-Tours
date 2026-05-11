@@ -12,7 +12,7 @@
 .title {
   font-size: $font-size-2xl;
   font-weight: 700;
-  color: #0E2851;
+  color: $dark;
   margin-bottom: 16px;
 
   @media (min-width: 768px) {
@@ -37,8 +37,8 @@
   align-items: center;
   padding: 8px 12px;
   gap: 12px;
-  background: #F9FAFB;
-  border: 1px solid #EAF1FD;
+  background: $gray-50;
+  border: 1px solid $background-blue;
   border-radius: 16px;
 
   @media (min-width: 768px) {
@@ -53,7 +53,7 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: #DFEAFB;
+  background: $border-card;
   border: 1px solid rgba(21, 93, 252, 0.04);
   display: flex;
   align-items: center;
@@ -88,7 +88,7 @@
   font-size: $font-size-sm;
   font-weight: 500;
   line-height: 1.4;
-  color: #0E2851;
+  color: $dark;
   margin: 0;
 
   @media (min-width: 768px) {
@@ -101,7 +101,7 @@
   font-family: 'Trip Sans', sans-serif;
   font-size: $font-size-xs;
   line-height: 1.4;
-  color: #4A5565;
+  color: $text-lighter;
   margin: 0;
 
   @media (min-width: 768px) {

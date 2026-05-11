@@ -60,7 +60,7 @@
   position: absolute;
   overflow: hidden;
   background: rgba($white, 0.2);
-  box-shadow: 0 4px 24px rgba(#000, 0.15);
+  box-shadow: 0 4px 24px rgba($black, 0.15);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -89,7 +89,7 @@
 
 .quote {
   font-size: $font-size-xs;
-  color: #364153;
+  color: $text-heading;
   line-height: 1.5;
   margin: 0;
   flex: 1;

@@ -188,4 +188,43 @@
     width: 12px;
     height: 12px;
   }
+}.discountBanner {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 2px 8px;
+  gap: 10px;
+
+  position: absolute;
+  width: 127px;
+  height: 19px;
+  left: 0;
+  top: 22px;
+
+  @media (min-width: 640px) {
+    top: 28px;
+  }
+
+  background: $secondary;
+  border-radius: 0px $radius-md $radius-md 0px;
+  z-index: 5;
+
+  span {
+    width: 111px;
+    height: 15px;
+    font-style: normal;
+    font-weight: $font-weight-normal;
+    font-size: $font-size-2xs;
+    line-height: 15px;
+    display: flex;
+    align-items: center;
+    color: $white;
+    white-space: nowrap;
+
+    strong {
+      font-weight: $font-weight-bold;
+      margin-left: 2px;
+    }
+  }
 }

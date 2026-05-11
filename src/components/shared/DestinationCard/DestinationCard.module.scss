@@ -90,7 +90,7 @@
   transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
 
   // Default expanded look for mobile
-  background: #FF6600;
+  background: $secondary;
   color: $white;
   transform: rotate(45deg);
 
@@ -101,7 +101,7 @@
 
   @media (min-width: 1024px) {
     background: $white;
-    color: #0E2851;
+    color: $dark;
     transform: none;
   }
 }
@@ -164,7 +164,7 @@
   transition: background 0.3s ease, color 0.3s ease;
 
   // Default expanded look for mobile
-  background: #FF6600;
+  background: $secondary;
   color: $white;
 
   svg {
@@ -190,13 +190,13 @@
     }
 
     .arrow {
-      background: #FF6600;
+      background: $secondary;
       color: $white;
       transform: rotate(45deg);
     }
 
     .cta {
-      background: #FF6600;
+      background: $secondary;
       color: $white;
     }
 

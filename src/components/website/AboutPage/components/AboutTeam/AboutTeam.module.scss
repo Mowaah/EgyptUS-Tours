@@ -99,11 +99,11 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #D1D5DB;
+  background: $gray-tailwind-300;
 }
 
 .dotActive {
-  background: #2971E6;
+  background: $primary;
 }
 
 .imageWrap {
@@ -160,7 +160,7 @@
 }
 
 .label {
-  color: #FF6600;
+  color: $secondary;
   font-size: $font-size-base;
   font-weight: 700;
   line-height: 22px;
@@ -168,7 +168,7 @@
 }
 
 .heading {
-  color: #0E2851;
+  color: $dark;
   font-size: $font-size-3xl;
   font-weight: 700;
   line-height: 41px;
@@ -181,7 +181,7 @@
   gap: 24px;
 
   p {
-    color: #364153;
+    color: $text-heading;
     font-size: $font-size-base;
     font-weight: 400;
     line-height: 26px;
@@ -223,7 +223,7 @@
   z-index: 1;
 
   &:not(:first-child) {
-    border-left: 1px solid #E5E7EB;
+    border-left: 1px solid $border-strong;
     padding: 0 24px;
     width: auto;
     flex: 1;
@@ -253,7 +253,7 @@
 }
 
 .statValue {
-  color: #FF6600;
+  color: $secondary;
   font-size: 20px;
   font-weight: 700;
   line-height: 28px;
@@ -266,7 +266,7 @@
 }
 
 .statDesc {
-  color: #6B7280;
+  color: $text-light;
   font-size: 11px;
   font-weight: 400;
   line-height: 14px;

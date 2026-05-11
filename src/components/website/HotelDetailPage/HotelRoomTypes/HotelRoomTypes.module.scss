@@ -18,7 +18,7 @@
 
 .subtitle {
   font-size: $font-size-base;
-  color: #4A5565;
+  color: $text-lighter;
   max-width: 600px;
   line-height: 1.6;
 }
@@ -53,7 +53,7 @@
   padding: 24px;
   gap: 24px;
   background: $white;
-  border: 1px solid #DFEAFB;
+  border: 1px solid $border-card;
   border-radius: 32px;
   transition: box-shadow $transition-fast;
 
@@ -101,8 +101,8 @@
   position: absolute;
   top: 16px;
   left: 16px;
-  background: #CDF8E5;
-  color: #06C270;
+  background: $background-green-light;
+  color: $green-500;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   padding: 2px 8px;
@@ -157,7 +157,7 @@
 .roomName {
   font-size: $font-size-lg;
   font-weight: 500;
-  color: #000;
+  color: $black;
   margin: 0;
   line-height: 1.33;
 }
@@ -209,14 +209,14 @@
   align-items: flex-start;
   gap: 4px;
   padding-left: 24px;
-  border-left: 1px solid #E5E5E5;
+  border-left: 1px solid $gray-200-zinc;
   align-self: stretch;
   width: 117px;
   flex-shrink: 0;
 
   @media (max-width: 768px) {
     border-left: none;
-    border-top: 1px solid #E5E5E5;
+    border-top: 1px solid $gray-200-zinc;
     padding-left: 0;
     padding-top: 16px;
     width: 100%;

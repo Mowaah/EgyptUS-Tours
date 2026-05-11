@@ -199,7 +199,7 @@
   cursor: pointer;
   font-size: $font-size-13;
   font-weight: 500;
-  color: #6A7282;
+  color: $gray-500-alt;
   width: 100%;
 
   @media (min-width: 768px) {
@@ -263,7 +263,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #F9FAFB;
+  background: $gray-50;
   padding: 7.5px 12px;
   border-radius: 999px;
   flex-shrink: 0;
@@ -277,7 +277,7 @@
 
 .reviewCount {
   font-size: $font-size-sm;
-  color: #6A7282;
+  color: $gray-500-alt;
   font-weight: $font-weight-normal;
 }
 
@@ -357,7 +357,7 @@
 
 .guestPill {
   flex: 1;
-  background: #EAF1FD;
+  background: $background-blue;
   color: $dark;
   padding: 6.45px 12px;
   border-radius: 24px;
@@ -396,7 +396,7 @@
   align-items: center;
   font-size: $font-size-sm;
   font-weight: $font-weight-normal;
-  color: #4A5565;
+  color: $text-lighter;
 
   strong {
     font-weight: $font-weight-bold;
@@ -430,7 +430,7 @@
 
 /* Deposit */
 .depositCard {
-  background: #F9FAFB;
+  background: $gray-50;
   border-radius: 24px;
   padding: 16px;
   margin-bottom: 16px;
@@ -464,14 +464,14 @@
 
 .depositNote {
   font-size: $font-size-xs;
-  color: #6B7280;
+  color: $text-light;
   flex: 1;
   line-height: 1.4;
 }
 
 .remainingAmount {
   font-size: $font-size-xs;
-  color: #6B7280;
+  color: $text-light;
   white-space: nowrap;
 }
 
@@ -491,7 +491,7 @@
   max-width: 100%;
   background: #EAFCF1;
   border-radius: 999px;
-  color: #10B981;
+  color: $success;
   font-size: $font-size-13;
   font-weight: $font-weight-normal;
 

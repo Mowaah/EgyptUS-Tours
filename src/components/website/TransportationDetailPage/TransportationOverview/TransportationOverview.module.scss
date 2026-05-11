@@ -8,7 +8,7 @@
 .title {
   font-size: $font-size-2xl;
   font-weight: 700;
-  color: #0E2851;
+  color: $dark;
   margin-bottom: 12px;
 
   @media (min-width: 768px) {
@@ -19,7 +19,7 @@
 
 .descriptionWrap {
   margin-bottom: 48px;
-  border-left: 3px solid #EBEBEB;
+  border-left: 3px solid $gray-200;
   padding: 0 16px;
   max-width: 806px;
 }
@@ -28,7 +28,7 @@
   font-size: $font-size-base;
   line-height: 1.5;
   letter-spacing: 0.16px;
-  color: #4A5565;
+  color: $text-lighter;
   margin: 0;
 }
 
@@ -77,13 +77,13 @@
 .statValue {
   font-size: $font-size-base;
   font-weight: 700;
-  color: #0E2851;
+  color: $dark;
   margin-bottom: 8px;
   line-height: 1;
 }
 
 .statLabel {
   font-size: $font-size-sm;
-  color: #4A5565;
+  color: $text-lighter;
   line-height: 1.4;
 }

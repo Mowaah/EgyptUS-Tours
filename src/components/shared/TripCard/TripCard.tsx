@@ -9,9 +9,10 @@ import styles from "./TripCard.module.scss";
 interface TripCardProps {
   trip: Trip;
   onFavoriteToggle?: (id: string) => void;
+  discountLabel?: React.ReactNode;
 }
 
-export default function TripCard({ trip, onFavoriteToggle }: TripCardProps) {
+export default function TripCard({ trip, onFavoriteToggle, discountLabel }: TripCardProps) {
   const tripDetailsHref = `/trips/${trip.id}`;
 
   return (
@@ -24,6 +25,11 @@ export default function TripCard({ trip, onFavoriteToggle }: TripCardProps) {
           sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, (max-width: 1279px) 33vw, 400px"
           className={styles.image}
         />
+        {discountLabel && (
+          <div className={styles.discountBanner}>
+            <span>{discountLabel}</span>
+          </div>
+        )}
         {onFavoriteToggle && (
           <button
             className={`${styles.favorite} ${trip.isFavorite ? styles.active : ""}`}

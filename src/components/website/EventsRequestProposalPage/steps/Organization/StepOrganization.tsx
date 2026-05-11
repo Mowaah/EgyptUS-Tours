@@ -35,13 +35,13 @@ export default function StepOrganization({
             label="Organization Name"
             className={pageStyles.formInput}
             type="text"
+            required
             placeholder="Company or Organization Name"
             value={data.name}
             onChange={(e) => onChange({ name: e.target.value })}
           />
 
-          <div className={formStyles.field}>
-            <label id="org-industry-label" className={formStyles.fieldLabel}>Industry</label>
+          <FormField label="Industry" required>
             <SelectDropdown
               id="org-industry"
               label="Select Industry"
@@ -50,13 +50,14 @@ export default function StepOrganization({
               onChange={(val) => onChange({ industry: val })}
               triggerClassName={pageStyles.formInput}
             />
-          </div>
+          </FormField>
 
           <FormField
             id="org-country"
             label="Country"
             className={pageStyles.formInput}
             type="text"
+            required
             placeholder="Headquarters Country"
             value={data.country}
             onChange={(e) => onChange({ country: e.target.value })}
@@ -67,6 +68,7 @@ export default function StepOrganization({
             label="Website"
             className={pageStyles.formInput}
             type="text"
+            required
             placeholder="www.company.com"
             value={data.website}
             onChange={(e) => onChange({ website: e.target.value })}
@@ -77,6 +79,7 @@ export default function StepOrganization({
             label="Contact Person"
             className={pageStyles.formInput}
             type="text"
+            required
             placeholder="Full Name"
             value={data.contactPerson}
             onChange={(e) => onChange({ contactPerson: e.target.value })}
@@ -87,6 +90,7 @@ export default function StepOrganization({
             label="Job Title"
             className={pageStyles.formInput}
             type="text"
+            required
             placeholder="Your Position"
             value={data.jobTitle}
             onChange={(e) => onChange({ jobTitle: e.target.value })}
@@ -97,13 +101,13 @@ export default function StepOrganization({
             label="Email Address"
             className={pageStyles.formInput}
             type="email"
+            required
             placeholder="youremail@company.com"
             value={data.email}
             onChange={(e) => onChange({ email: e.target.value })}
           />
 
-          <div className={formStyles.field}>
-            <label htmlFor="org-phone" className={formStyles.fieldLabel}>Phone Number</label>
+          <FormField label="Phone Number" required>
             <div className={styles.phoneRow}>
               <PhonePrefixSelect
                 phoneValue={data.phone}
@@ -118,7 +122,7 @@ export default function StepOrganization({
                 placeholder="+1 (555) 000-0000"
               />
             </div>
-          </div>
+          </FormField>
         </div>
       </div>
 

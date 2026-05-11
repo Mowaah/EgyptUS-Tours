@@ -59,8 +59,8 @@
 // Sliding pill that follows the active tab
 .indicator {
   position: absolute;
-  background: #DFEAFB;
-  border: 1px solid #2971E6;
+  background: $border-card;
+  border: 1px solid $primary;
   border-radius: 80px;
   pointer-events: none;
   z-index: 1;
@@ -91,9 +91,9 @@
   font-weight: 500;
   line-height: 1.4;
   letter-spacing: 0.01em;
-  color: #9CA3AF;
+  color: $gray-400;
   border: 1px solid rgba(26, 26, 26, 0.06);
-  background: #FFFFFF;
+  background: $background;
   cursor: pointer;
   transition: color $transition-fast;
   scroll-snap-align: start;
@@ -113,16 +113,16 @@
 
   &:hover {
     background: #fcfcfc;
-    color: #0E2851;
+    color: $dark;
     z-index: 2;
   }
 
   &.active {
     // CSS fallback so the active tab always looks correct even before
     // the JS indicator has measured & positioned itself.
-    background: #DFEAFB;
-    color: #0E2851;
-    border-color: #2971E6;
+    background: $border-card;
+    color: $dark;
+    border-color: $primary;
     position: relative;
     z-index: 2;
   }

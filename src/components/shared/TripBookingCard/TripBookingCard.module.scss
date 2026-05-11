@@ -139,18 +139,18 @@
   gap: 4px;
   padding: 4px 12px;
   border-radius: 20px;
-  background: #fef3c7;
+  background: $status-warning-bg;
   font-family: "Trip Sans", sans-serif;
   font-weight: $font-weight-bold;
   font-size: $font-size-2xs;
   line-height: 16px;
   letter-spacing: 0.22px;
-  color: #b45309;
+  color: $status-warning-text;
 }
 
 .loadingGlyph {
   display: inline-flex;
-  color: #b45309;
+  color: $status-warning-text;
 }
 
 .spinnerSvg {
@@ -168,13 +168,13 @@
   align-items: center;
   padding: 4px 12px;
   border-radius: 20px;
-  background: #dcfce7;
+  background: $status-success-bg;
   font-family: "Trip Sans", sans-serif;
   font-weight: $font-weight-bold;
   font-size: $font-size-2xs;
   line-height: 16px;
   letter-spacing: 0.22px;
-  color: #15803d;
+  color: $status-success-text;
 }
 
 .statusCancelled {
@@ -183,13 +183,13 @@
   gap: 4px;
   padding: 4px 12px;
   border-radius: 20px;
-  background: #fef2f2;
+  background: $background-danger;
   font-family: "Trip Sans", sans-serif;
   font-weight: $font-weight-medium;
   font-size: $font-size-2xs;
   line-height: 16px;
   letter-spacing: 0.22px;
-  color: #d80027;
+  color: $status-danger-text;
 }
 
 .cancelX {
@@ -333,7 +333,7 @@
   gap: 12px;
   padding: 16px;
   border-radius: 24px;
-  background: #f9fafb;
+  background: $gray-50;
 
   @media (min-width: 520px) {
     flex-direction: row;
@@ -390,7 +390,7 @@
   font-weight: $font-weight-medium;
   font-size: $font-size-xs;
   line-height: 150%;
-  color: #d80027;
+  color: $status-danger-text;
 }
 
 .metaInfo {

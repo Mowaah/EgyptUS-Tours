@@ -421,11 +421,14 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
             {filteredTrips.length > 0 ? (
               <>
                 <div className={styles.grid}>
-                  {filteredTrips.map((trip) => (
+                  {filteredTrips.map((trip, index) => (
                     <TripCard
                       key={trip.id}
                       trip={trip}
                       onFavoriteToggle={handleFavoriteToggle}
+                      discountLabel={index === 0 ? (
+                        <>Limited Time – <strong>15% Off</strong></>
+                      ) : undefined}
                     />
                   ))}
                 </div>

@@ -24,7 +24,7 @@
   padding: 0;
   box-sizing: border-box;
   border-radius: 1000px;
-  border: 0.64px solid #FF6600;
+  border: 0.64px solid $secondary;
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
@@ -52,8 +52,8 @@
 }
 
 .prevArrow {
-  background: #FFFFFF;
-  color: #FF6600;
+  background: $background;
+  color: $secondary;
 
   &:hover:not(:disabled) {
     background: #FFF0E8;
@@ -61,9 +61,9 @@
 }
 
 .nextArrow {
-  background: #FF6600;
-  color: #FFFFFF;
-  border-color: #FF6600;
+  background: $secondary;
+  color: $background;
+  border-color: $secondary;
 
   img {
     margin-left: 2px;
@@ -97,8 +97,8 @@
   min-width: 28px;
   height: 28px;
   border-radius: 8px;
-  background: #FFFFFF;
-  border: 1px solid #F4F4F4;
+  background: $background;
+  border: 1px solid $border;
   opacity: 0.8;
   font-family: 'Trip Sans';
   font-weight: 500;
@@ -120,8 +120,8 @@
   }
 
   &:hover:not(.active):not(.dots):not(:disabled) {
-    border-color: #FFD0B0;
-    color: #FF6600;
+    border-color: $secondary-border;
+    color: $secondary;
     opacity: 1;
   }
 
@@ -132,8 +132,8 @@
 
 .active {
   background: #FFE8D9;
-  border: 1px solid #FFD0B0;
-  color: #FF6600;
+  border: 1px solid $secondary-border;
+  color: $secondary;
   opacity: 1;
   cursor: default;
 }

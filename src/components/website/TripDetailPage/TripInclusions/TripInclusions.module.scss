@@ -23,18 +23,19 @@
 .item {
   display: flex;
   align-items: flex-start;
+  color: $text-heading;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
   gap: 12px;
-  font-size: $font-size-base;
-  color: #364153;
 }
 
-.icon {
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
+.iconBox {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background-color: #EAF1FD;
-  border: 2px solid #C7DBFF;
+  background-color: $background-blue;
+  border: 2px solid $border-light;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -50,6 +50,7 @@ export default function StepPersonalInfo({
                 label="Enter your Name"
                 className={planPage.formInput}
                 type="text"
+                required
                 placeholder="John Doe"
                 value={formData.name}
                 onChange={(e) => onChange({ name: e.target.value })}
@@ -59,12 +60,15 @@ export default function StepPersonalInfo({
                 label="Enter your E-mail"
                 className={planPage.formInput}
                 type="email"
+                required
                 placeholder="Example@Gmail.Com"
                 value={formData.email}
                 onChange={(e) => onChange({ email: e.target.value })}
               />
-              <div className={formStyles.field}>
-                <label htmlFor="pi-phone" className={formStyles.fieldLabel}>Enter your Phone Number</label>
+              <FormField
+                label="Enter your Phone Number"
+                required
+              >
                 <div className={travelerStyles.phoneRow}>
                   <PhonePrefixSelect phoneValue={formData.phone} onPhoneChange={(val) => onChange({ phone: val })} />
                   <input
@@ -76,14 +80,17 @@ export default function StepPersonalInfo({
                     placeholder="000-0000"
                   />
                 </div>
-              </div>
-              <div className={formStyles.field}>
-                <label className={formStyles.fieldLabel}>Select Your Nationality</label>
+              </FormField>
+
+              <FormField
+                label="Select Your Nationality"
+                required
+              >
                 <NationalitySelect 
                   value={formData.nationality}
                   onChange={(val) => onChange({ nationality: val })}
                 />
-              </div>
+              </FormField>
             </div>
 
             <div className={styles.mobileSummary}>

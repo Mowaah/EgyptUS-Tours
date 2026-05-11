@@ -75,7 +75,7 @@
   width: 18px;
   height: 18px;
   border-radius: 100%;
-  border: 1.13px solid #C2C2C2;
+  border: 1.13px solid $border-input;
   background: $white;
   flex-shrink: 0;
   transition: background $transition-fast, border-color $transition-fast;
@@ -104,7 +104,7 @@
 .roomTitle {
   font-size: $font-size-13;
   font-weight: $font-weight-medium;
-  color: #0D1B3E;
+  color: $dark-navy;
 }
 
 .roomSub {
@@ -121,7 +121,7 @@
 .priceVal {
   font-size: $font-size-sm;
   font-weight: $font-weight-bold;
-  color: #0D1B3E;
+  color: $dark-navy;
 }
 
 .roomCounter {
