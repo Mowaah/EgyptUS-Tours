@@ -16,7 +16,7 @@ const MORE_TRIPS: Trip[] = Array(8).fill({
 
 export default function TripMoreTrips() {
   return (
-    <section id="more-inspiring-adventures" className={styles.section}>
+    <section id="more-trips" className={styles.section}>
       <div className={styles.header}>
         <div className={styles.headerText}>
           <h2 className={styles.heading}>More Inspiring Trips</h2>

@@ -444,7 +444,7 @@
 }
 
 .depositLabel {
-  font-size: $font-size-sm;
+  font-size: $font-size-base;
   font-weight: $font-weight-bold;
   color: $dark;
 }
@@ -463,14 +463,14 @@
 }
 
 .depositNote {
-  font-size: $font-size-xs;
+  font-size: $font-size-sm;
   color: $text-light;
   flex: 1;
   line-height: 1.4;
 }
 
 .remainingAmount {
-  font-size: $font-size-xs;
+  font-size: $font-size-sm;
   color: $text-light;
   white-space: nowrap;
 }

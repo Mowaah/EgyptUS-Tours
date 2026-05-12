@@ -100,7 +100,6 @@ export default function StepRequirements({
         </div>
       </div>
 
-      <hr className={pageStyles.stepFormCardDivider} aria-hidden="true" />
 
       <BookingStepFooter onPrevious={onPrevious} onContinue={onContinue} />
     </div>

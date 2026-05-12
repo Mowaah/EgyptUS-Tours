@@ -1,6 +1,9 @@
 @use "@/styles/variables" as *;
 
 .wrapper {
+  position: sticky;
+  top: 180px;
+  z-index: 10;
   background: white;
   border: 1px solid $border;
   border-radius: 16px;
@@ -48,13 +51,13 @@
 }
 
 .rowsSection {
-  padding: 20px 24px 12px;
+  padding: 20px 20px 12px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 
   @media (min-width: 768px) {
-    padding: 24px 42px 16px;
+    padding: 24px 24px 16px;
   }
 }
 
@@ -78,7 +81,7 @@
 }
 
 .totalContainer {
-  padding: 0 16px;
+  padding: 0 20px;
 
   @media (min-width: 768px) {
     padding: 0 24px;

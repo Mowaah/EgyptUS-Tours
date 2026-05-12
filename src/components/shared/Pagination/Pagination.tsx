@@ -33,7 +33,6 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
           alt=""
           width={15}
           height={15}
-          style={{ transform: "scaleX(-1)", filter: "invert(48%) sepia(87%) saturate(2250%) hue-rotate(1deg) brightness(105%) contrast(105%)" }}
         />
       </button>
 

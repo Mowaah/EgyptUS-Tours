@@ -8,8 +8,30 @@
 
 .container {
   @include container;
+}
 
-  @media (min-width: 1024px) {}
+.withSidebar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 403px;
+    gap: 113px;
+  }
+}
+
+.mainContent {
+  min-width: 0;
+}
+
+.bookingSidebar {
+  display: none;
+  padding-top: 64px;
+
+  @media (min-width: 1024px) {
+    display: block;
+  }
 }
 
 .pageHeader {

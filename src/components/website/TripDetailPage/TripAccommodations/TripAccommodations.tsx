@@ -31,7 +31,7 @@ export default function TripAccommodations({ trip }: TripAccommodationsProps) {
   if (!hotels.length) return null;
 
   return (
-    <section id="vip-experiences" className={styles.section}>
+    <section id="luxury-accommodations" className={styles.section}>
       <div className={styles.header}>
         <h2 className={styles.heading}>Your Luxury Accommodations</h2>
         <p className={styles.subtitle}>

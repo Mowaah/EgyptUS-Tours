@@ -6,16 +6,14 @@
   position: sticky;
   top: 72px; // Mobile navbar height
   z-index: 50;
-  background: $white;
+  background: transparent;
 
   @media (min-width: 1150px) {
-    top: 0; // Navbar is absolute now, so no offset needed
+    top: $navbar-height-desktop;
   }
 }
 
 .inner {
   @include container;
   display: flex;
-  padding-top: 8px;
-  padding-bottom: 8px;
 }

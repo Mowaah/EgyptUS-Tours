@@ -45,22 +45,13 @@
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
 
-  // Modern subtle scrollbar
+  // Hide scrollbar but keep scrollable
   &::-webkit-scrollbar {
-    height: 8px;
+    display: none;
+    height: 0;
+    width: 0;
   }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: $gray-blue-200;
-    border-radius: 4px;
-  }
-  &:hover::-webkit-scrollbar-thumb {
-    background: $gray-blue-300;
-  }
-  scrollbar-width: thin;
-  scrollbar-color: $gray-blue-200 transparent;
+  scrollbar-width: none;
 
   & > * {
     flex: 0 0 calc(25% - 18px);

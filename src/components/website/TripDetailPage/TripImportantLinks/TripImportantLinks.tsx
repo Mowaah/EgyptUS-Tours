@@ -29,7 +29,7 @@ export default function TripImportantLinks({ trip }: Props) {
     <>
       <section id="more-adventures" className={styles.section}>
         <div className={styles.banner}>
-          <Image src="/images/caution.svg" alt="Important" width={20} height={20} />
+          <Image src="/images/caution-yellow.svg" alt="Important" width={20} height={20} />
           <span>Please make sure to review the following links</span>
         </div>
 

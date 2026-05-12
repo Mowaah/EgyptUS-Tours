@@ -11,7 +11,7 @@ export default function TripPricing({ trip }: TripPricingProps) {
   if (!pricing.length) return null;
 
   return (
-    <section id="pricing" className={styles.section}>
+    <section id="prices-accommodation" className={styles.section}>
       <div className={styles.header}>
         <h2 className={styles.heading}>Prices &amp; Accommodation</h2>
         <p className={styles.subtitle}>

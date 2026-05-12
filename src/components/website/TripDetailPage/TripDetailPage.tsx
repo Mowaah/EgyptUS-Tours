@@ -4,10 +4,12 @@ import { useState } from "react";
 import { Trip } from "@/types";
 import { PageHeader, DetailGallery, DetailHeroBar, DetailTabNav } from "@/components/shared";
 import Image from "next/image";
+import Link from "next/link";
 import Button from "@/components/shared/Button/Button";
 import TripOverview from "./TripOverview/TripOverview";
 import TripInclusions from "./TripInclusions/TripInclusions";
 import TripExclusions from "./TripExclusions/TripExclusions";
+import TripBookingWidget from "./TripBookingWidget/TripBookingWidget";
 import TripTravelerPhotos from "./TripTravelerPhotos/TripTravelerPhotos";
 import TripAvailability from "./TripAvailability/TripAvailability";
 import TripItinerary from "./TripItinerary/TripItinerary";
@@ -29,11 +31,11 @@ const TRIP_TABS = [
   { id: "excluded", label: "What's Not Included" },
   { id: "traveler-photos", label: "Taken by Travelers" },
   { id: "prices-accommodation", label: "Prices & Accommodation" },
+  { id: "luxury-accommodations", label: "Luxury Accommodations" },
+  { id: "dates-availability", label: "Dates & Availability" },
   { id: "itinerary", label: "Day-by-Day Itinerary" },
-  { id: "pricing", label: "Pricing" },
-  { id: "vip-experiences", label: "VIP Experiences" },
-  { id: "reviews", label: "Traveler Reviews" },
-  { id: "more-adventures", label: "More Inspiring Adventures" },
+  { id: "traveler-reviews", label: "Traveler Reviews" },
+  { id: "more-trips", label: "More Inspiring Trips" },
 ];
 
 export default function TripDetailPage({ trip }: TripDetailPageProps) {
@@ -115,16 +117,21 @@ export default function TripDetailPage({ trip }: TripDetailPageProps) {
 
       {/* ── Main content sections ── */}
       <div className={styles.container}>
-        {/* Overview + booking sidebar */}
-        <TripOverview trip={trip} />
+        <div className={styles.withSidebar}>
+          {/* ── Main content column ── */}
+          <div className={styles.mainContent}>
+            <TripOverview trip={trip} />
+            <TripInclusions trip={trip} />
+            <TripExclusions trip={trip} />
+          </div>
 
-        {/* What's Included */}
-        <TripInclusions trip={trip} />
+          {/* ── Sticky booking sidebar ── */}
+          <div className={styles.bookingSidebar}>
+            <TripBookingWidget trip={trip} />
+          </div>
+        </div>
 
-        {/* What's Not Included */}
-        <TripExclusions trip={trip} />
-
-        {/* Taken by Travelers */}
+        {/* Traveler photos outside sidebar grid */}
         <TripTravelerPhotos trip={trip} />
       </div>
 

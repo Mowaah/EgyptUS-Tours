@@ -5,11 +5,12 @@
   margin-top: 12px;
 }
 
+
+
 .layout {
   display: grid;
   grid-template-columns: 1fr 403px;
   gap: 113px;
-  align-items: flex-start;
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
@@ -49,6 +50,9 @@
 }
 
 .bookCard {
+  position: sticky;
+  top: 180px;
+  z-index: 10;
   border: 1px solid $border;
   border-radius: $radius-xl;
   padding: 24px;

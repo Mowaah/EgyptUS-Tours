@@ -93,7 +93,6 @@ export default function StepBudget({
         </div>
       </div>
 
-      <hr className={pageStyles.stepFormCardDivider} aria-hidden="true" />
 
       <BookingStepFooter onPrevious={onPrevious} onContinue={onContinue} continueLabel="Submit Request" />
     </div>

@@ -123,6 +123,7 @@
 
 // ── Details panel ────────────────────────────────────────────────────────────
 .details {
+
   // Always visible beside the form at desktop; hidden attribute is overridden.
   @media (min-width: 768px) {
     &[hidden] {
@@ -374,13 +375,9 @@
 }
 
 .depositLabel {
-  font-size: $font-size-13;
+  font-size: $font-size-base;
   font-weight: 800;
   color: $dark;
-
-  @media (min-width: 640px) {
-    font-size: $font-size-sm;
-  }
 }
 
 .depositAmount {
@@ -401,26 +398,18 @@
 }
 
 .remainingNote {
-  font-size: $font-size-2xs;
+  font-size: $font-size-sm;
   font-weight: 400;
   color: $text-light;
   line-height: 1.5;
   max-width: 193px;
-
-  @media (min-width: 640px) {
-    font-size: $font-size-xs;
-  }
 }
 
 .remainingVal {
-  font-size: $font-size-2xs;
+  font-size: $font-size-sm;
   font-weight: 400;
   color: $text-light;
   flex-shrink: 0;
-
-  @media (min-width: 640px) {
-    font-size: $font-size-xs;
-  }
 }
 
 .trustBadges {

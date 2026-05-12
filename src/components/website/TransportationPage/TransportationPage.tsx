@@ -94,6 +94,8 @@ export default function TransportationPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("recommended");
   const [isLg, setIsLg] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 6;
 
   useLayoutEffect(() => {
     const mq = window.matchMedia("(min-width: 768px)");
@@ -110,8 +112,8 @@ export default function TransportationPage() {
       return false;
     }
     if (isSearchResults) {
-        // Mock filtering logic based on URL search query
-        return true; 
+      // Mock filtering logic based on URL search query
+      return true;
     }
     // Tab match
     const tabItem = CATEGORIES[activeTab];
@@ -120,6 +122,17 @@ export default function TransportationPage() {
     }
     return true;
   });
+
+  const totalPages = Math.ceil(filteredVehicles.length / PAGE_SIZE);
+  const paginatedVehicles = filteredVehicles.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+
+  // Reset to first page when filtering
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, searchQuery, isSearchResults]);
 
   const getVehicleName = (id: string | null) => {
     if (id === "sedan") return "Sedan";
@@ -140,7 +153,7 @@ export default function TransportationPage() {
         decorationSrc="/images/dotted-line3.svg"
       />
       <div className={styles.container}>
-        
+
         {isSearchResults && (
           <div className={styles.searchSummaryBox}>
             <div className={styles.summaryItem}>
@@ -216,27 +229,29 @@ export default function TransportationPage() {
         )}
 
         <div className={styles.listingBlock}>
-          {filteredVehicles.length > 0 ? (
+          {paginatedVehicles.length > 0 ? (
             <>
               <div className={isSearchResults ? styles.vehicleList : styles.vehicleGrid}>
-                {filteredVehicles.map(vehicle => (
+                {paginatedVehicles.map(vehicle => (
                   <VehicleCard key={vehicle.id} vehicle={vehicle} view={isSearchResults ? "list" : "grid"} />
                 ))}
               </div>
 
-              <div className={styles.pagination}>
-                <Pagination
-                  currentPage={1}
-                  totalPages={15}
-                  onPageChange={() => {}}
-                />
-              </div>
+              {totalPages > 1 && (
+                <div className={styles.pagination}>
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                  />
+                </div>
+              )}
             </>
           ) : (
             <EmptyState
               title="No Vehicles Found"
               description="We couldn't find any vehicles matching your search or category filter. Try adjusting your selections."
-              buttonText="See All Vehicles"
+              buttonText="View Available Cars"
               onButtonClick={() => {
                 setActiveTab(0);
                 setSearchQuery("");

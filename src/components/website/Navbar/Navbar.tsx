@@ -16,8 +16,8 @@ const NAV_LINKS = [
   { label: "Trips", href: "/trips", hasDropdown: true },
   { label: "Destinations", href: "/destinations", hasDropdown: true },
   { label: "Hotels", href: "/hotels" },
-  { label: "Events", href: "/events" },
   { label: "Transportation", href: "/transportation" },
+  { label: "Events", href: "/events" },
   { label: "B2B Programs", href: "/b2b-programs" },
   { label: "About Us", href: "/about" },
 ];

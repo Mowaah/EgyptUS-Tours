@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import styles from "./Button.module.scss";
 
 interface ButtonProps {
@@ -41,7 +42,7 @@ export default function Button({
 
   if (href) {
     return (
-      <a href={href} className={classes}>
+      <Link href={href} className={classes}>
         {icon && iconPosition === "left" && (
           <span className={styles.icon}>{icon}</span>
         )}
@@ -49,7 +50,7 @@ export default function Button({
         {icon && iconPosition === "right" && (
           <span className={styles.icon}>{icon}</span>
         )}
-      </a>
+      </Link>
     );
   }
 

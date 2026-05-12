@@ -100,7 +100,7 @@
   transition: all $transition-fast;
 
   &:hover {
-    background: $background-alt;
+    transform: scale(1.1);
   }
 }
 
@@ -118,25 +118,15 @@
   }
 }
 
-.favoriteIcon path {
-  fill: none;
-  stroke: $text-light;
-  stroke-width: 1.5;
-  transition: all $transition-fast;
-}
-
-.iconBtn:has(.favoriteIcon):hover .favoriteIcon path {
+.heartActive {
   fill: $danger;
   stroke: $danger;
 }
 
-.favoriteActive {
-
-  &:hover .favoriteIcon path,
-  .favoriteIcon path {
-    fill: $danger;
-    stroke: $danger;
-  }
+.heartBlue {
+  width: 20px;
+  height: 20px;
+  display: block;
 }
 
 .backButton {

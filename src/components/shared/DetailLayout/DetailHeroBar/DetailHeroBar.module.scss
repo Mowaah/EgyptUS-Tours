@@ -42,6 +42,12 @@
   font-size: $font-size-lg;
 }
 
+.ratingGroup {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
 .star {
   display: block;
 }
@@ -82,35 +88,54 @@
   cursor: pointer;
   transition: all $transition-fast;
 
-  svg path {
-    fill: none;
-    stroke: $text-light;
-    stroke-width: 1.5;
-    transition: all $transition-fast;
-  }
-
   &:hover {
-    background: #FFEDED;
-    border-color: #FFB3B3;
-
-    svg path {
-      stroke: $danger;
-      fill: $danger;
-    }
+    transform: scale(1.1);
   }
+}
 
-  &.favoriteActive {
-    svg path {
-      fill: $danger;
-      stroke: $danger;
-    }
-  }
+.heartActive {
+  fill: $danger;
+  stroke: $danger;
+}
+
+.heartBlue {
+  width: 20px;
+  height: 20px;
+  display: block;
 }
 
 .subtitle {
   color: rgba(74, 85, 101, 0.9);
   font-size: $font-size-sm;
   margin: 0;
+}
+
+.tagsContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 9px;
+  margin-top: 16px;
+}
+
+.tag {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 16px;
+  gap: 4px;
+  height: 40px;
+  background: $gray-50;
+  border-radius: 21.25px;
+
+  span {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-normal;
+    line-height: 1;
+    letter-spacing: 0.01em;
+    color: $primary;
+  }
 }
 
 // Mobile Info Card

@@ -1,0 +1,75 @@
+@use "@/styles/variables" as *;
+
+.sidebar {
+  position: sticky;
+  top: 180px; /* Account for sticky desktop Navbar (110px) + DetailTabNav (~60px) */
+  z-index: 10;
+}
+
+.bookCard {
+  border: 1px solid $border;
+  border-radius: $radius-xl;
+  padding: 24px;
+  background: $white;
+}
+
+.bookTitle {
+  font-size: $font-size-22;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0 0 4px;
+}
+
+.bookSubtitle {
+  font-size: $font-size-sm;
+  color: $text-muted;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.pricingContainer {
+  background: $gray-50;
+  border-radius: 24px;
+  padding: 12px;
+  margin: 0 -14px 20px;
+}
+
+.divider {
+  height: 1px;
+  background: $border;
+  margin: 24px -24px;
+}
+
+.priceRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tierLabel {
+  display: block;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: $dark;
+}
+
+.tierSub {
+  display: block;
+  font-size: $font-size-13;
+  color: $text-light;
+  margin-top: 2px;
+}
+
+.tierPrice {
+  font-size: $font-size-26;
+  font-weight: $font-weight-bold;
+  color: $primary;
+  white-space: nowrap;
+}
+
+.ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

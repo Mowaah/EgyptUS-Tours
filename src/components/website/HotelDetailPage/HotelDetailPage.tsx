@@ -58,6 +58,7 @@ export default function HotelDetailPage({ hotel }: HotelDetailPageProps) {
               description={hotel.description}
               rating={hotel.rating ?? 0}
               reviewCount={hotel.reviews ?? 0}
+              showReviews={false}
               isFavorite={isFavorite}
               onFavoriteToggle={toggleFavorite}
             >

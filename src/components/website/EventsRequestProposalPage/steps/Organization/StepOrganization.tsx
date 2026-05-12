@@ -126,7 +126,6 @@ export default function StepOrganization({
         </div>
       </div>
 
-      <hr className={pageStyles.stepFormCardDivider} aria-hidden="true" />
 
       <BookingStepFooter onContinue={onContinue} />
     </div>

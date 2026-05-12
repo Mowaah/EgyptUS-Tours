@@ -83,9 +83,7 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
               {currentStep === 3 && <StepPayment {...sharedProps} />}
             </div>
 
-            <div className={styles.sidebarArea}>
-              <BookingSummary vehicle={vehicle} formData={formData} />
-            </div>
+            <BookingSummary vehicle={vehicle} formData={formData} />
           </div>
         </div>
       </main>

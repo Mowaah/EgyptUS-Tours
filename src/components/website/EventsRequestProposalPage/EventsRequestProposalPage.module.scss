@@ -121,18 +121,7 @@
   min-width: 0;
 }
 
-.stepFormCardDivider {
-  flex-shrink: 0;
-  margin: 0;
-  border: none;
-  height: 1px;
-  background: $border-strong;
-  display: none;
 
-  @media (min-width: 768px) {
-    display: block;
-  }
-}
 
 .stepFormCardFooter {
   flex-shrink: 0;

@@ -64,7 +64,7 @@ export const BUDGET_RANGES = [
 
 export const BUDGET_FLEXIBILITY = [
   { id: "fixed", label: "Fixed Budget" },
-  { id: "somewhat", label: "SomeWhat Flexible" },
+  { id: "somewhat", label: "Some What Flexible" },
   { id: "very", label: "Very Flexible" },
 ];
 

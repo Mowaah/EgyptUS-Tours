@@ -63,6 +63,7 @@ export default function HotelOverview({ hotel }: HotelOverviewProps) {
               <Button
                 variant="secondary"
                 fullWidth
+                href={`/hotels/${hotel.id}/book`}
                 icon={<Image src="/images/arrows/arrow-right.svg" alt="" width={20} height={20} />}
                 iconPosition="right"
               >

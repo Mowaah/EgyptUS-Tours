@@ -16,13 +16,25 @@ function getStatus(spotsLeft: number, total: number) {
   return { pct, color };
 }
 
+const ALL_MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
 export default function TripAvailability({ trip }: Props) {
   const slots = trip.availability ?? [];
-  const [sort, setSort] = useState("month");
+  const [selectedMonth, setSelectedMonth] = useState("all");
+  
   if (!slots.length) return null;
 
+  const filteredSlots = selectedMonth === "all"
+    ? slots
+    : slots.filter(slot => 
+        slot.dates.toLowerCase().includes(selectedMonth.toLowerCase())
+      );
+
   return (
-    <section id="reviews" className={styles.section}>
+    <section id="dates-availability" className={styles.section}>
       <h2 className={styles.heading}>Dates &amp; Availability</h2>
       <p className={styles.subtitle}>
         Select your preferred departure date for the {trip.duration.days}-day{" "}
@@ -30,20 +42,19 @@ export default function TripAvailability({ trip }: Props) {
       </p>
 
       <div className={styles.toolbar}>
-        <span className={styles.count}>{slots.length} Trips Founded</span>
+        <span className={styles.count}>{filteredSlots.length} Trips Found</span>
         <SortButton
           options={[
-            { value: "month", label: "Month" },
-            { value: "spots", label: "Spots" },
-            { value: "price", label: "Price" },
+            { value: "all", label: "All Months" },
+            ...ALL_MONTHS.map(month => ({ value: month.toLowerCase(), label: month }))
           ]}
-          defaultValue={sort}
-          onChange={setSort}
+          defaultValue={selectedMonth}
+          onChange={setSelectedMonth}
         />
       </div>
 
       <div className={styles.grid}>
-        {slots.map((slot, i) => {
+        {filteredSlots.map((slot, i) => {
           const { pct, color } = getStatus(slot.spotsLeft, slot.totalSpots);
           return (
             <div key={i} className={styles.card}>
