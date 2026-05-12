@@ -3,18 +3,19 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { GlassCard, AuthModal } from "@/components/shared";
+import { GlassCard } from "@/components/shared";
 import styles from "./UserMenu.module.scss";
 
 interface UserMenuProps {
   scrolled: boolean;
   lightNavBackground: boolean;
+  isLoggedIn: boolean;
+  setIsLoggedIn: (val: boolean) => void;
+  openAuthModal: () => void;
 }
 
-export default function UserMenu({ scrolled, lightNavBackground }: UserMenuProps) {
+export default function UserMenu({ scrolled, lightNavBackground, isLoggedIn, setIsLoggedIn, openAuthModal }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -110,20 +111,13 @@ export default function UserMenu({ scrolled, lightNavBackground }: UserMenuProps
 
             <div className={styles.divider} />
 
-            <button className={styles.menuItem} onClick={() => { setIsOpen(false); setIsAuthModalOpen(true); }}>
+            <button className={styles.menuItem} onClick={() => { setIsOpen(false); openAuthModal(); }}>
               <Image src="/images/profile-gray.svg" alt="" width={24} height={24} className={styles.menuIcon} />
               <span>Login / Sign up</span>
             </button>
           </>
         )}
       </div>
-
-      {isAuthModalOpen && (
-        <AuthModal 
-          onClose={() => setIsAuthModalOpen(false)} 
-          onLoginSuccess={() => setIsLoggedIn(true)} 
-        />
-      )}
     </div>
   );
 }

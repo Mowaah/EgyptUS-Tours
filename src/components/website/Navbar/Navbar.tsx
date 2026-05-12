@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Button from "@/components/shared/Button/Button";
-import { GlassCard } from "@/components/shared";
+import { GlassCard, AuthModal } from "@/components/shared";
 import UserMenu from "./UserMenu";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import styles from "./Navbar.module.scss";
@@ -77,6 +77,9 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [expandedDropdown, setExpandedDropdown] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  
   const pathname = usePathname();
   const isBookingPage = pathname === "/booking";
 
@@ -264,7 +267,13 @@ export default function Navbar() {
             ) : (
               planTripButton
             )}
-            <UserMenu scrolled={shouldShowScrolled} lightNavBackground={lightNavBackground} />
+            <UserMenu 
+              scrolled={shouldShowScrolled} 
+              lightNavBackground={lightNavBackground} 
+              isLoggedIn={isLoggedIn}
+              setIsLoggedIn={setIsLoggedIn}
+              openAuthModal={() => setIsAuthModalOpen(true)}
+            />
           </div>
         </div>
 
@@ -350,14 +359,50 @@ export default function Navbar() {
               <div className={styles.drawerDivider} />
 
               <ul className={styles.drawerUserLinks}>
-                {MOBILE_USER_LINKS.map((link) => (
-                  <li key={link.href}>
-                    <Link href={link.href} className={styles.drawerUserLink}>
-                      <Image src={link.icon} alt="" width={22} height={22} />
-                      <span>{link.label}</span>
-                    </Link>
-                  </li>
-                ))}
+                {isLoggedIn ? (
+                  <>
+                    <li className={styles.drawerGuestHeader}>
+                      <Image src="/images/profile-orange.svg" alt="" width={22} height={22} />
+                      <span className={styles.drawerUsername}>Username</span>
+                    </li>
+                    <li className={styles.drawerDivider} />
+                    {MOBILE_USER_LINKS.map((link) => (
+                      <li key={link.href}>
+                        <Link href={link.href} className={styles.drawerUserLink} onClick={() => setMobileOpen(false)}>
+                          <Image src={link.icon} alt="" width={22} height={22} />
+                          <span>{link.label}</span>
+                        </Link>
+                      </li>
+                    ))}
+                    <li className={styles.drawerDivider} />
+                    <li>
+                      <button className={styles.drawerUserLink} onClick={() => { setIsLoggedIn(false); setMobileOpen(false); }}>
+                        <Image src="/images/logout.svg" alt="" width={22} height={22} />
+                        <span>Log out</span>
+                      </button>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li className={styles.drawerGuestHeader}>
+                      Guest
+                    </li>
+                    <li className={styles.drawerDivider} />
+                    <li>
+                      <Link href="/profile?tab=favorites" className={styles.drawerUserLink} onClick={() => setMobileOpen(false)}>
+                        <Image src="/images/heart-outline.svg" alt="" width={22} height={22} />
+                        <span>Favorites</span>
+                      </Link>
+                    </li>
+                    <li className={styles.drawerDivider} />
+                    <li>
+                      <button className={styles.drawerUserLink} onClick={() => { setMobileOpen(false); setIsAuthModalOpen(true); }}>
+                        <Image src="/images/profile-gray.svg" alt="" width={22} height={22} />
+                        <span>Login / Sign up</span>
+                      </button>
+                    </li>
+                  </>
+                )}
               </ul>
             </nav>
 
@@ -365,6 +410,13 @@ export default function Navbar() {
           </aside>
         </>,
         document.body
+      )}
+
+      {isAuthModalOpen && (
+        <AuthModal 
+          onClose={() => setIsAuthModalOpen(false)} 
+          onLoginSuccess={() => setIsLoggedIn(true)} 
+        />
       )}
     </>
   );
