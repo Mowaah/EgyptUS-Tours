@@ -98,6 +98,13 @@
   padding: $spacing-xs $spacing-xs $spacing-sm;
 }
 
+.guestHeader {
+  padding: 12px;
+  font-weight: $font-weight-medium;
+  color: $text-muted;
+  font-size: $font-size-base;
+}
+
 .headerProfileLink {
   text-decoration: none;
   color: inherit;

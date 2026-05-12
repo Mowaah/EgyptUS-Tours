@@ -73,3 +73,4 @@ export type { ProfileSidebarProps, UserProfile, TabType } from "./ProfileSidebar
 export { default as CounterPill } from "./CounterPill/CounterPill";
 export { default as TimePicker } from "./TimePicker/TimePicker";
 export type { TimeValue } from "./TimePicker/TimePicker";
+export { default as AuthModal } from "./AuthModal/AuthModal";
