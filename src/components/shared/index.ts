@@ -71,3 +71,5 @@ export type { UpcomingTripBannerProps } from "./UpcomingTripBanner/UpcomingTripB
 export { default as ProfileSidebar } from "./ProfileSidebar/ProfileSidebar";
 export type { ProfileSidebarProps, UserProfile, TabType } from "./ProfileSidebar/ProfileSidebar";
 export { default as CounterPill } from "./CounterPill/CounterPill";
+export { default as TimePicker } from "./TimePicker/TimePicker";
+export type { TimeValue } from "./TimePicker/TimePicker";

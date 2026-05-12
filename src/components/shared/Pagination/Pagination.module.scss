@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "@/styles/variables" as *;
 
 .root {
@@ -38,8 +39,8 @@
   }
 
   &:hover:not(:disabled) {
-    background: darken($secondary, 5%);
-    border-color: darken($secondary, 5%);
+    background: color.adjust($secondary, $lightness: -5%);
+    border-color: color.adjust($secondary, $lightness: -5%);
   }
 
   &:disabled {

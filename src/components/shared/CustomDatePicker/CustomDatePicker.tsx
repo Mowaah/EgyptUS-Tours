@@ -174,7 +174,7 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
           }}
           onClick={() => setIsOpen(true)}
           className={className}
-          placeholder="mm/dd/yyyy"
+          placeholder="MM/DD/YYYY"
         />
       ) : variant === "custom" && renderTrigger ? (
         renderTrigger(isOpen, setIsOpen, !selectedDateObj || Number.isNaN(selectedDateObj.getTime()) ? "" : `${String(selectedDateObj.getDate()).padStart(2, '0')} - ${String(selectedDateObj.getMonth() + 1).padStart(2, '0')} - ${selectedDateObj.getFullYear()}`)

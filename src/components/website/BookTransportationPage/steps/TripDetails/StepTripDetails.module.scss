@@ -115,6 +115,30 @@
   }
 }
 
+.inputWithIcon {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  input {
+    padding-left: 44px !important;
+  }
+}
+
+.inputIcon {
+  position: absolute;
+  left: 16px;
+  pointer-events: none;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+}
+
+// Applies left padding to inputs inside .inputWithIcon
+.inputWithPaddingLeft {
+  padding-left: 44px !important;
+}
+
 // ─── SelectDropdown height override ──────────────────────────────────────────
 .selectTrigger {
   min-height: 44px !important;

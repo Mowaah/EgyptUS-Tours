@@ -36,6 +36,14 @@
 
 .gallery {
   width: 100%;
+
+  // On mobile, hide the arrow buttons — swipe is used instead
+  @media (max-width: 767px) {
+    button[aria-label="Previous"],
+    button[aria-label="Next"] {
+      display: none;
+    }
+  }
 }
 
 // Next-arrow variant matching Figma: solid orange fill with white icon.
@@ -52,8 +60,7 @@
 }
 
 // Gallery grid: matches Figma 1120×500 container with absolutely positioned images.
-// Uses aspect-ratio + percentage coords so the composition scales proportionally
-// at narrower viewports without losing its layout.
+// Positions are applied inline (JS) so the fan rotates smoothly via CSS transitions.
 .galleryGrid {
   position: relative;
   width: 100%;
@@ -71,7 +78,16 @@
   position: absolute;
   border-radius: 24px;
   overflow: hidden;
-  transition: translate $transition-base, z-index 0s;
+  cursor: pointer;
+
+  // Smoothly animate between fan positions
+  transition:
+    left 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    top 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s ease;
 
   &::after {
     content: "";
@@ -81,55 +97,24 @@
     border-radius: inherit;
     pointer-events: none;
     z-index: 1;
+    transition: opacity 0.5s ease;
   }
 
   &:hover {
-    z-index: 10;
-    translate: 0 -20px;
+    translate: 0 -12px;
+  }
+}
+
+// Center image (active): remove the tint overlay
+.galleryItemActive {
+  cursor: default;
+
+  &::after {
+    opacity: 0;
   }
 
-  &:nth-child(1) {
-    left: 0.11%;
-    top: 1.87%;
-    width: 21.40%;
-    height: 78.27%;
-    transform: rotate(1.72deg);
-    z-index: 1;
-  }
-
-  &:nth-child(2) {
-    left: 15.45%;
-    top: 13.60%;
-    width: 21.66%;
-    height: 78.12%;
-    transform: rotate(1.15deg);
-    z-index: 2;
-  }
-
-  &:nth-child(3) {
-    left: 38.39%;
-    top: 12.07%;
-    width: 23.85%;
-    height: 87.43%;
-    z-index: 5;
-  }
-
-  &:nth-child(4) {
-    left: 63.25%;
-    top: 13.96%;
-    width: 21.06%;
-    height: 78.13%;
-    transform: rotate(-1.15deg);
-    z-index: 2;
-  }
-
-  &:nth-child(5) {
-    left: 78.38%;
-    top: 0.15%;
-    width: 20.51%;
-    height: 78.29%;
-    transform: rotate(-2.29deg);
-    z-index: 1;
+  &:hover {
+    translate: 0 0;
   }
 }
 
@@ -141,3 +126,4 @@
     transform: scale(1.05);
   }
 }
+

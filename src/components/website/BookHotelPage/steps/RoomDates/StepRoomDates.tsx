@@ -90,7 +90,7 @@ export default function StepRoomDates({ formData, onChange, onContinue }: StepRo
                   value={formData[type]}
                   onIncrease={() => handleGuestChange(type, true)}
                   onDecrease={() => handleGuestChange(type, false)}
-                  required
+                  required={type === "adults"}
                 />
               </div>
             );

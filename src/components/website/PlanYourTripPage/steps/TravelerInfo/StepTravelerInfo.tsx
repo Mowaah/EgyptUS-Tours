@@ -89,7 +89,7 @@ export default function StepTravelerInfo({
           </FormField>
 
           <FormField label="Select Your Nationality" required>
-            <NationalitySelect 
+            <NationalitySelect
               value={travelerInfo.nationality}
               onChange={(val) => onTravelerChange("nationality", val)}
             />
@@ -113,38 +113,25 @@ export default function StepTravelerInfo({
             />
           </FormField>
 
-          <div className={pageStyles.formGroup}>
-            <CounterPill
-              label="No of Adults"
-              subLabel="( +12 years )"
-              value={travelerInfo.adults}
-              onIncrease={() => onNumberChange("adults", true)}
-              onDecrease={() => onNumberChange("adults", false)}
-              required
-            />
-          </div>
-
-          <div className={pageStyles.formGroup}>
-            <CounterPill
-              label="No of Children"
-              subLabel="( 2 to 11 years )"
-              value={travelerInfo.children}
-              onIncrease={() => onNumberChange("children", true)}
-              onDecrease={() => onNumberChange("children", false)}
-              required
-            />
-          </div>
-
-          <div className={pageStyles.formGroup}>
-            <CounterPill
-              label="No of Infants"
-              subLabel="( 0 to 2 years )"
-              value={travelerInfo.infants}
-              onIncrease={() => onNumberChange("infants", true)}
-              onDecrease={() => onNumberChange("infants", false)}
-              required
-            />
-          </div>
+          {(["adults", "children", "infants"] as const).map((type) => {
+            const meta = {
+              adults: { title: "No of Adults", hint: "( +12 years )" },
+              children: { title: "No of Children", hint: "( 2 to 11 years )" },
+              infants: { title: "No of Infants", hint: "( 0 to 2 years )" },
+            };
+            return (
+              <div key={type} className={pageStyles.formGroup}>
+                <CounterPill
+                  label={meta[type].title}
+                  subLabel={meta[type].hint}
+                  value={travelerInfo[type]}
+                  onIncrease={() => onNumberChange(type, true)}
+                  onDecrease={() => onNumberChange(type, false)}
+                  required={type === "adults"}
+                />
+              </div>
+            );
+          })}
 
           <FormField
             id="pti-details"

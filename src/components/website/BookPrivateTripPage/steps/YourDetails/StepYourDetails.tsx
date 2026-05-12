@@ -181,38 +181,25 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
         <hr className={stepStyles.divider} aria-hidden="true" />
 
         <div className={planPage.formGrid}>
-          <div className={planPage.formGroup}>
-            <CounterPill
-              label="No of Adults"
-              subLabel="( +12 years )"
-              value={formData.adults}
-              onIncrease={() => handleGuestChange("adults", true)}
-              onDecrease={() => handleGuestChange("adults", false)}
-              required
-            />
-          </div>
-
-          <div className={planPage.formGroup}>
-            <CounterPill
-              label="No of Children"
-              subLabel="( 2 to 11 years )"
-              value={formData.children}
-              onIncrease={() => handleGuestChange("children", true)}
-              onDecrease={() => handleGuestChange("children", false)}
-              required
-            />
-          </div>
-
-          <div className={planPage.formGroup}>
-            <CounterPill
-              label="No of Infants"
-              subLabel="( 0 to 2 years )"
-              value={formData.infants}
-              onIncrease={() => handleGuestChange("infants", true)}
-              onDecrease={() => handleGuestChange("infants", false)}
-              required
-            />
-          </div>
+          {(["adults", "children", "infants"] as const).map((type) => {
+            const meta = {
+              adults: { title: "No of Adults", hint: "( +12 years )" },
+              children: { title: "No of Children", hint: "( 2 to 11 years )" },
+              infants: { title: "No of Infants", hint: "( 0 to 2 years )" },
+            };
+            return (
+              <div key={type} className={planPage.formGroup}>
+                <CounterPill
+                  label={meta[type].title}
+                  subLabel={meta[type].hint}
+                  value={formData[type]}
+                  onIncrease={() => handleGuestChange(type, true)}
+                  onDecrease={() => handleGuestChange(type, false)}
+                  required={type === "adults"}
+                />
+              </div>
+            );
+          })}
         </div>
 
         <hr className={stepStyles.divider} aria-hidden="true" />

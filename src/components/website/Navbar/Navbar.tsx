@@ -264,9 +264,7 @@ export default function Navbar() {
             ) : (
               planTripButton
             )}
-            {!isBookingPage && (
-              <UserMenu scrolled={shouldShowScrolled} lightNavBackground={lightNavBackground} />
-            )}
+            <UserMenu scrolled={shouldShowScrolled} lightNavBackground={lightNavBackground} />
           </div>
         </div>
 

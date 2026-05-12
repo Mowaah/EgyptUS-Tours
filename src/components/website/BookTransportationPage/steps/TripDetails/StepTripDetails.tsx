@@ -1,8 +1,9 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { TransportationBookingData, Vehicle } from "@/types";
-import { FormField, Button, CustomDatePicker, SelectDropdown, CheckboxIndicator } from "@/components/shared";
+import { FormField, Button, CustomDatePicker, SelectDropdown, CheckboxIndicator, TimePicker, TimeValue } from "@/components/shared";
 import formStyles from "@/components/shared/FormField/FormField.module.scss";
 import styles from "./StepTripDetails.module.scss";
 
@@ -94,6 +95,78 @@ function ServiceItem({
   );
 }
 
+// ─── TimePickerField ──────────────────────────────────────────────────────────
+function TimePickerField({
+  value,
+  onChange,
+  inputClassName,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  inputClassName?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  // Close when clicking outside
+  useEffect(() => {
+    if (!open) return;
+    const handleOutside = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, [open]);
+
+  // Parse stored "HH:MM AM/PM" or fallback defaults
+  const parse = (v: string): TimeValue => {
+    const match = v.match(/^(\d{1,2}):(\d{2}):?(\d{2})?\s?(AM|PM)?$/i);
+    if (match) {
+      return {
+        hour: parseInt(match[1]) || 12,
+        minute: parseInt(match[2]) || 0,
+        second: parseInt(match[3] ?? "0") || 0,
+        period: (match[4]?.toUpperCase() as "AM" | "PM") ?? "AM",
+      };
+    }
+    return { hour: 12, minute: 0, second: 0, period: "AM" };
+  };
+
+  const tv = parse(value);
+  const display = value
+    ? `${String(tv.hour).padStart(2, "0")}:${String(tv.minute).padStart(2, "0")} ${tv.period}`
+    : "";
+
+  return (
+    <div ref={wrapperRef} className={styles.inputWithIcon} style={{ position: "relative" }}>
+      <div className={styles.inputIcon}>
+        <Image src="/images/clock-gray.svg" alt="" width={20} height={20} />
+      </div>
+      <input
+        type="text"
+        readOnly
+        className={inputClassName}
+        value={display}
+        placeholder="HH : MM  AM/PM"
+        onClick={() => setOpen((o) => !o)}
+      />
+
+      {open && (
+        <div style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 100 }}>
+          <TimePicker
+            value={tv}
+            onChange={(t) => {
+              onChange(`${String(t.hour).padStart(2, "0")}:${String(t.minute).padStart(2, "0")}:${String(t.second).padStart(2, "0")} ${t.period}`);
+            }}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function StepTripDetails({
   formData,
@@ -140,22 +213,25 @@ export default function StepTripDetails({
         {/* Date & Time */}
         <div className={styles.twoColumn}>
           <FormField label="Pickup Date" required wrapperClassName={styles.formField}>
-            <CustomDatePicker
-              value={formData.pickupDate}
-              onChange={(val) => onChange({ pickupDate: val })}
-              variant="input"
-              className={`${formStyles.input} ${styles.tallInput}`}
+            <div className={styles.inputWithIcon}>
+              <div className={styles.inputIcon}>
+                <Image src="/images/calendar-gray.svg" alt="" width={20} height={20} />
+              </div>
+              <CustomDatePicker
+                value={formData.pickupDate}
+                onChange={(val) => onChange({ pickupDate: val })}
+                variant="input"
+                className={`${formStyles.input} ${styles.tallInput} ${styles.inputWithPaddingLeft}`}
+              />
+            </div>
+          </FormField>
+          <FormField label="Pickup Time" required wrapperClassName={styles.formField}>
+            <TimePickerField
+              value={formData.pickupTime}
+              onChange={(val) => onChange({ pickupTime: val })}
+              inputClassName={`${formStyles.input} ${styles.tallInput}`}
             />
           </FormField>
-          <FormField
-            label="Pickup Time"
-            type="time"
-            value={formData.pickupTime}
-            onChange={(e) => onChange({ pickupTime: e.target.value })}
-            wrapperClassName={styles.formField}
-            className={styles.tallInput}
-            required
-          />
         </div>
 
         {/* Passengers & Luggage */}
