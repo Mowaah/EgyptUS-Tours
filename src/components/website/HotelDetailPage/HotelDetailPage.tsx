@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Hotel } from "@/types";
-import { PageHeader, DetailGallery, DetailHeroBar, DetailTabNav, ReviewSection } from "@/components/shared";
+import { PageHeader, DetailGallery, DetailHeroBar, DetailTabNav } from "@/components/shared";
 import Image from "next/image";
 import Button from "@/components/shared/Button/Button";
 import HotelOverview from "./HotelOverview/HotelOverview";
@@ -19,7 +19,6 @@ const HOTEL_TABS = [
   { id: "hotel-facilities", label: "Hotel Facilities" },
   { id: "location", label: "Location" },
   { id: "room-types", label: "Room Types" },
-  { id: "reviews", label: "Reviews" },
   { id: "similar-hotels", label: "Similar Hotels" },
 ];
 
@@ -89,9 +88,7 @@ export default function HotelDetailPage({ hotel }: HotelDetailPageProps) {
       </div>
 
 
-      <div className={styles.container}>
-        <ReviewSection reviews={hotel.hotelReviews?.map(r => ({ ...r, body: r.body })) || []} />
-      </div>
+
 
       <div className={styles.container}>
         <SimilarHotels hotel={hotel} />

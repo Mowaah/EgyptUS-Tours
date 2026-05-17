@@ -142,7 +142,7 @@ export default function EventsOverview() {
                 <div className={styles.accessList}>
                   <div className={styles.accessItem}>
                     <div className={styles.aIconWrap}>
-                      <Image src="/images/location.svg" alt="Location" width={24} height={24} />
+                      <Image src="/images/locations.svg" alt="Location" width={24} height={24} />
                     </div>
                     <div className={styles.aTextWrap}>
                       <span className={styles.aTitle}>Primary Locations</span>

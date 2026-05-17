@@ -65,9 +65,12 @@ export default function DetailTabNav({ tabs }: DetailTabNavProps) {
           tabs={tabs.map(tab => tab.label)}
           active={activeIndex !== -1 ? activeIndex : 0}
           onTabChange={(_: string, idx: number) => {
-            const id = tabs[idx].id;
-            setActiveTab(id);
-            scrollTo(id);
+            const targetTab = tabs[idx];
+            if (targetTab) {
+              const id = targetTab.id;
+              setActiveTab(id);
+              scrollTo(id);
+            }
           }}
           wrap
           disableAnimation

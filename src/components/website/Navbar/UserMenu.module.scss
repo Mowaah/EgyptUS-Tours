@@ -100,7 +100,7 @@
 
 .guestHeader {
   padding: 12px;
-  font-weight: $font-weight-medium;
+  font-weight: $font-weight-normal;
   color: $text-muted;
   font-size: $font-size-base;
 }
@@ -127,7 +127,7 @@
 }
 
 .username {
-  font-weight: $font-weight-medium;
+  font-weight: $font-weight-normal;
   color: $gray-500;
   font-size: $font-size-base;
 }
@@ -153,7 +153,7 @@
   border-radius: $radius-md;
   color: $text-muted;
   font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
+  font-weight: $font-weight-normal;
   transition: all $transition-fast;
   background: transparent;
   cursor: pointer;

@@ -16,8 +16,8 @@ export default function B2BCTA() {
         </div>
 
         <Link href="/b2b-programs/request-proposal" className={styles.ctaButton}>
-          Schedule a Strategy Call
-          <Image src="/images/calendar-orange.svg" alt="" width={24} height={24} style={{ filter: "brightness(0) invert(1)" }} />
+          Request a Proposal
+          <Image src="/images/arrows/arrow-right.svg" alt="" width={24} height={24} style={{ filter: "brightness(0) invert(1)" }} />
         </Link>
       </div>
 

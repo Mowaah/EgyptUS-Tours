@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { TransportationBookingData, Vehicle } from "@/types";
-import { FormField, Button, CustomDatePicker, SelectDropdown, CheckboxIndicator, TimePicker, TimeValue } from "@/components/shared";
+import { FormField, Button, CustomDatePicker, SelectDropdown, CheckboxIndicator, TimePicker, TimeValue, BookingStepFooter } from "@/components/shared";
 import formStyles from "@/components/shared/FormField/FormField.module.scss";
 import styles from "./StepTripDetails.module.scss";
 
@@ -273,15 +273,9 @@ export default function StepTripDetails({
         </div>
       </div>
 
-      {/* Footer */}
-      <div className={styles.footer}>
-        <button type="button" className={styles.prevBtn} disabled>
-          Previous
-        </button>
-        <button type="button" className={styles.contBtn} onClick={onContinue}>
-          Continue
-        </button>
-      </div>
+      <BookingStepFooter
+        onContinue={onContinue}
+      />
     </div>
   );
 }

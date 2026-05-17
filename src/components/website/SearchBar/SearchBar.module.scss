@@ -5,7 +5,6 @@
   width: 100%;
   max-width: 987px;
   margin: $spacing-lg auto 0;
-  padding: 0 16px;
   position: relative;
   z-index: 50;
 
@@ -112,14 +111,17 @@
   }
 
   @include sm {
+
     // Tablet 2x2 grid: no horizontal borders; use vertical border on left items
     &:not(:last-of-type) {
       border-bottom: none;
     }
+
     // Right column gets a left border as divider
     &:nth-of-type(2n) {
       border-left: 1px solid rgba(255, 255, 255, 0.18);
     }
+
     // Bottom row gets a top border as divider (filter 3 & 4)
     &:nth-of-type(n + 3) {
       border-top: 1px solid rgba(255, 255, 255, 0.18);

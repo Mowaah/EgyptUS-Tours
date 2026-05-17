@@ -36,27 +36,6 @@
 
 .gallery {
   width: 100%;
-
-  // On mobile, hide the arrow buttons — swipe is used instead
-  @media (max-width: 767px) {
-    button[aria-label="Previous"],
-    button[aria-label="Next"] {
-      display: none;
-    }
-  }
-}
-
-// Next-arrow variant matching Figma: solid orange fill with white icon.
-.arrowNext {
-  background: $secondary !important;
-  border-color: $secondary !important;
-  color: $white !important;
-
-  &:hover:not(:disabled),
-  &:active:not(:disabled) {
-    background: $secondary-dark !important;
-    border-color: $secondary-dark !important;
-  }
 }
 
 // Gallery grid: matches Figma 1120×500 container with absolutely positioned images.
@@ -67,6 +46,7 @@
   max-width: 1120px;
   aspect-ratio: 1120 / 500;
   min-width: 0;
+  margin: 0 auto;
 }
 
 .viewAll {

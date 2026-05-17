@@ -80,6 +80,11 @@ $nav-desktop: 1150px;
   width: 100%;
   gap: $spacing-sm;
 
+  @media (max-width: 768px) {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
   @media (min-width: $nav-desktop) {
     height: $navbar-height-desktop;
   }
@@ -283,7 +288,7 @@ $nav-desktop: 1150px;
 
 .dropdownText {
   font-size: 11px;
-  font-weight: 700;
+  font-weight: $font-weight-medium;
   color: #123367;
   line-height: 11px;
   letter-spacing: 0.01em;
@@ -483,6 +488,36 @@ $nav-desktop: 1150px;
   gap: 2px;
 }
 
+// Matches desktop .guestHeader — plain muted label, no icon
+.drawerGuestHeader {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: 12px $spacing-md;
+  font-weight: $font-weight-normal;
+  color: $text-muted;
+  font-size: $font-size-base;
+}
+
+// Avatar circle wrapper when logged in (matches desktop .avatarWrapper)
+.drawerAvatarWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: $secondary-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+// Matches desktop .username
+.drawerUsername {
+  font-weight: $font-weight-normal;
+  color: $gray-500;
+  font-size: $font-size-base;
+}
+
 .drawerUserLink {
   display: flex;
   align-items: center;
@@ -491,10 +526,15 @@ $nav-desktop: 1150px;
   padding: 0 $spacing-md;
   font-size: $font-size-base;
   color: $text-muted;
-  font-weight: $font-weight-medium;
+  font-weight: $font-weight-normal;
   border-radius: $radius-md;
   text-decoration: none;
   transition: background $transition-fast, color $transition-fast;
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
 
   &:hover {
     background: $background-alt;

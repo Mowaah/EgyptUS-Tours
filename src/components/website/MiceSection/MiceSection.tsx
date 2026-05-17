@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { SectionHeader, FeatureCard, Button, PaginationArrows } from "@/components/shared";
+import { SectionHeader, FeatureCard, Button } from "@/components/shared";
 import Image from "next/image";
 import styles from "./MiceSection.module.scss";
 
@@ -107,37 +107,35 @@ export default function MiceSection() {
         </div>
 
         <div className={styles.gallery}>
-          <PaginationArrows size={46} nextClassName={styles.arrowNext} onPrev={advance} onNext={retreat}>
-            <div
-              className={styles.galleryGrid}
-              onTouchStart={handleTouchStart}
-              onTouchEnd={handleTouchEnd}
-            >
-              {GALLERY_IMAGES.map((src, i) => {
-                // Which fan slot does image i sit in?
-                // Slot 2 = center; active image → slot 2
-                const slot = (i - active + 2 + N) % N;
-                const isCenter = slot === 2;
+          <div
+            className={styles.galleryGrid}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            {GALLERY_IMAGES.map((src, i) => {
+              // Which fan slot does image i sit in?
+              // Slot 2 = center; active image → slot 2
+              const slot = (i - active + 2 + N) % N;
+              const isCenter = slot === 2;
 
-                return (
-                  <div
-                    key={i}
-                    className={`${styles.galleryItem} ${isCenter ? styles.galleryItemActive : ""}`}
-                    style={SLOT_STYLES[slot]}
-                    onClick={() => setActive(i)}
-                  >
-                    <Image
-                      src={src}
-                      alt={`Corporate event ${i + 1}`}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 400px"
-                      className={styles.galleryImage}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          </PaginationArrows>
+              return (
+                <div
+                  key={i}
+                  className={`${styles.galleryItem} ${isCenter ? styles.galleryItemActive : ""}`}
+                  style={SLOT_STYLES[slot]}
+                  onClick={() => setActive(i)}
+                >
+                  <Image
+                    src={src}
+                    alt={`Corporate event ${i + 1}`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 400px"
+                    className={styles.galleryImage}
+                  />
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         <div className={styles.viewAll}>

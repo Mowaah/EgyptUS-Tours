@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   BookingStepFooter,
   FormField,
@@ -13,6 +13,7 @@ import styles from "./StepPersonalInfo.module.scss";
 import { BookingData } from "../../BookHotelPage";
 import { Hotel } from "@/types";
 import BookingSidebar from "@/components/shared/BookingSidebar/BookingSidebar";
+import ImportantLinksModal from "@/components/website/TripDetailPage/TripImportantLinks/ImportantLinksModal";
 
 interface StepPersonalInfoProps {
   hotel: Hotel;
@@ -31,6 +32,8 @@ export default function StepPersonalInfo({
   hotel, formData, onChange, onPrevious, onContinue,
   totalAmount, vatAmount, depositAmount, totalRooms, totalGuests,
 }: StepPersonalInfoProps) {
+  const [showTermsModal, setShowTermsModal] = useState(false);
+
   return (
     <div>
       <div className={styles.twoColumnLayout}>
@@ -115,7 +118,21 @@ export default function StepPersonalInfo({
                 className={styles.checkboxHidden}
               />
               <CheckboxIndicator variant="square" size="md" selected={formData.termsAccepted} aria-hidden />
-              <span>I have read and agree to the <a href="#">Terms &amp; Conditions and Cancellation</a> Policy.</span>
+              <span>
+                I have read and agree to the{" "}
+                <button
+                  type="button"
+                  className={styles.linkBtn}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowTermsModal(true);
+                  }}
+                >
+                  Terms &amp; Conditions and Cancellation
+                </button>{" "}
+                Policy.
+              </span>
             </label>
 
             <BookingStepFooter
@@ -124,6 +141,12 @@ export default function StepPersonalInfo({
               continueLabel="Continue To Payment"
               continueDisabled={!formData.termsAccepted}
               showMoneyIcon
+            />
+
+            <ImportantLinksModal
+              open={showTermsModal}
+              initialTab="terms"
+              onClose={() => setShowTermsModal(false)}
             />
           </div>
         </div>

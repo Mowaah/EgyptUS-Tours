@@ -1,0 +1,419 @@
+@use "@/styles/variables" as *;
+
+// ─── Keyframes ────────────────────────────────────────────────────────────────
+
+@keyframes circleReveal {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+    box-shadow: 0 0 0 0 rgba(25, 68, 138, 0);
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 1;
+    box-shadow: 0 0 0 10px rgba(25, 68, 138, 0.18);
+  }
+  75% {
+    transform: scale(0.94);
+    box-shadow: 0 0 0 16px rgba(25, 68, 138, 0.08);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(25, 68, 138, 0);
+  }
+}
+
+@keyframes rippleExpand {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@keyframes contentSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes vLineGrow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes checkmarkPop {
+  0% {
+    transform: scale(0) rotate(-20deg);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.2) rotate(5deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes lineGrow {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+// ─── Section ──────────────────────────────────────────────────────────────────
+
+.section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background: $background;
+  box-sizing: border-box;
+
+  &.padding-normal {
+    padding: 64px 0;
+    @media (max-width: 1024px) {
+      padding: 56px 0;
+    }
+    @media (max-width: 600px) {
+      padding: 40px 0;
+    }
+  }
+
+  &.padding-large {
+    padding: 80px 0;
+    @media (max-width: 1024px) {
+      padding: 56px 0;
+    }
+    @media (max-width: 600px) {
+      padding: 40px 0;
+    }
+  }
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 66px;
+  text-align: center;
+  padding: 0 16px;
+
+  @media (max-width: 600px) {
+    margin-bottom: 40px;
+  }
+}
+
+.title {
+  font-weight: $font-weight-bold;
+  font-size: clamp(1.5rem, 3.2vw, 2rem);
+  line-height: 1.25;
+  color: $dark;
+  margin: 0;
+}
+
+.subtitle {
+  font-weight: 400;
+  font-size: clamp(0.9375rem, 2vw, 1.25rem);
+  line-height: 1.4;
+  color: $text-light;
+  margin: 0;
+  max-width: 56ch;
+}
+
+// ─── Timeline Container ────────────────────────────────────────────────────────
+
+.timelineContainer {
+  position: relative;
+  width: 100%;
+  max-width: 1275px;
+  height: auto;
+  min-height: 220px;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+// ─── Track line ───────────────────────────────────────────────────────────────
+
+.lineBase {
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  left: 0;
+  top: 46.33px;
+  background: $gray-50-alt;
+  z-index: 1;
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
+}
+
+// Progress bar — animates width from 0 to the right proportion
+.lineProgress {
+  position: absolute;
+  height: 3.5px;
+  left: 0;
+  top: 46.8px;
+  z-index: 2;
+  background: $primary;
+  width: 0%;
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
+}
+
+// Single smooth animation — no step-by-step jumps
+.lineActive {
+  // Use the ratio passed from JS to determine the final width
+  // Subtracting the circle width (92.66px) / 2 from each end gives a cleaner look,
+  // but for simplicity and robustness, we can just use the ratio directly.
+  // If ratio is 0.8 (4/5 steps), width goes to 80%.
+  width: calc(var(--active-ratio, 1) * 100%);
+  transition: width 2s ease-in-out;
+}
+
+// ─── Steps Grid ───────────────────────────────────────────────────────────────
+
+.steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  width: 100%;
+  z-index: 3;
+
+  @media (max-width: 1024px) {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+// ─── Step Item ────────────────────────────────────────────────────────────────
+
+.stepItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (max-width: 1024px) {
+    display: grid;
+    grid-template-columns: 50px minmax(0, 1fr);
+    column-gap: 12px;
+    align-items: stretch;
+  }
+}
+
+.stepHidden {
+  .circle {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+
+  .content {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+}
+
+.stepVisible {
+  .content {
+    // React setTimeout already staggers each step — no extra CSS delay needed
+    animation: contentSlideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 200ms; // just enough to let the circle pop first
+  }
+}
+
+// ─── Step Aside ───────────────────────────────────────────────────────────────
+
+.stepAside {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+
+  @media (max-width: 1024px) {
+    width: 50px;
+    align-self: stretch;
+    min-height: 0;
+  }
+}
+
+// ─── Vertical connector (mobile) ──────────────────────────────────────────────
+
+.vLine {
+  display: none;
+
+  @media (max-width: 1024px) {
+    display: block;
+    width: 2px;
+    flex: 1 1 auto;
+    min-height: 16px;
+    margin-top: 6px;
+    background: $gray-50-alt;
+    border-radius: 1px;
+    transform-origin: top center;
+  }
+}
+
+.vLineActive {
+  @media (max-width: 1024px) {
+    background: linear-gradient(180deg, #3b82f6 0%, #1e5bc6 100%);
+    animation: vLineGrow 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 300ms; // after the circle pops
+  }
+}
+
+// ─── Circle ───────────────────────────────────────────────────────────────────
+
+.circle {
+  width: 92.66px;
+  height: 92.66px;
+  background: #dfebff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 17px;
+  flex-shrink: 0;
+  position: relative;
+  transition: background 0.35s ease, box-shadow 0.35s ease;
+
+  @media (max-width: 1024px) {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 0;
+  }
+
+  &:hover {
+    transform: scale(1.06);
+    transition: transform 0.25s ease, background 0.35s ease, box-shadow 0.35s ease;
+
+    @media (max-width: 1024px) {
+      transform: none;
+    }
+  }
+
+  &.inactive {
+    background: $border;
+
+    .number {
+      color: $text-light;
+    }
+  }
+}
+
+// Circle becomes active — pop animation only, no visual design change
+.circleActive {
+  // React setTimeout adds class at the right moment — animate immediately
+  animation: circleReveal 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+// Ripple ring on the currently-animating step
+.ripple {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2.5px solid #3b82f6;
+  animation: rippleExpand 0.7s ease-out forwards;
+  animation-delay: 250ms; // fires after circle spring-pops
+  pointer-events: none;
+}
+
+// ─── Number ───────────────────────────────────────────────────────────────────
+
+.number {
+  font-weight: 700;
+  font-size: $font-size-26;
+  color: #19448a;
+  position: relative;
+  z-index: 1;
+  transition: color 0.3s ease;
+
+  @media (max-width: 1024px) {
+    font-size: $font-size-sm;
+    font-weight: 800;
+  }
+}
+
+// ─── Content ──────────────────────────────────────────────────────────────────
+
+.content {
+  text-align: center;
+  max-width: 243px;
+  width: 100%;
+  box-sizing: border-box;
+  // Default: visible but will be overridden by stepHidden/stepVisible
+  opacity: 1;
+
+  @media (max-width: 1024px) {
+    text-align: left;
+    max-width: none;
+    margin-bottom: 16px;
+    padding: 16px 14px;
+    background: $background;
+    border: 1px solid $background-blue;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(14, 40, 81, 0.07);
+  }
+}
+
+.stepTitle {
+  font-weight: $font-weight-medium;
+  font-size: 18.5px;
+  line-height: 1.3;
+  color: $dark;
+  margin: 0 0 9px;
+
+  @media (max-width: 1024px) {
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    margin-bottom: 6px;
+  }
+}
+
+.stepDescription {
+  font-weight: $font-weight-normal;
+  font-size: $font-size-13;
+  line-height: 1.55;
+  color: $text-lighter;
+  margin: 0;
+
+  @media (max-width: 1024px) {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+}
+
+// ─── Misc overrides ───────────────────────────────────────────────────────────
+
+@media (min-width: 1025px) {
+  .stepItem:last-of-type .content {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .content {
+    padding: 14px 12px;
+  }
+}

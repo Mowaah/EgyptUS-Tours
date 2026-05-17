@@ -144,38 +144,10 @@
   width: 100%;
 }
 
-/* Same width as a single .formGrid cell (2 cols + 24px gap) — matches name/email/date fields */
-.monthSelectTrigger {
-  display: block;
+.monthSelectDropdownWrapper {
   width: 100%;
   max-width: calc((100% - 24px) / 2);
   align-self: flex-start;
-  margin: 0;
-  padding: 12px 36px 12px 42px;
-  border: 1px solid $border-strong;
-  border-radius: $radius-xl;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-normal;
-  color: $text;
-  background-color: $white;
-  background-image: url("/images/calendar3.svg"), url("/images/arrows/chevron-down2.svg");
-  background-repeat: no-repeat, no-repeat;
-  background-position: left 14px center, right 14px center;
-  background-size: 20px 20px, 20px 20px;
-  cursor: pointer;
-  outline: none;
-  transition: border-color $transition-fast;
-  font-family: inherit;
-  box-sizing: border-box;
-  text-align: left;
-
-  &:hover {
-    border-color: $border-input;
-  }
-
-  &:focus-visible {
-    border-color: $primary;
-  }
 
   @media (max-width: 768px) {
     max-width: none;

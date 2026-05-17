@@ -45,15 +45,13 @@ export default function AuthModal({ onClose, onLoginSuccess }: AuthModalProps) {
 
   const handleLogin = () => {
     let isValid = true;
-    
-    // Validate Email
+
     const emailValidationMsg = validateEmail(email);
     if (emailValidationMsg) {
       setEmailError(emailValidationMsg);
       isValid = false;
     }
-    
-    // Validate Password (unless in reset mode where it's hidden)
+
     if (mode !== "reset") {
       const passwordValidationMsg = validatePassword(password);
       if (passwordValidationMsg) {
@@ -62,23 +60,14 @@ export default function AuthModal({ onClose, onLoginSuccess }: AuthModalProps) {
       }
     }
 
-    // Validate Name (only if in signup mode)
     if (mode === "signup") {
       const nameValidationMsg = validateName(name);
-      // Let's assume you'll add name validation handling later if you want to show it,
-      // but for now we just prevent submission if invalid
-      if (nameValidationMsg) {
-        isValid = false;
-        // Optionally: setNameError(nameValidationMsg)
-      }
+      if (nameValidationMsg) isValid = false;
     }
-    
+
     if (!isValid) return;
 
-    // Fake login
-    if (onLoginSuccess) {
-      onLoginSuccess();
-    }
+    if (onLoginSuccess) onLoginSuccess();
     onClose();
   };
 

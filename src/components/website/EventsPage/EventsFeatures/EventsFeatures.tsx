@@ -44,9 +44,7 @@ export default function EventsFeatures() {
       <div className={styles.header}>
         <h2 className={styles.title}>What We Offer</h2>
         <p className={styles.subtitle}>
-          High-level meetings, curated incentives, and world-class exhibitions tailored
-          <br />
-          for leading organizations.
+          High-level meetings, curated incentives, and world-class exhibitions tailored for leading organizations.
         </p>
       </div>
 

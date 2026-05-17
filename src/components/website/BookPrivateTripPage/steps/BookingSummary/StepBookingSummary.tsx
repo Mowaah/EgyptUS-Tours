@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import planPage from "../../../PlanYourTripPage/PlanYourTripPage.module.scss";
 import localStyles from "../../BookPrivateTripPage.module.scss";
 import stepStyles from "./StepBookingSummary.module.scss";
@@ -6,6 +6,7 @@ import { BookingData } from "../../BookPrivateTripPage";
 import { Trip } from "@/types";
 import RightSidebar from "@/components/shared/BookingSidebar/BookingSidebar";
 import { BookingDetailsSections, BookingStepFooter, CheckboxIndicator } from "@/components/shared";
+import ImportantLinksModal from "@/components/website/TripDetailPage/TripImportantLinks/ImportantLinksModal";
 
 interface StepBookingSummaryProps {
   trip: Trip;
@@ -26,6 +27,8 @@ export default function StepBookingSummary({
   totalAmount,
   depositAmount
 }: StepBookingSummaryProps) {
+  const [showTermsModal, setShowTermsModal] = useState(false);
+
   const specialRequestItems = formData.specialRequests
     ? formData.specialRequests.split(",").map((s) => s.trim()).filter(Boolean)
     : [];
@@ -102,7 +105,21 @@ export default function StepBookingSummary({
           className={stepStyles.checkboxInputHidden}
         />
         <CheckboxIndicator variant="square" size="md" selected={formData.termsAccepted} aria-hidden />
-        <span>I have read and agree to the <a href="#">Terms & Conditions and Cancellation</a> Policy.</span>
+        <span>
+          I have read and agree to the{" "}
+          <button
+            type="button"
+            className={stepStyles.linkBtn}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setShowTermsModal(true);
+            }}
+          >
+            Terms & Conditions and Cancellation
+          </button>{" "}
+          Policy.
+        </span>
       </label>
 
       <BookingStepFooter
@@ -111,6 +128,12 @@ export default function StepBookingSummary({
         continueLabel="Continue To Payment"
         continueDisabled={!formData.termsAccepted}
         showMoneyIcon
+      />
+
+      <ImportantLinksModal
+        open={showTermsModal}
+        initialTab="terms"
+        onClose={() => setShowTermsModal(false)}
       />
     </div>
   );

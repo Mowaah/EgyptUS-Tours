@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { TransportationBookingData, Vehicle } from "@/types";
 import { 
@@ -8,11 +8,13 @@ import {
   PhonePrefixSelect, 
   CheckboxIndicator, 
   Button,
-  NationalitySelect
+  NationalitySelect,
+  BookingStepFooter
 } from "@/components/shared";
 import styles from "./StepPersonalInfo.module.scss";
 import travelerStyles from "../../../PlanYourTripPage/steps/TravelerInfo/StepTravelerInfo.module.scss";
 import formStyles from "@/components/shared/FormField/FormField.module.scss";
+import ImportantLinksModal from "@/components/website/TripDetailPage/TripImportantLinks/ImportantLinksModal";
 
 interface StepPersonalInfoProps {
   formData: TransportationBookingData;
@@ -25,6 +27,8 @@ interface StepPersonalInfoProps {
 export default function StepPersonalInfo({
   formData, onChange, onPrevious, onContinue, vehicle
 }: StepPersonalInfoProps) {
+  const [showTermsModal, setShowTermsModal] = useState(false);
+
   return (
     <div className={styles.stepCard}>
       <div className={styles.header}>
@@ -87,24 +91,36 @@ export default function StepPersonalInfo({
             <CheckboxIndicator variant="square" size="md" selected={formData.termsAccepted} />
           </div>
           <span className={styles.checkboxLabel}>
-            I have read and agree to the <a href="#" className={styles.link}>Terms & Conditions and Cancellation</a> Policy.
+            I have read and agree to the{" "}
+            <button
+              type="button"
+              className={styles.linkBtn}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowTermsModal(true);
+              }}
+            >
+              Terms & Conditions and Cancellation
+            </button>{" "}
+            Policy.
           </span>
         </label>
       </div>
 
-      <div className={styles.footer}>
-         <Button variant="outline" className={styles.prevBtn} onClick={onPrevious}>Previous</Button>
-         <Button 
-            variant="primary" 
-            className={styles.contBtn} 
-            onClick={onContinue}
-            disabled={!formData.termsAccepted}
-            icon={<Image src="/images/money-send.svg" alt="" width={20} height={20} />}
-            iconPosition="right"
-         >
-           Continue To Payment
-         </Button>
-      </div>
+      <BookingStepFooter
+        onPrevious={onPrevious}
+        onContinue={onContinue}
+        continueLabel="Continue To Payment"
+        continueDisabled={!formData.termsAccepted}
+        showMoneyIcon
+      />
+
+      <ImportantLinksModal
+        open={showTermsModal}
+        initialTab="terms"
+        onClose={() => setShowTermsModal(false)}
+      />
     </div>
   );
 }

@@ -272,7 +272,7 @@ export default function Navbar() {
               lightNavBackground={lightNavBackground} 
               isLoggedIn={isLoggedIn}
               setIsLoggedIn={setIsLoggedIn}
-              openAuthModal={() => setIsAuthModalOpen(true)}
+              openAuthModal={() => { setIsAuthModalOpen(true); setIsLoggedIn(true); }}
             />
           </div>
         </div>
@@ -362,7 +362,9 @@ export default function Navbar() {
                 {isLoggedIn ? (
                   <>
                     <li className={styles.drawerGuestHeader}>
-                      <Image src="/images/profile-orange.svg" alt="" width={22} height={22} />
+                      <div className={styles.drawerAvatarWrapper}>
+                        <Image src="/images/profile-orange.svg" alt="" width={22} height={22} />
+                      </div>
                       <span className={styles.drawerUsername}>Username</span>
                     </li>
                     <li className={styles.drawerDivider} />
@@ -387,7 +389,6 @@ export default function Navbar() {
                     <li className={styles.drawerGuestHeader}>
                       Guest
                     </li>
-                    <li className={styles.drawerDivider} />
                     <li>
                       <Link href="/profile?tab=favorites" className={styles.drawerUserLink} onClick={() => setMobileOpen(false)}>
                         <Image src="/images/heart-outline.svg" alt="" width={22} height={22} />
@@ -396,7 +397,7 @@ export default function Navbar() {
                     </li>
                     <li className={styles.drawerDivider} />
                     <li>
-                      <button className={styles.drawerUserLink} onClick={() => { setMobileOpen(false); setIsAuthModalOpen(true); }}>
+                      <button className={styles.drawerUserLink} onClick={() => { setMobileOpen(false); setIsAuthModalOpen(true); setIsLoggedIn(true); }}>
                         <Image src="/images/profile-gray.svg" alt="" width={22} height={22} />
                         <span>Login / Sign up</span>
                       </button>

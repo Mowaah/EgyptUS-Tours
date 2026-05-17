@@ -2,7 +2,6 @@
 
 .section {
   padding: 48px 0;
-  border-top: 1px solid $border;
 }
 
 .container {
@@ -28,16 +27,20 @@
   &::-webkit-scrollbar {
     height: 8px;
   }
+
   &::-webkit-scrollbar-track {
     background: transparent;
   }
+
   &::-webkit-scrollbar-thumb {
     background: $gray-blue-200;
     border-radius: 4px;
   }
+
   &:hover::-webkit-scrollbar-thumb {
     background: $gray-blue-300;
   }
+
   scrollbar-width: thin;
   scrollbar-color: $gray-blue-200 transparent;
 }

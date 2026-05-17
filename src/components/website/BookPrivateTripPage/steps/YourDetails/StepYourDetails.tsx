@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import {
   BookingStepFooter,
   CheckboxIndicator,
@@ -40,6 +41,24 @@ interface StepYourDetailsProps {
 }
 
 export default function StepYourDetails({ formData, onChange, onContinue, isGroupTrip }: StepYourDetailsProps) {
+  const DEPARTURE_MONTHS = React.useMemo(() => {
+    const options = [];
+    const currentDate = new Date();
+    // Generate 24 upcoming months starting from the current month/year
+    for (let i = 0; i < 24; i++) {
+      const d = new Date(currentDate.getFullYear(), currentDate.getMonth() + i, 1);
+      const label = d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+      options.push({ label, value: label });
+    }
+    return options;
+  }, []);
+
+  React.useEffect(() => {
+    if (isGroupTrip && !formData.departureMonth && DEPARTURE_MONTHS.length > 0) {
+      onChange({ departureMonth: DEPARTURE_MONTHS[0].value });
+    }
+  }, [isGroupTrip, formData.departureMonth, DEPARTURE_MONTHS, onChange]);
+
   const handleRoomChange = (roomType: "single" | "double" | "triple", increment: boolean) => {
     onChange({
       rooms: {
@@ -124,13 +143,20 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
                   label="Select Month"
                   required
                 >
-                  <button
-                    id="pti-group-departure-month"
-                    type="button"
-                    className={stepStyles.monthSelectTrigger}
-                  >
-                    {formData.departureMonth || "April 2026"}
-                  </button>
+                  <div className={stepStyles.monthSelectDropdownWrapper}>
+                    <SelectDropdown
+                      id="pti-group-departure-month"
+                      options={DEPARTURE_MONTHS}
+                      value={formData.departureMonth || DEPARTURE_MONTHS[0].value}
+                      onChange={(val) => onChange({ departureMonth: val })}
+                      renderValue={(val) => (
+                        <span style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                          <Image src="/images/calendar3.svg" alt="" width={20} height={20} />
+                          <span style={{ color: "#0A0A0A80", fontWeight: 500 }}>{val}</span>
+                        </span>
+                      )}
+                    />
+                  </div>
                 </FormField>
 
                 <FormField label="Choose Departure Date" required>

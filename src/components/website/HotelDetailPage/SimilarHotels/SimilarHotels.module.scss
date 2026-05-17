@@ -43,20 +43,11 @@
   -webkit-overflow-scrolling: touch;
 
   &::-webkit-scrollbar {
-    height: 8px;
+    display: none;
   }
 
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: $gray-blue-200;
-    border-radius: 4px;
-  }
-
-  scrollbar-width: thin;
-  scrollbar-color: $gray-blue-200 transparent;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 
   &>* {
     flex: 0 0 calc(25% - 18px);
