@@ -390,14 +390,14 @@ export default function Navbar() {
                       Guest
                     </li>
                     <li>
-                      <Link href="/profile?tab=favorites" className={styles.drawerUserLink} onClick={() => setMobileOpen(false)}>
+                      <Link href="/profile?tab=favorites" className={`${styles.drawerUserLink} ${styles.drawerGuestLink}`} onClick={() => setMobileOpen(false)}>
                         <Image src="/images/heart-outline.svg" alt="" width={22} height={22} />
                         <span>Favorites</span>
                       </Link>
                     </li>
                     <li className={styles.drawerDivider} />
                     <li>
-                      <button className={styles.drawerUserLink} onClick={() => { setMobileOpen(false); setIsAuthModalOpen(true); setIsLoggedIn(true); }}>
+                      <button className={`${styles.drawerUserLink} ${styles.drawerGuestLink}`} onClick={() => { setMobileOpen(false); setIsAuthModalOpen(true); setIsLoggedIn(true); }}>
                         <Image src="/images/profile-gray.svg" alt="" width={22} height={22} />
                         <span>Login / Sign up</span>
                       </button>

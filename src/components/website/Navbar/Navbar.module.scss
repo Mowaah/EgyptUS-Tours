@@ -493,7 +493,7 @@ $nav-desktop: 1150px;
   display: flex;
   align-items: center;
   gap: $spacing-sm;
-  padding: 12px $spacing-md;
+  padding: 12px $spacing-sm;
   font-weight: $font-weight-normal;
   color: $text-muted;
   font-size: $font-size-base;
@@ -540,6 +540,12 @@ $nav-desktop: 1150px;
     background: $background-alt;
     color: $text;
   }
+}
+
+.drawerGuestLink {
+  min-height: 15px;
+  padding: 0 $spacing-sm;
+  gap: $spacing-sm;
 }
 
 .drawerFooter {
