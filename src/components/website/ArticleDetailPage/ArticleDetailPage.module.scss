@@ -141,7 +141,9 @@
   }
 }
 
-.authorWrap, .statsWrap, .shareWrap {
+.authorWrap,
+.statsWrap,
+.shareWrap {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -174,7 +176,7 @@
 
 .shareWrap {
   gap: 12px;
-  
+
   @media (min-width: 640px) {
     order: 5;
   }
@@ -310,20 +312,19 @@
   color: #6B7A99;
   transition: border-color $transition-fast, background $transition-fast, color $transition-fast;
   flex-shrink: 0;
+  padding: 0;
 
   svg {
-    width: 16px;
-    height: 16px;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    overflow: visible;
+    display: block;
   }
 
   @media (min-width: 640px) {
     width: 42px;
     height: 42px;
-
-    svg {
-      width: auto;
-      height: auto;
-    }
   }
 
   @media (min-width: 768px) {

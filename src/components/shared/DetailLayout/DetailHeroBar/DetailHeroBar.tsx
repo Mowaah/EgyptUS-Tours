@@ -102,29 +102,22 @@ export default function DetailHeroBar({
         <div className={styles.mobileInfoCard}>
           {location && (
             <div className={styles.mobileInfoRow}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2971E6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                <circle cx="12" cy="10" r="3"></circle>
-              </svg>
+              <Image src="/images/location-blue-filled.svg" alt="Location" width={18} height={18} />
               <span>{location}</span>
             </div>
           )}
           {duration && (
             <div className={styles.mobileInfoRow}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2971E6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg>
+              <Image src="/images/clock2-blue.svg" alt="Duration" width={18} height={18} />
               <span>{duration}</span>
             </div>
           )}
           <div className={styles.mobileInfoRow}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="#2971E6" stroke="#2971E6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-            </svg>
-            <span>{rating} ({reviewCount} reviews)</span>
+            <Image src="/images/rating-star.svg" alt="Rating" width={18} height={18} />
+            <div className={styles.ratingGroup} style={{ gap: "4px" }}>
+              <span className={styles.rating}>{rating}</span>
+              {showReviews && <span className={styles.reviews}>({reviewCount.toLocaleString()} reviews)</span>}
+            </div>
           </div>
         </div>
       )}

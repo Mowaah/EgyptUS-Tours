@@ -176,18 +176,14 @@
 
 .metaGrid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px 12px;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 8px;
   background: $gray-50;
-  padding: 16px;
+  padding: 12px;
   border-radius: 12px;
   width: 100%;
   text-align: left;
   margin-bottom: 8px;
-
-  @media (min-width: 480px) {
-    grid-template-columns: 1fr 1fr;
-  }
 
   @media (min-width: 640px) {
     gap: 24px 16px;
@@ -203,7 +199,7 @@
 }
 
 .metaLabel {
-  font-size: $font-size-13;
+  font-size: 11px;
   font-weight: 400;
   color: $gray-500-alt;
   overflow-wrap: anywhere;
@@ -214,7 +210,7 @@
 }
 
 .metaValue {
-  font-size: $font-size-sm;
+  font-size: $font-size-xs;
   font-weight: 700;
   color: $dark;
   overflow-wrap: anywhere;

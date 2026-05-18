@@ -83,13 +83,14 @@
 
 .stickyNav {
   position: sticky;
-  top: 0;
+  top: 72px;
   background: $white;
   z-index: 100;
   margin-top: 32px;
   padding: 0 20px;
 
   @media (min-width: 1150px) {
+    top: 104px; // Fallback or if $navbar-height-desktop isn't explicitly imported
     margin-top: 64px;
     padding: 0 80px;
   }

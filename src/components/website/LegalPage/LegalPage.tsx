@@ -19,7 +19,7 @@ export default function LegalPage({ data }: LegalPageProps) {
   // Simple scroll spy logic
   useEffect(() => {
     const handleScroll = () => {
-      const offset = 80; // trigger early but not too early
+      const offset = 200; // Account for the sticky navbar and tabs height
       const scrollPos = window.scrollY + offset;
 
       for (const section of data.sections) {
@@ -38,7 +38,8 @@ export default function LegalPage({ data }: LegalPageProps) {
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      const offset = 60; // tabs height + buffer
+      // Account for both the main Navbar (72px/104px) and the sticky tabs (~50px) + some buffer
+      const offset = window.innerWidth >= 1150 ? 180 : 140; 
       
       const bodyRect = document.body.getBoundingClientRect().top;
       const elementRect = el.getBoundingClientRect().top;
