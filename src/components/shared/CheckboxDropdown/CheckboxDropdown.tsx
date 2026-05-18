@@ -21,6 +21,9 @@ export interface CheckboxDropdownProps<T extends CheckboxOption = CheckboxOption
   checkboxStyle?: "radio" | "checkbox" | "none";
   dropdownClassName?: string;
   checkboxClassName?: string;
+  /** Optional class for the root wrapper (e.g. shrink-to-fit sort triggers) */
+  wrapperClassName?: string;
+  menuItemTextClassName?: string;
 }
 
 export default function CheckboxDropdown<T extends CheckboxOption>({
@@ -33,6 +36,8 @@ export default function CheckboxDropdown<T extends CheckboxOption>({
   checkboxStyle = "radio",
   dropdownClassName = "",
   checkboxClassName = "",
+  wrapperClassName = "",
+  menuItemTextClassName = "",
 }: CheckboxDropdownProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -69,7 +74,7 @@ export default function CheckboxDropdown<T extends CheckboxOption>({
   };
 
   return (
-    <div className={styles.wrapper} ref={containerRef}>
+    <div className={[styles.wrapper, wrapperClassName].filter(Boolean).join(" ")} ref={containerRef}>
       {renderTrigger(isOpen, setIsOpen)}
 
       {isOpen && (
@@ -96,7 +101,9 @@ export default function CheckboxDropdown<T extends CheckboxOption>({
                   />
                 )}
                 {renderOption ? renderOption(opt, selected) : (
-                  <span className={styles.menuItemText}>{opt.label}</span>
+                  <span className={[styles.menuItemText, menuItemTextClassName].filter(Boolean).join(" ")}>
+                    {opt.label}
+                  </span>
                 )}
               </button>
             );

@@ -41,7 +41,11 @@ export default function SortButton({
         value={selectedValue}
         onChange={handleSelect}
         checkboxStyle="radio"
-        dropdownClassName={styles.dropdownOverride}
+        wrapperClassName={!showLabel ? styles.compactDropdownWrap : undefined}
+        dropdownClassName={[styles.dropdownOverride, !showLabel && styles.dropdownOverrideCompact]
+          .filter(Boolean)
+          .join(" ")}
+        menuItemTextClassName={styles.sortMenuItemText}
         renderTrigger={(isOpen, setIsOpen) => (
           <button
             type="button"

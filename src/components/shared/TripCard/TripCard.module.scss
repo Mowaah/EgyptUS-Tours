@@ -111,16 +111,20 @@
 .meta {
   margin-bottom: 0;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
   gap: 8px;
   min-width: 0;
 
-  @media (min-width: 400px) {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+  // Stack price / duration only on very narrow cards
+  @media (max-width: 340px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  @media (min-width: 768px) {
     gap: 10px;
   }
 }
@@ -130,6 +134,8 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
+  flex-shrink: 0;
+  min-width: 0;
 }
 
 .priceLabel {
@@ -141,18 +147,29 @@
 .priceFrom {
   color: $text-light;
   font-size: $font-size-10;
-}
 
+  @media (max-width: 767px) {
+    font-size: $font-size-xs;
+  }
+}
 
 .priceValue {
   color: $primary;
   font-size: $font-size-base;
   font-weight: 500;
+
+  @media (max-width: 767px) {
+    font-size: 1.125rem; // 18px
+  }
 }
 
 .pricePer {
   color: $text-light;
   font-size: $font-size-10;
+
+  @media (max-width: 767px) {
+    font-size: $font-size-xs;
+  }
 }
 
 .viewTripBtn {
@@ -172,23 +189,34 @@
   color: $text-light;
   font-size: $font-size-10;
   min-width: 0;
+  flex-shrink: 0;
+  white-space: nowrap;
 
-  @media (min-width: 400px) {
-    font-size: $font-size-10;
+  @media (max-width: 767px) {
+    font-size: $font-size-xs;
   }
 
   span {
     display: inline-flex;
     align-items: center;
     gap: 4px;
+    white-space: nowrap;
   }
 
   svg {
     color: $text-light;
     width: 12px;
     height: 12px;
+    flex-shrink: 0;
+
+    @media (max-width: 767px) {
+      width: 14px;
+      height: 14px;
+    }
   }
-}.discountBanner {
+}
+
+.discountBanner {
   display: flex;
   flex-direction: row;
   justify-content: center;
