@@ -16,70 +16,12 @@
   }
 }
 
-// ==== Mobile compact stepper (visible below 768px) ====
-.compact {
-  width: 100%;
-  max-width: 540px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 4px 0 8px;
-
-  @media (min-width: 768px) {
-    display: none;
-  }
-}
-
-.compactRow {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.compactCounter {
-  font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
-  color: $secondary;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.compactLabel {
-  font-size: $font-size-15;
-  font-weight: $font-weight-semibold;
-  color: $dark;
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-.compactTrack {
-  width: 100%;
-  height: 4px;
-  background: #eceef1;
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.compactFill {
-  height: 100%;
-  background: $secondary;
-  border-radius: 999px;
-  transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-  min-width: 8%;
-}
-
-// ==== Desktop pill stepper (visible 768px+) ====
 .stepContainer {
-  display: none;
-
-  @media (min-width: 768px) {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    width: 100%;
-    max-width: 1216px;
-  }
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  max-width: 1216px;
 }
 
 .stepChunk {
@@ -91,35 +33,54 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
+
+  @media (min-width: 768px) {
+    gap: 12px;
+  }
 }
 
 .stepCircle {
-  width: 48px;
-  height: 48px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: $font-size-lg;
+  font-size: $font-size-sm;
   font-weight: $font-weight-bold;
   flex-shrink: 0;
   box-sizing: border-box;
   transition: background $transition-base, color $transition-base, border-color $transition-base;
+
+  @media (min-width: 768px) {
+    width: 48px;
+    height: 48px;
+    font-size: $font-size-lg;
+  }
 }
 
 .stepCircleActive {
   background: #FEE8DE;
-  border: 4px solid #FDCFBB;
+  border: 3px solid #FDCFBB;
   color: transparent;
+
+  @media (min-width: 768px) {
+    border-width: 4px;
+  }
 }
 
 .stepBullseyeDot {
-  width: 16px;
-  height: 16px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #FA6324;
   flex-shrink: 0;
+
+  @media (min-width: 768px) {
+    width: 16px;
+    height: 16px;
+  }
 }
 
 .stepCircleCompleted {
@@ -135,11 +96,15 @@
 }
 
 .stepLabel {
-  font-size: $font-size-sm;
+  font-size: 11px;
   font-weight: $font-weight-medium;
   color: #9CA3AF;
   white-space: nowrap;
   transition: color $transition-base, font-weight $transition-base;
+
+  @media (min-width: 768px) {
+    font-size: $font-size-sm;
+  }
 }
 
 .stepLabelCurrent {
@@ -153,13 +118,30 @@
 }
 
 .stepLine {
-  width: 48px;
-  height: 4px;
+  width: 16px;
+  height: 2px;
   background: #F5F5F5;
   border-radius: 42px;
-  margin-top: 22px;
-  margin-inline: 10px;
+  margin-top: 15px;
+  margin-inline: 4px;
   transition: background $transition-base;
+
+  @media (min-width: 480px) {
+    width: 24px;
+    margin-inline: 8px;
+  }
+
+  @media (min-width: 640px) {
+    width: 32px;
+    margin-inline: 10px;
+  }
+
+  @media (min-width: 768px) {
+    width: 48px;
+    height: 4px;
+    margin-top: 22px;
+    margin-inline: 10px;
+  }
 
   @media (min-width: 1024px) {
     width: 96px;

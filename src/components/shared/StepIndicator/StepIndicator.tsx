@@ -17,23 +17,7 @@ export default function StepIndicator({ steps, currentStep }: StepIndicatorProps
 
   return (
     <div className={styles.stepIndicator}>
-      {/* Mobile: compact "Step X of Y" + progress bar. Hidden on md+. */}
-      <div className={styles.compact} aria-hidden="true">
-        <div className={styles.compactRow}>
-          <span className={styles.compactCounter}>
-            Step {currentStep} of {steps.length}
-          </span>
-          <span className={styles.compactLabel}>{currentLabel}</span>
-        </div>
-        <div className={styles.compactTrack}>
-          <div
-            className={styles.compactFill}
-            style={{ width: `${progressPct}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Desktop pill stepper. Hidden below md. */}
+      {/* Horizontal pill stepper for all screen sizes */}
       <div className={styles.stepContainer}>
         {steps.map((step, index) => {
           const isCurrent = currentStep === step.number;
