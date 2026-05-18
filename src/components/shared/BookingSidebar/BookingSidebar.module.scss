@@ -16,7 +16,7 @@
   @media (min-width: 1280px) {
     border-radius: 32px;
     position: sticky;
-    top: 40px;
+    top: 130px; /* Account for sticky desktop Navbar (110px) + gap */
   }
 }
 

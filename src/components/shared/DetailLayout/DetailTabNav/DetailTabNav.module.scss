@@ -6,10 +6,13 @@
   position: sticky;
   top: 72px; // Mobile navbar height
   z-index: 50;
-  background: transparent;
+  background: $white;
+  border-bottom: 1px solid $border;
+  padding: 8px 0;
 
   @media (min-width: 1150px) {
     top: $navbar-height-desktop;
+    padding: 12px 0;
   }
 }
 

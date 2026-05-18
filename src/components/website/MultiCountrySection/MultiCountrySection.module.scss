@@ -152,7 +152,7 @@
 
   >* {
     flex-shrink: 0;
-    width: 280px;
+    width: 390px; // Wider on mobile (increased from 280px)
     scroll-snap-align: start;
 
     @media (min-width: 480px) {

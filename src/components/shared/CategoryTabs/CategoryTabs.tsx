@@ -34,6 +34,7 @@ export default function CategoryTabs({
 
   // Sliding pill indicator
   const tabsContainerRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const tabButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [indicator, setIndicator] = useState<{
     left: number;
@@ -129,6 +130,27 @@ export default function CategoryTabs({
       cancelAnimationFrame(rafId.current);
     };
   }, []);
+
+  // Scroll active tab into view horizontally on mobile
+  useEffect(() => {
+    if (useWrapLayout) return;
+    
+    const activeEl = tabButtonRefs.current[activeIndex];
+    const wrapper = wrapperRef.current;
+    if (!activeEl || !wrapper) return;
+
+    const wrapperWidth = wrapper.clientWidth;
+    const elementLeft = activeEl.offsetLeft;
+    const elementWidth = activeEl.clientWidth;
+
+    // Center the active tab button within the wrapper container
+    const targetScrollLeft = elementLeft - (wrapperWidth / 2) + (elementWidth / 2);
+    
+    wrapper.scrollTo({
+      left: targetScrollLeft,
+      behavior: "smooth"
+    });
+  }, [activeIndex, useWrapLayout]);
 
   const handleClick = (tab: string, index: number) => {
     if (active === undefined) {
@@ -254,7 +276,7 @@ export default function CategoryTabs({
 
   // Default: single scrollable pill row
   return (
-    <div className={`${styles.wrapper} ${className}`} {...readyAttr}>
+    <div className={`${styles.wrapper} ${className}`} {...readyAttr} ref={wrapperRef}>
       <div className={styles.tabs} ref={tabsContainerRef}>
         {/* Sliding indicator pill — snaps on mount, animates on switch */}
         {indicator.ready && (
