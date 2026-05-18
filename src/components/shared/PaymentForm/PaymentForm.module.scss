@@ -7,6 +7,15 @@
   gap: 20px;
   align-items: flex-start;
 
+  @media (max-width: 1279px) {
+    & > *:nth-child(1) {
+      order: 2;
+    }
+    & > *:nth-child(2) {
+      order: 1;
+    }
+  }
+
   @media (min-width: 768px) {
     gap: 24px;
   }

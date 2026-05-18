@@ -37,12 +37,21 @@
   gap: 16px;
   align-items: flex-start;
 
+  @media (max-width: 640px) {
+    flex-direction: column;
+    gap: 12px;
+  }
+
   h2 {
     margin: 0;
     font-size: $font-size-3xl;
     font-weight: $font-weight-bold;
     color: $dark;
     line-height: 1.2;
+
+    @media (max-width: 640px) {
+      font-size: $font-size-xl;
+    }
   }
 
   p {
@@ -50,6 +59,10 @@
     color: $text-light;
     font-size: $font-size-base;
     line-height: 1.5;
+
+    @media (max-width: 640px) {
+      font-size: $font-size-xs;
+    }
   }
 }
 
@@ -62,6 +75,11 @@
   font-size: $font-size-sm;
   font-weight: $font-weight-bold;
   white-space: nowrap;
+
+  @media (max-width: 640px) {
+    padding: 6px 12px;
+    font-size: $font-size-xs;
+  }
 }
 
 .statusIcon {

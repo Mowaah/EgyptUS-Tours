@@ -3,7 +3,7 @@ import styles from "./RatingBadge.module.scss";
 
 interface RatingBadgeProps {
   rating: number;
-  reviews: number;
+  reviews?: number;
   size?: "sm" | "md";
   className?: string;
 }
@@ -26,7 +26,9 @@ export default function RatingBadge({
         aria-hidden="true"
       />
       <span>{rating}</span>
-      <span className={styles.reviewCount}>({reviews.toLocaleString()})</span>
+      {reviews !== undefined && (
+        <span className={styles.reviewCount}>({reviews.toLocaleString()})</span>
+      )}
     </div>
   );
 }

@@ -46,6 +46,19 @@ export default function StepPersonalInfo({
               </div>
             </header>
 
+            <div className={styles.mobileSummary}>
+              <BookingSidebar
+                detailsId="hotel-step2-summary-mobile"
+                hotel={hotel}
+                formData={formData}
+                totalAmount={totalAmount}
+                vatAmount={vatAmount}
+                depositAmount={depositAmount}
+                totalRooms={totalRooms}
+                totalGuests={totalGuests}
+              />
+            </div>
+
             {/* Contact fields */}
             <div className={planPage.formGrid}>
               <FormField
@@ -94,19 +107,6 @@ export default function StepPersonalInfo({
                   onChange={(val) => onChange({ nationality: val })}
                 />
               </FormField>
-            </div>
-
-            <div className={styles.mobileSummary}>
-              <BookingSidebar
-                detailsId="hotel-step2-summary-mobile"
-                hotel={hotel}
-                formData={formData}
-                totalAmount={totalAmount}
-                vatAmount={vatAmount}
-                depositAmount={depositAmount}
-                totalRooms={totalRooms}
-                totalGuests={totalGuests}
-              />
             </div>
 
             {/* Terms */}

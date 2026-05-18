@@ -84,12 +84,21 @@
   align-items: flex-start;
   margin-bottom: 16px;
 
+  @media (max-width: 640px) {
+    flex-direction: column;
+    gap: 12px;
+  }
+
   h2 {
     margin: 0;
     font-size: $font-size-3xl;
     font-weight: $font-weight-bold;
     color: $atlassian-dark;
     line-height: 1.2;
+
+    @media (max-width: 640px) {
+      font-size: $font-size-xl;
+    }
   }
 
   p {
@@ -97,6 +106,10 @@
     color: $atlassian-gray;
     font-size: clamp(0.8125rem, 2.3vw, #{$font-size-base});
     line-height: 1.5;
+
+    @media (max-width: 640px) {
+      font-size: $font-size-xs;
+    }
   }
 }
 
@@ -109,6 +122,11 @@
   font-size: $font-size-sm;
   font-weight: $font-weight-bold;
   white-space: nowrap;
+
+  @media (max-width: 640px) {
+    padding: 6px 12px;
+    font-size: $font-size-xs;
+  }
 }
 
 .statusIcon {
@@ -159,6 +177,13 @@
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
+
+    & > *:nth-child(1) {
+      order: 2;
+    }
+    & > *:nth-child(2) {
+      order: 1;
+    }
   }
 }
 
@@ -188,8 +213,12 @@
 .footerSplit {
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 20px;
   flex-wrap: nowrap;
+
+  @media (min-width: 640px) {
+    gap: 24px;
+  }
 }
 
 .cancelLink {
@@ -201,6 +230,11 @@
   border: none;
   padding: 0;
   cursor: pointer;
+  white-space: nowrap;
+
+  @media (max-width: 640px) {
+    font-size: $font-size-sm;
+  }
 }
 
 .footerSplit .cancelLink {
@@ -224,6 +258,18 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+  white-space: nowrap;
+
+  @media (max-width: 640px) {
+    padding: 10px 16px;
+    font-size: $font-size-sm;
+    gap: 6px;
+
+    img {
+      width: 18px !important;
+      height: 18px !important;
+    }
+  }
 }
 
 .footerSplit .payButton {

@@ -74,8 +74,7 @@
   gap: 8px;
 
   span {
-    font-family: 'Trip Sans';
-    font-weight: 700;
+    font-weight: $font-weight-bold;
     font-size: $font-size-sm;
     line-height: 1.35;
     letter-spacing: 0.01em;
@@ -103,7 +102,7 @@
   padding: 16px 18px;
   gap: 14px;
   width: 100%;
-  border: 1.3px solid #EEF0F7;
+  border: 1.3px solid $border-strong;
   border-radius: 20px;
   background: $white;
   transition: transform 0.2s ease, border-color 0.2s ease;
@@ -132,7 +131,7 @@
   align-items: center;
   width: 44px;
   height: 44px;
-  background: #F0F4FF;
+  background: $background-blue;
   border-radius: 14px;
   flex-shrink: 0;
 
@@ -155,8 +154,7 @@
 }
 
 .cardLabel {
-  font-family: 'Trip Sans';
-  font-weight: 400;
+  font-weight: $font-weight-normal;
   font-size: $font-size-sm;
   line-height: 19px;
   letter-spacing: 0.01em;
@@ -164,8 +162,7 @@
 }
 
 .cardValue {
-  font-family: 'Trip Sans';
-  font-weight: 500;
+  font-weight: $font-weight-medium;
   font-size: $font-size-15;
   line-height: 1.35;
   letter-spacing: 0.01em;
@@ -181,12 +178,11 @@
 }
 
 .cardSubtitle {
-  font-family: 'Trip Sans';
-  font-weight: 400;
+  font-weight: $font-weight-normal;
   font-size: $font-size-sm;
   line-height: 1.45;
   letter-spacing: 0.01em;
-  color: #6B7A99;
+  color: $text-muted;
 
   @media (min-width: 480px) {
     font-size: $font-size-base;
@@ -206,8 +202,8 @@
   width: 100%;
   height: clamp(220px, 52vw, 447px);
   min-height: 220px;
-  background: #E8EDF5;
-  border: 1.3px solid #EEF0F7;
+  background: $gray-blue-100;
+  border: 1.3px solid $border-strong;
   border-radius: 20px;
   overflow: hidden;
 
@@ -226,7 +222,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba($white, 0.95);
   padding: 12px 16px;
   display: flex;
   align-items: center;
@@ -252,8 +248,7 @@
 }
 
 .overlayText {
-  font-family: 'Trip Sans';
-  font-weight: 500;
+  font-weight: $font-weight-medium;
   font-size: $font-size-sm;
   line-height: 1.4;
   letter-spacing: 0.01em;
@@ -286,9 +281,16 @@
     align-self: auto;
   }
 
+  img {
+    width: 30px !important;
+    height: 30px !important;
+    flex-shrink: 0;
+    object-fit: contain;
+    transition: filter 0.2s ease;
+  }
+
   span {
-    font-family: 'Trip Sans';
-    font-weight: 500;
+    font-weight: $font-weight-medium;
     font-size: $font-size-sm;
     line-height: 1.35;
     letter-spacing: 0.01em;
@@ -305,6 +307,10 @@
 
     span {
       color: $white;
+    }
+
+    img {
+      filter: brightness(0) invert(1);
     }
   }
 }

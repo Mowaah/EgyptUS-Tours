@@ -10,6 +10,13 @@
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
+
+    & > *:nth-child(1) {
+      order: 2;
+    }
+    & > *:nth-child(2) {
+      order: 1;
+    }
   }
 }
 

@@ -19,6 +19,15 @@
   gap: 24px;
   align-items: flex-start;
 
+  @media (max-width: 1279px) {
+    & > *:nth-child(1) {
+      order: 2;
+    }
+    & > *:nth-child(2) {
+      order: 1;
+    }
+  }
+
   @media (min-width: 1280px) {
     grid-template-columns: 1fr 400px;
     gap: 40px;
