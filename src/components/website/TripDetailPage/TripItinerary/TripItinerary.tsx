@@ -50,8 +50,9 @@ export default function TripItinerary({ trip }: Props) {
                 )}
               </div>
               <div className={styles.connectorWrap}>
-                {i > 0 && <div className={styles.connectorTrack} />}
-                {i > 0 && i <= active && <div className={styles.connectorFill} />}
+                {i < days.length - 1 && <div className={styles.connectorTrack} />}
+                {i < active && <div className={styles.connectorFill} />}
+                {i === active && i < days.length - 1 && <div className={styles.connectorFillActiveDay} />}
                 <div className={`${styles.connectorDot} ${i <= active ? styles.connectorDotActive : ''}`} />
               </div>
               <div className={styles.dayInfo}>

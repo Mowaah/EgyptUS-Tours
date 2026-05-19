@@ -123,6 +123,7 @@ export default function TripDetailPage({ trip }: TripDetailPageProps) {
             <TripOverview trip={trip} />
             <TripInclusions trip={trip} />
             <TripExclusions trip={trip} />
+            <TripTravelerPhotos trip={trip} />
           </div>
 
           {/* ── Sticky booking sidebar ── */}
@@ -130,9 +131,6 @@ export default function TripDetailPage({ trip }: TripDetailPageProps) {
             <TripBookingWidget trip={trip} />
           </div>
         </div>
-
-        {/* Traveler photos outside sidebar grid */}
-        <TripTravelerPhotos trip={trip} />
       </div>
 
       {/* ── Full-width pricing section (Swapped here) ── */}
