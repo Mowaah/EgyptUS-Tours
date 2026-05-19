@@ -17,7 +17,7 @@ export default function DetailTabNav({ tabs }: DetailTabNavProps) {
     const observer = new IntersectionObserver(
       (entries) => {
         if (isClickScrolling.current) return; // Ignore intersections during manual scroll
-        
+
         // We only care about entries that are currently intersecting
         const visibleEntries = entries.filter(e => e.isIntersecting);
         if (visibleEntries.length > 0) {
@@ -27,12 +27,12 @@ export default function DetailTabNav({ tabs }: DetailTabNavProps) {
       },
       { rootMargin: "-190px 0px -50% 0px", threshold: 0 }
     );
-    
+
     tabs.forEach((tab) => {
       const el = document.getElementById(tab.id);
       if (el) observer.observe(el);
     });
-    
+
     return () => observer.disconnect();
   }, [tabs]);
 
@@ -41,7 +41,7 @@ export default function DetailTabNav({ tabs }: DetailTabNavProps) {
     if (el) {
       isClickScrolling.current = true;
       if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-      
+
       // Re-enable observer after smooth scroll completes (approx 800ms)
       scrollTimeout.current = setTimeout(() => {
         isClickScrolling.current = false;
@@ -49,7 +49,7 @@ export default function DetailTabNav({ tabs }: DetailTabNavProps) {
 
       const isDesktop = window.innerWidth >= 1150;
       const navHeight = isDesktop ? 110 : 72; // Desktop navbar is 110px tall and sticky
-      const tabNavHeight = 60; 
+      const tabNavHeight = 60;
       const offset = navHeight + tabNavHeight + 20;
       const top = el.getBoundingClientRect().top + window.scrollY - offset;
       window.scrollTo({ top, behavior: "smooth" });
@@ -65,12 +65,9 @@ export default function DetailTabNav({ tabs }: DetailTabNavProps) {
           tabs={tabs.map(tab => tab.label)}
           active={activeIndex !== -1 ? activeIndex : 0}
           onTabChange={(_: string, idx: number) => {
-            const targetTab = tabs[idx];
-            if (targetTab) {
-              const id = targetTab.id;
-              setActiveTab(id);
-              scrollTo(id);
-            }
+            const id = tabs[idx].id;
+            setActiveTab(id);
+            scrollTo(id);
           }}
           wrap
           disableAnimation

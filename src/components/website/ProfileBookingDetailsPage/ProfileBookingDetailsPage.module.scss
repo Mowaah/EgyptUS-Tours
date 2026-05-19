@@ -178,10 +178,11 @@
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
 
-    & > *:nth-child(1) {
+    &>*:nth-child(1) {
       order: 2;
     }
-    & > *:nth-child(2) {
+
+    &>*:nth-child(2) {
       order: 1;
     }
   }
@@ -219,6 +220,10 @@
   @media (min-width: 640px) {
     gap: 24px;
   }
+
+  @media (max-width: 380px) {
+    gap: 8px;
+  }
 }
 
 .cancelLink {
@@ -241,6 +246,10 @@
   flex: 0 0 25%;
   min-width: 0;
   text-align: center;
+
+  @media (max-width: 380px) {
+    flex: 0 0 auto;
+  }
 }
 
 .payButton {
@@ -248,7 +257,8 @@
   background: $primary;
   color: $background;
   border-radius: 999px;
-  padding: 12px 32px;
+  padding: 16px 32px;
+  height: 56px;
   font-size: $font-size-base;
   font-weight: $font-weight-medium;
   line-height: 1.5;
@@ -275,4 +285,9 @@
 .footerSplit .payButton {
   flex: 1 1 75%;
   min-width: 0;
+
+  @media (max-width: 380px) {
+    flex: 1 1 auto;
+    padding: 10px 12px;
+  }
 }

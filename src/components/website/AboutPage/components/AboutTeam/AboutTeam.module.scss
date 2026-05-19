@@ -207,6 +207,7 @@
       width: auto;
       flex: 1;
       align-items: center;
+      justify-content: flex-start;
     }
   }
 }
@@ -271,6 +272,13 @@
   font-weight: 400;
   line-height: 18px;
   text-align: center;
+
+  @media (max-width: 639px) {
+    min-height: 36px; // Enforce 2 lines height so everything aligns perfectly
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
 
   @media (min-width: 640px) {
     font-size: $font-size-sm;
