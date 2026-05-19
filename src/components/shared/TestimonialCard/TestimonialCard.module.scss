@@ -117,3 +117,9 @@
   font-size: $font-size-xs;
   color: $text-light;
 }
+
+.locationWrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}

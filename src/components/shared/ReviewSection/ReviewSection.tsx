@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Button } from "@/components/shared";
+import { ReviewGrid } from "@/components/shared";
 import styles from "./ReviewSection.module.scss";
 
 export interface Review {
@@ -23,30 +23,11 @@ export default function ReviewSection({ reviews, title = "Traveler Reviews", id 
   return (
     <section id={id} className={styles.section}>
       <h2 className={styles.heading}>{title}</h2>
-
-      <div className={styles.grid}>
-        {reviews.map((review, i) => (
-          <ReviewCard key={i} review={review} />
-        ))}
-      </div>
-
-      <div className={styles.loadMoreWrap}>
-        <Button
-          variant="outline"
-          icon={
-            <Image
-              src="/images/arrows/arrow-right-blue.svg"
-              alt=""
-              width={20}
-              height={20}
-              style={{ transform: "rotate(90deg)" }}
-            />
-          }
-          iconPosition="right"
-        >
-          Load More
-        </Button>
-      </div>
+      <ReviewGrid 
+        items={reviews} 
+        pageSize={6} 
+        renderItem={(review, i) => <ReviewCard key={i} review={review} />} 
+      />
     </section>
   );
 }

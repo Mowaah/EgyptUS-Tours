@@ -59,9 +59,9 @@ export default function TripDetailPage({ trip }: TripDetailPageProps) {
       {/* ── Gallery & Hero Bar ── */}
       <div className={styles.heroSection}>
         <div className={styles.galleryWrap}>
-          <DetailGallery 
-            images={trip.images || [trip.image]} 
-            title={trip.title} 
+          <DetailGallery
+            images={trip.images || [trip.image]}
+            title={trip.title}
             rating={trip.rating ?? 0}
             reviewCount={trip.reviewCount ?? 0}
             description={trip.description}
@@ -81,7 +81,7 @@ export default function TripDetailPage({ trip }: TripDetailPageProps) {
                 <Button
                   variant="primary"
                   size="lg"
-                  icon={<Image src="/images/brochure.svg" alt="" width={18} height={18} style={{filter: 'brightness(0) invert(1)'}} />}
+                  icon={<Image src="/images/brochure.svg" alt="" width={18} height={18} style={{ filter: 'brightness(0) invert(1)' }} />}
                   iconPosition="left"
                 >
                   Get the Brochure

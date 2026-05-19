@@ -1,0 +1,41 @@
+@use "@/styles/variables" as *;
+
+.reviewsWrap {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 72px;
+}
+
+.grid {
+  display: grid;
+  gap: 24px;
+  /* Columns can be overridden by passing a custom gridClassName or we can default to 3 columns */
+  grid-template-columns: repeat(3, 1fr);
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.loadMoreWrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.fadeOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 288px;
+  background: linear-gradient(360deg, #FFFFFF 0%, rgba(255, 255, 255, 0.1) 100%);
+  pointer-events: none;
+  z-index: 2;
+}

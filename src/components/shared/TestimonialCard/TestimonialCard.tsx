@@ -41,8 +41,10 @@ export default function TestimonialCard({ testimonial }: Props) {
         <div className={styles.reviewer}>
           <span className={styles.reviewerName}>{testimonial.name}</span>
           <div className={styles.reviewerMeta}>
-            <Image src="/images/en.svg" alt="flag" width={18} height={12} />
-            <span className={styles.reviewerLocation}>{testimonial.location}</span>
+            <div className={styles.locationWrap}>
+              <Image src="/images/en.svg" alt="flag" width={18} height={12} />
+              <span className={styles.reviewerLocation}>{testimonial.location}</span>
+            </div>
             <StarRating value={testimonial.rating} />
           </div>
         </div>

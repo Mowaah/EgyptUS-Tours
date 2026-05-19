@@ -4,7 +4,7 @@ import Image from "next/image";
 import Button from "@/components/shared/Button/Button";
 import TransportationOverview from "./TransportationOverview/TransportationOverview";
 import TransportationFeatures from "./TransportationFeatures/TransportationFeatures";
-import { ReviewSection, Review } from "@/components/shared";
+import TransportationReviews from "./TransportationReviews/TransportationReviews";
 import BookingWidget from "./BookingWidget/BookingWidget";
 import styles from "./TransportationDetailPage.module.scss";
 
@@ -17,12 +17,6 @@ const TABS = [
   { id: "overview", label: "Overview" },
   { id: "features", label: "Features & Amenities" },
   { id: "reviews", label: "Traveler Reviews" },
-];
-
-const MOCK_REVIEWS: Review[] = [
-  { title: "Unforgettable Journey", body: "An absolute pleasure to travel in such comfort. The driver was professional and the car was immaculate.", author: "Sarah Jenkins", date: "January 10, 2025", rating: 5 },
-  { title: "Perfect Service", body: "The location, comfort, and hospitality were outstanding. Waking up to the Nile view was simply magical.", author: "Anna & Marco", date: "January 28, 2025", rating: 5 },
-  { title: "Luxury Experience", body: "Elegant rooms, attentive staff, and a peaceful ambiance made our stay absolutely memorable.", author: "Michael Thompson", date: "January 07, 2025", rating: 5 },
 ];
 
 export default function TransportationDetailPage({ vehicleId }: TransportationDetailPageProps) {
@@ -106,7 +100,7 @@ export default function TransportationDetailPage({ vehicleId }: TransportationDe
       </div>
 
       <div className={styles.container}>
-        <ReviewSection reviews={MOCK_REVIEWS} title="Travelers' Reviews" />
+        <TransportationReviews />
       </div>
     </div>
   );
