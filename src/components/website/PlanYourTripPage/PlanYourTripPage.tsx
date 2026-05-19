@@ -13,6 +13,7 @@ import { SuccessModal, Breadcrumb, PageHeader, StepIndicator } from "@/component
 import StepDestination from "./steps/Destination/StepDestination";
 import StepTravelerInfo from "./steps/TravelerInfo/StepTravelerInfo";
 import StepPreferences from "./steps/Preferences/StepPreferences";
+import StepReview from "./steps/Review/StepReview";
 
 const initialTripData: TripData = {
   destinations: [],
@@ -29,10 +30,15 @@ const initialTripData: TripData = {
     tripDetails: "",
   },
   preferences: {
+    tripCategory: [],
+    duration: "",
+    budget: "",
     hotelCategory: "",
     roomType: [],
     transportation: "",
     experiences: [],
+    activities: [],
+    contactMethod: "",
   },
 };
 
@@ -82,15 +88,15 @@ export default function PlanYourTripPage() {
   };
 
   const handleContinue = () => {
-    if (currentStep < 3) {
-      setCurrentStep((s) => (s === 1 ? 2 : 3));
+    if (currentStep < 4) {
+      setCurrentStep((s) => (s + 1) as PlanStep);
       return;
     }
     setShowModal(true);
   };
 
   const handlePrevious = () => {
-    setCurrentStep((s) => (s === 3 ? 2 : 1));
+    setCurrentStep((s) => Math.max(1, s - 1) as PlanStep);
   };
 
   const handleReset = () => {
@@ -143,9 +149,17 @@ export default function PlanYourTripPage() {
           {currentStep === 3 && (
             <StepPreferences
               preferences={tripData.preferences}
-              transportOptions={TRANSPORT_OPTIONS}
-              experienceOptions={EXPERIENCE_OPTIONS}
               onSetPreferences={setPreferences}
+              tripDetails={tripData.travelerInfo.tripDetails}
+              onTripDetailsChange={(val) => handleTravelerChange("tripDetails", val)}
+              onPrevious={handlePrevious}
+              onContinue={handleContinue}
+            />
+          )}
+
+          {currentStep === 4 && (
+            <StepReview
+              tripData={tripData}
               onPrevious={handlePrevious}
               onContinue={handleContinue}
             />
@@ -157,9 +171,9 @@ export default function PlanYourTripPage() {
         <SuccessModal
           title="Your Custom Trip Request Has Been Received!"
           message="Thank you for designing your journey with us. Our travel specialists are reviewing your preferences and will contact you within 24 hours."
-          primaryButtonText="Explore More Experiences"
-          onPrimaryClick={handleReset}
-          onClose={handleReset}
+          primaryButtonText="View Request Details"
+          onPrimaryClick={() => router.push("/profile?tab=requests")}
+          onClose={() => router.push("/")}
         />
       )}
     </div>

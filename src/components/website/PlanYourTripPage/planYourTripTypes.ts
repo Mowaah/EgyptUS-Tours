@@ -1,4 +1,4 @@
-export type PlanStep = 1 | 2 | 3;
+export type PlanStep = 1 | 2 | 3 | 4;
 
 export type PlanDestination = {
   id: string;
@@ -21,9 +21,14 @@ export type TripData = {
     tripDetails: string;
   };
   preferences: {
+    tripCategory: string[];
+    duration: string;
+    budget: string;
     hotelCategory: string;
     roomType: string[];
     transportation: string;
     experiences: string[];
+    activities: string[];
+    contactMethod: string;
   };
 };

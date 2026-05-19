@@ -132,18 +132,6 @@ export default function StepTravelerInfo({
               </div>
             );
           })}
-
-          <FormField
-            id="pti-details"
-            label="Trip Details"
-            isTextarea
-            wrapperClassName={pageStyles.formGroupFull}
-            className={styles.formTextarea}
-            placeholder="Share your trip details"
-            value={travelerInfo.tripDetails}
-            onChange={(e) => onTravelerChange("tripDetails", e.target.value)}
-            rows={4}
-          />
         </div>
       </div>
 

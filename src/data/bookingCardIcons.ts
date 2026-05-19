@@ -39,9 +39,9 @@ export const bookingCardIcons = {
     companyName: "/images/profile/booking/trip-name.svg",
     country: "/images/profile/booking/destination.svg",
     contactPerson: "/images/profile/booking/travelers.svg",
-    email: "/images/email.svg",
-    phone: "/images/phone.svg",
-    website: "/images/languages.svg",
+    email: "/images/profile/booking/email.svg",
+    phone: "/images/profile/booking/phone.svg",
+    website: "/images/profile/booking/website.svg",
   },
 } as const;
 

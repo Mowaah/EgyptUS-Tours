@@ -71,6 +71,16 @@ export interface B2BRequestDetails {
   website: string;
 }
 
+/** Plan Your Trip request grid (3×2) */
+export interface PlanYourTripRequestDetails {
+  destination: string;
+  tripCategory: string;
+  durationLabel: string;
+  travelDates: string;
+  budget: string;
+  travelersLabel: string;
+}
+
 type BookingCardShared = {
   imageSrc: string;
   imageAlt?: string;
@@ -109,6 +119,10 @@ export type TripBookingCardProps =
   | (BookingCardShared & {
       variant: "b2b";
       details: B2BRequestDetails;
+    })
+  | (BookingCardShared & {
+      variant: "plan_your_trip";
+      details: PlanYourTripRequestDetails;
     });
 
 const TRIP_ICONS = bookingCardIcons.trip;
@@ -171,7 +185,9 @@ export default function TripBookingCard(props: TripBookingCardProps) {
           ? "MICE Event"
           : props.variant === "b2b"
             ? "B2B Event"
-        : "Trip Booking";
+            : props.variant === "plan_your_trip"
+              ? "Plan Your Trip"
+              : "Trip Booking";
 
   return (
     <article className={styles.card}>
@@ -402,6 +418,39 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                 icon={B2B_ICONS.website}
                 label="Website"
                 value={props.details.website}
+              />
+            </div>
+          ) : props.variant === "plan_your_trip" ? (
+            <div className={styles.detailGridHotel}>
+              <DetailCell
+                icon={bookingCardIcons.trip.destination}
+                label="Destination"
+                value={props.details.destination}
+              />
+              <DetailCell
+                icon="/images/summary/trip.svg"
+                label="Trip Category"
+                value={props.details.tripCategory}
+              />
+              <DetailCell
+                icon={bookingCardIcons.trip.duration}
+                label="Duration"
+                value={props.details.durationLabel}
+              />
+              <DetailCell
+                icon={bookingCardIcons.trip.returnDate}
+                label="Travel Dates"
+                value={props.details.travelDates}
+              />
+              <DetailCell
+                icon="/images/profile/booking/budget-orange.svg"
+                label="Budget"
+                value={props.details.budget}
+              />
+              <DetailCell
+                icon={bookingCardIcons.trip.travelers}
+                label="Travelers"
+                value={props.details.travelersLabel}
               />
             </div>
           ) : (

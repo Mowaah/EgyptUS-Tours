@@ -28,6 +28,7 @@ import {
   mockTransportBookings,
   mockMiceRequests,
   mockB2BRequests,
+  mockPlanYourTripRequests,
 } from "@/data/profilePageMocks";
 import styles from "./ProfilePage.module.scss";
 
@@ -201,6 +202,29 @@ export default function ProfilePage() {
         );
       case "requests":
         if (requestCategoryIndex === 0) {
+          if (mockPlanYourTripRequests.length === 0) {
+            return (
+              <EmptyState
+                framedIcon
+                iconSrc="/images/profile/glyphs/requests.svg"
+                iconWidth={150}
+                iconHeight={150}
+                title="No custom trip requests yet"
+                description="Use our Plan Your Trip planner to build your custom itinerary and get a proposal."
+                buttonText="Plan your trip"
+                buttonHref="/plan-your-trip"
+              />
+            );
+          }
+          return (
+            <div className={styles.bookingsList}>
+              {mockPlanYourTripRequests.map((request, index) => (
+                <TripBookingCard key={`plan-your-trip-request-${index}`} {...request} />
+              ))}
+            </div>
+          );
+        }
+        if (requestCategoryIndex === 1) {
           if (mockMiceRequests.length === 0) {
             return (
               <EmptyState

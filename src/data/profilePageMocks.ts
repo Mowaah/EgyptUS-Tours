@@ -108,7 +108,7 @@ export const mockFavoriteHotels: Hotel[] = [
 
 export const profileFavoriteCategoryTabs = ["Trips", "Hotels"];
 export const profileBookingCategoryTabs = ["Trips", "Hotels", "Transportation"];
-export const profileRequestCategoryTabs = ["Events (MICE)", "B2B"];
+export const profileRequestCategoryTabs = ["Plan Your Trip", "Events (MICE)", "B2B"];
 
 const sharedTripBookingDetails: TripBookingDetails = {
   tripName: "Mediterranean",
@@ -310,6 +310,43 @@ export const mockB2BRequests: TripBookingCardProps[] = [
     details: sharedB2BRequestDetails,
     primaryLabel: "View Details",
     primaryHref: "/profile/requests-details?type=b2b&status=proposal_sent",
+    infoMessage: "Proposal has been sent to your email",
+  },
+];
+
+export const mockPlanYourTripRequests: TripBookingCardProps[] = [
+  {
+    variant: "plan_your_trip",
+    imageSrc: "/images/pyramids.jpg",
+    tripTitle: "TRP-2026-021",
+    status: "proposal_in_progress",
+    details: {
+      destination: "Egypt • Dubai • Greece",
+      tripCategory: "Luxury Tour",
+      durationLabel: "7 Nights / 8 Days",
+      travelDates: "May 10 -> May 17, 2026",
+      budget: "$3,000 - $5,000",
+      travelersLabel: "2 Adults • 1 Child",
+    },
+    primaryLabel: "View Details",
+    primaryHref: "/profile/requests-details?type=plan_your_trip&status=proposal_in_progress",
+    infoMessage: "Proposal expected within 24–48 hrs",
+  },
+  {
+    variant: "plan_your_trip",
+    imageSrc: "/images/pyramids.jpg",
+    tripTitle: "TRP-2026-021",
+    status: "proposal_sent",
+    details: {
+      destination: "Egypt • Dubai • Greece",
+      tripCategory: "Luxury Tour",
+      durationLabel: "7 Nights / 8 Days",
+      travelDates: "May 10 -> May 17, 2026",
+      budget: "$3,000 - $5,000",
+      travelersLabel: "2 Adults • 1 Child",
+    },
+    primaryLabel: "View Details",
+    primaryHref: "/profile/requests-details?type=plan_your_trip&status=proposal_sent",
     infoMessage: "Proposal has been sent to your email",
   },
 ];

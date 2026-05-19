@@ -71,13 +71,54 @@ export const ROOM_TYPE_OPTIONS = [
 export const EXPERIENCE_OPTIONS = [
   "Private Tour Guide",
   "Photographer",
-  "Special Event during trip",
-  "Nile Cruise",
-  "Desert Safari",
+  "Luxury Yacht",
+  "Honeymoon Setup",
+  "Romantic Dinner",
+] as const;
+
+export const TRIP_CATEGORY_OPTIONS = [
+  "Honeymoon",
+  "Multi-Country Tour",
+  "Luxury Tour",
+  "Desert Adventure",
+  "Historical Tour",
+] as const;
+
+export const DURATION_OPTIONS = [
+  "1-3 Days",
+  "4-6 Days",
+  "7-10 Days",
+  "11-14 Days",
+  "15+ Days",
+  "Flexible",
+] as const;
+
+export const BUDGET_OPTIONS = [
+  "$500 - $1,000",
+  "$1,000 - $3,000",
+  "$3,000 - $5,000",
+  "$5,000+",
+  "Flexible",
+] as const;
+
+export const ACTIVITIES_OPTIONS = [
+  "Shopping",
+  "Food Tours",
+  "Diving",
+  "Hiking",
+  "Snorkeling",
+  "Snorkeling & Diving",
+] as const;
+
+export const CONTACT_METHOD_OPTIONS = [
+  "WhatsApp",
+  "Email",
+  "Phone Call",
 ] as const;
 
 export const STEPS: Array<{ number: PlanStep; label: string }> = [
   { number: 1, label: "Destination" },
   { number: 2, label: "Traveler Information" },
-  { number: 3, label: "Travel Preferences" },
+  { number: 3, label: "Trip Details & Preferences" },
+  { number: 4, label: "Review & Submit" },
 ];
