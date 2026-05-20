@@ -266,6 +266,14 @@
   }
 }
 
+.mobileBr {
+  display: none;
+
+  @media (max-width: 639px) {
+    display: inline;
+  }
+}
+
 .statDesc {
   color: $text-light;
   font-size: 13px;
@@ -274,10 +282,12 @@
   text-align: center;
 
   @media (max-width: 639px) {
-    min-height: 36px; // Enforce 2 lines height so everything aligns perfectly
+    min-height: 30px; // Enforce 2 lines height so everything aligns perfectly
     display: flex;
     align-items: flex-start;
     justify-content: center;
+    font-size: 11.5px;
+    line-height: 15px;
   }
 
   @media (min-width: 640px) {

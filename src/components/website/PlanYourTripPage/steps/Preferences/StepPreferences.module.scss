@@ -12,14 +12,15 @@
 .hotelCategoryValue {
   margin-left: 8px;
   color: $dark;
-  font-weight: $font-weight-medium;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-normal;
   font-variant-numeric: tabular-nums;
 }
 
 .dropdownValue {
   font-size: $font-size-sm;
   color: $dark;
-  font-weight: $font-weight-medium;
+  font-weight: $font-weight-normal;
 }
 
 .prefOptionRow {

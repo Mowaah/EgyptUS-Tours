@@ -173,9 +173,8 @@ export default function TimePicker({ value, onChange }: TimePickerProps) {
           <button
             key={p}
             type="button"
-            className={`${styles.ampmBtn} ${
-              time.period === p ? styles.ampmSelected : styles.ampmUnselected
-            }`}
+            className={`${styles.ampmBtn} ${time.period === p ? styles.ampmSelected : styles.ampmUnselected
+              }`}
             onClick={() => update({ period: p })}
           >
             {p}

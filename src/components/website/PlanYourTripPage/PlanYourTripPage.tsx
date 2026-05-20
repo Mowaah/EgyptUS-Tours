@@ -121,7 +121,7 @@ export default function PlanYourTripPage() {
       />
 
       <div ref={stepIndicatorRef}>
-        <StepIndicator steps={STEPS} currentStep={currentStep} />
+        <StepIndicator steps={STEPS} currentStep={currentStep} wrapLabels={true} />
       </div>
 
       <main className={styles.mainContent}>

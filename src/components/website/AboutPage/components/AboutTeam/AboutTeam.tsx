@@ -137,21 +137,21 @@ export default function AboutTeam() {
                 <Image src="/images/whytrustus/green-profile.svg" alt="" width={24} height={24} className={styles.statIcon} />
               </div>
               <span className={styles.statValue}>100%</span>
-              <span className={styles.statDesc}>Dedicated Corporate Focus</span>
+              <span className={styles.statDesc}>Dedicated <br className={styles.mobileBr} /> Corporate Focus</span>
             </div>
             <div className={styles.statItem}>
               <div className={styles.statIconWrap}>
                 <Image src="/images/whytrustus/award.svg" alt="" width={24} height={24} className={styles.statIcon} />
               </div>
               <span className={styles.statValue}>15,000+</span>
-              <span className={styles.statDesc}>Attendees Managed</span>
+              <span className={styles.statDesc}>Attendees <br className={styles.mobileBr} /> Managed</span>
             </div>
             <div className={styles.statItem}>
               <div className={styles.statIconWrap}>
                 <Image src="/images/whytrustus/chart-arrow.svg" alt="" width={24} height={24} className={styles.statIcon} />
               </div>
               <span className={styles.statValue}>8+ Years</span>
-              <span className={styles.statDesc}>Industry Experience</span>
+              <span className={styles.statDesc}>Industry <br className={styles.mobileBr} /> Experience</span>
             </div>
           </div>
         </div>

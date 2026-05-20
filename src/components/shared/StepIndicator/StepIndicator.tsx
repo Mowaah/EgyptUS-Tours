@@ -8,15 +8,16 @@ export interface StepDef {
 interface StepIndicatorProps {
   steps: StepDef[];
   currentStep: number;
+  wrapLabels?: boolean;
 }
 
-export default function StepIndicator({ steps, currentStep }: StepIndicatorProps) {
+export default function StepIndicator({ steps, currentStep, wrapLabels = false }: StepIndicatorProps) {
   const currentIndex = Math.max(0, currentStep - 1);
   const currentLabel = steps[currentIndex]?.label ?? "";
   const progressPct = steps.length > 1 ? (currentIndex / (steps.length - 1)) * 100 : 100;
 
   return (
-    <div className={styles.stepIndicator}>
+    <div className={`${styles.stepIndicator} ${wrapLabels ? styles.wrapLabels : ""}`}>
       {/* Horizontal pill stepper for all screen sizes */}
       <div className={styles.stepContainer}>
         {steps.map((step, index) => {

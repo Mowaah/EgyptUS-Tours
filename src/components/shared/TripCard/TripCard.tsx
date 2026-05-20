@@ -10,13 +10,14 @@ interface TripCardProps {
   trip: Trip;
   onFavoriteToggle?: (id: string) => void;
   discountLabel?: React.ReactNode;
+  className?: string;
 }
 
-export default function TripCard({ trip, onFavoriteToggle, discountLabel }: TripCardProps) {
+export default function TripCard({ trip, onFavoriteToggle, discountLabel, className = "" }: TripCardProps) {
   const tripDetailsHref = `/trips/${trip.id}`;
 
   return (
-    <div className={styles.card}>
+    <div className={`${styles.card} ${className}`}>
       <Link href={tripDetailsHref} className={styles.imageWrapper}>
         <Image
           src={trip.image}

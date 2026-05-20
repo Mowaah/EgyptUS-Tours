@@ -12,9 +12,7 @@
 
 // Container
 .container {
-  max-width: $container-max;
-  margin: 0 auto;
-  padding: 0 16px;
+  @include container;
   display: flex;
   flex-direction: column;
   gap: 40px;
@@ -142,6 +140,13 @@
   }
 }
 
+.profileTripCard {
+  > a:first-child {
+    aspect-ratio: auto !important;
+    height: 202px !important;
+  }
+}
+
 // Orange dotted line — directly under sidebar, left edge flush with viewport
 .decorationBottom {
   display: none;
@@ -151,7 +156,7 @@
   z-index: 0;
   overflow: visible;
   // Pull left so graphic aligns with screen edge (matches .container padding + centering)
-  margin-left: calc(-16px - max(0px, (100vw - #{$container-max}) / 2));
+  margin-left: calc(-40px - max(0px, (100vw - #{$container-max}) / 2));
 
   @media (min-width: 1024px) {
     display: block;

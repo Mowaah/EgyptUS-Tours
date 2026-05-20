@@ -145,11 +145,12 @@ export default function StepPreferences({
                         value={opt.starCount}
                         formatDisplayValue={(n) => n.toFixed(1)}
                         showValue
+                        valueClassName={styles.hotelCategoryValue}
                         size={12}
                       />
                     </span>
                   ) : (
-                    <span>{opt.value}</span>
+                    <span className={styles.dropdownValue}>{opt.value}</span>
                   )}
                 </span>
               )}

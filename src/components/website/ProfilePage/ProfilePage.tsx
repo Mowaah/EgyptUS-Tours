@@ -101,6 +101,7 @@ export default function ProfilePage() {
                   key={trip.id}
                   trip={trip}
                   onFavoriteToggle={handleTripFavoriteToggle}
+                  className={styles.profileTripCard}
                 />
               ))}
             </div>
