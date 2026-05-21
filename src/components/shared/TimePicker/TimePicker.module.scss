@@ -5,91 +5,77 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
-  align-items: stretch; // children fill the full height
+  align-items: stretch;
   padding: 10px 24px;
   gap: 16px;
   background: $white;
   border: 1px solid $border;
   box-shadow: 0px 8px 16px rgba(0, 0, 77, 0.08);
   border-radius: 12px;
-  width: 386px;
+  width: 300px;
   height: 240px;
-  position: relative; // anchor for full-width selection lines
+  position: relative; // anchor for selection lines
 }
 
-// ── Left drum: H : M : S ──────────────────────────────────────────────────────
-.drum {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  justify-content: center;
-  gap: 8px;
-  flex: 1;
+// ── Library Picker root ───────────────────────────────────────────────────────
+// react-mobile-picker renders: display:flex, justifyContent:center,
+// overflow:hidden, position:relative, height:220px (from prop).
+// We remove its gradient mask and let our own item opacity handle fading.
+.picker {
+  flex: 1; // fill available width inside .dropdown
+  width: 100%;
+
+  // Enable a smooth fade out at the top and bottom to create a 3D cylindrical drum illusion
+  mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
 }
 
-// Selection lines span the FULL inner width of the dropdown.
-// They are absolute on .dropdown, so the gap between drum and AM/PM
-// is bridged and the line looks continuous.
-.selectionLineTop,
-.selectionLineBottom {
-  position: absolute;
-  left: 24px; // respect horizontal padding
-  right: 24px;
-  height: 0.5px;
-  background: #8B8B8B;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.selectionLineTop {
-  top: calc(10px + (220px / 3)); // padding-top + 1/3 inner height
-}
-
-.selectionLineBottom {
-  top: calc(10px + (220px / 3) * 2);
-}
-
-// ── Each column ───────────────────────────────────────────────────────────────
+// ── Each scrollable column ────────────────────────────────────────────────────
+// Library sets: flex: 1 1 0%, maxHeight: 100%, transform (scroll position)
 .column {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100%;
+  width: 50px;
+  text-align: center;
   cursor: ns-resize;
-  touch-action: none;
   user-select: none;
   -webkit-user-select: none;
+  touch-action: none;
 }
 
-// ── Individual row ────────────────────────────────────────────────────────────
-.row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  flex: 1; // each of the 3 rows takes exactly 1/3 of column height
+// ── Each item cell ────────────────────────────────────────────────────────────
+// Library sets: height:73px, display:flex, justifyContent:center, alignItems:center
+.item {
+  width: 100%;
+  flex-shrink: 0; // prevent flex crushing if parent ever becomes flex
+  cursor: pointer;
+}
+
+// ── Item text — selected (middle row) ─────────────────────────────────────────
+.rowSelected {
+  display: inline-block;
   font-family: "Inter", sans-serif;
   font-size: 20px;
   line-height: 24px;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: color 0.12s ease;
-}
-
-// Active (selected) row — bright primary blue
-.rowSelected {
   color: $primary;
   font-weight: 600;
+  transform: scale(1.15); // Grow slightly when selected
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease;
 }
 
-// Faded rows (prev / next)
+// ── Item text — faded (prev / next rows) ──────────────────────────────────────
 .rowFaded {
+  display: inline-block;
+  font-family: "Inter", sans-serif;
+  font-size: 20px;
+  line-height: 24px;
   color: $dark;
   font-weight: 500;
   opacity: 0.35;
+  transform: scale(0.9); // Shrink slightly when unselected
+  transition: transform 0.2s ease, color 0.2s ease, opacity 0.2s ease;
 }
 
 // ── Colon separator ───────────────────────────────────────────────────────────
+// These <span>s are direct children of the Picker's flex container
 .separator {
   font-family: "Inter", sans-serif;
   font-weight: 600;
@@ -97,7 +83,24 @@
   line-height: 24px;
   color: $primary;
   flex-shrink: 0;
-  align-self: center;
+  align-self: center; // vertically center within the Picker flex row
+  z-index: 3; // sit above the selection lines
+  pointer-events: none;
+}
+
+// ── Full-width selection area (Highlight Pill) ────────────────────────────────
+.selectionHighlight {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  height: 73px; // same as item height
+  top: calc(10px + (220px / 3)); // padding-top + 1 item height
+  background: rgba(0, 85, 255, 0.05); // very soft tint
+  border-top: 1px solid rgba(0, 0, 77, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 77, 0.08);
+  border-radius: 12px;
+  pointer-events: none;
+  z-index: 2;
 }
 
 // ── AM / PM column ────────────────────────────────────────────────────────────
@@ -105,34 +108,44 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end; // PM at row 2, AM at row 3
+  justify-content: flex-end; // Push to bottom so AM is row 2, PM is row 3
   flex-shrink: 0;
+  padding-bottom: 4px; // small adjustment for visual balance
 }
 
 .ampmBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 16px;
-  width: 76px;
-  flex: 0 0 33.333%; // each button is exactly 1/3 of the column height
+  width: 64px;
+  height: 56px; // Slightly smaller than 73px to allow spacing
+  margin: 8px 0; // Creates spacing between AM and PM
+  border-radius: 12px;
   font-family: "Inter", sans-serif;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 24px;
   cursor: pointer;
-  background: none;
+  background: transparent;
   border: none;
   flex-shrink: 0;
-  transition: color 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .ampmSelected {
   color: $primary;
+  background: rgba(0, 85, 255, 0.08);
   font-weight: 600;
+  transform: scale(1.05);
 }
 
 .ampmUnselected {
   color: $dark;
   font-weight: 500;
   opacity: 0.5;
+  transform: scale(0.95);
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.03);
+    opacity: 0.8;
+  }
 }

@@ -1,115 +1,44 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
+import Picker, { PickerValue } from "react-mobile-picker";
 import styles from "./TimePicker.module.scss";
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
-function pad(n: number) {
-  return String(n).padStart(2, "0");
-}
+// ── Infinite-loop data (module-level — built once) ────────────────────────────
+// Strategy: use unique index-based keys ("h-0" … "h-59") so the library's
+// findIndex() always hits the exact slot we want, avoiding position jumps.
+// 5 repetitions → ~2 full rotations of buffer on each side.
 
-function mod(n: number, m: number) {
-  return ((n % m) + m) % m;
-}
+const H_REPS = 5;   // 5 × 12 =  60 hour entries
+const MS_REPS = 5;   // 5 × 60 = 300 minute / second entries
 
-// ── Column component ───────────────────────────────────────────────────────────
-interface DrumColumnProps {
-  value: number;
-  min: number;
-  max: number; // inclusive
-  onChange: (v: number) => void;
-}
+const HOUR_KEYS = Array.from({ length: H_REPS * 12 }, (_, i) => `h-${i}`);
+const MIN_KEYS = Array.from({ length: MS_REPS * 60 }, (_, i) => `m-${i}`);
 
-function DrumColumn({ value, min, max, onChange }: DrumColumnProps) {
-  const range = max - min + 1;
-  const prev = min + mod(value - min - 1, range);
-  const next = min + mod(value - min + 1, range);
-  const colRef = useRef<HTMLDivElement>(null);
+// Midpoints — where the picker starts (the center repetition)
+const MID_H = Math.floor(H_REPS / 2) * 12;  // 24  (indices 24–35 = hours 1–12)
+const MID_M = Math.floor(MS_REPS / 2) * 60;  // 120 (indices 120–179 = minutes 0–59)
 
-  // ── Mouse wheel — must be non-passive to preventDefault ──
-  const wheelDelta = useRef(0);
+// Display value from key
+const hourLabel = (k: string) => String((parseInt(k.slice(2)) % 12) + 1).padStart(2, "0");
+const minLabel = (k: string) => String(parseInt(k.slice(2)) % 60).padStart(2, "0");
 
-  useEffect(() => {
-    const el = colRef.current;
-    if (!el) return;
+// Mid-range key for a given logical value
+const midHKey = (h: number) => `h-${MID_H + (h - 1)}`;   // h ∈ 1..12
+const midMKey = (m: number) => `m-${MID_M + m}`;
 
-    const onWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      wheelDelta.current += e.deltaY;
-      const steps = Math.trunc(wheelDelta.current / 40);
-      if (steps !== 0) {
-        wheelDelta.current -= steps * 40;
-        onChange(min + mod(value - min + steps, range));
-      }
-    };
+// Extract logical value from a key
+const hourFromKey = (k: string) => (parseInt(k.slice(2)) % 12) + 1;  // 1..12
+const minFromKey = (k: string) => parseInt(k.slice(2)) % 60;
 
-    el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
-  }, [value, min, range, onChange]);
+// Picker sizing — matches the dropdown's inner height (240px − 2×10px padding = 220px)
+const PICKER_H = 220; // px
+const ITEM_H = 73;  // px  (≈ 220 / 3 → 3 visible rows)
 
-  // ── Touch drag ──
-  const touchStartY = useRef<number | null>(null);
-  const touchAccum = useRef(0);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartY.current = e.touches[0].clientY;
-    touchAccum.current = 0;
-  };
-
-  const handleTouchMove = useCallback(
-    (e: React.TouchEvent) => {
-      if (touchStartY.current === null) return;
-      const dy = touchStartY.current - e.touches[0].clientY;
-      touchAccum.current += dy;
-      touchStartY.current = e.touches[0].clientY;
-      const steps = Math.trunc(touchAccum.current / 40);
-      if (steps !== 0) {
-        touchAccum.current -= steps * 40;
-        onChange(min + mod(value - min + steps, range));
-      }
-    },
-    [value, min, range, onChange]
-  );
-
-  const handleTouchEnd = () => {
-    touchStartY.current = null;
-  };
-
-  return (
-    <div
-      ref={colRef}
-      className={styles.column}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
-      <div
-        className={`${styles.row} ${styles.rowFaded}`}
-        onClick={() => onChange(prev)}
-      >
-        {pad(prev)}
-      </div>
-
-      <div className={`${styles.row} ${styles.rowSelected}`}>
-        {pad(value)}
-      </div>
-
-      <div
-        className={`${styles.row} ${styles.rowFaded}`}
-        onClick={() => onChange(next)}
-      >
-        {pad(next)}
-      </div>
-    </div>
-  );
-}
-
-// ── Main Component ─────────────────────────────────────────────────────────────
+// ── Public types ──────────────────────────────────────────────────────────────
 export interface TimeValue {
-  hour: number;   // 1-12
-  minute: number; // 0-59
-  second: number; // 0-59
+  hour: number;          // 1-12
+  minute: number;          // 0-59
   period: "AM" | "PM";
 }
 
@@ -118,64 +47,112 @@ interface TimePickerProps {
   onChange?: (v: TimeValue) => void;
 }
 
+// Internal picker state (string keys understood by react-mobile-picker)
+interface DrumState extends PickerValue {
+  hour: string;
+  minute: string;
+}
+
+// ── Component ─────────────────────────────────────────────────────────────────
 export default function TimePicker({ value, onChange }: TimePickerProps) {
-  const [time, setTime] = useState<TimeValue>(
-    value ?? { hour: 6, minute: 28, second: 55, period: "PM" }
+  const tv = value ?? { hour: 6, minute: 28, period: "PM" as const };
+
+  const [drum, setDrum] = useState<DrumState>({
+    hour: midHKey(tv.hour),
+    minute: midMKey(tv.minute),
+  });
+  const [period, setPeriod] = useState<"AM" | "PM">(tv.period);
+
+  // Sync external value → internal state, but ONLY when the displayed value
+  // actually differs (prevents resetting position while the user is scrolling).
+  useEffect(() => {
+    setDrum((prev) => {
+      const same =
+        hourFromKey(prev.hour) === tv.hour &&
+        minFromKey(prev.minute) === tv.minute;
+      if (same) return prev;
+      return {
+        hour: midHKey(tv.hour),
+        minute: midMKey(tv.minute),
+      };
+    });
+    setPeriod((prev) => (prev !== tv.period ? tv.period : prev));
+  }, [tv.hour, tv.minute, tv.period]);
+
+  const handleDrumChange = useCallback(
+    (newDrum: DrumState) => {
+      setDrum(newDrum);
+      onChange?.({
+        hour: hourFromKey(newDrum.hour),
+        minute: minFromKey(newDrum.minute),
+        period,
+      });
+    },
+    [period, onChange]
   );
 
-  const update = useCallback(
-    (patch: Partial<TimeValue>) => {
-      const next = { ...time, ...patch };
-      setTime(next);
-      onChange?.(next);
+  const handlePeriod = useCallback(
+    (p: "AM" | "PM") => {
+      setPeriod(p);
+      onChange?.({
+        hour: hourFromKey(drum.hour),
+        minute: minFromKey(drum.minute),
+        period: p,
+      });
     },
-    [time, onChange]
+    [drum, onChange]
   );
 
   return (
     <div className={styles.dropdown}>
-      {/* Full-width selection lines — span across drum AND AM/PM column */}
-      <div className={styles.selectionLineTop} />
-      <div className={styles.selectionLineBottom} />
+      {/* Full-width selection lines (overlay the library's own gray lines) */}
+      <div className={styles.selectionHighlight} />
 
-      {/* ── Left: Hours : Minutes : Seconds ── */}
-      <div className={styles.drum}>
-
-        <DrumColumn
-          value={time.hour}
-          min={1}
-          max={12}
-          onChange={(v) => update({ hour: v })}
-        />
+      {/* ── Library drum: Hours : Minutes : Seconds ── */}
+      <Picker<DrumState>
+        value={drum}
+        onChange={handleDrumChange}
+        wheelMode="natural"
+        height={PICKER_H}
+        itemHeight={ITEM_H}
+        className={styles.picker}
+      >
+        <Picker.Column name="hour" className={styles.column}>
+          {HOUR_KEYS.map((key) => (
+            <Picker.Item key={key} value={key} className={styles.item}>
+              {({ selected }) => (
+                <span className={selected ? styles.rowSelected : styles.rowFaded}>
+                  {hourLabel(key)}
+                </span>
+              )}
+            </Picker.Item>
+          ))}
+        </Picker.Column>
 
         <span className={styles.separator}>:</span>
 
-        <DrumColumn
-          value={time.minute}
-          min={0}
-          max={59}
-          onChange={(v) => update({ minute: v })}
-        />
+        <Picker.Column name="minute" className={styles.column}>
+          {MIN_KEYS.map((key) => (
+            <Picker.Item key={key} value={key} className={styles.item}>
+              {({ selected }) => (
+                <span className={selected ? styles.rowSelected : styles.rowFaded}>
+                  {minLabel(key)}
+                </span>
+              )}
+            </Picker.Item>
+          ))}
+        </Picker.Column>
+      </Picker>
 
-        <span className={styles.separator}>:</span>
-
-        <DrumColumn
-          value={time.second}
-          min={0}
-          max={59}
-          onChange={(v) => update({ second: v })}
-        />
-      </div>
-
-      {/* ── Right: AM / PM ── */}
+      {/* ── AM / PM toggle (kept as custom buttons — matches original design) ── */}
       <div className={styles.ampmColumn}>
         {(["AM", "PM"] as const).map((p) => (
           <button
             key={p}
             type="button"
-            className={`${styles.ampmBtn} ${time.period === p ? styles.ampmSelected : styles.ampmUnselected
+            className={`${styles.ampmBtn} ${period === p ? styles.ampmSelected : styles.ampmUnselected
               }`}
-            onClick={() => update({ period: p })}
+            onClick={() => handlePeriod(p)}
           >
             {p}
           </button>

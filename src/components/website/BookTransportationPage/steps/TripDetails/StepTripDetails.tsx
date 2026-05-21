@@ -122,16 +122,15 @@ function TimePickerField({
 
   // Parse stored "HH:MM AM/PM" or fallback defaults
   const parse = (v: string): TimeValue => {
-    const match = v.match(/^(\d{1,2}):(\d{2}):?(\d{2})?\s?(AM|PM)?$/i);
+    const match = v.match(/^(\d{1,2}):(\d{2})\s?(AM|PM)?$/i);
     if (match) {
       return {
         hour: parseInt(match[1]) || 12,
         minute: parseInt(match[2]) || 0,
-        second: parseInt(match[3] ?? "0") || 0,
-        period: (match[4]?.toUpperCase() as "AM" | "PM") ?? "AM",
+        period: (match[3]?.toUpperCase() as "AM" | "PM") ?? "AM",
       };
     }
-    return { hour: 12, minute: 0, second: 0, period: "AM" };
+    return { hour: 12, minute: 0, period: "AM" };
   };
 
   const tv = parse(value);
@@ -158,7 +157,7 @@ function TimePickerField({
           <TimePicker
             value={tv}
             onChange={(t) => {
-              onChange(`${String(t.hour).padStart(2, "0")}:${String(t.minute).padStart(2, "0")}:${String(t.second).padStart(2, "0")} ${t.period}`);
+              onChange(`${String(t.hour).padStart(2, "0")}:${String(t.minute).padStart(2, "0")} ${t.period}`);
             }}
           />
         </div>
