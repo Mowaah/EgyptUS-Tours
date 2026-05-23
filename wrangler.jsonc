@@ -1,0 +1,19 @@
+{
+  "name": "egyptus-tours",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-04-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  }
+  // STEP 1: Deploy once with the "services" block below commented out (first-time bootstrap).
+  // STEP 2: After the first successful deploy, uncomment the block below and redeploy.
+  //
+  // ,"services": [
+  //   {
+  //     "binding": "WORKER_SELF_REFERENCE",
+  //     "service": "egyptus-tours"
+  //   }
+  // ]
+}
