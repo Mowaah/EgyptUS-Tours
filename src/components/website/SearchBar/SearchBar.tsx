@@ -72,8 +72,9 @@ export default function SearchBar() {
             variant="custom"
             renderTrigger={(isOpen, setIsOpen, displayTxt) => renderTrigger("calendar", "Date", displayTxt, isOpen, setIsOpen)}
           />
-          <div className={styles.separator} />
         </div>
+
+        <div className={styles.separator} aria-hidden />
 
         <div className={styles.filterWrapper}>
           <CheckboxDropdown
@@ -83,8 +84,9 @@ export default function SearchBar() {
             dropdownClassName={styles.searchDropdown}
             renderTrigger={(isOpen, setIsOpen) => renderTrigger("location", "Destination", destination, isOpen, setIsOpen)}
           />
-          <div className={styles.separator} />
         </div>
+
+        <div className={styles.separator} aria-hidden />
 
         <div className={styles.filterWrapper}>
           <CheckboxDropdown
@@ -94,8 +96,9 @@ export default function SearchBar() {
             dropdownClassName={styles.searchDropdown}
             renderTrigger={(isOpen, setIsOpen) => renderTrigger("budget", "Budget", budget, isOpen, setIsOpen)}
           />
-          <div className={styles.separator} />
         </div>
+
+        <div className={styles.separator} aria-hidden />
 
         <div className={styles.filterWrapper}>
           <CheckboxDropdown
@@ -106,7 +109,6 @@ export default function SearchBar() {
             renderTrigger={(isOpen, setIsOpen) => renderTrigger("trip-type", "Trip Type", tripType, isOpen, setIsOpen)}
           />
         </div>
-
 
         <button className={styles.searchBtn} onClick={handleSearch}>
           <Image src="/images/search/search.svg" alt="" width={18} height={18} />

@@ -3,7 +3,7 @@
 
 .wrapper {
   width: 100%;
-  max-width: 987px;
+  max-width: 1045px;
   margin: $spacing-lg auto 0;
   position: relative;
   z-index: 50;
@@ -57,10 +57,19 @@
       border-left: 7px solid transparent;
       border-right: 7px solid transparent;
       border-top: 10px solid $primary;
+      transition: border-top-color $transition-fast;
+    }
+
+    &:hover {
+      background: $primary-hover;
+
+      &::after {
+        border-top-color: $primary-hover;
+      }
     }
   }
 
-  &:hover {
+  &:hover:not(.active) {
     background: rgba(255, 255, 255, 0.18);
   }
 
@@ -92,9 +101,10 @@
   @include lg {
     display: flex;
     align-items: center;
-    border-radius: $radius-full;
-    padding: 6px 24px;
-    gap: 0;
+    border-radius: 9999px;
+    // Figma: padding 4px 7px on the outer pill; inner row gap 17px
+    padding: 4px 7px;
+    gap: 17px;
   }
 }
 
@@ -105,24 +115,24 @@
   min-width: 0;
   width: 100%;
 
-  // Mobile: horizontal divider under every filter except the last
-  &:not(:last-of-type) {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  // Mobile: horizontal divider under every filter wrapper
+  // (separators are hidden on mobile, so use bottom-border on wrapper)
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+
+  &:last-of-type {
+    border-bottom: none;
   }
 
   @include sm {
+    // Tablet 2x2 grid: clear mobile borders
+    border-bottom: none;
 
-    // Tablet 2x2 grid: no horizontal borders; use vertical border on left items
-    &:not(:last-of-type) {
-      border-bottom: none;
-    }
-
-    // Right column gets a left border as divider
+    // Right column (2nd and 4th filterWrapper)
     &:nth-of-type(2n) {
       border-left: 1px solid rgba(255, 255, 255, 0.18);
     }
 
-    // Bottom row gets a top border as divider (filter 3 & 4)
+    // Bottom row (3rd and 4th filterWrapper)
     &:nth-of-type(n + 3) {
       border-top: 1px solid rgba(255, 255, 255, 0.18);
     }
@@ -131,12 +141,7 @@
   @include lg {
     flex: 1;
     width: auto;
-
-    &:not(:last-of-type),
-    &:nth-of-type(2n),
-    &:nth-of-type(n + 3) {
-      border: none;
-    }
+    border: none !important;
   }
 }
 
@@ -144,7 +149,7 @@
   flex: 1;
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
+  gap: 12px;
   padding: 12px 14px;
   color: $white;
   cursor: pointer;
@@ -158,11 +163,13 @@
   }
 
   @include lg {
-    padding: 16px 24px;
-    border-radius: $radius-lg;
+    // Figma: inner row height 57px (outer pill 66px = 4px pad + 57px + 4px pad + ~1px)
+    padding: 0 24px;
+    height: 57px;
+    border-radius: 9999px;
 
     &:hover {
-      border-radius: $radius-full;
+      background: rgba(255, 255, 255, 0.08);
     }
   }
 }
@@ -175,8 +182,10 @@
 }
 
 .label {
-  font-size: $font-size-sm;
+  font-size: 16px;
   font-weight: $font-weight-medium;
+  letter-spacing: 0.01em;
+  color: #D1D5DB;
   margin-right: auto;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -199,10 +208,13 @@
 
   @include lg {
     display: block;
+    flex-shrink: 0;
     width: 1px;
-    height: 24px;
+    // Figma: separator height 32px
+    height: 32px;
     background: rgba(255, 255, 255, 0.2);
-    margin: 0 $spacing-xs;
+    border-radius: 0;
+    margin: 0;
   }
 }
 
@@ -210,13 +222,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: $spacing-sm;
+  gap: 8px;
   padding: 0.8rem 2rem;
   background: $white;
   color: $primary;
   border-radius: $radius-full;
-  font-size: $font-size-sm;
+  font-size: 16px;
   font-weight: $font-weight-bold;
+  letter-spacing: 0.01em;
   white-space: nowrap;
   flex-shrink: 0;
   transition: all $transition-fast;
@@ -237,10 +250,12 @@
   }
 
   @include lg {
+    // Figma: button padding 0px 24px, height 48px (shorter pill inside the 66px container)
     width: auto;
     margin-top: 0;
-    margin-left: $spacing-sm;
-    height: auto;
+    margin-left: 0;
+    height: 48px;
+    padding: 0 24px;
     grid-column: auto;
   }
 

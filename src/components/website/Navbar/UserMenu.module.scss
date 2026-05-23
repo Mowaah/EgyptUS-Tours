@@ -27,9 +27,24 @@
 }
 
 .glassToggle {
+  background: rgba(53, 60, 67, 0.15) !important;
+  backdrop-filter: blur(12px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+  
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-top-color: rgba(255, 255, 255, 0.35) !important;
+  border-left-color: rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.05),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.05) !important;
+
+  padding: 10px 18px;
+  gap: 10px;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(53, 60, 67, 0.25) !important;
+    border-top-color: rgba(255, 255, 255, 0.45) !important;
   }
 }
 

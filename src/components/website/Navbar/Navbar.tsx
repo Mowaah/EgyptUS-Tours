@@ -79,7 +79,7 @@ export default function Navbar() {
   const [expandedDropdown, setExpandedDropdown] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  
+
   const pathname = usePathname();
   const isBookingPage = pathname === "/booking";
 
@@ -267,9 +267,9 @@ export default function Navbar() {
             ) : (
               planTripButton
             )}
-            <UserMenu 
-              scrolled={shouldShowScrolled} 
-              lightNavBackground={lightNavBackground} 
+            <UserMenu
+              scrolled={shouldShowScrolled}
+              lightNavBackground={lightNavBackground}
               isLoggedIn={isLoggedIn}
               setIsLoggedIn={setIsLoggedIn}
               openAuthModal={() => { setIsAuthModalOpen(true); setIsLoggedIn(true); }}
@@ -414,9 +414,9 @@ export default function Navbar() {
       )}
 
       {isAuthModalOpen && (
-        <AuthModal 
-          onClose={() => setIsAuthModalOpen(false)} 
-          onLoginSuccess={() => setIsLoggedIn(true)} 
+        <AuthModal
+          onClose={() => setIsAuthModalOpen(false)}
+          onLoginSuccess={() => setIsLoggedIn(true)}
         />
       )}
     </>
