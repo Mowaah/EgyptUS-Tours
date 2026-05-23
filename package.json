@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "pages:build": "npx @opennextjs/cloudflare build",
     "start": "next start",
     "lint": "eslint"
   },
@@ -19,6 +20,7 @@
     "sass": "^1.97.3"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.19.11",
     "@svgr/webpack": "^8.1.0",
     "@types/node": "^20",
     "@types/react": "^19",

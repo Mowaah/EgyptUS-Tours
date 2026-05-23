@@ -1,19 +1,25 @@
 {
-  "name": "egyptus-tours",
+  "$schema": "node_modules/wrangler/config-schema.json",
   "main": ".open-next/worker.js",
-  "compatibility_date": "2025-04-01",
-  "compatibility_flags": ["nodejs_compat"],
+  "name": "egyptus-tours",
+  "compatibility_date": "2026-05-23",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "egyptus-tours"
+    }
+  ],
+  "images": {
+    "binding": "IMAGES"
+  },
+  "observability": {
+    "enabled": true
   }
-  // STEP 1: Deploy once with the "services" block below commented out (first-time bootstrap).
-  // STEP 2: After the first successful deploy, uncomment the block below and redeploy.
-  //
-  // ,"services": [
-  //   {
-  //     "binding": "WORKER_SELF_REFERENCE",
-  //     "service": "egyptus-tours"
-  //   }
-  // ]
 }
