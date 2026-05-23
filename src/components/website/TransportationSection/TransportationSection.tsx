@@ -102,8 +102,7 @@ export default function TransportationSection() {
 
       <div className={styles.mapBleed}>
         <div className={styles.mapStretch}>
-          {/* Plain img: SVG stays vector. next/Image often rasterizes for srcset → soft/pixelated on 3× iPhones */}
-          <img src="/images/map.svg" alt="Map" className={styles.mapImage} loading="eager" fetchPriority="high" />
+          <div className={styles.mapImage} role="img" aria-label="Map" />
         </div>
       </div>
     </section>
