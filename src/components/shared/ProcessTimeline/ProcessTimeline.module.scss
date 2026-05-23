@@ -6,39 +6,30 @@
   0% {
     transform: scale(0.4);
     opacity: 0;
-    box-shadow: 0 0 0 0 rgba(25, 68, 138, 0);
   }
+
   50% {
-    transform: scale(1.18);
+    transform: scale(1.12);
     opacity: 1;
-    box-shadow: 0 0 0 10px rgba(25, 68, 138, 0.18);
   }
+
   75% {
-    transform: scale(0.94);
-    box-shadow: 0 0 0 16px rgba(25, 68, 138, 0.08);
+    transform: scale(0.96);
   }
+
   100% {
     transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(25, 68, 138, 0);
   }
 }
 
-@keyframes rippleExpand {
-  0% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
-  100% {
-    transform: scale(2.6);
-    opacity: 0;
-  }
-}
+
 
 @keyframes contentSlideUp {
   from {
     opacity: 0;
     transform: translateY(22px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -49,6 +40,7 @@
   from {
     transform: scaleY(0);
   }
+
   to {
     transform: scaleY(1);
   }
@@ -59,10 +51,12 @@
     transform: scale(0) rotate(-20deg);
     opacity: 0;
   }
+
   70% {
     transform: scale(1.2) rotate(5deg);
     opacity: 1;
   }
+
   100% {
     transform: scale(1) rotate(0deg);
     opacity: 1;
@@ -70,8 +64,13 @@
 }
 
 @keyframes lineGrow {
-  from { width: 0%; }
-  to   { width: 100%; }
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: 100%;
+  }
 }
 
 // ─── Section ──────────────────────────────────────────────────────────────────
@@ -87,9 +86,11 @@
 
   &.padding-normal {
     padding: 64px 0;
+
     @media (max-width: 1024px) {
       padding: 56px 0;
     }
+
     @media (max-width: 600px) {
       padding: 40px 0;
     }
@@ -97,9 +98,11 @@
 
   &.padding-large {
     padding: 80px 0;
+
     @media (max-width: 1024px) {
       padding: 56px 0;
     }
+
     @media (max-width: 600px) {
       padding: 40px 0;
     }
@@ -189,7 +192,7 @@
   // but for simplicity and robustness, we can just use the ratio directly.
   // If ratio is 0.8 (4/5 steps), width goes to 80%.
   width: calc(var(--active-ratio, 1) * 100%);
-  transition: width 2s ease-in-out;
+  transition: width 3.5s ease-in-out;
 }
 
 // ─── Steps Grid ───────────────────────────────────────────────────────────────
@@ -238,8 +241,8 @@
 .stepVisible {
   .content {
     // React setTimeout already staggers each step — no extra CSS delay needed
-    animation: contentSlideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-delay: 200ms; // just enough to let the circle pop first
+    animation: contentSlideUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 300ms; // just enough to let the circle pop first
   }
 }
 
@@ -278,8 +281,8 @@
 .vLineActive {
   @media (max-width: 1024px) {
     background: linear-gradient(180deg, #3b82f6 0%, #1e5bc6 100%);
-    animation: vLineGrow 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-delay: 300ms; // after the circle pops
+    animation: vLineGrow 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 400ms; // after the circle pops
   }
 }
 
@@ -325,19 +328,10 @@
 // Circle becomes active — pop animation only, no visual design change
 .circleActive {
   // React setTimeout adds class at the right moment — animate immediately
-  animation: circleReveal 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: circleReveal 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-// Ripple ring on the currently-animating step
-.ripple {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 2.5px solid #3b82f6;
-  animation: rippleExpand 0.7s ease-out forwards;
-  animation-delay: 250ms; // fires after circle spring-pops
-  pointer-events: none;
-}
+
 
 // ─── Number ───────────────────────────────────────────────────────────────────
 

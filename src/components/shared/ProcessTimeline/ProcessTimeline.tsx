@@ -28,6 +28,7 @@ export default function ProcessTimeline({
   const sectionRef = useRef<HTMLDivElement>(null);
   const [activeStep, setActiveStep] = useState(-1);
   const [lineStarted, setLineStarted] = useState(false);
+  const [inactiveVisible, setInactiveVisible] = useState(false);
 
   // Calculate total active steps for line progress calculation
   const totalActiveSteps = steps.filter((s) => s.active !== false).length;
@@ -41,14 +42,22 @@ export default function ProcessTimeline({
         if (entry.isIntersecting) {
           setLineStarted(true);
 
-          steps.forEach((step, idx) => {
-            // Only schedule activation if the step is meant to be active
-            if (step.active !== false) {
-              setTimeout(() => {
-                setActiveStep(idx);
-              }, idx * STEP_DELAY_MS + 200);
-            }
+          const activeIndices = steps
+            .map((step, idx) => ({ step, idx }))
+            .filter(({ step }) => step.active !== false);
+
+          activeIndices.forEach(({ idx }, order) => {
+            setTimeout(() => {
+              setActiveStep(idx);
+            }, order * STEP_DELAY_MS + 200);
           });
+
+          // Reveal inactive steps after all active ones have animated in
+          const lastActiveOrder = activeIndices.length;
+          const inactiveDelay = lastActiveOrder * STEP_DELAY_MS + 200 + 300;
+          setTimeout(() => {
+            setInactiveVisible(true);
+          }, inactiveDelay);
 
           observer.disconnect();
         }
@@ -92,7 +101,7 @@ export default function ProcessTimeline({
                 key={idx}
                 className={`${styles.stepItem} ${
                   step.active === false
-                    ? "" // Don't apply hidden/visible classes to permanently inactive steps
+                    ? inactiveVisible ? styles.stepVisible : styles.stepHidden
                     : isActive
                     ? styles.stepVisible
                     : styles.stepHidden
