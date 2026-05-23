@@ -78,6 +78,7 @@ export default function LegalPage({ data }: LegalPageProps) {
             {data.sections.map((section) => (
               <button
                 key={section.id}
+                draggable={false}
                 className={`${styles.tabItem} ${activeId === section.id ? styles.activeTab : ""}`}
                 onClick={() => scrollToSection(section.id)}
               >

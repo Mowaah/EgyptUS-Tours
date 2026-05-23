@@ -108,6 +108,8 @@
   gap: 24px;
   overflow-x: auto;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
   &::-webkit-scrollbar {
     display: none;
   }
@@ -125,6 +127,10 @@
   cursor: pointer;
   white-space: nowrap;
   transition: color $transition-fast;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
 
   &:hover {
     color: $dark;
