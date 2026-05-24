@@ -1,8 +1,38 @@
 @use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+@use "@/styles/breakpoints" as *;
 
 .section {
-  padding: 80px 0;
   position: relative;
+  padding: 80px 0;
+  overflow: hidden;
+}
+
+.decoration {
+  display: none;
+  pointer-events: none;
+
+  @include lg {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 376px;
+    height: 207px;
+    z-index: 0;
+  }
+}
+
+.decorationImg {
+  width: 376px;
+  height: 207px;
+  display: block;
+}
+
+.inner {
+  @include container;
+  position: relative;
+  z-index: 1;
 }
 
 .header {

@@ -160,6 +160,9 @@ $shadow-card: 0 2px 12px rgba(0, 0, 0, 0.08);
 $container-max: 1440px;
 $container-padding: 0rem;
 $navbar-height-desktop: 110px;
+$detail-tab-nav-height-desktop: 159px;
+$detail-tab-nav-sticky-gap: 24px;
+$detail-tab-nav-sticky-top: calc(#{$detail-tab-nav-height-desktop} + #{$detail-tab-nav-sticky-gap});
 
 // Transitions
 $transition-fast: 150ms ease;

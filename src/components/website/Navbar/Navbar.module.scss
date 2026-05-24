@@ -49,6 +49,12 @@ $nav-desktop: 1150px;
     }
   }
 
+  &.notSticky {
+    @media (min-width: $nav-desktop) {
+      position: static;
+    }
+  }
+
   &.scrolled {
     background: $white;
 

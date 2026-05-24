@@ -12,14 +12,25 @@ export default function TripPricing({ trip }: TripPricingProps) {
 
   return (
     <section id="prices-accommodation" className={styles.section}>
-      <div className={styles.header}>
-        <h2 className={styles.heading}>Prices &amp; Accommodation</h2>
-        <p className={styles.subtitle}>
-          Explore detailed pricing and accommodation options tailored to your selected trip
-        </p>
+      <div className={styles.decoration} aria-hidden>
+        <Image
+          src="/images/myteneltayara.svg"
+          alt=""
+          width={376}
+          height={207}
+          className={styles.decorationImg}
+        />
       </div>
 
-      <div className={styles.grid}>
+      <div className={styles.inner}>
+        <div className={styles.header}>
+          <h2 className={styles.heading}>Prices &amp; Accommodation</h2>
+          <p className={styles.subtitle}>
+            Explore detailed pricing and accommodation options tailored to your selected trip
+          </p>
+        </div>
+
+        <div className={styles.grid}>
         {pricing.map((col, ci) => (
           <div key={ci} className={styles.column}>
             <h3 className={styles.season}>{col.season}</h3>
@@ -36,6 +47,7 @@ export default function TripPricing({ trip }: TripPricingProps) {
             ))}
           </div>
         ))}
+        </div>
       </div>
     </section>
   );

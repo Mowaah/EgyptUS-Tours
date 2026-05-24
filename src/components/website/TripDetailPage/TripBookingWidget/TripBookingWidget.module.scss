@@ -2,8 +2,7 @@
 
 .sidebar {
   position: sticky;
-  top: 300px;
-  /* Account for sticky desktop Navbar (110px) + 2-line DetailTabNav (~130px) + 24px gap */
+  top: $detail-tab-nav-sticky-top;
   z-index: 10;
 }
 

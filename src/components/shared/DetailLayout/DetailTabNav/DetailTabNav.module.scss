@@ -14,6 +14,12 @@
     top: $navbar-height-desktop;
     padding: 12px 0;
   }
+
+  &.staticNavbarOnDesktop {
+    @media (min-width: 1150px) {
+      top: 0;
+    }
+  }
 }
 
 .inner {

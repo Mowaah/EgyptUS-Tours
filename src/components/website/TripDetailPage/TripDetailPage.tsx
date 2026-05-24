@@ -113,7 +113,7 @@ export default function TripDetailPage({ trip }: TripDetailPageProps) {
       </div>
 
       {/* ── Sticky Tab Navigation ── */}
-      <DetailTabNav tabs={TRIP_TABS} />
+      <DetailTabNav tabs={TRIP_TABS} staticNavbarOnDesktop />
 
       {/* ── Main content sections ── */}
       <div className={styles.container}>
@@ -134,9 +134,7 @@ export default function TripDetailPage({ trip }: TripDetailPageProps) {
       </div>
 
       {/* ── Full-width pricing section (Swapped here) ── */}
-      <div className={styles.container}>
-        <TripPricing trip={trip} />
-      </div>
+      <TripPricing trip={trip} />
 
       {/* ── Accommodations (Swapped here) ── */}
       <div className={styles.container}>

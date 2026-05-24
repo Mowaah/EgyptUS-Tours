@@ -72,6 +72,14 @@ const MOBILE_USER_LINKS = [
   { label: "Bookings", href: "/profile?tab=bookings", icon: "/images/message-2.svg" },
 ];
 
+const TRIP_LISTING_SLUGS = new Set(["classic", "christmas", "nile-cruises"]);
+
+function isTripDetailPage(pathname: string): boolean {
+  const match = pathname.match(/^\/trips\/([^/]+)$/);
+  if (!match) return false;
+  return !TRIP_LISTING_SLUGS.has(match[1]);
+}
+
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -159,6 +167,7 @@ export default function Navbar() {
   );
 
   const shouldShowScrolled = scrolled || pathname !== "/";
+  const tripDetailPage = isTripDetailPage(pathname);
 
   const toggleMobileDropdown = (label: string) => {
     setExpandedDropdown((prev) => (prev === label ? null : label));
@@ -167,7 +176,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`${styles.navbar}${shouldShowScrolled ? ` ${styles.scrolled}` : ""}${lightNavBackground ? ` ${styles.lightPage}` : ""}${mobileOpen ? ` ${styles.drawerOpen}` : ""}`}
+        className={`${styles.navbar}${shouldShowScrolled ? ` ${styles.scrolled}` : ""}${lightNavBackground ? ` ${styles.lightPage}` : ""}${tripDetailPage ? ` ${styles.notSticky}` : ""}${mobileOpen ? ` ${styles.drawerOpen}` : ""}`}
       >
         <div className={styles.container}>
           <Link href="/" className={styles.logo} aria-label="EgyptUS Tours — Home">

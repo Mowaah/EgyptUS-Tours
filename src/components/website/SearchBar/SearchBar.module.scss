@@ -93,9 +93,25 @@
 
   @include sm {
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
     border-radius: 28px;
     padding: 12px;
+    // Gap keeps hover backgrounds off the dividers; ::before sits in the gutter center
     gap: 6px;
+    position: relative;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 12px;
+      bottom: calc(12px + 12px + 52px);
+      width: 1px;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.18);
+      pointer-events: none;
+      z-index: 1;
+    }
   }
 
   @include lg {
@@ -124,16 +140,10 @@
   }
 
   @include sm {
-    // Tablet 2x2 grid: clear mobile borders
     border-bottom: none;
 
-    // Right column (2nd and 4th filterWrapper)
-    &:nth-of-type(2n) {
-      border-left: 1px solid rgba(255, 255, 255, 0.18);
-    }
-
-    // Bottom row (3rd and 4th filterWrapper)
-    &:nth-of-type(n + 3) {
+    &:nth-child(4n + 5),
+    &:nth-child(4n + 7) {
       border-top: 1px solid rgba(255, 255, 255, 0.18);
     }
   }
@@ -162,8 +172,16 @@
     background: rgba(255, 255, 255, 0.1);
   }
 
+  @include sm {
+    // Inset hover so rounded backgrounds don't bleed into the center dividers
+    width: calc(100% - 4px);
+    margin: 2px;
+  }
+
   @include lg {
     // Figma: inner row height 57px (outer pill 66px = 4px pad + 57px + 4px pad + ~1px)
+    width: 100%;
+    margin: 0;
     padding: 0 24px;
     height: 57px;
     border-radius: 9999px;

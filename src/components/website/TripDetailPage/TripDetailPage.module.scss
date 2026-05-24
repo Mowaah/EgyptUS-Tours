@@ -23,6 +23,12 @@
 
 .mainContent {
   min-width: 0;
+
+  @media (min-width: 1150px) {
+    :global(#overview) {
+      padding-top: 24px;
+    }
+  }
 }
 
 .bookingSidebar {
@@ -31,6 +37,10 @@
 
   @media (min-width: 1024px) {
     display: block;
+  }
+
+  @media (min-width: 1150px) {
+    padding-top: 24px;
   }
 }
 
