@@ -187,10 +187,15 @@
   letter-spacing: 0.01em;
   color: #D1D5DB;
   margin-right: auto;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.labelTruncated {
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
   min-width: 0;
+  flex-shrink: 1;
 }
 
 .chevron {

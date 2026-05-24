@@ -1,78 +1,5 @@
 @use "@/styles/variables" as *;
 
-// ─── Keyframes ────────────────────────────────────────────────────────────────
-
-@keyframes circleReveal {
-  0% {
-    transform: scale(0.4);
-    opacity: 0;
-  }
-
-  50% {
-    transform: scale(1.12);
-    opacity: 1;
-  }
-
-  75% {
-    transform: scale(0.96);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-
-
-@keyframes contentSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(22px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes vLineGrow {
-  from {
-    transform: scaleY(0);
-  }
-
-  to {
-    transform: scaleY(1);
-  }
-}
-
-@keyframes checkmarkPop {
-  0% {
-    transform: scale(0) rotate(-20deg);
-    opacity: 0;
-  }
-
-  70% {
-    transform: scale(1.2) rotate(5deg);
-    opacity: 1;
-  }
-
-  100% {
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-  }
-}
-
-@keyframes lineGrow {
-  from {
-    width: 0%;
-  }
-
-  to {
-    width: 100%;
-  }
-}
-
 // ─── Section ──────────────────────────────────────────────────────────────────
 
 .section {
@@ -192,7 +119,7 @@
   // but for simplicity and robustness, we can just use the ratio directly.
   // If ratio is 0.8 (4/5 steps), width goes to 80%.
   width: calc(var(--active-ratio, 1) * 100%);
-  transition: width 3.5s ease-in-out;
+  transition: width 3.5s linear;
 }
 
 // ─── Steps Grid ───────────────────────────────────────────────────────────────
@@ -223,26 +150,6 @@
     grid-template-columns: 50px minmax(0, 1fr);
     column-gap: 12px;
     align-items: stretch;
-  }
-}
-
-.stepHidden {
-  .circle {
-    opacity: 0;
-    transform: scale(0.4);
-  }
-
-  .content {
-    opacity: 0;
-    transform: translateY(22px);
-  }
-}
-
-.stepVisible {
-  .content {
-    // React setTimeout already staggers each step — no extra CSS delay needed
-    animation: contentSlideUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-delay: 300ms; // just enough to let the circle pop first
   }
 }
 
@@ -281,8 +188,8 @@
 .vLineActive {
   @media (max-width: 1024px) {
     background: linear-gradient(180deg, #3b82f6 0%, #1e5bc6 100%);
-    animation: vLineGrow 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-delay: 400ms; // after the circle pops
+    transition: background 0.2s ease-out;
+    transition-delay: var(--vline-activate-delay, var(--activate-delay, 0ms));
   }
 }
 
@@ -291,7 +198,7 @@
 .circle {
   width: 92.66px;
   height: 92.66px;
-  background: #dfebff;
+  background: $border;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -299,7 +206,11 @@
   margin-bottom: 17px;
   flex-shrink: 0;
   position: relative;
-  transition: background 0.35s ease, box-shadow 0.35s ease;
+  transition:
+    background 0.2s ease-out,
+    box-shadow 0.2s ease-out,
+    transform 0.25s ease;
+  transition-delay: var(--activate-delay, 0ms);
 
   @media (max-width: 1024px) {
     width: 48px;
@@ -307,28 +218,35 @@
     margin-bottom: 0;
   }
 
+  .number {
+    color: $text-light;
+    transition: color 0.2s ease-out;
+    transition-delay: var(--activate-delay, 0ms);
+  }
+
   &:hover {
     transform: scale(1.06);
-    transition: transform 0.25s ease, background 0.35s ease, box-shadow 0.35s ease;
 
     @media (max-width: 1024px) {
       transform: none;
     }
   }
+}
 
-  &.inactive {
-    background: $border;
+.circlePermanentInactive {
+  transition-delay: 0ms;
 
-    .number {
-      color: $text-light;
-    }
+  .number {
+    transition-delay: 0ms;
   }
 }
 
-// Circle becomes active — pop animation only, no visual design change
 .circleActive {
-  // React setTimeout adds class at the right moment — animate immediately
-  animation: circleReveal 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  background: #dfebff;
+
+  .number {
+    color: #19448a;
+  }
 }
 
 
@@ -338,10 +256,8 @@
 .number {
   font-weight: 700;
   font-size: $font-size-26;
-  color: #19448a;
   position: relative;
   z-index: 1;
-  transition: color 0.3s ease;
 
   @media (max-width: 1024px) {
     font-size: $font-size-sm;

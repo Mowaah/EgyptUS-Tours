@@ -17,7 +17,15 @@ interface ProcessTimelineProps {
   sectionPadding?: "normal" | "large";
 }
 
-const STEP_DELAY_MS = 500;
+/** Must match `.lineActive` transition duration in SCSS */
+const LINE_DURATION_MS = 3500;
+
+/** When the linear progress line reaches this step's column center */
+function getActivateDelay(stepIndex: number, totalSteps: number, activeRatio: number): string {
+  const columnCenter = (stepIndex + 0.5) / totalSteps;
+  const delayMs = Math.min((columnCenter / activeRatio) * LINE_DURATION_MS, LINE_DURATION_MS);
+  return `${delayMs}ms`;
+}
 
 export default function ProcessTimeline({
   title,
@@ -26,12 +34,10 @@ export default function ProcessTimeline({
   sectionPadding = "normal",
 }: ProcessTimelineProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [activeStep, setActiveStep] = useState(-1);
   const [lineStarted, setLineStarted] = useState(false);
-  const [inactiveVisible, setInactiveVisible] = useState(false);
 
-  // Calculate total active steps for line progress calculation
-  const totalActiveSteps = steps.filter((s) => s.active !== false).length;
+  const totalSteps = steps.length;
+  const activeRatio = steps.filter((s) => s.active !== false).length / totalSteps;
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -40,25 +46,7 @@ export default function ProcessTimeline({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setLineStarted(true);
-
-          const activeIndices = steps
-            .map((step, idx) => ({ step, idx }))
-            .filter(({ step }) => step.active !== false);
-
-          activeIndices.forEach(({ idx }, order) => {
-            setTimeout(() => {
-              setActiveStep(idx);
-            }, order * STEP_DELAY_MS + 200);
-          });
-
-          // Reveal inactive steps after all active ones have animated in
-          const lastActiveOrder = activeIndices.length;
-          const inactiveDelay = lastActiveOrder * STEP_DELAY_MS + 200 + 300;
-          setTimeout(() => {
-            setInactiveVisible(true);
-          }, inactiveDelay);
-
+          requestAnimationFrame(() => setLineStarted(true));
           observer.disconnect();
         }
       },
@@ -67,7 +55,7 @@ export default function ProcessTimeline({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [steps]);
+  }, []);
 
   return (
     <section className={`${styles.section} ${styles[`padding-${sectionPadding}`]}`} ref={sectionRef}>
@@ -77,49 +65,48 @@ export default function ProcessTimeline({
       </div>
 
       <div className={styles.timelineContainer}>
-        {/* Track */}
         <div className={styles.lineBase} />
 
-        {/* Progress bar — smooth animation */}
         <div
           className={`${styles.lineProgress} ${lineStarted ? styles.lineActive : ""}`}
-          style={
-            {
-              "--active-ratio": totalActiveSteps / steps.length,
-            } as React.CSSProperties
-          }
+          style={{ "--active-ratio": activeRatio } as React.CSSProperties}
         />
 
         <div className={styles.steps}>
           {steps.map((step, idx) => {
-            // A step is visible/animated if it's supposed to be active AND we've reached its turn
-            const isActive = step.active !== false && idx <= activeStep;
-            const isCurrent = step.active !== false && idx === activeStep;
+            const isPermanentlyInactive = step.active === false;
+            const shouldActivate = lineStarted && !isPermanentlyInactive;
+            const activateDelay = isPermanentlyInactive
+              ? undefined
+              : getActivateDelay(idx, totalSteps, activeRatio);
+            const nextStepActive = idx < steps.length - 1 && steps[idx + 1].active !== false;
+            const vLineShouldActivate = lineStarted && nextStepActive;
+            const vLineDelay = nextStepActive ? getActivateDelay(idx + 1, totalSteps, activeRatio) : undefined;
 
             return (
               <div
                 key={idx}
-                className={`${styles.stepItem} ${
-                  step.active === false
-                    ? inactiveVisible ? styles.stepVisible : styles.stepHidden
-                    : isActive
-                    ? styles.stepVisible
-                    : styles.stepHidden
-                }`}
-                style={{ "--step-index": idx } as React.CSSProperties}
+                className={styles.stepItem}
+                style={
+                  activateDelay
+                    ? ({
+                        "--activate-delay": activateDelay,
+                        "--vline-activate-delay": vLineDelay,
+                      } as React.CSSProperties)
+                    : undefined
+                }
               >
                 <div className={styles.stepAside}>
                   <div
-                    className={`${styles.circle} ${step.active === false ? styles.inactive : ""} ${
-                      isActive ? styles.circleActive : ""
-                    } ${isCurrent ? styles.circlePulse : ""}`}
+                    className={`${styles.circle} ${shouldActivate ? styles.circleActive : ""} ${
+                      isPermanentlyInactive ? styles.circlePermanentInactive : ""
+                    }`}
                   >
-                    {isCurrent && <span className={styles.ripple} aria-hidden />}
                     <span className={styles.number}>{step.number}</span>
                   </div>
                   {idx < steps.length - 1 && (
                     <div
-                      className={`${styles.vLine} ${isActive ? styles.vLineActive : ""}`}
+                      className={`${styles.vLine} ${vLineShouldActivate ? styles.vLineActive : ""}`}
                       aria-hidden
                     />
                   )}

@@ -49,7 +49,7 @@ export default function SearchBar() {
       <span className={styles.icon}>
         <Image src={`/images/search/${icon}.svg`} alt="" width={18} height={18} />
       </span>
-      <span className={styles.label}>{value || label}</span>
+      <span className={`${styles.label} ${value ? styles.labelTruncated : ""}`}>{value || label}</span>
       <Image src="/images/arrows/arrow-down2-white.svg" alt="" width={12} height={12} className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ""}`} />
     </button>
   );
