@@ -18,24 +18,7 @@
 
 .bg {
   object-fit: cover;
-  object-position: center 65%;
-  filter: saturate(1.3) contrast(1.08);
-
-  @include md {
-    object-position: center 90%;
-  }
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg,
-      rgba(45, 23, 0, 0.17),
-      rgba(45, 23, 0, 0.17)),
-    linear-gradient(0deg, rgba(103, 41, 0, 0.31), rgba(103, 41, 0, 0.31)),
-    linear-gradient(181.81deg,
-      rgba(0, 27, 71, 0) 29.89%,
-      rgba(255, 128, 0, 0.74) 102.85%);
+  object-position: center;
 }
 
 .content {

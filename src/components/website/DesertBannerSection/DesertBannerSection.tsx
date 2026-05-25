@@ -6,15 +6,13 @@ export default function DesertBannerSection() {
   return (
     <section className={styles.section}>
       <Image
-        src="/images/cta.jpg"
+        src="/images/sora.png"
         alt="Desert landscape"
         fill
         priority
         className={styles.bg}
         sizes="(max-width: 768px) 100vw, 1920px"
-        quality={100}
       />
-      <div className={styles.overlay} />
       <div className={styles.content}>
         <h2 className={styles.heading}>
           Experience the Thrill of <br />Desert Adventures
