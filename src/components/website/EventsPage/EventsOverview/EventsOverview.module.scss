@@ -101,8 +101,7 @@
   }
 
   img {
-    // Ensuring the icon color matches the 2.5px solid $primary spec
-    filter: brightness(0) saturate(100%) invert(35%) sepia(85%) saturate(1915%) hue-rotate(204deg) brightness(97%) contrast(93%);
+    object-fit: contain;
   }
 }
 

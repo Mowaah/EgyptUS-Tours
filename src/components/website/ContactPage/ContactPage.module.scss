@@ -143,8 +143,7 @@
 }
 
 .icon {
-  // Direct filter for $primary (Primary color)
-  filter: invert(34%) sepia(85%) saturate(2250%) hue-rotate(204deg) brightness(97%) contrast(89%);
+  object-fit: contain;
 }
 
 .cardTexts {

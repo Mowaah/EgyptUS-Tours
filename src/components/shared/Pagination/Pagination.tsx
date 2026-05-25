@@ -16,8 +16,13 @@ function getPageNumbers(current: number, total: number): (number | "...")[] {
   return [1, "...", current - 1, current, current + 1, "...", total];
 }
 
+const ARROW_WHITE = "/images/arrows/pagination-arrow-white.svg";
+const ARROW_ORANGE = "/images/arrows/pagination-arrow.svg";
+
 export default function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
   const pages = getPageNumbers(currentPage, totalPages);
+  const isFirstPage = currentPage === 1;
+  const isLastPage = currentPage === totalPages;
 
   return (
     <div className={styles.root}>
@@ -25,11 +30,11 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
       <button
         className={`${styles.arrow} ${styles.prevArrow}`}
         onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
+        disabled={isFirstPage}
         aria-label="Previous page"
       >
         <Image
-          src="/images/arrows/pagination-arrow-white.svg"
+          src={isFirstPage ? ARROW_ORANGE : ARROW_WHITE}
           alt=""
           width={15}
           height={15}
@@ -55,11 +60,11 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
       <button
         className={`${styles.arrow} ${styles.nextArrow}`}
         onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
+        disabled={isLastPage}
         aria-label="Next page"
       >
         <Image
-          src="/images/arrows/pagination-arrow-white.svg"
+          src={isLastPage ? ARROW_ORANGE : ARROW_WHITE}
           alt=""
           width={15}
           height={15}

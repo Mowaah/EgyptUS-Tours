@@ -35,7 +35,7 @@
   img {
     width: 15px;
     height: 15px;
-    // Enabled icon is white by default (pagination-arrow-white.svg)
+    object-fit: contain;
   }
 
   &:hover:not(:disabled) {
@@ -47,11 +47,6 @@
     background: $white;
     border-color: $secondary;
     cursor: not-allowed;
-    
-    img {
-      // Turn white icon into secondary color when disabled
-      filter: invert(48%) sepia(87%) saturate(2250%) hue-rotate(1deg) brightness(105%) contrast(105%);
-    }
   }
 
   @media (max-width: 640px) {
@@ -65,16 +60,17 @@
   }
 }
 
-.prevArrow {
-  img {
-    transform: scaleX(-1);
-  }
+// White arrow points right; orange arrow points left.
+.prevArrow:not(:disabled) img {
+  transform: scaleX(-1);
 }
 
-.nextArrow {
-  img {
-    margin-left: 2px;
-  }
+.nextArrow:not(:disabled) img {
+  margin-left: 2px;
+}
+
+.nextArrow:disabled img {
+  transform: scaleX(-1);
 }
 
 .pages {
