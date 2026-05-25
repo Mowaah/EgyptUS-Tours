@@ -130,10 +130,6 @@
   scroll-padding-left: 4px;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  // Negative margin + matching padding lets the rail bleed into the side
-  // padding on mobile so users see a "peek" of the next card.
-  margin-inline: -20px;
-  padding-inline: 20px;
   padding-bottom: 4px;
 
   @media (min-width: 768px) {

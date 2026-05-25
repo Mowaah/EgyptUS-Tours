@@ -5,6 +5,7 @@
 .section {
   @include section-padding;
   background: $background;
+  overflow-x: clip;
 }
 
 .container {

@@ -341,8 +341,8 @@
     position: fixed;
     z-index: 200;
     top: 0;
-    right: -120%;
-    width: min(100vw - 40px, 400px);
+    right: 0;
+    width: min(100% - 40px, 400px);
     max-width: 100%;
     height: 100dvh;
     max-height: 100dvh;
@@ -352,13 +352,14 @@
     overflow-y: auto;
     padding: 0 16px calc(16px + env(safe-area-inset-bottom, 0));
     margin: 0;
-    transition: right 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     pointer-events: none;
   }
 
   &.sidebarOpen {
     @media (max-width: 767px) {
-      right: 0;
+      transform: translateX(0);
       pointer-events: auto;
     }
   }

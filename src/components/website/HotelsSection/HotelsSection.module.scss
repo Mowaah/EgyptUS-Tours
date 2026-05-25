@@ -44,8 +44,7 @@
   scroll-snap-type: x mandatory;
   padding-bottom: $spacing-lg;
   // Bleed the rail into the container side-padding so cards can peek off-edge.
-  margin-inline: -20px;
-  padding-inline: 20px;
+ 
   scrollbar-width: none;
 
   &::-webkit-scrollbar {
