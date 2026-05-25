@@ -237,6 +237,7 @@ export default function Navbar() {
                     <GlassCard
                       as={Link}
                       href={link.href}
+                      variant="nav"
                       className={`${styles.link} ${styles.active}`}
                     >
                       {content}

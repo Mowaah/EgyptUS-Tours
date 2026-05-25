@@ -156,6 +156,12 @@ $shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
 $shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.1);
 $shadow-card: 0 2px 12px rgba(0, 0, 0, 0.08);
 
+// Figma Glass (nav active pill on hero): fill 10%, frost 33, light -45° @ 80%
+$glass-nav-fill: rgba(255, 255, 255, 0.1);
+$glass-nav-frost-blur: 11px;
+$glass-nav-saturate: 140%;
+$glass-nav-shadow-depth: 0 4px 24px rgba(0, 0, 0, 0.08);
+
 // Layout
 $container-max: 1440px;
 $container-padding: 0rem;

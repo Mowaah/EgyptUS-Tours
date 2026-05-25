@@ -50,7 +50,11 @@ export default function UserMenu({ scrolled, lightNavBackground, isLoggedIn, set
   return (
     <div className={styles.wrapper} ref={menuRef}>
       {useGlass ? (
-        <GlassCard as="button" className={`${styles.toggle} ${styles.glassToggle}`} onClick={() => setIsOpen(!isOpen)}>
+        <GlassCard
+          as="button"
+          className={`${styles.toggle} ${styles.glassToggle}`}
+          onClick={() => setIsOpen(!isOpen)}
+        >
           {toggleButton}
         </GlassCard>
       ) : (

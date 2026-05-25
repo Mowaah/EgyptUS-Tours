@@ -155,21 +155,6 @@ $nav-desktop: 1150px;
   }
 }
 
-// Glass active pill — only on transparent (hero) navbar, not when scrolled
-.navbar:not(.scrolled) .link.active {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px) saturate(140%);
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
-
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-top-color: rgba(255, 255, 255, 0.5);
-  border-left-color: rgba(255, 255, 255, 0.35);
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.05),
-    inset 0 1px 1px rgba(255, 255, 255, 0.35),
-    inset 0 -1px 1px rgba(0, 0, 0, 0.05);
-}
-
 .cta {
   display: none;
 

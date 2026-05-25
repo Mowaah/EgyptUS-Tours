@@ -9,32 +9,35 @@ interface GlassCardProps {
   children?: ReactNode;
   className?: string;
   style?: CSSProperties;
+  /** Figma glass preset for navbar active pill on hero */
+  variant?: "default" | "nav";
   [key: string]: unknown;
 }
 
 /**
- * GlassCard — liquid glass morphism wrapper.
- *
- * The "liquid" quality comes from an SVG feDisplacementMap filter in backdrop-filter.
- * This warps/refracts whatever is behind the element, simulating real optical glass.
- *
- * - Chrome/Edge: full effect (blur + SVG warp + saturate)
- * - Safari:      blur + saturate (url() in backdrop-filter not supported)
- * - Firefox:     semi-transparent surface + box-shadow edges (no backdrop-filter)
+ * GlassCard — glass morphism wrapper.
+ * Use variant="nav" for the hero navbar active link (Figma glass settings).
  */
 export default function GlassCard({
   as: Tag = "div",
   children,
   className = "",
   style,
+  variant = "default",
   ...rest
 }: GlassCardProps) {
+  const isNav = variant === "nav";
+
   return (
     <Tag
-      className={`${styles.glass} ${className}`}
+      className={`${styles.glass} ${isNav ? styles.glassNav : ""} ${className}`.trim()}
       style={{
-        backdropFilter: `blur(4px) saturate(140%)`,
-        WebkitBackdropFilter: `blur(4px) saturate(140%)`,
+        ...(isNav
+          ? {}
+          : {
+              backdropFilter: "blur(4px) saturate(140%)",
+              WebkitBackdropFilter: "blur(4px) saturate(140%)",
+            }),
         ...style,
       }}
       {...rest}
