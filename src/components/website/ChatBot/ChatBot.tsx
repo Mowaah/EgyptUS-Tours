@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { useChatbotObstruction } from "@/hooks/useChatbotObstruction";
 import styles from "./ChatBot.module.scss";
 
 type Message = {
@@ -22,6 +23,8 @@ export default function ChatBot() {
   ]);
 
   const closeTimerRef = useRef<number | null>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const isObstructed = useChatbotObstruction(triggerRef, !isOpen);
 
   useEffect(() => {
     return () => {
@@ -82,7 +85,10 @@ export default function ChatBot() {
   ];
 
   return (
-    <div className={styles.chatbotContainer}>
+    <div
+      className={`${styles.chatbotContainer} ${isObstructed ? styles.obstructed : ""}`}
+      data-chatbot-root
+    >
       {/* Chat Window */}
       {isOpen && (
         <div className={`${styles.chatWindow} ${isClosing ? styles.chatWindowClosing : ""}`}>
@@ -152,6 +158,7 @@ export default function ChatBot() {
 
       {/* Trigger Button */}
       <button
+        ref={triggerRef}
         className={styles.trigger}
         onClick={toggleChat}
         aria-label="Open chat"
