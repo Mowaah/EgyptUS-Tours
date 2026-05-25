@@ -1,4 +1,3 @@
-import { Vehicle } from "@/components/shared/VehicleCard/VehicleCard";
 import { PageHeader, DetailGallery, DetailHeroBar, DetailTabNav } from "@/components/shared";
 import Image from "next/image";
 import Button from "@/components/shared/Button/Button";
@@ -8,7 +7,6 @@ import TransportationReviews from "./TransportationReviews/TransportationReviews
 import BookingWidget from "./BookingWidget/BookingWidget";
 import styles from "./TransportationDetailPage.module.scss";
 
-// Extending Vehicle type or using a specialized one for details
 interface TransportationDetailPageProps {
   vehicleId: string;
 }
@@ -20,7 +18,6 @@ const TABS = [
 ];
 
 export default function TransportationDetailPage({ vehicleId }: TransportationDetailPageProps) {
-  // Mock vehicle data for now
   const vehicle = {
     id: vehicleId,
     title: "Premium Sedan - Mercedes S-Class",
@@ -34,7 +31,7 @@ export default function TransportationDetailPage({ vehicleId }: TransportationDe
       "/images/car4.jpg",
       "/images/car3.jpg",
     ],
-    price: "$1299"
+    price: "$1299",
   };
 
   return (
@@ -49,12 +46,11 @@ export default function TransportationDetailPage({ vehicleId }: TransportationDe
         showMobileActions={true}
       />
 
-      {/* ── Gallery & Hero Bar ── */}
       <div className={styles.heroSection}>
         <div className={styles.galleryWrap}>
-          <DetailGallery 
-            images={vehicle.images} 
-            title={vehicle.title} 
+          <DetailGallery
+            images={vehicle.images}
+            title={vehicle.title}
             rating={vehicle.rating}
             reviewCount={vehicle.reviews}
             description={vehicle.description}
@@ -82,20 +78,18 @@ export default function TransportationDetailPage({ vehicleId }: TransportationDe
         </div>
       </div>
 
-      {/* ── Sticky Tab Navigation ── */}
       <DetailTabNav tabs={TABS} />
 
-      {/* ── Content Sections ── */}
       <div className={styles.container}>
-        <div className={styles.layout}>
+        <div className={styles.withSidebar}>
           <div className={styles.mainContent}>
             <TransportationOverview />
             <TransportationFeatures />
           </div>
 
-          <aside className={styles.sidebar}>
-            <BookingWidget vehicleId={vehicleId} />
-          </aside>
+          <div className={styles.bookingSidebar}>
+            <BookingWidget vehicleId={vehicleId} totalPrice={vehicle.price} />
+          </div>
         </div>
       </div>
 

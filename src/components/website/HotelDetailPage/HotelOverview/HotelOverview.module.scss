@@ -1,21 +1,7 @@
 @use "@/styles/variables" as *;
-@use "@/styles/mixins" as *;
 
 .section {
   margin-top: 12px;
-}
-
-
-
-.layout {
-  display: grid;
-  grid-template-columns: 1fr 403px;
-  gap: 113px;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-    gap: 48px;
-  }
 }
 
 .heading {
@@ -47,78 +33,4 @@
   margin: 0;
   border-left: 3px solid $gray-200;
   padding-left: 20px;
-}
-
-.bookCard {
-  position: sticky;
-  top: 216px;
-  z-index: 10;
-  border: 1px solid $border;
-  border-radius: $radius-xl;
-  padding: 24px;
-  background: $white;
-}
-
-
-.bookTitle {
-  font-size: $font-size-xl;
-  font-weight: $font-weight-bold;
-  color: $dark;
-  margin: 0 0 8px;
-}
-
-.bookSubtitle {
-  font-size: $font-size-sm;
-  color: $text-light;
-  line-height: 1.5;
-  margin: 0;
-}
-
-.divider {
-  height: 1px;
-  background: $border;
-  margin: 24px -32px;
-}
-
-.priceContainer {
-  background: $gray-50;
-  border-radius: 20px;
-  padding: 16px 20px;
-  margin-bottom: 24px;
-}
-
-.priceRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.priceLabel {
-  display: block;
-  font-size: $font-size-15;
-  font-weight: $font-weight-bold;
-  color: $dark;
-}
-
-.priceSub {
-  display: block;
-  font-size: $font-size-xs;
-  color: $text-light;
-}
-
-.priceValue {
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
-  color: $primary;
-}
-
-.ctas {
-  margin-bottom: 16px;
-}
-
-.cancelPolicy {
-  text-align: center;
-  font-size: $font-size-xs;
-  color: $text-light;
-  margin: 0;
 }

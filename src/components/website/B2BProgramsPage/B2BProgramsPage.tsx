@@ -2,6 +2,7 @@
 
 import { PageHeader, DetailGallery } from "@/components/shared";
 import B2BOverview from "./components/B2BOverview/B2BOverview";
+import B2BBookingWidget from "./components/B2BBookingWidget/B2BBookingWidget";
 import B2BFeatures from "./components/B2BFeatures/B2BFeatures";
 import B2BProcess from "./components/B2BProcess/B2BProcess";
 import B2BStats from "./components/B2BStats/B2BStats";
@@ -41,7 +42,14 @@ export default function B2BProgramsPage() {
       </div>
 
       <div className={styles.container}>
-        <B2BOverview />
+        <div className={styles.withSidebar}>
+          <div className={styles.mainContent}>
+            <B2BOverview />
+          </div>
+          <div className={styles.bookingSidebar}>
+            <B2BBookingWidget />
+          </div>
+        </div>
         <B2BFeatures />
         <B2BProcess />
       </div>

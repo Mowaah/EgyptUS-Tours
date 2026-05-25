@@ -2,6 +2,7 @@
 
 import { PageHeader, DetailGallery } from "@/components/shared";
 import EventsOverview from "./EventsOverview/EventsOverview";
+import EventsBookingWidget from "./EventsBookingWidget/EventsBookingWidget";
 import EventsFeatures from "./EventsFeatures/EventsFeatures";
 import EventsProcess from "./EventsProcess/EventsProcess";
 import EventsStats from "./EventsStats/EventsStats";
@@ -40,7 +41,14 @@ export default function EventsPage() {
       </div>
 
       <div className={styles.container}>
-        <EventsOverview />
+        <div className={styles.withSidebar}>
+          <div className={styles.mainContent}>
+            <EventsOverview />
+          </div>
+          <div className={styles.bookingSidebar}>
+            <EventsBookingWidget />
+          </div>
+        </div>
         <EventsFeatures />
         <EventsProcess />
         <EventsStats />

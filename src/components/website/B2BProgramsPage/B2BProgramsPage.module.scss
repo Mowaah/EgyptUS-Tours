@@ -3,6 +3,43 @@
 
 .page {
   background: white;
+
+  @media (max-width: 1023px) {
+    padding-bottom: calc(#{$detail-cta-only-bar-mobile-height} + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+.withSidebar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 403px;
+    gap: 113px;
+  }
+}
+
+.mainContent {
+  min-width: 0;
+}
+
+.bookingSidebar {
+  display: none;
+
+  @media (max-width: 1023px) {
+    display: block;
+    height: 0;
+    min-height: 0;
+    overflow: visible;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 1024px) {
+    display: block;
+    padding-top: 48px;
+  }
 }
 
 .heroSection {

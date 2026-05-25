@@ -6,8 +6,10 @@ import { PageHeader, DetailGallery, DetailHeroBar, DetailTabNav } from "@/compon
 import Image from "next/image";
 import Button from "@/components/shared/Button/Button";
 import HotelOverview from "./HotelOverview/HotelOverview";
+import HotelLocation from "./HotelLocation/HotelLocation";
 import HotelRoomTypes from "./HotelRoomTypes/HotelRoomTypes";
 import SimilarHotels from "./SimilarHotels/SimilarHotels";
+import HotelBookingWidget from "./HotelBookingWidget/HotelBookingWidget";
 import styles from "./HotelDetailPage.module.scss";
 
 interface HotelDetailPageProps {
@@ -40,11 +42,10 @@ export default function HotelDetailPage({ hotel }: HotelDetailPageProps) {
         onFavoriteToggle={toggleFavorite}
       />
 
-      {/* ── Gallery & Hero Bar ── */}
       <div className={styles.heroSection}>
         <div className={styles.galleryWrap}>
-          <DetailGallery 
-            images={hotel.images ?? [hotel.image]} 
+          <DetailGallery
+            images={hotel.images ?? [hotel.image]}
             title={hotel.name}
             rating={hotel.rating ?? 0}
             reviewCount={hotel.reviews ?? 0}
@@ -75,20 +76,26 @@ export default function HotelDetailPage({ hotel }: HotelDetailPageProps) {
         </div>
       </div>
 
-      {/* ── Sticky Tab Navigation ── */}
       <DetailTabNav tabs={HOTEL_TABS} />
 
-      {/* ── Content Sections ── */}
       <div className={styles.container}>
-        <HotelOverview hotel={hotel} />
+        <div className={styles.withSidebar}>
+          <div className={styles.mainContent}>
+            <HotelOverview hotel={hotel} />
+            <div className={styles.locationSection}>
+              <HotelLocation hotel={hotel} />
+            </div>
+          </div>
+
+          <div className={styles.bookingSidebar}>
+            <HotelBookingWidget hotel={hotel} />
+          </div>
+        </div>
       </div>
 
       <div className={styles.container}>
         <HotelRoomTypes hotel={hotel} />
       </div>
-
-
-
 
       <div className={styles.container}>
         <SimilarHotels hotel={hotel} />
@@ -96,4 +103,3 @@ export default function HotelDetailPage({ hotel }: HotelDetailPageProps) {
     </div>
   );
 }
-

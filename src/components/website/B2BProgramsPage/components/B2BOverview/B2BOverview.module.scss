@@ -9,22 +9,6 @@
   }
 }
 
-.layout {
-  display: grid;
-  grid-template-columns: 1fr 403px;
-  gap: 113px;
-  align-items: flex-start;
-
-  @media (max-width: 1100px) {
-    grid-template-columns: 1fr;
-    gap: 48px;
-  }
-
-  @media (max-width: 600px) {
-    gap: 32px;
-  }
-}
-
 .content {
   display: flex;
   flex-direction: column;
@@ -135,10 +119,6 @@
   text-align: center;
   color: $text-lighter;
   margin: 0;
-}
-
-.sidebar {
-  width: 100%;
 }
 
 /* ── Tabs Header ── */

@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import EventsBookingWidget from '../EventsBookingWidget/EventsBookingWidget';
 import CategoryTabs from '@/components/shared/CategoryTabs/CategoryTabs';
 import styles from './EventsOverview.module.scss';
 
@@ -24,9 +23,7 @@ export default function EventsOverview() {
 
   return (
     <section id="overview" className={styles.section}>
-      <div className={styles.layout}>
-        {/* ── Left: Content ── */}
-        <div className={styles.content}>
+      <div className={styles.content}>
 
           <CategoryTabs
             className={styles.tabsContainer}
@@ -173,12 +170,6 @@ export default function EventsOverview() {
               </>
             )}
           </div>
-        </div>
-
-        {/* ── Right: Sidebar ── */}
-        <aside className={styles.sidebar}>
-          <EventsBookingWidget />
-        </aside>
       </div>
     </section>
   );

@@ -163,6 +163,12 @@ $navbar-height-desktop: 110px;
 $detail-tab-nav-height-desktop: 159px;
 $detail-tab-nav-sticky-gap: 24px;
 $detail-tab-nav-sticky-top: calc(#{$detail-tab-nav-height-desktop} + #{$detail-tab-nav-sticky-gap});
+$detail-booking-sticky-top-with-navbar: calc(#{$navbar-height-desktop} + #{$detail-tab-nav-sticky-top});
+$detail-booking-bar-mobile-height: 148px;
+$detail-hotel-booking-bar-mobile-height: 195px;
+$detail-transportation-booking-bar-mobile-height: 195px;
+$detail-cta-only-bar-mobile-height: 96px;
+$detail-marketing-booking-sticky-top: calc(#{$navbar-height-desktop} + 24px);
 
 // Transitions
 $transition-fast: 150ms ease;
