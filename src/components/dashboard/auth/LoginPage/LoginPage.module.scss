@@ -1,0 +1,76 @@
+@use "@/styles/variables" as *;
+
+.welcome {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  max-width: 31.5rem;
+  width: 100%;
+  margin-bottom: 2.5rem;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.625rem, 4vw, 2.25rem);
+  font-weight: $font-weight-bold;
+  line-height: 1.5;
+  color: $primary-deep;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-normal;
+  line-height: 1.5;
+  color: $text-muted;
+}
+
+.form {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+  max-width: 31.5rem;
+  width: 100%;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.eyeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: $gray-400;
+  cursor: pointer;
+
+  &:hover {
+    color: $gray-500;
+  }
+}
+
+.forgotRow {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.forgotLink {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: 1.5;
+  color: $primary;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

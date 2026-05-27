@@ -23,6 +23,8 @@ export { default as GlassCard } from "./GlassCard/GlassCard";
 export { default as SuccessModal } from "./SuccessModal/SuccessModal";
 export { default as SecondaryCta } from "./SecondaryCta/SecondaryCta";
 export { default as FormField } from "./FormField/FormField";
+export { default as DashboardField } from "./DashboardField/DashboardField";
+export { default as PasswordToggleButton } from "./PasswordToggleButton/PasswordToggleButton";
 export { default as PhonePrefixSelect } from "./PhonePrefixSelect/PhonePrefixSelect";
 export { default as CustomDatePicker } from "./CustomDatePicker/CustomDatePicker";
 export { default as NationalitySelect } from "./NationalitySelect/NationalitySelect";

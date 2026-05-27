@@ -1,0 +1,56 @@
+@use "@/styles/variables" as *;
+
+.button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  height: 3.5rem;
+  padding: 0.5rem 1.5rem;
+  font-family: inherit;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  color: $white;
+  background: $border-blue-deep;
+  border: none;
+  border-radius: 2.5rem;
+  cursor: not-allowed;
+  transition: background $transition-fast;
+
+  &:not(:disabled) {
+    background: $primary;
+    cursor: pointer;
+
+    &:hover {
+      background: $primary-hover;
+    }
+  }
+
+  &[aria-busy="true"] {
+    background: $primary;
+    cursor: wait;
+  }
+
+  img {
+    flex-shrink: 0;
+  }
+}
+
+.spinner {
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 0.3125rem solid rgba($white, 0.38);
+  border-top-color: $white;
+  border-radius: 50%;
+  animation: authButtonSpin 0.8s linear infinite;
+}
+
+@keyframes authButtonSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 
 import { createPortal } from "react-dom";
-import { FormField } from "@/components/shared";
+import FormField from "@/components/shared/FormField/FormField";
+import PasswordToggleButton from "@/components/shared/PasswordToggleButton/PasswordToggleButton";
 import { validateEmail, validatePassword, validateName } from "@/utils/validation";
 import styles from "./AuthModal.module.scss";
 
@@ -13,7 +14,11 @@ export interface AuthModalProps {
 }
 
 export default function AuthModal({ onClose, onLoginSuccess }: AuthModalProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    subscribeToClientMount,
+    getClientSnapshot,
+    getServerSnapshot,
+  );
   const [mode, setMode] = useState<"login" | "signup" | "reset">("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -34,12 +39,13 @@ export default function AuthModal({ onClose, onLoginSuccess }: AuthModalProps) {
   };
 
   useEffect(() => {
-    setMounted(true);
+    if (!mounted) return;
+
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, []);
+  }, [mounted]);
 
   if (!mounted) return null;
 
@@ -130,26 +136,12 @@ export default function AuthModal({ onClose, onLoginSuccess }: AuthModalProps) {
                       if (passwordError) setPasswordError("");
                     }}
                   />
-                  <button
-                    type="button"
+                  <PasswordToggleButton
+                    isVisible={showPassword}
                     className={styles.eyeBtn}
-                    onClick={() => setShowPassword(!showPassword)}
-                    aria-label="Toggle password visibility"
-                  >
-                    {showPassword ? (
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 5C5 5 2 12 2 12C2 12 5 19 12 19C19 19 22 12 22 12C22 12 19 5 12 5Z" />
-                        <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" />
-                      </svg>
-                    ) : (
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
-                        <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
-                        <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
-                        <line x1="2" y1="2" x2="22" y2="22"></line>
-                      </svg>
-                    )}
-                  </button>
+                    onToggle={() => setShowPassword((value) => !value)}
+                    size={24}
+                  />
                 </div>
               </FormField>
               {mode === "login" && (
@@ -204,4 +196,16 @@ export default function AuthModal({ onClose, onLoginSuccess }: AuthModalProps) {
   );
 
   return createPortal(content, document.body);
+}
+
+function subscribeToClientMount() {
+  return () => {};
+}
+
+function getClientSnapshot() {
+  return true;
+}
+
+function getServerSnapshot() {
+  return false;
 }
