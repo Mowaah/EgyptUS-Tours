@@ -102,7 +102,16 @@ export default function TransportationSection() {
 
       <div className={styles.mapBleed}>
         <div className={styles.mapStretch}>
-          <div className={styles.mapImage} role="img" aria-label="Map" />
+          {/* img keeps vector SVG sharp on Safari; CSS background-image rasterizes label boxes */}
+          <img
+            src="/images/map.svg"
+            alt=""
+            width={1280}
+            height={603}
+            className={styles.mapImg}
+            decoding="async"
+            draggable={false}
+          />
         </div>
       </div>
     </section>
