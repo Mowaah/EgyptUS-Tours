@@ -33,7 +33,6 @@ const navItems: NavItem[] = [
   { label: "Customers" },
   {
     label: "Catalog",
-    defaultOpen: true,
     children: [
       { label: "Trips" },
       { label: "Transportation" },
@@ -42,7 +41,6 @@ const navItems: NavItem[] = [
   },
   {
     label: "Finance",
-    defaultOpen: true,
     children: [
       { label: "Payments" },
       { label: "Deposits" },
@@ -51,7 +49,6 @@ const navItems: NavItem[] = [
   },
   {
     label: "Marketing",
-    defaultOpen: true,
     children: [
       { label: "Blog" },
       { label: "Articles" },
@@ -62,7 +59,6 @@ const navItems: NavItem[] = [
   { label: "Reports & Analytics" },
   {
     label: "Settings",
-    defaultOpen: true,
     children: [
       { label: "User Management" },
       { label: "Access Control" },
