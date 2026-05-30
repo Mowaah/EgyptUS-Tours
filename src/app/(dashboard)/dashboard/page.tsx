@@ -1,7 +1,16 @@
+import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
+import styles from "./page.module.scss";
+
 export default function DashboardHomePage() {
   return (
-    <main style={{ padding: "2rem", fontFamily: "inherit" }}>
-      <h1>Tourism Dashboard</h1>
+    <main className={styles.page}>
+      <DashboardSidebar />
+
+      <section className={styles.content} aria-label="Dashboard content">
+        <div className={styles.placeholder}>
+          <p>Dashboard content area</p>
+        </div>
+      </section>
     </main>
   );
 }

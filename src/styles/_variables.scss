@@ -29,22 +29,28 @@ $text-muted: #606978;
 $text-placeholder: #B1B1B1;
 
 $gray-25: #F8FAFD;
+$gray-25-slate: #F8FAFC;
 $gray-50: #F9FAFB;
 $gray-50-tailwind: #F3F4F6;
 $gray-50-alt: #f2f2f2;
 $gray-100: #F1F5F9;
+$gray-100-zinc: #F5F5F5;
 $gray-150: #EEEEEE;
 $gray-150-alt: #D8DDE4;
 $gray-200: #EBEBEB;
 $gray-200-zinc: #E5E5E5;
 $gray-300: #DADADA;
+$gray-300-zinc: #D4D4D4;
 $gray-tailwind-300: #D1D5DB;
 $gray-400: #9CA3AF;
+$gray-400-zinc: #A3A3A3;
 $gray-500: #6B7280;
 $gray-500-alt: #6A7282;
+$gray-500-zinc: #737373;
 $gray-600: #4B5563;
 $gray-700: #374151;
 $gray-900: #111827;
+$slate-900: #0F172A;
 $gray-blue-100: #EDF2F7;
 $gray-blue-200: #E2E8F0;
 $gray-blue-300: #CBD5E1;
@@ -83,6 +89,7 @@ $status-success-text: #15803d;
 $status-warning-bg: #fef3c7;
 $status-warning-text: #b45309;
 $status-danger-text: #d80027;
+$status-danger-dark: #B91C1C;
 
 // Brand/Specific Colors
 $orange-500: #f4a340;
@@ -93,6 +100,9 @@ $atlassian-gray: #7a8597;
 $primary-deep: #123367;
 $primary-chatbot: #1f55ad;
 $background-chatbot: #f7fcff;
+$dashboard-avatar: #AFAFAF;
+$dashboard-expandable-hover: #F8F9FB;
+$dashboard-sidebar-shadow: 0 24px 70px rgba(15, 23, 42, 0.06);
 
 $white: #FFFFFF;
 $black: #000000;

@@ -1,0 +1,33 @@
+@use "@/styles/variables" as *;
+
+.page {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  min-height: 100dvh;
+  padding: 1rem;
+  background: #f4f7fd;
+}
+
+.content {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: calc(100dvh - 2rem);
+  padding: 1.5rem;
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 16rem;
+  border: 1px dashed #d8dde4;
+  border-radius: 1rem;
+  color: $gray-500;
+  background: rgba(255, 255, 255, 0.55);
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+  }
+}
