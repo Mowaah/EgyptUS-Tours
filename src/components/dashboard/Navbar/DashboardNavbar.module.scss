@@ -1,0 +1,247 @@
+@use "@/styles/variables" as *;
+
+.navbar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2.1875rem;
+  width: 100%;
+  height: 12.5625rem;
+  padding: 1rem 2rem 2rem;
+  border-radius: 2rem;
+  background: $white;
+}
+
+.bottomRow {
+  min-height: 4.375rem;
+}
+
+.topRow,
+.bottomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  width: 100%;
+}
+
+.breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  gap: 0.25rem;
+  padding: 0.5rem 1rem;
+  border-radius: $radius-full;
+  color: $gray-500;
+  background: $gray-50-tailwind;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.icon,
+.chevronIcon,
+.notificationIcon,
+.actionIcon {
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  stroke-width: 1.6;
+}
+
+.chevronIcon {
+  width: 0.8125rem;
+  height: 0.8125rem;
+  stroke-width: 1.7;
+}
+
+.notificationButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: $radius-full;
+  color: #3c4858;
+  background: $gray-50-tailwind;
+}
+
+.notificationIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  stroke-width: 1.5;
+}
+
+.notificationDot {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.8125rem;
+  width: 0.46875rem;
+  height: 0.46875rem;
+  border-radius: $radius-full;
+  background: $secondary;
+}
+
+.heading {
+  min-width: 15rem;
+
+  h1 {
+    margin: 0;
+    color: $dark;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  p {
+    margin: 0.25rem 0 0;
+    color: $text-muted;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1;
+  }
+}
+
+.tools {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 0 1 40rem;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.filterButton,
+.searchBox {
+  display: inline-flex;
+  align-items: center;
+  min-height: 3.5rem;
+  border: 1px solid $border-strong;
+  border-radius: $radius-full;
+  background: $white;
+  color: $gray-400;
+  outline: none;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+
+  &:hover {
+    border-color: $primary;
+  }
+}
+
+.filterButton {
+  justify-content: center;
+  flex: 0 0 3.5rem;
+  width: 3.5rem;
+  height: 3.5rem;
+
+  &:focus-visible,
+  &:active {
+    border-color: $primary;
+    box-shadow: 0 0 0 3px $primary-soft;
+  }
+}
+
+.searchBox {
+  flex: 0 1 27.25rem;
+  gap: 0.75rem;
+  width: min(27.25rem, 100%);
+  padding: 1rem;
+
+  &:focus-within {
+    border-color: $primary;
+    box-shadow: 0 0 0 3px $primary-soft;
+  }
+
+  input {
+    min-width: 0;
+    width: 100%;
+    color: $gray-700;
+    background: transparent;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.35;
+    outline: none;
+
+    &::placeholder {
+      color: $gray-400;
+      opacity: 1;
+    }
+  }
+}
+
+.actionIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  stroke-width: 1.5;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 980px) {
+  .navbar {
+    height: auto;
+    gap: 2rem;
+    padding: 1rem;
+  }
+
+  .bottomRow {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .tools {
+    width: 100%;
+    flex: 1 1 auto;
+    justify-content: flex-start;
+  }
+
+  .searchBox {
+    flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .topRow {
+    gap: 1rem;
+  }
+
+  .heading {
+    min-width: 0;
+
+    h1 {
+      font-size: 1.625rem;
+      line-height: 1.15;
+    }
+
+    p {
+      line-height: 1.35;
+    }
+  }
+
+  .tools {
+    gap: 0.5rem;
+  }
+
+  .searchBox input::placeholder {
+    font-size: 0;
+  }
+}

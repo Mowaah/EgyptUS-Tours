@@ -96,7 +96,7 @@ function DashboardIcon({
 }) {
   return (
     <Image
-      src={`/images/dashboard-sidebar/${iconNameByLabel[label] ?? toKebabCase(label)}.svg`}
+      src={`/images/dashboard/sidebar/${iconNameByLabel[label] ?? toKebabCase(label)}.svg`}
       alt=""
       width={24}
       height={24}
@@ -109,7 +109,7 @@ function DashboardIcon({
 function Chevron({ open = false }: { open?: boolean }) {
   return (
     <Image
-      src="/images/dashboard-sidebar/chevron.svg"
+      src="/images/dashboard/sidebar/chevron.svg"
       alt=""
       width={20}
       height={20}
