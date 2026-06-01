@@ -1,0 +1,39 @@
+@use "@/styles/variables" as *;
+
+.segmented {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+  margin-left: auto;
+  padding: 0.5rem;
+  border-radius: 2rem;
+  background: #f8f9fb;
+
+  button {
+    min-width: 5.375rem;
+    height: 2.25rem;
+    padding: 0 1rem;
+    border-radius: 1.5rem;
+    color: #111827;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transform: none;
+  }
+
+  .segmentActive {
+    color: $white;
+    background: $dark;
+  }
+}
+
+@media (max-width: 760px) {
+  .segmented {
+    width: 100%;
+    margin-left: 0;
+
+    button {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+}

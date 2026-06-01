@@ -1,4 +1,4 @@
-import styles from "./DashboardHome.module.scss";
+import styles from "./SegmentedControl.module.scss";
 
 export type DashboardRange = "Today" | "Week" | "Month";
 

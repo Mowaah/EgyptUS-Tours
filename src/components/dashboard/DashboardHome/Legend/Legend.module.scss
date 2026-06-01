@@ -1,0 +1,22 @@
+.legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 1.25rem;
+  color: #9ca3af;
+  font-size: 0.75rem;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  i {
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 50%;
+  }
+}

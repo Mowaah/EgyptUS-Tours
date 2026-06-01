@@ -1,7 +1,6 @@
 import Image from "next/image";
-import type { MetricCardData } from "./types";
-import { iconPath } from "./utils";
-import styles from "./DashboardHome.module.scss";
+import type { MetricCardData } from "../types";
+import styles from "./MetricCard.module.scss";
 
 interface MetricCardProps {
   card: MetricCardData;
@@ -17,7 +16,16 @@ const toneColors = {
 };
 
 const TrendIcon = ({ trend }: { trend: "up" | "down" }) => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     {trend === "up" ? (
       <path d="M23 6l-9.5 9.5-5-5L1 18m15-12h7v7" />
     ) : (
@@ -31,7 +39,7 @@ const generateJaggedPath = (seedStr: string, trend: "up" | "down") => {
   for (let i = 0; i < seedStr.length; i++) {
     seed = seedStr.charCodeAt(i) + ((seed << 5) - seed);
   }
-  
+
   const random = () => {
     const x = Math.sin(seed++) * 10000;
     return x - Math.floor(x);
@@ -39,13 +47,13 @@ const generateJaggedPath = (seedStr: string, trend: "up" | "down") => {
 
   let y = trend === "up" ? 34 : 8;
   let path = `M0 ${y.toFixed(1)}`;
-  
+
   for (let x = 2; x <= 208; x += 2) {
     let step = (random() - 0.5) * 5;
     y += step + (trend === "up" ? -0.25 : 0.25);
-    
+
     if (random() > 0.9) y += (random() - 0.5) * 8;
-    
+
     if (y < 2) y = 2;
     if (y > 40) y = 40;
     path += ` L${x} ${y.toFixed(1)}`;
@@ -58,16 +66,16 @@ export default function MetricCard({ card }: MetricCardProps) {
   const jaggedPath = generateJaggedPath(card.label, card.trend);
 
   return (
-    <article className={`${styles.metricCard} ${styles[card.tone]}`}>
-      <div className={styles.metricTop}>
-        <span className={styles.metricIcon} aria-hidden>
-          <Image src={iconPath(card.icon)} alt="" width={18} height={18} />
+    <article className={`${styles.card} ${styles[card.tone]}`}>
+      <div className={styles.top}>
+        <span className={styles.icon} aria-hidden>
+          <Image src={`/images/dashboard/${card.icon}.svg`} alt="" width={18} height={18} />
         </span>
         <span>{card.label}</span>
       </div>
-      <div className={styles.metricValueRow}>
+      <div className={styles.valueRow}>
         <strong>{card.value}</strong>
-        <span className={`${styles.metricTrend} ${card.trend === "down" ? styles.down : ""}`}>
+        <span className={`${styles.trend} ${card.trend === "down" ? styles.down : ""}`}>
           {card.change}
           <TrendIcon trend={card.trend} />
         </span>

@@ -1,19 +1,18 @@
 "use client";
 
-import Image from "next/image";
 import { useMemo, useState } from "react";
-import DestinationDonut from "./DestinationDonut";
-import DistributionChart from "./DistributionChart";
-import Legend from "./Legend";
-import LineChart from "./LineChart";
-import MetricCard from "./MetricCard";
-import PanelHeader from "./PanelHeader";
-import PendingActions from "./PendingActions";
-import RecentBookingsTable from "./RecentBookingsTable";
-import { domesticLines, metricCards, revenueLines } from "./dashboardHomeData";
-import { ChevronRightIcon } from "../Navbar/DashboardNavbar";
-import type { ChartLine } from "./types";
+import { RecentBookingsTable } from "@/components/dashboard/RecentBookingsTable";
+import { DestinationDonut } from "./DestinationDonut";
+import { DistributionChart } from "./DistributionChart";
+import { Legend } from "./Legend";
+import { LineChart } from "./LineChart";
+import { MetricCard } from "./MetricCard";
+import { PanelHeader } from "./PanelHeader";
+import { PendingActions } from "./PendingActions";
 import type { DashboardRange } from "./SegmentedControl";
+import { ChevronRightIcon } from "../Navbar/DashboardNavbar";
+import { domesticLines, metricCards, revenueLines } from "./dashboardHomeData";
+import type { ChartLine } from "./types";
 import styles from "./DashboardHome.module.scss";
 
 const rangeFactors: Record<DashboardRange, number[]> = {
@@ -37,36 +36,64 @@ function applyRange(lines: ChartLine[], range: DashboardRange) {
 export default function DashboardHome() {
   const [revenueRange, setRevenueRange] = useState<DashboardRange>("Month");
   const [bookingRange, setBookingRange] = useState<DashboardRange>("Month");
-  const revenueChartLines = useMemo(() => applyRange(revenueLines, revenueRange), [revenueRange]);
-  const bookingChartLines = useMemo(() => applyRange(domesticLines, bookingRange), [bookingRange]);
+  const revenueChartLines = useMemo(
+    () => applyRange(revenueLines, revenueRange),
+    [revenueRange]
+  );
+  const bookingChartLines = useMemo(
+    () => applyRange(domesticLines, bookingRange),
+    [bookingRange]
+  );
 
   return (
-    <div className={styles.dashboardBody}>
+    <div className={styles.body}>
       <section className={styles.metricGrid} aria-label="Dashboard metrics">
-        {metricCards.map((card) => <MetricCard card={card} key={card.label} />)}
+        {metricCards.map((card) => (
+          <MetricCard card={card} key={card.label} />
+        ))}
       </section>
 
       <section className={styles.analyticsGrid}>
         <article className={`${styles.panel} ${styles.revenuePanel}`}>
-          <PanelHeader icon="revenue" title="Revenue Overview" subtitle={`${revenueRange} revenue by service type`} range={revenueRange} onRangeChange={setRevenueRange} />
+          <PanelHeader
+            icon="revenue"
+            title="Revenue Overview"
+            subtitle={`${revenueRange} revenue by service type`}
+            range={revenueRange}
+            onRangeChange={setRevenueRange}
+          />
           <LineChart lines={revenueChartLines} />
           <Legend items={revenueChartLines} />
         </article>
 
         <article className={`${styles.panel} ${styles.distributionPanel}`}>
-          <PanelHeader icon="booking-distribution" title="Booking Distribution" subtitle="By service type" />
+          <PanelHeader
+            icon="booking-distribution"
+            title="Booking Distribution"
+            subtitle="By service type"
+          />
           <DistributionChart />
         </article>
       </section>
 
       <section className={styles.midGrid}>
         <article className={`${styles.panel} ${styles.destinationPanel}`}>
-          <PanelHeader icon="booking-by-destination" title="Bookings by Destination" subtitle="Top destinations this quarter" />
+          <PanelHeader
+            icon="booking-by-destination"
+            title="Bookings by Destination"
+            subtitle="Top destinations this quarter"
+          />
           <DestinationDonut />
         </article>
 
         <article className={`${styles.panel} ${styles.domesticPanel}`}>
-          <PanelHeader icon="domestic" title="Domestic vs International Bookings" subtitle={`${bookingRange} comparison inside Egypt and outbound destinations`} range={bookingRange} onRangeChange={setBookingRange} />
+          <PanelHeader
+            icon="domestic"
+            title="Domestic vs International Bookings"
+            subtitle={`${bookingRange} comparison inside Egypt and outbound destinations`}
+            range={bookingRange}
+            onRangeChange={setBookingRange}
+          />
           <LineChart lines={bookingChartLines} area />
           <Legend items={bookingChartLines} />
         </article>
@@ -75,7 +102,12 @@ export default function DashboardHome() {
       <section className={styles.bottomGrid}>
         <article className={`${styles.panel} ${styles.bookingsPanel}`}>
           <div className={styles.tableHeader}>
-            <PanelHeader icon="recent-bookings" title="Recent Bookings" badge="Last 7 bookings across all services" />
+            <PanelHeader
+              className={styles.tablePanelHeader}
+              icon="recent-bookings"
+              title="Recent Bookings"
+              badge="Last 7 bookings across all services"
+            />
             <a href="#" className={styles.viewAllLink}>
               View All
               <ChevronRightIcon className={styles.viewAllChevron} />
@@ -85,7 +117,11 @@ export default function DashboardHome() {
         </article>
 
         <article className={`${styles.panel} ${styles.actionsPanel}`}>
-          <PanelHeader icon="pending-actions" title="Pending Actions" subtitle="Items requiring your attention" />
+          <PanelHeader
+            icon="pending-actions"
+            title="Pending Actions"
+            subtitle="Items requiring your attention"
+          />
           <PendingActions />
         </article>
       </section>

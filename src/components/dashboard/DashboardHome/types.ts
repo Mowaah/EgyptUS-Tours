@@ -30,16 +30,6 @@ export interface DestinationItem {
   color: string;
 }
 
-export interface BookingRow {
-  id: string;
-  customer: string;
-  service: string;
-  destination: string;
-  date: string;
-  price: string;
-  status: string;
-}
-
 export interface PendingAction {
   title: string;
   time: string;

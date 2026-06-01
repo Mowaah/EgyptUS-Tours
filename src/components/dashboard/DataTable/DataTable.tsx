@@ -1,0 +1,214 @@
+"use client";
+
+import Image from "next/image";
+import { useState } from "react";
+import { buildPageList } from "./buildPageList";
+import styles from "./DataTable.module.scss";
+import type { DataTableProps } from "./types";
+
+const DEFAULT_PAGE_SIZES = [5, 10, 15];
+
+export default function DataTable<T>({
+  data,
+  columns,
+  getRowId,
+  selectable = false,
+  rowActions,
+  pageSizeOptions = DEFAULT_PAGE_SIZES,
+  defaultPageSize = pageSizeOptions[0] ?? 5,
+  className,
+}: DataTableProps<T>) {
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(defaultPageSize);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [openRowId, setOpenRowId] = useState<string | null>(null);
+
+  const pageCount = Math.max(1, Math.ceil(data.length / rowsPerPage));
+  const safePage = Math.min(page, pageCount);
+  const visibleRows = data.slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage);
+  const pageList = buildPageList(safePage, pageCount);
+  const hasActions = Boolean(rowActions);
+
+  const toggleRow = (id: string) => {
+    setSelectedRows((current) =>
+      current.includes(id) ? current.filter((rowId) => rowId !== id) : [...current, id]
+    );
+  };
+
+  const changeRowsPerPage = (value: number) => {
+    setRowsPerPage(value);
+    setPage(1);
+    setOpenRowId(null);
+  };
+
+  const wrapClassName = className ? `${styles.wrap} ${className}` : styles.wrap;
+
+  return (
+    <div className={wrapClassName}>
+      <table>
+        <thead>
+          <tr>
+            {selectable ? <th aria-label="Select visible rows" /> : null}
+            {columns.map((column) => (
+              <th key={column.id} aria-label={column.headerAriaLabel}>
+                {column.header}
+              </th>
+            ))}
+            {hasActions ? <th aria-label="Actions" /> : null}
+          </tr>
+        </thead>
+        <tbody>
+          {visibleRows.map((row) => {
+            const rowId = getRowId(row);
+            const isSelected = selectedRows.includes(rowId);
+            const actions = rowActions?.(row);
+
+            return (
+              <tr
+                key={rowId}
+                className={isSelected ? styles.selectedRow : undefined}
+              >
+                {selectable ? (
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => toggleRow(rowId)}
+                      aria-label={`Select row ${rowId}`}
+                    />
+                  </td>
+                ) : null}
+                {columns.map((column) => (
+                  <td key={column.id} className={column.cellClassName}>
+                    {column.render(row)}
+                  </td>
+                ))}
+                {hasActions ? (
+                  <td className={styles.moreCell}>
+                    <button
+                      type="button"
+                      className={styles.moreButton}
+                      aria-expanded={openRowId === rowId}
+                      aria-label={`More actions for ${rowId}`}
+                      onClick={() =>
+                        setOpenRowId((current) => (current === rowId ? null : rowId))
+                      }
+                    >
+                      <Image
+                        src="/images/dashboard/dots.svg"
+                        alt=""
+                        width={20}
+                        height={6}
+                        aria-hidden
+                      />
+                    </button>
+                    {openRowId === rowId && actions ? (
+                      <div className={styles.rowMenu}>
+                        {actions.map((action) => (
+                          <button
+                            type="button"
+                            key={action.label}
+                            onClick={() => action.onClick?.(row)}
+                          >
+                            {action.label}
+                          </button>
+                        ))}
+                      </div>
+                    ) : null}
+                  </td>
+                ) : null}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+      <div className={styles.footer}>
+        <div className={styles.footerLeft}>
+          <div className={styles.selectWrapper}>
+            <select
+              className={styles.rowsSelect}
+              value={rowsPerPage}
+              onChange={(event) => changeRowsPerPage(Number(event.target.value))}
+              aria-label="Rows per page"
+            >
+              {pageSizeOptions.map((value) => (
+                <option value={value} key={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
+            <Image
+              src="/images/dashboard/sidebar/chevron.svg"
+              alt=""
+              width={20}
+              height={20}
+              className={styles.selectChevron}
+              aria-hidden
+            />
+          </div>
+          <span className={styles.showLabel}>Show</span>
+          {selectedRows.length > 0 ? (
+            <span className={styles.selectionCount}>{selectedRows.length} selected</span>
+          ) : null}
+        </div>
+
+        <div className={styles.pagination}>
+          <button
+            type="button"
+            className={styles.paginationNav}
+            disabled={safePage === 1}
+            onClick={() => setPage((current) => Math.max(1, current - 1))}
+            aria-label="Previous page"
+          >
+            <Image
+              src="/images/dashboard/arrow-right.svg"
+              alt=""
+              width={16}
+              height={16}
+              className={styles.arrowLeft}
+            />
+            Previous
+          </button>
+
+          <div className={styles.pagesList}>
+            {pageList.map((p, i) =>
+              p === "..." ? (
+                <span key={`ellipsis-${i}`} className={styles.pageEllipsis}>
+                  ...
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  key={p}
+                  className={p === safePage ? styles.pageActive : styles.pageBtn}
+                  aria-current={p === safePage ? "page" : undefined}
+                  onClick={() => setPage(p)}
+                >
+                  {p}
+                </button>
+              )
+            )}
+          </div>
+
+          <button
+            type="button"
+            className={styles.paginationNav}
+            disabled={safePage === pageCount}
+            onClick={() => setPage((current) => Math.min(pageCount, current + 1))}
+            aria-label="Next page"
+          >
+            Next
+            <Image
+              src="/images/dashboard/arrow-right.svg"
+              alt=""
+              width={16}
+              height={16}
+              aria-hidden
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

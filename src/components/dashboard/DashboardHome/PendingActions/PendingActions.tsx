@@ -2,9 +2,8 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { pendingActions } from "./dashboardHomeData";
-import { iconPath } from "./utils";
-import styles from "./DashboardHome.module.scss";
+import { pendingActions } from "../dashboardHomeData";
+import styles from "./PendingActions.module.scss";
 
 export default function PendingActions() {
   const [activeAction, setActiveAction] = useState(pendingActions[0]?.title ?? "");
@@ -18,23 +17,25 @@ export default function PendingActions() {
   };
 
   return (
-    <div className={styles.actionList}>
+    <div className={styles.list}>
       {pendingActions.map((action) => (
         <button
           type="button"
-          className={`${styles.actionItem} ${activeAction === action.title ? styles.actionActive : ""} ${
-            completedActions.includes(action.title) ? styles.actionDone : ""
+          className={`${styles.item} ${activeAction === action.title ? styles.active : ""} ${
+            completedActions.includes(action.title) ? styles.done : ""
           }`}
           aria-pressed={completedActions.includes(action.title)}
           onClick={() => toggleCompleted(action.title)}
           key={action.title}
         >
-          <div className={`${styles.actionIcon} ${styles[action.tone]}`} aria-hidden>
-            <Image src={iconPath(action.icon)} alt="" width={18} height={18} />
+          <div className={`${styles.icon} ${styles[action.tone]}`} aria-hidden>
+            <Image src={`/images/dashboard/${action.icon}.svg`} alt="" width={18} height={18} />
           </div>
-          <div className={styles.actionText}>
+          <div className={styles.text}>
             <strong>{action.title}</strong>
-            <span>{completedActions.includes(action.title) ? "Marked as reviewed" : action.time}</span>
+            <span>
+              {completedActions.includes(action.title) ? "Marked as reviewed" : action.time}
+            </span>
           </div>
         </button>
       ))}

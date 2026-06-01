@@ -1,5 +1,4 @@
 import type {
-  BookingRow,
   ChartLine,
   DestinationItem,
   DistributionItem,
@@ -43,14 +42,6 @@ export const destinations: DestinationItem[] = [
   { label: "Hurghada", value: 30, color: "#FFC6A0" },
   { label: "Alexandria", value: 20, color: "#FFD6DD" },
   { label: "Sharm", value: 10, color: "#E9BDFF" },
-];
-
-export const bookings: BookingRow[] = [
-  { id: "BK-1284", customer: "Josh Adam", service: "MICE", destination: "Luxor & Aswan", date: "Jan 15, 2026", price: "$ 78,900", status: "Cancelled" },
-  { id: "BK-1283", customer: "Linda Blair", service: "Trips", destination: "Cairo - Marriott", date: "Jan 14, 2026", price: "$ 78,900", status: "Cancelled" },
-  { id: "BK-1282", customer: "Mohammad Karim", service: "Transport", destination: "Sharm El Sheikh", date: "Jan 14, 2026", price: "$ 78,900", status: "Pending" },
-  { id: "BK-1281", customer: "Ilham Budi Agung", service: "Hotels", destination: "Pyramids Day Tour", date: "Jan 14, 2026", price: "$ 78,900", status: "Pending" },
-  { id: "BK-1281", customer: "John Bushmill", service: "Hotels", destination: "Cairo Airport", date: "Jan 14, 2026", price: "$ 78,900", status: "Confirmed" },
 ];
 
 export const pendingActions: PendingAction[] = [

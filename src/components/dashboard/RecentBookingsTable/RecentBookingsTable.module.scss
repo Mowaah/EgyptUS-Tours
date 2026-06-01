@@ -1,0 +1,90 @@
+.idCell {
+  font-weight: 500;
+  color: #374151;
+}
+
+.priceCell {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.currencyIcon {
+  font-size: 18px;
+  font-weight: 600;
+  color: #6b7280;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.servicePill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.75rem;
+  padding: 4px 12px;
+  border-radius: 96px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  min-width: 5.25rem;
+  height: 1.75rem;
+  padding: 4px 12px;
+  border-radius: 128px;
+  font-size: 0.75rem;
+  font-weight: 500;
+
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+}
+
+.mice {
+  color: #c043ff;
+  background: rgba(206, 109, 255, 0.1);
+}
+.trips {
+  color: #1a84ff;
+  background: #e4f2ff;
+}
+.transport {
+  color: #ff627b;
+  background: rgba(251, 147, 163, 0.2);
+}
+.hotels {
+  color: #ea580c;
+  background: #ffedd5;
+}
+
+.cancelled {
+  color: #ef4444;
+  background: #fee2e2;
+  &::before {
+    background: #ef4444;
+  }
+}
+.pending {
+  color: #f59e0b;
+  background: #fef3c7;
+  &::before {
+    background: #f59e0b;
+  }
+}
+.confirmed {
+  color: #10b981;
+  background: #d1fae5;
+  &::before {
+    background: #10b981;
+  }
+}

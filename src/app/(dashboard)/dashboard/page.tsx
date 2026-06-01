@@ -1,4 +1,4 @@
-import DashboardHome from "@/components/dashboard/DashboardHome/DashboardHome";
+import DashboardHome from "@/components/dashboard/DashboardHome";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
 import styles from "./page.module.scss";

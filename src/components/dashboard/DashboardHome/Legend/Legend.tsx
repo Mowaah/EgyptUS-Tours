@@ -1,4 +1,4 @@
-import styles from "./DashboardHome.module.scss";
+import styles from "./Legend.module.scss";
 
 interface LegendItem {
   name?: string;
