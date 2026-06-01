@@ -24,9 +24,9 @@ const toTitleCase = (value: string) =>
     .replace(/[-_]+/g, " ")
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 
-function ChevronRightIcon() {
+export function ChevronRightIcon({ className, ...props }: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg className={styles.chevronIcon} viewBox="0 0 16 16" aria-hidden="true">
+    <svg className={`${styles.chevronIcon} ${className || ""}`.trim()} viewBox="0 0 16 16" aria-hidden="true" {...props}>
       <path d="m6 3.5 4 4.5-4 4.5" />
     </svg>
   );

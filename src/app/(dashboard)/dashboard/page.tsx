@@ -1,5 +1,6 @@
-import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
+import DashboardHome from "@/components/dashboard/DashboardHome/DashboardHome";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
+import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
 import styles from "./page.module.scss";
 
 export default function DashboardHomePage() {
@@ -9,10 +10,7 @@ export default function DashboardHomePage() {
 
       <section className={styles.content} aria-label="Dashboard content">
         <DashboardNavbar />
-
-        <div className={styles.placeholder}>
-          <p>Dashboard content area</p>
-        </div>
+        <DashboardHome />
       </section>
     </main>
   );
