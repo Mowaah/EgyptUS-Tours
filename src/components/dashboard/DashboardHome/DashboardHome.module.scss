@@ -55,6 +55,7 @@
   align-self: flex-start;
   height: 32.5rem;
   justify-content: space-between;
+  padding: 1.5rem;
 }
 
 .actionsPanel {
@@ -67,7 +68,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  width: 100%;
 }
 
 .tablePanelHeader {

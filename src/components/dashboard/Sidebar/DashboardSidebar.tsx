@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import styles from "./DashboardSidebar.module.scss";
 
@@ -11,8 +13,13 @@ interface NavItem {
   children?: NavItem[];
 }
 
+const navRoutes: Record<string, string> = {
+  Dashboard: "/dashboard",
+  "Leads & Inquiries": "/dashboard/leads",
+};
+
 const navItems: NavItem[] = [
-  { label: "Dashboard", active: true },
+  { label: "Dashboard" },
   { label: "Leads & Inquiries" },
   {
     label: "Bookings",
@@ -142,6 +149,8 @@ function NavChildren({ items, id, open }: { items: NavItem[]; id: string; open: 
 }
 
 export default function DashboardSidebar() {
+  const pathname = usePathname();
+
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(
       navItems
@@ -182,6 +191,8 @@ export default function DashboardSidebar() {
                 const hasChildren = Boolean(item.children?.length);
                 const isOpen = Boolean(openGroups[item.label]);
                 const subnavId = `dashboard-sidebar-${toKebabCase(item.label)}`;
+                const href = navRoutes[item.label];
+                const isActive = href ? pathname === href : false;
 
                 return (
                   <li key={item.label} className={styles.navGroup}>
@@ -189,7 +200,7 @@ export default function DashboardSidebar() {
                       <button
                         type="button"
                         className={`${styles.navLink} ${styles.navButton} ${
-                          item.active ? styles.active : ""
+                          isActive ? styles.active : ""
                         }`}
                         aria-expanded={isOpen}
                         aria-controls={subnavId}
@@ -199,11 +210,20 @@ export default function DashboardSidebar() {
                         <span>{item.label}</span>
                         <Chevron open={isOpen} />
                       </button>
+                    ) : href ? (
+                      <Link
+                        href={href}
+                        className={`${styles.navLink} ${isActive ? styles.active : ""}`}
+                        aria-current={isActive ? "page" : undefined}
+                      >
+                        <DashboardIcon label={item.label} className={styles.navIcon} />
+                        <span>{item.label}</span>
+                      </Link>
                     ) : (
                       <a
                         href="#"
-                        className={`${styles.navLink} ${item.active ? styles.active : ""}`}
-                        aria-current={item.active ? "page" : undefined}
+                        className={`${styles.navLink} ${isActive ? styles.active : ""}`}
+                        aria-current={isActive ? "page" : undefined}
                       >
                         <DashboardIcon label={item.label} className={styles.navIcon} />
                         <span>{item.label}</span>

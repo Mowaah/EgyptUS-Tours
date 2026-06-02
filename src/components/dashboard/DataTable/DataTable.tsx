@@ -1,12 +1,109 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { buildPageList } from "./buildPageList";
 import styles from "./DataTable.module.scss";
-import type { DataTableProps } from "./types";
+import type { DataTableProps, DataTableRowAction } from "./types";
 
 const DEFAULT_PAGE_SIZES = [5, 10, 15];
+
+interface ActionsCellProps<T> {
+  row: T;
+  rowId: string;
+  openRowId: string | null;
+  setOpenRowId: (id: string | null) => void;
+  actions: DataTableRowAction<T>[];
+  isLastRow: boolean;
+}
+
+function ActionsCell<T>({
+  row,
+  rowId,
+  openRowId,
+  setOpenRowId,
+  actions,
+  isLastRow,
+}: ActionsCellProps<T>) {
+  const [openUpward, setOpenUpward] = useState(false);
+  const cellRef = useRef<HTMLTableCellElement>(null);
+  const isOpen = openRowId === rowId;
+
+  const handleToggle = () => {
+    if (!isOpen && cellRef.current) {
+      const rect = cellRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const spaceBelow = viewportHeight - rect.bottom;
+      const dropdownHeight = 130;
+
+      if (isLastRow || (spaceBelow < dropdownHeight && rect.top > spaceBelow)) {
+        setOpenUpward(true);
+      } else {
+        setOpenUpward(false);
+      }
+    }
+    setOpenRowId(isOpen ? null : rowId);
+  };
+
+  return (
+    <td ref={cellRef} className={styles.moreCell}>
+      <div className={styles.menuWrapper}>
+        <button
+          type="button"
+          className={`${styles.moreButton} ${
+            isOpen ? styles.moreButtonActive : ""
+          }`}
+          aria-expanded={isOpen}
+          aria-label={`More actions for ${rowId}`}
+          onClick={handleToggle}
+        >
+          <Image
+            src="/images/dashboard/dots.svg"
+            alt=""
+            width={20}
+            height={6}
+            aria-hidden
+          />
+        </button>
+        {isOpen ? (
+          <div
+            className={`${styles.rowMenu} ${
+              openUpward ? styles.rowMenuUpward : ""
+            }`}
+          >
+            {actions.map((action) => (
+              <button
+                type="button"
+                key={action.label}
+                className={
+                  action.variant === "danger"
+                    ? styles.menuActionDanger
+                    : styles.menuAction
+                }
+                onClick={() => {
+                  action.onClick?.(row);
+                  setOpenRowId(null);
+                }}
+              >
+                {action.iconSrc ? (
+                  <span
+                    className={styles.actionIcon}
+                    style={{
+                      maskImage: `url(${action.iconSrc})`,
+                      WebkitMaskImage: `url(${action.iconSrc})`,
+                    }}
+                    aria-hidden
+                  />
+                ) : null}
+                <span>{action.label}</span>
+              </button>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </td>
+  );
+}
 
 export default function DataTable<T>({
   data,
@@ -22,6 +119,18 @@ export default function DataTable<T>({
   const [rowsPerPage, setRowsPerPage] = useState(defaultPageSize);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [openRowId, setOpenRowId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (openRowId === null) return;
+    const handleOutsideClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest(`.${styles.moreCell}`)) {
+        setOpenRowId(null);
+      }
+    };
+    document.addEventListener("click", handleOutsideClick);
+    return () => document.removeEventListener("click", handleOutsideClick);
+  }, [openRowId]);
 
   const pageCount = Math.max(1, Math.ceil(data.length / rowsPerPage));
   const safePage = Math.min(page, pageCount);
@@ -58,10 +167,11 @@ export default function DataTable<T>({
           </tr>
         </thead>
         <tbody>
-          {visibleRows.map((row) => {
+          {visibleRows.map((row, index) => {
             const rowId = getRowId(row);
             const isSelected = selectedRows.includes(rowId);
             const actions = rowActions?.(row);
+            const isLastRow = index === visibleRows.length - 1;
 
             return (
               <tr
@@ -83,39 +193,15 @@ export default function DataTable<T>({
                     {column.render(row)}
                   </td>
                 ))}
-                {hasActions ? (
-                  <td className={styles.moreCell}>
-                    <button
-                      type="button"
-                      className={styles.moreButton}
-                      aria-expanded={openRowId === rowId}
-                      aria-label={`More actions for ${rowId}`}
-                      onClick={() =>
-                        setOpenRowId((current) => (current === rowId ? null : rowId))
-                      }
-                    >
-                      <Image
-                        src="/images/dashboard/dots.svg"
-                        alt=""
-                        width={20}
-                        height={6}
-                        aria-hidden
-                      />
-                    </button>
-                    {openRowId === rowId && actions ? (
-                      <div className={styles.rowMenu}>
-                        {actions.map((action) => (
-                          <button
-                            type="button"
-                            key={action.label}
-                            onClick={() => action.onClick?.(row)}
-                          >
-                            {action.label}
-                          </button>
-                        ))}
-                      </div>
-                    ) : null}
-                  </td>
+                {hasActions && actions ? (
+                  <ActionsCell
+                    row={row}
+                    rowId={rowId}
+                    openRowId={openRowId}
+                    setOpenRowId={setOpenRowId}
+                    actions={actions}
+                    isLastRow={isLastRow}
+                  />
                 ) : null}
               </tr>
             );

@@ -1,0 +1,332 @@
+@use "@/styles/variables" as *;
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+  padding: 2rem;
+  background: $white;
+  border-radius: 1.5rem;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.panelTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  h2 {
+    margin: 0;
+    color: $dark;
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.375;
+  }
+}
+
+.panelIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 1.25rem;
+  background: #f8f9fb;
+}
+
+.panelActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.outlineButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.75rem;
+  padding: 0 1.5rem;
+  border: 1px solid rgba(102, 107, 109, 0.24);
+  border-radius: $radius-full;
+  color: #1f2937;
+  background: $white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transform: none;
+
+  &:hover {
+    background: #f9fafb;
+  }
+}
+
+/* ─── Filter bar ─── */
+
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: #fbfbfd;
+  border-radius: 2rem;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.016);
+}
+
+.filterFields {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* ─── Each input pill ─── */
+
+.filterField {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+.filterFieldOpen .filterPill {
+  border-color: #2971E6;
+  box-shadow: 0 1px 2px rgba(217, 217, 234, 0.05), 0 0 0 4px #E6F4FF;
+}
+
+.filterPill {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  height: 48px;
+  border: 1px solid rgba(102, 107, 109, 0.24);
+  border-radius: 50px;
+  background: $white;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  transform: none !important;
+  transition: none !important;
+
+  &:hover {
+    border-color: rgba(102, 107, 109, 0.4);
+    transform: none !important;
+  }
+  
+  &:active {
+    transform: none !important;
+  }
+}
+
+/* Left: label */
+.filterPillLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 100%;
+  padding: 12px 14px;
+  background: #F1F3F7;
+  border-radius: 50px 0 0 50px;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Middle: selected value */
+.filterPillValue {
+  flex: 1;
+  min-width: 0;
+  padding: 0 8px 0 12px;
+  color: #9ca3af;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Right: chevron circle */
+.filterPillChevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  background: #F1F3F7;
+  border-radius: 250px;
+
+  svg {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+/* ─── Dropdown menu ─── */
+
+.filterDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 50;
+  width: 100%;
+  min-width: 280px;
+  background: #ffffff;
+  border: 1px solid #F4F4F4;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 77, 0.08);
+  overflow: hidden;
+}
+
+.filterDropdownItems {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+}
+
+.filterDropdownItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  height: 48px;
+  padding: 2px 6px;
+  text-align: left;
+  transform: none;
+
+  &:hover:not(.filterDropdownItemSelected) {
+    background: transparent;
+
+    .filterDropdownItemInner {
+      background: #f9f9f9;
+    }
+  }
+}
+
+.filterDropdownItemSelected .filterDropdownItemInner {
+  background: #F4F4F4;
+  border-radius: 16px;
+}
+
+.filterDropdownItem > * {
+  /* inner content wrapper */
+}
+
+/* Inner content row inside each item */
+.filterDropdownItem {
+  > span,
+  > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    height: 100%;
+    padding: 10px 10px 10px 8px;
+    border-radius: 16px;
+  }
+}
+
+.filterDropdownItemSelected > * {
+  background: #F4F4F4;
+  border-radius: 16px;
+}
+
+/* Removed custom checkbox CSS in favor of CheckboxIndicator */
+
+.filterOptionText {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 400;
+  color: #0E2851;
+  letter-spacing: 0.01em;
+  line-height: 19px;
+}
+
+/* Backwards compat — keep label/selectWrap hidden */
+.filterSelectWrap,
+.filterChevronBtn,
+.filterSelect,
+.filterLabel {
+  display: none;
+}
+
+/* ─── Filter action buttons ─── */
+
+.filterActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.cleanButton {
+  padding: 0.75rem 1.75rem;
+  border-radius: 3.125rem;
+  color: $dark;
+  background: $white;
+  border: 1px solid #f2f2f2;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transform: none;
+
+  &:hover {
+    background: #f9fafb;
+  }
+}
+
+.applyButton {
+  padding: 0.75rem 1.75rem;
+  border-radius: 3.125rem;
+  color: $white;
+  background: $dark;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transform: none;
+
+  &:hover {
+    opacity: 0.92;
+  }
+}
+
+@media (max-width: 1180px) {
+  .filterBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filterFields {
+    flex-wrap: wrap;
+  }
+
+  .filterField {
+    flex: 1 1 calc(50% - 0.25rem);
+  }
+}
+
+@media (max-width: 760px) {
+  .panel {
+    padding: 1rem;
+  }
+
+  .panelHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filterField {
+    flex: 1 1 100%;
+  }
+}

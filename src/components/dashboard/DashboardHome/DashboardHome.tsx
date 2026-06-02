@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { RecentBookingsTable } from "@/components/dashboard/RecentBookingsTable";
+import { TablePanel } from "@/components/dashboard/TablePanel";
 import { DestinationDonut } from "./DestinationDonut";
 import { DistributionChart } from "./DistributionChart";
 import { Legend } from "./Legend";
@@ -100,21 +101,26 @@ export default function DashboardHome() {
       </section>
 
       <section className={styles.bottomGrid}>
-        <article className={`${styles.panel} ${styles.bookingsPanel}`}>
-          <div className={styles.tableHeader}>
-            <PanelHeader
-              className={styles.tablePanelHeader}
-              icon="recent-bookings"
-              title="Recent Bookings"
-              badge="Last 7 bookings across all services"
-            />
-            <a href="#" className={styles.viewAllLink}>
-              View All
-              <ChevronRightIcon className={styles.viewAllChevron} />
-            </a>
-          </div>
+        <TablePanel
+          ariaLabel="Recent bookings"
+          className={styles.bookingsPanel}
+          header={
+            <div className={styles.tableHeader}>
+              <PanelHeader
+                className={styles.tablePanelHeader}
+                icon="recent-bookings"
+                title="Recent Bookings"
+                badge="Last 7 bookings across all services"
+              />
+              <a href="#" className={styles.viewAllLink}>
+                View All
+                <ChevronRightIcon className={styles.viewAllChevron} />
+              </a>
+            </div>
+          }
+        >
           <RecentBookingsTable />
-        </article>
+        </TablePanel>
 
         <article className={`${styles.panel} ${styles.actionsPanel}`}>
           <PanelHeader
