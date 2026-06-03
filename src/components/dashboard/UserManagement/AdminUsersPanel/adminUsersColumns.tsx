@@ -70,18 +70,29 @@ export const adminUsersColumns: DataTableColumn<AdminUserRow>[] = [
   },
 ];
 
-export const adminUserRowActions = (row: AdminUserRow) => [
-  { label: "Change Role", iconSrc: "/images/dashboard/convert.svg" },
+export const createAdminUserRowActions = (
+  row: AdminUserRow,
+  onEditUser?: (row: AdminUserRow) => void,
+  onToggleUserStatus?: (row: AdminUserRow) => void,
+  onDeleteUser?: (row: AdminUserRow) => void
+) => [
+  {
+    label: "Edit User",
+    iconSrc: "/images/dashboard/edit.svg",
+    onClick: onEditUser,
+  },
   {
     label: row.state === "Active" ? "Deactivate" : "Activate",
     iconSrc:
       row.state === "Active"
         ? "/images/dashboard/deactivate.svg"
         : "/images/dashboard/activate.svg",
+    onClick: onToggleUserStatus,
   },
   {
     label: "Delete User",
     variant: "danger" as const,
     iconSrc: "/images/dashboard/delete.svg",
+    onClick: onDeleteUser,
   },
 ];

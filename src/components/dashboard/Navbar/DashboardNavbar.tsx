@@ -15,6 +15,7 @@ interface DashboardNavbarProps {
   title?: string;
   subtitle?: string;
   breadcrumbTrail?: BreadcrumbSegment[];
+  onPrimaryAction?: () => void;
 }
 
 interface PageCopy {
@@ -63,6 +64,7 @@ export default function DashboardNavbar({
   title,
   subtitle,
   breadcrumbTrail,
+  onPrimaryAction,
 }: DashboardNavbarProps) {
   const pathname = usePathname();
 
@@ -170,7 +172,11 @@ export default function DashboardNavbar({
           </label>
 
           {pageCopy.primaryAction ? (
-            <button type="button" className={styles.primaryActionButton}>
+            <button
+              type="button"
+              className={styles.primaryActionButton}
+              onClick={onPrimaryAction}
+            >
               {pageCopy.primaryAction.label}
               <Image
                 src="/images/dashboard/navbar/add-circle.svg"

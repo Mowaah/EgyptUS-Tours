@@ -7,11 +7,21 @@
   width: 100%;
 }
 
+.modalField {
+  gap: 0.75rem;
+}
+
 .label {
   font-size: $font-size-sm;
   font-weight: $font-weight-bold;
   line-height: 1.25rem;
   color: $dark;
+}
+
+.modalLabel {
+  color: $gray-600;
+  font-weight: $font-weight-medium;
+  line-height: 1.35;
 }
 
 .control {
@@ -46,6 +56,30 @@
   }
 }
 
+.modalInput {
+  height: 3rem;
+  border-color: $gray-100-zinc;
+  color: $gray-500-zinc;
+  letter-spacing: 0;
+
+  &::placeholder {
+    color: $gray-400;
+  }
+
+  &.select:invalid {
+    color: $gray-400;
+  }
+}
+
+.select {
+  appearance: none;
+  cursor: pointer;
+
+  &:invalid {
+    color: $gray-400;
+  }
+}
+
 .hasAdornment {
   padding-right: 3rem;
 }
@@ -65,6 +99,109 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.modalSelectWrap {
+  position: relative;
+  width: 100%;
+}
+
+.modalSelectTrigger {
+  position: relative;
+  justify-content: flex-start;
+  padding-right: 3rem;
+  cursor: pointer;
+  transform: none;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.modalSelectTriggerOpen {
+  border-color: $primary;
+  box-shadow: 0 0 0 3px $primary-soft;
+}
+
+.modalSelectValue {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  color: $gray-500-zinc;
+  font-size: $font-size-sm;
+  font-weight: 400;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.modalSelectPlaceholder {
+  color: $gray-400;
+}
+
+.modalSelectDropdown {
+  position: fixed;
+  z-index: 1300;
+  min-width: 17.5rem;
+  overflow: hidden;
+  background: $white;
+  border: 1px solid #f4f4f4;
+  border-radius: 1rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 77, 0.08);
+}
+
+.modalSelectDropdownItems {
+  display: flex;
+  flex-direction: column;
+  padding: 0.25rem 0;
+}
+
+.modalSelectDropdownItem {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 3rem;
+  padding: 0.125rem 0.375rem;
+  text-align: left;
+  transform: none;
+
+  &:hover:not(.modalSelectDropdownItemSelected, :disabled) {
+    background: transparent;
+
+    .modalSelectDropdownItemInner {
+      background: #f9f9f9;
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
+}
+
+.modalSelectDropdownItemSelected .modalSelectDropdownItemInner {
+  background: #f4f4f4;
+  border-radius: 1rem;
+}
+
+.modalSelectDropdownItemInner {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.5rem;
+  height: 100%;
+  padding: 0.625rem 0.625rem 0.625rem 0.5rem;
+  border-radius: 1rem;
+}
+
+.modalSelectOptionText {
+  flex: 1;
+  color: #0e2851;
+  font-size: $font-size-sm;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
 }
 
 .errorText {

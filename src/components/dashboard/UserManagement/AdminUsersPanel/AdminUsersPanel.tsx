@@ -8,14 +8,25 @@ import {
   TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
 import { mockAdminUsers } from "../userManagementData";
-import { adminUserRowActions, adminUsersColumns } from "./adminUsersColumns";
+import type { AdminUserRow } from "../types";
+import { createAdminUserRowActions, adminUsersColumns } from "./adminUsersColumns";
+
+interface AdminUsersPanelProps {
+  onEditUser?: (user: AdminUserRow) => void;
+  onToggleUserStatus?: (user: AdminUserRow) => void;
+  onDeleteUser?: (user: AdminUserRow) => void;
+}
 
 const filterOptions = {
   role: ["All", "Super Admin", "Operations", "Sales", "Support"],
   state: ["All", "Active", "Inactive"],
 };
 
-export default function AdminUsersPanel() {
+export default function AdminUsersPanel({
+  onEditUser,
+  onToggleUserStatus,
+  onDeleteUser,
+}: AdminUsersPanelProps) {
   const defaultFilters = { role: "All", state: "All" };
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
@@ -52,6 +63,9 @@ export default function AdminUsersPanel() {
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
 
+  const rowActions = (row: AdminUserRow) =>
+    createAdminUserRowActions(row, onEditUser, onToggleUserStatus, onDeleteUser);
+
   return (
     <TablePanel
       ariaLabel="Admin users table"
@@ -74,7 +88,7 @@ export default function AdminUsersPanel() {
         columns={adminUsersColumns}
         getRowId={(row) => row.id}
         selectable
-        rowActions={adminUserRowActions}
+        rowActions={rowActions}
         defaultPageSize={5}
       />
     </TablePanel>

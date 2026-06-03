@@ -21,6 +21,11 @@ export { default as PaginationArrows } from "./PaginationArrows/PaginationArrows
 export { default as StarRating } from "./StarRating/StarRating";
 export { default as GlassCard } from "./GlassCard/GlassCard";
 export { default as SuccessModal } from "./SuccessModal/SuccessModal";
+export { default as DashboardConfirmationModal } from "./DashboardConfirmationModal/DashboardConfirmationModal";
+export type {
+  DashboardConfirmationModalProps,
+  DashboardConfirmationVariant,
+} from "./DashboardConfirmationModal/DashboardConfirmationModal";
 export { default as SecondaryCta } from "./SecondaryCta/SecondaryCta";
 export { default as FormField } from "./FormField/FormField";
 export { default as DashboardField } from "./DashboardField/DashboardField";
