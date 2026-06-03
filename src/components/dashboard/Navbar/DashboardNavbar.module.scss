@@ -53,6 +53,16 @@
   }
 }
 
+.breadcrumbSegment {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.breadcrumbMuted {
+  color: $gray-500;
+}
+
 .breadcrumbCurrent {
   color: $gray-500;
 }
@@ -201,7 +211,7 @@
   stroke-width: 1.5;
 }
 
-.addLeadButton {
+.primaryActionButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;

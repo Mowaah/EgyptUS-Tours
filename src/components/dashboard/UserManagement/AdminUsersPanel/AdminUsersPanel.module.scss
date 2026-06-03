@@ -1,0 +1,77 @@
+@use "@/styles/variables" as *;
+
+.idCell {
+  font-weight: 700;
+  color: #374151;
+}
+
+.pill {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  height: 1.875rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+
+  i {
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+}
+
+.stateIcon {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+}
+
+.roleSuperAdmin {
+  color: #dc2626;
+  background: #fef2f2;
+  i {
+    background: #dc2626;
+  }
+}
+
+.roleOperations {
+  color: #cc5200;
+  background: #fff5ee;
+  i {
+    background: #cc5200;
+  }
+}
+
+.roleSales {
+  color: #16a34a;
+  background: #dcfce7;
+  i {
+    background: #16a34a;
+  }
+}
+
+.roleSupport {
+  color: $primary;
+  background: #f1f8ff;
+  i {
+    background: $primary;
+  }
+}
+
+.stateActive {
+  color: #16a34a;
+  background: $white;
+  border: 1px solid #86efac;
+}
+
+.stateInactive {
+  color: #dc2626;
+  background: $white;
+  border: 1px solid #fca5a5;
+}

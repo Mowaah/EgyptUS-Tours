@@ -16,6 +16,7 @@ interface NavItem {
 const navRoutes: Record<string, string> = {
   Dashboard: "/dashboard",
   "Leads & Inquiries": "/dashboard/leads",
+  "User Management": "/dashboard/settings/user-management",
 };
 
 const navItems: NavItem[] = [
@@ -126,38 +127,73 @@ function Chevron({ open = false }: { open?: boolean }) {
   );
 }
 
-function NavChildren({ items, id, open }: { items: NavItem[]; id: string; open: boolean }) {
+function NavChildren({
+  items,
+  id,
+  open,
+  pathname,
+}: {
+  items: NavItem[];
+  id: string;
+  open: boolean;
+  pathname: string;
+}) {
   return (
     <div className={`${styles.subnav} ${open ? styles.subnavOpen : ""}`} id={id}>
       <span className={styles.branch} aria-hidden />
       <ul className={styles.subnavList}>
-        {items.map((item) => (
-          <li key={item.label}>
-            <a
-              className={`${styles.subnavLink} ${item.active ? styles.active : ""}`}
-              href="#"
-              aria-current={item.active ? "page" : undefined}
-            >
-              <DashboardIcon label={item.label} className={styles.subnavIcon} />
-              <span>{item.label}</span>
-            </a>
-          </li>
-        ))}
+        {items.map((item) => {
+          const href = navRoutes[item.label];
+          const isActive = href ? pathname === href : false;
+          const linkClassName = `${styles.subnavLink} ${isActive ? styles.active : ""}`;
+
+          return (
+            <li key={item.label}>
+              {href ? (
+                <Link
+                  href={href}
+                  className={linkClassName}
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  <DashboardIcon label={item.label} className={styles.subnavIcon} />
+                  <span>{item.label}</span>
+                </Link>
+              ) : (
+                <a
+                  className={linkClassName}
+                  href="#"
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  <DashboardIcon label={item.label} className={styles.subnavIcon} />
+                  <span>{item.label}</span>
+                </a>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
 }
 
+const settingsPathPrefix = "/dashboard/settings";
+
 export default function DashboardSidebar() {
   const pathname = usePathname();
 
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
+    const groups = Object.fromEntries(
       navItems
         .filter((item) => item.children?.length)
         .map((item) => [item.label, Boolean(item.defaultOpen)])
-    )
-  );
+    );
+
+    if (pathname.startsWith(settingsPathPrefix)) {
+      groups.Settings = true;
+    }
+
+    return groups;
+  });
 
   const toggleGroup = (label: string) => {
     setOpenGroups((current) => ({
@@ -231,7 +267,12 @@ export default function DashboardSidebar() {
                     )}
 
                     {item.children ? (
-                      <NavChildren items={item.children} id={subnavId} open={isOpen} />
+                      <NavChildren
+                        items={item.children}
+                        id={subnavId}
+                        open={isOpen}
+                        pathname={pathname}
+                      />
                     ) : null}
                   </li>
                 );
