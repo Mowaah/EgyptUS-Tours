@@ -1,5 +1,17 @@
 @use "@/styles/variables" as *;
 
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0 0 1.5rem;
+}
+
+.panel {
+  position: relative;
+  gap: 1.75rem;
+}
+
 .idCell {
   font-weight: 700;
   color: #374151;
@@ -26,13 +38,8 @@
   }
 }
 
-.stateIcon {
-  flex-shrink: 0;
-  width: 1rem;
-  height: 1rem;
-}
-
-.roleSuperAdmin {
+.actionDeleteLead,
+.actionDeleteReview {
   color: #dc2626;
   background: #fef2f2;
   i {
@@ -40,7 +47,7 @@
   }
 }
 
-.roleOperations {
+.actionLogin {
   color: #cc5200;
   background: #fff5ee;
   i {
@@ -48,7 +55,7 @@
   }
 }
 
-.roleSales {
+.actionUpdateStatus {
   color: #16a34a;
   background: #dcfce7;
   i {
@@ -56,7 +63,7 @@
   }
 }
 
-.roleSupport {
+.actionCreateUser {
   color: $primary;
   background: #f1f8ff;
   i {
@@ -74,4 +81,16 @@
   color: #D80027;
   background: rgba(216, 0, 39, 0.05);
   border: none;
+}
+
+.stateIcon {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+}
+
+.toolbarStack {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }

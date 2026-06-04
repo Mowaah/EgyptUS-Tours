@@ -90,15 +90,26 @@
   color: #9ca3af;
   background: #fbfbfd;
   transform: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
 
   &:hover {
-    background: #f3f4f6;
+    background: #fff3ef;
+    color: #ff6f47;
   }
 }
 
 .moreButtonActive {
-  background: #fff3ef;
-  color: #ff6f47;
+  background: #fff3ef !important;
+  color: #ff6f47 !important;
+}
+
+.dotsIcon {
+  display: inline-block;
+  width: 20px;
+  height: 6px;
+  background-color: currentColor;
+  mask: url("/images/dashboard/dots.svg") no-repeat center / contain;
+  -webkit-mask: url("/images/dashboard/dots.svg") no-repeat center / contain;
 }
 
 .moreCell {

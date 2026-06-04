@@ -57,13 +57,7 @@ function ActionsCell<T>({
           aria-label={`More actions for ${rowId}`}
           onClick={handleToggle}
         >
-          <Image
-            src="/images/dashboard/dots.svg"
-            alt=""
-            width={20}
-            height={6}
-            aria-hidden
-          />
+          <span className={styles.dotsIcon} aria-hidden />
         </button>
         {isOpen ? (
           <div

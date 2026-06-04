@@ -52,6 +52,20 @@ const pageCopyByPath: Record<string, PageCopy> = {
     searchPlaceholder: "Search bookings, customers...",
     primaryAction: { label: "New Admin Role" },
   },
+  "/dashboard/settings/system-configuration": {
+    title: "System Configuration",
+    subtitle: "Manage and customize system settings, preferences, and platform configurations.",
+    breadcrumbTrail: [{ label: "Settings" }, { label: "System Configuration" }],
+    searchPlaceholder: "Search bookings, customers...",
+    primaryAction: { label: "New Admin" },
+  },
+  "/dashboard/settings/audit-log": {
+    title: "Audit Log",
+    subtitle: "Track and review all system activities, user actions, and recent administrative changes.",
+    breadcrumbTrail: [{ label: "Settings" }, { label: "Audit Log" }],
+    searchPlaceholder: "Search bookings, customers...",
+    primaryAction: { label: "New Admin" },
+  },
 };
 
 const toTitleCase = (value: string) =>
