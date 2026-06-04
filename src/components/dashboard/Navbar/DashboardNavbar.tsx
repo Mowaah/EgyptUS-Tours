@@ -45,6 +45,13 @@ const pageCopyByPath: Record<string, PageCopy> = {
     searchPlaceholder: "Search names, emails...",
     primaryAction: { label: "New Admin" },
   },
+  "/dashboard/settings/access-control": {
+    title: "Access Control",
+    subtitle: "Control user permissions and manage access levels across the admin dashboard.",
+    breadcrumbTrail: [{ label: "Settings" }, { label: "Access Control" }],
+    searchPlaceholder: "Search bookings, customers...",
+    primaryAction: { label: "New Admin Role" },
+  },
 };
 
 const toTitleCase = (value: string) =>

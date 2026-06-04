@@ -26,6 +26,11 @@ export type {
   DashboardConfirmationModalProps,
   DashboardConfirmationVariant,
 } from "./DashboardConfirmationModal/DashboardConfirmationModal";
+export { default as DashboardStatusBanner } from "./DashboardStatusBanner/DashboardStatusBanner";
+export type {
+  DashboardStatusBannerProps,
+  DashboardStatusBannerVariant,
+} from "./DashboardStatusBanner/DashboardStatusBanner";
 export { default as SecondaryCta } from "./SecondaryCta/SecondaryCta";
 export { default as FormField } from "./FormField/FormField";
 export { default as DashboardField } from "./DashboardField/DashboardField";

@@ -17,6 +17,7 @@ const navRoutes: Record<string, string> = {
   Dashboard: "/dashboard",
   "Leads & Inquiries": "/dashboard/leads",
   "User Management": "/dashboard/settings/user-management",
+  "Access Control": "/dashboard/settings/access-control",
 };
 
 const navItems: NavItem[] = [
