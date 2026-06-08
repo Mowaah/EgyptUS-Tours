@@ -66,6 +66,13 @@ const pageCopyByPath: Record<string, PageCopy> = {
     searchPlaceholder: "Search bookings, customers...",
     primaryAction: { label: "New Admin" },
   },
+  "/dashboard/settings/faq-management": {
+    title: "FAQ Management",
+    subtitle: "Easily manage common questions and answers for users",
+    breadcrumbTrail: [{ label: "Legal & Help Center" }, { label: "FAQ Management" }],
+    searchPlaceholder: "Search FAQs...",
+    primaryAction: { label: "Add New FAQ" },
+  },
 };
 
 const toTitleCase = (value: string) =>

@@ -169,7 +169,7 @@ export default function AuditLog() {
     },
   ];
 
-  const rowActions = (row: AuditLogEntry) => [
+  const rowActions = (_row: AuditLogEntry) => [
     {
       label: "Restore Changes",
       iconSrc: "/images/dashboard/restore.svg",

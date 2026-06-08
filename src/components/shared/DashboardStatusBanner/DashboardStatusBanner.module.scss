@@ -26,6 +26,28 @@
   }
 }
 
+.warning {
+  color: #FF663D;
+  background: #FFF0EB;
+  box-shadow: 0px 16px 64px rgba(39, 87, 76, 0.16);
+}
+
+.warningIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: #FF5527;
+  border-radius: 50%;
+  flex-shrink: 0;
+
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
 .leaving {
   animation: dashboardStatusBannerOut 260ms ease-in both;
 }

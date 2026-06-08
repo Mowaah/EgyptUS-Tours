@@ -20,6 +20,7 @@ const navRoutes: Record<string, string> = {
   "Access Control": "/dashboard/settings/access-control",
   "System Configuration": "/dashboard/settings/system-configuration",
   "Audit Log": "/dashboard/settings/audit-log",
+  "FAQ Management": "/dashboard/settings/faq-management",
 };
 
 const navItems: NavItem[] = [
@@ -80,6 +81,7 @@ const navItems: NavItem[] = [
   {
     label: "Legal & Help Center",
     children: [
+      { label: "FAQ Management" },
       { label: "Terms & Conditions" },
       { label: "Privacy Policy" },
     ],
@@ -96,6 +98,7 @@ const toKebabCase = (value: string) =>
 
 const iconNameByLabel: Partial<Record<string, string>> = {
   "Privacy Policy": "privacy",
+  "FAQ Management": "faq",
 };
 
 function DashboardIcon({

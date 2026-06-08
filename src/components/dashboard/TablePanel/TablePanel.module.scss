@@ -1,6 +1,7 @@
 @use "@/styles/variables" as *;
 
 .panel {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;

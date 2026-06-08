@@ -109,7 +109,7 @@
   margin-inline: -0.5rem;
   border-radius: 2rem;
   text-align: left;
-  font-size: 1rem;
+  font-size: 0.875rem;
   line-height: 1.375rem;
   opacity: 1;
   transition: background $transition-fast, color $transition-fast, opacity $transition-fast;
@@ -119,9 +119,6 @@
     display: flex;
     align-items: center;
     min-width: 0;
-    height: 1.25rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   &:hover,
@@ -183,7 +180,8 @@
   display: none;
   grid-template-columns: 0.875rem minmax(0, 1fr);
   gap: 0;
-  width: 12.0625rem;
+  width: auto;
+  min-width: 12.0625rem;
   margin: 0.5rem 0 0 1.5rem;
   padding-bottom: 0.25rem;
 }
@@ -237,8 +235,7 @@
   transition: background $transition-fast, color $transition-fast;
 
   span {
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow: visible;
   }
 
   &:hover,
