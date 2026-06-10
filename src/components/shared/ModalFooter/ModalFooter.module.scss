@@ -1,0 +1,51 @@
+@use "@/styles/variables" as *;
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem 1.5rem;
+  border-top: 1px solid rgba(102, 107, 109, 0.12);
+  background: $white;
+}
+
+.secondaryBtn,
+.primaryBtn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 3rem;
+  border-radius: 9999px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  user-select: none;
+}
+
+.secondaryBtn {
+  color: #374151;
+  background: $white;
+  border: 1px solid #D1D5DB;
+
+  &:hover {
+    background: #F9FAFB;
+  }
+}
+
+.primaryBtn {
+  color: $white;
+  background: #2971E6;
+  border: none;
+
+  &:hover:not(:disabled) {
+    background: #1d5fd4;
+  }
+
+  &:disabled {
+    background: #E5E7EB;
+    color: #9CA3AF;
+    cursor: not-allowed;
+  }
+}

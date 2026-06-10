@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import { LanguageTabs, type Language, ModalHeader, ModalFooter } from "@/components/shared";
 import styles from "./FaqFormModal.module.scss";
 
 interface FaqFormModalProps {
@@ -12,19 +12,11 @@ interface FaqFormModalProps {
   onSave: (question: string, answer: string, published: boolean) => void;
 }
 
-function CloseIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.closeSvg}>
-      <path d="M18 6 6 18" />
-      <path d="m6 6 12 12" />
-    </svg>
-  );
-}
-
 export default function FaqFormModal({ open, mode = "add", initialData, onClose, onSave }: FaqFormModalProps) {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [published, setPublished] = useState(true);
+  const [activeLang, setActiveLang] = useState<Language>("English");
 
   // Sync initialData when modal opens
   useEffect(() => {
@@ -74,25 +66,19 @@ export default function FaqFormModal({ open, mode = "add", initialData, onClose,
         onMouseDown={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <header className={styles.header}>
-          <div className={styles.headerIcon} aria-hidden>
-            {mode === "add" ? (
-              <Image src="/images/dashboard/add-modal.svg" alt="Add" width={20} height={20} />
-            ) : (
-              <Image src="/images/dashboard/edit-modal.svg" alt="Edit" width={20} height={20} />
-            )}
-          </div>
-          <div className={styles.headerText}>
-            <h2 id="faq-form-modal-title">{mode === "add" ? "Add New Question" : "Edit Question"}</h2>
-            <p>{mode === "add" ? "Create a new question that will appear to visitors on the website." : "Make changes to the question and answer."}</p>
-          </div>
-          <button type="button" className={styles.closeButton} aria-label="Close modal" onClick={onClose}>
-            <CloseIcon />
-          </button>
-        </header>
+        <ModalHeader
+          onClose={onClose}
+          iconSrc={mode === "add" ? "/images/dashboard/add-modal.svg" : "/images/dashboard/edit-modal.svg"}
+          title={mode === "add" ? "Add New Question" : "Edit Question"}
+          subtitle={mode === "add" ? "Create a new question that will appear to visitors on the website." : "Make changes to the question and answer."}
+          id="faq-form-modal-title"
+        />
 
         {/* Body */}
         <div className={styles.body}>
+          {/* Language tabs */}
+          <LanguageTabs active={activeLang} onChange={setActiveLang} />
+
           {/* Question field */}
           <div className={styles.fieldGroup}>
             <label className={styles.fieldLabel} htmlFor="faq-question">Question</label>
@@ -138,14 +124,12 @@ export default function FaqFormModal({ open, mode = "add", initialData, onClose,
         </div>
 
         {/* Footer */}
-        <footer className={styles.footer}>
-          <button type="button" className={styles.discardBtn} onClick={handleDiscard}>
-            Discard
-          </button>
-          <button type="button" className={styles.saveBtn} onClick={handleSave}>
-            {mode === "add" ? "Add Question" : "Save Edits"}
-          </button>
-        </footer>
+        <ModalFooter
+          secondaryLabel="Discard"
+          secondaryOnClick={handleDiscard}
+          primaryLabel={mode === "add" ? "Add Question" : "Save Edits"}
+          primaryOnClick={handleSave}
+        />
       </section>
     </div>
   );

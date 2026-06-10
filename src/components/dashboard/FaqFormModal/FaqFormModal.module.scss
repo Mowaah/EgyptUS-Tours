@@ -23,78 +23,7 @@
   box-shadow: 0 20px 24px -4px rgba(16, 24, 40, 0.08), 0 8px 8px -4px rgba(16, 24, 40, 0.03);
 }
 
-/* ── Header ── */
-.header {
-  position: relative;
-  display: grid;
-  grid-template-columns: 4rem minmax(0, 1fr) 5rem;
-  align-items: center;
-  gap: 1rem;
-  min-height: 6.8125rem;
-  padding: 1.5rem 1rem 1.25rem 1.5rem;
-  border-bottom: 1px solid rgba(102, 107, 109, 0.12);
-}
 
-.headerIcon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 4rem;
-  height: 4rem;
-  border: 0.5rem solid #F9FAFB;
-  border-radius: 50%;
-  background: #F2F4F7;
-  color: #737373;
-  flex-shrink: 0;
-}
-
-.headerText {
-  min-width: 0;
-
-  h2 {
-    margin: 0;
-    color: #11263B;
-    font-size: 1.5rem;
-    font-weight: 500;
-    line-height: 1.5;
-  }
-
-  p {
-    margin: 0.25rem 0 0;
-    color: #A3A3A3;
-    font-size: 0.875rem;
-    font-weight: 400;
-    line-height: 1.35;
-  }
-}
-
-.closeButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 4rem;
-  height: 4rem;
-  color: #9CA3AF;
-  background: transparent;
-  border-radius: 9999px;
-  transform: none;
-  justify-self: end;
-
-  &:hover {
-    color: #374151;
-    background: #F9FAFB;
-  }
-}
-
-.closeSvg {
-  width: 1.5rem;
-  height: 1.5rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.4;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
 
 /* ── Body ── */
 .body {
@@ -224,44 +153,4 @@
   box-shadow: 0 1px 3px rgba(16, 24, 40, 0.1), 0 1px 2px rgba(16, 24, 40, 0.06);
 }
 
-/* ── Footer ── */
-.footer {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
-  padding: 1rem 1.5rem 1.5rem;
-  border-top: 1px solid rgba(102, 107, 109, 0.12);
-}
 
-.discardBtn,
-.saveBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 3rem;
-  border-radius: 9999px;
-  font-size: 1rem;
-  font-weight: 500;
-  transform: none;
-  cursor: pointer;
-}
-
-.discardBtn {
-  color: #374151;
-  background: $white;
-  border: 1px solid #D1D5DB;
-
-  &:hover {
-    background: #F9FAFB;
-  }
-}
-
-.saveBtn {
-  color: $white;
-  background: #2971E6;
-  border: none;
-
-  &:hover {
-    background: #1d5fd4;
-  }
-}

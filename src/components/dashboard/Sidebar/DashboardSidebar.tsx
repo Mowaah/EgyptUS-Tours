@@ -21,6 +21,7 @@ const navRoutes: Record<string, string> = {
   "System Configuration": "/dashboard/settings/system-configuration",
   "Audit Log": "/dashboard/settings/audit-log",
   "FAQ Management": "/dashboard/settings/faq-management",
+  "Terms & Conditions": "/dashboard/settings/terms-conditions",
 };
 
 const navItems: NavItem[] = [
@@ -194,8 +195,14 @@ export default function DashboardSidebar() {
         .map((item) => [item.label, Boolean(item.defaultOpen)])
     );
 
-    if (pathname.startsWith(settingsPathPrefix)) {
+    if (pathname.startsWith(settingsPathPrefix) || pathname.startsWith("/dashboard/settings")) {
       groups.Settings = true;
+    }
+
+    if (pathname.startsWith("/dashboard/settings/faq-management") ||
+        pathname.startsWith("/dashboard/settings/terms-conditions") ||
+        pathname.startsWith("/dashboard/settings/privacy-policy")) {
+      groups["Legal & Help Center"] = true;
     }
 
     return groups;

@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
-import Image from "next/image";
+import { useEffect, useState } from "react";
+import { LanguageTabs, type Language, ModalHeader, ModalFooter } from "@/components/shared";
 import styles from "./FaqViewModal.module.scss";
+
 
 interface FaqViewModalProps {
   open: boolean;
@@ -11,15 +12,6 @@ interface FaqViewModalProps {
   content: string;
   onClose: () => void;
   onEdit: () => void;
-}
-
-function CloseIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.closeSvg}>
-      <path d="M18 6 6 18" />
-      <path d="m6 6 12 12" />
-    </svg>
-  );
 }
 
 function ChevronUpIcon() {
@@ -38,6 +30,8 @@ export default function FaqViewModal({
   onClose,
   onEdit,
 }: FaqViewModalProps) {
+  const [activeLang, setActiveLang] = useState<Language>("English");
+
   useEffect(() => {
     if (!open) return;
     const previousOverflow = document.body.style.overflow;
@@ -64,21 +58,19 @@ export default function FaqViewModal({
         onMouseDown={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <header className={styles.header}>
-          <div className={styles.headerIcon}>
-            <Image src="/images/dashboard/view.svg" alt="" width={20} height={20} aria-hidden />
-          </div>
-          <div className={styles.headerText}>
-            <h2 id="faq-view-modal-title">Website Preview</h2>
-            <p>How this question appears to visitors.</p>
-          </div>
-          <button type="button" className={styles.closeButton} aria-label="Close modal" onClick={onClose}>
-            <CloseIcon />
-          </button>
-        </header>
+        <ModalHeader
+          onClose={onClose}
+          iconSrc="/images/dashboard/view.svg"
+          title="Website Preview"
+          subtitle="How this question appears to visitors."
+          id="faq-view-modal-title"
+        />
 
         {/* Body */}
         <div className={styles.body}>
+          {/* Language tabs */}
+          <LanguageTabs active={activeLang} onChange={setActiveLang} />
+
           <div className={styles.faqCard}>
             {/* Question row */}
             <div className={styles.questionRow}>
@@ -99,14 +91,12 @@ export default function FaqViewModal({
         </div>
 
         {/* Footer */}
-        <footer className={styles.footer}>
-          <button type="button" className={styles.closeBtn} onClick={onClose}>
-            Close
-          </button>
-          <button type="button" className={styles.editBtn} onClick={onEdit}>
-            Edit
-          </button>
-        </footer>
+        <ModalFooter
+          secondaryLabel="Close"
+          secondaryOnClick={onClose}
+          primaryLabel="Edit"
+          primaryOnClick={onEdit}
+        />
       </section>
     </div>
   );

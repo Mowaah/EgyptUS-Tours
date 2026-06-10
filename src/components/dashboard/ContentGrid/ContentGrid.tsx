@@ -27,6 +27,10 @@ export interface ContentGridProps {
   emptyStateTitle?: string;
   emptyStateSubtitle?: string;
   emptyStateActionLabel?: string;
+  /** Override the built-in view modal. Called instead of opening FaqViewModal. */
+  onViewItem?: (item: ContentItem, index: number) => void;
+  /** Override the built-in edit modal. Called instead of opening FaqFormModal in edit mode. */
+  onEditItem?: (item: ContentItem) => void;
 }
 
 export interface ContentGridRef {
@@ -41,7 +45,9 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
   onAdd,
   emptyStateTitle = "No items yet",
   emptyStateSubtitle = "Get started by creating your first item.",
-  emptyStateActionLabel = "Add New"
+  emptyStateActionLabel = "Add New",
+  onViewItem,
+  onEditItem,
 }, ref) => {
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [viewItem, setViewItem] = useState<{ index: number; title: string; content: string } | null>(null);
@@ -146,7 +152,11 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
                         className={styles.menuAction}
                         onClick={() => {
                           setOpenDropdownId(null);
-                          setViewItem({ index: idx + 1, title: item.title, content: item.content });
+                          if (onViewItem) {
+                            onViewItem(item, idx + 1);
+                          } else {
+                            setViewItem({ index: idx + 1, title: item.title, content: item.content });
+                          }
                         }}
                       >
                         <span className={styles.actionIcon} style={{ maskImage: `url(/images/dashboard/view.svg)`, WebkitMaskImage: `url(/images/dashboard/view.svg)` }} aria-hidden />
@@ -157,7 +167,11 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
                         className={styles.menuAction}
                         onClick={() => {
                           setOpenDropdownId(null);
-                          setEditItem({ id: item.id, title: item.title, content: item.content, status: item.status });
+                          if (onEditItem) {
+                            onEditItem(item);
+                          } else {
+                            setEditItem({ id: item.id, title: item.title, content: item.content, status: item.status });
+                          }
                         }}
                       >
                         <span className={styles.actionIcon} style={{ maskImage: `url(/images/dashboard/edit.svg)`, WebkitMaskImage: `url(/images/dashboard/edit.svg)` }} aria-hidden />
@@ -165,12 +179,21 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
                       </button>
 
                       {item.status === "Published" ? (
-                        <button className={styles.menuActionUnpublish} onClick={() => showBanner("The question has been unpublished successfully and is no longer visible to users on the platform.", "warning")}>
+                        <button className={styles.menuActionUnpublish} onClick={() => showBanner(
+                          title.toLowerCase().includes("terms") 
+                            ? "The Terms & Conditions have been moved to draft and unpublished successfully" 
+                            : "The question has been unpublished successfully and is no longer visible to users on the platform.", 
+                          "warning"
+                        )}>
                           <span className={styles.actionIcon} style={{ maskImage: `url(/images/dashboard/unpublish.svg)`, WebkitMaskImage: `url(/images/dashboard/unpublish.svg)` }} aria-hidden />
                           <span>Unpublish</span>
                         </button>
                       ) : (
-                        <button className={styles.menuActionPublish} onClick={() => showBanner("The question has been published successfully")}>
+                        <button className={styles.menuActionPublish} onClick={() => showBanner(
+                          title.toLowerCase().includes("terms")
+                            ? "The Terms & Conditions have been successfully republished"
+                            : "The question has been published successfully"
+                        )}>
                           <span className={styles.actionIcon} style={{ maskImage: `url(/images/dashboard/publish.svg)`, WebkitMaskImage: `url(/images/dashboard/publish.svg)` }} aria-hidden />
                           <span>Publish</span>
                         </button>
@@ -252,14 +275,20 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
       <DashboardConfirmationModal
         open={deleteItem !== null}
         variant="delete"
-        title="Delete FAQ Item"
-        message="Are you sure you want to remove this FAQ from the website? This action cannot be undone and the question will no longer appear to users."
+        title={title.toLowerCase().includes("terms") ? "Delete Terms & Conditions?" : "Delete FAQ Item"}
+        message={title.toLowerCase().includes("terms") 
+          ? "Are you sure you want to delete these Terms & Conditions? This action cannot be undone and the content will be permanently removed from the system" 
+          : "Are you sure you want to remove this FAQ from the website? This action cannot be undone and the question will no longer appear to users."}
         cancelLabel="Back"
         confirmLabel="Delete"
         onClose={() => setDeleteItem(null)}
         onConfirm={() => {
           setDeleteItem(null);
-          showBanner("The question has been deleted successfully");
+          showBanner(
+            title.toLowerCase().includes("terms")
+              ? "The Terms & Conditions have been deleted successfully"
+              : "The question has been deleted successfully"
+          );
         }}
       />
     </>
