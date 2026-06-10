@@ -1,46 +1,48 @@
 "use client";
 
-import { useState, useRef } from "react";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
-import ContentGrid, { type ContentItem, type ContentGridRef } from "@/components/dashboard/ContentGrid/ContentGrid";
+import ContentGrid, { type ContentItem } from "@/components/dashboard/ContentGrid/ContentGrid";
 import DocumentViewModal from "@/components/dashboard/DocumentViewModal/DocumentViewModal";
 import DocumentFormModal from "@/components/dashboard/DocumentFormModal/DocumentFormModal";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
+import DashboardConfirmationModal from "@/components/shared/DashboardConfirmationModal/DashboardConfirmationModal";
+import { useContentManager } from "@/hooks/useContentManager";
 import styles from "../../page.module.scss";
 
 // Dummy data for visual — swap with real API data later
-const TERMS: ContentItem[] = [
+const INITIAL_DATA: ContentItem[] = [
   { id: "1", title: "General Terms", content: "All users of this website agree to comply with the following general terms and conditions. By accessing or using the site, you accept full responsibility for your actions. Bookings made through the website are subject to availability, and the information provided on the site is for informational purposes only. Prices, services, and schedules may change without prior notice due to seasonal demand, special offers, or unforeseen circumstances. Users are responsible for ensuring the accuracy of the information they provide and for following all instructions during the booking and payment process.\n\nThe website owner reserves the right to suspend, modify, or terminate access to the platform at any time, with or without notice. Any unauthorized use of the website, including attempts to copy, reproduce, or exploit content, is strictly prohibited.", status: "Draft", lastUpdated: "May 13, 2026" },
   { id: "2", title: "User Responsibilities", content: "The website and its owners are not liable for personal belongings, accidents, injuries, or events outside our control during your travel, stay, or interactions with services booked through the site. Users are encouraged to obtain appropriate travel insurance to cover unforeseen events.\n\nAny changes, modifications, or cancellations must be communicated promptly. Additional charges may apply depending on the type of modification or service. By using this website, you agree to comply with all applicable local laws and accept that the governing law for any disputes will be [insert country/jurisdiction].", status: "Published", lastUpdated: "May 13, 2026" },
 ];
 
-type ViewState = { item: ContentItem; index: number } | null;
-type EditState = ContentItem | null;
-
 export default function TermsConditionsPage() {
-  const contentGridRef = useRef<ContentGridRef>(null);
-
-  // Modal state
-  const [viewState, setViewState] = useState<ViewState>(null);
-  const [editState, setEditState] = useState<EditState>(null);
-  const [addOpen, setAddOpen] = useState(false);
-  const [saveSuccessOpen, setSaveSuccessOpen] = useState(false);
-  const [saveMode, setSaveMode] = useState<"add" | "edit">("add");
-
-  const handleView = (item: ContentItem, index: number) => setViewState({ item, index });
-
-  const handleEdit = (item: ContentItem) => {
-    setViewState(null);
-    setEditState(item);
-  };
-
-  const handleAdd = () => setAddOpen(true);
-
-  const handleSave = (mode: "add" | "edit") => {
-    setSaveMode(mode);
-    setSaveSuccessOpen(true);
-  };
+  const {
+    contentGridRef,
+    data,
+    viewState,
+    setViewState,
+    editState,
+    setEditState,
+    addOpen,
+    setAddOpen,
+    saveSuccessOpen,
+    setSaveSuccessOpen,
+    saveMode,
+    deleteItem,
+    setDeleteItem,
+    handleView,
+    handleEdit,
+    handleAdd,
+    handlePublishItem,
+    handleUnpublishItem,
+    handleDeleteItem,
+    confirmDelete,
+    handleSave,
+  } = useContentManager({
+    initialData: INITIAL_DATA,
+    itemName: "Terms & Conditions",
+  });
 
   return (
     <main className={styles.page}>
@@ -53,10 +55,13 @@ export default function TermsConditionsPage() {
           title="Terms & Conditions"
           ariaLabel="Terms & Conditions Content"
           iconSrc="/images/dashboard/sidebar/terms-conditions.svg"
-          items={TERMS}
+          items={data}
           onAdd={handleAdd}
           onViewItem={handleView}
           onEditItem={handleEdit}
+          onPublishItem={handlePublishItem}
+          onUnpublishItem={handleUnpublishItem}
+          onDeleteItem={handleDeleteItem}
           emptyStateTitle="No Terms & Conditions Yet"
           emptyStateSubtitle="Add your first terms & conditions document to get started."
           emptyStateActionLabel="Add New Terms"
@@ -85,9 +90,9 @@ export default function TermsConditionsPage() {
         titlePlaceholder="Enter title here"
         editorPlaceholder="Write your Terms & Conditions content here...."
         onClose={() => setAddOpen(false)}
-        onSave={() => {
+        onSave={(title, content, published) => {
           setAddOpen(false);
-          handleSave("add");
+          handleSave(title, content, published, "add");
         }}
       />
 
@@ -104,9 +109,9 @@ export default function TermsConditionsPage() {
         titlePlaceholder="Enter title here"
         editorPlaceholder="Write your Terms & Conditions content here...."
         onClose={() => setEditState(null)}
-        onSave={() => {
+        onSave={(title, content, published) => {
           setEditState(null);
-          handleSave("edit");
+          handleSave(title, content, published, "edit");
         }}
       />
 
@@ -125,6 +130,18 @@ export default function TermsConditionsPage() {
           onClose={() => setSaveSuccessOpen(false)}
         />
       )}
+
+      {/* Delete Confirmation */}
+      <DashboardConfirmationModal
+        open={deleteItem !== null}
+        variant="delete"
+        title="Delete Terms & Conditions?"
+        message="Are you sure you want to delete these Terms & Conditions? This action cannot be undone and the content will be permanently removed from the system"
+        cancelLabel="Back"
+        confirmLabel="Delete"
+        onClose={() => setDeleteItem(null)}
+        onConfirm={confirmDelete}
+      />
     </main>
   );
 }

@@ -1,15 +1,17 @@
 "use client";
 
-import { useState, useRef } from "react";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
-import ContentGrid, { type ContentItem, type ContentGridRef } from "@/components/dashboard/ContentGrid/ContentGrid";
+import ContentGrid, { type ContentItem } from "@/components/dashboard/ContentGrid/ContentGrid";
+import FaqViewModal from "@/components/dashboard/FaqViewModal/FaqViewModal";
 import FaqFormModal from "@/components/dashboard/FaqFormModal/FaqFormModal";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
+import DashboardConfirmationModal from "@/components/shared/DashboardConfirmationModal/DashboardConfirmationModal";
+import { useContentManager } from "@/hooks/useContentManager";
 import styles from "../../page.module.scss";
 
 // Dummy data for visual — swap with real API data later
-const FAQS: ContentItem[] = [
+const INITIAL_DATA: ContentItem[] = [
   { id: "1", title: "What's included in the trip price?", content: "Each trip includes clearly listed services such as accommodation, transportation tours, and selected meals. Full details are available on the trip details page.", status: "Draft", lastUpdated: "May 13, 2026" },
   { id: "2", title: "Can I customize a trip or book a private tour?", content: "Yes! You can choose between group or private trips, and customize your itinerary based on your preferences, budget, and travel style.", status: "Published", lastUpdated: "May 13, 2026" },
   { id: "3", title: "Are there discounts or special offers?", content: "Yes, we offer seasonal discounts and exclusive deals on selected trips and hotels. Check the homepage or subscribe to our newsletter for updates.", status: "Draft", lastUpdated: "May 13, 2026" },
@@ -19,9 +21,32 @@ const FAQS: ContentItem[] = [
 ];
 
 export default function FaqManagementPage() {
-  const [addOpen, setAddOpen] = useState(false);
-  const [addSuccessOpen, setAddSuccessOpen] = useState(false);
-  const contentGridRef = useRef<ContentGridRef>(null);
+  const {
+    contentGridRef,
+    data,
+    viewState,
+    setViewState,
+    editState,
+    setEditState,
+    addOpen,
+    setAddOpen,
+    saveSuccessOpen,
+    setSaveSuccessOpen,
+    saveMode,
+    deleteItem,
+    setDeleteItem,
+    handleView,
+    handleEdit,
+    handleAdd,
+    handlePublishItem,
+    handleUnpublishItem,
+    handleDeleteItem,
+    confirmDelete,
+    handleSave,
+  } = useContentManager({
+    initialData: INITIAL_DATA,
+    itemName: "FAQ",
+  });
 
   return (
     <main className={styles.page}>
@@ -34,34 +59,75 @@ export default function FaqManagementPage() {
           title="Published Questions on the Website"
           ariaLabel="FAQ Management Content"
           iconSrc="/images/dashboard/sidebar/faq.svg"
-          items={FAQS}
-          onAdd={() => setAddOpen(true)}
+          items={data}
+          onAdd={handleAdd}
+          onViewItem={handleView}
+          onEditItem={handleEdit}
+          onPublishItem={handlePublishItem}
+          onUnpublishItem={handleUnpublishItem}
+          onDeleteItem={handleDeleteItem}
           emptyStateTitle="No FAQs Yet"
           emptyStateSubtitle="Add your first FAQ to help users quickly find answers and support information."
           emptyStateActionLabel="Add New FAQ"
         />
       </section>
 
+      {/* View modal */}
+      <FaqViewModal
+        open={viewState !== null}
+        index={viewState?.index ?? 1}
+        title={viewState?.item.title ?? ""}
+        content={viewState?.item.content ?? ""}
+        onClose={() => setViewState(null)}
+        onEdit={() => handleEdit(viewState!.item)}
+      />
+
+      {/* Add modal */}
       <FaqFormModal
         open={addOpen}
         mode="add"
         onClose={() => setAddOpen(false)}
-        onSave={() => {
+        onSave={(question, answer, published) => {
           setAddOpen(false);
-          setAddSuccessOpen(true);
+          handleSave(question, answer, published, "add");
         }}
       />
 
-      {addSuccessOpen && (
+      {/* Edit modal */}
+      <FaqFormModal
+        open={editState !== null}
+        mode="edit"
+        initialData={editState ? { question: editState.title, answer: editState.content, status: editState.status as "Draft" | "Published" } : undefined}
+        onClose={() => setEditState(null)}
+        onSave={(question, answer, published) => {
+          setEditState(null);
+          handleSave(question, answer, published, "edit");
+        }}
+      />
+
+      {/* Success */}
+      {saveSuccessOpen && (
         <SuccessModal
-          title="Question Published"
+          title={saveMode === "add" ? "Question Published" : "Question Updated"}
           message="The question is now live on the website and visible to all visitors. You can preview it anytime from the website view."
           primaryButtonText="View live"
           hideSecondaryButton
-          onPrimaryClick={() => setAddSuccessOpen(false)}
-          onClose={() => setAddSuccessOpen(false)}
+          onPrimaryClick={() => setSaveSuccessOpen(false)}
+          onClose={() => setSaveSuccessOpen(false)}
         />
       )}
+
+      {/* Delete Confirmation */}
+      <DashboardConfirmationModal
+        open={deleteItem !== null}
+        variant="delete"
+        title="Delete FAQ Item"
+        message="Are you sure you want to remove this FAQ from the website? This action cannot be undone and the question will no longer appear to users."
+        cancelLabel="Back"
+        confirmLabel="Delete"
+        onClose={() => setDeleteItem(null)}
+        onConfirm={confirmDelete}
+      />
     </main>
   );
 }

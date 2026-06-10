@@ -3,11 +3,7 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import TablePanel from "@/components/dashboard/TablePanel/TablePanel";
 import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
-import DashboardConfirmationModal from "@/components/shared/DashboardConfirmationModal/DashboardConfirmationModal";
-import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
-import FaqViewModal from "@/components/dashboard/FaqViewModal/FaqViewModal";
-import FaqFormModal from "@/components/dashboard/FaqFormModal/FaqFormModal";
 import styles from "./ContentGrid.module.scss";
 
 export interface ContentItem {
@@ -27,10 +23,11 @@ export interface ContentGridProps {
   emptyStateTitle?: string;
   emptyStateSubtitle?: string;
   emptyStateActionLabel?: string;
-  /** Override the built-in view modal. Called instead of opening FaqViewModal. */
-  onViewItem?: (item: ContentItem, index: number) => void;
-  /** Override the built-in edit modal. Called instead of opening FaqFormModal in edit mode. */
-  onEditItem?: (item: ContentItem) => void;
+  onViewItem: (item: ContentItem, index: number) => void;
+  onEditItem: (item: ContentItem) => void;
+  onPublishItem: (item: ContentItem) => void;
+  onUnpublishItem: (item: ContentItem) => void;
+  onDeleteItem: (item: ContentItem) => void;
 }
 
 export interface ContentGridRef {
@@ -48,12 +45,11 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
   emptyStateActionLabel = "Add New",
   onViewItem,
   onEditItem,
+  onPublishItem,
+  onUnpublishItem,
+  onDeleteItem,
 }, ref) => {
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
-  const [viewItem, setViewItem] = useState<{ index: number; title: string; content: string } | null>(null);
-  const [editItem, setEditItem] = useState<{ id: string; title: string; content: string; status: "Published" | "Draft" } | null>(null);
-  const [editSuccessOpen, setEditSuccessOpen] = useState(false);
-  const [deleteItem, setDeleteItem] = useState<string | null>(null);
 
   const [bannerState, setBannerState] = useState<"hidden" | "visible" | "leaving">("hidden");
   const [bannerTick, setBannerTick] = useState(0);
@@ -152,11 +148,7 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
                         className={styles.menuAction}
                         onClick={() => {
                           setOpenDropdownId(null);
-                          if (onViewItem) {
-                            onViewItem(item, idx + 1);
-                          } else {
-                            setViewItem({ index: idx + 1, title: item.title, content: item.content });
-                          }
+                          onViewItem(item, idx + 1);
                         }}
                       >
                         <span className={styles.actionIcon} style={{ maskImage: `url(/images/dashboard/view.svg)`, WebkitMaskImage: `url(/images/dashboard/view.svg)` }} aria-hidden />
@@ -167,11 +159,7 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
                         className={styles.menuAction}
                         onClick={() => {
                           setOpenDropdownId(null);
-                          if (onEditItem) {
-                            onEditItem(item);
-                          } else {
-                            setEditItem({ id: item.id, title: item.title, content: item.content, status: item.status });
-                          }
+                          onEditItem(item);
                         }}
                       >
                         <span className={styles.actionIcon} style={{ maskImage: `url(/images/dashboard/edit.svg)`, WebkitMaskImage: `url(/images/dashboard/edit.svg)` }} aria-hidden />
@@ -179,25 +167,18 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
                       </button>
 
                       {item.status === "Published" ? (
-                        <button className={styles.menuActionUnpublish} onClick={() => showBanner(
-                          title.toLowerCase().includes("terms") 
-                            ? "The Terms & Conditions have been moved to draft and unpublished successfully" 
-                            : title.toLowerCase().includes("privacy")
-                            ? "The Privacy Policy has been moved to draft and unpublished successfully"
-                            : "The question has been unpublished successfully and is no longer visible to users on the platform.", 
-                          "warning"
-                        )}>
+                        <button className={styles.menuActionUnpublish} onClick={() => {
+                          setOpenDropdownId(null);
+                          onUnpublishItem(item);
+                        }}>
                           <span className={styles.actionIcon} style={{ maskImage: `url(/images/dashboard/unpublish.svg)`, WebkitMaskImage: `url(/images/dashboard/unpublish.svg)` }} aria-hidden />
                           <span>Unpublish</span>
                         </button>
                       ) : (
-                        <button className={styles.menuActionPublish} onClick={() => showBanner(
-                          title.toLowerCase().includes("terms")
-                            ? "The Terms & Conditions have been successfully republished"
-                            : title.toLowerCase().includes("privacy")
-                            ? "The Privacy Policy has been successfully republished"
-                            : "The question has been published successfully"
-                        )}>
+                        <button className={styles.menuActionPublish} onClick={() => {
+                          setOpenDropdownId(null);
+                          onPublishItem(item);
+                        }}>
                           <span className={styles.actionIcon} style={{ maskImage: `url(/images/dashboard/publish.svg)`, WebkitMaskImage: `url(/images/dashboard/publish.svg)` }} aria-hidden />
                           <span>Publish</span>
                         </button>
@@ -207,7 +188,7 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
                         className={styles.menuActionDanger}
                         onClick={() => {
                           setOpenDropdownId(null);
-                          setDeleteItem(item.id);
+                          onDeleteItem(item);
                         }}
                       >
                         <span className={styles.actionIcon} style={{ maskImage: `url(/images/dashboard/delete.svg)`, WebkitMaskImage: `url(/images/dashboard/delete.svg)` }} aria-hidden />
@@ -245,67 +226,6 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
           ))}
         </div>
       </TablePanel>
-
-      <FaqViewModal
-        open={viewItem !== null}
-        index={viewItem?.index ?? 1}
-        title={viewItem?.title ?? ""}
-        content={viewItem?.content ?? ""}
-        onClose={() => setViewItem(null)}
-        onEdit={() => {
-          if (viewItem) {
-            const item = items[viewItem.index - 1];
-            setEditItem({ id: item.id, title: item.title, content: item.content, status: item.status });
-          }
-          setViewItem(null);
-        }}
-      />
-
-      <FaqFormModal
-        open={editItem !== null}
-        mode="edit"
-        initialData={editItem ? { question: editItem.title, answer: editItem.content, status: editItem.status } : undefined}
-        onClose={() => setEditItem(null)}
-        onSave={() => {
-          setEditItem(null);
-          setEditSuccessOpen(true);
-        }}
-      />
-
-      {editSuccessOpen && (
-        <SuccessModal
-          title="Changes Published Successfully"
-          message="Your edits have been successfully published and are now live on the website for visitors to see."
-          primaryButtonText="View live"
-          hideSecondaryButton
-          onPrimaryClick={() => setEditSuccessOpen(false)}
-          onClose={() => setEditSuccessOpen(false)}
-        />
-      )}
-
-      <DashboardConfirmationModal
-        open={deleteItem !== null}
-        variant="delete"
-        title={title.toLowerCase().includes("terms") ? "Delete Terms & Conditions?" : title.toLowerCase().includes("privacy") ? "Delete Privacy Policy?" : "Delete FAQ Item"}
-        message={title.toLowerCase().includes("terms") 
-          ? "Are you sure you want to delete these Terms & Conditions? This action cannot be undone and the content will be permanently removed from the system" 
-          : title.toLowerCase().includes("privacy")
-          ? "Are you sure you want to delete this Privacy Policy? This action cannot be undone and the content will be permanently removed from the system."
-          : "Are you sure you want to remove this FAQ from the website? This action cannot be undone and the question will no longer appear to users."}
-        cancelLabel="Back"
-        confirmLabel="Delete"
-        onClose={() => setDeleteItem(null)}
-        onConfirm={() => {
-          setDeleteItem(null);
-          showBanner(
-            title.toLowerCase().includes("terms")
-              ? "The Terms & Conditions have been deleted successfully"
-              : title.toLowerCase().includes("privacy")
-              ? "The Privacy Policy has been deleted successfully"
-              : "The question has been deleted successfully"
-          );
-        }}
-      />
     </>
   );
 });
