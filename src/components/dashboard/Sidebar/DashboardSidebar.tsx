@@ -22,6 +22,7 @@ const navRoutes: Record<string, string> = {
   "Audit Log": "/dashboard/settings/audit-log",
   "FAQ Management": "/dashboard/settings/faq-management",
   "Terms & Conditions": "/dashboard/settings/terms-conditions",
+  "Privacy Policy": "/dashboard/settings/privacy-policy",
 };
 
 const navItems: NavItem[] = [

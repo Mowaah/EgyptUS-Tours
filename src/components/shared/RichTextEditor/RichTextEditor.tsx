@@ -1,29 +1,24 @@
-"use client";
-
-import { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { useEditor, EditorContent, type Editor } from "@tiptap/react";
+import { EditorContent, useEditor, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import CharacterCount from "@tiptap/extension-character-count";
-import { LanguageTabs, type Language, ModalHeader, ModalFooter } from "@/components/shared";
-import styles from "./TermsFormModal.module.scss";
+import Color from "@tiptap/extension-color";
+import { TextStyle } from "@tiptap/extension-text-style";
+import styles from "./RichTextEditor.module.scss";
 
-interface TermsFormModalProps {
-  open: boolean;
-  mode?: "add" | "edit";
-  initialData?: { title: string; content: string; status: "Published" | "Draft" };
-  onClose: () => void;
-  onSave: (title: string, content: string, published: boolean) => void;
+interface RichTextEditorProps {
+  value: string;
+  onChange: (value: string, plainText: string) => void;
+  placeholder?: string;
+  className?: string;
+  showColorPicker?: boolean;
 }
 
-const LANGS = ["English", "Italian", "Spanish"] as const;
-
-
-/* ── Simple Toolbar for Terms & Conditions ── */
 const HEADING_OPTIONS = [
   { label: "Paragraph", value: "paragraph" as const, short: "P" },
   { label: "Heading 1", value: "h1" as const, short: "H1" },
@@ -31,16 +26,30 @@ const HEADING_OPTIONS = [
   { label: "Heading 3", value: "h3" as const, short: "H3" },
 ];
 
-function Toolbar({ editor }: { editor: Editor }) {
+const ALIGN_OPTIONS = [
+  { label: "Align Left",   value: "left"   as const, short: "Left",   icon: <Image src="/images/dashboard/editor/text-align-left.svg" alt="Left" width={20} height={20} /> },
+  { label: "Align Center", value: "center" as const, short: "Center", icon: <Image src="/images/dashboard/editor/text-align-center.svg" alt="Center" width={20} height={20} /> },
+  { label: "Align Right",  value: "right"  as const, short: "Right",  icon: <Image src="/images/dashboard/editor/text-align-left.svg" alt="Right" width={20} height={20} style={{ transform: "scaleX(-1)" }} /> },
+];
+
+const COLORS = [
+  "#000000", "#FF5527", "#FF6600", "#EAB308", "#10B981", "#2971E6", "#A855F7", "#EF4444", "#6B7280"
+];
+
+function Toolbar({ editor, showColorPicker }: { editor: Editor; showColorPicker: boolean }) {
   const [showHeadingMenu, setShowHeadingMenu] = useState(false);
   const [showAlignMenu, setShowAlignMenu] = useState(false);
+  const [showColorMenu, setShowColorMenu] = useState(false);
+  
   const headingRef = useRef<HTMLDivElement>(null);
   const alignRef = useRef<HTMLDivElement>(null);
+  const colorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (!headingRef.current?.contains(e.target as Node)) setShowHeadingMenu(false);
       if (!alignRef.current?.contains(e.target as Node)) setShowAlignMenu(false);
+      if (!colorRef.current?.contains(e.target as Node)) setShowColorMenu(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -60,19 +69,13 @@ function Toolbar({ editor }: { editor: Editor }) {
   const setLink = () => {
     const previousUrl = editor.getAttributes("link").href;
     const url = window.prompt("URL", previousUrl);
-    if (url === null) return; // cancelled
+    if (url === null) return;
     if (url === "") {
       editor.chain().focus().extendMarkRange("link").unsetLink().run();
       return;
     }
     editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
   };
-
-  const ALIGN_OPTIONS = [
-    { label: "Align Left",   value: "left"   as const, short: "Left",   icon: <Image src="/images/dashboard/editor/text-align-left.svg" alt="Left" width={20} height={20} /> },
-    { label: "Align Center", value: "center" as const, short: "Center", icon: <Image src="/images/dashboard/editor/text-align-center.svg" alt="Center" width={20} height={20} /> },
-    { label: "Align Right",  value: "right"  as const, short: "Right",  icon: <Image src="/images/dashboard/editor/text-align-left.svg" alt="Right" width={20} height={20} style={{ transform: "scaleX(-1)" }} /> },
-  ];
 
   const currentAlign = ALIGN_OPTIONS.find((a) => editor.isActive({ textAlign: a.value })) ?? ALIGN_OPTIONS[0];
 
@@ -81,9 +84,13 @@ function Toolbar({ editor }: { editor: Editor }) {
     setShowAlignMenu(false);
   };
 
+  const applyColor = (color: string) => {
+    editor.chain().focus().setColor(color).run();
+    setShowColorMenu(false);
+  };
+
   return (
     <div className={styles.toolbar} role="toolbar" aria-label="Text formatting">
-      {/* Undo / Redo */}
       <div className={styles.toolbarGroup}>
         <button type="button" onClick={() => editor.chain().focus().undo().run()} className={styles.toolbarBtn} title="Undo">
           <Image src="/images/dashboard/editor/undo.svg" alt="Undo" width={20} height={20} />
@@ -149,7 +156,50 @@ function Toolbar({ editor }: { editor: Editor }) {
 
       <div className={styles.toolbarDivider} />
 
-      {/* Alignment Dropdown */}
+      {/* Color Dropdown */}
+      {showColorPicker && (
+        <>
+          <div className={styles.toolbarGroup} ref={colorRef}>
+            <div className={styles.dropdownWrap}>
+              <button
+                type="button"
+                className={`${styles.toolbarBtn} ${showColorMenu ? styles.active : ""}`}
+                style={{ position: 'relative' }}
+                onClick={() => setShowColorMenu((v) => !v)}
+                title="Text Color"
+              >
+                {/* simple color icon indicator */}
+                <span style={{ 
+                  display: 'block', 
+                  width: 16, 
+                  height: 16, 
+                  borderRadius: '50%', 
+                  backgroundColor: editor.getAttributes('textStyle').color || '#000',
+                  border: '1px solid #E5E7EB'
+                }} />
+              </button>
+              {showColorMenu && (
+                <div className={styles.colorMenu}>
+                  {COLORS.map((color) => (
+                    <button
+                      key={color}
+                      type="button"
+                      className={styles.colorSwatch}
+                      style={{ backgroundColor: color }}
+                      onClick={() => applyColor(color)}
+                      title={color}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className={styles.toolbarDivider} />
+        </>
+      )}
+
+      {/* Alignment */}
       <div className={styles.toolbarGroup} ref={alignRef}>
         <div className={styles.dropdownWrap}>
           <button
@@ -204,129 +254,43 @@ function Toolbar({ editor }: { editor: Editor }) {
   );
 }
 
-export default function TermsFormModal({ open, mode = "add", initialData, onClose, onSave }: TermsFormModalProps) {
-  const [activeLang, setActiveLang] = useState<Language>("English");
-  const [title, setTitle] = useState("");
-  const [published, setPublished] = useState(true);
-  const [wordCount, setWordCount] = useState(0);
-
+export default function RichTextEditor({ value, onChange, placeholder = "Start typing...", className = "", showColorPicker = false }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
       StarterKit,
       Underline,
+      TextStyle,
+      Color,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Link.configure({ openOnClick: false }),
-      Placeholder.configure({ placeholder: "Write your Terms & Conditions content here...." }),
+      Placeholder.configure({ placeholder }),
       CharacterCount,
     ],
-    content: "",
+    content: value,
     onUpdate({ editor }) {
-      setWordCount(editor.storage.characterCount.words());
+      const html = editor.getHTML();
+      const plainText = editor.getText();
+      onChange(html, plainText);
     },
   });
 
   useEffect(() => {
-    if (!open || !editor) return;
-    if (mode === "edit" && initialData) {
-      setTitle(initialData.title);
-      setPublished(initialData.status === "Published");
-      editor.commands.setContent(
-        initialData.content.split("\n\n").map((p) => `<p>${p.replace(/\n/g, "<br>")}</p>`).join("")
-      );
-      setWordCount(editor.storage.characterCount.words());
-    } else {
-      setTitle("");
-      setPublished(true);
-      editor.commands.clearContent();
-      setWordCount(0);
+    if (editor && editor.getHTML() !== value) {
+      const currentPos = editor.state.selection;
+      editor.commands.setContent(value, { emitUpdate: false });
+      editor.commands.setTextSelection(currentPos);
     }
-  }, [open, mode, initialData, editor]);
+  }, [value, editor]);
 
-  useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = prev;
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open, onClose]);
-
-  const handleSave = useCallback(() => {
-    const html = editor?.getHTML() ?? "";
-    const plain = html
-      .replace(/<p>/g, "").replace(/<\/p>/g, "\n\n")
-      .replace(/<br\s*\/?>/g, "\n").replace(/<[^>]+>/g, "").trim();
-    onSave(title, plain, published);
-  }, [editor, title, published, onSave]);
-
-  if (!open) return null;
+  if (!editor) return null;
 
   return (
-    <div className={styles.overlay} role="presentation" onMouseDown={onClose}>
-      <section
-        className={styles.modal}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="terms-form-modal-title"
-        onMouseDown={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <ModalHeader
-          onClose={onClose}
-          iconSrc={mode === "add" ? "/images/dashboard/add-modal.svg" : "/images/dashboard/edit-modal.svg"}
-          title={mode === "add" ? "Add New Terms & Conditions" : "Edit Terms & Conditions"}
-          subtitle={mode === "add" ? "Create a new Terms that will appear to visitors on the website." : "Update the Terms & Conditions content displayed to website"}
-          id="terms-form-modal-title"
-        />
-
-        {/* Body */}
-        <div className={styles.body}>
-          {/* Language tabs */}
-          <LanguageTabs active={activeLang} onChange={setActiveLang} />
-
-          {/* Title */}
-          <div className={styles.fieldGroup}>
-            <label className={styles.fieldLabel} htmlFor="terms-title">Terms & Conditions Title</label>
-            <input id="terms-title" type="text" className={styles.titleInput} placeholder="Enter title here" value={title} onChange={(e) => setTitle(e.target.value)} />
-          </div>
-
-          {/* Editor */}
-          <div className={styles.fieldGroup}>
-            <label className={styles.fieldLabel}>Content</label>
-            <div className={styles.editorWrapper}>
-              {editor && <Toolbar editor={editor} />}
-              <EditorContent editor={editor} className={styles.editorContent} />
-            </div>
-            {editor && (
-              <div className={styles.wordCount}>
-                {wordCount} {wordCount === 1 ? 'word' : 'words'}
-              </div>
-            )}
-          </div>
-
-          {/* Publish toggle */}
-          <div className={styles.statusRow}>
-            <div className={styles.statusLabel}>
-              <span className={styles.statusTitle}>Publish Status</span>
-              <span className={styles.statusDesc}>Turn on the toggle to make it live</span>
-            </div>
-            <button type="button" aria-label="Publish status" className={`${styles.toggle} ${published ? styles.toggleOn : styles.toggleOff}`} onClick={() => setPublished((v) => !v)}>
-              <span className={styles.toggleThumb} />
-            </button>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <ModalFooter
-          secondaryLabel="Discard"
-          secondaryOnClick={onClose}
-          primaryLabel={mode === "add" ? "Publish" : "Save Edits"}
-          primaryOnClick={handleSave}
-        />
-      </section>
+    <div className={`${styles.editorWrapper} ${className}`}>
+      <Toolbar editor={editor} showColorPicker={showColorPicker} />
+      <EditorContent editor={editor} className={styles.editorContent} />
+      <div className={styles.wordCount}>
+        {editor.storage.characterCount.words()} {editor.storage.characterCount.words() === 1 ? 'word' : 'words'}
+      </div>
     </div>
   );
 }

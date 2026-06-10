@@ -4,8 +4,8 @@ import { useState, useRef } from "react";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
 import ContentGrid, { type ContentItem, type ContentGridRef } from "@/components/dashboard/ContentGrid/ContentGrid";
-import TermsViewModal from "@/components/dashboard/TermsViewModal/TermsViewModal";
-import TermsFormModal from "@/components/dashboard/TermsFormModal/TermsFormModal";
+import DocumentViewModal from "@/components/dashboard/DocumentViewModal/DocumentViewModal";
+import DocumentFormModal from "@/components/dashboard/DocumentFormModal/DocumentFormModal";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import styles from "../../page.module.scss";
 
@@ -64,18 +64,26 @@ export default function TermsConditionsPage() {
       </section>
 
       {/* View modal */}
-      <TermsViewModal
+      <DocumentViewModal
         open={viewState !== null}
         title={viewState?.item.title ?? ""}
         content={viewState?.item.content ?? ""}
+        modalSubtitle="How the Terms appear on the website"
         onClose={() => setViewState(null)}
         onEdit={() => handleEdit(viewState!.item)}
       />
 
       {/* Add modal */}
-      <TermsFormModal
+      <DocumentFormModal
         open={addOpen}
         mode="add"
+        modalTitleAdd="Add New Terms & Conditions"
+        modalTitleEdit="Edit Terms & Conditions"
+        modalSubtitleAdd="Create a new Terms that will appear to visitors on the website."
+        modalSubtitleEdit="Update the Terms & Conditions content displayed to website"
+        titleLabel="Terms & Conditions Title"
+        titlePlaceholder="Enter title here"
+        editorPlaceholder="Write your Terms & Conditions content here...."
         onClose={() => setAddOpen(false)}
         onSave={() => {
           setAddOpen(false);
@@ -84,10 +92,17 @@ export default function TermsConditionsPage() {
       />
 
       {/* Edit modal */}
-      <TermsFormModal
+      <DocumentFormModal
         open={editState !== null}
         mode="edit"
-        initialData={editState ? { title: editState.title, content: editState.content, status: editState.status } : undefined}
+        initialData={editState ? { title: editState.title, content: editState.content, status: editState.status as "Draft" | "Published" } : undefined}
+        modalTitleAdd="Add New Terms & Conditions"
+        modalTitleEdit="Edit Terms & Conditions"
+        modalSubtitleAdd="Create a new Terms that will appear to visitors on the website."
+        modalSubtitleEdit="Update the Terms & Conditions content displayed to website"
+        titleLabel="Terms & Conditions Title"
+        titlePlaceholder="Enter title here"
+        editorPlaceholder="Write your Terms & Conditions content here...."
         onClose={() => setEditState(null)}
         onSave={() => {
           setEditState(null);

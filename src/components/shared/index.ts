@@ -87,9 +87,7 @@ export { default as CounterPill } from "./CounterPill/CounterPill";
 export { default as TimePicker } from "./TimePicker/TimePicker";
 export type { TimeValue } from "./TimePicker/TimePicker";
 export { default as AuthModal } from "./AuthModal/AuthModal";
-export { default as LanguageTabs } from "./LanguageTabs/LanguageTabs";
-export type { Language } from "./LanguageTabs/LanguageTabs";
+export { default as LanguageTabs, type Language } from "./LanguageTabs/LanguageTabs";
 export { default as ModalHeader } from "./ModalHeader/ModalHeader";
 export { default as ModalFooter } from "./ModalFooter/ModalFooter";
-
-
+export { default as RichTextEditor } from "./RichTextEditor/RichTextEditor";

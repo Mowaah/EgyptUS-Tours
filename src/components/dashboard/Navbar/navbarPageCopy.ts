@@ -72,6 +72,13 @@ const pageCopyByPath: Record<string, PageCopy> = {
     searchPlaceholder: "Search terms...",
     primaryAction: { label: "Add New Terms" },
   },
+  "/dashboard/settings/privacy-policy": {
+    title: "Privacy and Policy",
+    subtitle: "Details about data privacy and user information handling",
+    breadcrumbTrail: [{ label: "Legal & Help Center" }, { label: "Privacy and Policy" }],
+    searchPlaceholder: "Search privacy policies...",
+    primaryAction: { label: "Add New Privacy" },
+  },
 };
 
 export default pageCopyByPath;

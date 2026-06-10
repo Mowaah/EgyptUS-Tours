@@ -2,18 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { LanguageTabs, type Language, ModalHeader, ModalFooter } from "@/components/shared";
-import styles from "./TermsViewModal.module.scss";
+import styles from "./DocumentViewModal.module.scss";
 
-interface TermsViewModalProps {
+interface DocumentViewModalProps {
   open: boolean;
   title: string;
   content: string;
+  modalSubtitle: string;
   onClose: () => void;
   onEdit: () => void;
 }
 
 
-export default function TermsViewModal({ open, title, content, onClose, onEdit }: TermsViewModalProps) {
+export default function DocumentViewModal({ open, title, content, modalSubtitle, onClose, onEdit }: DocumentViewModalProps) {
   const [activeLang, setActiveLang] = useState<Language>("English");
 
   useEffect(() => {
@@ -36,7 +37,7 @@ export default function TermsViewModal({ open, title, content, onClose, onEdit }
         className={styles.modal}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="terms-view-modal-title"
+        aria-labelledby="privacy-view-modal-title"
         onMouseDown={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -44,8 +45,8 @@ export default function TermsViewModal({ open, title, content, onClose, onEdit }
           onClose={onClose}
           iconSrc="/images/dashboard/view.svg"
           title="Website Preview"
-          subtitle="How the Terms & Conditions appear on the website."
-          id="terms-view-modal-title"
+          subtitle={modalSubtitle}
+          id="document-view-modal-title"
         />
 
         {/* Body */}
@@ -60,10 +61,14 @@ export default function TermsViewModal({ open, title, content, onClose, onEdit }
                 <span className={styles.dot} aria-hidden />
                 <span className={styles.contentTitle}>{title}</span>
               </div>
-              <div className={styles.contentBody}>
-                {content.split("\n\n").map((para, i) => (
-                  <p key={i}>{para}</p>
-                ))}
+              <div className={`${styles.contentBody} tiptap-content`}>
+                <div 
+                  dangerouslySetInnerHTML={{ 
+                    __html: /<[a-z][\s\S]*>/i.test(content) 
+                      ? content 
+                      : content.split("\n\n").map((p) => `<p>${p.replace(/\n/g, "<br>")}</p>`).join("") 
+                  }} 
+                />
               </div>
             </div>
           </div>

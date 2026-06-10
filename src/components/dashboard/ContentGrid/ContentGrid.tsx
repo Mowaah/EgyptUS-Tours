@@ -182,6 +182,8 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
                         <button className={styles.menuActionUnpublish} onClick={() => showBanner(
                           title.toLowerCase().includes("terms") 
                             ? "The Terms & Conditions have been moved to draft and unpublished successfully" 
+                            : title.toLowerCase().includes("privacy")
+                            ? "The Privacy Policy has been moved to draft and unpublished successfully"
                             : "The question has been unpublished successfully and is no longer visible to users on the platform.", 
                           "warning"
                         )}>
@@ -192,6 +194,8 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
                         <button className={styles.menuActionPublish} onClick={() => showBanner(
                           title.toLowerCase().includes("terms")
                             ? "The Terms & Conditions have been successfully republished"
+                            : title.toLowerCase().includes("privacy")
+                            ? "The Privacy Policy has been successfully republished"
                             : "The question has been published successfully"
                         )}>
                           <span className={styles.actionIcon} style={{ maskImage: `url(/images/dashboard/publish.svg)`, WebkitMaskImage: `url(/images/dashboard/publish.svg)` }} aria-hidden />
@@ -216,7 +220,14 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
 
               {/* Card Body */}
               <div className={styles.cardBody}>
-                <p className={styles.answerText}>{item.content}</p>
+                <div 
+                  className={`${styles.answerText} tiptap-content`}
+                  dangerouslySetInnerHTML={{ 
+                    __html: /<[a-z][\s\S]*>/i.test(item.content) 
+                      ? item.content 
+                      : item.content.split("\n\n").map((p) => `<p>${p.replace(/\n/g, "<br>")}</p>`).join("") 
+                  }} 
+                />
               </div>
 
               {/* Card Footer */}
@@ -275,9 +286,11 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
       <DashboardConfirmationModal
         open={deleteItem !== null}
         variant="delete"
-        title={title.toLowerCase().includes("terms") ? "Delete Terms & Conditions?" : "Delete FAQ Item"}
+        title={title.toLowerCase().includes("terms") ? "Delete Terms & Conditions?" : title.toLowerCase().includes("privacy") ? "Delete Privacy Policy?" : "Delete FAQ Item"}
         message={title.toLowerCase().includes("terms") 
           ? "Are you sure you want to delete these Terms & Conditions? This action cannot be undone and the content will be permanently removed from the system" 
+          : title.toLowerCase().includes("privacy")
+          ? "Are you sure you want to delete this Privacy Policy? This action cannot be undone and the content will be permanently removed from the system."
           : "Are you sure you want to remove this FAQ from the website? This action cannot be undone and the question will no longer appear to users."}
         cancelLabel="Back"
         confirmLabel="Delete"
@@ -287,6 +300,8 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
           showBanner(
             title.toLowerCase().includes("terms")
               ? "The Terms & Conditions have been deleted successfully"
+              : title.toLowerCase().includes("privacy")
+              ? "The Privacy Policy has been deleted successfully"
               : "The question has been deleted successfully"
           );
         }}
