@@ -4,7 +4,7 @@ import { useEffect, type ReactNode } from "react";
 import Image from "next/image";
 import styles from "./DashboardConfirmationModal.module.scss";
 
-export type DashboardConfirmationVariant = "activate" | "deactivate" | "delete";
+export type DashboardConfirmationVariant = "activate" | "deactivate" | "delete" | "logout";
 
 export interface DashboardConfirmationModalProps {
   open: boolean;
@@ -22,6 +22,7 @@ const iconSrcByVariant: Record<DashboardConfirmationVariant, string> = {
   activate: "/images/dashboard/activate-modal.svg",
   deactivate: "/images/dashboard/delete-modal.svg",
   delete: "/images/dashboard/delete-modal.svg",
+  logout: "/images/dashboard/logout-modal.svg",
 };
 
 export default function DashboardConfirmationModal({

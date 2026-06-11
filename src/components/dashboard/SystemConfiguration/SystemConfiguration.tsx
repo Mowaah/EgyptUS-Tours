@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent, type SVGProps } from "react";
 import Image from "next/image";
-import { DashboardField, DashboardStatusBanner } from "@/components/shared";
+import { DashboardField, DashboardStatusBanner, DashboardFooter } from "@/components/shared";
 import styles from "./SystemConfiguration.module.scss";
 
 interface ConfigurationValues {
@@ -305,27 +305,11 @@ export default function SystemConfiguration() {
         </div>
       </section>
 
-      <footer className={styles.actionBar}>
-        <p>
-          Last Update: <strong>42/6/206</strong>
-        </p>
-
-        <div className={styles.actions}>
-          <button type="button" className={styles.discardButton} onClick={handleDiscard}>
-            Discard
-          </button>
-          <button type="submit" className={styles.saveButton}>
-            Save Changes
-            <Image
-              src="/images/dashboard/save.svg"
-              alt=""
-              width={22}
-              height={22}
-              className={styles.buttonIcon}
-            />
-          </button>
-        </div>
-      </footer>
+      <DashboardFooter 
+        lastUpdateDate="42/6/206" 
+        isSubmit={true} 
+        onDiscard={handleDiscard} 
+      />
     </form>
   );
 }

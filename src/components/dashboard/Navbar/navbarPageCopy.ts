@@ -79,6 +79,11 @@ const pageCopyByPath: Record<string, PageCopy> = {
     searchPlaceholder: "Search privacy policies...",
     primaryAction: { label: "Add New Privacy" },
   },
+  "/dashboard/profile": {
+    title: "Profile",
+    subtitle: "Manage your personal information and security settings.",
+    breadcrumbTrail: [{ label: "Profile" }, { label: "Personal Information" }],
+  },
 };
 
 export default pageCopyByPath;

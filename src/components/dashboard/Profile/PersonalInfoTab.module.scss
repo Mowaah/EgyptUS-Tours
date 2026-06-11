@@ -1,0 +1,252 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px 0px 12px;
+  gap: 12px;
+  width: 100%;
+}
+
+.formCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 32px;
+  gap: 24px;
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: 24px;
+  box-sizing: border-box;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.5rem;
+  width: 100%;
+
+  h2 {
+    margin: 0;
+    color: #11263B;
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.375;
+    font-family: 'Trip Sans', sans-serif;
+  }
+}
+
+.sectionIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  color: #9CA3AF;
+  background: #f8f9fb;
+}
+
+.assetIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  background: currentColor;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+}
+
+.userIcon {
+  mask-image: url("/images/dashboard/sidebar/user-management.svg");
+  -webkit-mask-image: url("/images/dashboard/sidebar/user-management.svg");
+}
+
+.cardHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  width: 100%;
+  height: 112px;
+  background: #FFFFFF;
+  border: 1px solid #F5F5F5;
+  border-radius: 24px;
+  box-sizing: border-box;
+}
+
+.avatarSection {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatarPlaceholder, .avatarImage {
+  width: 80px;
+  height: 80px;
+  background: #D9D9D9;
+  border: 3px solid #FAFAFA;
+  border-radius: 750px;
+  box-sizing: border-box;
+}
+
+.avatarImage {
+  object-fit: cover;
+  background: none;
+}
+
+.avatarText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.avatarTitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 27px;
+  color: #11263B;
+  margin: 0;
+}
+
+.avatarSubtitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+  color: #606978;
+  opacity: 0.8;
+  margin: 0;
+}
+
+.avatarActions {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+}
+
+.btnUpload {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px 24px;
+  gap: 8px;
+  height: 48px;
+  background: #2971E6;
+  border-radius: 32px;
+  border: none;
+  cursor: pointer;
+
+  span {
+    font-family: 'Trip Sans', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 22px;
+    text-align: center;
+    color: #FFFFFF;
+  }
+}
+
+.btnRemove {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 32px;
+  gap: 6px;
+  height: 48px;
+  border: 1px solid #D1D5DB;
+  border-radius: 100px;
+  background: #FFFFFF;
+  cursor: pointer;
+
+  span {
+    font-family: 'Trip Sans', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 18px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    letter-spacing: 0.005em;
+    color: #374151;
+  }
+}
+
+.deleteIcon {
+  width: 16px;
+  height: 16px;
+  
+  path {
+    stroke: #374151 !important;
+  }
+}
+
+.formArea {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  padding: 16px;
+  width: 100%;
+  background: #F9FAFB;
+  border-radius: 24px;
+  box-sizing: border-box;
+}
+
+.bioRow {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+
+
+.inputFieldPlaceholder {
+  flex: 1;
+}
+
+.inputFieldFull {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+
+  label {
+    font-family: 'Trip Sans', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 19px;
+    color: #4B5563;
+    padding-left: 10px;
+  }
+
+  textarea {
+    width: 100%;
+    height: 96px;
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 24px;
+    padding: 16px;
+    font-family: 'Trip Sans', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    color: #444A51;
+    box-sizing: border-box;
+    resize: none;
+
+    &:focus {
+      outline: none;
+      border-color: #2971E6;
+    }
+  }
+}

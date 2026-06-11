@@ -39,7 +39,7 @@
   font-size: $font-size-sm;
   line-height: 1.35;
   letter-spacing: 0.01em;
-  color: $dark;
+  color: #444A51;
   background: $white;
   border: 1px solid $border-strong;
   border-radius: 2.5rem;
@@ -59,7 +59,7 @@
 .modalInput {
   height: 3rem;
   border-color: $gray-100-zinc;
-  color: $gray-500-zinc;
+  color: #444A51;
   letter-spacing: 0;
 
   &::placeholder {

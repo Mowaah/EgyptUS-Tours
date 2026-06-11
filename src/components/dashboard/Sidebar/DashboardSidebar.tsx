@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import DashboardConfirmationModal from "@/components/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import styles from "./DashboardSidebar.module.scss";
 
 interface NavItem {
@@ -188,15 +189,12 @@ const settingsPathPrefix = "/dashboard/settings";
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
-    const groups = Object.fromEntries(
-      navItems
-        .filter((item) => item.children?.length)
-        .map((item) => [item.label, Boolean(item.defaultOpen)])
-    );
+    const groups: Record<string, boolean> = {};
 
-    if (pathname.startsWith(settingsPathPrefix) || pathname.startsWith("/dashboard/settings")) {
+    if (pathname.startsWith("/dashboard/settings")) {
       groups.Settings = true;
     }
 
@@ -208,6 +206,8 @@ export default function DashboardSidebar() {
 
     return groups;
   });
+
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const toggleGroup = (label: string) => {
     setOpenGroups((current) => ({
@@ -298,17 +298,37 @@ export default function DashboardSidebar() {
         <footer className={styles.profile}>
           <div className={styles.profileDivider} />
           <div className={styles.profileRow}>
-            <div className={styles.avatar} aria-hidden />
-            <div className={styles.profileText}>
-              <strong>Adam Saed</strong>
-              <span>Admin</span>
-            </div>
-            <button className={styles.logoutButton} type="button" aria-label="Log out">
+            <Link href="/dashboard/profile" className={styles.profileLink}>
+              <div className={styles.avatar} aria-hidden />
+              <div className={styles.profileText}>
+                <strong>Adam Saed</strong>
+                <span>Admin</span>
+              </div>
+            </Link>
+            <button 
+              className={styles.logoutButton} 
+              type="button" 
+              aria-label="Log out"
+              onClick={() => setIsLogoutModalOpen(true)}
+            >
               <DashboardIcon label="Logout" className={styles.logoutIcon} />
             </button>
           </div>
         </footer>
       </div>
+
+      <DashboardConfirmationModal
+        open={isLogoutModalOpen}
+        variant="logout"
+        title="Logout?"
+        message="Your account will remain safe and secure"
+        confirmLabel="Logout"
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={() => {
+          setIsLogoutModalOpen(false);
+          router.push("/dashboard/login");
+        }}
+      />
     </aside>
   );
 }

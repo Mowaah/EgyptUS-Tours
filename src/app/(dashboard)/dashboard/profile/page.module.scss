@@ -1,0 +1,59 @@
+.page {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background: #F4F8FF;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 12px 12px 0px;
+  gap: 10px;
+  overflow-y: auto;
+  border-radius: 0px 32px 0px 0px;
+  background: #F4F8FF;
+}
+
+.navbarWrapper {
+  align-self: stretch;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  border-radius: 32px;
+  overflow: hidden;
+  /* Next.js default navbar styling matches but we make sure the radius is applied */
+}
+
+.profileContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  width: 100%;
+  max-width: 1620px;
+  margin: 0 auto;
+}
+
+.tabContentWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  gap: 12px;
+  width: 100%;
+  height: auto;
+  margin-top: 12px;
+}
+
+.securityPlaceholder {
+  padding: 32px;
+  background: #FFFFFF;
+  border-radius: 24px;
+  width: 100%;
+  text-align: center;
+  font-family: 'Trip Sans';
+  color: #606978;
+}

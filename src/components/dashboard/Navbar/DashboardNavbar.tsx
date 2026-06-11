@@ -13,6 +13,7 @@ interface DashboardNavbarProps {
   subtitle?: string;
   breadcrumbTrail?: BreadcrumbSegment[];
   onPrimaryAction?: () => void;
+  children?: React.ReactNode;
 }
 
 
@@ -34,6 +35,7 @@ export default function DashboardNavbar({
   subtitle,
   breadcrumbTrail,
   onPrimaryAction,
+  children,
 }: DashboardNavbarProps) {
   const pathname = usePathname();
 
@@ -110,53 +112,57 @@ export default function DashboardNavbar({
       </div>
 
       <div className={styles.bottomRow}>
-        <div className={styles.heading}>
-          <h1>{visibleTitle}</h1>
-          <p>{visibleSubtitle}</p>
-        </div>
+        {children ? children : (
+          <>
+            <div className={styles.heading}>
+              <h1>{visibleTitle}</h1>
+              <p>{visibleSubtitle}</p>
+            </div>
 
-        <div className={styles.tools}>
-          <button className={styles.filterButton} type="button" aria-label="Filter dashboard results">
-            <Image
-              src="/images/dashboard/navbar/filter.svg"
-              alt=""
-              width={24}
-              height={24}
-              className={styles.actionIcon}
-              aria-hidden
-            />
-          </button>
+            <div className={styles.tools}>
+              <button className={styles.filterButton} type="button" aria-label="Filter dashboard results">
+                <Image
+                  src="/images/dashboard/navbar/filter.svg"
+                  alt=""
+                  width={24}
+                  height={24}
+                  className={styles.actionIcon}
+                  aria-hidden
+                />
+              </button>
 
-          <label className={styles.searchBox}>
-            <Image
-              src="/images/dashboard/navbar/search.svg"
-              alt=""
-              width={24}
-              height={24}
-              className={styles.actionIcon}
-              aria-hidden
-            />
-            <span className={styles.srOnly}>Search dashboard</span>
-            <input type="search" placeholder={searchPlaceholder} />
-          </label>
+              <label className={styles.searchBox}>
+                <Image
+                  src="/images/dashboard/navbar/search.svg"
+                  alt=""
+                  width={24}
+                  height={24}
+                  className={styles.actionIcon}
+                  aria-hidden
+                />
+                <span className={styles.srOnly}>Search dashboard</span>
+                <input type="search" placeholder={searchPlaceholder} />
+              </label>
 
-          {pageCopy.primaryAction ? (
-            <button
-              type="button"
-              className={styles.primaryActionButton}
-              onClick={onPrimaryAction}
-            >
-              {pageCopy.primaryAction.label}
-              <Image
-                src="/images/dashboard/navbar/add-circle.svg"
-                alt=""
-                width={24}
-                height={24}
-                aria-hidden
-              />
-            </button>
-          ) : null}
-        </div>
+              {pageCopy.primaryAction ? (
+                <button
+                  type="button"
+                  className={styles.primaryActionButton}
+                  onClick={onPrimaryAction}
+                >
+                  {pageCopy.primaryAction.label}
+                  <Image
+                    src="/images/dashboard/navbar/add-circle.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                    aria-hidden
+                  />
+                </button>
+              ) : null}
+            </div>
+          </>
+        )}
       </div>
     </header>
   );
