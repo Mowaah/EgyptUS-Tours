@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { EditorContent, useEditor, type Editor } from "@tiptap/react";
@@ -17,6 +19,7 @@ interface RichTextEditorProps {
   placeholder?: string;
   className?: string;
   showColorPicker?: boolean;
+  error?: boolean;
 }
 
 const HEADING_OPTIONS = [
@@ -254,7 +257,7 @@ function Toolbar({ editor, showColorPicker }: { editor: Editor; showColorPicker:
   );
 }
 
-export default function RichTextEditor({ value, onChange, placeholder = "Start typing...", className = "", showColorPicker = false }: RichTextEditorProps) {
+export default function RichTextEditor({ value, onChange, placeholder = "Start typing...", className = "", showColorPicker = false, error = false }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -285,7 +288,7 @@ export default function RichTextEditor({ value, onChange, placeholder = "Start t
   if (!editor) return null;
 
   return (
-    <div className={`${styles.editorWrapper} ${className}`}>
+    <div className={`${styles.editorWrapper} ${error ? styles.editorError : ""} ${className}`}>
       <Toolbar editor={editor} showColorPicker={showColorPicker} />
       <EditorContent editor={editor} className={styles.editorContent} />
       <div className={styles.wordCount}>

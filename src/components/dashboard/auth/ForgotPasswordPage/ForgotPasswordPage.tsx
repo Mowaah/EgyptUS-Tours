@@ -25,9 +25,12 @@ export default function ForgotPasswordPage() {
 
     if (emailMsg) return;
 
-    setIsSubmitting(true);
-    // TODO: wire to password reset OTP API
-    router.push("/dashboard/otp-confirmation");
+    // Simulate incorrect email
+    setEmailError("We couldn't find an account with that email address.");
+    return;
+    
+    // setIsSubmitting(true);
+    // router.push("/dashboard/otp-confirmation");
   };
 
   return (
@@ -60,7 +63,7 @@ export default function ForgotPasswordPage() {
 
           <AuthSubmitButton
             type="submit"
-            disabled={!isFormValid || isSubmitting}
+            disabled={isSubmitting}
             isLoading={isSubmitting}
           >
             Send OTP

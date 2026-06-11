@@ -45,12 +45,14 @@ function CloseIcon() {
 
 export default function DashboardRoleModal({ open, onClose, onSubmit }: DashboardRoleModalProps) {
   const [roleName, setRoleName] = useState("");
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([
     ...defaultPermissions,
   ]);
 
   const resetForm = useCallback(() => {
     setRoleName("");
+    setHasSubmitted(false);
     setSelectedPermissions([...defaultPermissions]);
   }, []);
 
@@ -119,9 +121,11 @@ export default function DashboardRoleModal({ open, onClose, onSubmit }: Dashboar
         </header>
 
         <form
+          noValidate
           className={styles.form}
           onSubmit={(event) => {
             event.preventDefault();
+            setHasSubmitted(true);
             if (!trimmedRoleName) return;
             onSubmit({
               name: trimmedRoleName,
@@ -138,7 +142,11 @@ export default function DashboardRoleModal({ open, onClose, onSubmit }: Dashboar
               value={roleName}
               placeholder="Enter Role name"
               required
-              onChange={(event) => setRoleName(event.target.value)}
+              onChange={(event) => {
+                setRoleName(event.target.value);
+                if (hasSubmitted) setHasSubmitted(false);
+              }}
+              error={hasSubmitted && !trimmedRoleName ? "This field is required" : undefined}
             />
 
             <fieldset className={styles.permissions}>
@@ -184,7 +192,7 @@ export default function DashboardRoleModal({ open, onClose, onSubmit }: Dashboar
             <button type="button" className={styles.cancelButton} onClick={handleClose}>
               Cancel
             </button>
-            <button type="submit" className={styles.primaryButton} disabled={!trimmedRoleName}>
+            <button type="submit" className={styles.primaryButton}>
               Create Role
             </button>
           </footer>

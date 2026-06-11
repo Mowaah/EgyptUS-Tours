@@ -12,6 +12,7 @@ import {
   type SelectHTMLAttributes,
 } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import CheckboxIndicator from "@/components/shared/CheckboxIndicator/CheckboxIndicator";
 import styles from "./DashboardField.module.scss";
 
@@ -272,9 +273,10 @@ export default function DashboardField({
         </>
       )}
       {error ? (
-        <p id={errorId} className={styles.errorText} role="alert">
-          {error}
-        </p>
+        <div id={errorId} className={styles.errorText} role="alert">
+          <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+          <span>{error}</span>
+        </div>
       ) : null}
     </div>
   );

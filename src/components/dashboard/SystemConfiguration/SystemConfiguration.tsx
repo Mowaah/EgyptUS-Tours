@@ -88,6 +88,7 @@ export default function SystemConfiguration() {
   const [saveNoticeState, setSaveNoticeState] = useState<"hidden" | "visible" | "leaving">(
     "hidden"
   );
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const [saveNoticeTick, setSaveNoticeTick] = useState(0);
   const logoInputRef = useRef<HTMLInputElement>(null);
 
@@ -114,6 +115,7 @@ export default function SystemConfiguration() {
 
   const updateValue = (field: keyof ConfigurationValues, value: string) => {
     setValues((current) => ({ ...current, [field]: value }));
+    if (hasSubmitted) setHasSubmitted(false);
   };
 
   const handleDiscard = () => {
@@ -150,12 +152,28 @@ export default function SystemConfiguration() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setHasSubmitted(true);
+    
+    if (
+      !values.companyName.trim() ||
+      !values.contactEmail.trim() ||
+      !values.phone.trim() ||
+      !values.address.trim() ||
+      !values.smtpHost.trim() ||
+      !values.port.trim() ||
+      !values.username.trim() ||
+      !values.password.trim()
+    ) {
+      return;
+    }
+
     setSaveNoticeState("visible");
     setSaveNoticeTick((current) => current + 1);
+    setHasSubmitted(false);
   };
 
   return (
-    <form className={styles.wrapper} onSubmit={handleSubmit}>
+    <form noValidate className={styles.wrapper} onSubmit={handleSubmit}>
       {saveNoticeState !== "hidden" ? (
         <DashboardStatusBanner
           message={saveSuccessMessage}
@@ -223,9 +241,10 @@ export default function SystemConfiguration() {
             variant="modal"
             label="Company name"
             value={values.companyName}
-            placeholder="Enter company name"
+            onChange={(e) => updateValue("companyName", e.target.value)}
+            placeholder="Enter Company name"
             className={styles.fieldInput}
-            onChange={(event) => updateValue("companyName", event.target.value)}
+            error={hasSubmitted && !values.companyName.trim() ? "This field is required" : undefined}
           />
           <DashboardField
             id="system-contact-email"
@@ -233,27 +252,30 @@ export default function SystemConfiguration() {
             label="Contact email"
             type="email"
             value={values.contactEmail}
-            placeholder="Enter contact email"
+            onChange={(e) => updateValue("contactEmail", e.target.value)}
+            placeholder="Enter Contact email"
             className={styles.fieldInput}
-            onChange={(event) => updateValue("contactEmail", event.target.value)}
+            error={hasSubmitted && !values.contactEmail.trim() ? "This field is required" : undefined}
           />
           <DashboardField
             id="system-phone"
             variant="modal"
             label="Phone"
             value={values.phone}
-            placeholder="Enter phone number"
+            onChange={(e) => updateValue("phone", e.target.value)}
+            placeholder="+20 123 456 7890"
             className={styles.fieldInput}
-            onChange={(event) => updateValue("phone", event.target.value)}
+            error={hasSubmitted && !values.phone.trim() ? "This field is required" : undefined}
           />
           <DashboardField
             id="system-address"
             variant="modal"
             label="Address"
             value={values.address}
-            placeholder="Enter business address"
+            onChange={(e) => updateValue("address", e.target.value)}
+            placeholder="Type your Location..."
             className={styles.fieldInput}
-            onChange={(event) => updateValue("address", event.target.value)}
+            error={hasSubmitted && !values.address.trim() ? "This field is required" : undefined}
           />
         </div>
       </section>
@@ -267,9 +289,10 @@ export default function SystemConfiguration() {
             variant="modal"
             label="SMTP host"
             value={values.smtpHost}
-            placeholder="Enter SMTP host"
+            onChange={(e) => updateValue("smtpHost", e.target.value)}
+            placeholder="smtp.travelco.com"
             className={styles.fieldInput}
-            onChange={(event) => updateValue("smtpHost", event.target.value)}
+            error={hasSubmitted && !values.smtpHost.trim() ? "This field is required" : undefined}
           />
           <DashboardField
             id="system-port"
@@ -277,20 +300,22 @@ export default function SystemConfiguration() {
             label="Port"
             inputMode="numeric"
             value={values.port}
-            placeholder="Enter port"
+            onChange={(e) => updateValue("port", e.target.value)}
+            placeholder="465"
             className={styles.fieldInput}
-            onChange={(event) => updateValue("port", event.target.value)}
+            error={hasSubmitted && !values.port.trim() ? "This field is required" : undefined}
           />
           <DashboardField
             id="system-username"
             variant="modal"
             control="select"
             label="Username"
-            value={values.username}
             options={usernameOptions}
+            value={values.username}
+            onChange={(e) => updateValue("username", e.target.value)}
             className={styles.fieldInput}
-            endAdornment={<ChevronDownIcon className={styles.chevronIcon} />}
-            onChange={(event) => updateValue("username", event.target.value)}
+            endAdornment={<ChevronDownIcon className={styles.selectChevron} />}
+            error={hasSubmitted && !values.username.trim() ? "This field is required" : undefined}
           />
           <DashboardField
             id="system-password"
@@ -298,9 +323,10 @@ export default function SystemConfiguration() {
             label="Password"
             type="password"
             value={values.password}
-            placeholder="Enter password"
+            onChange={(e) => updateValue("password", e.target.value)}
+            placeholder="****************"
             className={styles.fieldInput}
-            onChange={(event) => updateValue("password", event.target.value)}
+            error={hasSubmitted && !values.password.trim() ? "This field is required" : undefined}
           />
         </div>
       </section>

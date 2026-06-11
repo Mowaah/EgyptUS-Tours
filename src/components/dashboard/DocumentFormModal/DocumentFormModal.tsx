@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Image from "next/image";
 import { LanguageTabs, type Language, ModalHeader, ModalFooter, RichTextEditor } from "@/components/shared";
 import styles from "./DocumentFormModal.module.scss";
 
@@ -39,6 +40,7 @@ export default function DocumentFormModal({
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [published, setPublished] = useState(true);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -59,6 +61,7 @@ export default function DocumentFormModal({
       setPublished(true);
       setContent("");
     }
+    setHasSubmitted(false);
   }, [open, mode, initialData]);
 
   useEffect(() => {
@@ -74,6 +77,8 @@ export default function DocumentFormModal({
   }, [open, onClose]);
 
   const handleSave = useCallback(() => {
+    setHasSubmitted(true);
+    if (!title.trim() || !content.trim() || content === "<p></p>") return;
     onSave(title, content, published);
   }, [content, title, published, onSave]);
 
@@ -105,7 +110,23 @@ export default function DocumentFormModal({
           {/* Title */}
           <div className={styles.fieldGroup}>
             <label className={styles.fieldLabel} htmlFor="document-title">{titleLabel}</label>
-            <input id="document-title" type="text" className={styles.titleInput} placeholder={titlePlaceholder} value={title} onChange={(e) => setTitle(e.target.value)} />
+            <input 
+              id="document-title" 
+              type="text" 
+              className={`${styles.titleInput} ${hasSubmitted && !title.trim() ? styles.inputError : ""}`} 
+              placeholder={titlePlaceholder} 
+              value={title} 
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (hasSubmitted) setHasSubmitted(false);
+              }} 
+            />
+            {hasSubmitted && !title.trim() && (
+              <div className={styles.errorText}>
+                <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+                <span>This field is required</span>
+              </div>
+            )}
           </div>
 
           {/* Editor */}
@@ -115,10 +136,18 @@ export default function DocumentFormModal({
               value={content}
               onChange={(html) => {
                 setContent(html);
+                if (hasSubmitted) setHasSubmitted(false);
               }}
               placeholder={editorPlaceholder}
               showColorPicker={showColorPicker}
+              error={hasSubmitted && (!content.trim() || content === "<p></p>")}
             />
+            {hasSubmitted && (!content.trim() || content === "<p></p>") && (
+              <div className={styles.errorText}>
+                <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+                <span>This field is required</span>
+              </div>
+            )}
           </div>
 
           {/* Publish toggle */}

@@ -117,7 +117,7 @@ export default function CreateNewPasswordPage() {
 
           <AuthSubmitButton
             type="submit"
-            disabled={!isFormValid || isSubmitting}
+            disabled={isSubmitting}
             isLoading={isSubmitting}
           >
             Reset Password

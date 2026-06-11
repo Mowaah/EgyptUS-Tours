@@ -34,9 +34,12 @@ export default function LoginPage() {
 
     if (emailMsg || passwordMsg) return;
 
-    setIsSubmitting(true);
-    // TODO: wire to auth API
-    router.push("/dashboard");
+    // Simulate incorrect password
+    setPasswordError("The password you entered is incorrect.");
+    return;
+    
+    // setIsSubmitting(true);
+    // router.push("/dashboard");
   };
 
   return (
@@ -92,7 +95,7 @@ export default function LoginPage() {
 
         <AuthSubmitButton
           type="submit"
-          disabled={!isFormValid || isSubmitting}
+          disabled={isSubmitting}
           isLoading={isSubmitting}
         >
           Login

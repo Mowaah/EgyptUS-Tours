@@ -8,6 +8,7 @@ import {
   type FormEvent,
 } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import AuthBackLink from "../AuthBackLink/AuthBackLink";
 import AuthSubmitButton from "../AuthSubmitButton/AuthSubmitButton";
 import DashboardAuthLayout from "../DashboardAuthLayout/DashboardAuthLayout";
@@ -57,11 +58,17 @@ export default function OtpConfirmationPage() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!isFormValid) return;
+    if (!isFormValid) {
+      setHasError(true);
+      return;
+    }
 
-    setIsSubmitting(true);
-    // TODO: wire to OTP verification API
-    router.push("/dashboard/create-new-password");
+    // Simulate incorrect OTP
+    setHasError(true);
+    return;
+    
+    // setIsSubmitting(true);
+    // router.push("/dashboard/create-new-password");
   };
 
   const handleResend = () => {
@@ -114,11 +121,17 @@ export default function OtpConfirmationPage() {
                 />
               ))}
             </div>
+            {hasError && (
+              <div className={styles.errorText}>
+                <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+                <span>Wrong OTP code</span>
+              </div>
+            )}
           </div>
 
           <AuthSubmitButton
             type="submit"
-            disabled={!isFormValid || isSubmitting}
+            disabled={isSubmitting}
             isLoading={isSubmitting}
           >
             Verify

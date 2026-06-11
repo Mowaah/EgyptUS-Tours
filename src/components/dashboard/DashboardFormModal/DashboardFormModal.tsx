@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { DashboardField } from "@/components/shared";
 import styles from "./DashboardFormModal.module.scss";
@@ -55,6 +55,8 @@ export default function DashboardFormModal({
   onSubmit,
   onFieldChange,
 }: DashboardFormModalProps) {
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+
   useEffect(() => {
     if (!open) return;
 
@@ -109,10 +111,15 @@ export default function DashboardFormModal({
         </header>
 
         <form
+          noValidate
           className={styles.form}
           onSubmit={(event) => {
             event.preventDefault();
+            setHasSubmitted(true);
+            const hasError = fields.some((field) => field.required && !field.value.trim());
+            if (hasError) return;
             onSubmit();
+            setHasSubmitted(false);
           }}
         >
           <div className={styles.fields}>
@@ -136,8 +143,12 @@ export default function DashboardFormModal({
                         value: option,
                       })),
                     ]}
-                    onChange={(event) => onFieldChange(field.id, event.target.value)}
+                    onChange={(event) => {
+                      onFieldChange(field.id, event.target.value);
+                      if (hasSubmitted) setHasSubmitted(false);
+                    }}
                     endAdornment={<ChevronIcon />}
+                    error={hasSubmitted && field.required && !field.value.trim() ? "This field is required" : undefined}
                   />
                 ) : (
                   <DashboardField
@@ -148,7 +159,11 @@ export default function DashboardFormModal({
                     value={field.value}
                     required={field.required}
                     placeholder={field.placeholder}
-                    onChange={(event) => onFieldChange(field.id, event.target.value)}
+                    onChange={(event) => {
+                      onFieldChange(field.id, event.target.value);
+                      if (hasSubmitted) setHasSubmitted(false);
+                    }}
+                    error={hasSubmitted && field.required && !field.value.trim() ? "This field is required" : undefined}
                   />
                 )}
               </div>
