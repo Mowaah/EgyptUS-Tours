@@ -24,6 +24,7 @@ const navRoutes: Record<string, string> = {
   "FAQ Management": "/dashboard/settings/faq-management",
   "Terms & Conditions": "/dashboard/settings/terms-conditions",
   "Privacy Policy": "/dashboard/settings/privacy-policy",
+  Blog: "/dashboard/marketing/blog",
 };
 
 const navItems: NavItem[] = [
@@ -202,6 +203,10 @@ export default function DashboardSidebar() {
         pathname.startsWith("/dashboard/settings/terms-conditions") ||
         pathname.startsWith("/dashboard/settings/privacy-policy")) {
       groups["Legal & Help Center"] = true;
+    }
+
+    if (pathname.startsWith("/dashboard/marketing")) {
+      groups.Marketing = true;
     }
 
     return groups;

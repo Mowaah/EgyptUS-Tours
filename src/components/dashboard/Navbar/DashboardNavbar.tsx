@@ -120,16 +120,18 @@ export default function DashboardNavbar({
             </div>
 
             <div className={styles.tools}>
-              <button className={styles.filterButton} type="button" aria-label="Filter dashboard results">
-                <Image
-                  src="/images/dashboard/navbar/filter.svg"
-                  alt=""
-                  width={24}
-                  height={24}
-                  className={styles.actionIcon}
-                  aria-hidden
-                />
-              </button>
+              {!pageCopy.hideFilterButton && (
+                <button className={styles.filterButton} type="button" aria-label="Filter dashboard results">
+                  <Image
+                    src="/images/dashboard/navbar/filter.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                    className={styles.actionIcon}
+                    aria-hidden
+                  />
+                </button>
+              )}
 
               <label className={styles.searchBox}>
                 <Image

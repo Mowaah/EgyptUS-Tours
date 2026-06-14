@@ -16,6 +16,7 @@ export interface PageCopy {
   breadcrumbTrail: BreadcrumbSegment[];
   searchPlaceholder?: string;
   primaryAction?: { label: string };
+  hideFilterButton?: boolean;
 }
 
 const pageCopyByPath: Record<string, PageCopy> = {
@@ -83,6 +84,14 @@ const pageCopyByPath: Record<string, PageCopy> = {
     title: "Profile",
     subtitle: "Manage your personal information and security settings.",
     breadcrumbTrail: [{ label: "Profile" }, { label: "Personal Information" }],
+  },
+  "/dashboard/marketing/blog": {
+    title: "Blogs",
+    subtitle: "Manage blog posts and articles.",
+    breadcrumbTrail: [{ label: "Marketing" }, { label: "Blog" }],
+    searchPlaceholder: "Search Posts...",
+    primaryAction: { label: "Create Post" },
+    hideFilterButton: true,
   },
 };
 
