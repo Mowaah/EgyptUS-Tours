@@ -247,9 +247,32 @@
   }
 }
 
+.footerWrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 0.25rem;
+  width: 100%;
+}
+
 .wordCount {
   font-size: 0.75rem;
   color: #71717A; /* equivalent to $gray-500-zinc */
   text-align: right;
-  margin-top: 0.25rem;
+  margin-left: auto;
+}
+
+.errorText {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
+  gap: 4px;
+  
+  font-family: 'Trip Sans', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: #C11515;
 }

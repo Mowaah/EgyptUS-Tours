@@ -16,8 +16,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import CustomDatePicker from "@/components/shared/CustomDatePicker/CustomDatePicker";
 import CreateCategoryModal from "./CreateCategoryModal/CreateCategoryModal";
 import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
+import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { createPostSchema, type CreatePostValues } from "./CreatePostSchema";
 import styles from "./CreatePost.module.scss";
+import { useRouter } from "next/navigation";
 
 export function CreatePost() {
   const [thumbnailLang, setThumbnailLang] = useState<Language>("English");
@@ -31,11 +33,19 @@ export function CreatePost() {
     { label: "Luxury Hotels", value: "luxury-hotels" }
   ]);
   const [showToast, setShowToast] = useState(false);
+  const [toastLeaving, setToastLeaving] = useState(false);
+  const [showPublishModal, setShowPublishModal] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (showToast) {
-      const timer = setTimeout(() => setShowToast(false), 3000);
-      return () => clearTimeout(timer);
+      setToastLeaving(false);
+      const leaveTimer = setTimeout(() => setToastLeaving(true), 2700);
+      const unmountTimer = setTimeout(() => setShowToast(false), 3000);
+      return () => {
+        clearTimeout(leaveTimer);
+        clearTimeout(unmountTimer);
+      };
     }
   }, [showToast]);
 
@@ -53,7 +63,7 @@ export function CreatePost() {
 
   const onSubmit = (data: CreatePostValues) => {
     console.log("Form Payload:", data);
-    alert("Payload logged to console! Check devtools.");
+    setShowPublishModal(true);
   };
 
   return (
@@ -69,7 +79,7 @@ export function CreatePost() {
               )}
             />
             <LanguageTabs active={thumbnailLang} onChange={setThumbnailLang} className={styles.whiteTabs} />
-            <div style={{ display: "flex", gap: "1rem", width: "100%" }}>
+            <div className={styles.fieldRow}>
               <DashboardField label="Thumbnail Title" placeholder="Thumbnail Title..." {...register("thumbnailTitle")} error={errors.thumbnailTitle?.message} />
               <DashboardField label="Thumbnail Alt" placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" {...register("thumbnailAlt")} error={errors.thumbnailAlt?.message} />
             </div>
@@ -86,7 +96,7 @@ export function CreatePost() {
               )}
             />
             <LanguageTabs active={imageLang} onChange={setImageLang} className={styles.whiteTabs} />
-            <div style={{ display: "flex", gap: "1rem", width: "100%" }}>
+            <div className={styles.fieldRow}>
               <DashboardField label="Image Title" placeholder="Image Title..." {...register("imageTitle")} error={errors.imageTitle?.message} />
               <DashboardField label="Image Alt" placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" {...register("imageAlt")} error={errors.imageAlt?.message} />
             </div>
@@ -109,17 +119,16 @@ export function CreatePost() {
               name="content"
               control={control}
               render={({ field }) => (
-                <RichTextField label="Content" value={field.value} onChange={field.onChange} />
+                <RichTextField label="Content" value={field.value} onChange={field.onChange} error={errors.content?.message} />
               )}
             />
-            {errors.content && <span style={{ color: "#EF4444", fontSize: "0.875rem" }}>{errors.content.message}</span>}
           </FormSpec>
         </FormSection>
       </div>
 
       <div className={styles.sideColumn}>
         <FormSection title="Publish Settings" iconSrc="/images/dashboard/fields/publish-settings.svg">
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem", width: "100%" }}>
+          <div className={styles.fieldColumn}>
             <FormSpec>
               <Controller
                 name="scheduledDate"
@@ -130,15 +139,15 @@ export function CreatePost() {
                     value={field.value || ""}
                     onChange={field.onChange}
                     renderTrigger={(isOpen, setIsOpen, displayTxt) => (
-                      <div onClick={() => setIsOpen(!isOpen)} style={{ cursor: "pointer" }}>
+                      <div onClick={() => setIsOpen(!isOpen)} className={styles.datePickerTrigger}>
                         <DashboardField
                           label="Scheduled Date"
                           value={displayTxt || field.value || ""}
                           readOnly
                           placeholder="MM/DD/YYYY"
                           error={errors.scheduledDate?.message}
-                          endAdornment={<Image src="/images/calendar3.svg" alt="calendar icon" width={20} height={20} aria-hidden style={{ pointerEvents: "none" }} />}
-                          style={{ pointerEvents: "none" }}
+                          endAdornment={<Image src="/images/calendar3.svg" alt="calendar icon" width={20} height={20} aria-hidden className={styles.iconOverlay} />}
+                          className={styles.iconOverlay}
                         />
                       </div>
                     )}
@@ -146,19 +155,7 @@ export function CreatePost() {
                 )}
               />
             </FormSpec>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                padding: "10px 20px",
-                gap: "10px",
-                background: "#FBFBFB",
-                border: "1px solid #F5F5F5",
-                borderRadius: "24px",
-                width: "100%",
-              }}
-            >
+            <div className={styles.toggleWrapper}>
               <Controller
                 name="autoApply"
                 control={control}
@@ -196,24 +193,14 @@ export function CreatePost() {
                 />
               )}
             />
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                <span style={{ fontSize: "14px", color: "#4B5563" }}>Can&apos;t find your category?</span>
-                <span style={{ fontSize: "12px", color: "#9CA3AF" }}>Create a new one.</span>
+            <div className={styles.createCategoryRow}>
+              <div className={styles.createCategoryText}>
+                <span className={styles.title}>Can&apos;t find your category?</span>
+                <span className={styles.subtitle}>Create a new one.</span>
               </div>
               <button
                 type="button"
-                style={{
-                  width: "32px",
-                  height: "32px",
-                  borderRadius: "16px",
-                  background: "#2971E6",
-                  color: "white",
-                  border: "none",
-                  justifyContent: "center",
-                  border: "none",
-                  cursor: "pointer",
-                }}
+                className={styles.createCategoryBtn}
                 onClick={() => setIsCategoryModalOpen(true)}
               >
                 +
@@ -234,7 +221,7 @@ export function CreatePost() {
               {...register("metaDescription")}
               error={errors.metaDescription?.message}
             />
-            <div style={{ display: "flex", gap: "1rem", width: "100%" }}>
+            <div className={styles.fieldRow}>
               <DashboardField label="Meta keywords" placeholder="Separate keywords using 10 commas" {...register("metaKeywords")} error={errors.metaKeywords?.message} />
               <DashboardField label="Slug" placeholder="e.g. your-page-url-slug" {...register("slug")} error={errors.slug?.message} />
             </div>
@@ -265,10 +252,22 @@ export function CreatePost() {
         </FormSection>
       </div>
 
+      {showPublishModal && (
+        <SuccessModal
+          title="Post is Live"
+          message="Your post has been successfully published and is now live on the platform, making it visible and accessible to your audience across all relevant sections."
+          hideSecondaryButton
+          primaryButtonText="View Details"
+          onPrimaryClick={() => router.push("/dashboard/marketing/blog")}
+          onClose={() => setShowPublishModal(false)}
+        />
+      )}
+
       {showToast && (
         <DashboardStatusBanner
           message="The new category has been created and is now available for blog organization."
           variant="success"
+          leaving={toastLeaving}
           className={styles.toastBanner}
         />
       )}

@@ -1,5 +1,6 @@
+import Image from "next/image";
 import type { DataTableColumn } from "@/components/dashboard/DataTable";
-import type { BlogRow } from "./types";
+import type { BlogRow } from "../types";
 import styles from "./BlogsPanel.module.scss";
 
 const statusClass: Record<BlogRow["status"], string> = {

@@ -19,7 +19,7 @@ interface RichTextEditorProps {
   placeholder?: string;
   className?: string;
   showColorPicker?: boolean;
-  error?: boolean;
+  error?: string | boolean;
 }
 
 const HEADING_OPTIONS = [
@@ -299,8 +299,16 @@ export default function RichTextEditor({ value, onChange, placeholder = "Start t
         <Toolbar editor={editor} showColorPicker={showColorPicker} />
         <EditorContent editor={editor} className={styles.editorContent} />
       </div>
-      <div className={styles.wordCount}>
-        {wordCount} {wordCount === 1 ? 'word' : 'words'}
+      <div className={styles.footerWrap}>
+        {error ? (
+          <div className={styles.errorText} role="alert">
+            <img src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+            <span>{error}</span>
+          </div>
+        ) : <div />}
+        <div className={styles.wordCount}>
+          {wordCount} {wordCount === 1 ? 'word' : 'words'}
+        </div>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import type { BlogRow } from "./types";
+import type { BlogRow } from "../types";
 
 export const mockBlogs: BlogRow[] = [
   { id: "1", postId: "POST-001", title: "Top 10 Things to Do in Cairo", category: "Destination", publishDate: "Mar 15, 2024", views: 1250, status: "Published" },

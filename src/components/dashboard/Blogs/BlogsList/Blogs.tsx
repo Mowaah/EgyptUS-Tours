@@ -1,4 +1,4 @@
-import { BlogsPanel } from "./BlogsPanel";
+import { BlogsPanel } from "../BlogsPanel/BlogsPanel";
 import styles from "./Blogs.module.scss";
 
 export function Blogs() {

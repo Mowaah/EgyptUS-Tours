@@ -12,16 +12,16 @@ export const createPostSchema = z.object({
   imageAlt: z.string().optional(),
 
   // Blog Content
-  title: z.string().min(1, "Title is required"),
+  title: z.string({ message: "Title is required" }).min(1, "Title is required"),
   shortDescription: z.string().max(300, "Short description must be 300 characters or less").optional(),
-  content: z.string().min(1, "Content is required"),
+  content: z.string({ message: "Content is required" }).min(1, "Content is required"),
 
   // Publish Settings
   scheduledDate: z.string().optional(),
   autoApply: z.boolean(),
 
   // Details
-  category: z.string().min(1, "Category is required"),
+  category: z.string({ message: "Category is required" }).min(1, "Category is required"),
 
   // SEO Settings
   metaTitle: z.string().optional(),
@@ -30,7 +30,7 @@ export const createPostSchema = z.object({
   slug: z.string().optional(),
 
   // Author
-  author: z.string().min(1, "Author is required"),
+  author: z.string({ message: "Author is required" }).min(1, "Author is required"),
 });
 
 export type CreatePostValues = z.infer<typeof createPostSchema>;
