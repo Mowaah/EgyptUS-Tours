@@ -8,11 +8,12 @@ export type Language = typeof LANGS[number];
 interface LanguageTabsProps {
   active: Language;
   onChange: (lang: Language) => void;
+  className?: string;
 }
 
-export default function LanguageTabs({ active, onChange }: LanguageTabsProps) {
+export default function LanguageTabs({ active, onChange, className = "" }: LanguageTabsProps) {
   return (
-    <div className={styles.langTabs} role="tablist" aria-label="Language">
+    <div className={`${styles.langTabs} ${className}`} role="tablist" aria-label="Language">
       {LANGS.map((lang) => (
         <button
           key={lang}

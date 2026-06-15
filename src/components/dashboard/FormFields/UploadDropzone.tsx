@@ -1,0 +1,125 @@
+"use client";
+
+import React, { useRef } from "react";
+import Image from "next/image";
+import styles from "./FormFields.module.scss";
+
+interface UploadDropzoneProps {
+  value?: File;
+  onFileSelect?: (file: File | undefined) => void;
+  accept?: string;
+  className?: string;
+}
+
+function formatBytes(bytes: number, decimals = 2) {
+  if (!+bytes) return '0 Bytes';
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+}
+
+export function UploadDropzone({ value, onFileSelect, accept = "image/png, image/jpeg, image/gif", className = "" }: UploadDropzoneProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [progress, setProgress] = React.useState(100);
+
+  // Fake upload progress simulation
+  React.useEffect(() => {
+    if (value) {
+      setProgress(0);
+      const interval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            return 100;
+          }
+          return prev + 10;
+        });
+      }, 50); // 500ms total
+      return () => clearInterval(interval);
+    }
+  }, [value]);
+
+  const handleClick = () => {
+    inputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0] && onFileSelect) {
+      onFileSelect(e.target.files[0]);
+    }
+  };
+
+  return (
+    <div className={styles.uploadContainer}>
+      <div className={`${styles.dropzone} ${className}`} onClick={handleClick} role="button" tabIndex={0}>
+        <input
+          type="file"
+          ref={inputRef}
+          accept={accept}
+          onChange={handleFileChange}
+          style={{ display: "none" }}
+        />
+        <div className={styles.dropzoneContent}>
+          <Image src="/images/dashboard/fields/document-upload.svg" alt="" width={32} height={32} aria-hidden style={{ opacity: 0.4 }} />
+          <p className={styles.dropzoneTitle}>Click to upload an image or drag & drop</p>
+          <p className={styles.dropzoneSubtitle}>PNG, JPG, GIF up to 10MB</p>
+        </div>
+      </div>
+
+      {value && (
+        <div className={styles.fileItem}>
+          <div className={styles.fileIconWrapper}>
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7.5 3.33334H24.1667L32.5 11.6667V36.6667C32.5 37.1087 32.3244 37.5326 32.0118 37.8452C31.6993 38.1577 31.2754 38.3333 30.8333 38.3333H7.5C7.05797 38.3333 6.63405 38.1577 6.32149 37.8452C6.00893 37.5326 5.83333 37.1087 5.83333 36.6667V5C5.83333 4.55797 6.00893 4.13405 6.32149 3.82149C6.63405 3.50893 7.05797 3.33334 7.5 3.33334Z" stroke="#D8DDE4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M24.1667 3.33334V11.6667H32.5" stroke="#D8DDE4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <rect x="7" y="17" width="22" height="15" rx="2" fill="#7F56D9"/>
+              <text x="18" y="27" fill="white" fontSize="10" fontWeight="bold" fontFamily="Inter, sans-serif" textAnchor="middle">
+                {value.name.split('.').pop()?.toUpperCase() || 'FILE'}
+              </text>
+            </svg>
+          </div>
+          
+          <div className={styles.fileInfo}>
+            <p className={styles.fileName}>{value.name}</p>
+            <div className={styles.fileMeta}>
+              <span className={styles.fileSize}>{formatBytes(value.size)} of {formatBytes(value.size)}</span>
+              <div className={styles.fileDivider}></div>
+              <span className={styles.fileStatus}>
+                {progress === 100 ? (
+                  <>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M8 14.6667C11.6819 14.6667 14.6667 11.6819 14.6667 8C14.6667 4.3181 11.6819 1.33334 8 1.33334C4.3181 1.33334 1.33333 4.3181 1.33333 8C1.33333 11.6819 4.3181 14.6667 8 14.6667Z" stroke="#079455" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M5.33333 8.00001L7.11111 9.77779L10.6667 6.22223" stroke="#079455" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    Complete
+                  </>
+                ) : (
+                  <span style={{ color: '#606978' }}>Uploading...</span>
+                )}
+              </span>
+            </div>
+            <div className={styles.fileProgressWrapper}>
+              <div className={styles.fileProgressBar}>
+                <div className={styles.fileProgressFill} style={{ width: `${progress}%` }}></div>
+              </div>
+              <span className={styles.fileProgressPercentage}>{progress}%</span>
+            </div>
+          </div>
+
+          <button 
+            type="button" 
+            className={styles.fileDeleteBtn}
+            onClick={(e) => {
+              e.stopPropagation();
+              onFileSelect?.(undefined);
+            }}
+          >
+            <Image src="/images/dashboard/delete.svg" alt="Delete" width={20} height={20} />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}

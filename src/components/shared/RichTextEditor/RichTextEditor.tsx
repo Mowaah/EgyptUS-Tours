@@ -14,8 +14,8 @@ import { TextStyle } from "@tiptap/extension-text-style";
 import styles from "./RichTextEditor.module.scss";
 
 interface RichTextEditorProps {
-  value: string;
-  onChange: (value: string, plainText: string) => void;
+  value?: string;
+  onChange?: (value: string, plainText: string) => void;
   placeholder?: string;
   className?: string;
   showColorPicker?: boolean;
@@ -258,6 +258,8 @@ function Toolbar({ editor, showColorPicker }: { editor: Editor; showColorPicker:
 }
 
 export default function RichTextEditor({ value, onChange, placeholder = "Start typing...", className = "", showColorPicker = false, error = false }: RichTextEditorProps) {
+  const [wordCount, setWordCount] = useState(0);
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -273,26 +275,32 @@ export default function RichTextEditor({ value, onChange, placeholder = "Start t
     onUpdate({ editor }) {
       const html = editor.getHTML();
       const plainText = editor.getText();
-      onChange(html, plainText);
+      setWordCount(editor.storage.characterCount.words());
+      if (onChange) {
+        onChange(html, plainText);
+      }
     },
   });
 
   useEffect(() => {
     if (editor && editor.getHTML() !== value) {
       const currentPos = editor.state.selection;
-      editor.commands.setContent(value, { emitUpdate: false });
+      editor.commands.setContent(value || "", { emitUpdate: false });
       editor.commands.setTextSelection(currentPos);
+      setWordCount(editor.storage.characterCount.words());
     }
   }, [value, editor]);
 
   if (!editor) return null;
 
   return (
-    <div className={`${styles.editorWrapper} ${error ? styles.editorError : ""} ${className}`}>
-      <Toolbar editor={editor} showColorPicker={showColorPicker} />
-      <EditorContent editor={editor} className={styles.editorContent} />
+    <div className={className}>
+      <div className={`${styles.editorWrapper} ${error ? styles.editorError : ""}`}>
+        <Toolbar editor={editor} showColorPicker={showColorPicker} />
+        <EditorContent editor={editor} className={styles.editorContent} />
+      </div>
       <div className={styles.wordCount}>
-        {editor.storage.characterCount.words()} {editor.storage.characterCount.words() === 1 ? 'word' : 'words'}
+        {wordCount} {wordCount === 1 ? 'word' : 'words'}
       </div>
     </div>
   );

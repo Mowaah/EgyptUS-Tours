@@ -154,7 +154,9 @@ function NavChildren({
       <ul className={styles.subnavList}>
         {items.map((item) => {
           const href = navRoutes[item.label];
-          const isActive = href ? pathname === href : false;
+          const isActive = href
+            ? pathname === href || (href !== "/dashboard" && pathname.startsWith(href + "/"))
+            : false;
           const linkClassName = `${styles.subnavLink} ${isActive ? styles.active : ""}`;
 
           return (
@@ -247,7 +249,9 @@ export default function DashboardSidebar() {
                 const isOpen = Boolean(openGroups[item.label]);
                 const subnavId = `dashboard-sidebar-${toKebabCase(item.label)}`;
                 const href = navRoutes[item.label];
-                const isActive = href ? pathname === href : false;
+                const isActive = href
+                  ? pathname === href || (href !== "/dashboard" && pathname.startsWith(href + "/"))
+                  : false;
 
                 return (
                   <li key={item.label} className={styles.navGroup}>

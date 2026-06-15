@@ -1,0 +1,385 @@
+@use "@/styles/variables" as *;
+
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 2rem;
+  gap: 1.5rem;
+  background: $white;
+  border-radius: 1.5rem;
+  width: 100%;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.sectionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #f8f9fb;
+  border-radius: 1.25rem;
+
+  img, svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+.sectionTitle {
+  font-family: "Trip Sans", sans-serif;
+  font-weight: 500;
+  font-size: 1.5rem;
+  color: #11263b;
+  margin: 0;
+}
+
+.specItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1rem;
+  gap: 1rem;
+  background: #f9fafb;
+  border-radius: 1rem;
+  width: 100%;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.625rem;
+  font-family: "Trip Sans", sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin: 0;
+}
+
+.inputArea {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  gap: 0.625rem;
+  background: $white;
+  border: 1px solid #e5e5e5;
+  border-radius: 1.5rem;
+  width: 100%;
+  min-height: 3rem;
+  transition: border-color $transition-fast;
+
+  &:focus-within {
+    border-color: $primary;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: "Trip Sans", sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    color: #444a51;
+
+    &::placeholder {
+      color: #9ca3af;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 5rem;
+    padding: 0;
+  }
+}
+
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  gap: 0.625rem;
+  width: 100%;
+  min-height: 8.125rem;
+  background: #f9fafb;
+  border: 1px dashed #e5e7eb;
+  border-radius: 1.5rem;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover,
+  &:focus-visible {
+    border-color: $primary;
+    background: $white;
+    box-shadow: 0px 1px 2px rgba(217, 217, 234, 0.05), 0px 0px 0px 4px #e6f4ff;
+    outline: none;
+  }
+}
+
+.dropzoneContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  text-align: center;
+}
+
+.dropzoneTitle {
+  font-family: "Trip Sans", sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.uploadContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.fileItem {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 1rem;
+  gap: 1rem;
+  width: 100%;
+  background: $white;
+  border: 1px solid #e5e7eb;
+  border-radius: 1.5rem;
+  position: relative;
+}
+
+.fileIconWrapper {
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fileInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  flex-grow: 1;
+}
+
+.fileName {
+  font-family: "Trip Sans", sans-serif;
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: #2b2b38;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.fileMeta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.fileSize {
+  font-family: "Trip Sans", sans-serif;
+  font-weight: 400;
+  font-size: 0.8125rem;
+  color: #606978;
+}
+
+.fileDivider {
+  width: 1px;
+  height: 0.75rem;
+  background: #d8dde4;
+}
+
+.fileStatus {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: "Trip Sans", sans-serif;
+  font-weight: 400;
+  font-size: 0.8125rem;
+  color: #079455;
+}
+
+.fileProgressWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.fileProgressBar {
+  flex-grow: 1;
+  height: 0.5rem;
+  background: #f3f4f6;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.fileProgressFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #1b8ffe;
+  border-radius: 0.5rem;
+  transition: width 0.3s ease;
+}
+
+.fileProgressPercentage {
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  color: #606978;
+  min-width: 2rem;
+}
+
+.fileDeleteBtn {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  background: #fdf2f4;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  flex: none;
+  padding: 0;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #fce4e8;
+  }
+}
+
+.dropzoneSubtitle {
+  font-family: "Trip Sans", sans-serif;
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.charCount {
+  font-family: "Trip Sans", sans-serif;
+  font-weight: 400;
+  font-size: 0.75rem;
+  text-align: right;
+  color: #9ca3af;
+  width: 100%;
+}
+
+.toggleField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.toggleHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.toggleLabel {
+  font-family: "Trip Sans", sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #11263b;
+}
+
+.toggleDescription {
+  font-family: "Trip Sans", sans-serif;
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* Switch Toggle Component */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 2.75rem;
+  height: 1.5rem;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e5e7eb;
+  transition: 0.4s;
+  border-radius: 2rem;
+
+  &:before {
+    position: absolute;
+    content: "";
+    height: 1.125rem;
+    width: 1.125rem;
+    left: 0.1875rem;
+    bottom: 0.1875rem;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+  }
+}
+
+input:checked + .slider {
+  background-color: #ff6b00; /* Example toggle color */
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #ff6b00;
+}
+
+input:checked + .slider:before {
+  transform: translateX(1.25rem);
+}

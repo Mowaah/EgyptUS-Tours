@@ -15,7 +15,9 @@ export interface PageCopy {
   subtitle: string;
   breadcrumbTrail: BreadcrumbSegment[];
   searchPlaceholder?: string;
-  primaryAction?: { label: string };
+  hideSearch?: boolean;
+  primaryAction?: { label: string; iconSrc?: string; iconRotation?: number; form?: string; type?: "button" | "submit" };
+  secondaryAction?: { label: string; iconSrc?: string; iconRotation?: number; form?: string; type?: "button" | "submit" };
   hideFilterButton?: boolean;
 }
 
@@ -92,6 +94,15 @@ const pageCopyByPath: Record<string, PageCopy> = {
     searchPlaceholder: "Search Posts...",
     primaryAction: { label: "Create Post" },
     hideFilterButton: true,
+  },
+  "/dashboard/marketing/blog/create": {
+    title: "Create New Post",
+    subtitle: "Write and publish blog content",
+    breadcrumbTrail: [{ label: "Marketing" }, { label: "Blog" }, { label: "Create Post" }],
+    hideFilterButton: true,
+    hideSearch: true,
+    primaryAction: { label: "Publish Post", iconSrc: "/images/dashboard/arrow-up.svg", iconRotation: 90, form: "create-post-form", type: "submit" },
+    secondaryAction: { label: "Save draft", iconSrc: "/images/dashboard/save2.svg" },
   },
 };
 

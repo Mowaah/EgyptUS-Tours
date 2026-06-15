@@ -3,8 +3,8 @@
 .editorWrapper {
   display: flex;
   flex-direction: column;
-  border: 1.5px solid #E5E7EB;
-  border-radius: 16px;
+  border: 1px solid #E5E7EB;
+  border-radius: 24px;
   overflow: hidden;
   background: #fff;
   resize: vertical;
@@ -248,8 +248,8 @@
 }
 
 .wordCount {
-  font-size: 0.875rem;
-  color: #9CA3AF;
+  font-size: 0.75rem;
+  color: #71717A; /* equivalent to $gray-500-zinc */
   text-align: right;
-  padding: 4px 16px 12px;
+  margin-top: 0.25rem;
 }

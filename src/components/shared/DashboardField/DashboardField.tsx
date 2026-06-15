@@ -39,7 +39,22 @@ interface DashboardFieldSelectProps
   options: { label: string; value: string; disabled?: boolean }[];
 }
 
-type DashboardFieldProps = DashboardFieldInputProps | DashboardFieldSelectProps;
+interface DashboardFieldTextareaProps
+  extends DashboardFieldBaseProps,
+    React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  control: "textarea";
+  options?: never;
+}
+
+type DashboardFieldProps = DashboardFieldInputProps | DashboardFieldSelectProps | DashboardFieldTextareaProps;
+
+function ChevronIcon() {
+  return (
+    <svg viewBox="0 0 16 16" aria-hidden="true" className={styles.chevronSvg}>
+      <path d="m3.5 6 4.5 4 4.5-4" />
+    </svg>
+  );
+}
 
 function ModalSelect({
   id,
@@ -48,8 +63,10 @@ function ModalSelect({
   errorId,
   endAdornment,
   value,
+  defaultValue,
   onChange,
   disabled,
+  variant = "default",
 }: {
   id?: string;
   label: ReactNode;
@@ -57,14 +74,24 @@ function ModalSelect({
   errorId?: string;
   endAdornment?: ReactNode;
   value?: string | readonly string[] | number;
+  defaultValue?: string | readonly string[] | number;
   onChange?: DashboardFieldSelectProps["onChange"];
   disabled?: boolean;
+  variant?: "default" | "modal";
 }) {
   const [open, setOpen] = useState(false);
+  const [internalValue, setInternalValue] = useState(value ?? defaultValue ?? "");
+
+  useEffect(() => {
+    if (value !== undefined) {
+      setInternalValue(value);
+    }
+  }, [value]);
+
   const [dropdownStyle, setDropdownStyle] = useState<CSSProperties>();
   const ref = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const stringValue = typeof value === "string" ? value : String(value ?? "");
+  const stringValue = typeof internalValue === "string" ? internalValue : String(internalValue ?? "");
   const selectedOption = options?.find((option) => option.value === stringValue);
   const displayValue = selectedOption?.label ?? stringValue;
   const isPlaceholder = !stringValue || selectedOption?.disabled;
@@ -112,6 +139,9 @@ function ModalSelect({
   }, [open]);
 
   const handleSelect = (optionValue: string) => {
+    if (value === undefined) {
+      setInternalValue(optionValue);
+    }
     onChange?.({
       target: { value: optionValue },
       currentTarget: { value: optionValue },
@@ -165,14 +195,14 @@ function ModalSelect({
 
   return (
     <>
-      <label htmlFor={id} className={`${styles.label} ${styles.modalLabel}`}>
+      <label htmlFor={id} className={`${styles.label} ${variant === "modal" ? styles.modalLabel : ""}`}>
         {label}
       </label>
       <div className={`${styles.control} ${styles.modalSelectWrap}`} ref={ref}>
         <button
           type="button"
           id={id}
-          className={`${styles.input} ${styles.modalInput} ${styles.modalSelectTrigger} ${
+          className={`${styles.input} ${variant === "modal" ? styles.modalInput : ""} ${styles.modalSelectTrigger} ${
             open ? styles.modalSelectTriggerOpen : ""
           }`}
           aria-haspopup="listbox"
@@ -191,7 +221,11 @@ function ModalSelect({
         </button>
         {endAdornment ? (
           <div className={styles.endAdornment}>{endAdornment}</div>
-        ) : null}
+        ) : (
+          <div className={styles.endAdornment}>
+            <ChevronIcon />
+          </div>
+        )}
       </div>
       {dropdown}
     </>
@@ -209,6 +243,21 @@ export default function DashboardField({
   options,
   ...props
 }: DashboardFieldProps) {
+  const maxLength = (props as any).maxLength;
+  const initialValueLength = (props as any).value?.toString().length || (props as any).defaultValue?.toString().length || 0;
+  const [charCount, setCharCount] = useState(initialValueLength);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setCharCount(e.target.value.length);
+    if ((props as any).onChange) {
+      (props as any).onChange(e);
+    }
+  };
+
+  const mergedProps = {
+    ...props,
+    onChange: handleChange,
+  };
   const errorId = error && id ? `${id}-error` : undefined;
   const fieldClassName =
     variant === "modal" ? `${styles.field} ${styles.modalField}` : styles.field;
@@ -222,16 +271,18 @@ export default function DashboardField({
 
   return (
     <div className={fieldClassName}>
-      {control === "select" && variant === "modal" ? (
+      {control === "select" ? (
         <ModalSelect
           id={id}
           label={label}
           options={options}
           errorId={errorId}
           endAdornment={endAdornment}
-          value={(props as Omit<DashboardFieldSelectProps, "options">).value}
-          disabled={(props as Omit<DashboardFieldSelectProps, "options">).disabled}
-          onChange={(props as Omit<DashboardFieldSelectProps, "options">).onChange}
+          variant={variant}
+          value={(mergedProps as Omit<DashboardFieldSelectProps, "options">).value}
+          defaultValue={(mergedProps as Omit<DashboardFieldSelectProps, "options">).defaultValue}
+          disabled={(mergedProps as Omit<DashboardFieldSelectProps, "options">).disabled}
+          onChange={(mergedProps as Omit<DashboardFieldSelectProps, "options">).onChange}
         />
       ) : (
         <>
@@ -239,37 +290,33 @@ export default function DashboardField({
             {label}
           </label>
           <div className={styles.control}>
-            {control === "select" ? (
-          <select
-            id={id}
-            className={`${inputClassName} ${styles.select}`}
-            aria-invalid={error ? "true" : undefined}
-            aria-describedby={errorId}
-            {...(props as Omit<DashboardFieldSelectProps, "options">)}
-          >
-            {options?.map((option) => (
-              <option
-                value={option.value}
-                disabled={option.disabled}
-                key={`${id}-${option.value || option.label}`}
-              >
-                {option.label}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <input
-            id={id}
-            className={inputClassName}
-            aria-invalid={error ? "true" : undefined}
-            aria-describedby={errorId}
-            {...(props as DashboardFieldInputProps)}
-          />
-        )}
+            {control === "textarea" ? (
+              <textarea
+                id={id}
+                className={inputClassName}
+                aria-invalid={error ? "true" : undefined}
+                aria-describedby={errorId}
+                {...(mergedProps as DashboardFieldTextareaProps)}
+                style={{ borderRadius: "1.5rem", minHeight: "8rem", resize: "vertical", padding: "1rem", ...(props as any).style }}
+              />
+            ) : (
+              <input
+                id={id}
+                className={inputClassName}
+                aria-invalid={error ? "true" : undefined}
+                aria-describedby={errorId}
+                {...(mergedProps as DashboardFieldInputProps)}
+              />
+            )}
             {endAdornment ? (
               <div className={styles.endAdornment}>{endAdornment}</div>
             ) : null}
           </div>
+          {maxLength && (
+            <div className={styles.charCount}>
+              {charCount}/{maxLength}
+            </div>
+          )}
         </>
       )}
       {error ? (

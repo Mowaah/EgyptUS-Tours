@@ -13,6 +13,7 @@ interface DashboardNavbarProps {
   subtitle?: string;
   breadcrumbTrail?: BreadcrumbSegment[];
   onPrimaryAction?: () => void;
+  onSecondaryAction?: () => void;
   children?: React.ReactNode;
 }
 
@@ -35,6 +36,7 @@ export default function DashboardNavbar({
   subtitle,
   breadcrumbTrail,
   onPrimaryAction,
+  onSecondaryAction,
   children,
 }: DashboardNavbarProps) {
   const pathname = usePathname();
@@ -133,32 +135,57 @@ export default function DashboardNavbar({
                 </button>
               )}
 
-              <label className={styles.searchBox}>
-                <Image
-                  src="/images/dashboard/navbar/search.svg"
-                  alt=""
-                  width={24}
-                  height={24}
-                  className={styles.actionIcon}
-                  aria-hidden
-                />
-                <span className={styles.srOnly}>Search dashboard</span>
-                <input type="search" placeholder={searchPlaceholder} />
-              </label>
+              {!pageCopy.hideSearch && (
+                <label className={styles.searchBox}>
+                  <Image
+                    src="/images/dashboard/navbar/search.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                    className={styles.actionIcon}
+                    aria-hidden
+                  />
+                  <span className={styles.srOnly}>Search dashboard</span>
+                  <input type="search" placeholder={searchPlaceholder} />
+                </label>
+              )}
+
+              {pageCopy.secondaryAction ? (
+                <button
+                  type={pageCopy.secondaryAction.type || "button"}
+                  form={pageCopy.secondaryAction.form}
+                  className={styles.secondaryActionButton}
+                  onClick={onSecondaryAction}
+                >
+                  {pageCopy.secondaryAction.iconSrc && (
+                    <Image
+                      src={pageCopy.secondaryAction.iconSrc}
+                      alt=""
+                      width={20}
+                      height={20}
+                      aria-hidden
+                      style={pageCopy.secondaryAction.iconRotation ? { transform: `rotate(${pageCopy.secondaryAction.iconRotation}deg)` } : undefined}
+                    />
+                  )}
+                  {pageCopy.secondaryAction.label}
+                </button>
+              ) : null}
 
               {pageCopy.primaryAction ? (
                 <button
-                  type="button"
+                  type={pageCopy.primaryAction.type || "button"}
+                  form={pageCopy.primaryAction.form}
                   className={styles.primaryActionButton}
                   onClick={onPrimaryAction}
                 >
                   {pageCopy.primaryAction.label}
                   <Image
-                    src="/images/dashboard/navbar/add-circle.svg"
+                    src={pageCopy.primaryAction.iconSrc || "/images/dashboard/navbar/add-circle.svg"}
                     alt=""
                     width={24}
                     height={24}
                     aria-hidden
+                    style={pageCopy.primaryAction.iconRotation ? { transform: `rotate(${pageCopy.primaryAction.iconRotation}deg)` } : undefined}
                   />
                 </button>
               ) : null}
