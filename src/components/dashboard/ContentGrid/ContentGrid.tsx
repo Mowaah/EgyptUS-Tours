@@ -51,8 +51,7 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
 }, ref) => {
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
-  const [bannerState, setBannerState] = useState<"hidden" | "visible" | "leaving">("hidden");
-  const [bannerTick, setBannerTick] = useState(0);
+  const [isBannerVisible, setIsBannerVisible] = useState(false);
   const [bannerMessage, setBannerMessage] = useState("");
   const [bannerVariant, setBannerVariant] = useState<"success" | "warning">("success");
 
@@ -68,21 +67,14 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
     return () => document.removeEventListener("click", handleOutsideClick);
   }, [openDropdownId]);
 
-  useEffect(() => {
-    if (bannerState === "hidden") return;
-    const leaveTimer = setTimeout(() => setBannerState("leaving"), 4000);
-    const hiddenTimer = setTimeout(() => setBannerState("hidden"), 4300);
-    return () => {
-      clearTimeout(leaveTimer);
-      clearTimeout(hiddenTimer);
-    };
-  }, [bannerTick, bannerState]);
+
 
   const showBanner = (message: string, variant: "success" | "warning" = "success") => {
     setBannerMessage(message);
     setBannerVariant(variant);
-    setBannerState("visible");
-    setBannerTick((c) => c + 1);
+    // Setting it to false first ensures the banner re-triggers if called multiple times quickly
+    setIsBannerVisible(false);
+    setTimeout(() => setIsBannerVisible(true), 10);
     setOpenDropdownId(null);
   };
 
@@ -108,14 +100,14 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
         title={title}
         iconSrc={iconSrc}
         headerActions={
-          bannerState !== "hidden" ? (
-            <DashboardStatusBanner
-              message={bannerMessage}
-              leaving={bannerState === "leaving"}
-              variant={bannerVariant}
-              className={styles.bannerOverride}
-            />
-          ) : null
+          <DashboardStatusBanner
+            show={isBannerVisible}
+            onClose={() => setIsBannerVisible(false)}
+            message={bannerMessage}
+            variant={bannerVariant}
+            className={styles.bannerOverride}
+            durationMs={4300}
+          />
         }
       >
         <div className={styles.faqGrid}>

@@ -8,13 +8,28 @@ import pageCopyByPath, { type BreadcrumbSegment } from "./navbarPageCopy";
 import styles from "./DashboardNavbar.module.scss";
 
 
+interface ActionConfig {
+  label: string;
+  form?: string;
+  type?: "button" | "submit" | "reset";
+  iconSrc?: string;
+  iconRotation?: number;
+  hideIcon?: boolean;
+}
+
 interface DashboardNavbarProps {
   title?: string;
   subtitle?: string;
   breadcrumbTrail?: BreadcrumbSegment[];
+  primaryAction?: ActionConfig;
+  secondaryAction?: ActionConfig;
   onPrimaryAction?: () => void;
   onSecondaryAction?: () => void;
   children?: React.ReactNode;
+  hideFilterButton?: boolean;
+  hideSearch?: boolean;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
 }
 
 
@@ -35,9 +50,15 @@ export default function DashboardNavbar({
   title,
   subtitle,
   breadcrumbTrail,
+  primaryAction,
+  secondaryAction,
   onPrimaryAction,
   onSecondaryAction,
   children,
+  hideFilterButton,
+  hideSearch,
+  searchQuery,
+  onSearchChange,
 }: DashboardNavbarProps) {
   const pathname = usePathname();
 
@@ -59,8 +80,12 @@ export default function DashboardNavbar({
   const visibleTitle = title ?? pageCopy.title;
   const visibleSubtitle = subtitle ?? pageCopy.subtitle;
   const visibleTrail = breadcrumbTrail ?? pageCopy.breadcrumbTrail;
+  const visiblePrimaryAction = primaryAction ?? pageCopy.primaryAction;
+  const visibleSecondaryAction = secondaryAction ?? pageCopy.secondaryAction;
   const searchPlaceholder =
     pageCopy.searchPlaceholder ?? "Search bookings, customers...";
+  const isFilterHidden = hideFilterButton ?? pageCopy.hideFilterButton;
+  const isSearchHidden = hideSearch ?? pageCopy.hideSearch;
 
   return (
     <header className={styles.navbar}>
@@ -122,7 +147,7 @@ export default function DashboardNavbar({
             </div>
 
             <div className={styles.tools}>
-              {!pageCopy.hideFilterButton && (
+              {!isFilterHidden && (
                 <button className={styles.filterButton} type="button" aria-label="Filter dashboard results">
                   <Image
                     src="/images/dashboard/navbar/filter.svg"
@@ -135,7 +160,7 @@ export default function DashboardNavbar({
                 </button>
               )}
 
-              {!pageCopy.hideSearch && (
+              {!isSearchHidden && (
                 <label className={styles.searchBox}>
                   <Image
                     src="/images/dashboard/navbar/search.svg"
@@ -146,47 +171,54 @@ export default function DashboardNavbar({
                     aria-hidden
                   />
                   <span className={styles.srOnly}>Search dashboard</span>
-                  <input type="search" placeholder={searchPlaceholder} />
+                  <input 
+                    type="search" 
+                    placeholder={searchPlaceholder} 
+                    value={searchQuery}
+                    onChange={(e) => onSearchChange?.(e.target.value)}
+                  />
                 </label>
               )}
 
-              {pageCopy.secondaryAction ? (
+              {visibleSecondaryAction ? (
                 <button
-                  type={pageCopy.secondaryAction.type || "button"}
-                  form={pageCopy.secondaryAction.form}
+                  type={visibleSecondaryAction.type || "button"}
+                  form={visibleSecondaryAction.form}
                   className={styles.secondaryActionButton}
                   onClick={onSecondaryAction}
                 >
-                  {pageCopy.secondaryAction.iconSrc && (
+                  {visibleSecondaryAction.iconSrc && (
                     <Image
-                      src={pageCopy.secondaryAction.iconSrc}
+                      src={visibleSecondaryAction.iconSrc}
                       alt=""
                       width={20}
                       height={20}
                       aria-hidden
-                      style={pageCopy.secondaryAction.iconRotation ? { transform: `rotate(${pageCopy.secondaryAction.iconRotation}deg)` } : undefined}
+                      style={visibleSecondaryAction.iconRotation ? { transform: `rotate(${visibleSecondaryAction.iconRotation}deg)` } : undefined}
                     />
                   )}
-                  {pageCopy.secondaryAction.label}
+                  {visibleSecondaryAction.label}
                 </button>
               ) : null}
 
-              {pageCopy.primaryAction ? (
+              {visiblePrimaryAction ? (
                 <button
-                  type={pageCopy.primaryAction.type || "button"}
-                  form={pageCopy.primaryAction.form}
+                  type={visiblePrimaryAction.type || "button"}
+                  form={visiblePrimaryAction.form}
                   className={styles.primaryActionButton}
                   onClick={onPrimaryAction}
                 >
-                  {pageCopy.primaryAction.label}
-                  <Image
-                    src={pageCopy.primaryAction.iconSrc || "/images/dashboard/navbar/add-circle.svg"}
-                    alt=""
-                    width={24}
-                    height={24}
-                    aria-hidden
-                    style={pageCopy.primaryAction.iconRotation ? { transform: `rotate(${pageCopy.primaryAction.iconRotation}deg)` } : undefined}
-                  />
+                  {visiblePrimaryAction.label}
+                  {!visiblePrimaryAction.hideIcon && (
+                    <Image
+                      src={visiblePrimaryAction.iconSrc || "/images/dashboard/navbar/add-circle.svg"}
+                      alt=""
+                      width={24}
+                      height={24}
+                      aria-hidden
+                      style={visiblePrimaryAction.iconRotation ? { transform: `rotate(${visiblePrimaryAction.iconRotation}deg)` } : undefined}
+                    />
+                  )}
                 </button>
               ) : null}
             </div>

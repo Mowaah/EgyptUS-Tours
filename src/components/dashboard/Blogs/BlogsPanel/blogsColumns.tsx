@@ -52,8 +52,26 @@ export const blogsColumns: DataTableColumn<BlogRow>[] = [
   },
 ];
 
-export const blogRowActions = () => [
-  { label: "View", iconSrc: "/images/dashboard/view.svg" },
-  { label: "Edit", iconSrc: "/images/dashboard/edit.svg" },
-  { label: "Delete", iconSrc: "/images/dashboard/delete.svg", variant: "danger" as const },
-];
+import { useRouter } from "next/navigation";
+
+export const useBlogRowActions = (onDelete: (row: BlogRow) => void) => {
+  const router = useRouter();
+  return (row: BlogRow) => [
+    { 
+      label: "View", 
+      iconSrc: "/images/dashboard/view.svg",
+      onClick: () => router.push(`/dashboard/marketing/blog/${row.postId}`)
+    },
+    { 
+      label: "Edit", 
+      iconSrc: "/images/dashboard/edit.svg",
+      onClick: () => router.push(`/dashboard/marketing/blog/${row.postId}/edit?from=list`)
+    },
+    { 
+      label: "Delete", 
+      iconSrc: "/images/dashboard/delete.svg", 
+      variant: "danger" as const,
+      onClick: () => onDelete(row)
+    },
+  ];
+};

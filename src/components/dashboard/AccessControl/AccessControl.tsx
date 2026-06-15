@@ -74,28 +74,14 @@ export default function AccessControl({
 }: AccessControlProps) {
   const [permissions, setPermissions] = useState(modules);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [saveNoticeState, setSaveNoticeState] = useState<"hidden" | "visible" | "leaving">(
-    "hidden"
-  );
-  const [saveNoticeTick, setSaveNoticeTick] = useState(0);
+  const [showSaveNotice, setShowSaveNotice] = useState(false);
   const roleOptions = useMemo(
     () => [...roles, ...customRoles],
     [customRoles]
   );
   const visibleRole = selectedRole ?? customRoles.at(-1) ?? roles[0];
 
-  useEffect(() => {
-    if (saveNoticeState === "hidden") return;
 
-    const timeout = window.setTimeout(
-      () => {
-        setSaveNoticeState(saveNoticeState === "visible" ? "leaving" : "hidden");
-      },
-      saveNoticeState === "visible" ? 2800 : 260
-    );
-
-    return () => window.clearTimeout(timeout);
-  }, [saveNoticeState, saveNoticeTick]);
 
   const togglePermission = (moduleName: string, key: PermissionKey) => {
     setPermissions((current) =>
@@ -114,8 +100,7 @@ export default function AccessControl({
   };
 
   const handleSavePermissions = () => {
-    setSaveNoticeState("visible");
-    setSaveNoticeTick((current) => current + 1);
+    setShowSaveNotice(true);
   };
 
   const handleConfirmDeleteRole = () => {
@@ -131,12 +116,11 @@ export default function AccessControl({
         className={styles.panel}
         toolbar={
           <div className={styles.toolbarStack}>
-            {saveNoticeState !== "hidden" ? (
-              <DashboardStatusBanner
-                message={saveSuccessMessage}
-                leaving={saveNoticeState === "leaving"}
-              />
-            ) : null}
+            <DashboardStatusBanner
+              show={showSaveNotice}
+              onClose={() => setShowSaveNotice(false)}
+              message={saveSuccessMessage}
+            />
 
             <div className={styles.roleToolbar}>
               <FilterSelect

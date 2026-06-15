@@ -85,11 +85,8 @@ function SectionHeader({
 export default function SystemConfiguration() {
   const [values, setValues] = useState<ConfigurationValues>(initialValues);
   const [logo, setLogo] = useState(initialLogo);
-  const [saveNoticeState, setSaveNoticeState] = useState<"hidden" | "visible" | "leaving">(
-    "hidden"
-  );
+  const [showSaveNotice, setShowSaveNotice] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
-  const [saveNoticeTick, setSaveNoticeTick] = useState(0);
   const logoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -100,18 +97,7 @@ export default function SystemConfiguration() {
     };
   }, [logo.src]);
 
-  useEffect(() => {
-    if (saveNoticeState === "hidden") return;
 
-    const timeout = window.setTimeout(
-      () => {
-        setSaveNoticeState(saveNoticeState === "visible" ? "leaving" : "hidden");
-      },
-      saveNoticeState === "visible" ? 2800 : 260
-    );
-
-    return () => window.clearTimeout(timeout);
-  }, [saveNoticeState, saveNoticeTick]);
 
   const updateValue = (field: keyof ConfigurationValues, value: string) => {
     setValues((current) => ({ ...current, [field]: value }));
@@ -167,19 +153,17 @@ export default function SystemConfiguration() {
       return;
     }
 
-    setSaveNoticeState("visible");
-    setSaveNoticeTick((current) => current + 1);
+    setShowSaveNotice(true);
     setHasSubmitted(false);
   };
 
   return (
     <form noValidate className={styles.wrapper} onSubmit={handleSubmit}>
-      {saveNoticeState !== "hidden" ? (
-        <DashboardStatusBanner
-          message={saveSuccessMessage}
-          leaving={saveNoticeState === "leaving"}
-        />
-      ) : null}
+      <DashboardStatusBanner
+        show={showSaveNotice}
+        onClose={() => setShowSaveNotice(false)}
+        message={saveSuccessMessage}
+      />
 
       <section className={styles.card} aria-labelledby="business-info-title">
         <SectionHeader id="business-info-title" title="Business Info" icon="settings" />

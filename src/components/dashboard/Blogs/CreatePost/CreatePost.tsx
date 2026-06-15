@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import DashboardField from "@/components/shared/DashboardField/DashboardField";
 import {
@@ -19,9 +20,8 @@ import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/Das
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { createPostSchema, type CreatePostValues } from "./CreatePostSchema";
 import styles from "./CreatePost.module.scss";
-import { useRouter } from "next/navigation";
 
-export function CreatePost() {
+export function CreatePost({ postId }: { postId?: string }) {
   const [thumbnailLang, setThumbnailLang] = useState<Language>("English");
   const [imageLang, setImageLang] = useState<Language>("English");
   const [contentLang, setContentLang] = useState<Language>("English");
@@ -33,21 +33,14 @@ export function CreatePost() {
     { label: "Luxury Hotels", value: "luxury-hotels" }
   ]);
   const [showToast, setShowToast] = useState(false);
-  const [toastLeaving, setToastLeaving] = useState(false);
   const [showPublishModal, setShowPublishModal] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const fromList = searchParams?.get("from") === "list";
 
-  useEffect(() => {
-    if (showToast) {
-      setToastLeaving(false);
-      const leaveTimer = setTimeout(() => setToastLeaving(true), 2700);
-      const unmountTimer = setTimeout(() => setShowToast(false), 3000);
-      return () => {
-        clearTimeout(leaveTimer);
-        clearTimeout(unmountTimer);
-      };
-    }
-  }, [showToast]);
+
+
+
 
   const {
     register,
@@ -56,14 +49,37 @@ export function CreatePost() {
     formState: { errors },
   } = useForm<CreatePostValues>({
     resolver: zodResolver(createPostSchema),
-    defaultValues: {
+    defaultValues: postId ? {
+      autoApply: false,
+      title: "Top 10 Things to Do in Cairo",
+      shortDescription: "Discover the vibrant culture and history of Egypt's capital city with our ultimate guide.",
+      content: "<p>Cairo is a fascinating city...</p>",
+      thumbnailTitle: "Cairo Skyline at Sunset",
+      thumbnailAlt: "cairo, sunset, skyline, egypt",
+      imageTitle: "Pyramids of Giza",
+      imageAlt: "pyramids, giza, sphinx",
+      scheduledDate: "10/25/2026",
+      metaTitle: "Top 10 Things to Do in Cairo - EgyptUS Tours",
+      metaDescription: "Explore the best activities in Cairo.",
+      metaKeywords: "cairo, travel, activities",
+      category: "adventure-tours",
+      author: "Admin User"
+    } : {
       autoApply: false,
     },
   });
 
   const onSubmit = (data: CreatePostValues) => {
     console.log("Form Payload:", data);
-    setShowPublishModal(true);
+    if (postId) {
+      if (fromList) {
+        router.push(`/dashboard/marketing/blog?editSaved=true`);
+      } else {
+        router.push(`/dashboard/marketing/blog/${postId}?editSaved=true`);
+      }
+    } else {
+      setShowPublishModal(true);
+    }
   };
 
   return (
@@ -265,12 +281,15 @@ export function CreatePost() {
 
       {showToast && (
         <DashboardStatusBanner
+          show={showToast}
+          onClose={() => setShowToast(false)}
           message="The new category has been created and is now available for blog organization."
           variant="success"
-          leaving={toastLeaving}
           className={styles.toastBanner}
         />
       )}
+
+
 
       <CreateCategoryModal 
         isOpen={isCategoryModalOpen} 

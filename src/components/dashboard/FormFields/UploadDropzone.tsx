@@ -53,20 +53,22 @@ export function UploadDropzone({ value, onFileSelect, accept = "image/png, image
 
   return (
     <div className={styles.uploadContainer}>
-      <div className={`${styles.dropzone} ${className}`} onClick={handleClick} role="button" tabIndex={0}>
-        <input
-          type="file"
-          ref={inputRef}
-          accept={accept}
-          onChange={handleFileChange}
-          style={{ display: "none" }}
-        />
-        <div className={styles.dropzoneContent}>
-          <Image src="/images/dashboard/fields/document-upload.svg" alt="" width={32} height={32} aria-hidden style={{ opacity: 0.4 }} />
-          <p className={styles.dropzoneTitle}>Click to upload an image or drag & drop</p>
-          <p className={styles.dropzoneSubtitle}>PNG, JPG, GIF up to 10MB</p>
+      {!value && (
+        <div className={`${styles.dropzone} ${className}`} onClick={handleClick} role="button" tabIndex={0}>
+          <input
+            type="file"
+            ref={inputRef}
+            accept={accept}
+            onChange={handleFileChange}
+            style={{ display: "none" }}
+          />
+          <div className={styles.dropzoneContent}>
+            <Image src="/images/dashboard/fields/document-upload.svg" alt="" width={32} height={32} aria-hidden style={{ opacity: 0.4 }} />
+            <p className={styles.dropzoneTitle}>Click to upload an image or drag & drop</p>
+            <p className={styles.dropzoneSubtitle}>PNG, JPG, GIF up to 10MB</p>
+          </div>
         </div>
-      </div>
+      )}
 
       {value && (
         <div className={styles.fileItem}>

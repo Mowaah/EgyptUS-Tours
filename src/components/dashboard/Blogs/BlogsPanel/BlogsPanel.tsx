@@ -7,8 +7,12 @@ import {
   TablePanelFilterBar,
   TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
+import { DashboardConfirmationModal } from "@/components/shared";
+import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import { useRouter } from "next/navigation";
 import { mockBlogs } from "./blogsData";
-import { blogsColumns, blogRowActions } from "./blogsColumns";
+import { blogsColumns, useBlogRowActions } from "./blogsColumns";
+import type { BlogRow } from "../types";
 
 const filterOptions = {
   category: ["All", "Destination", "Adventures", "Travel Tips"],
@@ -16,7 +20,12 @@ const filterOptions = {
   status: ["All", "Published", "Draft", "Scheduled"],
 };
 
-export function BlogsPanel() {
+interface BlogsPanelProps {
+  searchQuery?: string;
+  onClearSearch?: () => void;
+}
+
+export function BlogsPanel({ searchQuery = "", onClearSearch }: BlogsPanelProps) {
   const defaultFilters = {
     category: "All",
     publishDate: "All",
@@ -25,21 +34,35 @@ export function BlogsPanel() {
 
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [blogToDelete, setBlogToDelete] = useState<BlogRow | null>(null);
+  const router = useRouter();
+
+  const handleDeleteRow = (row: BlogRow) => {
+    setBlogToDelete(row);
+    setIsDeleteModalOpen(true);
+  };
+
+  const rowActions = useBlogRowActions(handleDeleteRow);
 
   const filteredBlogs = useMemo(
     () =>
       mockBlogs.filter((blog) => {
+        if (searchQuery && !blog.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
         if (appliedFilters.category !== "All" && blog.category !== appliedFilters.category) return false;
         if (appliedFilters.publishDate !== "All" && blog.publishDate !== appliedFilters.publishDate) return false;
         if (appliedFilters.status !== "All" && blog.status !== appliedFilters.status) return false;
         return true;
       }),
-    [appliedFilters]
+    [appliedFilters, searchQuery]
   );
 
   const resetFilters = () => {
     setFilters(defaultFilters);
     setAppliedFilters(defaultFilters);
+    if (onClearSearch) {
+      onClearSearch();
+    }
   };
 
   const applyFilters = () => {
@@ -59,6 +82,30 @@ export function BlogsPanel() {
     options,
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
+
+  if (mockBlogs.length > 0 && filteredBlogs.length === 0) {
+    return (
+      <DashboardEmptyState
+        title="No results found"
+        subtitle="We couldn't find anything matching your search. Try using different keywords."
+        actionLabel="Search Again"
+        imageSrc="/images/dashboard/no-search-found.png"
+        actionIconSrc="/images/dashboard/refresh.svg"
+        onAction={resetFilters}
+      />
+    );
+  }
+
+  if (mockBlogs.length === 0) {
+    return (
+      <DashboardEmptyState
+        title="No Blogs Yet"
+        subtitle="There are no blog posts available at the moment."
+        actionLabel="Create Your First Blog"
+        onAction={() => router.push("/dashboard/marketing/blog/create")}
+      />
+    );
+  }
 
   return (
     <TablePanel
@@ -82,8 +129,22 @@ export function BlogsPanel() {
         columns={blogsColumns}
         getRowId={(row) => row.id}
         selectable
-        rowActions={blogRowActions}
+        rowActions={rowActions}
         defaultPageSize={16}
+      />
+
+      <DashboardConfirmationModal
+        open={isDeleteModalOpen}
+        variant="delete"
+        title="Delete Blog"
+        message="Are you sure you want to delete this Blog? This action cannot be undone and the article will be permanently removed from the system."
+        cancelLabel="Back"
+        confirmLabel="Delete"
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={() => {
+          setIsDeleteModalOpen(false);
+          router.push("/dashboard/marketing/blog?deleted=true");
+        }}
       />
     </TablePanel>
   );

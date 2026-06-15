@@ -8,44 +8,41 @@ import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
 import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
 import styles from "../../page.module.scss";
 
-function DraftBanner() {
+function StatusBanners() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [show, setShow] = useState(false);
-  const [leaving, setLeaving] = useState(false);
+  const [show, setShow] = useState<"draft" | "deleted" | "edited" | null>(null);
 
   useEffect(() => {
     if (searchParams?.get("draftSaved") === "true") {
-      setShow(true);
-      setLeaving(false);
+      setShow("draft");
+      router.replace('/dashboard/marketing/blog');
+    } else if (searchParams?.get("deleted") === "true") {
+      setShow("deleted");
+      router.replace('/dashboard/marketing/blog');
+    } else if (searchParams?.get("editSaved") === "true") {
+      setShow("edited");
       router.replace('/dashboard/marketing/blog');
     }
   }, [searchParams, router]);
 
-  useEffect(() => {
-    if (show) {
-      const leaveTimer = setTimeout(() => {
-        setLeaving(true);
-      }, 2700);
-      
-      const unmountTimer = setTimeout(() => {
-        setShow(false);
-      }, 3000);
-      
-      return () => {
-        clearTimeout(leaveTimer);
-        clearTimeout(unmountTimer);
-      };
-    }
-  }, [show]);
-
   if (!show) return null;
+
+  let message = "";
+  if (show === "draft") {
+    message = "Your post has been saved as a draft and is not visible to users yet. You can continue editing, reviewing content, and publish it whenever you're ready.";
+  } else if (show === "deleted") {
+    message = "The Blog has been deleted successfully";
+  } else if (show === "edited") {
+    message = "Your Edits have been saved and are now live.";
+  }
 
   return (
     <DashboardStatusBanner
-      message="Your post has been saved as a draft and is not visible to users yet. You can continue editing, reviewing content, and publish it whenever you're ready."
+      show={!!show}
+      onClose={() => setShow(null)}
+      message={message}
       variant="success"
-      leaving={leaving}
       className={styles.draftBanner}
     />
   );
@@ -53,6 +50,7 @@ function DraftBanner() {
 
 export default function BlogsPage() {
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <main className={styles.page}>
@@ -60,10 +58,14 @@ export default function BlogsPage() {
 
       <section className={styles.content} aria-label="Blogs content">
         <Suspense fallback={null}>
-          <DraftBanner />
+          <StatusBanners />
         </Suspense>
-        <DashboardNavbar onPrimaryAction={() => router.push("/dashboard/marketing/blog/create")} />
-        <Blogs />
+        <DashboardNavbar 
+          onPrimaryAction={() => router.push("/dashboard/marketing/blog/create")} 
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
+        <Blogs searchQuery={searchQuery} onClearSearch={() => setSearchQuery("")} />
       </section>
     </main>
   );

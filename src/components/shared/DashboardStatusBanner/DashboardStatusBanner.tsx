@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import styles from "./DashboardStatusBanner.module.scss";
 
@@ -5,21 +6,55 @@ export type DashboardStatusBannerVariant = "success" | "warning";
 
 export interface DashboardStatusBannerProps {
   message: string;
-  leaving?: boolean;
   variant?: DashboardStatusBannerVariant;
   className?: string;
+  show?: boolean;
+  onClose?: () => void;
+  durationMs?: number;
+  // Kept for backward compatibility if any component still passes it manually
+  leaving?: boolean;
 }
 
 export default function DashboardStatusBanner({
   message,
-  leaving = false,
   variant = "success",
   className = "",
+  show = true,
+  onClose,
+  durationMs = 3000,
+  leaving: externalLeaving,
 }: DashboardStatusBannerProps) {
+  const [visible, setVisible] = useState(show);
+  const [internalLeaving, setInternalLeaving] = useState(false);
+
+  useEffect(() => {
+    if (show) {
+      setVisible(true);
+      setInternalLeaving(false);
+      const leaveTimer = setTimeout(() => setInternalLeaving(true), durationMs - 300);
+      const unmountTimer = setTimeout(() => {
+        setVisible(false);
+        onClose?.();
+      }, durationMs);
+
+      return () => {
+        clearTimeout(leaveTimer);
+        clearTimeout(unmountTimer);
+      };
+    } else {
+      setVisible(false);
+      setInternalLeaving(false);
+    }
+  }, [show, durationMs, onClose]);
+
+  if (!visible) return null;
+
+  const isLeaving = externalLeaving !== undefined ? externalLeaving : internalLeaving;
+
   const bannerClassName = [
     styles.banner,
     styles[variant],
-    leaving ? styles.leaving : "",
+    isLeaving ? styles.leaving : "",
     className,
   ]
     .filter(Boolean)

@@ -34,8 +34,7 @@ export default function AuditLog() {
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
 
-  const [saveNoticeState, setSaveNoticeState] = useState<"hidden" | "visible" | "leaving">("hidden");
-  const [saveNoticeTick, setSaveNoticeTick] = useState(0);
+  const [showSaveNotice, setShowSaveNotice] = useState(false);
   const [saveNoticeMessage, setSaveNoticeMessage] = useState("");
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -44,18 +43,7 @@ export default function AuditLog() {
   const [restoreModalOpen, setRestoreModalOpen] = useState(false);
   const [restoreItem, setRestoreItem] = useState<AuditLogEntry | null>(null);
 
-  useEffect(() => {
-    if (saveNoticeState === "hidden") return;
 
-    const timeout = window.setTimeout(
-      () => {
-        setSaveNoticeState(saveNoticeState === "visible" ? "leaving" : "hidden");
-      },
-      saveNoticeState === "visible" ? 2800 : 260
-    );
-
-    return () => window.clearTimeout(timeout);
-  }, [saveNoticeState, saveNoticeTick]);
 
   const filteredLogs = useMemo(
     () =>
@@ -193,8 +181,7 @@ export default function AuditLog() {
     setDeleteModalOpen(false);
     if (deleteItem) {
       setSaveNoticeMessage(`The audit log for record ${deleteItem.id} has been deleted successfully.`);
-      setSaveNoticeState("visible");
-      setSaveNoticeTick((current) => current + 1);
+      setShowSaveNotice(true);
       setDeleteItem(null);
     }
   };
@@ -203,8 +190,7 @@ export default function AuditLog() {
     setRestoreModalOpen(false);
     if (restoreItem) {
       setSaveNoticeMessage(`The changes for record ${restoreItem.id} have been restored successfully.`);
-      setSaveNoticeState("visible");
-      setSaveNoticeTick((current) => current + 1);
+      setShowSaveNotice(true);
       setRestoreItem(null);
     }
   };
@@ -228,12 +214,11 @@ export default function AuditLog() {
         }
         toolbar={
           <div className={styles.toolbarStack}>
-            {saveNoticeState !== "hidden" ? (
-              <DashboardStatusBanner
-                message={saveNoticeMessage}
-                leaving={saveNoticeState === "leaving"}
-              />
-            ) : null}
+            <DashboardStatusBanner
+              show={showSaveNotice}
+              onClose={() => setShowSaveNotice(false)}
+              message={saveNoticeMessage}
+            />
             <TablePanelFilterBar
               fields={filterFields}
               onClean={resetFilters}
