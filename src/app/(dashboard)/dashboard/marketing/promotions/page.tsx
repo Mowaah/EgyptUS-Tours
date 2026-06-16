@@ -10,24 +10,27 @@ import styles from "../../page.module.scss";
 
 function ActionBanner() {
   const searchParams = useSearchParams();
-  const [show, setShow] = useState(false);
+  const [bannerState, setBannerState] = useState<{ message: string; variant: "success" | "warning" } | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     if (searchParams?.get("editSaved") === "true") {
-      setShow(true);
+      setBannerState({ message: "Your edits have been saved and are now live.", variant: "success" });
+      router.replace(window.location.pathname);
+    } else if (searchParams?.get("deleted") === "true") {
+      setBannerState({ message: "The promotion has been successfully deleted.", variant: "success" });
       router.replace(window.location.pathname);
     }
   }, [searchParams, router]);
 
-  if (!show) return null;
+  if (!bannerState) return null;
 
   return (
     <DashboardStatusBanner
-      show={show}
-      onClose={() => setShow(false)}
-      message="Your edits have been saved and are now live."
-      variant="success"
+      show={!!bannerState}
+      onClose={() => setBannerState(null)}
+      message={bannerState.message}
+      variant={bannerState.variant}
       className={styles.draftBanner}
     />
   );

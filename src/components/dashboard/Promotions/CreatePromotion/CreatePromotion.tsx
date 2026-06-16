@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +20,8 @@ import styles from "./CreatePromotion.module.scss";
 
 export function CreatePromotion({ promotionId }: { promotionId?: string }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const fromList = searchParams?.get("from") === "list";
   const [detailsLang, setDetailsLang] = useState<Language>("English");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   
@@ -129,7 +131,11 @@ export function CreatePromotion({ promotionId }: { promotionId?: string }) {
   const onSubmit = (data: CreatePromotionValues) => {
     console.log("Form Payload:", data);
     if (promotionId) {
-      router.push(`/dashboard/marketing/promotions?editSaved=true`);
+      if (fromList) {
+        router.push(`/dashboard/marketing/promotions?editSaved=true`);
+      } else {
+        router.push(`/dashboard/marketing/promotions/${promotionId}?editSaved=true`);
+      }
     } else {
       setShowSuccessModal(true);
     }

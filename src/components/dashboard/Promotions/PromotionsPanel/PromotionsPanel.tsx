@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/dashboard/DataTable";
 import {
   TablePanel,
@@ -19,6 +20,7 @@ interface PromotionsPanelProps {
 }
 
 export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsPanelProps) {
+  const router = useRouter();
   const defaultFilters = {
     appliesTo: "All",
     validFrom: "All",
@@ -113,9 +115,10 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
     return (
       <DashboardEmptyState
         title="No Promotions Yet"
-        subtitle="There are no promotions available at the moment."
-        actionLabel="Create Your First Offer"
-        onAction={() => {}}
+        subtitle="There are no Promotions available at the moment."
+        actionLabel="Create Your First Promotion"
+        imageSrc="/images/dashboard/empty.png"
+        onAction={() => router.push("/dashboard/marketing/promotions/create")}
       />
     );
   }

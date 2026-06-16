@@ -20,7 +20,6 @@ export default function EditPromotionPage({ params }: { params: Promise<{ id: st
           title="Edit Offer"
           subtitle="Edit and publish promotional content"
           breadcrumbTrail={[
-            { label: "Home" }, 
             { label: "Marketing" }, 
             { label: "Promotions", href: "/dashboard/marketing/promotions" }, 
             { label: "Edit Offer" }
