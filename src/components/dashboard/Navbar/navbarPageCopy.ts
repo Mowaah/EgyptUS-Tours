@@ -104,6 +104,23 @@ const pageCopyByPath: Record<string, PageCopy> = {
     primaryAction: { label: "Publish Post", iconSrc: "/images/dashboard/arrow-up.svg", iconRotation: 90, form: "create-post-form", type: "submit" },
     secondaryAction: { label: "Save draft", iconSrc: "/images/dashboard/save2.svg" },
   },
+  "/dashboard/marketing/articles": {
+    title: "Articles",
+    subtitle: "Manage article posts.",
+    breadcrumbTrail: [{ label: "Marketing" }, { label: "Article" }],
+    searchPlaceholder: "Search Posts...",
+    primaryAction: { label: "Create Post" },
+    hideFilterButton: true,
+  },
+  "/dashboard/marketing/articles/create": {
+    title: "Create New Post",
+    subtitle: "Write and publish article content",
+    breadcrumbTrail: [{ label: "Marketing" }, { label: "Article", href: "/dashboard/marketing/articles" }, { label: "Create Post" }],
+    hideFilterButton: true,
+    hideSearch: true,
+    primaryAction: { label: "Publish Post", iconSrc: "/images/dashboard/arrow-up.svg", iconRotation: 90, form: "create-post-form", type: "submit" },
+    secondaryAction: { label: "Save draft", iconSrc: "/images/dashboard/save2.svg" },
+  },
 };
 
 export default pageCopyByPath;

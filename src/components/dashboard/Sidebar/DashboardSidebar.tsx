@@ -25,6 +25,7 @@ const navRoutes: Record<string, string> = {
   "Terms & Conditions": "/dashboard/settings/terms-conditions",
   "Privacy Policy": "/dashboard/settings/privacy-policy",
   Blog: "/dashboard/marketing/blog",
+  Articles: "/dashboard/marketing/articles",
 };
 
 const navItems: NavItem[] = [

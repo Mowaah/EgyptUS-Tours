@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Blogs } from "@/components/dashboard/Blogs";
+import { Articles } from "@/components/dashboard/Articles";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
 import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
@@ -16,13 +16,13 @@ function StatusBanners() {
   useEffect(() => {
     if (searchParams?.get("draftSaved") === "true") {
       setShow("draft");
-      router.replace('/dashboard/marketing/blog');
+      router.replace('/dashboard/marketing/articles');
     } else if (searchParams?.get("deleted") === "true") {
       setShow("deleted");
-      router.replace('/dashboard/marketing/blog');
+      router.replace('/dashboard/marketing/articles');
     } else if (searchParams?.get("editSaved") === "true") {
       setShow("edited");
-      router.replace('/dashboard/marketing/blog');
+      router.replace('/dashboard/marketing/articles');
     }
   }, [searchParams, router]);
 
@@ -32,7 +32,7 @@ function StatusBanners() {
   if (show === "draft") {
     message = "Your post has been saved as a draft and is not visible to users yet. You can continue editing, reviewing content, and publish it whenever you're ready.";
   } else if (show === "deleted") {
-    message = "The blog has been deleted successfully";
+    message = "The article has been deleted successfully";
   } else if (show === "edited") {
     message = "Your edits have been saved and are now live.";
   }
@@ -48,7 +48,7 @@ function StatusBanners() {
   );
 }
 
-export default function BlogsPage() {
+export default function ArticlesPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -56,16 +56,16 @@ export default function BlogsPage() {
     <main className={styles.page}>
       <DashboardSidebar />
 
-      <section className={styles.content} aria-label="Blogs content">
+      <section className={styles.content} aria-label="Articles content">
         <Suspense fallback={null}>
           <StatusBanners />
         </Suspense>
         <DashboardNavbar 
-          onPrimaryAction={() => router.push("/dashboard/marketing/blog/create")} 
+          onPrimaryAction={() => router.push("/dashboard/marketing/articles/create")} 
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
         />
-        <Blogs searchQuery={searchQuery} onClearSearch={() => setSearchQuery("")} />
+        <Articles searchQuery={searchQuery} onClearSearch={() => setSearchQuery("")} />
       </section>
     </main>
   );

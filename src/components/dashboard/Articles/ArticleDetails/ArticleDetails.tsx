@@ -6,9 +6,9 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/shared";
-import styles from "./BlogDetails.module.scss";
+import styles from "./ArticleDetails.module.scss";
 
-interface BlogDetailsProps {
+interface ArticleDetailsProps {
   postId: string;
 }
 
@@ -40,13 +40,13 @@ function EditStatusBanner() {
   );
 }
 
-export default function BlogDetails({ postId }: BlogDetailsProps) {
+export default function ArticleDetails({ postId }: ArticleDetailsProps) {
   const router = useRouter();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const handleConfirmDelete = () => {
     setIsDeleteModalOpen(false);
-    router.push("/dashboard/marketing/blog?deleted=true");
+    router.push("/dashboard/marketing/articles?deleted=true");
   };
 
   // Mocking the post details
@@ -62,7 +62,7 @@ export default function BlogDetails({ postId }: BlogDetailsProps) {
     thumbnailAlt: "10 Top- Rated Tourist Attractions in Egypt",
     imageTitle: "10 Top- Rated Tourist Attractions in Egypt",
     imageAlt: "10 Top- Rated Tourist Attractions in Egypt",
-    metaTitle: "Top 10 Things to Do in Cairo | Egypt Tourism Blog",
+    metaTitle: "Top 10 Things to Do in Cairo | Egypt Tourism Article",
     metaDescription: "Discover the best experiences Cairo has to offer, from ancient pyramids to vibrant bazaars.",
     metaKeywords: "Cairo, Egypt, Tourism, Pyramids, Travel Guide",
     slug: "top-10-things-to-do-in-cairo",
@@ -77,7 +77,7 @@ export default function BlogDetails({ postId }: BlogDetailsProps) {
       <DashboardNavbar
         breadcrumbTrail={[
           { label: "Marketing" },
-          { label: "Blog", href: "/dashboard/marketing/blog" },
+          { label: "Article", href: "/dashboard/marketing/articles" },
           { label: "Details" }
         ]}
       >
@@ -98,12 +98,12 @@ export default function BlogDetails({ postId }: BlogDetailsProps) {
           </div>
 
           <div className={styles.actionsArea}>
-            <button className={styles.editBtn} onClick={() => router.push(`/dashboard/marketing/blog/${postId}/edit`)}>
+            <button className={styles.editBtn} onClick={() => router.push(`/dashboard/marketing/articles/${postId}/edit`)}>
               <Image src="/images/dashboard/edit.svg" alt="" width={20} height={20} />
               Edit
             </button>
             <button className={styles.deleteBtn} onClick={() => setIsDeleteModalOpen(true)}>
-              Delete Blog
+              Delete Article
               <Image src="/images/dashboard/delete.svg" alt="" width={24} height={24} />
             </button>
           </div>
@@ -254,8 +254,8 @@ export default function BlogDetails({ postId }: BlogDetailsProps) {
       <DashboardConfirmationModal
         open={isDeleteModalOpen}
         variant="delete"
-        title="Delete Blog"
-        message="Are you sure you want to delete this Blog? This action cannot be undone and the article will be permanently removed from the system."
+        title="Delete Article"
+        message="Are you sure you want to delete this Article? This action cannot be undone and the article will be permanently removed from the system."
         cancelLabel="Back"
         confirmLabel="Delete"
         onClose={() => setIsDeleteModalOpen(false)}
