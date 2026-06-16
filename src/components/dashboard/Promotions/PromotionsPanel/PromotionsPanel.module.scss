@@ -1,0 +1,63 @@
+.panel {
+  margin-top: 1rem;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-weight: 500;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.pillWithDot {
+  gap: 6px;
+
+  i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+}
+
+.statusActive {
+  background: #E8F5E9;
+  color: #1B5E20;
+
+  i {
+    background: #4CAF50;
+  }
+}
+
+.statusInactive {
+  background: #FFF3E0;
+  color: #E65100;
+
+  i {
+    background: #FF9800;
+  }
+}
+
+.appliesTrips {
+  background: #E3F2FD;
+  color: #1976D2;
+}
+
+.appliesTransport {
+  background: #F3E5F5;
+  color: #7B1FA2;
+}
+
+.appliesHotels {
+  background: #FFF8E1;
+  color: #F57C00;
+}
+
+.idCell {
+  font-weight: 600;
+  color: #1F2937;
+}
