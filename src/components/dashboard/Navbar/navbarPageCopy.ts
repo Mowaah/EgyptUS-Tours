@@ -121,6 +121,14 @@ const pageCopyByPath: Record<string, PageCopy> = {
     primaryAction: { label: "Publish Post", iconSrc: "/images/dashboard/arrow-up.svg", iconRotation: 90, form: "create-post-form", type: "submit" },
     secondaryAction: { label: "Save draft", iconSrc: "/images/dashboard/save2.svg" },
   },
+  "/dashboard/marketing/promotions": {
+    title: "Promotions",
+    subtitle: "Manage your offers and discounts",
+    breadcrumbTrail: [{ label: "Marketing" }, { label: "Promotions" }],
+    searchPlaceholder: "Search Offers...",
+    primaryAction: { label: "Create Offer" },
+    hideFilterButton: true,
+  },
 };
 
 export default pageCopyByPath;

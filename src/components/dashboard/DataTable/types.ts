@@ -11,7 +11,7 @@ export interface DataTableColumn<T> {
 
 export interface DataTableRowAction<T> {
   label: string;
-  variant?: "default" | "primary" | "danger";
+  variant?: "default" | "primary" | "danger" | "success" | "warning";
   iconSrc?: string;
   onClick?: (row: T) => void;
 }

@@ -1,18 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/dashboard/DataTable";
 import {
   TablePanel,
   TablePanelFilterBar,
   TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
-import { DashboardConfirmationModal } from "@/components/shared";
+import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/shared";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import { promotionsColumns, usePromotionRowActions } from "./promotionsColumns";
 import { mockPromotions } from "./promotionsData";
-import styles from "./PromotionsPanel.module.scss";
 import type { PromotionRow } from "../types";
 
 interface PromotionsPanelProps {
@@ -21,8 +19,6 @@ interface PromotionsPanelProps {
 }
 
 export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsPanelProps) {
-  const router = useRouter();
-  
   const defaultFilters = {
     appliesTo: "All",
     validFrom: "All",
@@ -32,7 +28,7 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [promotionToDelete, setPromotionToDelete] = useState<PromotionRow | null>(null);
+  const [bannerState, setBannerState] = useState<{ message: string; variant: "success" | "warning" } | null>(null);
 
   const filterOptions = useMemo(() => {
     return {
@@ -43,11 +39,24 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
   }, []);
 
   const handleDeleteRow = (row: PromotionRow) => {
-    setPromotionToDelete(row);
     setIsDeleteModalOpen(true);
   };
 
-  const rowActions = usePromotionRowActions(handleDeleteRow);
+  const handleToggleStatus = (row: PromotionRow) => {
+    if (row.status === "Active") {
+      setBannerState({
+        message: `Promotion ${row.offerId} has been deactivated and is no longer available for use on the platform.`,
+        variant: "warning",
+      });
+    } else {
+      setBannerState({
+        message: `Promotion ${row.offerId} is now active and available for use across the platform.`,
+        variant: "success",
+      });
+    }
+  };
+
+  const rowActions = usePromotionRowActions(handleDeleteRow, handleToggleStatus);
 
   const filteredPromotions = useMemo(() => {
     return mockPromotions.filter((promotion) => {
@@ -141,14 +150,24 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
         open={isDeleteModalOpen}
         variant="delete"
         title="Delete Promotion"
-        message="Are you sure you want to delete this promotion? This action cannot be undone."
+        message="Are you sure you want to delete this promotion? This action cannot be undone and the promotion will be permanently removed from the system."
         cancelLabel="Back"
-        confirmLabel="Delete"
+        confirmLabel="Delete Promotion"
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={() => {
           setIsDeleteModalOpen(false);
-          // router.push("/dashboard/marketing/promotions?deleted=true");
+          setBannerState({
+            message: "The promotion has been deleted successfully",
+            variant: "success",
+          });
         }}
+      />
+
+      <DashboardStatusBanner
+        show={bannerState !== null}
+        message={bannerState?.message || ""}
+        variant={bannerState?.variant || "success"}
+        onClose={() => setBannerState(null)}
       />
     </TablePanel>
   );

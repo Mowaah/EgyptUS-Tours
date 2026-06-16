@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { DataTableColumn } from "@/components/dashboard/DataTable";
 import type { PromotionRow } from "../types";
 import styles from "./PromotionsPanel.module.scss";
@@ -6,7 +5,7 @@ import styles from "./PromotionsPanel.module.scss";
 const statusClass: Record<PromotionRow["status"], string> = {
   Active: styles.statusActive,
   Inactive: styles.statusInactive,
-  Draft: styles.statusInactive,
+  Draft: styles.statusDraft,
 };
 
 const appliesToClass: Record<PromotionRow["appliesTo"], string> = {
@@ -68,20 +67,25 @@ export const promotionsColumns: DataTableColumn<PromotionRow>[] = [
   },
 ];
 
-export const usePromotionRowActions = (onDelete: (row: PromotionRow) => void) => {
+export const usePromotionRowActions = (
+  onDelete: (row: PromotionRow) => void,
+  onToggleStatus: (row: PromotionRow) => void
+) => {
   return (row: PromotionRow) => {
     const actions = [];
     if (row.status === "Active") {
       actions.push({
         label: "Inactive",
-        // The user mentioned publish/unpublish icons but those don't exist in blog columns.
-        // We'll leave iconSrc blank or omit it for now, since it's optional.
-        onClick: () => {}
+        iconSrc: "/images/dashboard/unpublish.svg",
+        variant: "warning" as const,
+        onClick: () => onToggleStatus(row)
       });
     } else {
       actions.push({
         label: "Activate",
-        onClick: () => {}
+        iconSrc: "/images/dashboard/publish.svg",
+        variant: "success" as const,
+        onClick: () => onToggleStatus(row)
       });
     }
     

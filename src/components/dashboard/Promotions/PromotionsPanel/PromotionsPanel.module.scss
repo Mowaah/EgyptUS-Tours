@@ -25,36 +25,45 @@
 }
 
 .statusActive {
-  background: #E8F5E9;
-  color: #1B5E20;
+  background: #DCFCE7;
+  color: #16A34A;
 
   i {
-    background: #4CAF50;
+    background: #16A34A;
   }
 }
 
 .statusInactive {
-  background: #FFF3E0;
-  color: #E65100;
+  background: #FFEDD5;
+  color: #EA580C;
 
   i {
-    background: #FF9800;
+    background: #EA580C;
+  }
+}
+
+.statusDraft {
+  background: #F5F5F5;
+  color: #525252;
+
+  i {
+    background: #525252;
   }
 }
 
 .appliesTrips {
-  background: #E3F2FD;
-  color: #1976D2;
+  background: #E4F2FF;
+  color: #1A84FF;
 }
 
 .appliesTransport {
-  background: #F3E5F5;
-  color: #7B1FA2;
+  background: rgba(206, 109, 255, 0.1);
+  color: #C043FF;
 }
 
 .appliesHotels {
-  background: #FFF8E1;
-  color: #F57C00;
+  background: #FFEDD5;
+  color: #EA580C;
 }
 
 .idCell {

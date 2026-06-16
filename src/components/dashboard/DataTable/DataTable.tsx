@@ -72,6 +72,10 @@ function ActionsCell<T>({
                 className={
                   action.variant === "danger"
                     ? styles.menuActionDanger
+                    : action.variant === "success"
+                    ? styles.menuActionSuccess
+                    : action.variant === "warning"
+                    ? styles.menuActionWarning
                     : styles.menuAction
                 }
                 onClick={() => {

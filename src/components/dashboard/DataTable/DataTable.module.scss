@@ -192,6 +192,26 @@
   }
 }
 
+.menuActionSuccess {
+  color: #16A34A;
+  background: transparent;
+  font-weight: 400;
+
+  &:hover {
+    background: #DCFCE7;
+  }
+}
+
+.menuActionWarning {
+  color: #EA580C;
+  background: transparent;
+  font-weight: 400;
+
+  &:hover {
+    background: #FFEDD5;
+  }
+}
+
 .footer {
   display: flex;
   align-items: center;
