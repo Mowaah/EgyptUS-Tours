@@ -129,6 +129,14 @@ const pageCopyByPath: Record<string, PageCopy> = {
     primaryAction: { label: "Create Offer" },
     hideFilterButton: true,
   },
+  "/dashboard/marketing/promotions/create": {
+    title: "Create New Offer",
+    subtitle: "Set up discounts and promotional campaigns",
+    breadcrumbTrail: [{ label: "Home" }, { label: "Marketing" }, { label: "Promotions", href: "/dashboard/marketing/promotions" }, { label: "Create Offer" }],
+    hideSearch: true,
+    hideFilterButton: true,
+    primaryAction: { label: "Activate Offer", type: "submit", form: "create-promotion-form", iconSrc: "/images/dashboard/activate-offer.svg" },
+    secondaryAction: { label: "Save draft", type: "button", iconSrc: "/images/dashboard/save2.svg" },
+  },
 };
-
 export default pageCopyByPath;

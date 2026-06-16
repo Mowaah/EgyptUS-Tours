@@ -34,9 +34,10 @@ interface DashboardFieldInputProps
 
 interface DashboardFieldSelectProps
   extends DashboardFieldBaseProps,
-    Omit<SelectHTMLAttributes<HTMLSelectElement>, "size"> {
+    Omit<SelectHTMLAttributes<HTMLSelectElement>, "size" | "multiple"> {
   control: "select";
   options: { label: string; value: string; disabled?: boolean }[];
+  multiple?: boolean;
 }
 
 interface DashboardFieldTextareaProps
@@ -67,6 +68,7 @@ function ModalSelect({
   onChange,
   disabled,
   variant = "default",
+  multiple,
 }: {
   id?: string;
   label: ReactNode;
@@ -78,9 +80,11 @@ function ModalSelect({
   onChange?: DashboardFieldSelectProps["onChange"];
   disabled?: boolean;
   variant?: "default" | "modal";
+  multiple?: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const [internalValue, setInternalValue] = useState(value ?? defaultValue ?? "");
+  const initialValue = value ?? defaultValue ?? (multiple ? [] : "");
+  const [internalValue, setInternalValue] = useState<string | readonly string[] | number>(initialValue);
 
   useEffect(() => {
     if (value !== undefined) {
@@ -92,9 +96,32 @@ function ModalSelect({
   const ref = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const stringValue = typeof internalValue === "string" ? internalValue : String(internalValue ?? "");
-  const selectedOption = options?.find((option) => option.value === stringValue);
-  const displayValue = selectedOption?.label ?? stringValue;
-  const isPlaceholder = !stringValue || selectedOption?.disabled;
+  
+  let displayValue: ReactNode = stringValue;
+  let isPlaceholder = false;
+
+  if (multiple && Array.isArray(internalValue)) {
+    isPlaceholder = internalValue.length === 0;
+    if (internalValue.length > 0) {
+      const firstValue = internalValue[0];
+      const firstLabel = options?.find((o) => o.value === firstValue)?.label || firstValue;
+      displayValue = (
+        <div className={styles.multiSelectTags}>
+          <span className={styles.multiSelectTagText}>{firstLabel}</span>
+          {internalValue.length > 1 && (
+            <span className={styles.multiSelectTagPill}>+{internalValue.length - 1}</span>
+          )}
+        </div>
+      );
+    } else {
+      displayValue = options?.find((o) => o.disabled && o.value === "")?.label || "";
+    }
+  } else {
+    const selectedOption = options?.find((option) => option.value === stringValue);
+    displayValue = selectedOption?.label ?? stringValue;
+    isPlaceholder = !stringValue || selectedOption?.disabled || false;
+  }
+
   const dropdownOptions = options?.filter((option) => !(option.disabled && option.value === ""));
 
   useEffect(() => {
@@ -121,11 +148,25 @@ function ModalSelect({
       if (!ref.current) return;
 
       const rect = ref.current.getBoundingClientRect();
-      setDropdownStyle({
-        left: rect.left,
-        top: rect.bottom + 8,
-        width: rect.width,
-      });
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      
+      // If less than 200px below, and more space above, open upwards
+      if (spaceBelow < 200 && spaceAbove > spaceBelow) {
+        setDropdownStyle({
+          left: rect.left,
+          bottom: window.innerHeight - rect.top + 8,
+          top: "auto",
+          width: rect.width,
+        });
+      } else {
+        setDropdownStyle({
+          left: rect.left,
+          top: rect.bottom + 8,
+          bottom: "auto",
+          width: rect.width,
+        });
+      }
     };
 
     updateDropdownPosition();
@@ -139,14 +180,32 @@ function ModalSelect({
   }, [open]);
 
   const handleSelect = (optionValue: string) => {
-    if (value === undefined) {
-      setInternalValue(optionValue);
+    if (multiple) {
+      const currentArray = Array.isArray(internalValue) ? internalValue : [];
+      const newArray = currentArray.includes(optionValue)
+        ? currentArray.filter((v) => v !== optionValue)
+        : [...currentArray, optionValue];
+      
+      if (value === undefined) {
+        setInternalValue(newArray);
+      }
+      
+      onChange?.({
+        target: { value: newArray },
+        currentTarget: { value: newArray },
+      } as unknown as ChangeEvent<HTMLSelectElement>);
+      
+      // Do not close dropdown on multi-select
+    } else {
+      if (value === undefined) {
+        setInternalValue(optionValue);
+      }
+      onChange?.({
+        target: { value: optionValue },
+        currentTarget: { value: optionValue },
+      } as ChangeEvent<HTMLSelectElement>);
+      setOpen(false);
     }
-    onChange?.({
-      target: { value: optionValue },
-      currentTarget: { value: optionValue },
-    } as ChangeEvent<HTMLSelectElement>);
-    setOpen(false);
   };
 
   const dropdown =
@@ -161,7 +220,9 @@ function ModalSelect({
           >
             <div className={styles.modalSelectDropdownItems}>
               {dropdownOptions?.map((option) => {
-                const selected = option.value === stringValue;
+                const selected = multiple && Array.isArray(internalValue) 
+                  ? internalValue.includes(option.value)
+                  : option.value === stringValue;
 
                 return (
                   <button
@@ -195,7 +256,7 @@ function ModalSelect({
 
   return (
     <>
-      <label htmlFor={id} className={`${styles.label} ${variant === "modal" ? styles.modalLabel : ""}`}>
+      <label htmlFor={id} className={`${styles.label} ${variant === "modal" ? styles.modalLabel : ""} ${disabled ? styles.labelDisabled : ""}`}>
         {label}
       </label>
       <div className={`${styles.control} ${styles.modalSelectWrap}`} ref={ref}>
@@ -259,10 +320,12 @@ export default function DashboardField({
     onChange: handleChange,
   };
   const errorId = error && id ? `${id}-error` : undefined;
+  const disabled = (props as any).disabled;
   const fieldClassName =
     variant === "modal" ? `${styles.field} ${styles.modalField}` : styles.field;
-  const labelClassName =
-    variant === "modal" ? `${styles.label} ${styles.modalLabel}` : styles.label;
+  const labelClassName = `${
+    variant === "modal" ? `${styles.label} ${styles.modalLabel}` : styles.label
+  } ${disabled ? styles.labelDisabled : ""}`;
   const inputClassName = `${styles.input} ${
     variant === "modal" ? styles.modalInput : ""
   } ${error ? styles.inputError : ""} ${
@@ -283,6 +346,7 @@ export default function DashboardField({
           defaultValue={(mergedProps as Omit<DashboardFieldSelectProps, "options">).defaultValue}
           disabled={(mergedProps as Omit<DashboardFieldSelectProps, "options">).disabled}
           onChange={(mergedProps as Omit<DashboardFieldSelectProps, "options">).onChange}
+          multiple={(mergedProps as Omit<DashboardFieldSelectProps, "options">).multiple}
         />
       ) : (
         <>

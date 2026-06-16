@@ -1,5 +1,6 @@
 import type { DataTableColumn } from "@/components/dashboard/DataTable";
 import type { PromotionRow } from "../types";
+import { useRouter } from "next/navigation";
 import styles from "./PromotionsPanel.module.scss";
 
 const statusClass: Record<PromotionRow["status"], string> = {
@@ -71,6 +72,8 @@ export const usePromotionRowActions = (
   onDelete: (row: PromotionRow) => void,
   onToggleStatus: (row: PromotionRow) => void
 ) => {
+  const router = useRouter();
+  
   return (row: PromotionRow) => {
     const actions = [];
     if (row.status === "Active") {
@@ -97,7 +100,7 @@ export const usePromotionRowActions = (
     actions.push({ 
       label: "Edit", 
       iconSrc: "/images/dashboard/edit.svg",
-      onClick: () => {}
+      onClick: () => router.push(`/dashboard/marketing/promotions/${row.offerId}/edit`)
     });
     actions.push({ 
       label: "Delete Offer", 
