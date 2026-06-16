@@ -138,5 +138,13 @@ const pageCopyByPath: Record<string, PageCopy> = {
     primaryAction: { label: "Activate Offer", type: "submit", form: "create-promotion-form", iconSrc: "/images/dashboard/activate-offer.svg" },
     secondaryAction: { label: "Save draft", type: "button", iconSrc: "/images/dashboard/save2.svg" },
   },
+  "/dashboard/reviews": {
+    title: "Reviews & Testimonials",
+    subtitle: "Moderate customer reviews, reply officially, and feature the best ones on the homepage.",
+    breadcrumbTrail: [{ label: "Reviews" }, { label: "User Reviews" }],
+    searchPlaceholder: "Search bookings, customers...",
+    primaryAction: { label: "Add New Review" },
+    hideFilterButton: true,
+  },
 };
 export default pageCopyByPath;

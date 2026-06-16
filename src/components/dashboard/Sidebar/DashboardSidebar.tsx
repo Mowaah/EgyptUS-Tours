@@ -17,6 +17,7 @@ interface NavItem {
 const navRoutes: Record<string, string> = {
   Dashboard: "/dashboard",
   "Leads & Inquiries": "/dashboard/leads",
+  Reviews: "/dashboard/reviews",
   "User Management": "/dashboard/settings/user-management",
   "Access Control": "/dashboard/settings/access-control",
   "System Configuration": "/dashboard/settings/system-configuration",
