@@ -23,6 +23,7 @@ export interface AdminTestimonialRow {
   country: string;
   countryCode: string;
   video: boolean;
+  videoUrl?: string;
   category: ReviewCategory | "B2B" | "Mice";
   rating: ReviewRating;
   date: string;

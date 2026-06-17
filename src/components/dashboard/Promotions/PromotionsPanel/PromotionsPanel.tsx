@@ -10,6 +10,7 @@ import {
 } from "@/components/dashboard/TablePanel";
 import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/shared";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import { promotionsColumns, usePromotionRowActions } from "./promotionsColumns";
 import { mockPromotions } from "./promotionsData";
 import type { PromotionRow } from "../types";
@@ -100,14 +101,7 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
 
   if (mockPromotions.length > 0 && filteredPromotions.length === 0) {
     return (
-      <DashboardEmptyState
-        title="No results found"
-        subtitle="We couldn't find anything matching your search. Try using different keywords."
-        actionLabel="Search Again"
-        imageSrc="/images/dashboard/no-search-found.png"
-        actionIconSrc="/images/dashboard/refresh.svg"
-        onAction={resetFilters}
-      />
+      <DashboardSearchEmptyState onClearSearch={resetFilters} />
     );
   }
 

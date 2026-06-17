@@ -29,17 +29,18 @@ export default function ViewReviewModal({ open, onClose, data, type }: ViewRevie
 
   const isUser = type === "user";
   const userRow = data as ReviewRow;
-  
-  // Resolve fields that differ or might be undefined
+  const adminRow = data as AdminTestimonialRow;
+
   const email = data.email || `${data.customer.toLowerCase().replace(/\s+/g, '')}@example.com`;
   const body = data.body || "Perfect in every way. The Eiffel Tower dinner was magical. Perfect in every way. The Eiffel Tower dinner was magical. Perfect in every way. The Eiffel Tower dinner was magical.";
-  const title = (data as ReviewRow).title || "Perfect in every way";
+  const title = isUser ? ((data as ReviewRow).title || "Perfect in every way") : data.customer;
   const photos = data.photos || [
     "/images/pyramids.jpg",
     "/images/pyramids2.jpg",
     "/images/pyramids3.jpg",
     "/images/pyramids4.jpg"
   ];
+  const videoUrl = (data as any).videoUrl || null;
 
   return (
     <div className={styles.modalOverlay} onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="view-review-title">
@@ -80,68 +81,143 @@ export default function ViewReviewModal({ open, onClose, data, type }: ViewRevie
         </div>
 
         <div className={styles.body}>
-          {/* Name Block */}
-          <div className={styles.infoBlock}>
-            <Image src="/images/dashboard/reviews/modal/name.svg" alt="" width={24} height={24} className={styles.infoIcon} />
-            <div className={styles.infoContent}>
-              <p className={styles.infoLabel}>Name</p>
-              <p className={styles.infoValue}>Paris Romantic Getaway</p>
-            </div>
-          </div>
-
-          {/* Customer Block */}
-          <div className={styles.infoBlock}>
-            <Image src="/images/dashboard/reviews/modal/customer.svg" alt="" width={24} height={24} className={styles.infoIcon} />
-            <div className={styles.infoContent}>
-              <p className={styles.infoLabel}>Customer</p>
-              <p className={styles.infoValue}>{data.customer}</p>
-            </div>
-          </div>
-
-          {/* Email Block */}
-          <div className={styles.infoBlock}>
-            <Image src="/images/dashboard/reviews/modal/email.svg" alt="" width={24} height={24} className={styles.infoIcon} />
-            <div className={styles.infoContent}>
-              <p className={styles.infoLabel}>Email</p>
-              <p className={styles.infoValue}>{email}</p>
-            </div>
-          </div>
-
-          {/* Review Block */}
-          <div className={styles.reviewBlock}>
-            <Image src="/images/dashboard/reviews/modal/review.svg" alt="" width={24} height={24} className={styles.infoIcon} />
-            <div className={styles.reviewContent}>
-              <div className={styles.reviewHeader}>
-                <p className={styles.infoLabel}>Review</p>
-                <StarRating filled={data.rating} showValue={false} size={18} />
-              </div>
-              <p className={styles.reviewText}>{body}</p>
-            </div>
-          </div>
-
-          {/* Photos Block */}
-          {photos && photos.length > 0 && (
-            <div className={styles.photosBlock}>
-              <Image src="/images/dashboard/reviews/modal/photos.svg" alt="" width={24} height={24} className={styles.infoIcon} />
-              <div className={styles.photosContent}>
-                <p className={styles.infoLabel}>Photos</p>
-                <div className={styles.photoGrid}>
-                  {photos.map((photo, idx) => (
-                    <div 
-                      key={idx} 
-                      className={styles.photoItem} 
-                      style={{ 
-                        background: `linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('${photo}') center/cover no-repeat` 
-                      }} 
-                    />
-                  ))}
+          {isUser ? (
+            <>
+              {/* Name Block */}
+              <div className={styles.infoBlock}>
+                <Image src="/images/dashboard/reviews/modal/name.svg" alt="" width={24} height={24} className={styles.infoIcon} />
+                <div className={styles.infoContent}>
+                  <p className={styles.infoLabel}>Name</p>
+                  <p className={styles.infoValue}>Paris Romantic Getaway</p>
                 </div>
               </div>
-            </div>
+
+              {/* Customer Block */}
+              <div className={styles.infoBlock}>
+                <Image src="/images/dashboard/reviews/modal/customer.svg" alt="" width={24} height={24} className={styles.infoIcon} />
+                <div className={styles.infoContent}>
+                  <p className={styles.infoLabel}>Customer</p>
+                  <p className={styles.infoValue}>{data.customer}</p>
+                </div>
+              </div>
+
+              {/* Email Block */}
+              <div className={styles.infoBlock}>
+                <Image src="/images/dashboard/reviews/modal/email.svg" alt="" width={24} height={24} className={styles.infoIcon} />
+                <div className={styles.infoContent}>
+                  <p className={styles.infoLabel}>Email</p>
+                  <p className={styles.infoValue}>{email}</p>
+                </div>
+              </div>
+
+              {/* Review Block */}
+              <div className={styles.reviewBlock}>
+                <Image src="/images/dashboard/reviews/modal/review.svg" alt="" width={24} height={24} className={styles.infoIcon} />
+                <div className={styles.reviewContent}>
+                  <div className={styles.reviewHeader}>
+                    <p className={styles.infoLabel}>Review</p>
+                    <StarRating filled={data.rating} showValue={false} size={18} />
+                  </div>
+                  <p className={styles.reviewText}>{body}</p>
+                </div>
+              </div>
+
+              {/* Photos Block */}
+              {photos && photos.length > 0 && (
+                <div className={styles.photosBlock}>
+                  <Image src="/images/dashboard/reviews/modal/photos.svg" alt="" width={24} height={24} className={styles.infoIcon} />
+                  <div className={styles.photosContent}>
+                    <p className={styles.infoLabel}>Photos</p>
+                    <div className={styles.photoGrid}>
+                      {photos.map((photo, idx) => (
+                        <div
+                          key={idx}
+                          className={styles.photoItem}
+                          style={{
+                            background: `linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('${photo}') center/cover no-repeat`
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              {/* Name Block */}
+              <div className={styles.infoBlock}>
+                <Image src="/images/dashboard/reviews/modal/name.svg" alt="" width={24} height={24} className={styles.infoIcon} />
+                <div className={styles.infoContent}>
+                  <p className={styles.infoLabel}>Name</p>
+                  <p className={styles.infoValue}>Paris Romantic Getaway</p>
+                </div>
+              </div>
+
+              {/* Customer Block */}
+              <div className={styles.infoBlock}>
+                <Image src="/images/dashboard/reviews/modal/customer.svg" alt="" width={24} height={24} className={styles.infoIcon} />
+                <div className={styles.infoContent}>
+                  <p className={styles.infoLabel}>Customer</p>
+                  <p className={styles.infoValue}>{adminRow.customer}</p>
+                </div>
+              </div>
+
+              {/* Email Block */}
+              <div className={styles.infoBlock}>
+                <Image src="/images/dashboard/reviews/modal/email.svg" alt="" width={24} height={24} className={styles.infoIcon} />
+                <div className={styles.infoContent}>
+                  <p className={styles.infoLabel}>Email</p>
+                  <p className={styles.infoValue}>{email}</p>
+                </div>
+              </div>
+
+              {/* Country Block */}
+              <div className={styles.infoBlock}>
+                <Image src="/images/dashboard/reviews/modal/country.svg" alt="" width={24} height={24} className={styles.infoIcon} />
+                <div className={styles.infoContent}>
+                  <p className={styles.infoLabel}>Country</p>
+                  <div className={styles.flagRow}>
+                    <img
+                      src={`https://hatscripts.github.io/circle-flags/flags/${adminRow.countryCode}.svg`}
+                      alt={adminRow.country}
+                    />
+                    <p className={styles.countryValue}>{adminRow.country}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Rating & Testimonial Block */}
+              <div className={styles.reviewBlock}>
+                <Image src="/images/dashboard/reviews/modal/review.svg" alt="" width={24} height={24} className={styles.infoIcon} />
+                <div className={styles.reviewContent}>
+                  <div className={styles.reviewHeader}>
+                    <p className={styles.infoLabel}>Review</p>
+                    <StarRating filled={adminRow.rating} showValue={false} size={18} />
+                  </div>
+                  <p className={styles.reviewText}>{body}</p>
+                </div>
+              </div>
+
+              {/* Video Block */}
+              <div className={styles.infoBlock}>
+                <Image src="/images/dashboard/reviews/modal/video.svg" alt="" width={24} height={24} className={styles.infoIcon} />
+                <div className={styles.infoContent}>
+                  <p className={styles.infoLabel}>Video</p>
+                  {videoUrl ? (
+                    <a href={videoUrl} target="_blank" rel="noopener noreferrer" className={styles.infoValue} style={{ textDecoration: "underline", wordBreak: "break-all" }}>{videoUrl}</a>
+                  ) : adminRow.video ? (
+                    <p className={styles.infoValue}>Video uploaded</p>
+                  ) : (
+                    <p className={styles.infoValue} style={{ color: "#9CA3AF" }}>No video</p>
+                  )}
+                </div>
+              </div>
+            </>
           )}
         </div>
 
-        {(!isUser || userRow.status !== "Replied") && (
+        {isUser && userRow.status !== "Replied" && (
           <div className={styles.actions}>
             <button className={styles.btnCancel} onClick={onClose}>
               Cancel
@@ -155,3 +231,4 @@ export default function ViewReviewModal({ open, onClose, data, type }: ViewRevie
     </div>
   );
 }
+

@@ -9,6 +9,7 @@ import {
 } from "@/components/dashboard/TablePanel";
 import { DashboardConfirmationModal } from "@/components/shared";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import { useRouter } from "next/navigation";
 import { mockBlogs } from "./blogsData";
 import { blogsColumns, useBlogRowActions } from "./blogsColumns";
@@ -85,14 +86,7 @@ export function BlogsPanel({ searchQuery = "", onClearSearch }: BlogsPanelProps)
 
   if (mockBlogs.length > 0 && filteredBlogs.length === 0) {
     return (
-      <DashboardEmptyState
-        title="No results found"
-        subtitle="We couldn't find anything matching your search. Try using different keywords."
-        actionLabel="Search Again"
-        imageSrc="/images/dashboard/no-search-found.png"
-        actionIconSrc="/images/dashboard/refresh.svg"
-        onAction={resetFilters}
-      />
+      <DashboardSearchEmptyState onClearSearch={resetFilters} />
     );
   }
 

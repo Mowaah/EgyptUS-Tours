@@ -3,16 +3,23 @@
 import { useState } from "react";
 import ReviewSummaryGrid from "./ReviewSummaryGrid";
 import { ReviewsPanel } from "./ReviewsPanel";
+import AddTestimonialModal from "./ReviewsPanel/AddTestimonialModal";
+import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
+import reviewsPanelStyles from "./ReviewsPanel/ReviewsPanel.module.scss";
 import styles from "./Reviews.module.scss";
 
 type ReviewTab = "user-reviews" | "admin-testimonials";
 
 interface ReviewsProps {
   searchQuery?: string;
+  isAddModalOpen?: boolean;
+  onAddModalClose?: () => void;
+  onClearSearch?: () => void;
 }
 
-export default function Reviews({ searchQuery = "" }: ReviewsProps) {
+export default function Reviews({ searchQuery = "", isAddModalOpen = false, onAddModalClose, onClearSearch }: ReviewsProps) {
   const [activeTab, setActiveTab] = useState<ReviewTab>("user-reviews");
+  const [isAddBannerOpen, setIsAddBannerOpen] = useState(false);
 
   return (
     <div className={styles.page}>
@@ -51,7 +58,7 @@ export default function Reviews({ searchQuery = "" }: ReviewsProps) {
           className={styles.tabPanel}
         >
           <ReviewSummaryGrid />
-          <ReviewsPanel searchQuery={searchQuery} />
+          <ReviewsPanel searchQuery={searchQuery} onClearSearch={onClearSearch} />
         </div>
       )}
 
@@ -63,9 +70,27 @@ export default function Reviews({ searchQuery = "" }: ReviewsProps) {
           className={styles.tabPanel}
         >
           <ReviewSummaryGrid type="admin" />
-          <ReviewsPanel searchQuery={searchQuery} type="admin" />
+          <ReviewsPanel searchQuery={searchQuery} type="admin" onClearSearch={onClearSearch} />
         </div>
       )}
+
+      <AddTestimonialModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => onAddModalClose?.()} 
+        onSubmit={(data) => {
+          // TODO: call your API here, e.g. await api.createTestimonial(data)
+          console.log("[Add Testimonial] Submitting:", data);
+          onAddModalClose?.();
+          setIsAddBannerOpen(true);
+        }}
+      />
+      <DashboardStatusBanner
+        show={isAddBannerOpen}
+        onClose={() => setIsAddBannerOpen(false)}
+        message="The new testimonial has been added successfully"
+        variant="success"
+        className={reviewsPanelStyles.toastBanner} 
+      />
     </div>
   );
 }

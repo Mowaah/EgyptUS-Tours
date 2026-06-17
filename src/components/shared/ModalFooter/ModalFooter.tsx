@@ -3,9 +3,9 @@
 import styles from "./ModalFooter.module.scss";
 
 interface ModalFooterProps {
-  secondaryLabel: string;
+  secondaryLabel: React.ReactNode;
   secondaryOnClick: () => void;
-  primaryLabel: string;
+  primaryLabel: React.ReactNode;
   primaryOnClick: () => void;
   primaryDisabled?: boolean;
 }

@@ -318,28 +318,31 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  gap: 27px;
 }
 
 .toggleLabel {
   font-family: "Trip Sans", sans-serif;
-  font-weight: 500;
-  font-size: 0.875rem;
-  color: #11263b;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 22px;
+  color: #4B5563;
 }
 
 .toggleDescription {
   font-family: "Trip Sans", sans-serif;
   font-weight: 400;
-  font-size: 0.75rem;
-  color: #9ca3af;
+  font-size: 14px;
+  line-height: 19px;
+  color: #6B7280;
 }
 
 /* Switch Toggle Component */
 .switch {
   position: relative;
   display: inline-block;
-  width: 2.75rem;
-  height: 1.5rem;
+  width: 44px;
+  height: 24px;
 }
 
 .switch input {
@@ -357,29 +360,30 @@
   bottom: 0;
   background-color: #e5e7eb;
   transition: 0.4s;
-  border-radius: 2rem;
+  border-radius: 12px;
 
   &:before {
     position: absolute;
     content: "";
-    height: 1.125rem;
-    width: 1.125rem;
-    left: 0.1875rem;
-    bottom: 0.1875rem;
-    background-color: white;
+    height: 20px;
+    width: 20px;
+    left: 2px;
+    bottom: 2px;
+    background-color: #FFFFFF;
+    box-shadow: 0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06);
     transition: 0.4s;
     border-radius: 50%;
   }
 }
 
 input:checked + .slider {
-  background-color: #ff6b00; /* Example toggle color */
+  background-color: #FF6F47;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #ff6b00;
+  box-shadow: 0 0 1px #FF6F47;
 }
 
 input:checked + .slider:before {
-  transform: translateX(1.25rem);
+  transform: translateX(20px);
 }

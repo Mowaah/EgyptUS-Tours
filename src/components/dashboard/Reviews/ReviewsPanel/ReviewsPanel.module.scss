@@ -109,3 +109,13 @@
   z-index: 100 !important;
 }
 
+.primaryBtn {
+  background: #1B8FFE;
+  border-color: #1B8FFE;
+  color: #FFFFFF;
+  
+  &:hover {
+    background: #0077ED;
+    border-color: #0077ED;
+  }
+}

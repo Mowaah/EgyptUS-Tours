@@ -143,7 +143,7 @@ const pageCopyByPath: Record<string, PageCopy> = {
     subtitle: "Moderate customer reviews, reply officially, and feature the best ones on the homepage.",
     breadcrumbTrail: [{ label: "Reviews" }, { label: "User Reviews" }],
     searchPlaceholder: "Search bookings, customers...",
-    primaryAction: { label: "Add New Review" },
+    primaryAction: { label: "Add New Testimonial" },
     hideFilterButton: true,
   },
 };

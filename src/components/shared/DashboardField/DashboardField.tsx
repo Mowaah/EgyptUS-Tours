@@ -265,7 +265,7 @@ function ModalSelect({
           id={id}
           className={`${styles.input} ${variant === "modal" ? styles.modalInput : ""} ${styles.modalSelectTrigger} ${
             open ? styles.modalSelectTriggerOpen : ""
-          }`}
+          } ${errorId ? styles.inputError : ""}`}
           aria-haspopup="listbox"
           aria-expanded={open}
           aria-describedby={errorId}

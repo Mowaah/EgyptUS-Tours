@@ -11,8 +11,11 @@ import { mockReviews, mockAdminTestimonials } from "../reviewsData";
 import { reviewsColumns, reviewRowActions, adminTestimonialsColumns, adminTestimonialRowActions } from "./reviewsColumns";
 import ViewReviewModal from "./ViewReviewModal";
 import ChangeStatusModal from "./ChangeStatusModal";
+import AddTestimonialModal from "./AddTestimonialModal";
 import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
 import DashboardConfirmationModal from "@/components/shared/DashboardConfirmationModal/DashboardConfirmationModal";
+import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import styles from "./ReviewsPanel.module.scss";
 
 const filterOptions = {
@@ -25,9 +28,10 @@ const filterOptions = {
 interface ReviewsPanelProps {
   searchQuery?: string;
   type?: "user" | "admin";
+  onClearSearch?: () => void;
 }
 
-export function ReviewsPanel({ searchQuery = "", type = "user" }: ReviewsPanelProps) {
+export function ReviewsPanel({ searchQuery = "", type = "user", onClearSearch }: ReviewsPanelProps) {
   const defaultFilters = {
     category: "All",
     rating: "All",
@@ -44,6 +48,8 @@ export function ReviewsPanel({ searchQuery = "", type = "user" }: ReviewsPanelPr
   const [isStatusBannerOpen, setIsStatusBannerOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleteBannerOpen, setIsDeleteBannerOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditBannerOpen, setIsEditBannerOpen] = useState(false);
 
   const filteredReviews = useMemo(
     () => {
@@ -78,6 +84,9 @@ export function ReviewsPanel({ searchQuery = "", type = "user" }: ReviewsPanelPr
   const resetFilters = () => {
     setFilters(defaultFilters);
     setAppliedFilters(defaultFilters);
+    if (onClearSearch) {
+      onClearSearch();
+    }
   };
 
   const applyFilters = () => {
@@ -109,10 +118,30 @@ export function ReviewsPanel({ searchQuery = "", type = "user" }: ReviewsPanelPr
     } else if (action.label === "Delete") {
       setSelectedRow(row);
       setIsDeleteModalOpen(true);
+    } else if (action.label === "Edit") {
+      setSelectedRow(row);
+      setIsEditModalOpen(true);
     }
   };
 
   const title = type === "admin" ? "Testimonials" : "Reviews";
+  const data = type === "admin" ? mockAdminTestimonials : mockReviews;
+
+  if (data.length > 0 && filteredReviews.length === 0) {
+    return (
+      <DashboardSearchEmptyState onClearSearch={resetFilters} />
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <DashboardEmptyState
+        title="No Reviews & Testimonials Yet"
+        subtitle="There are no Reviews & Testimonials available at the moment."
+        imageSrc="/images/dashboard/empty.png"
+      />
+    );
+  }
 
   return (
     <>
@@ -188,6 +217,35 @@ export function ReviewsPanel({ searchQuery = "", type = "user" }: ReviewsPanelPr
       show={isDeleteBannerOpen}
       onClose={() => setIsDeleteBannerOpen(false)}
       message={`The ${type === "admin" ? "testimonial" : "review"} has been deleted successfully`}
+      variant="success"
+      className={styles.toastBanner}
+    />
+
+    <AddTestimonialModal
+      isEdit
+      isOpen={isEditModalOpen}
+      onClose={() => setIsEditModalOpen(false)}
+      initialData={selectedRow ? {
+        customer: selectedRow.customer,
+        country: selectedRow.country,
+        category: selectedRow.category,
+        rating: selectedRow.rating,
+        title: selectedRow.title,
+        description: selectedRow.description,
+        videoUrl: selectedRow.video,
+      } : undefined}
+      onSubmit={(data) => {
+        // TODO: call your API here, e.g. await api.updateTestimonial(selectedRow.id, data)
+        console.log("[Edit Testimonial] Submitting:", data);
+        setIsEditModalOpen(false);
+        setIsEditBannerOpen(true);
+      }}
+    />
+
+    <DashboardStatusBanner
+      show={isEditBannerOpen}
+      onClose={() => setIsEditBannerOpen(false)}
+      message="The testimonial has been updated successfully"
       variant="success"
       className={styles.toastBanner}
     />

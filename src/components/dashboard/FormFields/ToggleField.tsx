@@ -11,7 +11,7 @@ export const ToggleField = forwardRef<HTMLInputElement, ToggleFieldProps>(
     return (
       <div className={`${styles.toggleField} ${className}`}>
         <div className={styles.toggleHeader}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             <span className={styles.toggleLabel}>{label}</span>
             {description && <span className={styles.toggleDescription}>{description}</span>}
           </div>

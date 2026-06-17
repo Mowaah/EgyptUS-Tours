@@ -24,6 +24,9 @@ interface SelectDropdownProps<T extends SelectOption = SelectOption> {
   renderValue?: (value: string) => React.ReactNode;
   /** Custom renderer for each option in the list */
   renderOption?: (option: T, isSelected: boolean) => React.ReactNode;
+  /** Optional override for checkbox style */
+  checkboxStyle?: "radio" | "checkbox" | "none";
+  error?: boolean;
 }
 
 export default function SelectDropdown<T extends SelectOption = SelectOption>({
@@ -35,6 +38,8 @@ export default function SelectDropdown<T extends SelectOption = SelectOption>({
   triggerClassName = "",
   renderValue,
   renderOption,
+  checkboxStyle = "radio",
+  error,
 }: SelectDropdownProps<T>) {
   const selectedOption = options.find((o) => o.value === value) ?? options[0];
 
@@ -43,7 +48,7 @@ export default function SelectDropdown<T extends SelectOption = SelectOption>({
       options={options}
       value={value}
       onChange={onChange}
-      checkboxStyle="radio"
+      checkboxStyle={checkboxStyle}
       dropdownClassName={styles.dropdownPanel}
       renderOption={renderOption || ((opt) => (
         <div className={styles.option}>
@@ -63,7 +68,7 @@ export default function SelectDropdown<T extends SelectOption = SelectOption>({
       renderTrigger={(isOpen, setIsOpen) => (
         <div
           id={id}
-          className={`${styles.dropdownTrigger} ${isOpen ? styles.dropdownTriggerOpen : ""} ${triggerClassName}`}
+          className={`${styles.dropdownTrigger} ${isOpen ? styles.dropdownTriggerOpen : ""} ${triggerClassName} ${error ? styles.error : ""}`}
           tabIndex={0}
           role="combobox"
           aria-expanded={isOpen}
