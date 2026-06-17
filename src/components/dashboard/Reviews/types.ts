@@ -11,6 +11,25 @@ export interface ReviewRow {
   date: string;
   status: ReviewStatus;
   featured: boolean;
+  email?: string;
+  body?: string;
+  photos?: string[];
+}
+
+export interface AdminTestimonialRow {
+  id: string;
+  addedBy: string;
+  customer: string;
+  country: string;
+  countryCode: string;
+  video: boolean;
+  category: ReviewCategory | "B2B" | "Mice";
+  rating: ReviewRating;
+  date: string;
+  featured: boolean;
+  email?: string;
+  body?: string;
+  photos?: string[];
 }
 
 export interface ReviewSummaryMetric {
@@ -18,6 +37,6 @@ export interface ReviewSummaryMetric {
   value: string;
   change: string;
   trend: "up" | "down";
-  tone: "blue" | "orange" | "pink" | "purple";
+  tone: "blue" | "orange" | "pink" | "purple" | "green";
   icon: string;
 }

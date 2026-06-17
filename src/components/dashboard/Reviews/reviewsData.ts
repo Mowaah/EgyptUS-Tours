@@ -1,4 +1,4 @@
-import type { ReviewRow, ReviewSummaryMetric } from "./types";
+import type { AdminTestimonialRow, ReviewRow, ReviewSummaryMetric } from "./types";
 
 export const reviewSummaryMetrics: ReviewSummaryMetric[] = [
   {
@@ -35,6 +35,41 @@ export const reviewSummaryMetrics: ReviewSummaryMetric[] = [
   },
 ];
 
+export const adminTestimonialMetrics: ReviewSummaryMetric[] = [
+  {
+    label: "Total Testimonials",
+    value: "40",
+    change: "+8.2%",
+    trend: "up",
+    tone: "green",
+    icon: "total-reviews",
+  },
+  {
+    label: "Published Testimonials",
+    value: "10",
+    change: "+8.2%",
+    trend: "up",
+    tone: "blue",
+    icon: "approved",
+  },
+  {
+    label: "Draft Testimonials",
+    value: "30",
+    change: "-5.1%",
+    trend: "down",
+    tone: "pink",
+    icon: "pending",
+  },
+  {
+    label: "Featured Testimonials",
+    value: "4",
+    change: "-5.1%",
+    trend: "down",
+    tone: "orange",
+    icon: "featured",
+  },
+];
+
 const baseReviews: Omit<ReviewRow, "id">[] = [
   {
     customer: "Ahmed Hassan",
@@ -42,7 +77,7 @@ const baseReviews: Omit<ReviewRow, "id">[] = [
     title: "Perfect in every way",
     rating: 4,
     date: "Mar 15, 2024",
-    status: "Pending",
+    status: "Replied",
     featured: true,
   },
   {
@@ -105,4 +140,89 @@ export const mockReviews: ReviewRow[] = Array.from({ length: 15 }, (_, index) =>
   ...baseReviews[index % baseReviews.length],
   id: `REV-${String(index + 1).padStart(3, "0")}`,
   featured: index % 3 === 0,
+}));
+
+const baseAdminTestimonials: Omit<AdminTestimonialRow, "id">[] = [
+  {
+    addedBy: "Ahmed Hassan",
+    customer: "Ahmed Hassan",
+    country: "America",
+    countryCode: "us",
+    video: true,
+    category: "Trips",
+    rating: 4,
+    date: "Mar 15, 2024",
+    featured: true,
+  },
+  {
+    addedBy: "Linda Blair",
+    customer: "Linda Blair",
+    country: "Italy",
+    countryCode: "it",
+    video: true,
+    category: "B2B",
+    rating: 4,
+    date: "Mar 15, 2024",
+    featured: false,
+  },
+  {
+    addedBy: "Mohammad Karim",
+    customer: "Mohammad Karim",
+    country: "Italy",
+    countryCode: "it",
+    video: true,
+    category: "Hotels",
+    rating: 4,
+    date: "Mar 15, 2024",
+    featured: false,
+  },
+  {
+    addedBy: "Ilham Budi Agung",
+    customer: "Ilham Budi Agung",
+    country: "America",
+    countryCode: "us",
+    video: true,
+    category: "Mice",
+    rating: 4,
+    date: "Mar 15, 2024",
+    featured: false,
+  },
+  {
+    addedBy: "John Bushmill",
+    customer: "John Bushmill",
+    country: "America",
+    countryCode: "us",
+    video: true,
+    category: "Transportation",
+    rating: 4,
+    date: "Mar 15, 2024",
+    featured: true,
+  },
+  {
+    addedBy: "Linda Blair",
+    customer: "Linda Blair",
+    country: "Italy",
+    countryCode: "it",
+    video: true,
+    category: "Trips",
+    rating: 4,
+    date: "Mar 15, 2024",
+    featured: false,
+  },
+  {
+    addedBy: "Josh Adam",
+    customer: "Josh Adam",
+    country: "America",
+    countryCode: "us",
+    video: true,
+    category: "Mice",
+    rating: 4,
+    date: "Mar 15, 2024",
+    featured: true,
+  },
+];
+
+export const mockAdminTestimonials: AdminTestimonialRow[] = Array.from({ length: 15 }, (_, index) => ({
+  ...baseAdminTestimonials[index % baseAdminTestimonials.length],
+  id: `TST-${String(index + 3001).padStart(4, "0")}`,
 }));

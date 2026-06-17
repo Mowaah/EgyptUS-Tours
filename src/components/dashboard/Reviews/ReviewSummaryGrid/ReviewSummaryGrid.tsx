@@ -1,11 +1,17 @@
 import { SummaryCard } from "@/components/dashboard/SummaryCard";
-import { reviewSummaryMetrics } from "../reviewsData";
+import { reviewSummaryMetrics, adminTestimonialMetrics } from "../reviewsData";
 import styles from "./ReviewSummaryGrid.module.scss";
 
-export default function ReviewSummaryGrid() {
+interface ReviewSummaryGridProps {
+  type?: "user" | "admin";
+}
+
+export default function ReviewSummaryGrid({ type = "user" }: ReviewSummaryGridProps) {
+  const metrics = type === "admin" ? adminTestimonialMetrics : reviewSummaryMetrics;
+
   return (
     <section className={styles.grid} aria-label="Review summary metrics">
-      {reviewSummaryMetrics.map((metric) => (
+      {metrics.map((metric) => (
         <SummaryCard
           key={metric.label}
           label={metric.label}

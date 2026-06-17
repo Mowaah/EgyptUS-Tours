@@ -1,0 +1,265 @@
+@use "@/styles/variables" as *;
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(17, 38, 59, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
+}
+
+.modalContent {
+  width: 100%;
+  max-width: 647px;
+  max-height: 90vh;
+  background: #FFFFFF;
+  box-shadow: 0px 20px 24px -4px rgba(16, 24, 40, 0.08), 0px 8px 8px -4px rgba(16, 24, 40, 0.03);
+  border-radius: 32px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  padding: 24px 24px 0px;
+  background: #FFFFFF;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.featuredIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: #F2F4F7;
+  border: 8px solid #F9FAFB;
+  border-radius: 50%;
+  flex-shrink: 0;
+  img {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.titleArea {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.title {
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 150%;
+  color: #11263B;
+  margin: 0;
+}
+
+.subtitle {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+  color: #A3A3A3;
+  margin: 0;
+}
+
+.closeButton {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  
+  &:hover {
+    background: #F9FAFB;
+  }
+
+  img {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.infoBlock {
+  background: #FBFBFD;
+  border-radius: 16px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.infoContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.infoIcon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.infoLabel {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 22px;
+  color: #1F2937;
+  margin: 0;
+}
+
+.infoValue {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 16px;
+  color: #9CA3AF;
+  margin: 0;
+  text-align: left;
+}
+
+.reviewBlock {
+  background: #FBFBFD;
+  border-radius: 16px;
+  padding: 12px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.reviewContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reviewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.reviewText {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 22px;
+  color: #9CA3AF;
+  margin: 0;
+}
+
+.photosBlock {
+  background: #FBFBFD;
+  border-radius: 16px;
+  padding: 12px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.photosContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.photoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.photoItem {
+  width: 100%;
+  height: 168px;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.actions {
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  background: #FFFFFF;
+}
+
+.btnCancel {
+  flex: 1;
+  height: 48px;
+  border: 1px solid #D1D5DB;
+  border-radius: 100px;
+  background: transparent;
+  font-weight: 500;
+  font-size: 16px;
+  color: #374151;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #F3F4F6;
+  }
+}
+
+.btnReply {
+  flex: 1;
+  height: 48px;
+  border-radius: 32px;
+  background: #2971E6;
+  border: none;
+  font-weight: 500;
+  font-size: 16px;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}

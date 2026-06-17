@@ -62,8 +62,8 @@ export default function Reviews({ searchQuery = "" }: ReviewsProps) {
           aria-labelledby="tab-admin-testimonials"
           className={styles.tabPanel}
         >
-          <ReviewSummaryGrid />
-          <ReviewsPanel searchQuery={searchQuery} />
+          <ReviewSummaryGrid type="admin" />
+          <ReviewsPanel searchQuery={searchQuery} type="admin" />
         </div>
       )}
     </div>
