@@ -28,7 +28,7 @@ export interface SummaryCardProps {
   value: React.ReactNode;
   change?: string;
   trend?: "up" | "down";
-  tone?: "blue" | "orange" | "pink" | "purple" | "green" | string;
+  tone?: "blue" | "orange" | "pink" | "purple" | "green" | "gray" | string;
   iconSrc?: string;
   icon?: React.ReactNode;
   className?: string;
@@ -45,7 +45,7 @@ export default function SummaryCard({
   className = "",
 }: SummaryCardProps) {
   // Determine if tone is one of the predefined styles
-  const isPredefinedTone = ["blue", "orange", "pink", "purple", "green"].includes(tone);
+  const isPredefinedTone = ["blue", "orange", "pink", "purple", "green", "gray"].includes(tone);
   const toneClass = isPredefinedTone ? styles[tone] : "";
 
   return (

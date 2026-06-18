@@ -28,6 +28,7 @@ interface DashboardNavbarProps {
   children?: React.ReactNode;
   hideFilterButton?: boolean;
   hideSearch?: boolean;
+  hidePrimaryAction?: boolean;
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
 }
@@ -57,6 +58,7 @@ export default function DashboardNavbar({
   children,
   hideFilterButton,
   hideSearch,
+  hidePrimaryAction,
   searchQuery,
   onSearchChange,
 }: DashboardNavbarProps) {
@@ -86,6 +88,7 @@ export default function DashboardNavbar({
     pageCopy.searchPlaceholder ?? "Search bookings, customers...";
   const isFilterHidden = hideFilterButton ?? pageCopy.hideFilterButton;
   const isSearchHidden = hideSearch ?? pageCopy.hideSearch;
+  const isPrimaryActionHidden = hidePrimaryAction ?? false;
 
   return (
     <header className={styles.navbar}>
@@ -201,7 +204,7 @@ export default function DashboardNavbar({
                 </button>
               ) : null}
 
-              {visiblePrimaryAction ? (
+              {!isPrimaryActionHidden && visiblePrimaryAction ? (
                 <button
                   type={visiblePrimaryAction.type || "button"}
                   form={visiblePrimaryAction.form}
