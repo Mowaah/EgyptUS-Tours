@@ -1,5 +1,7 @@
 "use client";
 
+import { Suspense } from "react";
+
 import { useRouter } from "next/navigation";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
@@ -15,7 +17,9 @@ export default function CreatePromotionPage() {
 
       <section className={styles.content} aria-label="Create Promotion content">
         <DashboardNavbar onSecondaryAction={() => router.push('/dashboard/marketing/promotions?draftSaved=true')} />
-        <CreatePromotion />
+        <Suspense fallback={<div>Loading...</div>}>
+          <CreatePromotion />
+        </Suspense>
       </section>
     </main>
   );

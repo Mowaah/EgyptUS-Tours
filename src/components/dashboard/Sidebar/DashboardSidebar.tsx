@@ -29,6 +29,7 @@ const navRoutes: Record<string, string> = {
   Blog: "/dashboard/marketing/blog",
   Articles: "/dashboard/marketing/articles",
   Promotions: "/dashboard/marketing/promotions",
+  Payments: "/dashboard/finance/payments",
 };
 
 const navItems: NavItem[] = [
@@ -213,6 +214,10 @@ export default function DashboardSidebar() {
 
     if (pathname.startsWith("/dashboard/marketing")) {
       groups.Marketing = true;
+    }
+
+    if (pathname.startsWith("/dashboard/finance")) {
+      groups.Finance = true;
     }
 
     return groups;

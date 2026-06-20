@@ -31,6 +31,7 @@ interface DashboardNavbarProps {
   hidePrimaryAction?: boolean;
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
+  searchPlaceholder?: string;
 }
 
 
@@ -61,6 +62,7 @@ export default function DashboardNavbar({
   hidePrimaryAction,
   searchQuery,
   onSearchChange,
+  searchPlaceholder,
 }: DashboardNavbarProps) {
   const pathname = usePathname();
 
@@ -84,8 +86,8 @@ export default function DashboardNavbar({
   const visibleTrail = breadcrumbTrail ?? pageCopy.breadcrumbTrail;
   const visiblePrimaryAction = primaryAction ?? pageCopy.primaryAction;
   const visibleSecondaryAction = secondaryAction ?? pageCopy.secondaryAction;
-  const searchPlaceholder =
-    pageCopy.searchPlaceholder ?? "Search bookings, customers...";
+  const searchPlaceholderStr =
+    searchPlaceholder ?? pageCopy.searchPlaceholder ?? "Search bookings, customers...";
   const isFilterHidden = hideFilterButton ?? pageCopy.hideFilterButton;
   const isSearchHidden = hideSearch ?? pageCopy.hideSearch;
   const isPrimaryActionHidden = hidePrimaryAction ?? false;
@@ -176,7 +178,7 @@ export default function DashboardNavbar({
                   <span className={styles.srOnly}>Search dashboard</span>
                   <input 
                     type="search" 
-                    placeholder={searchPlaceholder} 
+                    placeholder={searchPlaceholderStr} 
                     value={searchQuery}
                     onChange={(e) => onSearchChange?.(e.target.value)}
                   />

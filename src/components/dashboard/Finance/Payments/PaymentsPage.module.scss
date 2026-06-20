@@ -1,0 +1,305 @@
+@use "@/styles/variables" as *;
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+}
+
+.placeholderCard {
+  background: $white;
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.chartCard {
+  background: $white;
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.iconBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #F8F9FB;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 33px;
+  color: #0E2851;
+}
+
+.cardSubtitle {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  line-height: 14px;
+  color: #9ca3af;
+}
+
+/* Donut Chart Inner Styles */
+.donutWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.legend {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 32px;
+  gap: 16px;
+  background: #F8FAFF;
+  border-radius: 24px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legendColor {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: 0px 1px 4px rgba(25, 33, 61, 0.08);
+}
+
+.legendText {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.legendValue {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: #1F2937;
+}
+
+.legendLabel {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 20px;
+  color: #9CA3AF;
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background: #E1E4ED;
+  margin: 0;
+  border: none;
+}
+
+.barChartContainer {
+  position: relative;
+  flex: 1;
+  display: flex;
+  min-height: 300px;
+  margin-top: 16px;
+}
+
+.yAxis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-right: 16px;
+  color: #A3A3A3;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: right;
+  flex-shrink: 0;
+  width: 56px;
+}
+
+.yAxisLine {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 20px;
+}
+
+.gridLines {
+  position: absolute;
+  top: 10px; /* center of the 20px row */
+  left: 56px;
+  right: 0;
+  bottom: 30px; /* leave space for xAxis */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.gridLine {
+  height: 1px;
+  width: 100%;
+  border-top: 1px dashed #E1E4ED;
+}
+
+.gridLineSolid {
+  height: 1px;
+  width: 100%;
+  background-color: #E1E4ED;
+}
+
+.chartArea {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
+}
+
+.chartBars {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex: 1;
+  padding: 0 16px;
+  position: relative;
+  z-index: 1;
+  padding-bottom: 8px; /* space before x-axis */
+}
+
+.barColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  height: 100%;
+  justify-content: flex-end;
+  width: 32px;
+  position: relative;
+  cursor: pointer;
+}
+
+.barWrapper {
+  width: 100%;
+  height: 100%; /* max height */
+  display: flex;
+  align-items: flex-end;
+  position: relative;
+}
+
+.barFill {
+  width: 100%;
+  background: #EAF1FD;
+  border-radius: 50px;
+  position: relative;
+  overflow: hidden;
+  /* subtle scale up on hover */
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.barFill::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0%;
+  background: #2971E6;
+  border-radius: 50px;
+  transition: height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.barFillActive {
+  transform: scaleY(1.05);
+  transform-origin: bottom;
+}
+
+.barFillActive::before {
+  height: 100%;
+}
+
+.xAxisLabel {
+  color: #A3A3A3;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  text-align: center;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.barColumn:hover .xAxisLabel {
+  color: #0E2851;
+  font-weight: 600;
+  transform: translateY(-2px);
+}
+
+.tooltip {
+  position: absolute;
+  top: -44px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: #FFFFFF;
+  box-shadow: 0px 4px 12px rgba(25, 33, 61, 0.12);
+  border-radius: 4px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 20px;
+  color: #353E5C;
+  z-index: 10;
+  
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+
+.barColumn:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 8px;
+  height: 8px;
+  background: #FFFFFF;
+  box-shadow: 1px 1px 2px rgba(25, 33, 61, 0.04);
+}
