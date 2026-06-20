@@ -69,13 +69,15 @@
 .trend {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  height: 1.5rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 5.25rem;
-  font-size: 0.625rem;
+  justify-content: center;
+  gap: 4px;
+  height: 28px;
+  padding: 4px 8px;
+  border-radius: 84px;
+  font-family: 'Trip Sans', sans-serif;
+  font-size: 12px;
   font-weight: 500;
-  line-height: 1;
+  line-height: 18px;
   color: #0c9d61;
   background: #f2faf6;
 
@@ -83,4 +85,15 @@
     color: #dc2626;
     background: #fef2f2;
   }
+
+  &.neutral {
+    color: #525252;
+    background: #f5f5f5;
+  }
+}
+
+.customBadgeIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }

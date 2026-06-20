@@ -1,0 +1,59 @@
+@use "@/styles/variables" as *;
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  height: 1.875rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6rem;
+  font-family: 'Trip Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+
+  i {
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+}
+
+.variantGreen {
+  color: #16a34a;
+  background: #dcfce7;
+  i { background: #16a34a; }
+}
+
+.variantRed {
+  color: #dc2626;
+  background: #fef2f2;
+  i { background: #dc2626; }
+}
+
+.variantBlue {
+  color: #2563eb;
+  background: #dbeafe;
+  i { background: #2563eb; }
+}
+
+.variantOrange {
+  color: #ea580c;
+  background: #ffedd5;
+  i { background: #ea580c; }
+}
+
+.variantPink {
+  color: #c026d3;
+  background: #fae8ff;
+  i { background: #c026d3; }
+}
+
+.variantGray {
+  color: #525252;
+  background: #f5f5f5;
+  i { background: #525252; }
+}

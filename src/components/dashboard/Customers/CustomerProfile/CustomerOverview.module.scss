@@ -1,0 +1,105 @@
+.overviewContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  width: 100%;
+}
+
+.metricCard {
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 124px;
+}
+
+.metricHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.iconWrapper {
+  width: 38px;
+  height: 38px;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.blueIcon { background: #E9F1FC; }
+.redIcon { background: #FFF5EF; }
+.grayIcon { background: #F5F5F5; }
+.greenIcon { background: #E9F6F0; }
+
+.metricTitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 22px;
+  color: #9CA3AF;
+  margin: 0;
+}
+
+.metricBody {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metricValue {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 44px;
+  color: #0E2851;
+  margin: 0;
+}
+
+.metricBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 84px;
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 18px;
+}
+
+.badgeUp {
+  background: #F2FAF6;
+  color: #0C9D61;
+}
+
+.badgeDown {
+  background: #FEF2F2;
+  color: #DC2626;
+}
+
+.badgeNeutral {
+  background: #F5F5F5;
+  color: #525252;
+}
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: 624px 1fr;
+  gap: 24px;
+  width: 100%;
+}

@@ -1,0 +1,116 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
+import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
+import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
+import DashboardTabs from "@/components/shared/DashboardTabs/DashboardTabs";
+import CustomerOverview from "./CustomerOverview";
+import BookingHistoryPanel from "./BookingHistory/BookingHistoryPanel";
+import CustomTripRequestsPanel from "./CustomTripRequests/CustomTripRequestsPanel";
+import { ReviewsPanel } from "@/components/dashboard/Reviews/ReviewsPanel/ReviewsPanel";
+import pageStyles from "@/app/(dashboard)/dashboard/page.module.scss";
+import styles from "./CustomerProfile.module.scss";
+
+interface CustomerProfileProps {
+  customerId: string;
+}
+
+type TabType = "overview" | "booking-history" | "custom-trip-requests" | "reviews";
+
+export default function CustomerProfile({ customerId }: CustomerProfileProps) {
+  const [activeTab, setActiveTab] = useState<TabType>("overview");
+
+  // In a real app, we'd fetch the customer by ID. Using mock data for now.
+  const customer = {
+    id: "BK-TR01",
+    name: "Linda Blair",
+    email: "lindablair@mail.com",
+    phone: "+20 101 234 5678",
+    country: "USA",
+    status: "Active",
+  };
+
+  return (
+    <main className={pageStyles.page}>
+      <DashboardSidebar />
+
+      <section className={pageStyles.content} aria-label="Customer profile content">
+        <DashboardNavbar
+          breadcrumbTrail={[
+            { label: "Customers", href: "/dashboard/customers" },
+            { label: customer.name }
+          ]}
+        >
+          <div className={styles.headerContent}>
+            <div className={styles.headerInfo}>
+              <div className={styles.titleRow}>
+                <h1>{customer.name} - {customer.id}</h1>
+                <span className={`${styles.pill} ${styles.statusActive}`}>
+                  <i aria-hidden />
+                  {customer.status}
+                </span>
+              </div>
+              <div className={styles.subtitleRow}>
+                <span>{customer.email}</span>
+                <span className={styles.dot}>•</span>
+                <span>{customer.phone}</span>
+                <span className={styles.dot}>•</span>
+                <span>{customer.country}</span>
+              </div>
+            </div>
+
+            <div className={styles.headerActions}>
+              <label className={styles.searchBox}>
+                <Image
+                  src="/images/dashboard/navbar/search.svg"
+                  alt=""
+                  width={24}
+                  height={24}
+                  aria-hidden
+                />
+                <input type="search" placeholder="Search ........" />
+              </label>
+
+              <button className={styles.editButton} type="button">
+                <Image src="/images/dashboard/edit.svg" alt="" width={20} height={20} />
+                Edit Profile
+              </button>
+
+              <button className={styles.blockButton} type="button">
+                <Image src="/images/dashboard/block.svg" alt="" width={20} height={20} />
+                Block User
+              </button>
+            </div>
+          </div>
+        </DashboardNavbar>
+
+        <div className={styles.tabsWrapper}>
+          <DashboardTabs 
+            tabs={[
+              { id: "overview", label: "Overview" },
+              { id: "booking-history", label: "Booking History" },
+              { id: "custom-trip-requests", label: "Custom Trip Requests" },
+              { id: "reviews", label: "Reviews" },
+            ]}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            ariaLabel="Customer profile sections"
+          />
+        </div>
+
+        {activeTab === "overview" && <CustomerOverview />}
+        {activeTab === "booking-history" && <BookingHistoryPanel />}
+        {activeTab === "custom-trip-requests" && <CustomTripRequestsPanel />}
+        {activeTab === "reviews" && (
+          <ReviewsPanel 
+            title="User Reviews" 
+            hideCustomerColumn 
+            emptyStateTitle="No Reviews Yet"
+            emptyStateSubtitle="Customer reviews will appear here once users start sharing their feedback"
+          />
+        )}
+      </section>
+    </main>
+  );
+}

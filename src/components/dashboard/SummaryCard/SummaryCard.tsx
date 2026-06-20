@@ -32,6 +32,7 @@ export interface SummaryCardProps {
   iconSrc?: string;
   icon?: React.ReactNode;
   className?: string;
+  customBadgeIcon?: React.ReactNode;
 }
 
 export default function SummaryCard({
@@ -43,6 +44,7 @@ export default function SummaryCard({
   iconSrc,
   icon,
   className = "",
+  customBadgeIcon,
 }: SummaryCardProps) {
   // Determine if tone is one of the predefined styles
   const isPredefinedTone = ["blue", "orange", "pink", "purple", "green", "gray"].includes(tone);
@@ -71,10 +73,11 @@ export default function SummaryCard({
       </div>
       <div className={styles.bottom}>
         <strong className={styles.value}>{value}</strong>
-        {change && trend && (
-          <span className={`${styles.trend} ${trend === "down" ? styles.down : ""}`}>
+        {change && (
+          <span className={`${styles.trend} ${trend === "down" ? styles.down : ""} ${!trend ? styles.neutral : ""}`}>
+            {customBadgeIcon && <span className={styles.customBadgeIcon}>{customBadgeIcon}</span>}
             {change}
-            <TrendIcon trend={trend} />
+            {trend && <TrendIcon trend={trend} />}
           </span>
         )}
       </div>

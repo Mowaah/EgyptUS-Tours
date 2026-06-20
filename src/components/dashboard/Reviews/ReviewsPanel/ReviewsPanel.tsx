@@ -5,7 +5,6 @@ import { DataTable } from "@/components/dashboard/DataTable";
 import {
   TablePanel,
   TablePanelFilterBar,
-  TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
 import { mockReviews, mockAdminTestimonials } from "../reviewsData";
 import { reviewsColumns, reviewRowActions, adminTestimonialsColumns, adminTestimonialRowActions } from "./reviewsColumns";
@@ -29,9 +28,23 @@ interface ReviewsPanelProps {
   searchQuery?: string;
   type?: "user" | "admin";
   onClearSearch?: () => void;
+  title?: string;
+  iconSrc?: string;
+  hideCustomerColumn?: boolean;
+  emptyStateTitle?: string;
+  emptyStateSubtitle?: string;
 }
 
-export function ReviewsPanel({ searchQuery = "", type = "user", onClearSearch }: ReviewsPanelProps) {
+export function ReviewsPanel({
+  searchQuery = "",
+  type = "user",
+  onClearSearch,
+  title: customTitle,
+  iconSrc: customIconSrc,
+  hideCustomerColumn,
+  emptyStateTitle,
+  emptyStateSubtitle,
+}: ReviewsPanelProps) {
   const defaultFilters = {
     category: "All",
     rating: "All",
@@ -124,8 +137,14 @@ export function ReviewsPanel({ searchQuery = "", type = "user", onClearSearch }:
     }
   };
 
-  const title = type === "admin" ? "Testimonials" : "Reviews";
+  const title = customTitle || (type === "admin" ? "Testimonials" : "Reviews");
+  const iconSrc = customIconSrc || "/images/dashboard/sidebar/reviews.svg";
   const data = type === "admin" ? mockAdminTestimonials : mockReviews;
+  
+  let baseColumns = type === "admin" ? adminTestimonialsColumns as any : reviewsColumns as any;
+  if (hideCustomerColumn) {
+    baseColumns = baseColumns.filter((col: any) => col.id !== "customer");
+  }
 
   if (data.length > 0 && filteredReviews.length === 0) {
     return (
@@ -136,8 +155,8 @@ export function ReviewsPanel({ searchQuery = "", type = "user", onClearSearch }:
   if (data.length === 0) {
     return (
       <DashboardEmptyState
-        title="No Reviews & Testimonials Yet"
-        subtitle="There are no Reviews & Testimonials available at the moment."
+        title={emptyStateTitle || "No Reviews & Testimonials Yet"}
+        subtitle={emptyStateSubtitle || "There are no Reviews & Testimonials available at the moment."}
         imageSrc="/images/dashboard/empty.png"
       />
     );
@@ -146,24 +165,16 @@ export function ReviewsPanel({ searchQuery = "", type = "user", onClearSearch }:
   return (
     <>
       <TablePanel
-        ariaLabel={`${title} table`}
+      ariaLabel={`${title} table`}
       title={title}
-      iconSrc="/images/dashboard/sidebar/reviews.svg"
-      headerActions={
-        <>
-          <TablePanelHeaderButton iconSrc="/images/dashboard/filter.svg">
-            Filters
-          </TablePanelHeaderButton>
-          <TablePanelHeaderButton iconSrc="/images/dashboard/export.svg">
-            Export Data
-          </TablePanelHeaderButton>
-        </>
-      }
+      iconSrc={iconSrc}
+      showFilters
+      showExport
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
     >
       <DataTable
         data={filteredReviews}
-        columns={type === "admin" ? adminTestimonialsColumns as any : reviewsColumns as any}
+        columns={baseColumns}
         getRowId={(row) => row.id}
         selectable
         rowActions={type === "admin" ? adminTestimonialRowActions(handleAction) as any : reviewRowActions(handleAction) as any}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/dashboard/DataTable";
 import {
   TablePanel,
@@ -86,8 +87,12 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
 
+  const router = useRouter();
+
   const handleAction = (action: { label: string }, row: any) => {
-    if (action.label === "Edit") {
+    if (action.label === "View") {
+      router.push(`/dashboard/customers/${row.id}`);
+    } else if (action.label === "Edit") {
       setSelectedRow({
         fullName: row.name,
         phone: row.phone,

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
+import TablePanelHeaderButton from "./TablePanelHeaderButton";
 import styles from "./TablePanel.module.scss";
 
 export interface TablePanelProps {
@@ -12,6 +13,10 @@ export interface TablePanelProps {
   iconSrc?: string;
   headerActions?: ReactNode;
   toolbar?: ReactNode;
+  showFilters?: boolean;
+  onFilterClick?: () => void;
+  showExport?: boolean;
+  onExportClick?: () => void;
 }
 
 export default function TablePanel({
@@ -23,6 +28,10 @@ export default function TablePanel({
   iconSrc,
   headerActions,
   toolbar,
+  showFilters,
+  onFilterClick,
+  showExport,
+  onExportClick,
 }: TablePanelProps) {
   const panelClassName = className ? `${styles.panel} ${className}` : styles.panel;
 
@@ -38,7 +47,22 @@ export default function TablePanel({
             ) : null}
             {title ? <h2>{title}</h2> : null}
           </div>
-          {headerActions ? <div className={styles.panelActions}>{headerActions}</div> : null}
+          {headerActions ? (
+            <div className={styles.panelActions}>{headerActions}</div>
+          ) : showFilters || showExport ? (
+            <div className={styles.panelActions}>
+              {showFilters && (
+                <TablePanelHeaderButton iconSrc="/images/dashboard/navbar/filter.svg" onClick={onFilterClick}>
+                  Filters
+                </TablePanelHeaderButton>
+              )}
+              {showExport && (
+                <TablePanelHeaderButton iconSrc="/images/dashboard/export.svg" onClick={onExportClick}>
+                  Export Data
+                </TablePanelHeaderButton>
+              )}
+            </div>
+          ) : null}
         </div>
       )}
 

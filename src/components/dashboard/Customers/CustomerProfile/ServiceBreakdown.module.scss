@@ -1,0 +1,116 @@
+.card {
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 491px;
+}
+
+.header {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.iconWrapper {
+  width: 40px;
+  height: 40px;
+  background: #F8F9FB;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  h2 {
+    font-family: 'Trip Sans', sans-serif;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 33px;
+    color: #0E2851;
+    margin: 0;
+  }
+
+  p {
+    font-family: 'Trip Sans', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 14px;
+    color: #9CA3AF;
+    margin: 0;
+  }
+}
+
+.chartContainer {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+
+
+.legend {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 32px;
+  gap: 24px;
+  background: #F8FAFF;
+  border-radius: 24px;
+}
+
+.legendItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .text {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+
+    strong {
+      font-family: 'Trip Sans', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 24px;
+      color: #1F2937;
+    }
+
+    span {
+      font-family: 'Trip Sans', sans-serif;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 20px;
+      color: #9CA3AF;
+    }
+  }
+}
+
+.dotBlue { background: #93C5FD; }
+.dotPurple { background: #E9D5FF; }
+.dotOrange { background: #FDBA74; }
