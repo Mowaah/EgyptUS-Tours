@@ -1,63 +1,60 @@
 .wrap {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1.5rem minmax(0, 1fr);
-  gap: 1rem;
-  margin-top: 1.5rem;
-  flex: 1 1 0;
+  display: flex;
+  flex: 1;
+  height: 100%;
   min-height: 250px;
+  width: 100%;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .yAxis {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-bottom: 2.25rem;
+  text-align: right;
+  min-width: 40px;
 
   span {
+    font-size: 14px;
     color: #a3a3a3;
-    font-size: 12px;
-    font-weight: 400;
-    text-align: right;
-    line-height: 1;
-    transform: translateY(-50%);
+    font-weight: 500;
   }
 }
 
 .chartArea {
   position: relative;
-  width: 100%;
-  height: 100%;
-  padding-bottom: 2.25rem;
+  flex: 1;
+  display: flex;
 }
 
 .gridLine {
   position: absolute;
   left: 0;
   right: 0;
-  border-top: 1px dashed #e1e4ed;
-  z-index: 0;
+  height: 1px;
+  border-top: 1px dashed #e5e7eb;
+  z-index: 1;
 }
 
 .bars {
   position: absolute;
-  left: 3%;
-  right: 3%;
   top: 0;
-  bottom: 2.25rem;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  z-index: 1;
+  z-index: 2;
 }
 
 .barCol {
   position: relative;
-  width: 46px;
+  width: 48px;
   height: 100%;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  align-items: flex-end;
 }
 
 .barTrack {
@@ -75,7 +72,7 @@
       rgba(180, 215, 255, 0.5) 12px,
       transparent 13px
     ),
-    #f4f8ff;
+    rgba(227, 239, 255, 0.51);
   border-radius: 8px 8px 0 0;
   overflow: hidden;
 }

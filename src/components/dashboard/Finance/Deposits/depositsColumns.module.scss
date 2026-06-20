@@ -1,0 +1,68 @@
+.serviceTrips {
+  background-color: #E4F2FF;
+  color: #1A84FF;
+}
+
+.serviceTransport {
+  background-color: rgba(206, 109, 255, 0.1);
+  color: #C043FF;
+}
+
+.serviceHotels {
+  background-color: #FFEDD5;
+  color: #EA580C;
+}
+
+.serviceB2B {
+  background-color: rgba(32, 183, 148, 0.1);
+  color: #20B794;
+}
+
+.serviceMice {
+  background-color: rgba(251, 147, 163, 0.2);
+  color: #FF627B;
+}
+
+.pill {
+  padding: 4px 12px;
+  border-radius: 96px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 105px;
+}
+
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  
+  i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+}
+
+.statusPending {
+  background-color: #FFEDD5;
+  color: #EA580C;
+  i { background-color: #EA580C; }
+}
+
+.statusOverdue {
+  background-color: #FEE2E2;
+  color: #EF4444;
+  i { background-color: #EF4444; }
+}
+
+.overdueText {
+  color: #EF4444;
+  font-weight: 500;
+}

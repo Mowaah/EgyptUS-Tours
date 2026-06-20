@@ -1,40 +1,12 @@
 import { distribution } from "../dashboardHomeData";
-import styles from "./DistributionChart.module.scss";
+import HatchedBarChart from "@/components/shared/HatchedBarChart/HatchedBarChart";
 
 export default function DistributionChart() {
+  const yAxisLabels = ["5k", "4k", "3k", "2k", "1k", "0"];
+
   return (
-    <div className={styles.wrap}>
-      <div className={styles.yAxis}>
-        <span>5k</span>
-        <span>4k</span>
-        <span>3k</span>
-        <span>2k</span>
-        <span>1k</span>
-        <span>0</span>
-      </div>
-      <div className={styles.chartArea}>
-        {Array.from({ length: 6 }).map((_, index) => (
-          <div
-            key={`grid-${index}`}
-            className={styles.gridLine}
-            style={{ top: `${(index * 100) / 5}%` }}
-          />
-        ))}
-        <div className={styles.bars}>
-          {distribution.map((item) => (
-            <div className={styles.barCol} key={item.label}>
-              <div className={styles.barTrack} />
-              <div
-                className={styles.barFill}
-                style={{ height: `${item.value}%`, background: item.color }}
-              >
-                <span className={styles.barPct}>{item.value}%</span>
-              </div>
-              <span className={styles.barLabel}>{item.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", marginTop: "32px" }}>
+      <HatchedBarChart data={distribution} yAxisLabels={yAxisLabels} />
     </div>
   );
 }

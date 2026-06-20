@@ -1,0 +1,109 @@
+.chartsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.chartCard {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.iconBox {
+  width: 40px;
+  height: 40px;
+  background: #f8f9fb;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cardTitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: 24px;
+  color: #0e2851;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.cardSubtitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #9ca3af;
+  margin: 4px 0 0 0;
+}
+
+/* Donut Chart Inner Styles */
+.donutWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.legend {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 32px;
+  gap: 16px;
+  background: #F8FAFF;
+  border-radius: 24px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legendColor {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: 0px 1px 4px rgba(25, 33, 61, 0.08);
+}
+
+.legendText {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.legendValue {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: #1F2937;
+}
+
+.legendLabel {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 20px;
+  color: #9CA3AF;
+}
