@@ -44,7 +44,19 @@ const fleetData: FleetData[] = [
   },
 ];
 
-export default function FleetUtilizationChart() {
+export interface FleetUtilizationChartProps {
+  title?: string;
+  subtitle?: string;
+  showBanner?: boolean;
+  actions?: React.ReactNode;
+}
+
+export default function FleetUtilizationChart({
+  title = "Fleet Utilization & Revenue",
+  subtitle = "SUVs at 91% utilization — consider expanding luxury fleet",
+  showBanner = true,
+  actions,
+}: FleetUtilizationChartProps = {}) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -58,8 +70,9 @@ export default function FleetUtilizationChart() {
     <article className={styles.card}>
       <PanelHeader
         icon="finance/payment/fleet"
-        title="Fleet Utilization & Revenue"
-        subtitle="SUVs at 91% utilization — consider expanding luxury fleet"
+        title={title}
+        subtitle={subtitle}
+        actions={actions}
       />
 
       <div className={styles.rowList}>
@@ -100,9 +113,11 @@ export default function FleetUtilizationChart() {
         ))}
       </div>
 
-      <div className={styles.alertBanner}>
-        Buses have lowest utilization (55%). Consider partnering with MICE clients for group transport bundles.
-      </div>
+      {showBanner && (
+        <div className={styles.alertBanner}>
+          Buses have lowest utilization (55%). Consider partnering with MICE clients for group transport bundles.
+        </div>
+      )}
     </article>
   );
 }

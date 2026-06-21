@@ -11,7 +11,7 @@ interface ChartData {
   percentage: number;
 }
 
-const data: ChartData[] = [
+const defaultData: ChartData[] = [
   { label: "LUXOR", value: 256000, percentage: 57 },
   { label: "ASWAN", value: 292000, percentage: 65 },
   { label: "HURGHADA", value: 427000, percentage: 95 },
@@ -19,17 +19,38 @@ const data: ChartData[] = [
   { label: "SIWA", value: 283000, percentage: 63 },
 ];
 
-const gridLabels = ["$0K", "$75K", "$150K", "$225K", "$300K", "$375K", "$450K"];
+const defaultGridLabels = ["$0K", "$75K", "$150K", "$225K", "$300K", "$375K", "$450K"];
 
-export default function RevenueByDestinationChart() {
+export interface RevenueByDestinationChartProps {
+  title?: string;
+  subtitle?: string;
+  icon?: string;
+  data?: ChartData[];
+  gridLabels?: string[];
+  tooltipFormat?: "revenue" | "booking";
+  maxValue?: number;
+  actions?: React.ReactNode;
+}
+
+export default function RevenueByDestinationChart({
+  title = "Revenue by Destination in Egypt",
+  subtitle = "Cairo dominates (26%), but Siwa shows highest per-booking value ($734)",
+  icon = "booking-distribution",
+  data = defaultData,
+  gridLabels = defaultGridLabels,
+  tooltipFormat = "revenue",
+  maxValue = 450000,
+  actions,
+}: RevenueByDestinationChartProps) {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(2); // Default Hurghada to be hovered as in mockup?
 
   return (
     <article className={styles.card}>
       <PanelHeader
-        icon="booking-distribution"
-        title="Revenue by Destination in Egypt"
-        subtitle="Cairo dominates (26%), but Siwa shows highest per-booking value ($734)"
+        icon={icon}
+        title={title}
+        subtitle={subtitle}
+        actions={actions}
       />
 
       <div className={styles.chartBody}>
@@ -46,7 +67,7 @@ export default function RevenueByDestinationChart() {
           {/* Data Rows */}
           {data.map((item, index) => {
             const isHovered = hoveredIdx === index;
-            const widthPct = (item.value / 450000) * 100;
+            const widthPct = (item.value / maxValue) * 100;
             
             return (
               <div 
@@ -65,13 +86,19 @@ export default function RevenueByDestinationChart() {
                   >
                     <div className={`${styles.tooltip} ${isHovered ? styles.tooltipVisible : ""}`}>
                       <span className={styles.tooltipText}>
-                        $
-                        {item.value >= 1000 ? (
+                        {tooltipFormat === "revenue" ? (
                           <>
-                            <AnimatedNumber value={Math.round(item.value / 1000)} isActive={isHovered} />K
+                            $
+                            {item.value >= 1000 ? (
+                              <><AnimatedNumber value={Math.round(item.value / 1000)} isActive={isHovered} />K</>
+                            ) : (
+                              <AnimatedNumber value={item.value} isActive={isHovered} />
+                            )}
                           </>
                         ) : (
-                          <AnimatedNumber value={item.value} isActive={isHovered} />
+                          <>
+                            <AnimatedNumber value={item.value} isActive={isHovered} /> Booking
+                          </>
                         )}
                       </span>
                     </div>

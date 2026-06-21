@@ -9,6 +9,7 @@ interface PanelHeaderProps {
   badge?: string;
   range?: DashboardRange;
   onRangeChange?: (range: DashboardRange) => void;
+  actions?: React.ReactNode;
   className?: string;
 }
 
@@ -19,6 +20,7 @@ export default function PanelHeader({
   badge,
   range,
   onRangeChange,
+  actions,
   className,
 }: PanelHeaderProps) {
   const headerClassName = className ? `${styles.header} ${className}` : styles.header;
@@ -38,6 +40,11 @@ export default function PanelHeader({
       {range && onRangeChange ? (
         <SegmentedControl value={range} onChange={onRangeChange} />
       ) : null}
+      {actions && (
+        <div className={styles.actions}>
+          {actions}
+        </div>
+      )}
     </div>
   );
 }

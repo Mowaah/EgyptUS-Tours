@@ -25,9 +25,7 @@ export default function OverdueDepositsChart() {
         </div>
       </div>
       
-      <div style={{ marginTop: "16px", flex: 1, display: "flex", flexDirection: "column" }}>
-        <HatchedBarChart data={distribution} yAxisLabels={yAxisLabels} />
-      </div>
+      <HatchedBarChart data={distribution} yAxisLabels={yAxisLabels} />
     </div>
   );
 }
