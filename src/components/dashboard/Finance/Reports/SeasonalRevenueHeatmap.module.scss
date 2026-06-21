@@ -1,0 +1,109 @@
+@use "@/styles/variables" as *;
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+  background: $white;
+  border-radius: 1.5rem;
+  min-width: 0;
+  height: 100%;
+}
+
+.heatmapContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.grid {
+  display: grid;
+  /* 1st col for label (auto/fixed), then 12 equal cols */
+  grid-template-columns: 80px repeat(12, 1fr);
+  row-gap: 8px;
+  column-gap: 4px; /* minimal gap between blocks horizontally */
+  align-items: center;
+}
+
+.rowLabel {
+  font-family: 'Trip Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #A3A3A3;
+  padding-right: 12px;
+}
+
+.monthLabelRow {
+  display: contents; /* Allows children to participate in the grid directly */
+}
+
+.monthLabel {
+  text-align: center;
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 12px;
+  color: #A3A3A3;
+  padding-top: 8px;
+}
+
+.block {
+  height: 30px;
+  border-radius: 4px;
+  width: 100%;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+.level1 {
+  background: #EBE9FE;
+}
+
+.level2 {
+  background: #9B8AFB;
+}
+
+.level3 {
+  background: #3E1C96;
+}
+
+/* Legend */
+.legendArea {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.legend {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.legendItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 80px;
+}
+
+.legendLabel {
+  font-family: 'Trip Sans', sans-serif;
+  font-size: 14px;
+  color: #737373;
+}
+
+.legendColor {
+  width: 100%;
+  height: 12px;
+  border-radius: 4px;
+}

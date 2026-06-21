@@ -1,0 +1,94 @@
+.typePill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 96px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  
+  i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    transform: translateY(1px);
+  }
+}
+
+.typePlanYourTrip {
+  background-color: #E4F2FF;
+  color: #1A84FF;
+  i { background-color: #1A84FF; }
+}
+
+.typeMice {
+  background-color: rgba(206, 109, 255, 0.1);
+  color: #C043FF;
+  i { background-color: #C043FF; }
+}
+
+.typeB2b {
+  background-color: #F3F4F6;
+  color: #6B7280;
+  i { background-color: #6B7280; }
+}
+
+.typeTransport {
+  background-color: rgba(32, 183, 148, 0.1);
+  color: #20B794;
+  i { background-color: #20B794; }
+}
+
+.trendBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 28px;
+  padding: 4px 8px;
+  border-radius: 84px;
+  font-family: 'Trip Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+.trendUp {
+  background: #f2faf6;
+  color: #0c9d61;
+}
+
+.trendDown {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.checkboxContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #D1D5DB;
+    border-radius: 4px;
+    appearance: none;
+    cursor: pointer;
+    background-color: white;
+
+    &:checked {
+      background-color: #1A84FF;
+      border-color: #1A84FF;
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='8' viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4L3.5 6.5L9 1' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+  }
+}

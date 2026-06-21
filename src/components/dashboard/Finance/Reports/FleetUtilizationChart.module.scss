@@ -1,0 +1,145 @@
+@use "@/styles/variables" as *;
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+  background: $white;
+  border-radius: 1.5rem;
+  min-width: 0;
+  width: 100%;
+}
+
+.rowList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.rowCard {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px 12px 12px;
+  border: 1px solid #F5F5F5;
+  border-radius: 32px;
+  background: #FFFFFF;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: #E2E8F0;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.02);
+  }
+}
+
+.leftSection {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  flex-grow: 1;
+}
+
+.badge {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  background: #F2F7FF;
+  border-radius: 36px;
+  color: #2979FF;
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-grow: 1;
+}
+
+.titleRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+  color: #0E2851;
+  line-height: 1;
+}
+
+.subtitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  color: #6B7280;
+  line-height: 1;
+}
+
+.progressTrack {
+  position: relative;
+  width: 184px;
+  height: 4px;
+  background: #F3F4F6;
+  border-radius: 58px;
+  overflow: hidden;
+}
+
+.progressFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  border-radius: 21px;
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.pill {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 10px;
+  background: #F2F7FF;
+  border-radius: 18px;
+  color: #2979FF;
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.alertBanner {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+  background: #FFF4F4;
+  border: 1px solid #FFF0E6;
+  border-radius: 128px;
+  margin-top: 8px;
+  
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  color: #FF6600;
+  text-align: center;
+}

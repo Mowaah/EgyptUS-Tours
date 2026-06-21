@@ -17,7 +17,7 @@ export default function OverdueDepositsChart() {
     <div className={parentStyles.chartCard}>
       <div className={parentStyles.cardHeader}>
         <div className={parentStyles.iconBox}>
-          <Image src="/images/dashboard/finance/payment/money.svg" alt="" width={24} height={24} />
+          <Image src="/images/dashboard/customers/overview/service.svg" alt="" width={24} height={24} />
         </div>
         <div>
           <h2 className={parentStyles.cardTitle}>Overdue Deposits by Service</h2>

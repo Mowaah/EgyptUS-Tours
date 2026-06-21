@@ -31,6 +31,7 @@ const navRoutes: Record<string, string> = {
   Promotions: "/dashboard/marketing/promotions",
   Payments: "/dashboard/finance/payments",
   Deposits: "/dashboard/finance/deposits",
+  "Financial Reports": "/dashboard/finance/reports",
 };
 
 const navItems: NavItem[] = [

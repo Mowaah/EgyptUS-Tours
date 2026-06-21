@@ -4,40 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import styles from "./PaymentsPage.module.scss";
 
-function AnimatedNumber({ value, isActive }: { value: number; isActive: boolean }) {
-  const [displayValue, setDisplayValue] = useState(0);
-
-  useEffect(() => {
-    if (!isActive) {
-      setDisplayValue(0);
-      return;
-    }
-    
-    let startTimestamp: number;
-    const duration = 500; // 500ms counter animation
-
-    const step = (timestamp: number) => {
-      if (!startTimestamp) startTimestamp = timestamp;
-      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      
-      // easeOutExpo curve for a snappy but smooth deceleration
-      const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-      
-      setDisplayValue(Math.floor(easeProgress * value));
-      
-      if (progress < 1) {
-        window.requestAnimationFrame(step);
-      } else {
-        setDisplayValue(value);
-      }
-    };
-    
-    const reqId = window.requestAnimationFrame(step);
-    return () => window.cancelAnimationFrame(reqId);
-  }, [value, isActive]);
-
-  return <>{displayValue}</>;
-}
+import { AnimatedNumber } from "@/components/shared/AnimatedNumber/AnimatedNumber";
 
 export default function RevenueByDestination() {
   const chartData = [
