@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { CreatePost } from "@/components/dashboard/Blogs";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
@@ -15,7 +16,9 @@ export default function CreatePostPage() {
 
       <section className={styles.content} aria-label="Create Post content">
         <DashboardNavbar onSecondaryAction={() => router.push('/dashboard/marketing/blog?draftSaved=true')} />
-        <CreatePost />
+        <Suspense fallback={<div>Loading...</div>}>
+          <CreatePost />
+        </Suspense>
       </section>
     </main>
   );
