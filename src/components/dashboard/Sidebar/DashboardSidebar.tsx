@@ -3,9 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useLayoutEffect, useEffect } from "react";
 import DashboardConfirmationModal from "@/components/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import styles from "./DashboardSidebar.module.scss";
+import { useSidebarContext } from "@/contexts/SidebarContext";
 
 interface NavItem {
   label: string;
@@ -132,7 +133,7 @@ function DashboardIcon({
   );
 }
 
-function Chevron({ open = false }: { open?: boolean }) {
+function Chevron({ open }: { open: boolean }) {
   return (
     <Image
       src="/images/dashboard/sidebar/chevron.svg"
@@ -141,6 +142,7 @@ function Chevron({ open = false }: { open?: boolean }) {
       height={20}
       className={`${styles.chevron} ${open ? styles.chevronOpen : ""}`}
       aria-hidden
+      suppressHydrationWarning
     />
   );
 }
@@ -157,7 +159,7 @@ function NavChildren({
   pathname: string;
 }) {
   return (
-    <div className={`${styles.subnav} ${open ? styles.subnavOpen : ""}`} id={id}>
+    <div className={`${styles.subnav} ${open ? styles.subnavOpen : ""}`} id={id} suppressHydrationWarning>
       <span className={styles.branch} aria-hidden />
       <ul className={styles.subnavList}>
         {items.map((item) => {
@@ -201,44 +203,24 @@ const settingsPathPrefix = "/dashboard/settings";
 export default function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
-    const groups: Record<string, boolean> = {};
-
-    if (pathname.startsWith("/dashboard/settings")) {
-      groups.Settings = true;
-    }
-
-    if (pathname.startsWith("/dashboard/settings/faq-management") ||
-        pathname.startsWith("/dashboard/settings/terms-conditions") ||
-        pathname.startsWith("/dashboard/settings/privacy-policy")) {
-      groups["Legal & Help Center"] = true;
-    }
-
-    if (pathname.startsWith("/dashboard/marketing")) {
-      groups.Marketing = true;
-    }
-
-    if (pathname.startsWith("/dashboard/finance")) {
-      groups.Finance = true;
-    }
-
-    return groups;
-  });
+  const { openGroups, toggleGroup } = useSidebarContext();
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
-  const toggleGroup = (label: string) => {
-    setOpenGroups((current) => ({
-      ...current,
-      [label]: !current[label],
-    }));
-  };
+  const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
+  useIsomorphicLayoutEffect(() => {
+    const savedScroll = localStorage.getItem("sidebarScrollPos");
+    if (savedScroll && scrollRef.current) {
+      scrollRef.current.scrollTop = parseInt(savedScroll, 10);
+    }
+  }, []);
 
   return (
     <aside className={styles.sidebar} aria-label="Dashboard navigation">
       <div className={styles.inner}>
-        <div className={styles.top}>
+        <div className={styles.top} ref={scrollRef} onScroll={(e) => localStorage.setItem("sidebarScrollPos", (e.target as HTMLDivElement).scrollTop.toString())} id="dashboard-sidebar-scroll">
           <div className={styles.sidebarHeader}>
             <a href="/dashboard" className={styles.logoLink} aria-label="Egypt US dashboard home">
               <Image
@@ -276,6 +258,7 @@ export default function DashboardSidebar() {
                         aria-expanded={isOpen}
                         aria-controls={subnavId}
                         onClick={() => toggleGroup(item.label)}
+                        suppressHydrationWarning
                       >
                         <DashboardIcon label={item.label} className={styles.navIcon} />
                         <span>{item.label}</span>

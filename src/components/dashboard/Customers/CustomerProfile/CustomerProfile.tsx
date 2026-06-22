@@ -12,14 +12,39 @@ import { ReviewsPanel } from "@/components/dashboard/Reviews/ReviewsPanel/Review
 import pageStyles from "@/app/(dashboard)/dashboard/page.module.scss";
 import styles from "./CustomerProfile.module.scss";
 
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
+
 interface CustomerProfileProps {
   customerId: string;
 }
 
 type TabType = "overview" | "booking-history" | "custom-trip-requests" | "reviews";
 
+import { Suspense } from "react";
+
 export default function CustomerProfile({ customerId }: CustomerProfileProps) {
-  const [activeTab, setActiveTab] = useState<TabType>("overview");
+  return (
+    <main className={pageStyles.page}>
+      <DashboardSidebar />
+      <Suspense fallback={<section className={pageStyles.content} aria-label="Customer profile content" />}>
+        <CustomerProfileContent customerId={customerId} />
+      </Suspense>
+    </main>
+  );
+}
+
+function CustomerProfileContent({ customerId }: CustomerProfileProps) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  
+  const activeTab = (searchParams.get("tab") as TabType) || "overview";
+
+  const handleTabChange = (tabId: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tabId);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   // In a real app, we'd fetch the customer by ID. Using mock data for now.
   const customer = {
@@ -32,10 +57,7 @@ export default function CustomerProfile({ customerId }: CustomerProfileProps) {
   };
 
   return (
-    <main className={pageStyles.page}>
-      <DashboardSidebar />
-
-      <section className={pageStyles.content} aria-label="Customer profile content">
+    <section className={pageStyles.content} aria-label="Customer profile content">
         <DashboardNavbar
           breadcrumbTrail={[
             { label: "Customers", href: "/dashboard/customers" },
@@ -94,7 +116,7 @@ export default function CustomerProfile({ customerId }: CustomerProfileProps) {
               { id: "reviews", label: "Reviews" },
             ]}
             activeTab={activeTab}
-            onTabChange={setActiveTab}
+            onTabChange={handleTabChange}
             ariaLabel="Customer profile sections"
           />
         </div>
@@ -111,6 +133,5 @@ export default function CustomerProfile({ customerId }: CustomerProfileProps) {
           />
         )}
       </section>
-    </main>
   );
 }

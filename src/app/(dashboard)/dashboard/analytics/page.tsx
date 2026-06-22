@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: "Comprehensive reports across customers, operations, sales, and leads.",
 };
 
+import { Suspense } from "react";
+
 export default function Page() {
   return <ReportsAnalyticsPage />;
 }

@@ -25,6 +25,14 @@ import TopCustomersByRevenueTable from "../TopCustomersByRevenueTable/TopCustome
 import pageStyles from "@/app/(dashboard)/dashboard/page.module.scss";
 import styles from "./ReportsAnalyticsPage.module.scss";
 
+import MiceMetrics from "../MiceMetrics/MiceMetrics";
+import MicePipeline from "../MicePipeline/MicePipeline";
+import MiceRevenueByEventType from "../MiceRevenueByEventType/MiceRevenueByEventType";
+import MiceBookingsDetail from "../MiceBookingsDetail/MiceBookingsDetail";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
+
+import { Suspense } from "react";
+
 const tabs = [
   { id: "operational", label: "Operational Reports" },
   { id: "sales", label: "Sales & Revenue" },
@@ -34,14 +42,32 @@ const tabs = [
 ];
 
 export default function ReportsAnalyticsPage() {
-  const [activeTab, setActiveTab] = useState("operational");
-
   return (
     <main className={pageStyles.page}>
       <DashboardSidebar />
+      <Suspense fallback={<section className={pageStyles.content} aria-label="Reports & Analytics content" />}>
+        <ReportsAnalyticsContent />
+      </Suspense>
+    </main>
+  );
+}
 
-      <section className={pageStyles.content} aria-label="Reports & Analytics content">
-        <DashboardNavbar
+function ReportsAnalyticsContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  
+  const activeTab = searchParams.get("tab") || "operational";
+
+  const handleTabChange = (tabId: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tabId);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
+  return (
+    <section className={pageStyles.content} aria-label="Reports & Analytics content">
+      <DashboardNavbar
           title="Reports & Analytics"
           subtitle="Comprehensive reports across customers, operations, sales, and leads — plus a custom builder."
           searchPlaceholder="Search bookings, customers..."
@@ -50,7 +76,7 @@ export default function ReportsAnalyticsPage() {
         <DashboardTabs
           tabs={tabs}
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={handleTabChange}
         />
 
         {activeTab === "operational" && (
@@ -153,7 +179,21 @@ export default function ReportsAnalyticsPage() {
             </div>
           </div>
         )}
+
+        {activeTab === "mice" && (
+          <div className={styles.salesTab}>
+            <MiceMetrics />
+            <div className={styles.chartsGridHalf}>
+              <div className={styles.leftColumn}>
+                <MiceRevenueByEventType />
+              </div>
+              <div className={styles.rightColumn}>
+                <MicePipeline />
+              </div>
+            </div>
+            <MiceBookingsDetail />
+          </div>
+        )}
       </section>
-    </main>
   );
 }
