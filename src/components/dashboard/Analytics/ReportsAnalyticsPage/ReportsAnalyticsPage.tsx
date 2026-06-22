@@ -13,6 +13,11 @@ import SalesRevenueMetrics from "../SalesRevenueMetrics/SalesRevenueMetrics";
 import RevenueByPartnerChart from "../RevenueByPartnerChart/RevenueByPartnerChart";
 import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 
+import LeadConversionMetrics from "../LeadConversionMetrics/LeadConversionMetrics";
+import LeadsBySourceChart from "../LeadsBySourceChart/LeadsBySourceChart";
+import LostLeadsAnalysis from "../LostLeadsAnalysis/LostLeadsAnalysis";
+import AvgTimeToConvertChart from "../AvgTimeToConvertChart/AvgTimeToConvertChart";
+
 import pageStyles from "@/app/(dashboard)/dashboard/page.module.scss";
 import styles from "./ReportsAnalyticsPage.module.scss";
 
@@ -88,7 +93,7 @@ export default function ReportsAnalyticsPage() {
               <div className={styles.leftColumn}>
                 <RevenueByDestinationChart 
                   title="Revenue by Destination"
-                  icon="sidebar/locations"
+                  icon="reports/top_destinations"
                   gridLabels={["0", "55000$", "110000$", "165000$", "220000$", "420000$", "550000$"]}
                   tooltipFormat="revenue"
                   maxValue={550000}
@@ -109,6 +114,23 @@ export default function ReportsAnalyticsPage() {
             </div>
 
             <RevenueByPartnerChart />
+          </div>
+        )}
+
+        {activeTab === "lead" && (
+          <div className={styles.salesTab}>
+            <LeadConversionMetrics />
+            
+            <div className={styles.chartsGridHalf}>
+              <div className={styles.leftColumn}>
+                <LeadsBySourceChart />
+                <LostLeadsAnalysis />
+              </div>
+              
+              <div className={styles.rightColumn}>
+                <AvgTimeToConvertChart />
+              </div>
+            </div>
           </div>
         )}
       </section>

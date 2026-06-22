@@ -20,7 +20,7 @@ export default function RevenueByPartnerChart() {
   return (
     <article className={styles.chartCard}>
       <PanelHeader
-        icon="reports/profile"
+        icon="reports/profile_grey"
         title="Revenue by Partner"
         actions={<ExportButtons />}
       />

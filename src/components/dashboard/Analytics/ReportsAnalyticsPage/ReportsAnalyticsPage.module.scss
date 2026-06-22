@@ -11,14 +11,36 @@
   align-items: start;
 }
 
+.chartsGridHalf {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  align-items: start;
+}
+
 .metricsGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.75rem;
 }
 
+.metricsGridFour {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
 @media (max-width: 1280px) {
-  .chartsGrid {
+  .chartsGrid, .chartsGridHalf {
+    grid-template-columns: 1fr;
+  }
+  .metricsGrid, .metricsGridFour {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .metricsGrid, .metricsGridFour {
     grid-template-columns: 1fr;
   }
 }
@@ -33,6 +55,15 @@
 .leftColumn > *,
 .rightColumn > * {
   height: 462px;
+}
+
+.chartsGridHalf .leftColumn > *:first-child,
+.chartsGridHalf .rightColumn > *:first-child {
+  height: 507px;
+}
+
+.chartsGridHalf .leftColumn > *:nth-child(2) {
+  height: 422px;
 }
 
 .chartCard {

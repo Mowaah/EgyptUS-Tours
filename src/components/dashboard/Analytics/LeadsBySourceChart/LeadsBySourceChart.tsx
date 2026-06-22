@@ -1,17 +1,18 @@
 "use client";
 
-import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
 import parentStyles from "../ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
 import HatchedBarChart from "@/components/shared/HatchedBarChart/HatchedBarChart";
+import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
 import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 
-export default function ServiceRevenueChart() {
+export default function LeadsBySourceChart() {
   const distribution = [
-    { label: "Trips", value: 32, color: "#A1CCFF" },
-    { label: "Hotels", value: 22, color: "#FFC6A0" },
-    { label: "Transport", value: 36, color: "#FFD1DE" },
-    { label: "MICE", value: 74, color: "#E9BDFF" },
-    { label: "Others", value: 58, color: "#A1F6CC" },
+    { label: "Website", value: 32, color: "#A1CCFF" },
+    { label: "Phone", value: 22, color: "#FFC6A0" },
+    { label: "Email", value: 36, color: "#FFD1DE" },
+    { label: "Walk-In", value: 74, color: "#E9BDFF" },
+    { label: "Social Media", value: 58, color: "#FDE68A" },
+    { label: "Others", value: 56, color: "#A1F6CC" },
   ];
 
   const yAxisLabels = ["500000$", "400000$", "300000$", "200000$", "100000$", "0"];
@@ -19,9 +20,9 @@ export default function ServiceRevenueChart() {
   return (
     <article className={parentStyles.chartCard}>
       <PanelHeader
-        icon="reports/money-send_grey"
-        title="Service Revenue"
-        subtitle="By service type"
+        icon="reports/leads_by_source"
+        title="Leads by Source"
+        subtitle="Overview of lead acquisition channels"
         actions={<ExportButtons />}
       />
       
