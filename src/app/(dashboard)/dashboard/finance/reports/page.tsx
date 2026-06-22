@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import FinancialReportsPage from "@/components/dashboard/Finance/Reports/FinancialReportsPage";
+import FinancialReportsPage from "@/components/dashboard/Finance/Reports/FinancialReportsPage/FinancialReportsPage";
 
 export const metadata: Metadata = {
   title: "Financial Reports | Egypt US Tours",

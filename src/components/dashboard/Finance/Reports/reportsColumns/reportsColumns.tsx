@@ -1,5 +1,5 @@
 import type { DataTableColumn } from "@/components/dashboard/DataTable";
-import type { ReportRow } from "./mockReports";
+import type { ReportRow } from "../mockReports";
 import styles from "./reportsColumns.module.scss";
 
 const typeClass: Record<ReportRow["type"], string> = {

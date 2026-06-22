@@ -7,8 +7,8 @@ import {
 } from "@/components/dashboard/TablePanel";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import { DataTable } from "@/components/dashboard/DataTable";
-import { paymentsColumns, paymentRowActions } from "./paymentsColumns";
-import { mockPayments } from "./mockPayments";
+import { paymentsColumns, paymentRowActions } from "../paymentsColumns/paymentsColumns";
+import { mockPayments } from "../mockPayments";
 
 export default function PaymentsTable() {
   const [filters, setFilters] = useState({

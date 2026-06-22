@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import styles from "./PaymentsPage.module.scss";
+import styles from "../PaymentsPage/PaymentsPage.module.scss";
 
 import { AnimatedNumber } from "@/components/shared/AnimatedNumber/AnimatedNumber";
 

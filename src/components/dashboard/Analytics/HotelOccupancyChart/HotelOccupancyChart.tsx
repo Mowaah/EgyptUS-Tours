@@ -1,5 +1,5 @@
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
-import parentStyles from "./ReportsAnalyticsPage.module.scss";
+import parentStyles from "../ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
 import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 import DoubleBarChart from "@/components/shared/DoubleBarChart/DoubleBarChart";
 

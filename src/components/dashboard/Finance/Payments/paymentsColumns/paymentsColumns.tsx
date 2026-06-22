@@ -1,6 +1,6 @@
 import type { DataTableColumn, DataTableRowAction } from "@/components/dashboard/DataTable";
-import type { PaymentRow } from "./mockPayments";
-import styles from "./PaymentsTable.module.scss";
+import type { PaymentRow } from "../mockPayments";
+import styles from "../PaymentsTable/PaymentsTable.module.scss";
 
 const serviceClass: Record<PaymentRow["service"], string> = {
   Trips: styles.serviceTrips,

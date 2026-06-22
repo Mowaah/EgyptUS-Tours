@@ -1,5 +1,5 @@
 import type { DataTableColumn, DataTableRowAction } from "@/components/dashboard/DataTable";
-import type { DepositRow } from "./mockDeposits";
+import type { DepositRow } from "../mockDeposits";
 import styles from "./depositsColumns.module.scss";
 
 const serviceClass: Record<DepositRow["service"], string> = {

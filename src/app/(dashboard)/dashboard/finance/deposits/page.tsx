@@ -1,4 +1,4 @@
-import DepositsPage from "@/components/dashboard/Finance/Deposits/DepositsPage";
+import DepositsPage from "@/components/dashboard/Finance/Deposits/DepositsPage/DepositsPage";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

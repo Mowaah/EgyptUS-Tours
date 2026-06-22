@@ -3,9 +3,9 @@
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
 import { SummaryCard } from "@/components/dashboard/SummaryCard";
-import ReportsTable from "./ReportsTable";
+import ReportsTable from "../ReportsTable/ReportsTable";
 import RevenueByDestinationChart from "@/components/shared/RevenueByDestinationChart/RevenueByDestinationChart";
-import SeasonalRevenueHeatmap from "./SeasonalRevenueHeatmap";
+import SeasonalRevenueHeatmap from "../SeasonalRevenueHeatmap/SeasonalRevenueHeatmap";
 import FleetUtilizationChart from "@/components/shared/FleetUtilizationChart/FleetUtilizationChart";
 import pageStyles from "@/app/(dashboard)/dashboard/page.module.scss";
 import styles from "./FinancialReportsPage.module.scss";

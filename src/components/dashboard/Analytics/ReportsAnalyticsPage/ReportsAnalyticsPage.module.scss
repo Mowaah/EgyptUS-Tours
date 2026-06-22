@@ -1,8 +1,20 @@
+.salesTab {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 .chartsGrid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 579px;
-  gap: 1.5rem;
+  gap: 0.75rem;
   align-items: start;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
 }
 
 @media (max-width: 1280px) {

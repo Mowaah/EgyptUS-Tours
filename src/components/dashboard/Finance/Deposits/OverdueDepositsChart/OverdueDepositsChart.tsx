@@ -1,5 +1,5 @@
 import Image from "next/image";
-import parentStyles from "./DepositsPage.module.scss";
+import parentStyles from "../DepositsPage/DepositsPage.module.scss";
 import HatchedBarChart from "@/components/shared/HatchedBarChart/HatchedBarChart";
 
 export default function OverdueDepositsChart() {

@@ -6,8 +6,11 @@ import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
 import DashboardTabs from "@/components/shared/DashboardTabs/DashboardTabs";
 import RevenueByDestinationChart from "@/components/shared/RevenueByDestinationChart/RevenueByDestinationChart";
 import FleetUtilizationChart from "@/components/shared/FleetUtilizationChart/FleetUtilizationChart";
-import BookingsByServiceChart from "./BookingsByServiceChart";
-import HotelOccupancyChart from "./HotelOccupancyChart";
+import BookingsByServiceChart from "../BookingsByServiceChart/BookingsByServiceChart";
+import HotelOccupancyChart from "../HotelOccupancyChart/HotelOccupancyChart";
+import ServiceRevenueChart from "../ServiceRevenueChart/ServiceRevenueChart";
+import SalesRevenueMetrics from "../SalesRevenueMetrics/SalesRevenueMetrics";
+import RevenueByPartnerChart from "../RevenueByPartnerChart/RevenueByPartnerChart";
 import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 
 import pageStyles from "@/app/(dashboard)/dashboard/page.module.scss";
@@ -74,6 +77,38 @@ export default function ReportsAnalyticsPage() {
                 actions={<ExportButtons />}
               />
             </div>
+          </div>
+        )}
+
+        {activeTab === "sales" && (
+          <div className={styles.salesTab}>
+            <SalesRevenueMetrics />
+            
+            <div className={styles.chartsGrid}>
+              <div className={styles.leftColumn}>
+                <RevenueByDestinationChart 
+                  title="Revenue by Destination"
+                  icon="sidebar/locations"
+                  gridLabels={["0", "55000$", "110000$", "165000$", "220000$", "420000$", "550000$"]}
+                  tooltipFormat="revenue"
+                  maxValue={550000}
+                  data={[
+                    { label: "LUXOR", value: 150000, percentage: 27 },
+                    { label: "ASWAN", value: 300000, percentage: 54 },
+                    { label: "HURGHADA", value: 550000, percentage: 100 },
+                    { label: "DAHAB", value: 400000, percentage: 72 },
+                    { label: "SIWA", value: 250000, percentage: 45 },
+                  ]}
+                  actions={<ExportButtons />}
+                />
+              </div>
+              
+              <div className={styles.rightColumn}>
+                <ServiceRevenueChart />
+              </div>
+            </div>
+
+            <RevenueByPartnerChart />
           </div>
         )}
       </section>

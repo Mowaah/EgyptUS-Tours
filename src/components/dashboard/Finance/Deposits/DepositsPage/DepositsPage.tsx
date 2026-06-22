@@ -1,28 +1,28 @@
 "use client";
 
-import Image from "next/image";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
 import { SummaryCard } from "@/components/dashboard/SummaryCard";
-import PaymentsTable from "./PaymentsTable";
-import RevenueByCategory from "./RevenueByCategory";
-import RevenueByDestination from "./RevenueByDestination";
+import DepositsTable from "../DepositsTable/DepositsTable";
+import DepositStatusDonut from "../DepositStatusDonut/DepositStatusDonut";
+import OverdueDepositsChart from "../OverdueDepositsChart/OverdueDepositsChart";
+import { mockDeposits } from "../mockDeposits";
 import pageStyles from "@/app/(dashboard)/dashboard/page.module.scss";
-import styles from "./PaymentsPage.module.scss";
+import styles from "./DepositsPage.module.scss";
 
-export default function PaymentsPage() {
+export default function DepositsPage() {
   return (
     <main className={pageStyles.page}>
       <DashboardSidebar />
 
-      <section className={pageStyles.content} aria-label="Payments content">
+      <section className={pageStyles.content} aria-label="Deposits content">
         <DashboardNavbar
           breadcrumbTrail={[
-            { label: "Finance", href: "/dashboard/finance/payments" },
-            { label: "Payments" },
+            { label: "Finance", href: "/dashboard/finance/deposits" },
+            { label: "Deposits" },
           ]}
-          title="Payments"
-          subtitle="Track and manage all payment transactions."
+          title="Deposits"
+          subtitle="Track deposit status for all bookings (30% policy)."
           searchPlaceholder="Search Customer, Booking ID, Payment ID"
           primaryAction={{
             label: "Export Report",
@@ -32,7 +32,7 @@ export default function PaymentsPage() {
 
         <div className={styles.metricsGrid}>
           <SummaryCard
-            label="Total Revenue (MTD)"
+            label="Total Deposits Expected"
             value="$ 284,50"
             change="+8.2%"
             trend="up"
@@ -40,7 +40,7 @@ export default function PaymentsPage() {
             iconSrc="/images/dashboard/finance/payment/total.svg"
           />
           <SummaryCard
-            label="Total Transactions"
+            label="Collected Deposits"
             value="$38,200"
             change="+8.2%"
             trend="up"
@@ -48,29 +48,29 @@ export default function PaymentsPage() {
             iconSrc="/images/dashboard/finance/payment/total_transaction.svg"
           />
           <SummaryCard
-            label="Refunded Amount"
+            label="Pending"
+            value="$38,200"
+            change="-5.1%"
+            trend="down"
+            tone="pink"
+            iconSrc="/images/dashboard/finance/payment/money.svg"
+          />
+          <SummaryCard
+            label="Overdue"
             value="$4,200"
             change="-5.1%"
             trend="down"
             tone="gray"
             iconSrc="/images/dashboard/finance/payment/refunded.svg"
           />
-          <SummaryCard
-            label="Revenue Growth %"
-            value="70%"
-            change="+8.2%"
-            trend="up"
-            tone="pink"
-            iconSrc="/images/dashboard/finance/payment/chart.svg"
-          />
         </div>
 
         <div className={styles.chartsGrid}>
-          <RevenueByDestination />
-          <RevenueByCategory />
+          <OverdueDepositsChart />
+          <DepositStatusDonut />
         </div>
 
-        <PaymentsTable />
+        <DepositsTable />
       </section>
     </main>
   );

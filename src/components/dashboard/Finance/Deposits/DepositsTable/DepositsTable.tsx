@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { TablePanel, TablePanelFilterBar } from "@/components/dashboard/TablePanel";
-import { mockDeposits } from "./mockDeposits";
-import { depositsColumns, depositRowActions } from "./depositsColumns";
+import { mockDeposits } from "../mockDeposits";
+import { depositsColumns, depositRowActions } from "../depositsColumns/depositsColumns";
 
 const PAGE_SIZE = 8;
 

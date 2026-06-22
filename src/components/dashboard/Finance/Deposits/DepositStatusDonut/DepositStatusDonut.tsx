@@ -1,23 +1,23 @@
 import RoundedDonutChart from "@/components/shared/RoundedDonutChart/RoundedDonutChart";
-import styles from "./PaymentsPage.module.scss";
+import styles from "../DepositsPage/DepositsPage.module.scss";
 import Image from "next/image";
 
-export default function RevenueByCategory() {
+export default function DepositStatusDonut() {
   const chartData = [
-    { label: "Trips", value: 40, color: "#A1CCFF" },
-    { label: "Hotels", value: 20, color: "#FFC6A0" },
-    { label: "Transportation", value: 30, color: "#E9BDFF" },
+    { label: "Paid", value: 50, color: "#A1CCFF" },
+    { label: "Unpaid", value: 20, color: "#E9BDFF" },
+    { label: "Overdue", value: 30, color: "#FFC6A0" },
   ];
 
   return (
-    <div className={styles.chartCard}>
+    <div className={styles.chartCard} style={{ paddingBottom: 24 }}>
       <div className={styles.cardHeader}>
         <div className={styles.iconBox}>
-          <Image src="/images/dashboard/customers/overview/service.svg" alt="" width={24} height={24} />
+          <Image src="/images/dashboard/finance/payment/chart.svg" alt="" width={24} height={24} />
         </div>
         <div>
-          <h2 className={styles.cardTitle}>Revenue by Category</h2>
-          <p className={styles.cardSubtitle}>Distribution of revenue across trips, hotels, and transportation</p>
+          <h2 className={styles.cardTitle}>Deposit Status</h2>
+          <p className={styles.cardSubtitle}>Overview of deposit payments across all bookings.</p>
         </div>
       </div>
       
@@ -25,7 +25,7 @@ export default function RevenueByCategory() {
         <RoundedDonutChart 
           data={chartData} 
           centerValue="147K" 
-          centerLabel="Total Payments" 
+          centerLabel="Total Deposits" 
         />
         
         <div className={styles.legend}>

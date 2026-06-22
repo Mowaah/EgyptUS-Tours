@@ -1,4 +1,4 @@
-import PaymentsPage from "@/components/dashboard/Finance/Payments/PaymentsPage";
+import PaymentsPage from "@/components/dashboard/Finance/Payments/PaymentsPage/PaymentsPage";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
