@@ -16,8 +16,13 @@ export default function HatchedBarChart({ data, yAxisLabels }: HatchedBarChartPr
   return (
     <div className={styles.wrap}>
       <div className={styles.yAxis}>
-        {yAxisLabels.map((label, i) => (
-          <span key={`y-label-${i}`}>{label}</span>
+        {yAxisLabels.map((label, index) => (
+          <span 
+            key={`y-label-${index}`}
+            style={{ top: `${(index * 100) / gapCount}%` }}
+          >
+            {label}
+          </span>
         ))}
       </div>
       <div className={styles.chartArea}>

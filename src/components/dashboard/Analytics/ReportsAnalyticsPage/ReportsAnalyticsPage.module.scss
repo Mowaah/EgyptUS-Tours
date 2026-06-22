@@ -13,7 +13,7 @@
 
 .chartsGridHalf {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 0.75rem;
   align-items: start;
 }
@@ -64,6 +64,11 @@
 
 .chartsGridHalf .leftColumn > *:nth-child(2) {
   height: 422px;
+}
+
+.customerBottomGrid .leftColumn > *,
+.customerBottomGrid .rightColumn > * {
+  height: 462px !important;
 }
 
 .chartCard {

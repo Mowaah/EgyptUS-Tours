@@ -9,9 +9,16 @@ import styles from "./LineChart.module.scss";
 interface LineChartProps {
   lines: ChartLine[];
   area?: boolean;
+  maxValue?: number;
+  yAxisLabels?: string[];
 }
 
-export default function LineChart({ lines, area = false }: LineChartProps) {
+export default function LineChart({ 
+  lines, 
+  area = false,
+  maxValue = 12000,
+  yAxisLabels = ["12K", "9K", "6K", "3K", "1K", "0"]
+}: LineChartProps) {
   const width = 980;
   const height = 250;
 
@@ -38,12 +45,9 @@ export default function LineChart({ lines, area = false }: LineChartProps) {
   return (
     <div className={styles.wrap} ref={wrapRef}>
       <div className={styles.yAxis}>
-        <span>12K</span>
-        <span>9K</span>
-        <span>6K</span>
-        <span>3K</span>
-        <span>1K</span>
-        <span>0</span>
+        {yAxisLabels.map((label, i) => (
+          <span key={i}>{label}</span>
+        ))}
       </div>
       <div style={{ position: "relative", width: "100%", height: "100%", minHeight: 0 }}>
         <svg
@@ -98,7 +102,7 @@ export default function LineChart({ lines, area = false }: LineChartProps) {
             </defs>
           ) : null}
           {lines.map((line) => {
-            const path = pathFromPoints(line.points, width, height);
+            const path = pathFromPoints(line.points, width, height, maxValue);
             const gradId = `areaGrad-${line.name.replace(/\s+/g, "-")}`;
             return (
               <g key={line.name}>
@@ -130,7 +134,7 @@ export default function LineChart({ lines, area = false }: LineChartProps) {
         {hoverData !== null
           ? lines.map((line, i) => {
               const leftPercent = (hoverData.index / 11) * 100;
-              const topPercent = (1 - line.points[hoverData.index] / 12000) * 100;
+              const topPercent = (1 - line.points[hoverData.index] / maxValue) * 100;
               return (
                 <div
                   key={`marker-${i}`}

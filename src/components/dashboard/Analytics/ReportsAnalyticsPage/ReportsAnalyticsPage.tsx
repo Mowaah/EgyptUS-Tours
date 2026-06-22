@@ -18,6 +18,10 @@ import LeadsBySourceChart from "../LeadsBySourceChart/LeadsBySourceChart";
 import LostLeadsAnalysis from "../LostLeadsAnalysis/LostLeadsAnalysis";
 import AvgTimeToConvertChart from "../AvgTimeToConvertChart/AvgTimeToConvertChart";
 
+import NewVsReturningCustomers from "../NewVsReturningCustomers/NewVsReturningCustomers";
+import CustomersByNationality from "../CustomersByNationality/CustomersByNationality";
+import TopCustomersByRevenueTable from "../TopCustomersByRevenueTable/TopCustomersByRevenueTable";
+
 import pageStyles from "@/app/(dashboard)/dashboard/page.module.scss";
 import styles from "./ReportsAnalyticsPage.module.scss";
 
@@ -129,6 +133,22 @@ export default function ReportsAnalyticsPage() {
               
               <div className={styles.rightColumn}>
                 <AvgTimeToConvertChart />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "customer" && (
+          <div className={styles.salesTab}>
+            <NewVsReturningCustomers />
+            
+            <div className={`${styles.chartsGridHalf} ${styles.customerBottomGrid}`}>
+              <div className={styles.leftColumn}>
+                <CustomersByNationality />
+              </div>
+              
+              <div className={styles.rightColumn}>
+                <TopCustomersByRevenueTable />
               </div>
             </div>
           </div>
