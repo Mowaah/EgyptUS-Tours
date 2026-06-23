@@ -68,7 +68,8 @@ export default function SEOConfiguration() {
       </div>
 
       <div className={styles.formContainer}>
-        <div className={styles.column}>
+        {activeTab === "home" && (
+          <div className={styles.column}>
           <FormSection title="Upload Image" iconSrc="/images/dashboard/fields/document-upload.svg">
             <FormSpec>
               <Controller
@@ -96,6 +97,7 @@ export default function SEOConfiguration() {
             </FormSection>
           )}
         </div>
+        )}
 
         <div className={styles.column}>
           <FormSection title="General SEO" iconSrc="/images/dashboard/fields/seo-settings.svg">
