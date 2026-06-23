@@ -1,0 +1,65 @@
+@use "@/styles/variables" as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.formContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+@media (max-width: 1024px) {
+  .formContainer {
+    flex-direction: column;
+  }
+}
+
+.whiteTabs {
+  background-color: #FFFFFF !important;
+}
+
+.fieldRow {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.previewCard {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px;
+  width: 100%;
+  background: #FFFFFF;
+  border: 1px solid #EAF1FD;
+  border-radius: 22px;
+}
+
+.previewImageWrapper {
+  position: relative;
+  width: 100%;
+  height: 352px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #f4f7fd;
+}
+
+.previewImage {
+  object-fit: cover;
+}

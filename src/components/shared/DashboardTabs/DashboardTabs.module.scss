@@ -46,6 +46,12 @@
   }
 }
 
+.tabContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .tabActive {
   border-bottom-color: #2971e6;
   color: #2971e6;

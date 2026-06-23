@@ -1,8 +1,10 @@
+import Image from "next/image";
 import styles from "./DashboardTabs.module.scss";
 
 export interface TabConfig<T extends string = string> {
   id: T;
   label: string;
+  iconSrc?: string;
 }
 
 interface DashboardTabsProps<T extends string = string> {
@@ -32,7 +34,12 @@ export default function DashboardTabs<T extends string = string>({
             className={`${styles.tab} ${activeTab === tab.id ? styles.tabActive : ""}`}
             onClick={() => onTabChange(tab.id)}
           >
-            {tab.label}
+            <div className={styles.tabContent}>
+              {tab.iconSrc && (
+                <Image src={tab.iconSrc} alt="" width={20} height={20} aria-hidden />
+              )}
+              <span>{tab.label}</span>
+            </div>
           </button>
         ))}
       </div>

@@ -146,5 +146,12 @@ const pageCopyByPath: Record<string, PageCopy> = {
     primaryAction: { label: "Add New Testimonial" },
     hideFilterButton: true,
   },
+  "/dashboard/seo": {
+    title: "SEO Configuration",
+    subtitle: "Manage page content, metadata, social previews, structured data, and analytics.",
+    breadcrumbTrail: [{ label: "Home" }, { label: "SEO Configuration" }],
+    searchPlaceholder: "Search bookings, customers...",
+    hideFilterButton: true,
+  },
 };
 export default pageCopyByPath;

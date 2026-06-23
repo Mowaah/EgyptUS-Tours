@@ -34,6 +34,7 @@ const navRoutes: Record<string, string> = {
   Deposits: "/dashboard/finance/deposits",
   "Financial Reports": "/dashboard/finance/reports",
   "Reports & Analytics": "/dashboard/analytics",
+  "SEO Configuration": "/dashboard/seo",
 };
 
 const navItems: NavItem[] = [
