@@ -151,7 +151,7 @@ function ReportsAnalyticsContent() {
           <div className={styles.salesTab}>
             <LeadConversionMetrics />
             
-            <div className={styles.chartsGridHalf}>
+            <div className={`${styles.chartsGridHalf} ${styles.leadChartsGrid}`}>
               <div className={styles.leftColumn}>
                 <LeadsBySourceChart />
                 <LostLeadsAnalysis />
@@ -185,10 +185,10 @@ function ReportsAnalyticsContent() {
             <MiceMetrics />
             <div className={styles.chartsGridHalf}>
               <div className={styles.leftColumn}>
-                <MiceRevenueByEventType />
+                <MicePipeline />
               </div>
               <div className={styles.rightColumn}>
-                <MicePipeline />
+                <MiceRevenueByEventType />
               </div>
             </div>
             <MiceBookingsDetail />

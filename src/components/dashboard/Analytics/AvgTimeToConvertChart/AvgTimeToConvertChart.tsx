@@ -3,6 +3,7 @@
 import { useState } from "react";
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
 import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
+import parentStyles from "../ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
 import styles from "./AvgTimeToConvertChart.module.scss";
 
 // 75 data points to map closely to the 5 horizontal segments
@@ -51,7 +52,7 @@ export default function AvgTimeToConvertChart() {
   }
 
   return (
-    <article className={styles.chartCard}>
+    <article className={parentStyles.chartCard}>
       <PanelHeader
         icon="reports/avg_time"
         title="Avg Time to Convert (days)"

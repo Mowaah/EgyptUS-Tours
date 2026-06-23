@@ -54,10 +54,16 @@
 
 .barCol {
   position: relative;
-  width: 48px;
+  width: var(--bar-width, 48px);
   height: 100%;
   display: flex;
   align-items: flex-end;
+}
+
+@media (max-width: 1440px) {
+  .barCol {
+    width: 48px;
+  }
 }
 
 .barTrack {
@@ -107,4 +113,8 @@
   color: #a3a3a3;
   font-weight: 500;
   white-space: nowrap;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
 }

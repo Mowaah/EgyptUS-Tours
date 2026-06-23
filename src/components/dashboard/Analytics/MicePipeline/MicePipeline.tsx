@@ -27,7 +27,6 @@ export default function MicePipeline() {
           <RoundedDonutChart
             data={donutData}
             centerValue="500"
-            size={600}
           />
         </div>
 

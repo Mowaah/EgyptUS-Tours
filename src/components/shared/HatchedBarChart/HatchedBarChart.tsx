@@ -7,9 +7,10 @@ export interface HatchedBarChartProps {
     color: string;
   }[];
   yAxisLabels: string[];
+  barWidth?: number;
 }
 
-export default function HatchedBarChart({ data, yAxisLabels }: HatchedBarChartProps) {
+export default function HatchedBarChart({ data, yAxisLabels, barWidth }: HatchedBarChartProps) {
   const lineCount = yAxisLabels.length;
   const gapCount = Math.max(1, lineCount - 1);
 
@@ -25,7 +26,10 @@ export default function HatchedBarChart({ data, yAxisLabels }: HatchedBarChartPr
           </span>
         ))}
       </div>
-      <div className={styles.chartArea}>
+      <div 
+        className={styles.chartArea}
+        style={barWidth ? { '--bar-width': `${barWidth}px` } as React.CSSProperties : undefined}
+      >
         {Array.from({ length: lineCount }).map((_, index) => (
           <div
             key={`grid-${index}`}

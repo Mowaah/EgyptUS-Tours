@@ -1,8 +1,10 @@
 .donutWrapper {
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 24px;
   width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .legendCard {

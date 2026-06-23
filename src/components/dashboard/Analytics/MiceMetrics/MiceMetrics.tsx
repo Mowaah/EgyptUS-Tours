@@ -21,7 +21,7 @@ export default function MiceMetrics() {
       change: "+8.2%",
       trend: "up",
       tone: "green",
-      icon: "reports/converted",
+      icon: "reports/proposals",
       spark: ""
     },
     {
@@ -30,7 +30,7 @@ export default function MiceMetrics() {
       change: "+18.3%",
       trend: "up",
       tone: "purple",
-      icon: "reports/conversion_rate",
+      icon: "reports/contracts",
       spark: ""
     },
   ];

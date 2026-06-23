@@ -6,16 +6,16 @@
 
 .chartsGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 579px;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
   gap: 0.75rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 .chartsGridHalf {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 0.75rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 .metricsGrid {
@@ -30,7 +30,7 @@
   gap: 0.75rem;
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1400px) {
   .chartsGrid, .chartsGridHalf {
     grid-template-columns: 1fr;
   }
@@ -54,21 +54,32 @@
 
 .leftColumn > *,
 .rightColumn > * {
-  height: 462px;
+  min-height: 462px;
+  flex: 1;
+}
+
+.noStretchChildren > * {
+  flex: none !important;
+}
+
+.leadChartsGrid .leftColumn > *:first-child,
+.leadChartsGrid .rightColumn > *:first-child {
+  height: 507px !important;
+  flex: none !important;
 }
 
 .chartsGridHalf .leftColumn > *:first-child,
 .chartsGridHalf .rightColumn > *:first-child {
-  height: 507px;
+  min-height: 507px;
 }
 
 .chartsGridHalf .leftColumn > *:nth-child(2) {
-  height: 422px;
+  min-height: 422px;
 }
 
 .customerBottomGrid .leftColumn > *,
 .customerBottomGrid .rightColumn > * {
-  height: 462px !important;
+  min-height: 462px !important;
 }
 
 .chartCard {

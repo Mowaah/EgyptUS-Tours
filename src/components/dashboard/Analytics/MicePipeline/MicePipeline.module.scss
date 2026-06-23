@@ -1,7 +1,8 @@
 .content {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 24px;
   flex: 1;
   min-height: 0;
@@ -9,10 +10,11 @@
 }
 
 .donutWrapper {
-  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex: 0 0 auto;
+  min-width: 220px;
 }
 
 .stats {
