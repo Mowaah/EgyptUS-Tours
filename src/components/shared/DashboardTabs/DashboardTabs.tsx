@@ -36,7 +36,14 @@ export default function DashboardTabs<T extends string = string>({
           >
             <div className={styles.tabContent}>
               {tab.iconSrc && (
-                <Image src={tab.iconSrc} alt="" width={20} height={20} aria-hidden />
+                <span 
+                  className={styles.tabIcon}
+                  style={{
+                    maskImage: `url(${tab.iconSrc})`,
+                    WebkitMaskImage: `url(${tab.iconSrc})`
+                  }}
+                  aria-hidden 
+                />
               )}
               <span>{tab.label}</span>
             </div>

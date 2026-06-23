@@ -8,17 +8,18 @@ import DashboardTabs from "@/components/shared/DashboardTabs/DashboardTabs";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import DashboardField from "@/components/shared/DashboardField/DashboardField";
 import { DashboardFooter } from "@/components/shared";
+import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
 import { FormSection, FormSpec, UploadDropzone, KeywordsField } from "@/components/dashboard/FormFields";
 import { seoConfigurationSchema, type SEOConfigurationValues } from "./SEOConfigurationSchema";
 import styles from "./SEOConfiguration.module.scss";
 
 const seoTabs = [
-  { id: "home", label: "Home", iconSrc: "/images/dashboard/sidebar/dashboard.svg" },
-  { id: "trips", label: "Trips", iconSrc: "/images/dashboard/sidebar/trips.svg" },
-  { id: "hotels", label: "Hotels", iconSrc: "/images/dashboard/sidebar/hotels.svg" },
-  { id: "transportation", label: "Transportation", iconSrc: "/images/dashboard/sidebar/transportation.svg" },
-  { id: "mice-events", label: "Mice & Events", iconSrc: "/images/dashboard/sidebar/requests.svg" },
-  { id: "b2b", label: "B2B", iconSrc: "/images/dashboard/sidebar/customers.svg" },
+  { id: "home", label: "Home", iconSrc: "/images/dashboard/seo/home.svg" },
+  { id: "trips", label: "Trips", iconSrc: "/images/dashboard/seo/trips.svg" },
+  { id: "hotels", label: "Hotels", iconSrc: "/images/dashboard/seo/hotels.svg" },
+  { id: "transportation", label: "Transportation", iconSrc: "/images/dashboard/seo/transportation.svg" },
+  { id: "mice-events", label: "Mice & Events", iconSrc: "/images/dashboard/seo/mice.svg" },
+  { id: "b2b", label: "B2B", iconSrc: "/images/dashboard/seo/b2b.svg" },
 ];
 
 export default function SEOConfiguration() {
@@ -37,8 +38,11 @@ export default function SEOConfiguration() {
     defaultValues: {},
   });
 
+  const [showSuccess, setShowSuccess] = useState(false);
+
   const onSubmit = (data: SEOConfigurationValues) => {
     console.log("Saved SEO Configuration:", activeTab, data);
+    setShowSuccess(true);
   };
 
   const imageFile = watch("imageFile");
@@ -58,6 +62,11 @@ export default function SEOConfiguration() {
 
   return (
     <form className={styles.container} onSubmit={handleSubmit(onSubmit)}>
+      <DashboardStatusBanner 
+        show={showSuccess} 
+        onClose={() => setShowSuccess(false)} 
+        message="Your changes have been saved successfully." 
+      />
       <div className={styles.tabsContainer}>
         <DashboardTabs
           tabs={seoTabs}
@@ -68,7 +77,7 @@ export default function SEOConfiguration() {
       </div>
 
       <div className={styles.formContainer}>
-        {activeTab === "home" && (
+        {["home", "mice-events", "b2b"].includes(activeTab) && (
           <div className={styles.column}>
           <FormSection title="Upload Image" iconSrc="/images/dashboard/fields/document-upload.svg">
             <FormSpec>
