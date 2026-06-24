@@ -5,6 +5,12 @@
   color: #374151;
 }
 
+.teamPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .pill {
   display: inline-flex;
   align-items: center;
@@ -16,7 +22,6 @@
   font-size: 0.75rem;
   font-weight: 500;
   white-space: nowrap;
-  width: 95px;
 
   i {
     width: 0.375rem;
@@ -27,42 +32,32 @@
   }
 }
 
-.statusQualified {
-  color: #A855F7;
-  background: #F4E9FF;
+.teamOperations {
+  color: #cc5200;
+  background: #fff5ee;
   i {
-    background: #A855F7;
+    background: #cc5200;
   }
 }
 
-.statusClosed {
-  color: #DF3451;
-  background: #FFEDF0;
-  i {
-    background: #DF3451;
-  }
-}
-
-.statusContacted {
-  color: #FF6600;
-  background: #FFF0E6;
-  i {
-    background: #FF6600;
-  }
-}
-
-.statusNew {
-  color: #2971E6;
-  background: #F1F8FF;
-  i {
-    background: #2971E6;
-  }
-}
-
-.statusConverted {
+.teamSales {
   color: #16A34A;
   background: #DCFCE7;
   i {
     background: #16A34A;
+  }
+}
+
+.importedBy {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #4B5563;
+  font-size: 14px;
+  font-weight: 400;
+
+  img {
+    border-radius: 32px;
+    object-fit: cover;
   }
 }

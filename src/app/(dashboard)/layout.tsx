@@ -1,3 +1,4 @@
+import Script from "next/script";
 import { cookies } from "next/headers";
 import { SidebarProvider } from "@/contexts/SidebarContext";
 
@@ -19,19 +20,17 @@ export default async function DashboardLayout({
   return (
     <SidebarProvider initialOpenGroups={initialOpenGroups}>
       <div data-dashboard-layout>{children}</div>
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            try {
-              var saved = localStorage.getItem('sidebarScrollPos');
-              if (saved) {
-                var el = document.getElementById('dashboard-sidebar-scroll');
-                if (el) el.scrollTop = parseInt(saved, 10);
-              }
-            } catch(e) {}
-          `,
-        }}
-      />
+      <Script id="restore-sidebar-scroll">
+        {`
+          try {
+            var saved = localStorage.getItem('sidebarScrollPos');
+            if (saved) {
+              var el = document.getElementById('dashboard-sidebar-scroll');
+              if (el) el.scrollTop = parseInt(saved, 10);
+            }
+          } catch(e) {}
+        `}
+      </Script>
     </SidebarProvider>
   );
 }

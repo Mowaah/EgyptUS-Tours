@@ -11,18 +11,24 @@ import { mockLeads } from "../leadsInquiriesData";
 import { inquiriesColumns, leadRowActions } from "./inquiriesColumns";
 
 const filterOptions = {
-  leadId: ["All", "LD-001", "LD-002", "LD-003"],
-  source: ["All", "B2B", "Contact", "MICE", "Plan Your Trip"],
+  batchId: ["All", "LD-001", "LD-002", "LD-003"],
+  source: ["All", "Phone Call", "Walk-in", "Email", "Whatsup", "Facebook"],
   date: ["All", "2024-03-15", "2024-03-14"],
-  status: ["All", "New", "In Progress", "Converted"],
+  status: ["All", "New", "Closed", "Qualified", "Converted", "Contacted"],
+  assigned: ["All", "Sara M.", "Unassigned"],
 };
 
-export default function InquiriesPanel() {
+interface InquiriesPanelProps {
+  onEditLead?: (lead: any) => void;
+}
+
+export default function InquiriesPanel({ onEditLead }: InquiriesPanelProps) {
   const defaultFilters = {
-    leadId: "All",
+    batchId: "All",
     source: "All",
     date: "All",
     status: "All",
+    assigned: "All",
   };
 
   const [filters, setFilters] = useState(defaultFilters);
@@ -31,10 +37,11 @@ export default function InquiriesPanel() {
   const filteredLeads = useMemo(
     () =>
       mockLeads.filter((lead) => {
-        if (appliedFilters.leadId !== "All" && lead.id !== appliedFilters.leadId) return false;
+        if (appliedFilters.batchId !== "All" && lead.id !== appliedFilters.batchId) return false;
         if (appliedFilters.source !== "All" && lead.source !== appliedFilters.source) return false;
         if (appliedFilters.date !== "All" && lead.date !== appliedFilters.date) return false;
         if (appliedFilters.status !== "All" && lead.status !== appliedFilters.status) return false;
+        if (appliedFilters.assigned !== "All" && lead.agent !== appliedFilters.assigned) return false;
         return true;
       }),
     [appliedFilters]
@@ -51,10 +58,11 @@ export default function InquiriesPanel() {
 
   const filterFields = (
     [
-      ["leadId", "Lead ID", filterOptions.leadId],
+      ["batchId", "Batch ID", filterOptions.batchId],
       ["source", "Source", filterOptions.source],
       ["date", "Date", filterOptions.date],
       ["status", "Status", filterOptions.status],
+      ["assigned", "Assigned", filterOptions.assigned],
     ] as const
   ).map(([id, label, options]) => ({
     id,
@@ -66,8 +74,8 @@ export default function InquiriesPanel() {
 
   return (
     <TablePanel
-      ariaLabel="Inquiries table"
-      title="Inquiries"
+      ariaLabel="Leads table"
+      title="Leads"
       iconSrc="/images/dashboard/inquiries/inquiries.svg"
       headerActions={
         <>
@@ -86,7 +94,11 @@ export default function InquiriesPanel() {
         columns={inquiriesColumns}
         getRowId={(row) => row.id}
         selectable
-        rowActions={leadRowActions}
+        rowActions={(row) => leadRowActions((action, r) => {
+          if (action === "Edit" && onEditLead) {
+            onEditLead(r);
+          }
+        })}
         defaultPageSize={5}
       />
     </TablePanel>

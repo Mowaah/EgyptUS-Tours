@@ -216,9 +216,10 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  width: 200px;
+  min-width: 200px;
+  width: max-content;
   height: 56px;
-  padding: 12px 24px;
+  padding: 12px 32px;
   border-radius: 32px;
   color: $white;
   background: $primary;
@@ -238,9 +239,10 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  width: 152px;
+  min-width: 152px;
+  width: max-content;
   height: 56px;
-  padding: 12px 24px;
+  padding: 12px 32px;
   border-radius: 32px;
   color: #374151;
   background: #FFFFFF;
@@ -297,13 +299,17 @@
 
   .primaryActionButton {
     height: 3rem;
-    width: 160px;
+    min-width: 160px;
+    width: max-content;
+    padding: 0 24px;
     font-size: 14px;
   }
 
   .secondaryActionButton {
     height: 3rem;
-    width: 130px;
+    min-width: 130px;
+    width: max-content;
+    padding: 0 24px;
     font-size: 14px;
   }
 }

@@ -28,10 +28,10 @@ const pageCopyByPath: Record<string, PageCopy> = {
     breadcrumbTrail: [],
   },
   "/dashboard/leads": {
-    title: "Leads & Inquiries",
+    title: "Leads Management",
     subtitle: "Track and manage all incoming customer inquiries.",
-    breadcrumbTrail: [{ label: "Leads & Inquiries" }],
-    primaryAction: { label: "Add Lead" },
+    breadcrumbTrail: [{ label: "Home" }, { label: "Leads Management" }],
+    primaryAction: { label: "Add New Lead", iconSrc: "/images/dashboard/navbar/add-circle.svg" },
   },
   "/dashboard/settings/user-management": {
     title: "User Management",

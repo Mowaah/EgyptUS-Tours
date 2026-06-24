@@ -107,7 +107,6 @@ function CustomerProfileContent({ customerId }: CustomerProfileProps) {
           </div>
         </DashboardNavbar>
 
-        <div className={styles.tabsWrapper}>
           <DashboardTabs 
             tabs={[
               { id: "overview", label: "Overview" },
@@ -119,7 +118,6 @@ function CustomerProfileContent({ customerId }: CustomerProfileProps) {
             onTabChange={handleTabChange}
             ariaLabel="Customer profile sections"
           />
-        </div>
 
         {activeTab === "overview" && <CustomerOverview />}
         {activeTab === "booking-history" && <BookingHistoryPanel />}

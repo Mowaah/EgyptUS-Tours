@@ -4,6 +4,10 @@
   position: relative;
   width: auto;
   flex-shrink: 0;
+
+  &.wrapperGhost {
+    position: static;
+  }
 }
 
 .trigger {
@@ -45,6 +49,26 @@
     flex-shrink: 0;
     margin-left: 2px;
     display: block;
+  }
+
+  &.ghost {
+    border: none;
+    background: transparent;
+    padding: 0;
+    height: auto;
+    
+    &:focus,
+    &.open {
+      border: none;
+      box-shadow: none;
+    }
+    
+    .dialSpan {
+      color: #9CA3AF;
+      font-weight: 400;
+      font-size: 14px;
+      letter-spacing: 0.01em;
+    }
   }
 }
 

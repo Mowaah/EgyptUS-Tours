@@ -10,9 +10,10 @@ const PHONE_CODES = COUNTRIES;
 interface PhonePrefixSelectProps {
   phoneValue?: string;
   onPhoneChange?: (val: string) => void;
+  variant?: "default" | "ghost";
 }
 
-export default function PhonePrefixSelect({ phoneValue = "", onPhoneChange }: PhonePrefixSelectProps) {
+export default function PhonePrefixSelect({ phoneValue = "", onPhoneChange, variant = "default" }: PhonePrefixSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState(PHONE_CODES[0]);
   const [typedChars, setTypedChars] = useState("");
@@ -106,11 +107,14 @@ export default function PhonePrefixSelect({ phoneValue = "", onPhoneChange }: Ph
     }
   };
 
+  const triggerClass = `${styles.trigger} ${isOpen ? styles.open : ""} ${variant === "ghost" ? styles.ghost : ""}`;
+  const wrapperClass = `${styles.wrapper} ${variant === "ghost" ? styles.wrapperGhost : ""}`;
+
   return (
-    <div className={styles.wrapper} ref={containerRef} onKeyDown={handleKeyDown}>
+    <div className={wrapperClass} ref={containerRef} onKeyDown={handleKeyDown}>
       <button
         type="button"
-        className={`${styles.trigger} ${isOpen ? styles.open : ""}`}
+        className={triggerClass}
         onClick={() => setIsOpen(!isOpen)}
       >
         <img
@@ -118,6 +122,7 @@ export default function PhonePrefixSelect({ phoneValue = "", onPhoneChange }: Ph
           alt={selected.code}
           className={styles.flag}
         />
+        <span className={styles.dialSpan}>{selected.dial}</span>
         <img
           src="/images/arrows/chevron-down2.svg"
           alt=""
