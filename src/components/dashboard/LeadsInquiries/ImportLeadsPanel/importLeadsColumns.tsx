@@ -73,8 +73,27 @@ export const importLeadsColumns: DataTableColumn<ImportLeadRow>[] = [
 
 import type { DataTableRowAction } from "@/components/dashboard/DataTable";
 
-export const importRowActions = (): DataTableRowAction<ImportLeadRow>[] => [
-  { label: "View", iconSrc: "/images/dashboard/view.svg" },
-  { label: "Reassign Leads", iconSrc: "/images/dashboard/assign.svg" },
-  { label: "Delete Batch", iconSrc: "/images/dashboard/delete.svg", variant: "danger" },
+export const importRowActions = (
+  handlers?: {
+    onView?: (row: ImportLeadRow) => void;
+    onReassign?: (row: ImportLeadRow) => void;
+    onDelete?: (row: ImportLeadRow) => void;
+  }
+): DataTableRowAction<ImportLeadRow>[] => [
+  { 
+    label: "View", 
+    iconSrc: "/images/dashboard/view.svg",
+    onClick: handlers?.onView 
+  },
+  { 
+    label: "Reassign Leads", 
+    iconSrc: "/images/dashboard/assign.svg",
+    onClick: handlers?.onReassign 
+  },
+  { 
+    label: "Delete Batch", 
+    iconSrc: "/images/dashboard/delete.svg", 
+    variant: "danger",
+    onClick: handlers?.onDelete
+  },
 ];

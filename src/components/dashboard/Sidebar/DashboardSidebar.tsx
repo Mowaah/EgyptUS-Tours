@@ -17,7 +17,7 @@ interface NavItem {
 
 const navRoutes: Record<string, string> = {
   Dashboard: "/dashboard",
-  "Leads & Inquiries": "/dashboard/leads",
+  "Lead Management": "/dashboard/leads",
   Customers: "/dashboard/customers",
   Reviews: "/dashboard/reviews",
   "User Management": "/dashboard/settings/user-management",
@@ -39,7 +39,7 @@ const navRoutes: Record<string, string> = {
 
 const navItems: NavItem[] = [
   { label: "Dashboard" },
-  { label: "Leads & Inquiries" },
+  { label: "Lead Management" },
   {
     label: "Bookings",
     children: [
@@ -113,6 +113,7 @@ const toKebabCase = (value: string) =>
 const iconNameByLabel: Partial<Record<string, string>> = {
   "Privacy Policy": "privacy",
   "FAQ Management": "faq",
+  "Lead Management": "leads-inquiries",
 };
 
 function DashboardIcon({

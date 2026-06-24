@@ -10,6 +10,8 @@ import {
 } from "@/components/dashboard/TablePanel";
 import { mockLeads } from "../leadsInquiriesData";
 import { inquiriesColumns, leadRowActions } from "./inquiriesColumns";
+import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 
 const filterOptions = {
   batchId: ["All", "LD-001", "LD-002", "LD-003"],
@@ -20,10 +22,13 @@ const filterOptions = {
 };
 
 interface InquiriesPanelProps {
+  searchQuery?: string;
+  onClearSearch?: () => void;
   onEditLead?: (lead: any) => void;
+  onAddLead?: () => void;
 }
 
-export default function InquiriesPanel({ onEditLead }: InquiriesPanelProps) {
+export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEditLead, onAddLead }: InquiriesPanelProps) {
   const router = useRouter();
   
   const defaultFilters = {
@@ -40,6 +45,14 @@ export default function InquiriesPanel({ onEditLead }: InquiriesPanelProps) {
   const filteredLeads = useMemo(
     () =>
       mockLeads.filter((lead) => {
+        if (searchQuery) {
+          const lowerQuery = searchQuery.toLowerCase();
+          if (!lead.name.toLowerCase().includes(lowerQuery) &&
+              !lead.email.toLowerCase().includes(lowerQuery) &&
+              !lead.id.toLowerCase().includes(lowerQuery)) {
+            return false;
+          }
+        }
         if (appliedFilters.batchId !== "All" && lead.id !== appliedFilters.batchId) return false;
         if (appliedFilters.source !== "All" && lead.source !== appliedFilters.source) return false;
         if (appliedFilters.date !== "All" && lead.date !== appliedFilters.date) return false;
@@ -47,7 +60,7 @@ export default function InquiriesPanel({ onEditLead }: InquiriesPanelProps) {
         if (appliedFilters.assigned !== "All" && lead.agent !== appliedFilters.assigned) return false;
         return true;
       }),
-    [appliedFilters]
+    [appliedFilters, searchQuery]
   );
 
   const resetFilters = () => {
@@ -74,6 +87,24 @@ export default function InquiriesPanel({ onEditLead }: InquiriesPanelProps) {
     options,
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
+
+  if (mockLeads.length > 0 && filteredLeads.length === 0) {
+    return (
+      <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
+    );
+  }
+
+  if (mockLeads.length === 0) {
+    return (
+      <DashboardEmptyState
+        title="No Leads Yet"
+        subtitle="Leads will appear here once they are added or imported."
+        actionLabel="Add New Lead"
+        onAction={onAddLead}
+        imageSrc="/images/dashboard/empty-folder.svg"
+      />
+    );
+  }
 
   return (
     <TablePanel

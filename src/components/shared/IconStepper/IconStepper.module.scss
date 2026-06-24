@@ -1,0 +1,86 @@
+@use "@/styles/variables" as *;
+
+.stepper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 8px 0px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 130px;
+}
+
+.stepIconWrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.stepIconWrapActive {
+  background: #2971E6;
+  color: #FFFFFF;
+}
+
+.stepIconWrapCompleted {
+  background: #EBF1FD; // Optional: A light blue for completed?
+  /* The design didn't explicitly show completed vs active vs pending. 
+     We'll just use active for current, pending for future, and maybe active for past? */
+  background: #2971E6;
+  color: #FFFFFF;
+}
+
+.stepIconWrapPending {
+  background: #F8F9FB;
+  color: #94A3B8;
+}
+
+.stepLabel {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  text-align: center;
+}
+
+.stepLabelActive {
+  color: #0E2851;
+  font-size: 14px;
+}
+
+.stepLabelCompleted {
+  color: #0E2851;
+}
+
+.stepLabelPending {
+  color: #94A3B8;
+}
+
+.stepDividerWrap {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 4px;
+}
+
+.stepDivider {
+  width: 60px;
+  height: 4px;
+  background: #ECECF0;
+  border-radius: 4px;
+}
+
+.stepDividerActive {
+  background: #2971E6;
+}
+
+.stepDividerCompleted {
+  background: #2971E6;
+}

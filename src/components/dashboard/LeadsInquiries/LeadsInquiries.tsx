@@ -4,25 +4,29 @@ import { useState } from "react";
 import DashboardTabs from "@/components/shared/DashboardTabs/DashboardTabs";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
+import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { InquiriesPanel } from "./InquiriesPanel";
 import { ImportLeadsPanel } from "./ImportLeadsPanel/ImportLeadsPanel";
 import { LeadSummaryGrid } from "./LeadSummaryGrid";
 import { AddNewLeadModal } from "./AddNewLeadModal";
+import { ImportLeadsModal } from "./ImportLeadsPanel/ImportLeadsModal";
 import styles from "./LeadsInquiries.module.scss";
 
 export default function LeadsInquiries() {
   const [activeTab, setActiveTab] = useState("leads");
   const [isAddLeadModalOpen, setIsAddLeadModalOpen] = useState(false);
-  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isImportSuccessOpen, setIsImportSuccessOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const [editingLead, setEditingLead] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handlePrimaryAction = () => {
     if (activeTab === "leads") {
       setEditingLead(null);
       setIsAddLeadModalOpen(true);
     } else if (activeTab === "import") {
-      // Logic for importing lead CSV would go here
-      console.log("Import Lead CSV clicked");
+      setIsImportModalOpen(true);
     }
   };
 
@@ -53,13 +57,15 @@ export default function LeadsInquiries() {
       <DashboardNavbar 
         primaryAction={primaryActionConfig} 
         onPrimaryAction={handlePrimaryAction} 
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
       
       <div className={styles.page}>
         <DashboardStatusBanner 
-          show={showSuccessBanner} 
-          onClose={() => setShowSuccessBanner(false)} 
-          message={editingLead ? "The lead has been updated successfully" : "The new lead has been added successfully"} 
+          show={!!successMessage} 
+          onClose={() => setSuccessMessage("")} 
+          message={successMessage} 
           className={styles.toastBanner}
         />
         
@@ -75,12 +81,23 @@ export default function LeadsInquiries() {
         {activeTab === "leads" && (
           <>
             <LeadSummaryGrid />
-            <InquiriesPanel onEditLead={handleEditLead} />
+            <InquiriesPanel 
+              searchQuery={searchQuery}
+              onClearSearch={() => setSearchQuery("")}
+              onEditLead={handleEditLead} 
+              onAddLead={() => setIsAddLeadModalOpen(true)}
+            />
           </>
         )}
         
         {activeTab === "import" && (
-          <ImportLeadsPanel />
+          <ImportLeadsPanel 
+            searchQuery={searchQuery}
+            onClearSearch={() => setSearchQuery("")}
+            onReassignSuccess={() => setSuccessMessage("The lead has been reassigned successfully")}
+            onDeleteSuccess={() => setSuccessMessage("The selected batches have been deleted successfully")}
+            onImportLead={() => setIsImportModalOpen(true)}
+          />
         )}
       </div>
 
@@ -91,9 +108,36 @@ export default function LeadsInquiries() {
         initialData={editingLead || undefined}
         onSuccess={() => {
           setIsAddLeadModalOpen(false);
-          setShowSuccessBanner(true);
+          setSuccessMessage(editingLead ? "The lead has been updated successfully" : "The new lead has been added successfully");
         }}
       />
+
+      <ImportLeadsModal 
+        open={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onSuccess={() => {
+          setIsImportModalOpen(false);
+          setIsImportSuccessOpen(true);
+        }}
+      />
+
+      {isImportSuccessOpen && (
+        <SuccessModal
+          title="Leads Assigned Successfully"
+          message="480 leads have been assigned successfully."
+          buttonText="Close"
+          primaryButtonText="Go to Leads"
+          onClose={() => setIsImportSuccessOpen(false)}
+          onPrimaryClick={() => {
+            setIsImportSuccessOpen(false);
+            setActiveTab("leads");
+          }}
+          metadata={[
+            { label: "Assigned To", value: "Sales & Operation", valueColor: "#0E2851" },
+            { label: "Team Members", value: "4", valueColor: "#0E2851" }
+          ]}
+        />
+      )}
     </>
   );
 }

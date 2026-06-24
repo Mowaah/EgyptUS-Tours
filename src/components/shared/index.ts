@@ -92,3 +92,4 @@ export { default as ModalHeader } from "./ModalHeader/ModalHeader";
 export { default as ModalFooter } from "./ModalFooter/ModalFooter";
 export { default as RichTextEditor } from "./RichTextEditor/RichTextEditor";
 export { DashboardFooter } from "./DashboardFooter/DashboardFooter";
+export { IconStepper } from "./IconStepper/IconStepper";
