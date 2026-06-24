@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/dashboard/DataTable";
 import {
   TablePanel,
@@ -23,6 +24,8 @@ interface InquiriesPanelProps {
 }
 
 export default function InquiriesPanel({ onEditLead }: InquiriesPanelProps) {
+  const router = useRouter();
+  
   const defaultFilters = {
     batchId: "All",
     source: "All",
@@ -97,6 +100,8 @@ export default function InquiriesPanel({ onEditLead }: InquiriesPanelProps) {
         rowActions={(row) => leadRowActions((action, r) => {
           if (action === "Edit" && onEditLead) {
             onEditLead(r);
+          } else if (action === "View") {
+            router.push(`/dashboard/leads/${r.id}`);
           }
         })}
         defaultPageSize={5}

@@ -9,6 +9,7 @@ interface ModalHeaderProps {
   subtitle?: string;
   onClose: () => void;
   id?: string;
+  isDanger?: boolean;
 }
 
 function CloseIcon() {
@@ -26,10 +27,11 @@ export default function ModalHeader({
   subtitle,
   onClose,
   id,
+  isDanger = false,
 }: ModalHeaderProps) {
   return (
     <header className={styles.header}>
-      <div className={styles.headerIcon} aria-hidden>
+      <div className={`${styles.headerIcon} ${isDanger ? styles.dangerIcon : ""}`} aria-hidden>
         <Image src={iconSrc} alt="" width={20} height={20} />
       </div>
       <div className={styles.headerText}>

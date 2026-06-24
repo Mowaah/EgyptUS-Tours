@@ -9,6 +9,7 @@ import CustomerOverview from "./CustomerOverview";
 import BookingHistoryPanel from "./BookingHistory/BookingHistoryPanel";
 import CustomTripRequestsPanel from "./CustomTripRequests/CustomTripRequestsPanel";
 import { ReviewsPanel } from "@/components/dashboard/Reviews/ReviewsPanel/ReviewsPanel";
+import ProfileHeader from "@/components/shared/ProfileHeader/ProfileHeader";
 import pageStyles from "@/app/(dashboard)/dashboard/page.module.scss";
 import styles from "./CustomerProfile.module.scss";
 
@@ -64,47 +65,40 @@ function CustomerProfileContent({ customerId }: CustomerProfileProps) {
             { label: customer.name }
           ]}
         >
-          <div className={styles.headerContent}>
-            <div className={styles.headerInfo}>
-              <div className={styles.titleRow}>
-                <h1>{customer.name} - {customer.id}</h1>
-                <span className={`${styles.pill} ${styles.statusActive}`}>
-                  <i aria-hidden />
-                  {customer.status}
-                </span>
-              </div>
-              <div className={styles.subtitleRow}>
-                <span>{customer.email}</span>
-                <span className={styles.dot}>•</span>
-                <span>{customer.phone}</span>
-                <span className={styles.dot}>•</span>
-                <span>{customer.country}</span>
-              </div>
-            </div>
+          <ProfileHeader
+            title={`${customer.name} - ${customer.id}`}
+            pillLabel={customer.status}
+            pillVariant="green"
+            subtitleElements={[
+              customer.email,
+              customer.phone,
+              customer.country,
+            ]}
+            actionButtons={
+              <>
+                <label className={styles.searchBox}>
+                  <Image
+                    src="/images/dashboard/navbar/search.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                    aria-hidden
+                  />
+                  <input type="search" placeholder="Search ........" />
+                </label>
 
-            <div className={styles.headerActions}>
-              <label className={styles.searchBox}>
-                <Image
-                  src="/images/dashboard/navbar/search.svg"
-                  alt=""
-                  width={24}
-                  height={24}
-                  aria-hidden
-                />
-                <input type="search" placeholder="Search ........" />
-              </label>
+                <button className={styles.editButton} type="button">
+                  <Image src="/images/dashboard/edit.svg" alt="" width={20} height={20} />
+                  Edit Profile
+                </button>
 
-              <button className={styles.editButton} type="button">
-                <Image src="/images/dashboard/edit.svg" alt="" width={20} height={20} />
-                Edit Profile
-              </button>
-
-              <button className={styles.blockButton} type="button">
-                <Image src="/images/dashboard/block.svg" alt="" width={20} height={20} />
-                Block User
-              </button>
-            </div>
-          </div>
+                <button className={styles.blockButton} type="button">
+                  <Image src="/images/dashboard/block.svg" alt="" width={20} height={20} />
+                  Block User
+                </button>
+              </>
+            }
+          />
         </DashboardNavbar>
 
           <DashboardTabs 

@@ -50,3 +50,12 @@
     cursor: not-allowed;
   }
 }
+
+.dangerBtn {
+  color: #B91C1C;
+  background: #FEE2E2;
+
+  &:hover:not(:disabled) {
+    background: #FECACA;
+  }
+}

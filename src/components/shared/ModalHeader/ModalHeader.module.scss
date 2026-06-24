@@ -23,6 +23,16 @@
   border: 8px solid #F9FAFB;
 }
 
+.dangerIcon {
+  background: #FEF2F2; // $background-danger
+  color: #B91C1C; // $status-danger-dark
+  border: 8px solid #FEF2F2; // Wait, screenshot says border #FFFBFB and background #FFECEC.
+  // Actually, I'll use design tokens. $background-danger-light is #FEE2E2.
+  // I will just use the ones from the screenshot snippet to be exact.
+  background: #FFECEC;
+  border-color: #FFFBFB;
+}
+
 .headerText {
   flex: 1;
   min-width: 0;
