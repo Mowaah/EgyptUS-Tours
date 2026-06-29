@@ -2,7 +2,7 @@
 
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import TablePanel from "@/components/dashboard/TablePanel/TablePanel";
-import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
+import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import styles from "./ContentGrid.module.scss";
 

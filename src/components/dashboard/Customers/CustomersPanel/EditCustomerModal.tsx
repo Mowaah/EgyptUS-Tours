@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { ModalHeader, ModalFooter, DashboardField } from "@/components/shared";
-import dashboardStyles from "@/components/shared/DashboardField/DashboardField.module.scss";
+import { ModalHeader, ModalFooter, DashboardField } from "@/components/dashboard/shared";;
+import dashboardStyles from "@/components/dashboard/shared/DashboardField/DashboardField.module.scss";
 import styles from "./EditCustomerModal.module.scss";
 
 interface CustomerFormData {

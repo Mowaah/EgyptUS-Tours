@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { LanguageTabs, type Language, ModalHeader, ModalFooter } from "@/components/shared";
+import { LanguageTabs, type Language } from "@/components/shared";
+import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";;
 import styles from "./FaqFormModal.module.scss";
 
 interface FaqFormModalProps {

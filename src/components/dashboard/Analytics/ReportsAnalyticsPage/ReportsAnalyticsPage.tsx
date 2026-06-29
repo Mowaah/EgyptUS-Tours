@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
-import DashboardTabs from "@/components/shared/DashboardTabs/DashboardTabs";
-import RevenueByDestinationChart from "@/components/shared/RevenueByDestinationChart/RevenueByDestinationChart";
-import FleetUtilizationChart from "@/components/shared/FleetUtilizationChart/FleetUtilizationChart";
+import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/DashboardTabs";
+import RevenueByDestinationChart from "@/components/dashboard/shared/RevenueByDestinationChart/RevenueByDestinationChart";
+import FleetUtilizationChart from "@/components/dashboard/shared/FleetUtilizationChart/FleetUtilizationChart";
 import BookingsByServiceChart from "../BookingsByServiceChart/BookingsByServiceChart";
 import HotelOccupancyChart from "../HotelOccupancyChart/HotelOccupancyChart";
 import ServiceRevenueChart from "../ServiceRevenueChart/ServiceRevenueChart";
@@ -43,12 +42,11 @@ const tabs = [
 
 export default function ReportsAnalyticsPage() {
   return (
-    <main className={pageStyles.page}>
-      <DashboardSidebar />
-      <Suspense fallback={<section className={pageStyles.content} aria-label="Reports & Analytics content" />}>
+    <>
+      <Suspense fallback={<div aria-label="Reports loading" />}>
         <ReportsAnalyticsContent />
       </Suspense>
-    </main>
+    </>
   );
 }
 
@@ -66,7 +64,7 @@ function ReportsAnalyticsContent() {
   };
 
   return (
-    <section className={pageStyles.content} aria-label="Reports & Analytics content">
+    <>
       <DashboardNavbar
           title="Reports & Analytics"
           subtitle="Comprehensive reports across customers, operations, sales, and leads — plus a custom builder."
@@ -194,6 +192,6 @@ function ReportsAnalyticsContent() {
             <MiceBookingsDetail />
           </div>
         )}
-      </section>
+    </>
   );
 }

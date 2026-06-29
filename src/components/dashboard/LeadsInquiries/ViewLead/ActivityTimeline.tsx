@@ -1,20 +1,5 @@
 import React from "react";
-import Image from "next/image";
-import styles from "./ViewLead.module.scss";
-
-type MilestoneStatus = "completed" | "pending";
-
-interface Milestone {
-  id: string;
-  title: string;
-  time?: string;
-  description: string;
-  status: MilestoneStatus;
-}
-
-interface ActivityTimelineProps {
-  milestones?: Milestone[];
-}
+import { ActivityTimeline, Milestone } from "@/components/dashboard/shared";;
 
 const defaultMilestones: Milestone[] = [
   {
@@ -61,52 +46,10 @@ const defaultMilestones: Milestone[] = [
   },
 ];
 
-export default function ActivityTimeline({ milestones = defaultMilestones }: ActivityTimelineProps) {
-  return (
-    <div className={styles.card}>
-      <div className={styles.cardTitle}>
-        <div className={styles.titleIcon}>
-          <Image
-            src="/images/dashboard/inquiries/activity_timeline.svg"
-            alt=""
-            width={20}
-            height={20}
-            aria-hidden
-          />
-        </div>
-        Activity Timeline
-      </div>
+interface ActivityTimelineProps {
+  milestones?: Milestone[];
+}
 
-      <div className={styles.timeline}>
-        <div className={styles.timelineLine} />
-        {milestones.map((milestone) => (
-          <div 
-            key={milestone.id} 
-            className={`${styles.milestone} ${milestone.status === "pending" ? styles.milestonePending : ""}`}
-          >
-            <div className={`${styles.iconWrapper} ${milestone.status === "completed" ? styles.iconCompleted : styles.iconPending}`}>
-              {milestone.status === "completed" ? (
-                <Image
-                  src="/images/check-white.svg"
-                  alt="Completed"
-                  width={18}
-                  height={18}
-                />
-              ) : (
-                <div className={styles.dot} />
-              )}
-            </div>
-            
-            <div className={styles.milestoneContent}>
-              <div className={styles.milestoneHeader}>
-                <span className={styles.milestoneTitle}>{milestone.title}</span>
-                <span className={styles.milestoneTime}>{milestone.time}</span>
-              </div>
-              <p className={styles.milestoneDesc}>{milestone.description}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+export default function LeadActivityTimeline({ milestones = defaultMilestones }: ActivityTimelineProps) {
+  return <ActivityTimeline milestones={milestones} />;
 }

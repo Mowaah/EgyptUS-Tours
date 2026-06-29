@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { DashboardField, DashboardFooter, PasswordToggleButton } from "@/components/shared";
+import { PasswordToggleButton } from "@/components/shared";
+import { DashboardField, DashboardFooter } from "@/components/dashboard/shared";;
 import styles from "./SecurityTab.module.scss";
 
 export function SecurityTab() {

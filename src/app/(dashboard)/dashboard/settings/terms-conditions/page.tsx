@@ -1,12 +1,11 @@
 "use client";
 
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
 import ContentGrid, { type ContentItem } from "@/components/dashboard/ContentGrid/ContentGrid";
 import DocumentViewModal from "@/components/dashboard/DocumentViewModal/DocumentViewModal";
 import DocumentFormModal from "@/components/dashboard/DocumentFormModal/DocumentFormModal";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
-import DashboardConfirmationModal from "@/components/shared/DashboardConfirmationModal/DashboardConfirmationModal";
+import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import { useContentManager } from "@/hooks/useContentManager";
 import styles from "../../page.module.scss";
 
@@ -45,10 +44,9 @@ export default function TermsConditionsPage() {
   });
 
   return (
-    <main className={styles.page}>
-      <DashboardSidebar />
-
-      <section className={styles.content} aria-label="Terms & Conditions Management">
+    <>
+      
+      
         <DashboardNavbar onPrimaryAction={handleAdd} />
         <ContentGrid
           ref={contentGridRef}
@@ -66,7 +64,7 @@ export default function TermsConditionsPage() {
           emptyStateSubtitle="Add your first terms & conditions document to get started."
           emptyStateActionLabel="Add New Terms"
         />
-      </section>
+      
 
       {/* View modal */}
       <DocumentViewModal
@@ -142,6 +140,6 @@ export default function TermsConditionsPage() {
         onClose={() => setDeleteItem(null)}
         onConfirm={confirmDelete}
       />
-    </main>
+    </>
   );
 }

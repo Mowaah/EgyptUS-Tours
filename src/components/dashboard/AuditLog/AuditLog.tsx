@@ -9,7 +9,7 @@ import {
   TablePanelFilterBar,
   TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
-import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/shared";
+import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";;
 import { mockAuditLogs } from "./auditLogData";
 import type { AuditLogEntry } from "./auditLogData";
 import styles from "./AuditLog.module.scss";

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { LanguageTabs, type Language, ModalHeader, ModalFooter } from "@/components/shared";
+import { LanguageTabs, type Language } from "@/components/shared";
+import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";;
 import styles from "./DocumentViewModal.module.scss";
 
 interface DocumentViewModalProps {

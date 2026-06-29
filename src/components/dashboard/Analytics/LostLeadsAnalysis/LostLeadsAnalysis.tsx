@@ -1,6 +1,6 @@
 "use client";
 
-import RoundedDonutChart from "@/components/shared/RoundedDonutChart/RoundedDonutChart";
+import RoundedDonutChart from "@/components/dashboard/shared/RoundedDonutChart/RoundedDonutChart";
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
 import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 import parentStyles from "../ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";

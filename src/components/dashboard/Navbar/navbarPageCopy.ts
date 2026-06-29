@@ -33,6 +33,13 @@ const pageCopyByPath: Record<string, PageCopy> = {
     breadcrumbTrail: [{ label: "Home" }, { label: "Leads Management" }],
     primaryAction: { label: "Add New Lead", iconSrc: "/images/dashboard/navbar/add-circle.svg" },
   },
+  "/dashboard/bookings/trips": {
+    title: "Trips",
+    subtitle: "Monitor and control trips and accommodations",
+    breadcrumbTrail: [{ label: "Home" }, { label: "Bookings" }, { label: "Trips" }],
+    searchPlaceholder: "Search bookings, customers...",
+    primaryAction: { label: "New Booking", iconSrc: "/images/dashboard/navbar/add-circle.svg" },
+  },
   "/dashboard/settings/user-management": {
     title: "User Management",
     subtitle: "Manage and organize all system users, control access levels",

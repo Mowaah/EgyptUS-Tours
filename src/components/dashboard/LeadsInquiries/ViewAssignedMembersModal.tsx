@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import Image from "next/image";
-import { ModalHeader, ModalFooter } from "@/components/shared";
+import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";;
 import formStyles from "@/components/dashboard/FormFields/FormFields.module.scss";
 import styles from "./ViewAssignedMembersModal.module.scss";
 

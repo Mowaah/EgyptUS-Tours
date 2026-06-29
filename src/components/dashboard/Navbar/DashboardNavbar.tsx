@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import pageCopyByPath, { type BreadcrumbSegment } from "./navbarPageCopy";
 import styles from "./DashboardNavbar.module.scss";
 
@@ -65,6 +65,22 @@ export default function DashboardNavbar({
   searchPlaceholder,
 }: DashboardNavbarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const handleSearchChange = (val: string) => {
+    if (onSearchChange) {
+      onSearchChange(val);
+      return;
+    }
+    const params = new URLSearchParams(searchParams.toString());
+    if (val) {
+      params.set("search", val);
+    } else {
+      params.delete("search");
+    }
+    router.replace(`${pathname}?${params.toString()}`);
+  };
 
   const pageCopy = useMemo(() => {
     if (pathname && pageCopyByPath[pathname]) {
@@ -179,8 +195,8 @@ export default function DashboardNavbar({
                   <input 
                     type="search" 
                     placeholder={searchPlaceholderStr} 
-                    value={searchQuery}
-                    onChange={(e) => onSearchChange?.(e.target.value)}
+                    value={searchQuery ?? searchParams.get("search") ?? ""}
+                    onChange={(e) => handleSearchChange(e.target.value)}
                   />
                 </label>
               )}

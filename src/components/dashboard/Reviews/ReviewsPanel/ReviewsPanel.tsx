@@ -11,8 +11,8 @@ import { reviewsColumns, reviewRowActions, adminTestimonialsColumns, adminTestim
 import ViewReviewModal from "./ViewReviewModal";
 import ChangeStatusModal from "./ChangeStatusModal";
 import AddTestimonialModal from "./AddTestimonialModal";
-import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
-import DashboardConfirmationModal from "@/components/shared/DashboardConfirmationModal/DashboardConfirmationModal";
+import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
+import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import styles from "./ReviewsPanel.module.scss";

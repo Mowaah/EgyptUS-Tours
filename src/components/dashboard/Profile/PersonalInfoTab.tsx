@@ -3,7 +3,7 @@
 import { useState, useRef, ChangeEvent } from "react";
 import Image from "next/image";
 import DeleteIcon from "@public/images/dashboard/delete.svg";
-import { DashboardField, DashboardFooter } from "@/components/shared";
+import { DashboardField, DashboardFooter } from "@/components/dashboard/shared";;
 import styles from "./PersonalInfoTab.module.scss";
 
 export function PersonalInfoTab() {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import DashboardField from "@/components/shared/DashboardField/DashboardField";
-import { ModalHeader, ModalFooter } from "@/components/shared";
+import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
+import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";;
 import styles from "./ReassignLeadModal.module.scss";
 
 interface ReassignLeadModalProps {

@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { UploadDropzone } from "@/components/dashboard/FormFields/UploadDropzone";
-import DashboardField from "@/components/shared/DashboardField/DashboardField";
-import { ModalHeader, ModalFooter, IconStepper } from "@/components/shared";
+import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
+import { IconStepper } from "@/components/shared";
+import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";;
 import styles from "./ImportLeadsModal.module.scss";
 
 interface ImportLeadsModalProps {

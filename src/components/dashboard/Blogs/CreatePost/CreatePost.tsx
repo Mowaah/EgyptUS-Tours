@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
-import DashboardField from "@/components/shared/DashboardField/DashboardField";
+import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import {
   FormSection,
   FormSpec,
@@ -16,7 +16,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CustomDatePicker from "@/components/shared/CustomDatePicker/CustomDatePicker";
 import CreateCategoryModal from "./CreateCategoryModal/CreateCategoryModal";
-import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
+import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { createPostSchema, type CreatePostValues } from "./CreatePostSchema";
 import styles from "./CreatePost.module.scss";

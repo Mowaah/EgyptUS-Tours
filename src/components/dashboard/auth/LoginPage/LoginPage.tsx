@@ -3,7 +3,8 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { DashboardField, PasswordToggleButton } from "@/components/shared";
+import { PasswordToggleButton } from "@/components/shared";
+import { DashboardField } from "@/components/dashboard/shared";;
 import { validateEmail, validatePassword } from "@/utils/validation";
 import AuthSubmitButton from "../AuthSubmitButton/AuthSubmitButton";
 import DashboardAuthLayout from "../DashboardAuthLayout/DashboardAuthLayout";

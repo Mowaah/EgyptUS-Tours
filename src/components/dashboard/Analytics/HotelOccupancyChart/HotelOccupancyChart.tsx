@@ -1,7 +1,7 @@
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
 import parentStyles from "../ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
 import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
-import DoubleBarChart from "@/components/shared/DoubleBarChart/DoubleBarChart";
+import DoubleBarChart from "@/components/dashboard/shared/DoubleBarChart/DoubleBarChart";
 
 const hotelData = [
   { label: "Grand Hyatt Dubai", value1: 48, value2: 46 },

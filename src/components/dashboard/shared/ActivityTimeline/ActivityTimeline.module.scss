@@ -1,0 +1,126 @@
+.card {
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+}
+
+.cardTitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: 24px;
+  color: #0E2851;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.titleIcon {
+  width: 40px;
+  height: 40px;
+  background: #F8F9FB;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  position: relative;
+  padding-top: 12px;
+}
+
+.timelineLine {
+  position: absolute;
+  width: 2px;
+  left: 11px;
+  top: 8px;
+  bottom: 8px;
+  background: #F6F6F6;
+  z-index: 0;
+}
+
+.milestone {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.milestonePending {
+  opacity: 0.5;
+}
+
+.iconWrapper {
+  width: 24px;
+  height: 24px;
+  border-radius: 9999px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.iconCompleted {
+  background: #FF6600;
+  box-shadow: 0px 0px 0px 4px rgba(170, 48, 0, 0.1);
+}
+
+.iconPending {
+  background: #DDDDDD;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #565E71;
+  border-radius: 9999px;
+}
+
+.milestoneContent {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 4px;
+}
+
+.milestoneHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.milestoneTitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 22px;
+  color: #0E2851;
+}
+
+.milestoneTime {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: #565E71;
+  text-align: right;
+}
+
+.milestoneDesc {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 12px;
+  color: #565E71;
+  margin: 0;
+}

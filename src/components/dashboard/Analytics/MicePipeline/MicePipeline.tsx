@@ -2,7 +2,7 @@
 
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
 import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
-import RoundedDonutChart from "@/components/shared/RoundedDonutChart/RoundedDonutChart";
+import RoundedDonutChart from "@/components/dashboard/shared/RoundedDonutChart/RoundedDonutChart";
 import parentStyles from "../ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
 import styles from "./MicePipeline.module.scss";
 

@@ -2,7 +2,7 @@
 
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
 import parentStyles from "../ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
-import HatchedBarChart from "@/components/shared/HatchedBarChart/HatchedBarChart";
+import HatchedBarChart from "@/components/dashboard/shared/HatchedBarChart/HatchedBarChart";
 import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 
 export default function ServiceRevenueChart() {

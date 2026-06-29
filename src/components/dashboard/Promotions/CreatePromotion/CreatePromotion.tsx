@@ -6,14 +6,14 @@ import Image from "next/image";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
-import DashboardField from "@/components/shared/DashboardField/DashboardField";
+import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import {
   FormSection,
   FormSpec,
   ToggleField,
 } from "@/components/dashboard/FormFields";
 import CustomDatePicker from "@/components/shared/CustomDatePicker/CustomDatePicker";
-import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
+import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { createPromotionSchema, type CreatePromotionValues } from "./CreatePromotionSchema";
 import styles from "./CreatePromotion.module.scss";

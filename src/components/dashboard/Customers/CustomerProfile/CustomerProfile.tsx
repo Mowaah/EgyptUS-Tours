@@ -3,13 +3,12 @@
 import { useState } from "react";
 import Image from "next/image";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
-import DashboardTabs from "@/components/shared/DashboardTabs/DashboardTabs";
+import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/DashboardTabs";
 import CustomerOverview from "./CustomerOverview";
 import BookingHistoryPanel from "./BookingHistory/BookingHistoryPanel";
 import CustomTripRequestsPanel from "./CustomTripRequests/CustomTripRequestsPanel";
 import { ReviewsPanel } from "@/components/dashboard/Reviews/ReviewsPanel/ReviewsPanel";
-import ProfileHeader from "@/components/shared/ProfileHeader/ProfileHeader";
+import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
 import pageStyles from "@/app/(dashboard)/dashboard/page.module.scss";
 import styles from "./CustomerProfile.module.scss";
 
@@ -25,12 +24,11 @@ import { Suspense } from "react";
 
 export default function CustomerProfile({ customerId }: CustomerProfileProps) {
   return (
-    <main className={pageStyles.page}>
-      <DashboardSidebar />
-      <Suspense fallback={<section className={pageStyles.content} aria-label="Customer profile content" />}>
+    <>
+      <Suspense fallback={<div aria-label="Customer profile loading" />}>
         <CustomerProfileContent customerId={customerId} />
       </Suspense>
-    </main>
+    </>
   );
 }
 
@@ -58,7 +56,7 @@ function CustomerProfileContent({ customerId }: CustomerProfileProps) {
   };
 
   return (
-    <section className={pageStyles.content} aria-label="Customer profile content">
+    <>
         <DashboardNavbar
           breadcrumbTrail={[
             { label: "Customers", href: "/dashboard/customers" },
@@ -124,6 +122,6 @@ function CustomerProfileContent({ customerId }: CustomerProfileProps) {
             emptyStateSubtitle="Customer reviews will appear here once users start sharing their feedback"
           />
         )}
-      </section>
+    </>
   );
 }

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useLayoutEffect, useEffect } from "react";
-import DashboardConfirmationModal from "@/components/shared/DashboardConfirmationModal/DashboardConfirmationModal";
+import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import styles from "./DashboardSidebar.module.scss";
 import { useSidebarContext } from "@/contexts/SidebarContext";
 
@@ -18,6 +18,7 @@ interface NavItem {
 const navRoutes: Record<string, string> = {
   Dashboard: "/dashboard",
   "Lead Management": "/dashboard/leads",
+  Trips: "/dashboard/bookings/trips",
   Customers: "/dashboard/customers",
   Reviews: "/dashboard/reviews",
   "User Management": "/dashboard/settings/user-management",

@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ModalHeader, ModalFooter } from "@/components/shared";
-import DashboardField from "@/components/shared/DashboardField/DashboardField";
+import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";;
+import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import styles from "./ActionNoteModal.module.scss";
 
 export interface ActionNoteModalConfig {

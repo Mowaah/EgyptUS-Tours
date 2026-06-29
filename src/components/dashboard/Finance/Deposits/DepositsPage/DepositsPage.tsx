@@ -1,7 +1,6 @@
 "use client";
 
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
 import { SummaryCard } from "@/components/dashboard/SummaryCard";
 import DepositsTable from "../DepositsTable/DepositsTable";
 import DepositStatusDonut from "../DepositStatusDonut/DepositStatusDonut";
@@ -12,10 +11,9 @@ import styles from "./DepositsPage.module.scss";
 
 export default function DepositsPage() {
   return (
-    <main className={pageStyles.page}>
-      <DashboardSidebar />
-
-      <section className={pageStyles.content} aria-label="Deposits content">
+    <>
+      
+      
         <DashboardNavbar
           breadcrumbTrail={[
             { label: "Finance", href: "/dashboard/finance/deposits" },
@@ -71,7 +69,7 @@ export default function DepositsPage() {
         </div>
 
         <DepositsTable />
-      </section>
-    </main>
+      
+    </>
   );
 }

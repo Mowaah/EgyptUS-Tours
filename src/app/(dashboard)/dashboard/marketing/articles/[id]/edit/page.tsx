@@ -4,7 +4,6 @@ import { use, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { CreatePost } from "@/components/dashboard/Articles";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
 import styles from "../../../../page.module.scss";
 
 export default function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
@@ -12,10 +11,9 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
   const unwrappedParams = use(params);
   
   return (
-    <main className={styles.page}>
-      <DashboardSidebar />
-
-      <section className={styles.content} aria-label="Edit Post content">
+    <>
+      
+      
         <DashboardNavbar 
           title="Edit Post"
           subtitle="Edit and publish article content"
@@ -33,7 +31,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
         <Suspense fallback={null}>
           <CreatePost postId={unwrappedParams.id} />
         </Suspense>
-      </section>
-    </main>
+      
+    </>
   );
 }

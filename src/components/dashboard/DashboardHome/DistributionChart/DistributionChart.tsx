@@ -1,5 +1,5 @@
 import { distribution } from "../dashboardHomeData";
-import HatchedBarChart from "@/components/shared/HatchedBarChart/HatchedBarChart";
+import HatchedBarChart from "@/components/dashboard/shared/HatchedBarChart/HatchedBarChart";
 
 export default function DistributionChart() {
   const yAxisLabels = ["5k", "4k", "3k", "2k", "1k", "0"];

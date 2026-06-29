@@ -4,8 +4,8 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import { DashboardConfirmationModal } from "@/components/shared";
-import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
+import { DashboardConfirmationModal } from "@/components/dashboard/shared";;
+import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import styles from "./PromotionDetails.module.scss";
 
 interface PromotionDetailsProps {

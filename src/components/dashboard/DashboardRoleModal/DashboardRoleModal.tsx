@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
-import { CheckboxIndicator, DashboardField } from "@/components/shared";
+import { CheckboxIndicator } from "@/components/shared";
+import { DashboardField } from "@/components/dashboard/shared";;
 import styles from "./DashboardRoleModal.module.scss";
 
 export interface DashboardRoleModalSubmitValues {

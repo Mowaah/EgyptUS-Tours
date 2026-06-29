@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
 import { SummaryCard } from "@/components/dashboard/SummaryCard";
 import PaymentsTable from "../PaymentsTable/PaymentsTable";
 import RevenueByCategory from "../RevenueByCategory/RevenueByCategory";
@@ -13,10 +12,9 @@ import styles from "./PaymentsPage.module.scss";
 
 export default function PaymentsPage() {
   return (
-    <main className={pageStyles.page}>
-      <DashboardSidebar />
-
-      <section className={pageStyles.content} aria-label="Payments content">
+    <>
+      
+      
         <DashboardNavbar
           breadcrumbTrail={[
             { label: "Finance", href: "/dashboard/finance/payments" },
@@ -72,7 +70,7 @@ export default function PaymentsPage() {
         </div>
 
         <PaymentsTable />
-      </section>
-    </main>
+      
+    </>
   );
 }

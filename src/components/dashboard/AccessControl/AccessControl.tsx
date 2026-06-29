@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { FilterSelect, TablePanel } from "@/components/dashboard/TablePanel";
-import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/shared";
+import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";;
 import styles from "./AccessControl.module.scss";
 
 type PermissionKey = "view" | "create" | "edit";

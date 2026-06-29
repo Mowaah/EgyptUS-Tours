@@ -2,12 +2,11 @@
 
 import { useRef } from "react";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
 import ContentGrid, { type ContentItem } from "@/components/dashboard/ContentGrid/ContentGrid";
 import DocumentViewModal from "@/components/dashboard/DocumentViewModal/DocumentViewModal";
 import DocumentFormModal from "@/components/dashboard/DocumentFormModal/DocumentFormModal";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
-import DashboardConfirmationModal from "@/components/shared/DashboardConfirmationModal/DashboardConfirmationModal";
+import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import { useContentManager } from "@/hooks/useContentManager";
 import styles from "../../page.module.scss";
 
@@ -46,10 +45,9 @@ export default function PrivacyPolicyPage() {
   });
 
   return (
-    <main className={styles.page}>
-      <DashboardSidebar />
-
-      <section className={styles.content} aria-label="Privacy Policy Management">
+    <>
+      
+      
         <DashboardNavbar onPrimaryAction={handleAdd} />
         <ContentGrid
           ref={contentGridRef}
@@ -67,7 +65,7 @@ export default function PrivacyPolicyPage() {
           emptyStateSubtitle="Add your first privacy policy document to get started."
           emptyStateActionLabel="Add New Privacy Policy"
         />
-      </section>
+      
 
       {/* View modal */}
       <DocumentViewModal
@@ -145,6 +143,6 @@ export default function PrivacyPolicyPage() {
         onClose={() => setDeleteItem(null)}
         onConfirm={confirmDelete}
       />
-    </main>
+    </>
   );
 }

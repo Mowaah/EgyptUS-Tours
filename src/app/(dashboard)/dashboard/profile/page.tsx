@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import { ProfileHeader } from "@/components/dashboard/Profile/ProfileHeader";
 import { ProfileTabs } from "@/components/dashboard/Profile/ProfileTabs";
@@ -13,9 +12,8 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<"Personal Information" | "Security">("Personal Information");
 
   return (
-    <main className={styles.page}>
-      <DashboardSidebar />
-      <section className={styles.content} aria-label="Profile">
+    <>
+            
         {/* We use the DashboardNavbar but pass custom children for the Profile Header block */}
         <div className={styles.navbarWrapper}>
           <DashboardNavbar>
@@ -30,7 +28,7 @@ export default function ProfilePage() {
             {activeTab === "Security" && <SecurityTab />}
           </div>
         </div>
-      </section>
-    </main>
+      
+    </>
   );
 }

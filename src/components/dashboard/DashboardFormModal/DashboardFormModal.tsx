@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { DashboardField } from "@/components/shared";
+import { DashboardField } from "@/components/dashboard/shared";;
 import styles from "./DashboardFormModal.module.scss";
 
 export interface DashboardFormModalField {

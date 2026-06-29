@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import DashboardTabs from "@/components/shared/DashboardTabs/DashboardTabs";
+import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/DashboardTabs";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
+import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { InquiriesPanel } from "./InquiriesPanel";
 import { ImportLeadsPanel } from "./ImportLeadsPanel/ImportLeadsPanel";

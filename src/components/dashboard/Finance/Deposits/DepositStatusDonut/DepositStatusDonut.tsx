@@ -1,4 +1,4 @@
-import RoundedDonutChart from "@/components/shared/RoundedDonutChart/RoundedDonutChart";
+import RoundedDonutChart from "@/components/dashboard/shared/RoundedDonutChart/RoundedDonutChart";
 import styles from "../DepositsPage/DepositsPage.module.scss";
 import Image from "next/image";
 

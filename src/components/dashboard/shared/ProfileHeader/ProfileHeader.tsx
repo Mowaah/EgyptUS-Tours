@@ -7,6 +7,7 @@ interface ProfileHeaderProps {
   title: React.ReactNode;
   pillLabel?: string;
   pillVariant?: PillVariant;
+  customPills?: React.ReactNode;
   subtitleElements?: React.ReactNode[];
   actionButtons?: React.ReactNode;
 }
@@ -15,6 +16,7 @@ export default function ProfileHeader({
   title,
   pillLabel,
   pillVariant = "blue",
+  customPills,
   subtitleElements = [],
   actionButtons,
 }: ProfileHeaderProps) {
@@ -49,6 +51,7 @@ export default function ProfileHeader({
               {pillLabel}
             </span>
           )}
+          {customPills}
         </div>
         
         {subtitleElements.length > 0 && (

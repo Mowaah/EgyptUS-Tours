@@ -3,9 +3,8 @@
 import React from "react";
 import Image from "next/image";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
-import ProfileHeader from "@/components/shared/ProfileHeader/ProfileHeader";
-import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
+import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
+import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import pageStyles from "@/app/(dashboard)/dashboard/page.module.scss";
 import styles from "./ViewLead.module.scss";
 import CustomerInformation from "./CustomerInformation";
@@ -83,9 +82,8 @@ export default function ViewLead({ leadId }: ViewLeadProps) {
   const activeModalConfig = activeModalKey ? MODAL_CONFIGS[activeModalKey] : null;
 
   return (
-    <main className={pageStyles.page}>
-      <DashboardSidebar />
-      <section className={pageStyles.content} aria-label="View Lead content">
+    <>
+            
         <DashboardNavbar
           breadcrumbTrail={[
             { label: "Leads Management", href: "/dashboard/leads" },
@@ -176,7 +174,7 @@ export default function ViewLead({ leadId }: ViewLeadProps) {
             <ActivityTimeline />
           </div>
         </div>
-      </section>
+      
 
       <ActionNoteModal 
         open={!!activeModalConfig}
@@ -214,6 +212,6 @@ export default function ViewLead({ leadId }: ViewLeadProps) {
           setActiveModalKey(null);
         }} 
       />
-    </main>
+    </>
   );
 }

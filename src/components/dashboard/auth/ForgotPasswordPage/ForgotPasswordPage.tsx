@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { DashboardField } from "@/components/shared";
+import { DashboardField } from "@/components/dashboard/shared";;
 import { validateEmail } from "@/utils/validation";
 import AuthBackLink from "../AuthBackLink/AuthBackLink";
 import AuthSubmitButton from "../AuthSubmitButton/AuthSubmitButton";

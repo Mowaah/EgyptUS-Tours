@@ -12,8 +12,8 @@ import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyStat
 import { mockCustomers } from "../customersData";
 import { customersColumns, customerRowActions } from "./customersColumns";
 import EditCustomerModal from "./EditCustomerModal";
-import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
-import DashboardConfirmationModal from "@/components/shared/DashboardConfirmationModal/DashboardConfirmationModal";
+import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
+import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 
 const filterOptions = {
   nationality: ["All", "Egyptian", "American", "Spanish", "Japanese"],

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ModalHeader, ModalFooter, DashboardField, PhonePrefixSelect } from "@/components/shared";
+import { PhonePrefixSelect } from "@/components/shared";
+import { ModalHeader, ModalFooter, DashboardField } from "@/components/dashboard/shared";;
 import styles from "./AddNewLeadModal.module.scss";
 
 interface AddNewLeadModalProps {

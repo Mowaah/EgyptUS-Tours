@@ -4,8 +4,8 @@ import { useState } from "react";
 import ReviewSummaryGrid from "./ReviewSummaryGrid";
 import { ReviewsPanel } from "./ReviewsPanel";
 import AddTestimonialModal from "./ReviewsPanel/AddTestimonialModal";
-import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
-import DashboardTabs from "@/components/shared/DashboardTabs/DashboardTabs";
+import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
+import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/DashboardTabs";
 import reviewsPanelStyles from "./ReviewsPanel/ReviewsPanel.module.scss";
 import styles from "./Reviews.module.scss";
 

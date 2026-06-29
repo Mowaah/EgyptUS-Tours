@@ -8,7 +8,7 @@ import {
   TablePanelFilterBar,
   TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
-import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/shared";
+import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";;
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import { promotionsColumns, usePromotionRowActions } from "./promotionsColumns";

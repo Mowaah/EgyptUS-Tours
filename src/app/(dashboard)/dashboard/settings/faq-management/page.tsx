@@ -1,12 +1,11 @@
 "use client";
 
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
 import ContentGrid, { type ContentItem } from "@/components/dashboard/ContentGrid/ContentGrid";
 import FaqViewModal from "@/components/dashboard/FaqViewModal/FaqViewModal";
 import FaqFormModal from "@/components/dashboard/FaqFormModal/FaqFormModal";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
-import DashboardConfirmationModal from "@/components/shared/DashboardConfirmationModal/DashboardConfirmationModal";
+import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import { useContentManager } from "@/hooks/useContentManager";
 import styles from "../../page.module.scss";
 
@@ -49,10 +48,9 @@ export default function FaqManagementPage() {
   });
 
   return (
-    <main className={styles.page}>
-      <DashboardSidebar />
-
-      <section className={styles.content} aria-label="FAQ Management">
+    <>
+      
+      
         <DashboardNavbar onPrimaryAction={() => setAddOpen(true)} />
         <ContentGrid 
           ref={contentGridRef}
@@ -70,7 +68,7 @@ export default function FaqManagementPage() {
           emptyStateSubtitle="Add your first FAQ to help users quickly find answers and support information."
           emptyStateActionLabel="Add New FAQ"
         />
-      </section>
+      
 
       {/* View modal */}
       <FaqViewModal
@@ -128,7 +126,7 @@ export default function FaqManagementPage() {
         onClose={() => setDeleteItem(null)}
         onConfirm={confirmDelete}
       />
-    </main>
+    </>
   );
 }
 

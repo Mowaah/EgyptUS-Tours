@@ -1,5 +1,5 @@
 import Image from "next/image";
-import RoundedDonutChart from "@/components/shared/RoundedDonutChart/RoundedDonutChart";
+import RoundedDonutChart from "@/components/dashboard/shared/RoundedDonutChart/RoundedDonutChart";
 import styles from "./ServiceBreakdown.module.scss";
 
 export default function ServiceBreakdown() {

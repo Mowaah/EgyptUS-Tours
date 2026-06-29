@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import NationalitySelect from "@/components/shared/NationalitySelect/NationalitySelect";
-import { ModalHeader, ModalFooter, DashboardField } from "@/components/shared";
+import { ModalHeader, ModalFooter, DashboardField } from "@/components/dashboard/shared";;
 import SelectDropdown from "@/components/shared/SelectDropdown/SelectDropdown";
 import StarRating from "@/components/shared/StarRating/StarRating";
 import { ToggleField } from "@/components/dashboard/FormFields/ToggleField";
-import dashboardStyles from "@/components/shared/DashboardField/DashboardField.module.scss";
+import dashboardStyles from "@/components/dashboard/shared/DashboardField/DashboardField.module.scss";
 import styles from "./AddTestimonialModal.module.scss";
 
 interface InitialData {

@@ -21,19 +21,8 @@ export { default as PaginationArrows } from "./PaginationArrows/PaginationArrows
 export { default as StarRating } from "./StarRating/StarRating";
 export { default as GlassCard } from "./GlassCard/GlassCard";
 export { default as SuccessModal } from "./SuccessModal/SuccessModal";
-export { default as DashboardConfirmationModal } from "./DashboardConfirmationModal/DashboardConfirmationModal";
-export type {
-  DashboardConfirmationModalProps,
-  DashboardConfirmationVariant,
-} from "./DashboardConfirmationModal/DashboardConfirmationModal";
-export { default as DashboardStatusBanner } from "./DashboardStatusBanner/DashboardStatusBanner";
-export type {
-  DashboardStatusBannerProps,
-  DashboardStatusBannerVariant,
-} from "./DashboardStatusBanner/DashboardStatusBanner";
 export { default as SecondaryCta } from "./SecondaryCta/SecondaryCta";
 export { default as FormField } from "./FormField/FormField";
-export { default as DashboardField } from "./DashboardField/DashboardField";
 export { default as PasswordToggleButton } from "./PasswordToggleButton/PasswordToggleButton";
 export { default as PhonePrefixSelect } from "./PhonePrefixSelect/PhonePrefixSelect";
 export { default as CustomDatePicker } from "./CustomDatePicker/CustomDatePicker";
@@ -88,8 +77,5 @@ export { default as TimePicker } from "./TimePicker/TimePicker";
 export type { TimeValue } from "./TimePicker/TimePicker";
 export { default as AuthModal } from "./AuthModal/AuthModal";
 export { default as LanguageTabs, type Language } from "./LanguageTabs/LanguageTabs";
-export { default as ModalHeader } from "./ModalHeader/ModalHeader";
-export { default as ModalFooter } from "./ModalFooter/ModalFooter";
 export { default as RichTextEditor } from "./RichTextEditor/RichTextEditor";
-export { DashboardFooter } from "./DashboardFooter/DashboardFooter";
 export { IconStepper } from "./IconStepper/IconStepper";

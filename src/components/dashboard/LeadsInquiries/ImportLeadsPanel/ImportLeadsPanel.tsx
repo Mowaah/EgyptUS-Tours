@@ -5,7 +5,7 @@ import { mockImportLeads } from "../leadsInquiriesData";
 import { importLeadsColumns, importRowActions } from "./importLeadsColumns";
 import { ReassignLeadModal } from "../ReassignLeadModal";
 import { ViewAssignedMembersModal } from "../ViewAssignedMembersModal";
-import DashboardConfirmationModal from "@/components/shared/DashboardConfirmationModal/DashboardConfirmationModal";
+import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 

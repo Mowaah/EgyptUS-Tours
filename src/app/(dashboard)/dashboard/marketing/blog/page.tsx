@@ -4,8 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Blogs } from "@/components/dashboard/Blogs";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
-import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
+import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import styles from "../../page.module.scss";
 
 function StatusBanners() {
@@ -53,10 +52,9 @@ export default function BlogsPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
-    <main className={styles.page}>
-      <DashboardSidebar />
-
-      <section className={styles.content} aria-label="Blogs content">
+    <>
+      
+      
         <Suspense fallback={null}>
           <StatusBanners />
         </Suspense>
@@ -66,7 +64,7 @@ export default function BlogsPage() {
           onSearchChange={setSearchQuery}
         />
         <Blogs searchQuery={searchQuery} onClearSearch={() => setSearchQuery("")} />
-      </section>
-    </main>
+      
+    </>
   );
 }

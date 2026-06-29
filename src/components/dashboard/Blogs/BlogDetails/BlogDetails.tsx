@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/shared";
+import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";;
 import styles from "./BlogDetails.module.scss";
 
 interface BlogDetailsProps {

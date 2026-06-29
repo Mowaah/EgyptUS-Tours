@@ -5,8 +5,7 @@ import type { DashboardFormModalField } from "@/components/dashboard/DashboardFo
 import DashboardFormModal from "@/components/dashboard/DashboardFormModal";
 import { UserManagement } from "@/components/dashboard/UserManagement";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
-import { DashboardConfirmationModal } from "@/components/shared";
+import { DashboardConfirmationModal } from "@/components/dashboard/shared";;
 import type { AdminRole, AdminState, AdminUserRow } from "@/components/dashboard/UserManagement/types";
 import styles from "../../page.module.scss";
 
@@ -161,17 +160,16 @@ export default function UserManagementPage() {
     : null;
 
   return (
-    <main className={styles.page}>
-      <DashboardSidebar />
-
-      <section className={styles.content} aria-label="User management content">
+    <>
+      
+      
         <DashboardNavbar onPrimaryAction={openCreateModal} />
         <UserManagement
           onEditUser={openEditModal}
           onToggleUserStatus={openStatusConfirmation}
           onDeleteUser={openDeleteConfirmation}
         />
-      </section>
+      
 
       <DashboardFormModal
         open={modalOpen}
@@ -200,6 +198,6 @@ export default function UserManagementPage() {
           onConfirm={handleConfirmAction}
         />
       ) : null}
-    </main>
+    </>
   );
 }

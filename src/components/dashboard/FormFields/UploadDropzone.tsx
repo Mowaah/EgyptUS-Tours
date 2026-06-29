@@ -9,6 +9,8 @@ interface UploadDropzoneProps {
   onFileSelect?: (file: File | undefined) => void;
   accept?: string;
   className?: string;
+  title?: string;
+  subtitle?: string;
 }
 
 function formatBytes(bytes: number, decimals = 2) {
@@ -20,7 +22,14 @@ function formatBytes(bytes: number, decimals = 2) {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
 
-export function UploadDropzone({ value, onFileSelect, accept = "image/png, image/jpeg, image/gif", className = "" }: UploadDropzoneProps) {
+export function UploadDropzone({ 
+  value, 
+  onFileSelect, 
+  accept = "image/png, image/jpeg, image/gif", 
+  className = "",
+  title = "Click to upload an image or drag & drop",
+  subtitle = "PNG, JPG, GIF up to 10MB"
+}: UploadDropzoneProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [progress, setProgress] = React.useState(100);
 
@@ -64,8 +73,8 @@ export function UploadDropzone({ value, onFileSelect, accept = "image/png, image
           />
           <div className={styles.dropzoneContent}>
             <Image src="/images/dashboard/fields/document-upload.svg" alt="" width={32} height={32} aria-hidden style={{ opacity: 0.4 }} />
-            <p className={styles.dropzoneTitle}>Click to upload an image or drag & drop</p>
-            <p className={styles.dropzoneSubtitle}>PNG, JPG, GIF up to 10MB</p>
+            <p className={styles.dropzoneTitle}>{title}</p>
+            <p className={styles.dropzoneSubtitle}>{subtitle}</p>
           </div>
         </div>
       )}

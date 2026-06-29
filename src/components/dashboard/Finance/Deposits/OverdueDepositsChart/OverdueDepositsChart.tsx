@@ -1,6 +1,6 @@
 import Image from "next/image";
 import parentStyles from "../DepositsPage/DepositsPage.module.scss";
-import HatchedBarChart from "@/components/shared/HatchedBarChart/HatchedBarChart";
+import HatchedBarChart from "@/components/dashboard/shared/HatchedBarChart/HatchedBarChart";
 
 export default function OverdueDepositsChart() {
   const distribution = [

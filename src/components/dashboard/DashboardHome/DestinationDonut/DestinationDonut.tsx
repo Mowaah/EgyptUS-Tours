@@ -1,5 +1,5 @@
 import { destinations } from "../dashboardHomeData";
-import RoundedDonutChart from "@/components/shared/RoundedDonutChart/RoundedDonutChart";
+import RoundedDonutChart from "@/components/dashboard/shared/RoundedDonutChart/RoundedDonutChart";
 import styles from "./DestinationDonut.module.scss";
 
 export default function DestinationDonut() {

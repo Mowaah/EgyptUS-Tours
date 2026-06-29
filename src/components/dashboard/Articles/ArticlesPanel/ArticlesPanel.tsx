@@ -7,7 +7,7 @@ import {
   TablePanelFilterBar,
   TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
-import { DashboardConfirmationModal } from "@/components/shared";
+import { DashboardConfirmationModal } from "@/components/dashboard/shared";;
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import { useRouter } from "next/navigation";

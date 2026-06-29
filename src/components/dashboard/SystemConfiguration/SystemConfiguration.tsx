@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent, type SVGProps } from "react";
 import Image from "next/image";
-import { DashboardField, DashboardStatusBanner, DashboardFooter } from "@/components/shared";
+import { DashboardField, DashboardStatusBanner, DashboardFooter } from "@/components/dashboard/shared";;
 import styles from "./SystemConfiguration.module.scss";
 
 interface ConfigurationValues {

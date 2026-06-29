@@ -1,5 +1,4 @@
 import ArticleDetails from "@/components/dashboard/Articles/ArticleDetails/ArticleDetails";
-import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
 import styles from "../../../page.module.scss";
 
 export default async function ArticleDetailsPage({ params }: { params: Promise<{ id: string }> }) {
@@ -7,12 +6,11 @@ export default async function ArticleDetailsPage({ params }: { params: Promise<{
   
   // Pass the ID or dummy data to the component
   return (
-    <main className={styles.page}>
-      <DashboardSidebar />
-
-      <section className={styles.content} aria-label="Article Details content">
+    <>
+      
+      
         <ArticleDetails postId={unwrappedParams.id} />
-      </section>
-    </main>
+      
+    </>
   );
 }

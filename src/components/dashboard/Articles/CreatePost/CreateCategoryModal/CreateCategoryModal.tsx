@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { createPortal } from "react-dom";
-import ModalHeader from "@/components/shared/ModalHeader/ModalHeader";
-import ModalFooter from "@/components/shared/ModalFooter/ModalFooter";
-import DashboardField from "@/components/shared/DashboardField/DashboardField";
+import ModalHeader from "@/components/dashboard/shared/ModalHeader/ModalHeader";
+import ModalFooter from "@/components/dashboard/shared/ModalFooter/ModalFooter";
+import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import styles from "./CreateCategoryModal.module.scss";
 
 interface CategoryItem {

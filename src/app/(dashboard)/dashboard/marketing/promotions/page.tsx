@@ -3,8 +3,7 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import DashboardSidebar from "@/components/dashboard/Sidebar/DashboardSidebar";
-import DashboardStatusBanner from "@/components/shared/DashboardStatusBanner/DashboardStatusBanner";
+import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import { PromotionsPanel } from "@/components/dashboard/Promotions/PromotionsPanel/PromotionsPanel";
 import styles from "../../page.module.scss";
 
@@ -49,10 +48,9 @@ export default function PromotionsPage() {
   };
 
   return (
-    <main className={styles.page}>
-      <DashboardSidebar />
-
-      <section className={styles.content} aria-label="Promotions content">
+    <>
+      
+      
         <DashboardNavbar
           onSearchChange={handleSearch}
           onPrimaryAction={handleAction}
@@ -64,7 +62,7 @@ export default function PromotionsPage() {
           searchQuery={searchQuery}
           onClearSearch={() => setSearchQuery("")}
         />
-      </section>
-    </main>
+      
+    </>
   );
 }
