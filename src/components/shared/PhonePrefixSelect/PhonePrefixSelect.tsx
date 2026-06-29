@@ -53,10 +53,14 @@ export default function PhonePrefixSelect({ phoneValue = "", onPhoneChange, vari
       .sort((a, b) => b.dial.length - a.dial.length)
       .find(c => phoneValue.startsWith(c.dial));
 
-    if (match && match.code !== selected.code) {
-      setSelected(match);
+    if (match) {
+      // Only auto-switch if the newly matched dial code is DIFFERENT from the currently selected one.
+      // If they share the same dial code (e.g., US and Canada both have +1), respect the user's current selection.
+      if (match.dial !== selected.dial) {
+        setSelected(match);
+      }
     }
-  }, [phoneValue, selected.code]);
+  }, [phoneValue, selected.dial]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

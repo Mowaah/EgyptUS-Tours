@@ -1,0 +1,214 @@
+@use "@/styles/variables" as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $dark-navy;
+  margin-bottom: 0.5rem;
+}
+
+.roomList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.roomRowWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+
+  @media (min-width: 640px) {
+    gap: 20px;
+  }
+}
+
+.roomInfoBox {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: $white;
+  border: 1px solid $border-strong;
+  transition: border-color $transition-fast;
+
+  @media (min-width: 640px) {
+    max-width: 319px;
+    padding: 7px 16px;
+  }
+}
+
+.roomTexts {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.roomTitle {
+  font-size: $font-size-13;
+  font-weight: $font-weight-medium;
+  color: $dark-navy;
+}
+
+.roomSubtitle {
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-normal;
+  color: $gray-blue-400;
+}
+
+.priceContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+}
+
+.priceValue {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: $dark-navy;
+}
+
+.groupSection {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1.5rem;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+.monthSelectDropdownWrapper {
+  width: 100%;
+  align-self: flex-start;
+}
+
+.departureGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+
+  @media (min-width: 480px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+.departureCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border: 1px solid $border-strong;
+  border-radius: 16px;
+  background: white;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $secondary;
+  }
+
+  &.departureSelected {
+    background-color: $secondary-light;
+    border-color: $secondary;
+  }
+}
+
+.departureInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.departureDate {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: $dark-navy;
+}
+
+.departureDuration {
+  font-size: $font-size-13;
+  color: $gray-500;
+}
+
+.fieldTrigger {
+  height: 48px;
+  border: 1px solid #F5F5F5;
+  border-radius: 24px;
+  padding: 0 16px;
+
+  svg {
+    color: #6B7280;
+  }
+}
+
+.monthValueWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.monthValueText {
+  color: #9CA3AF;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.customRoomsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.subSectionTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $dark-navy;
+}
+
+.customRoomsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.customRoomField {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  label {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 19px;
+    color: #4B5563;
+  }
+}

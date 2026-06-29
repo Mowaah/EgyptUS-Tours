@@ -1,0 +1,142 @@
+@use "@/styles/variables" as *;
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(17, 38, 59, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  display: flex;
+  flex-direction: column;
+  width: 647px;
+  background: #FFFFFF;
+  box-shadow: 0px 20px 24px -4px rgba(16, 24, 40, 0.08), 0px 8px 8px -4px rgba(16, 24, 40, 0.03);
+  border-radius: 2rem; // 32px
+  overflow: hidden;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 1.5rem 1.5rem; // 20px 24px 24px
+  gap: 1rem; // 16px
+}
+
+.formFields {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; // 16px
+  padding-bottom: 1rem;
+}
+
+.tourOptions {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0.75rem; // 12px
+}
+
+.tourCard {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0.75rem; // 12px
+  gap: 0.875rem; // 14.25px
+  background: #F9FAFB;
+  border-radius: 1.5rem; // 24px
+  border: 1px solid transparent;
+}
+
+.tourInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  h3 {
+    font-family: 'Trip Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1.125rem; // 18px
+    line-height: 1.5;
+    color: #0E2851;
+    margin: 0;
+  }
+
+  p {
+    font-family: 'Trip Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.8125rem; // 13px
+    line-height: 1.5;
+    color: #6B7280;
+    margin: 0;
+  }
+}
+
+.tourPrice {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1.625rem; // 26px
+  color: #2971E6;
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0 1.5rem 1.5rem; // 0 24px 24px
+  gap: 0.75rem; // 12px
+}
+
+.btnGroup {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.9rem 1.25rem; // 16px 20px
+  gap: 0.5rem; // 8px
+  border: 1.5px solid #FF6600;
+  border-radius: 2.5rem; // 40px
+  background: transparent;
+  color: #FF6600;
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: 1rem; // 16px
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(255, 102, 0, 0.05);
+  }
+}
+
+.btnPrivate {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.89rem 1.25rem; // 16px 20px
+  gap: 0.5rem; // 8px
+  background: #FF6600;
+  border: 1.5px solid #FF6600;
+  border-radius: 2.5rem; // 40px
+  color: #FFFFFF;
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: 1rem; // 16px
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #E55C00;
+    border-color: #E55C00;
+  }
+}

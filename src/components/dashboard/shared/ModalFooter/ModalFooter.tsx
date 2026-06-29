@@ -8,6 +8,7 @@ interface ModalFooterProps {
   primaryLabel: React.ReactNode;
   primaryOnClick: () => void;
   primaryDisabled?: boolean;
+  secondaryDisabled?: boolean;
   isDanger?: boolean;
 }
 
@@ -17,6 +18,7 @@ export default function ModalFooter({
   primaryLabel,
   primaryOnClick,
   primaryDisabled = false,
+  secondaryDisabled = false,
   isDanger = false,
 }: ModalFooterProps) {
   return (
@@ -25,6 +27,7 @@ export default function ModalFooter({
         type="button"
         className={styles.secondaryBtn}
         onClick={secondaryOnClick}
+        disabled={secondaryDisabled}
       >
         {secondaryLabel}
       </button>

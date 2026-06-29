@@ -30,8 +30,14 @@
   background: $white;
   border: 1px solid #D1D5DB;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: #F9FAFB;
+  }
+
+  &:disabled {
+    background: #F3F4F6;
+    color: #9CA3AF;
+    cursor: not-allowed;
   }
 }
 

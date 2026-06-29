@@ -1,0 +1,283 @@
+@use "@/styles/variables" as *;
+
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 16px;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.panel {
+  box-sizing: border-box;
+  background: #FFFFFF;
+  border: 1px solid #EAF1FD;
+  border-radius: 32px;
+  padding: 16px 16px 32px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Left Panel */
+.leftPanel {
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.leftInner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 26px;
+  width: 100%;
+}
+
+.titleWrap {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 52px;
+  width: 100%;
+}
+
+.tripTitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 28px;
+  color: #0E2851;
+  text-align: left;
+  width: 100%;
+}
+
+.middleSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+}
+
+.staySection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  gap: 12px;
+  max-width: 340px;
+}
+
+.stayLabel {
+  font-weight: 500;
+  font-size: 14px;
+  color: #C6C6C6;
+}
+
+.datesRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.dateItem {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 8px;
+  width: 168px;
+  height: 60px;
+}
+
+.dateHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #FF6600;
+  font-weight: 500;
+  font-size: 16px;
+  
+  img {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.dateValuesWrap {
+  display: flex;
+  flex-direction: column;
+  padding-left: 10px;
+}
+
+.dateValues {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 32px;
+  border-left: 1px solid #FFC299;
+}
+
+.dateDay {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 14px;
+  letter-spacing: 0.01em;
+  color: #0E2851;
+}
+
+.dateTime {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 14px;
+  letter-spacing: 0.01em;
+  color: #97A0AF;
+}
+
+.badgesRow {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  background: #EAF1FD;
+  border-radius: 24px;
+  padding: 8px 12px;
+  font-weight: 500;
+  font-size: 12px;
+  color: #0E2851;
+
+  img {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Right Panel */
+.rightPanel {
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.rightInner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 20px;
+  width: 100%;
+}
+
+.priceListSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 13px;
+  width: 100%;
+}
+
+.priceTitleWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+.priceTitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #C6C6C6;
+}
+
+.priceItemsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px 0px 12px;
+  gap: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.priceRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  height: 20px;
+}
+
+.priceLabel {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #4A5565;
+}
+
+.priceValue {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 20px;
+  color: #0E2851;
+}
+
+.discountValue {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+  color: #009625;
+}
+
+.totalRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 36px;
+}
+
+.totalLabel {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 28px;
+  color: #FF6600;
+}
+
+.totalValue {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 36px;
+  color: #FF6600;
+}

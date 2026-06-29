@@ -11,7 +11,7 @@ export interface SuccessModalProps {
   onClose: () => void;
   primaryButtonText?: string;
   onPrimaryClick?: () => void;
-  metadata?: { label: string; value: string; valueColor?: string }[];
+  metadata?: { label: string; value: React.ReactNode; valueColor?: string }[];
   children?: React.ReactNode;
 }
 

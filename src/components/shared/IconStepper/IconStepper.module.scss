@@ -13,7 +13,8 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  width: 130px;
+  min-width: 130px;
+  width: auto;
 }
 
 .stepIconWrap {
@@ -48,6 +49,7 @@
   font-weight: 500;
   font-size: 12px;
   text-align: center;
+  white-space: nowrap;
 }
 
 .stepLabelActive {
@@ -78,7 +80,7 @@
 }
 
 .stepDividerActive {
-  background: #2971E6;
+  background: linear-gradient(to right, #2971E6 50%, #ECECF0 50%);
 }
 
 .stepDividerCompleted {
