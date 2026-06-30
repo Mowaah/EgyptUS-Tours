@@ -47,6 +47,13 @@ const pageCopyByPath: Record<string, PageCopy> = {
     searchPlaceholder: "Search transfers, guests...",
     primaryAction: { label: "New Booking", iconSrc: "/images/dashboard/navbar/add-circle.svg" },
   },
+  "/dashboard/bookings/hotels": {
+    title: "Hotel Bookings",
+    subtitle: "Approve, follow up on payments and manage upcoming stays in one place.",
+    breadcrumbTrail: [{ label: "Bookings" }, { label: "Hotels" }],
+    searchPlaceholder: "Search bookings, customers...",
+    primaryAction: { label: "New Booking", iconSrc: "/images/dashboard/navbar/add-circle.svg" },
+  },
   "/dashboard/settings/user-management": {
     title: "User Management",
     subtitle: "Manage and organize all system users, control access levels",

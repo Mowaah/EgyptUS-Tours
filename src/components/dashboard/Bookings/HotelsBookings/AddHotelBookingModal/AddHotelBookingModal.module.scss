@@ -1,0 +1,63 @@
+@use "@/styles/variables" as *;
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(17, 38, 59, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.modal {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 882px;
+  max-height: 90vh;
+  background: #FFFFFF;
+  box-shadow: 0px 20px 24px -4px rgba(16, 24, 40, 0.08), 0px 8px 8px -4px rgba(16, 24, 40, 0.03);
+  border-radius: 2rem;
+  overflow: hidden;
+}
+
+.headerWrap {
+  flex-shrink: 0;
+}
+
+.stepperWrap {
+  padding: 1rem 0rem 1.5rem 0rem;
+  flex-shrink: 0;
+}
+
+.contentWrap {
+  padding: 0.5rem 2rem 4rem 2rem;
+  flex: 1;
+  overflow-y: auto;
+
+  /* Custom Scrollbar */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #E5E7EB;
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: #D1D5DB;
+  }
+}
+
+.footerWrap {
+  flex-shrink: 0;
+  margin-top: -1.5rem;
+}

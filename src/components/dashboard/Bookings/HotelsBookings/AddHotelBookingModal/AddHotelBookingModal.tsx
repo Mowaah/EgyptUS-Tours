@@ -1,18 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
+import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";
 import { SuccessModal } from "@/components/shared";
 import StatusPill from "@/components/shared/StatusPill/StatusPill";
-import { IconStepDef } from "@/components/shared/IconStepper/IconStepper";
+import { IconStepper, IconStepDef } from "@/components/shared/IconStepper/IconStepper";
 
-import StepGuestDetails from "./steps/StepGuestDetails/StepGuestDetails";
 import StepBookingDetails from "./steps/StepBookingDetails/StepBookingDetails";
+import StepGuestDetails from "./steps/StepGuestDetails/StepGuestDetails";
 import StepBookingSummary from "./steps/StepBookingSummary/StepBookingSummary";
 import PaymentStep from "@/components/dashboard/shared/PaymentStep/PaymentStep";
 import BookingModalContainer from "../../shared/BookingModalContainer/BookingModalContainer";
 import { BaseGuestDetails } from "../../shared/types";
 
-interface AddTripBookingModalProps {
+import styles from "./AddHotelBookingModal.module.scss";
+
+interface AddHotelBookingModalProps {
   open: boolean;
   onClose: () => void;
 }
@@ -24,43 +28,46 @@ const STEPS: IconStepDef[] = [
   { label: "Payment & Confirmation", iconSrc: "/images/dashboard/sidebar/payments.svg" },
 ];
 
-export interface AddTripBookingData extends BaseGuestDetails {
-  startDate: string;
-  endDate: string;
+export interface AddHotelBookingData extends BaseGuestDetails {
+  checkInDate: string;
+  checkOutDate: string;
   adults: number;
-  children: number;
   infants: number;
-  departureMonth: string;
-  departureDateId: string;
-  rooms: {
-    single: number;
-    double: number;
-    triple: number;
-  };
+  children: number;
+  
+  // Booking Details
+  hotelCategory: string;
+  specificHotel: string;
+  roomsCount: number;
+  rooms: { single: number; double: number; triple: number };
+  roomCustomizations: Record<string, string[]>;
 }
 
-const INITIAL_DATA: AddTripBookingData = {
+const INITIAL_DATA: AddHotelBookingData = {
   guestName: "",
   guestEmail: "",
   guestPhonePrefix: "+1",
   guestPhone: "",
   guestNationality: "",
-  startDate: "",
-  endDate: "",
+  checkInDate: "",
+  checkOutDate: "",
   adults: 0,
-  children: 0,
   infants: 0,
+  children: 0,
   specialRequests: "",
-  departureMonth: "",
-  departureDateId: "",
-  rooms: { single: 0, double: 0, triple: 0 },
+  
+  hotelCategory: "",
+  specificHotel: "",
+  roomsCount: 1,
+  rooms: { single: 0, double: 2, triple: 1 },
+  roomCustomizations: {},
 };
 
-export default function AddTripBookingModal({ open, onClose }: AddTripBookingModalProps) {
+export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingModalProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState<AddTripBookingData>(INITIAL_DATA);
+  const [formData, setFormData] = useState<AddHotelBookingData>(INITIAL_DATA);
   const [bookingId, setBookingId] = useState("");
 
   useEffect(() => {
@@ -77,11 +84,10 @@ export default function AddTripBookingModal({ open, onClose }: AddTripBookingMod
   if (!open) return null;
 
   const calculateTotal = () => {
-    // Mock calculation for trip price based on rooms and people
-    const basePrice = 500;
+    // Mock calculation for hotel price based on rooms
+    const basePrice = 100;
     const roomsTotal = (formData.rooms.single * 1) + (formData.rooms.double * 1.5) + (formData.rooms.triple * 2);
-    const paxTotal = formData.adults + (formData.children * 0.5);
-    return basePrice * (roomsTotal || 1) + (paxTotal * 100);
+    return basePrice * (roomsTotal || 1);
   };
   
   const total = calculateTotal();
@@ -105,7 +111,7 @@ export default function AddTripBookingModal({ open, onClose }: AddTripBookingMod
     }
   };
 
-  const handleChange = (patch: Partial<AddTripBookingData>) => {
+  const handleChange = (patch: Partial<AddHotelBookingData>) => {
     setFormData((prev) => ({ ...prev, ...patch }));
   };
 
@@ -119,8 +125,10 @@ export default function AddTripBookingModal({ open, onClose }: AddTripBookingMod
         primaryButtonText="View Booking"
         onPrimaryClick={onClose}
         metadata={[
-          { label: "Booking ID", value: bookingId },
-          { label: "Trip Name", value: formData.departureMonth ? `Trip in ${formData.departureMonth}` : "Aswan Nile Cruise Experience" },
+          { label: "Booking Reference", value: bookingId },
+          { label: "Hotel", value: formData.specificHotel || "Beach Nile Palace Hotel & Spa" },
+          { label: "Check-in", value: formData.checkInDate || "12 Oct 2026" },
+          { label: "Check-out", value: formData.checkOutDate || "24 Oct 2026" },
           { 
             label: "Payment Status", 
             value: <StatusPill label="Paid" variant="green" hideDot /> 
@@ -135,9 +143,9 @@ export default function AddTripBookingModal({ open, onClose }: AddTripBookingMod
     <BookingModalContainer
       open={open}
       onClose={onClose}
-      title="Add New Trip Booking"
-      subtitle="Enter the Trip details and create a new booking."
-      iconSrc="/images/dashboard/sidebar/trips.svg"
+      title="Add New Hotel Booking"
+      subtitle="Create and confirm a new hotel booking by entering the guest details, stay information"
+      iconSrc="/images/dashboard/sidebar/hotels.svg"
       steps={STEPS}
       currentStep={currentStep}
       onStepClick={setCurrentStep}
@@ -146,9 +154,7 @@ export default function AddTripBookingModal({ open, onClose }: AddTripBookingMod
       isSubmitting={isSubmitting}
       isConfirmed={isConfirmed}
     >
-      {currentStep === 0 && (
-        <StepGuestDetails formData={formData} onChange={handleChange} />
-      )}
+      {currentStep === 0 && <StepGuestDetails formData={formData} onChange={handleChange} />}
       {currentStep === 1 && <StepBookingDetails formData={formData} onChange={handleChange} />}
       {currentStep === 2 && <StepBookingSummary formData={formData} />}
       {currentStep === 3 && <PaymentStep total={total} />}

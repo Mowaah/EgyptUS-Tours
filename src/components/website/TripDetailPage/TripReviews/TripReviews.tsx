@@ -1,3 +1,5 @@
+"use client";
+
 import { TestimonialCard, ReviewGrid } from "@/components/shared";
 import type { Testimonial } from "@/components/shared/TestimonialCard/TestimonialCard";
 import styles from "./TripReviews.module.scss";

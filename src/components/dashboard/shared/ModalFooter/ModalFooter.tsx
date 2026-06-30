@@ -10,6 +10,7 @@ interface ModalFooterProps {
   primaryDisabled?: boolean;
   secondaryDisabled?: boolean;
   isDanger?: boolean;
+  primaryIsLoading?: boolean;
 }
 
 export default function ModalFooter({
@@ -20,6 +21,7 @@ export default function ModalFooter({
   primaryDisabled = false,
   secondaryDisabled = false,
   isDanger = false,
+  primaryIsLoading = false,
 }: ModalFooterProps) {
   return (
     <footer className={styles.footer}>
@@ -35,9 +37,14 @@ export default function ModalFooter({
         type="button"
         className={`${styles.primaryBtn} ${isDanger ? styles.dangerBtn : ""}`}
         onClick={primaryOnClick}
-        disabled={primaryDisabled}
+        disabled={primaryDisabled || primaryIsLoading}
+        aria-busy={primaryIsLoading}
       >
-        {primaryLabel}
+        {primaryIsLoading ? (
+          <span className={styles.spinner} aria-hidden />
+        ) : (
+          primaryLabel
+        )}
       </button>
     </footer>
   );

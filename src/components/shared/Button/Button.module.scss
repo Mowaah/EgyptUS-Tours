@@ -138,3 +138,25 @@
   align-items: center;
   font-size: 1.1em;
 }
+
+.spinner {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid rgba(255, 255, 255, 0.38);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: buttonSpin 0.8s linear infinite;
+  display: inline-block;
+}
+
+.button.outline .spinner,
+.button.secondary-outline .spinner {
+  border-color: rgba(0, 0, 0, 0.1);
+  border-top-color: currentColor;
+}
+
+@keyframes buttonSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}

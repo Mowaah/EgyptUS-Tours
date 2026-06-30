@@ -9,8 +9,9 @@ import { IconStepper, IconStepDef } from "@/components/shared/IconStepper/IconSt
 import StepGuestDetails from "./steps/StepGuestDetails/StepGuestDetails";
 import StepBookingDetails from "./steps/StepBookingDetails/StepBookingDetails";
 import StepBookingSummary from "./steps/StepBookingSummary/StepBookingSummary";
-import StepPayment from "./steps/StepPayment/StepPayment";
-
+import PaymentStep from "@/components/dashboard/shared/PaymentStep/PaymentStep";
+import BookingModalContainer from "../../shared/BookingModalContainer/BookingModalContainer";
+import { BaseGuestDetails } from "../../shared/types";
 import styles from "./AddTransportationBookingModal.module.scss";
 
 interface AddTransportationBookingModalProps {
@@ -25,14 +26,7 @@ const STEPS: IconStepDef[] = [
   { label: "Payment & Confirmation", iconSrc: "/images/dashboard/sidebar/payments.svg" },
 ];
 
-export interface AddTransportationBookingData {
-  guestName: string;
-  guestEmail: string;
-  guestPhonePrefix: string;
-  guestPhone: string;
-  guestNationality: string;
-  specialRequests: string;
-
+export interface AddTransportationBookingData extends BaseGuestDetails {
   // Placeholder for transportation specific fields
   vehicleType: string;
   specificVehicle: string;
@@ -73,32 +67,43 @@ export default function AddTransportationBookingModal({ open, onClose }: AddTran
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<AddTransportationBookingData>(INITIAL_DATA);
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [bookingId, setBookingId] = useState("");
 
   useEffect(() => {
     if (!open) return;
     setCurrentStep(0);
     setFormData(INITIAL_DATA);
     setIsSuccessOpen(false);
-    
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = originalOverflow;
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open, onClose]);
+    setIsSubmitting(false);
+    setBookingId(`#BK${Math.floor(Math.random() * 1000000)}`);
+  }, [open]);
 
   if (!open) return null;
+
+  const getVehicleBasePrice = (type: string) => {
+    switch (type) {
+      case "SUV": return 80;
+      case "Van": return 120;
+      case "Bus": return 200;
+      case "Sedan":
+      default: return 50;
+    }
+  };
+  const basePrice = getVehicleBasePrice(formData.vehicleType);
+  const tripMultiplier = formData.tripType === "Round Trip" ? 2 : 1;
+  const subtotal = basePrice * tripMultiplier + (formData.childSeat ? 10 : 0) + (formData.extraLuggageSpace ? 15 : 0) + (formData.meetAndGreetService ? 20 : 0);
+  const total = subtotal - 5 + (subtotal * 0.10);
 
   const handleNext = () => {
     if (currentStep < STEPS.length - 1) {
       setCurrentStep((prev) => prev + 1);
     } else {
-      setIsSuccessOpen(true);
+      setIsSubmitting(true);
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setIsSuccessOpen(true);
+      }, 1500);
     }
   };
 
@@ -121,26 +126,13 @@ export default function AddTransportationBookingModal({ open, onClose }: AddTran
       case 2:
         return <StepBookingSummary formData={formData} />;
       case 3:
-        return <StepPayment formData={formData} onChange={updateFormData} />;
+        return <PaymentStep total={total} />;
       default:
         return null;
     }
   };
 
   if (isSuccessOpen) {
-    const getVehicleBasePrice = (type: string) => {
-      switch (type) {
-        case "SUV": return 80;
-        case "Van": return 120;
-        case "Bus": return 200;
-        case "Sedan":
-        default: return 50;
-      }
-    };
-    const basePrice = getVehicleBasePrice(formData.vehicleType);
-    const tripMultiplier = formData.tripType === "Round Trip" ? 2 : 1;
-    const subtotal = basePrice * tripMultiplier + (formData.childSeat ? 10 : 0) + (formData.extraLuggageSpace ? 15 : 0) + (formData.meetAndGreetService ? 20 : 0);
-    const total = subtotal - 5 + (subtotal * 0.10);
 
     return (
       <SuccessModal
@@ -157,7 +149,7 @@ export default function AddTransportationBookingModal({ open, onClose }: AddTran
           onClose();
         }}
         metadata={[
-          { label: "Booking ID", value: "#BK53602205" },
+          { label: "Booking ID", value: bookingId },
           { label: "Vehicle", value: formData.vehicleType || "Mercedes S-Class" },
           { 
             label: "Route", 
@@ -194,51 +186,21 @@ export default function AddTransportationBookingModal({ open, onClose }: AddTran
   }
 
   return (
-    <div className={styles.overlay} onMouseDown={onClose}>
-      <div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}>
-        <ModalHeader
-          title="Add New Transportation Booking"
-          subtitle="Enter the transportation details and create a new booking."
-          iconSrc="/images/dashboard/sidebar/transportation.svg" // using a transportation car icon
-          onClose={onClose}
-        />
-        <div className={styles.contentWrap}>
-          <div className={styles.stepperWrap}>
-            <IconStepper steps={STEPS} currentStep={currentStep} onStepClick={setCurrentStep} />
-          </div>
-          {renderStepContent()}
-        </div>
-        <div className={styles.footerWrap}>
-          <ModalFooter
-            secondaryLabel={
-              currentStep > 0 ? (
-                <>
-                  <Image src="/images/dashboard/previous.svg" alt="" width={20} height={20} />
-                  <span style={{ marginLeft: "0.5rem" }}>Previous</span>
-                </>
-              ) : (
-                "Cancel"
-              )
-            }
-            secondaryOnClick={currentStep > 0 ? handlePrev : onClose}
-            primaryLabel={
-              <>
-                <span>{currentStep === STEPS.length - 1 ? "Submit" : "Next"}</span>
-                {currentStep !== STEPS.length - 1 && (
-                  <Image
-                    src="/images/dashboard/next.svg"
-                    alt=""
-                    width={20}
-                    height={20}
-                    style={{ marginLeft: "0.5rem" }}
-                  />
-                )}
-              </>
-            }
-            primaryOnClick={handleNext}
-          />
-        </div>
-      </div>
-    </div>
+    <BookingModalContainer
+      open={open}
+      onClose={onClose}
+      title="Add New Transportation Booking"
+      subtitle="Enter the transportation details and create a new booking."
+      iconSrc="/images/dashboard/sidebar/transportation.svg"
+      steps={STEPS}
+      currentStep={currentStep}
+      onStepClick={setCurrentStep}
+      onNext={handleNext}
+      onPrevious={handlePrev}
+      isSubmitting={isSubmitting}
+      isConfirmed={isSuccessOpen}
+    >
+      {renderStepContent()}
+    </BookingModalContainer>
   );
 }

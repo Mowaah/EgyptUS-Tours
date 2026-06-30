@@ -42,22 +42,22 @@ export default function PriceDetails() {
 
           <div className={styles.priceList}>
             <div className={styles.priceListItem}>
-              <span className={styles.priceItemName}>1 Ã— Double Room â€“ Sea View</span>
+              <span className={styles.priceItemName}>1 × Double Room - Sea View</span>
               <span className={styles.priceItemCost}>$250.00</span>
             </div>
             
             <div className={styles.priceListItem}>
-              <span className={styles.priceItemName}>1 Ã— Double Room â€“ Pool View</span>
+              <span className={styles.priceItemName}>1 × Double Room - Pool View</span>
               <span className={styles.priceItemCost}>$250.00</span>
             </div>
 
             <div className={styles.priceListItem}>
-              <span className={styles.priceItemName}>1 Ã— Triple Room â€“ Garden View</span>
+              <span className={styles.priceItemName}>1 × Triple Room - Garden View</span>
               <span className={styles.priceItemCost}>$500.00</span>
             </div>
 
             <div className={styles.priceListItem}>
-              <span className={styles.priceItemName}>1 Ã— Triple Room â€“ Garden View</span>
+              <span className={styles.priceItemName}>1 × Triple Room - Garden View</span>
               <span className={styles.priceItemCost}>$500.00</span>
             </div>
           </div>

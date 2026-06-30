@@ -20,6 +20,7 @@ const navRoutes: Record<string, string> = {
   "Lead Management": "/dashboard/leads",
   Trips: "/dashboard/bookings/trips",
   Transportation: "/dashboard/bookings/transportation",
+  Hotels: "/dashboard/bookings/hotels",
   Customers: "/dashboard/customers",
   Reviews: "/dashboard/reviews",
   "User Management": "/dashboard/settings/user-management",

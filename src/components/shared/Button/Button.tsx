@@ -14,6 +14,7 @@ interface ButtonProps {
   onClick?: () => void;
   className?: string;
   disabled?: boolean;
+  isLoading?: boolean;
   type?: "button" | "submit" | "reset";
 }
 
@@ -28,6 +29,7 @@ export default function Button({
   onClick,
   className = "",
   disabled,
+  isLoading = false,
   type = "button",
 }: ButtonProps) {
   const classes = [
@@ -36,6 +38,7 @@ export default function Button({
     styles[size],
     fullWidth ? styles.fullWidth : "",
     className,
+    isLoading ? styles.loading : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -58,15 +61,22 @@ export default function Button({
     <button 
       className={classes} 
       onClick={onClick} 
-      disabled={disabled}
+      disabled={disabled || isLoading}
+      aria-busy={isLoading}
       type={type}
     >
-      {icon && iconPosition === "left" && (
-        <span className={styles.icon}>{icon}</span>
-      )}
-      <span>{children}</span>
-      {icon && iconPosition === "right" && (
-        <span className={styles.icon}>{icon}</span>
+      {isLoading ? (
+        <span className={styles.spinner} aria-hidden />
+      ) : (
+        <>
+          {icon && iconPosition === "left" && (
+            <span className={styles.icon}>{icon}</span>
+          )}
+          <span>{children}</span>
+          {icon && iconPosition === "right" && (
+            <span className={styles.icon}>{icon}</span>
+          )}
+        </>
       )}
     </button>
   );

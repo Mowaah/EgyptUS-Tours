@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useLayoutEffect, CSSProperties } from "react";
+import { createPortal } from "react-dom";
 
 import CheckboxIndicator from "@/components/shared/CheckboxIndicator/CheckboxIndicator";
 import styles from "./CheckboxDropdown.module.scss";
@@ -41,16 +42,64 @@ export default function CheckboxDropdown<T extends CheckboxOption>({
 }: CheckboxDropdownProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [dropdownStyle, setDropdownStyle] = useState<CSSProperties>({});
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(target) &&
+        !dropdownRef.current?.contains(target)
+      ) {
         setIsOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useLayoutEffect(() => {
+    if (!isOpen) return;
+
+    const updateDropdownPosition = () => {
+      if (!containerRef.current) return;
+
+      const rect = containerRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      
+      if (spaceBelow < 250 && spaceAbove > spaceBelow) {
+        setDropdownStyle({
+          position: "fixed",
+          left: rect.left,
+          bottom: window.innerHeight - rect.top + 8,
+          top: "auto",
+          width: rect.width,
+          zIndex: 9999,
+        });
+      } else {
+        setDropdownStyle({
+          position: "fixed",
+          left: rect.left,
+          top: rect.bottom + 8,
+          bottom: "auto",
+          width: rect.width,
+          zIndex: 9999,
+        });
+      }
+    };
+
+    updateDropdownPosition();
+    window.addEventListener("resize", updateDropdownPosition);
+    window.addEventListener("scroll", updateDropdownPosition, true);
+
+    return () => {
+      window.removeEventListener("resize", updateDropdownPosition);
+      window.removeEventListener("scroll", updateDropdownPosition, true);
+    };
+  }, [isOpen]);
 
   const handleSelect = (optionValue: string) => {
     if (multiple) {
@@ -73,12 +122,13 @@ export default function CheckboxDropdown<T extends CheckboxOption>({
     return value === optionValue;
   };
 
-  return (
-    <div className={[styles.wrapper, wrapperClassName].filter(Boolean).join(" ")} ref={containerRef}>
-      {renderTrigger(isOpen, setIsOpen)}
-
-      {isOpen && (
-        <div className={`${styles.dropdown} ${dropdownClassName}`}>
+  const dropdown = isOpen
+    ? createPortal(
+        <div 
+          className={`${styles.dropdown} ${dropdownClassName}`} 
+          style={dropdownStyle}
+          ref={dropdownRef}
+        >
           {options.map((opt) => {
             const selected = isSelected(opt.value);
             return (
@@ -108,8 +158,15 @@ export default function CheckboxDropdown<T extends CheckboxOption>({
               </button>
             );
           })}
-        </div>
-      )}
+        </div>,
+        document.body
+      )
+    : null;
+
+  return (
+    <div className={[styles.wrapper, wrapperClassName].filter(Boolean).join(" ")} ref={containerRef}>
+      {renderTrigger(isOpen, setIsOpen)}
+      {dropdown}
     </div>
   );
 }

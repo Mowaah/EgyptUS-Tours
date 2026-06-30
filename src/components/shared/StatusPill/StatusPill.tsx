@@ -3,7 +3,7 @@ import styles from "./StatusPill.module.scss";
 export type StatusPillVariant = "green" | "red" | "blue" | "orange" | "pink" | "gray";
 
 interface StatusPillProps {
-  label: string;
+  label: React.ReactNode;
   variant: StatusPillVariant;
   hideDot?: boolean;
 }
