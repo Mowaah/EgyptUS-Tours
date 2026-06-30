@@ -1,5 +1,3 @@
-"use client";
-
 import type { HTMLAttributes } from "react";
 
 import styles from "./CheckboxIndicator.module.scss";
@@ -15,7 +13,7 @@ export interface CheckboxIndicatorProps extends HTMLAttributes<HTMLSpanElement> 
   /** Frosted overlay style for destination cards and similar. */
   surface?: "default" | "overlay";
   /**
-   * "filter" — sidebar-style 20px radios (e.g. trips filters): 1px border, soft ring + shadow when selected.
+   * "filter" â€” sidebar-style 20px radios (e.g. trips filters): 1px border, soft ring + shadow when selected.
    */
   emphasis?: "default" | "filter";
 }

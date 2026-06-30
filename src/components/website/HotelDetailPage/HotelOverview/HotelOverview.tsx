@@ -1,5 +1,3 @@
-"use client";
-
 import { Hotel } from "@/types";
 import HotelFacilities from "../HotelFacilities/HotelFacilities";
 import styles from "./HotelOverview.module.scss";

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef, useLayoutEffect } from "react";
+import { createPortal } from "react-dom";
 import Picker, { PickerValue } from "react-mobile-picker";
 import styles from "./TimePicker.module.scss";
 
@@ -43,8 +44,12 @@ export interface TimeValue {
 }
 
 interface TimePickerProps {
-  value?: TimeValue;
-  onChange?: (v: TimeValue) => void;
+  value?: TimeValue | string;
+  onChange?: (v: TimeValue, str: string) => void;
+  variant?: "inline" | "input";
+  className?: string;
+  dropdownClassName?: string;
+  placeholder?: string;
 }
 
 // Internal picker state (string keys understood by react-mobile-picker)
@@ -54,14 +59,77 @@ interface DrumState extends PickerValue {
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export default function TimePicker({ value, onChange }: TimePickerProps) {
-  const tv = value ?? { hour: 6, minute: 28, period: "PM" as const };
+export default function TimePicker({ 
+  value, 
+  onChange, 
+  variant = "inline",
+  className,
+  dropdownClassName,
+  placeholder = "HH : MM  AM/PM" 
+}: TimePickerProps) {
+  const parseTime = (val?: TimeValue | string): TimeValue => {
+    if (!val) return { hour: 6, minute: 0, period: "PM" };
+    if (typeof val !== "string") return val;
+    const match = val.match(/^(\d{1,2}):(\d{2})\s?(AM|PM)?$/i);
+    if (match) {
+      return {
+        hour: parseInt(match[1]) || 12,
+        minute: parseInt(match[2]) || 0,
+        period: (match[3]?.toUpperCase() as "AM" | "PM") ?? "AM",
+      };
+    }
+    return { hour: 12, minute: 0, period: "AM" };
+  };
+
+  const tv = parseTime(value);
 
   const [drum, setDrum] = useState<DrumState>({
     hour: midHKey(tv.hour),
     minute: midMKey(tv.minute),
   });
   const [period, setPeriod] = useState<"AM" | "PM">(tv.period);
+  
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>();
+
+  useEffect(() => {
+    if (variant === "inline") return;
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (
+        containerRef.current && !containerRef.current.contains(target) &&
+        (!dropdownRef.current || !dropdownRef.current.contains(target))
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [variant]);
+
+  useLayoutEffect(() => {
+    if (variant === "inline" || !open || !containerRef.current) return;
+    const updatePos = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      setDropdownStyle({
+        position: "fixed",
+        top: rect.bottom + 8,
+        left: rect.left,
+        width: rect.width,
+        zIndex: 1300,
+      });
+    };
+    updatePos();
+    window.addEventListener("scroll", updatePos, true);
+    window.addEventListener("resize", updatePos);
+    return () => {
+      window.removeEventListener("scroll", updatePos, true);
+      window.removeEventListener("resize", updatePos);
+    };
+  }, [variant, open]);
 
   // Sync external value → internal state, but ONLY when the displayed value
   // actually differs (prevents resetting position while the user is scrolling).
@@ -82,29 +150,35 @@ export default function TimePicker({ value, onChange }: TimePickerProps) {
   const handleDrumChange = useCallback(
     (newDrum: DrumState) => {
       setDrum(newDrum);
-      onChange?.({
-        hour: hourFromKey(newDrum.hour),
-        minute: minFromKey(newDrum.minute),
-        period,
-      });
+      if (onChange) {
+        const h = hourFromKey(newDrum.hour);
+        const m = minFromKey(newDrum.minute);
+        const hStr = String(h).padStart(2, "0");
+        const mStr = String(m).padStart(2, "0");
+        onChange({ hour: h, minute: m, period }, `${hStr}:${mStr} ${period}`);
+      }
     },
-    [period, onChange]
+    [onChange, period]
   );
 
   const handlePeriod = useCallback(
     (p: "AM" | "PM") => {
       setPeriod(p);
-      onChange?.({
-        hour: hourFromKey(drum.hour),
-        minute: minFromKey(drum.minute),
-        period: p,
-      });
+      if (onChange) {
+        const h = hourFromKey(drum.hour);
+        const m = minFromKey(drum.minute);
+        const hStr = String(h).padStart(2, "0");
+        const mStr = String(m).padStart(2, "0");
+        onChange({ hour: h, minute: m, period: p }, `${hStr}:${mStr} ${p}`);
+      }
     },
     [drum, onChange]
   );
 
-  return (
-    <div className={styles.dropdown}>
+  const displayValue = value ? `${String(tv.hour).padStart(2, "0")}:${String(tv.minute).padStart(2, "0")} ${tv.period}` : "";
+
+  const pickerContent = (
+    <div className={`${styles.dropdown} ${dropdownClassName || ""}`} style={variant === "input" ? dropdownStyle : undefined} ref={dropdownRef}>
       {/* Full-width selection lines (overlay the library's own gray lines) */}
       <div className={styles.selectionHighlight} />
 
@@ -152,7 +226,10 @@ export default function TimePicker({ value, onChange }: TimePickerProps) {
             type="button"
             className={`${styles.ampmBtn} ${period === p ? styles.ampmSelected : styles.ampmUnselected
               }`}
-            onClick={() => handlePeriod(p)}
+            onClick={(e) => {
+              e.preventDefault();
+              handlePeriod(p);
+            }}
           >
             {p}
           </button>
@@ -160,4 +237,23 @@ export default function TimePicker({ value, onChange }: TimePickerProps) {
       </div>
     </div>
   );
+
+  if (variant === "input") {
+    return (
+      <div ref={containerRef} style={{ width: "100%", position: "relative" }}>
+        <input
+          type="text"
+          readOnly
+          className={className}
+          value={displayValue}
+          placeholder={placeholder}
+          onClick={() => setOpen((o) => !o)}
+          style={{ cursor: "pointer", width: "100%" }}
+        />
+        {open && dropdownStyle && createPortal(pickerContent, document.body)}
+      </div>
+    );
+  }
+
+  return pickerContent;
 }

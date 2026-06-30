@@ -1,5 +1,3 @@
-"use client";
-
 import DashboardEmptyState from "./DashboardEmptyState";
 
 interface DashboardSearchEmptyStateProps {

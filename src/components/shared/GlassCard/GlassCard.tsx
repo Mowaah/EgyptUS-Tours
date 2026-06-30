@@ -1,5 +1,3 @@
-"use client";
-
 import { CSSProperties, ElementType, ReactNode } from "react";
 import styles from "./GlassCard.module.scss";
 
@@ -15,7 +13,7 @@ interface GlassCardProps {
 }
 
 /**
- * GlassCard — glass morphism wrapper.
+ * GlassCard â€” glass morphism wrapper.
  * Use variant="nav" for the hero navbar active link (Figma glass settings).
  */
 export default function GlassCard({

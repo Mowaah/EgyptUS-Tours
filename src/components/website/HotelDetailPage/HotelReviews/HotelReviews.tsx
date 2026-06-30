@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import { Hotel, HotelReview } from "@/types";
 import { Button } from "@/components/shared";

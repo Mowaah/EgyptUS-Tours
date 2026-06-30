@@ -51,7 +51,7 @@ export default function RefundModal({ open, onClose, onSubmit }: RefundModalProp
       <div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}>
         <ModalHeader
           title="Refund Payment"
-          iconSrc="/images/money-send.svg"
+          iconSrc="/images/dashboard/booking/refund.svg"
           onClose={onClose}
         />
 

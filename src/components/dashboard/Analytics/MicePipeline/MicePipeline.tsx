@@ -1,5 +1,3 @@
-"use client";
-
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
 import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 import RoundedDonutChart from "@/components/dashboard/shared/RoundedDonutChart/RoundedDonutChart";
@@ -18,7 +16,7 @@ export default function MicePipeline() {
       <PanelHeader
         icon="finance/payment/chart"
         title="MICE Pipeline"
-        subtitle="RFPs Received → Proposals Sent → Contracts Signed"
+        subtitle="RFPs Received â†’ Proposals Sent â†’ Contracts Signed"
         actions={<ExportButtons />}
       />
 

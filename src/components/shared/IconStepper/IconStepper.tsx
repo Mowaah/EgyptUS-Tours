@@ -10,9 +10,10 @@ export interface IconStepDef {
 interface IconStepperProps {
   steps: IconStepDef[];
   currentStep: number; // 0-indexed
+  onStepClick?: (stepIndex: number) => void;
 }
 
-export function IconStepper({ steps, currentStep }: IconStepperProps) {
+export function IconStepper({ steps, currentStep, onStepClick }: IconStepperProps) {
   return (
     <div className={styles.stepper}>
       {steps.map((step, index) => {
@@ -35,7 +36,11 @@ export function IconStepper({ steps, currentStep }: IconStepperProps) {
 
         return (
           <React.Fragment key={index}>
-            <div className={styles.step}>
+            <div
+              className={styles.step}
+              onClick={() => onStepClick?.(index)}
+              style={onStepClick ? { cursor: "pointer" } : undefined}
+            >
               <div className={`${styles.stepIconWrap} ${iconWrapClass}`}>
                 <Image
                   src={step.iconSrc}

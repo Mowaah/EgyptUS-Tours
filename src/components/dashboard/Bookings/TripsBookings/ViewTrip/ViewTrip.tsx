@@ -16,8 +16,8 @@ import { mockTripsData } from "../tripsData";
 import { getTripsPillStyle } from "../TripsPanel/tripsColumns";
 import ActionNoteModal, { ActionNoteModalConfig } from "@/components/dashboard/LeadsInquiries/ActionNoteModal/ActionNoteModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
-import RefundModal from "./RefundModal/RefundModal";
-import RefundSummary, { RefundData } from "./RefundSummary/RefundSummary";
+import { RefundModal, RefundSummary } from "@/components/dashboard/shared";
+import type { RefundData } from "@/components/dashboard/shared/RefundSummary/RefundSummary";
 
 interface ViewTripProps {
   tripId: string;

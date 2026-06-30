@@ -19,6 +19,7 @@ const navRoutes: Record<string, string> = {
   Dashboard: "/dashboard",
   "Lead Management": "/dashboard/leads",
   Trips: "/dashboard/bookings/trips",
+  Transportation: "/dashboard/bookings/transportation",
   Customers: "/dashboard/customers",
   Reviews: "/dashboard/reviews",
   "User Management": "/dashboard/settings/user-management",

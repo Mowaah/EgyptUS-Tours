@@ -1,12 +1,10 @@
-"use client";
-
 import Image from "next/image";
 import styles from "./BlogSubscribe.module.scss";
 
 export default function BlogSubscribe() {
   return (
     <section className={styles.section}>
-      {/* Decorative paper plane — left side, absolutely positioned */}
+      {/* Decorative paper plane â€” left side, absolutely positioned */}
       <div className={styles.planeDecoration}>
         <Image
           src="/images/paper-plane.svg"

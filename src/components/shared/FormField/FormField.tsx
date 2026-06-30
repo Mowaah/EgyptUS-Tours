@@ -1,5 +1,3 @@
-"use client";
-
 import React, { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 import styles from "./FormField.module.scss";
 

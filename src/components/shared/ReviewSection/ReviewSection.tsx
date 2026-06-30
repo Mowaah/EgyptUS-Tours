@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import { ReviewGrid } from "@/components/shared";
 import styles from "./ReviewSection.module.scss";

@@ -1,5 +1,3 @@
-"use client";
-
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
 import parentStyles from "../ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
 import HatchedBarChart from "@/components/dashboard/shared/HatchedBarChart/HatchedBarChart";

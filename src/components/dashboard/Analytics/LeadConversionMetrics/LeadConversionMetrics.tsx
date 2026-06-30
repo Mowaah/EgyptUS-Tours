@@ -1,5 +1,3 @@
-"use client";
-
 import MetricCard from "@/components/dashboard/DashboardHome/MetricCard/MetricCard";
 import type { MetricCardData } from "@/components/dashboard/DashboardHome/types";
 import styles from "../ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";

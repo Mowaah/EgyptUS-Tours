@@ -7,9 +7,8 @@ import FaqFormModal from "@/components/dashboard/FaqFormModal/FaqFormModal";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import { useContentManager } from "@/hooks/useContentManager";
-import styles from "../../page.module.scss";
 
-// Dummy data for visual — swap with real API data later
+// Dummy data for visual â€” swap with real API data later
 const INITIAL_DATA: ContentItem[] = [
   { id: "1", title: "What's included in the trip price?", content: "Each trip includes clearly listed services such as accommodation, transportation tours, and selected meals. Full details are available on the trip details page.", status: "Draft", lastUpdated: "May 13, 2026" },
   { id: "2", title: "Can I customize a trip or book a private tour?", content: "Yes! You can choose between group or private trips, and customize your itinerary based on your preferences, budget, and travel style.", status: "Published", lastUpdated: "May 13, 2026" },

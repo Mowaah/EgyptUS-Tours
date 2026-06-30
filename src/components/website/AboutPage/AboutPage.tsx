@@ -1,5 +1,3 @@
-"use client";
-
 import { PageHeader, SecondaryCta } from "@/components/shared";
 import AboutStory from "./components/AboutStory/AboutStory";
 import AboutFeatures from "./components/AboutFeatures/AboutFeatures";

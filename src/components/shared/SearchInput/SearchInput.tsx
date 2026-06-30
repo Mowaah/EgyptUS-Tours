@@ -1,13 +1,11 @@
-"use client";
-
 import Image from "next/image";
 import styles from "./SearchInput.module.scss";
 
 interface SearchInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   wrapperClassName?: string;
   /**
-   * `toolbar` — next to sort/filters: flexes in a row (no fixed min-width);
-   * use in page toolbars. `default` — full width of parent.
+   * `toolbar` â€” next to sort/filters: flexes in a row (no fixed min-width);
+   * use in page toolbars. `default` â€” full width of parent.
    */
   variant?: "default" | "toolbar";
 }

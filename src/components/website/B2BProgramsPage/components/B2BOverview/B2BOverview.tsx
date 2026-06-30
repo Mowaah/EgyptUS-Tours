@@ -1,5 +1,3 @@
-"use client";
-
 import styles from "./B2BOverview.module.scss";
 
 export default function B2BOverview() {
@@ -15,7 +13,7 @@ export default function B2BOverview() {
           </p>
           <p className={styles.description}>
             We work closely with decision-makers, HR leaders, and event managers
-            to deliver seamless MICE experiences — from executive meetings and
+            to deliver seamless MICE experiences â€” from executive meetings and
             conferences to incentive retreats and large-scale corporate events.
           </p>
           <p className={styles.description}>

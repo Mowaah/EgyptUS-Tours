@@ -1,5 +1,3 @@
-"use client";
-
 import { PageHeader, DetailGallery } from "@/components/shared";
 import B2BOverview from "./components/B2BOverview/B2BOverview";
 import B2BBookingWidget from "./components/B2BBookingWidget/B2BBookingWidget";
@@ -29,7 +27,7 @@ export default function B2BProgramsPage() {
           { label: "B2B Programs", isCurrent: true },
         ]}
         title="Corporate Travel & Event Experiences Designed for Results"
-        subtitle="From executive retreats to large-scale company events — we handle everything with precision."
+        subtitle="From executive retreats to large-scale company events â€” we handle everything with precision."
         decorationSrc="/images/dotted-line3.svg"
         titleMaxWidth="950px"
         subtitleMaxWidth="900px"

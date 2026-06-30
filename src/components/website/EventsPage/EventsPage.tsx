@@ -1,5 +1,3 @@
-"use client";
-
 import { PageHeader, DetailGallery } from "@/components/shared";
 import EventsOverview from "./EventsOverview/EventsOverview";
 import EventsBookingWidget from "./EventsBookingWidget/EventsBookingWidget";
@@ -28,7 +26,7 @@ export default function EventsPage() {
           { label: "MICE & Corporate Events", isCurrent: true },
         ]}
         title="Professional Corporate Events & MICE Solutions in Egypt"
-        subtitle="From executive meetings to large-scale conferences and incentive retreats — we handle everything."
+        subtitle="From executive meetings to large-scale conferences and incentive retreats â€” we handle everything."
         decorationSrc="/images/dotted-line3.svg"
         titleMaxWidth="900px"
         subtitleMaxWidth="900px"

@@ -1,5 +1,3 @@
-"use client";
-
 import { PageHeader, SearchContainer } from "@/components/shared";
 
 interface BlogHeroProps {

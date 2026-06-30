@@ -1,5 +1,3 @@
-"use client";
-
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import { SummaryCard } from "@/components/dashboard/SummaryCard";
 import DepositsTable from "../DepositsTable/DepositsTable";

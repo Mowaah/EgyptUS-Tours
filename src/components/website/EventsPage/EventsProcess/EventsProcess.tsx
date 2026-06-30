@@ -1,5 +1,3 @@
-"use client";
-
 import ProcessTimeline from "@/components/shared/ProcessTimeline/ProcessTimeline";
 
 const STEPS = [

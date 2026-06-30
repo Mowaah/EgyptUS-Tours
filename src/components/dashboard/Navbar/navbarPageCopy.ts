@@ -30,14 +30,21 @@ const pageCopyByPath: Record<string, PageCopy> = {
   "/dashboard/leads": {
     title: "Leads Management",
     subtitle: "Track and manage all incoming customer inquiries.",
-    breadcrumbTrail: [{ label: "Home" }, { label: "Leads Management" }],
+    breadcrumbTrail: [{ label: "Leads Management" }],
     primaryAction: { label: "Add New Lead", iconSrc: "/images/dashboard/navbar/add-circle.svg" },
   },
   "/dashboard/bookings/trips": {
     title: "Trips",
     subtitle: "Monitor and control trips and accommodations",
-    breadcrumbTrail: [{ label: "Home" }, { label: "Bookings" }, { label: "Trips" }],
+    breadcrumbTrail: [{ label: "Bookings" }, { label: "Trips" }],
     searchPlaceholder: "Search bookings, customers...",
+    primaryAction: { label: "New Booking", iconSrc: "/images/dashboard/navbar/add-circle.svg" },
+  },
+  "/dashboard/bookings/transportation": {
+    title: "Transportation",
+    subtitle: "Manage transportation bookings and transfers",
+    breadcrumbTrail: [{ label: "Bookings" }, { label: "Transportation" }],
+    searchPlaceholder: "Search transfers, guests...",
     primaryAction: { label: "New Booking", iconSrc: "/images/dashboard/navbar/add-circle.svg" },
   },
   "/dashboard/settings/user-management": {
@@ -139,7 +146,7 @@ const pageCopyByPath: Record<string, PageCopy> = {
   "/dashboard/marketing/promotions/create": {
     title: "Create New Offer",
     subtitle: "Set up discounts and promotional campaigns",
-    breadcrumbTrail: [{ label: "Home" }, { label: "Marketing" }, { label: "Promotions", href: "/dashboard/marketing/promotions" }, { label: "Create Offer" }],
+    breadcrumbTrail: [{ label: "Marketing" }, { label: "Promotions", href: "/dashboard/marketing/promotions" }, { label: "Create Offer" }],
     hideSearch: true,
     hideFilterButton: true,
     primaryAction: { label: "Activate Offer", type: "submit", form: "create-promotion-form", iconSrc: "/images/dashboard/activate-offer.svg" },
@@ -156,7 +163,7 @@ const pageCopyByPath: Record<string, PageCopy> = {
   "/dashboard/seo": {
     title: "SEO Configuration",
     subtitle: "Manage page content, metadata, social previews, structured data, and analytics.",
-    breadcrumbTrail: [{ label: "Home" }, { label: "SEO Configuration" }],
+    breadcrumbTrail: [{ label: "SEO Configuration" }],
     searchPlaceholder: "Search bookings, customers...",
     hideFilterButton: true,
   },

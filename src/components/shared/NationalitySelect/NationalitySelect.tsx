@@ -9,9 +9,11 @@ interface NationalitySelectProps {
   onChange: (value: string) => void;
   error?: boolean;
   useCountryName?: boolean;
+  placeholder?: string;
+  variant?: string;
 }
 
-export default function NationalitySelect({ value, onChange, error, useCountryName = false }: NationalitySelectProps) {
+export default function NationalitySelect({ value, onChange, error, useCountryName = false, placeholder, variant }: NationalitySelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -82,7 +84,7 @@ export default function NationalitySelect({ value, onChange, error, useCountryNa
     <div className={styles.wrapper} ref={containerRef} onKeyDown={handleKeyDown}>
       <button 
         type="button" 
-        className={`${styles.trigger} ${isOpen ? styles.open : ""} ${error ? styles.error : ""}`}
+        className={`${styles.trigger} ${isOpen ? styles.open : ""} ${error ? styles.error : ""} ${variant ? styles[variant] || variant : ""}`}
         onClick={() => setIsOpen(!isOpen)}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -93,7 +95,7 @@ export default function NationalitySelect({ value, onChange, error, useCountryNa
             <span>{useCountryName ? selected.name : (selected.nationality || selected.name)}</span>
           </div>
         ) : (
-          <span className={styles.placeholder}>{useCountryName ? "Select Country" : "Select Your Nationality"}</span>
+          <span className={styles.placeholder}>{placeholder || (useCountryName ? "Select Country" : "Select Your Nationality")}</span>
         )}
         <svg className={styles.chevron} width="12" height="8" viewBox="0 0 12 8" fill="none">
           <path d="M1 1.5L6 6.5L11 1.5" stroke="#A3A3A3" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>

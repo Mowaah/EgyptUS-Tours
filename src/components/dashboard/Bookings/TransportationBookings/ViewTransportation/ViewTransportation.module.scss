@@ -1,0 +1,465 @@
+@use "@/styles/variables" as *;
+
+.contentWrapper {
+  position: relative;
+  padding: 0;
+  width: 100%;
+}
+
+.toastBanner {
+  top: -24px !important;
+  right: 0 !important;
+  z-index: 100 !important;
+}
+
+.gridContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.firstRowCard {
+  min-height: 314px;
+}
+
+.card {
+  background: $white;
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px; /* Figma: User Visits gap is 18px */
+  width: 100%;
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.titleLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: 24px;
+  color: #0E2851;
+}
+
+.titleIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #F8F9FB;
+  border-radius: 20px;
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #F8FAFC;
+  width: 100%;
+  
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.infoLabel {
+  font-family: 'Urbanist', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #A3A3A3;
+}
+
+.infoValue {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pillBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 24px;
+  font-size: 12px;
+  font-weight: 500;
+  gap: 8px;
+
+  &.orange {
+    background: #FFF5EE;
+    color: #FF6600;
+  }
+}
+
+.customPills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.headerBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 96px;
+  font-size: 12px;
+  font-weight: 500;
+  gap: 6px;
+
+  &.orange {
+    background: #FFEDD5;
+    color: #EA580C;
+    .dot { background: #EA580C; }
+  }
+
+  &.blue {
+    background: #F1F8FF;
+    color: #2971E6;
+    .dot { background: #2971E6; }
+  }
+
+  &.lightBlue {
+    background: #EBF2FF;
+    color: #2B7CD3;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: 32px;
+  font-size: 16px;
+  font-weight: 500;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  height: 56px;
+
+  &.dangerButton {
+    background: rgba(242, 107, 128, 0.02);
+    border: 1px solid rgba(185, 28, 28, 0.28);
+    color: #B91C1C;
+    &:hover { background: #FEE2E2; }
+  }
+
+  &.primaryButton {
+    background: #2971E6;
+    border: none;
+    color: $white;
+    &:hover { background: #1d5fd4; }
+  }
+}
+
+/* Specific elements */
+.nationalityBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 24px;
+  background: #EAF1FD;
+  gap: 8px;
+  font-size: 12px;
+  color: #0E2851;
+}
+
+.avatar {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Additional Layout Styles */
+
+.priceDetailsWrapper {
+  display: flex;
+  gap: 16px;
+  
+  @media (max-width: 1550px) {
+    flex-direction: column;
+  }
+}
+
+.priceImageContainer {
+  flex: 41;
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  min-height: 205px;
+  
+  @media (max-width: 1550px) {
+    flex: none;
+    width: 100%;
+    height: 160px;
+    min-height: 160px;
+  }
+}
+
+.priceListContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 59;
+  justify-content: center;
+  background: #F9FAFB;
+  border-radius: 24px;
+  padding: 24px;
+  height: 205px;
+
+  @media (max-width: 1550px) {
+    flex: none;
+    width: 100%;
+    height: auto;
+  }
+}
+
+.priceTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.exportButton {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+  
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.priceTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0E2851;
+  text-decoration: underline;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.priceList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.priceListItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.priceItemName {
+  font-size: 14px;
+  color: #4A5565;
+}
+
+.priceItemCost {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0E2851;
+}
+
+.bookingInfoWrapper {
+  display: flex;
+  gap: 12px; /* Figma: Frame 2147227143 gap is 12px */
+  width: 100%;
+
+  @media (max-width: 1550px) {
+    flex-direction: column;
+  }
+}
+
+.bookingInfoBox {
+  flex: 1;
+  background: #F9FAFB;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.boxTitle {
+  color: #C6C6C6;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.dateRow {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+}
+
+.dateBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1; /* Divides the width equally */
+}
+
+.dateTopRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dateBottomRow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 0 0 32px;
+  border-left: 1px solid #FFC299;
+  margin-left: 10px; /* Aligns the border with the center of the 24px icon */
+}
+
+.dateLabel {
+  font-size: 16px;
+  color: #FF6600;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: 0.01em;
+}
+
+.dateValue {
+  font-size: 14px;
+  color: #0E2851;
+  font-weight: 700;
+  line-height: 14px;
+  letter-spacing: 0.01em;
+}
+
+.paxDistributionList {
+  display: flex;
+  gap: 10px; /* Figma gap is 10px */
+  padding: 12px 0px; /* Restored Figma padding */
+  flex-wrap: wrap;
+}
+
+.nationalityBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 24px;
+  background: #EAF1FD;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #0E2851;
+  line-height: 16px;
+  letter-spacing: 0.01em;
+}
+
+.roomBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 24px;
+  background: #EAF1FD;
+  gap: 8px;
+  color: #0E2851;
+}
+
+.roomBadgeText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.roomBadgeTitle {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.01em;
+  color: #0E2851;
+}
+
+.roomBadgeSubtitle {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0.01em;
+  color: #0E2851;
+}
+
+.roomBadgeList {
+  display: flex;
+  gap: 16px;
+  padding: 12px 0;
+  flex-wrap: wrap;
+}
+
+.paymentTotal {
+  color: #2971E6 !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+}
+
+.paymentAmount {
+  font-weight: 700 !important;
+}
+
+.transferIcon {
+  background-color: #94A3B8;
+  -webkit-mask: url('/images/dashboard/booking/car.svg') no-repeat center;
+  mask: url('/images/dashboard/booking/car.svg') no-repeat center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}

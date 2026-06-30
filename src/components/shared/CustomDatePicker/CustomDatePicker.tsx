@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import styles from "./CustomDatePicker.module.scss";
 
@@ -51,16 +52,43 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
   const [viewDate, setViewDate] = useState(initialDate);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>();
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (
+        containerRef.current && !containerRef.current.contains(target) &&
+        (!dropdownRef.current || !dropdownRef.current.contains(target))
+      ) {
         setIsOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useLayoutEffect(() => {
+    if (!isOpen || !containerRef.current) return;
+    const updatePosition = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      setDropdownStyle({
+        position: "fixed",
+        top: rect.bottom + 8,
+        left: rect.left,
+        zIndex: 1300,
+      });
+    };
+    updatePosition();
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
+    return () => {
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
+    };
+  }, [isOpen]);
 
   const handlePrevMonth = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -193,8 +221,8 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
         </button>
       )}
 
-      {isOpen && (
-        <div className={`${styles.dropdown} ${dropdownClassName}`}>
+      {isOpen && dropdownStyle && createPortal(
+        <div className={`${styles.dropdown} ${dropdownClassName}`} style={dropdownStyle} ref={dropdownRef}>
           <div className={styles.header}>
 
             <button className={styles.navBtn} onClick={handlePrevMonth}>
@@ -231,7 +259,8 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
               );
             })}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

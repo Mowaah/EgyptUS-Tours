@@ -1,5 +1,3 @@
-"use client";
-
 import { BookingStepFooter, BookingDetailsSections } from "@/components/shared";
 import pageStyles from "../../PlanYourTripPage.module.scss";
 import type { TripData } from "../../planYourTripTypes";
@@ -67,7 +65,7 @@ export default function StepReview({
   if (travelerInfo.infants > 0) {
     travelersParts.push(`${travelerInfo.infants} ${travelerInfo.infants === 1 ? 'Infant' : 'Infants'}`);
   }
-  const travelersValue = travelersParts.join(" • ") || "None";
+  const travelersValue = travelersParts.join(" â€¢ ") || "None";
 
   const sections = [
     {
@@ -117,7 +115,7 @@ export default function StepReview({
         <div className={pageStyles.formHeaderColumn}>
           <h2 className={pageStyles.formTitle}>Review & Submit</h2>
           <p className={pageStyles.formSubtitle}>
-            Here’s a summary of your personalized trip request.
+            Hereâ€™s a summary of your personalized trip request.
           </p>
         </div>
       </header>

@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import { SummaryCard } from "@/components/dashboard/SummaryCard";

@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Button from "@/components/shared/Button/Button";
@@ -26,7 +24,7 @@ export interface TripBookingDetails {
   travelersLabel: string;
 }
 
-/** Hotel booking grid (3×2) — check-in/out, nights, room, guests */
+/** Hotel booking grid (3Ã—2) â€” check-in/out, nights, room, guests */
 export interface HotelBookingDetails {
   checkIn: string;
   checkOut: string;
@@ -37,7 +35,7 @@ export interface HotelBookingDetails {
   guests: string;
 }
 
-/** Transportation booking grid (4×2) */
+/** Transportation booking grid (4Ã—2) */
 export interface TransportBookingDetails {
   pickupLocation: string;
   dropoffLocation: string;
@@ -49,7 +47,7 @@ export interface TransportBookingDetails {
   luggageLabel: string;
 }
 
-/** MICE request grid (4×2) */
+/** MICE request grid (4Ã—2) */
 export interface MiceRequestDetails {
   organization: string;
   preferredCity: string;
@@ -61,7 +59,7 @@ export interface MiceRequestDetails {
   durationLabel: string;
 }
 
-/** B2B request grid (3×2) */
+/** B2B request grid (3Ã—2) */
 export interface B2BRequestDetails {
   companyName: string;
   country: string;
@@ -71,7 +69,7 @@ export interface B2BRequestDetails {
   website: string;
 }
 
-/** Plan Your Trip request grid (3×2) */
+/** Plan Your Trip request grid (3Ã—2) */
 export interface PlanYourTripRequestDetails {
   destination: string;
   tripCategory: string;
@@ -226,12 +224,12 @@ export default function TripBookingCard(props: TripBookingCardProps) {
               )}
               {(status === "confirmed" || status === "proposal_sent") && (
                 <span className={styles.statusConfirmed}>
-                  ✓ {status === "proposal_sent" ? "Proposal Sent" : "Confirmed"}
+                  âœ“ {status === "proposal_sent" ? "Proposal Sent" : "Confirmed"}
                 </span>
               )}
               {status === "cancelled" && (
                 <span className={styles.statusCancelled}>
-                  <span className={styles.cancelX}>✕</span>
+                  <span className={styles.cancelX}>âœ•</span>
                   <span>Cancelled</span>
                 </span>
               )}
@@ -516,7 +514,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                 remainingAmount != null && (
                   <p className={styles.metaPartial}>
                     <span className={styles.metaMuted}>Paid {formatUsd(paidAmount)}</span>
-                    <span className={styles.metaBullet}>•</span>
+                    <span className={styles.metaBullet}>â€¢</span>
                     <span className={styles.metaStrong}>
                       Remaining {formatUsd(remainingAmount)}
                     </span>
@@ -525,7 +523,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
               {status === "confirmed" && totalAmount != null && (
                 <p className={styles.metaConfirmed}>
                   <span className={styles.metaMuted}>Fully Paid</span>
-                  <span className={styles.metaBullet}>•</span>
+                  <span className={styles.metaBullet}>â€¢</span>
                   <span className={styles.metaPrice}>{formatUsd(totalAmount)}</span>
                 </p>
               )}
@@ -533,7 +531,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                 <p className={styles.metaCancelled}>{cancelledLabel}</p>
               )}
               {(status === "proposal_in_progress" || status === "proposal_sent") && infoMessage && (
-                <p className={styles.metaInfo}>• {infoMessage}</p>
+                <p className={styles.metaInfo}>â€¢ {infoMessage}</p>
               )}
             </div>
             <Button
@@ -562,7 +560,7 @@ function DetailCell({
   iconClass?: string;
   label: string;
   value: ReactNode;
-  /** Some asset SVGs are 24×24 */
+  /** Some asset SVGs are 24Ã—24 */
   iconSize?: number;
 }) {
   return (

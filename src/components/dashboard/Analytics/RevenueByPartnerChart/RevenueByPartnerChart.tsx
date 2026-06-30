@@ -1,5 +1,3 @@
-"use client";
-
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
 import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 import styles from "./RevenueByPartnerChart.module.scss";

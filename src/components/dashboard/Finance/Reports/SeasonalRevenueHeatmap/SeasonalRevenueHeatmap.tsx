@@ -1,5 +1,3 @@
-"use client";
-
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
 import styles from "./SeasonalRevenueHeatmap.module.scss";
 
@@ -46,7 +44,7 @@ export default function SeasonalRevenueHeatmap() {
       <PanelHeader
         icon="finance/payment/seasonal"
         title="Seasonal Revenue Heatmap"
-        subtitle="Peak season: Oct-Dec & Mar — MICE dead zone in Jul-Aug (Ramadan/Summer)"
+        subtitle="Peak season: Oct-Dec & Mar â€” MICE dead zone in Jul-Aug (Ramadan/Summer)"
       />
 
       <div className={styles.heatmapContainer}>
