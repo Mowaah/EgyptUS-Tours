@@ -110,7 +110,7 @@ export default function TripItinerary({ trip }: Props) {
                   <ul className={styles.highlightsList}>
                     {current.highlights.map((h, hi) => (
                       <li key={hi} className={styles.highlightItem}>
-                        <Image src="/images/location.svg" alt="Location" width={17} height={17} />
+                        <Image src="/images/location-blue2.svg" alt="Location" width={17} height={17} />
                         {h}
                       </li>
                     ))}

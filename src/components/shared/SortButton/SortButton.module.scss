@@ -62,7 +62,7 @@
 }
 
 .dropdownOverride {
-  min-width: 100% !important;
+  min-width: max-content !important;
   width: max-content !important;
   max-width: calc(100vw - 24px) !important;
   max-height: 244px;

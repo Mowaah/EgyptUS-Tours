@@ -6,13 +6,7 @@ const DESERTS = [
     title: "Western Desert",
     description:
       "Experience the thrill of the Egyptian desert with camel rides and sandboarding adventures.",
-    image: "/images/desert/western.jpg",
-  },
-  {
-    title: "Eastern Desert",
-    description:
-      "Experience the thrill of the Egyptian desert with camel rides and sandboarding adventures.",
-    image: "/images/desert/eastern.jpg",
+    image: "/images/desert/western.png",
   },
   {
     title: "Sinai Desert",
@@ -30,7 +24,7 @@ const DESERTS = [
     title: "Safari Trips",
     description:
       "Experience the thrill of the Egyptian desert with camel rides and sandboarding adventures.",
-    image: "/images/desert/western.jpg",
+    image: "/images/desert/safari.jpg",
   },
 ];
 

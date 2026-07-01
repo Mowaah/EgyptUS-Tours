@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import { Trip } from "@/types";
 import styles from "./TripPricing.module.scss";
@@ -7,6 +10,7 @@ interface TripPricingProps {
 }
 
 export default function TripPricing({ trip }: TripPricingProps) {
+  const [pricingType, setPricingType] = useState<"private" | "group">("private");
   const pricing = trip.pricing ?? [];
   if (!pricing.length) return null;
 
@@ -28,6 +32,21 @@ export default function TripPricing({ trip }: TripPricingProps) {
           <p className={styles.subtitle}>
             Explore detailed pricing and accommodation options tailored to your selected trip
           </p>
+        </div>
+
+        <div className={styles.toggleWrapper}>
+          <button
+            className={`${styles.toggleBtn} ${pricingType === "private" ? styles.toggleBtnActive : ""}`}
+            onClick={() => setPricingType("private")}
+          >
+            Private Tour
+          </button>
+          <button
+            className={`${styles.toggleBtn} ${pricingType === "group" ? styles.toggleBtnActive : ""}`}
+            onClick={() => setPricingType("group")}
+          >
+            Group Tour
+          </button>
         </div>
 
         <div className={styles.grid}>

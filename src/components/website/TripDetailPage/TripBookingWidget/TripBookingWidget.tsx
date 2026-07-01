@@ -27,12 +27,12 @@ export default function TripBookingWidget({ trip }: TripBookingWidgetProps) {
   const groupPrice = formatPrice(trip.groupPrice);
 
   return (
-    <aside className={styles.sidebar} aria-label="Book this trip">
+    <aside className={styles.sidebar} aria-label="Book this tour">
       <div className={styles.card}>
         <div className={styles.desktop}>
-          <h3 className={styles.title}>Book Your Trip</h3>
+          <h3 className={styles.title}>Book Your Tour</h3>
           <p className={styles.subtitle}>
-            Choose between a private experience or a group trip tailored to your preference.
+            Choose between a private experience or a group tour tailored to your preference.
           </p>
           <div className={styles.divider} />
 
@@ -60,7 +60,7 @@ export default function TripBookingWidget({ trip }: TripBookingWidgetProps) {
                 icon={<Image src="/images/profile.svg" alt="" width={24} height={24} />}
                 iconPosition="right"
               >
-                Book Private Trip
+                Book Private Tour
               </Button>
             </Link>
             <Link href={`/trips/${trip.id}/book-group`} className={styles.cta}>
@@ -70,7 +70,7 @@ export default function TripBookingWidget({ trip }: TripBookingWidgetProps) {
                 icon={<Image src="/images/profile2.svg" alt="" width={24} height={24} />}
                 iconPosition="right"
               >
-                Book Group Trip
+                Book Group Tour
               </Button>
             </Link>
           </div>
@@ -80,14 +80,14 @@ export default function TripBookingWidget({ trip }: TripBookingWidgetProps) {
           href={`/trips/${trip.id}/book-private`}
           className={`${styles.mobileBtn} ${styles.mobileBtnFilled}`}
         >
-          <span>{mobileLabel(privatePrice, "Book Private Trip")}</span>
+          <span>{mobileLabel(privatePrice, "Book Private Tour")}</span>
           <Image src="/images/profile.svg" alt="" width={24} height={24} />
         </Link>
         <Link
           href={`/trips/${trip.id}/book-group`}
           className={`${styles.mobileBtn} ${styles.mobileBtnOutline}`}
         >
-          <span>{mobileLabel(groupPrice, "Book Group Trip")}</span>
+          <span>{mobileLabel(groupPrice, "Book Group Tour")}</span>
           <Image src="/images/profile2.svg" alt="" width={24} height={24} />
         </Link>
       </div>
