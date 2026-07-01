@@ -11,9 +11,10 @@ interface NationalitySelectProps {
   useCountryName?: boolean;
   placeholder?: string;
   variant?: string;
+  placement?: "top" | "bottom";
 }
 
-export default function NationalitySelect({ value, onChange, error, useCountryName = false, placeholder, variant }: NationalitySelectProps) {
+export default function NationalitySelect({ value, onChange, error, useCountryName = false, placeholder, variant, placement = "bottom" }: NationalitySelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -103,7 +104,7 @@ export default function NationalitySelect({ value, onChange, error, useCountryNa
       </button>
 
       {isOpen && (
-        <div className={styles.dropdown}>
+        <div className={`${styles.dropdown} ${placement === "top" ? styles.dropdownTop : ""}`}>
           <div className={styles.scrollArea} ref={scrollAreaRef} role="listbox">
             {sortedCountries.map(c => {
               const label = useCountryName ? c.name : (c.nationality || c.name);

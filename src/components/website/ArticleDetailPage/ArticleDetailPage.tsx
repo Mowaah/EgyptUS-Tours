@@ -165,23 +165,6 @@ export default function ArticleDetailPage({ content }: ArticleDetailPageProps) {
               </div>
             ))}
 
-            {/* Tags */}
-            <div className={styles.tagsRow}>
-              {content.tags.map((tag) => (
-                <span key={tag} className={styles.tag}>
-                  {tag}
-                </span>
-              ))}
-            </div>
-
-            {/* Author bio card */}
-            <div className={styles.authorCard}>
-              <div className={styles.authorCardAvatar}>{initials}</div>
-              <div className={styles.authorCardInfo}>
-                <span className={styles.authorCardName}>{content.author}</span>
-                <p className={styles.authorCardBio}>{content.authorBio}</p>
-              </div>
-            </div>
           </article>
 
           {/* Sidebar */}

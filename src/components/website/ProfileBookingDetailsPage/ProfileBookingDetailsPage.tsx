@@ -451,13 +451,31 @@ export default function ProfileBookingDetailsPage() {
         />
       )}
 
-      {showCancelModal && (
-        <CancelBookingModal
-          onKeepBooking={() => setShowCancelModal(false)}
-          onConfirmCancel={() => {
-            setShowCancelModal(false);
+      <CancelBookingModal
+        open={showCancelModal}
+        onClose={() => setShowCancelModal(false)}
+        onSubmit={(data) => {
+          console.log("Cancelling booking with data:", data);
+          setShowCancelModal(false);
+          setShowSuccess(true);
+        }}
+      />
+
+      {showSuccess && (
+        <SuccessModal
+          title="Cancellation Request Submitted"
+          message="Your cancellation request has been received successfully."
+          buttonText="Back to Home"
+          onClose={() => {
+            setShowSuccess(false);
             router.push("/profile?tab=bookings");
           }}
+          metadata={[
+            { label: "Booking Reference", value: "#BK53602205" },
+            { label: "Refund Amount", value: "$1,500", valueColor: "#FF6600" },
+            { label: "Refund Method", value: "Bank Transfer" },
+            { label: "Estimated Processing Time", value: "7 - 10 Business Days" }
+          ]}
         />
       )}
     </div>

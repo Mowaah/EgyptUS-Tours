@@ -156,10 +156,11 @@ export default function TripDetailPage({ trip }: TripDetailPageProps) {
         <TripImportantLinks trip={trip} />
       </div>
 
-      {/* ── VIP Experiences ── */}
+      {/* ── VIP Experiences (hidden) ──
       <div className={styles.container}>
         <TripVIPExperiences trip={trip} />
       </div>
+      */}
 
       {/* ── Traveler Reviews ── */}
       <div className={styles.container}>

@@ -206,27 +206,32 @@ export default function Navbar() {
           {/* Desktop links */}
           <ul className={styles.links}>
             {NAV_LINKS.map((link) => {
-              const isActive = pathname === link.href;
-              const usePrimaryDropdownArrow = isActive && shouldShowScrolled;
-              const useDarkDropdownArrow = !isActive && (shouldShowScrolled || lightNavBackground);
+              const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+              const isLightBg = shouldShowScrolled || lightNavBackground;
               const useGlass = isActive && !shouldShowScrolled && !lightNavBackground;
 
               const content = (
                 <>
                   {link.label}
                   {link.hasDropdown && (
-                    <Image
-                      src={
-                        usePrimaryDropdownArrow
-                          ? "/images/arrows/chevron-blue.svg"
-                          : useDarkDropdownArrow
-                            ? "/images/arrows/arrow-down2.svg"
-                            : "/images/arrows/arrow-down2-white.svg"
-                      }
-                      alt=""
-                      width={10}
-                      height={10}
-                    />
+                    <svg
+                      width="10"
+                      height="10"
+                      viewBox="0 0 15 8"
+                      fill="none"
+                      className={styles.dropdownChevron}
+                      aria-hidden
+                    >
+                      <path
+                        d="M13.95 0.75L8.51667 6.18333C7.875 6.825 6.825 6.825 6.18333 6.18333L0.75 0.75"
+                        stroke="currentColor"
+                        strokeOpacity={isActive && isLightBg ? 1 : undefined}
+                        strokeWidth="1.5"
+                        strokeMiterlimit="10"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   )}
                 </>
               );
