@@ -19,6 +19,7 @@ import CreateCategoryModal from "./CreateCategoryModal/CreateCategoryModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { createPostSchema, type CreatePostValues } from "./CreatePostSchema";
+import SEOSettingsSection from "@/components/dashboard/shared/SEOSettingsSection/SEOSettingsSection";
 import styles from "./CreatePost.module.scss";
 
 export function CreatePost({ postId }: { postId?: string }) {
@@ -225,24 +226,14 @@ export function CreatePost({ postId }: { postId?: string }) {
           </FormSpec>
         </FormSection>
 
-        <FormSection title="SEO Settings" iconSrc="/images/dashboard/fields/seo-settings.svg">
-          <FormSpec>
-            <LanguageTabs active={seoLang} onChange={setSeoLang} className={styles.whiteTabs} />
-            <DashboardField label="Meta Title" placeholder="Meta Title..." {...register("metaTitle")} error={errors.metaTitle?.message} />
-            <DashboardField
-              control="textarea"
-              label="Meta Description"
-              placeholder="SEO description (max 300 char..."
-              maxLength={300}
-              {...register("metaDescription")}
-              error={errors.metaDescription?.message}
-            />
-            <div className={styles.fieldRow}>
-              <DashboardField label="Meta keywords" placeholder="Separate keywords using 10 commas" {...register("metaKeywords")} error={errors.metaKeywords?.message} />
-              <DashboardField label="Slug" placeholder="e.g. your-page-url-slug" {...register("slug")} error={errors.slug?.message} />
-            </div>
-          </FormSpec>
-        </FormSection>
+        <SEOSettingsSection
+          title="SEO Settings"
+          seoLang={seoLang}
+          setSeoLang={setSeoLang}
+          register={register}
+          control={control}
+          errors={errors}
+        />
 
         <FormSection title="Author" iconSrc="/images/dashboard/fields/author.svg">
           <FormSpec>

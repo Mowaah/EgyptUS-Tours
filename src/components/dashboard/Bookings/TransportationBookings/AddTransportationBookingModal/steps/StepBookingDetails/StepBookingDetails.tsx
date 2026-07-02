@@ -108,7 +108,7 @@ export default function StepBookingDetails({ formData, onChange }: StepBookingDe
       <div className={styles.row}>
         <div className={styles.col}>
           <div className={styles.tripTypeWrapper}>
-            <label className={styles.fieldLabel}>Pickup Location</label>
+            <label className={styles.fieldLabel}>Trip Type</label>
             <div className={styles.tripTypeContainer}>
               <button
                 type="button"

@@ -250,6 +250,28 @@
   width: 100%;
 }
 
+.metaKeywordsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.metaKeywordTag {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 12px;
+  gap: 4px;
+  height: 32px;
+  background: #E4F2FF;
+  border-radius: 96px;
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: #2971E6;
+}
+
 .imageInfoItem {
   display: flex;
   flex-direction: column;

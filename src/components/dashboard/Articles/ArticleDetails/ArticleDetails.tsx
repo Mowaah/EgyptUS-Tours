@@ -208,9 +208,20 @@ export default function ArticleDetails({ postId }: ArticleDetailsProps) {
                 <span className={styles.imageInfoLabel}>Meta Description</span>
                 <span className={styles.imageInfoValue}>{post.metaDescription}</span>
               </div>
-              <div className={styles.imageInfoItem}>
+              <div className={styles.imageInfoItem} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '1rem' }}>
                 <span className={styles.imageInfoLabel}>Meta Keywords</span>
-                <span className={styles.imageInfoValue}>{post.metaKeywords}</span>
+                {post.metaKeywords ? (
+                  <div className={styles.metaKeywordsContainer}>
+                    {post.metaKeywords.split(',').map(tag => tag.trim()).filter(Boolean).map((tag, idx) => (
+                      <div key={idx} className={styles.metaKeywordTag}>
+                        <Image src="/images/dashboard/tag.svg" alt="tag" width={18} height={18} />
+                        {tag}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <span className={styles.imageInfoValue}>-</span>
+                )}
               </div>
               <div className={styles.imageInfoItem}>
                 <span className={styles.imageInfoLabel}>Slug</span>

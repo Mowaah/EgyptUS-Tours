@@ -37,7 +37,7 @@ export default function PaymentsPage() {
             iconSrc="/images/dashboard/finance/payment/total.svg"
           />
           <SummaryCard
-            label="Total Transactions"
+            label="Outstanding Payments"
             value="$38,200"
             change="+8.2%"
             trend="up"

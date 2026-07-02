@@ -10,6 +10,7 @@ import DashboardField from "@/components/dashboard/shared/DashboardField/Dashboa
 import { DashboardFooter } from "@/components/dashboard/shared";;
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import { FormSection, FormSpec, UploadDropzone, KeywordsField } from "@/components/dashboard/FormFields";
+import SEOSettingsSection from "@/components/dashboard/shared/SEOSettingsSection/SEOSettingsSection";
 import { seoConfigurationSchema, type SEOConfigurationValues } from "./SEOConfigurationSchema";
 import styles from "./SEOConfiguration.module.scss";
 
@@ -109,33 +110,14 @@ export default function SEOConfiguration() {
         )}
 
         <div className={styles.column}>
-          <FormSection title="General SEO" iconSrc="/images/dashboard/fields/seo-settings.svg">
-            <FormSpec>
-              <LanguageTabs active={seoLang} onChange={setSeoLang} className={styles.whiteTabs} />
-              <DashboardField label="Meta Title" placeholder="Meta Title..." {...register("metaTitle")} error={errors.metaTitle?.message} />
-              <DashboardField
-                control="textarea"
-                label="Meta Description"
-                placeholder="SEO description (max 300 char..."
-                maxLength={300}
-                {...register("metaDescription")}
-                error={errors.metaDescription?.message}
-              />
-              <Controller
-                name="metaKeywords"
-                control={control}
-                render={({ field }) => (
-                  <KeywordsField
-                    label="Meta keywords"
-                    value={field.value}
-                    onChange={field.onChange}
-                    error={errors.metaKeywords?.message}
-                  />
-                )}
-              />
-              <DashboardField label="Slug" placeholder="e.g. your-page-url-slug" {...register("slug")} error={errors.slug?.message} />
-            </FormSpec>
-          </FormSection>
+          <SEOSettingsSection
+            title="General SEO"
+            seoLang={seoLang}
+            setSeoLang={setSeoLang}
+            register={register}
+            control={control}
+            errors={errors}
+          />
         </div>
       </div>
 

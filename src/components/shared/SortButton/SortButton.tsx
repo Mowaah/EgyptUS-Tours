@@ -41,7 +41,7 @@ export default function SortButton({
         value={selectedValue}
         onChange={handleSelect}
         checkboxStyle="radio"
-        wrapperClassName={!showLabel ? styles.compactDropdownWrap : undefined}
+        wrapperClassName={styles.dropdownWrap}
         dropdownClassName={[styles.dropdownOverride, !showLabel && styles.dropdownOverrideCompact]
           .filter(Boolean)
           .join(" ")}

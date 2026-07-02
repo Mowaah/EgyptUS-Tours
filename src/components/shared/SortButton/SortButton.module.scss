@@ -23,7 +23,7 @@
   max-width: 100%;
 }
 
-.compactDropdownWrap {
+.dropdownWrap {
   flex: 0 0 auto;
   width: auto;
   min-width: 0;
@@ -62,9 +62,7 @@
 }
 
 .dropdownOverride {
-  min-width: max-content !important;
-  width: max-content !important;
-  max-width: calc(100vw - 24px) !important;
+  min-width: 0 !important;
   max-height: 244px;
   overflow-x: auto;
   overflow-y: auto;
