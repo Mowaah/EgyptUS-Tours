@@ -30,14 +30,15 @@
   gap: 12px;
 }
 
-.iconBox {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: $background-danger-light;
-  border: 2px solid $border-danger-light;
-  border-radius: 50%;
+.icon {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: #FEE2E2;
+  border: 2px solid #FECACA;
+  border-radius: 50%;
+  flex-shrink: 0;
 }

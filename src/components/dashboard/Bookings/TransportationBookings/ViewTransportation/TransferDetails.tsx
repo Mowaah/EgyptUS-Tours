@@ -18,23 +18,23 @@ export default function TransferDetails({ transportation }: TransferDetailsProps
 
       <div className={styles.infoList}>
         <div className={styles.infoRow}>
-          <span className={styles.infoLabel}>Pickup Point</span>
+          <span className={styles.infoLabel}>Pickup Location</span>
           <span className={styles.infoValue}>{transportation.route?.split(" -> ")[0] || "Luxor International Airport"}</span>
         </div>
 
         <div className={styles.infoRow}>
+          <span className={styles.infoLabel}>Drop-off location</span>
+          <span className={styles.infoValue}>{transportation.route?.split(" -> ")[1] || "Hotel Ibis Luxor"}</span>
+        </div>
+
+        <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Date & Time</span>
-          <span className={styles.infoValue}>{transportation.dateTime || "Mar 22, 2026 - 10:30 AM"}</span>
+          <span className={styles.infoValue}>{transportation.dateTime?.replace("-", "·") || "Mar 22, 2026 · 10:30 AM"}</span>
         </div>
 
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Trip Type</span>
-          <span className={styles.infoValue}>{transportation.tripType}</span>
-        </div>
-
-        <div className={styles.infoRow}>
-          <span className={styles.infoLabel}>Drop-off</span>
-          <span className={styles.infoValue}>{transportation.route?.split(" -> ")[1] || "Hotel Ibis Luxor"}</span>
+          <span className={styles.infoValue}>{transportation.tripType || "One Way"}</span>
         </div>
 
         <div className={styles.infoRow}>

@@ -63,7 +63,7 @@ export default function TripAccommodations({ trip }: TripAccommodationsProps) {
               <div className={styles.info}>
                 <h3 className={styles.name}>{hotel.name}</h3>
                 <p className={styles.location}>
-                  <Image src="/images/location.svg" alt="" width={14} height={14} />
+                  <Image src="/images/location-blue-filled.svg" alt="" width={14} height={14} />
                   {hotel.location}
                 </p>
               </div>

@@ -9,7 +9,7 @@ import styles from "./DocumentFormModal.module.scss";
 interface DocumentFormModalProps {
   open: boolean;
   mode?: "add" | "edit";
-  initialData?: { title: string; content: string; status: "Published" | "Draft" };
+  initialData?: { title: string; content: string; status: "Published" | "Unpublished" };
   modalTitleAdd: string;
   modalTitleEdit: string;
   modalSubtitleAdd: string;

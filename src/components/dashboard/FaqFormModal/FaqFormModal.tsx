@@ -9,7 +9,7 @@ import styles from "./FaqFormModal.module.scss";
 interface FaqFormModalProps {
   open: boolean;
   mode?: "add" | "edit";
-  initialData?: { question: string; answer: string; status: "Published" | "Draft" };
+  initialData?: { question: string; answer: string; status: "Published" | "Unpublished" };
   onClose: () => void;
   onSave: (question: string, answer: string, published: boolean) => void;
 }

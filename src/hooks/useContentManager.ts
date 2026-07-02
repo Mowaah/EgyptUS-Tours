@@ -32,8 +32,8 @@ export function useContentManager({ initialData, itemName }: UseContentManagerPr
   };
 
   const handleUnpublishItem = (item: ContentItem) => {
-    setData(prev => prev.map(i => i.id === item.id ? { ...i, status: "Draft" } : i));
-    contentGridRef.current?.showBanner(`The ${itemName} has been moved to draft and unpublished successfully`, "warning");
+    setData(prev => prev.map(i => i.id === item.id ? { ...i, status: "Unpublished" } : i));
+    contentGridRef.current?.showBanner(`The ${itemName} has been unpublished successfully`, "warning");
   };
 
   const handleDeleteItem = (item: ContentItem) => {
@@ -49,7 +49,7 @@ export function useContentManager({ initialData, itemName }: UseContentManagerPr
   };
 
   const handleSave = (title: string, content: string, published: boolean, mode: "add" | "edit") => {
-    const status = published ? "Published" : "Draft";
+    const status = published ? "Published" : "Unpublished";
     const lastUpdated = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
     
     if (mode === "add") {

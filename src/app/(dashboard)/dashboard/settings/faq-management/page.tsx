@@ -10,11 +10,11 @@ import { useContentManager } from "@/hooks/useContentManager";
 
 // Dummy data for visual â€” swap with real API data later
 const INITIAL_DATA: ContentItem[] = [
-  { id: "1", title: "What's included in the trip price?", content: "Each trip includes clearly listed services such as accommodation, transportation tours, and selected meals. Full details are available on the trip details page.", status: "Draft", lastUpdated: "May 13, 2026" },
-  { id: "2", title: "Can I customize a trip or book a private tour?", content: "Yes! You can choose between group or private trips, and customize your itinerary based on your preferences, budget, and travel style.", status: "Published", lastUpdated: "May 13, 2026" },
-  { id: "3", title: "Are there discounts or special offers?", content: "Yes, we offer seasonal discounts and exclusive deals on selected trips and hotels. Check the homepage or subscribe to our newsletter for updates.", status: "Draft", lastUpdated: "May 13, 2026" },
-  { id: "4", title: "How do I book a trip and confirm availability?", content: "Simply select your trip, check available dates, and proceed with booking. A trip manager will contact you to confirm all details after reservation.", status: "Published", lastUpdated: "May 13, 2026" },
-  { id: "5", title: "Can I book for a group or multiple people?", content: "Yes, you can book trips or accommodations for groups. Just select the number of travelers during the booking process.", status: "Draft", lastUpdated: "May 13, 2026" },
+  { id: "1", title: "What's included in the trip price?", content: "Each trip includes clearly listed services such as accommodation, transportation tours, and selected meals. Full details are available on the trip details page.", status: "Unpublished", lastUpdated: "May 13, 2026" },
+  { id: "2", title: "Do I need a visa to travel?", content: "Visa requirements depend on your nationality and destination. Please consult the relevant embassy or our dedicated visa support page for accurate information.", status: "Published", lastUpdated: "May 13, 2026" },
+  { id: "3", title: "Are there discounts or special offers?", content: "Yes, we offer seasonal discounts and exclusive deals on selected trips and hotels. Check the homepage or subscribe to our newsletter for updates.", status: "Unpublished", lastUpdated: "May 13, 2026" },
+  { id: "4", title: "How do I cancel or modify my booking?", content: "You can modify or cancel your booking through the \"My Bookings\" section in your account. Cancellation policies vary by service provider.", status: "Published", lastUpdated: "May 13, 2026" },
+  { id: "5", title: "Can I book for a group or multiple people?", content: "Yes, you can book trips or accommodations for groups. Just select the number of travelers during the booking process.", status: "Unpublished", lastUpdated: "May 13, 2026" },
   { id: "6", title: "How do I know my booking is confirmed?", content: "You will receive an email confirmation immediately after completing your reservation, including all booking details.", status: "Published", lastUpdated: "May 13, 2026" },
 ];
 
@@ -94,7 +94,7 @@ export default function FaqManagementPage() {
       <FaqFormModal
         open={editState !== null}
         mode="edit"
-        initialData={editState ? { question: editState.title, answer: editState.content, status: editState.status as "Draft" | "Published" } : undefined}
+        initialData={editState ? { question: editState.title, answer: editState.content, status: editState.status as "Unpublished" | "Published" } : undefined}
         onClose={() => setEditState(null)}
         onSave={(question, answer, published) => {
           setEditState(null);

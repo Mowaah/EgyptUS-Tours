@@ -10,7 +10,7 @@ export interface ContentItem {
   id: string;
   title: string;
   content: string;
-  status: "Draft" | "Published";
+  status: "Unpublished" | "Published";
   lastUpdated: string;
 }
 
@@ -208,7 +208,7 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
                 <span className={styles.lastUpdated}>Last Updated: {item.lastUpdated}</span>
                 <div
                   className={`${styles.statusBadge} ${
-                    item.status === "Published" ? styles.statusPublished : styles.statusDraft
+                    item.status === "Published" ? styles.statusPublished : styles.statusUnpublished
                   }`}
                 >
                   {item.status}

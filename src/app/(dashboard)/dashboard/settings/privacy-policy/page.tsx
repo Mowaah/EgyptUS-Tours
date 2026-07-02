@@ -12,7 +12,7 @@ import styles from "../../page.module.scss";
 
 // Dummy data for visual — swap with real API data later
 const INITIAL_DATA: ContentItem[] = [
-  { id: "1", title: "Data Collection Policy", content: "We collect information to provide better services to our users. We do not sell your personal data. The privacy policy explains how we treat your personal data and protect your privacy when you use our Services.", status: "Published", lastUpdated: "May 13, 2026" },
+  { id: "1", title: "Data Collection", content: "We collect personal information such as your name, email address, phone number, and payment details when you create an account, make a booking, or interact with our website. Non-personal information, like IP addresses and browser types, is also collected to improve site performance and user experience.\n\nYour data is used strictly for processing bookings, communicating updates, and offering personalized recommendations. We use industry-standard encryption to protect your information and ensure secure transactions.", status: "Unpublished", lastUpdated: "May 13, 2026" },
   { id: "2", title: "Children Policy", content: "Children are warmly welcomed at our hotels and trips. Policies regarding age limits, extra beds, and meal options may vary depending on the hotel or tour selected.\n\n<span style=\"color: #FF6600\">Infants (0-2 years):</span>\nGenerally stay free of charge; cribs may be available upon request.\n\n<span style=\"color: #FF6600\">Children (3-11 years):</span>\nMay incur a reduced rate for accommodation and meals.", status: "Published", lastUpdated: "May 13, 2026" },
 ];
 
@@ -100,7 +100,7 @@ export default function PrivacyPolicyPage() {
       <DocumentFormModal
         open={editState !== null}
         mode="edit"
-        initialData={editState ? { title: editState.title, content: editState.content, status: editState.status as "Draft" | "Published" } : undefined}
+        initialData={editState ? { title: editState.title, content: editState.content, status: editState.status as "Unpublished" | "Published" } : undefined}
         modalTitleAdd="Add New Privacy Policy"
         modalTitleEdit="Edit Privacy Policy"
         modalSubtitleAdd="Create a new Privacy Policy that will appear to visitors on the website."
