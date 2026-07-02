@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
+import { useSidebar } from "../Sidebar/SidebarContext";
+import NotificationDropdown from "./NotificationDropdown/NotificationDropdown";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import pageCopyByPath, { type BreadcrumbSegment } from "./navbarPageCopy";
 import styles from "./DashboardNavbar.module.scss";
@@ -146,17 +148,7 @@ export default function DashboardNavbar({
           })}
         </nav>
 
-        <button className={styles.notificationButton} type="button" aria-label="Notifications">
-          <Image
-            src="/images/dashboard/navbar/notification-bing.svg"
-            alt=""
-            width={24}
-            height={24}
-            className={styles.notificationIcon}
-            aria-hidden
-          />
-          <span className={styles.notificationDot} aria-hidden="true" />
-        </button>
+        <NotificationDropdown />
       </div>
 
       <div className={styles.bottomRow}>
