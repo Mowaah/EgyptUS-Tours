@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
-import { useSidebar } from "../Sidebar/SidebarContext";
 import NotificationDropdown from "./NotificationDropdown/NotificationDropdown";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import pageCopyByPath, { type BreadcrumbSegment } from "./navbarPageCopy";

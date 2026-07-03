@@ -47,7 +47,7 @@ export default function SEOSettingsSection<T extends FieldValues>({
           render={({ field }) => (
             <KeywordsField
               label="Meta keywords"
-              value={field.value as string[]}
+              value={field.value as string}
               onChange={field.onChange}
               error={errors.metaKeywords?.message as string}
             />
