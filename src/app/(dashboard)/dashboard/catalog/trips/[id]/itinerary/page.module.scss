@@ -1,0 +1,207 @@
+@use "@/styles/variables" as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background: $white;
+  border-radius: 24px;
+  padding: 32px;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  .headerIcon {
+    width: 40px;
+    height: 40px;
+    background: $gray-50;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  h2 {
+    font-size: $font-size-2xl;
+    font-weight: 600;
+    color: $dark;
+    margin: 0;
+  }
+}
+
+.daysGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: flex-start;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dayCard {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px;
+  gap: 20px;
+  border: 1px solid #F0F0F0;
+  border-radius: 16px;
+  background: $white;
+}
+
+.dayHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+
+  .dayIcon {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background: $dashboard-expandable-hover;
+    border-radius: 20px;
+    flex: none;
+  }
+
+  h3 {
+    font-family: 'Trip Sans', sans-serif;
+    font-weight: 700;
+    font-size: $font-size-28;
+    line-height: 24px;
+    color: $dark;
+    margin: 0;
+  }
+}
+
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px;
+  gap: 12px;
+  background: $gray-50;
+  border-radius: 16px;
+  width: 100%;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.label {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 700;
+  font-size: $font-size-sm;
+  line-height: 14px;
+  color: $gray-600;
+  padding-left: 8px; /* Slightly offset label */
+}
+
+.input {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 16px;
+  width: 100%;
+  height: 48px;
+  background: $background;
+  border: 1px solid $gray-100-zinc;
+  border-radius: 24px;
+  font-family: 'Trip Sans', sans-serif;
+  font-size: $font-size-xs;
+  color: #444A51;
+}
+
+.textarea {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 16px;
+  width: 100%;
+  height: 110px;
+  background: $background;
+  border: 1px solid $gray-100-zinc;
+  border-radius: 24px;
+  font-family: 'Trip Sans', sans-serif;
+  font-size: $font-size-xs;
+  color: #444A51;
+}
+
+.highlightsGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  
+  .highlightInput {
+    @extend .input;
+    border: 1px solid $gray-200-zinc; /* Slightly different border in figma for highlights */
+  }
+}
+
+.fileUpload {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 16px;
+  gap: 16px;
+  width: 100%;
+  height: 77px;
+  border: 1px solid $border-strong;
+  border-radius: 24px;
+  background: $white;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: $gray-50;
+  }
+
+  .fileIcon {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  .fileInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .fileName {
+      font-family: 'Trip Sans', sans-serif;
+      font-weight: 500;
+      font-size: $font-size-sm;
+      line-height: 19px;
+      color: $text;
+      margin: 0;
+    }
+
+    .fileSize {
+      font-family: 'Trip Sans', sans-serif;
+      font-weight: 400;
+      font-size: $font-size-13;
+      line-height: 18px;
+      color: $text-muted;
+      margin: 0;
+    }
+  }
+}
