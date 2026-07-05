@@ -92,7 +92,7 @@ export default function TripLayout({
         {children}
       </div>
 
-      <DashboardFooter lastUpdateDate="6/6/2026" hideActions />
+      <DashboardFooter lastUpdateDate="6/6/2026" hideActions className={styles.customFooter} />
     </div>
   );
 }

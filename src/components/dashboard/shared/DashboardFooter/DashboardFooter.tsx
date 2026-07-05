@@ -7,6 +7,7 @@ interface DashboardFooterProps {
   onSave?: () => void;
   isSubmit?: boolean;
   hideActions?: boolean;
+  className?: string;
 }
 
 export function DashboardFooter({
@@ -15,9 +16,10 @@ export function DashboardFooter({
   onSave,
   isSubmit = false,
   hideActions = false,
+  className = "",
 }: DashboardFooterProps) {
   return (
-    <footer className={styles.actionBar}>
+    <footer className={`${styles.actionBar} ${className}`}>
       {lastUpdateDate ? (
         <p>
           Last Update: <strong>{lastUpdateDate}</strong>

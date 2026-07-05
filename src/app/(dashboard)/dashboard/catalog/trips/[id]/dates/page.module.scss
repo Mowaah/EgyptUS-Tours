@@ -1,0 +1,145 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px;
+  gap: 32px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 24px;
+}
+
+.titleRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+
+  .iconWrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background: #f8f9fb;
+    border-radius: 20px;
+  }
+
+  h2 {
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 33px;
+    color: #0e2851;
+    margin: 0;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  width: 100%;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px;
+  gap: 12px;
+  background: #f9fafb;
+  border-radius: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.cardHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.dateRange {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+  color: #6b7280;
+}
+
+.duration {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  color: #9ca3af;
+}
+
+.spotsBox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 12px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.spotsContent {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.spotsText {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 22px;
+  color: #6b7280;
+}
+
+.statusRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  margin-top: auto;
+  
+  span {
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  &.red {
+    color: #d80027;
+    span {
+      font-weight: 400;
+    }
+  }
+
+  &.blue {
+    color: #2971e6;
+    span {
+      font-weight: 400;
+    }
+  }
+
+  &.green {
+    color: #10b981;
+    span {
+      font-weight: 500;
+    }
+  }
+}
