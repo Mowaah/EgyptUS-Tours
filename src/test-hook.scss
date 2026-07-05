@@ -1,0 +1,6 @@
+@use "@/styles/variables" as *;
+
+.test {
+  color: $primary;
+  font-size: $font-size-sm;
+}
