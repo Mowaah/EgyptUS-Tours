@@ -4,7 +4,6 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  padding: 0.75rem 0 1.5rem;
 }
 
 .metricGrid {
@@ -13,15 +12,15 @@
   gap: 0.75rem;
 }
 
-.analyticsGrid,
+.fullWidthGrid,
 .midGrid,
 .bottomGrid {
   display: grid;
   gap: 0.75rem;
 }
 
-.analyticsGrid {
-  grid-template-columns: minmax(0, 2.35fr) minmax(20rem, 1fr);
+.fullWidthGrid {
+  grid-template-columns: 1fr;
 }
 
 .midGrid {
@@ -41,8 +40,7 @@
   border-radius: 1.5rem;
 }
 
-.revenuePanel,
-.distributionPanel {
+.revenuePanel {
   min-height: 28rem;
 }
 
@@ -51,60 +49,23 @@
   min-height: 32.375rem;
 }
 
-.bookingsPanel {
-  align-self: flex-start;
-  height: 32.5rem;
-  justify-content: space-between;
-  padding: 1.5rem;
+.distributionPanel,
+.actionsPanel {
+  min-height: 32.5rem;
 }
 
 .actionsPanel {
-  height: 32.5rem;
   gap: 24px;
 }
 
-.tableHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  width: 100%;
-}
-
-.tablePanelHeader {
-  width: auto;
-  flex: 1;
-}
-
-.viewAllLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  color: $gray-400;
-  font-size: 1rem;
-  line-height: 1.375;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.viewAllChevron {
-  width: 16px;
-  height: 16px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-@media (max-width: 1500px) {
+@media (max-width: 1600px) {
   .metricGrid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 1180px) {
-  .analyticsGrid,
+  .fullWidthGrid,
   .midGrid,
   .bottomGrid {
     grid-template-columns: 1fr;

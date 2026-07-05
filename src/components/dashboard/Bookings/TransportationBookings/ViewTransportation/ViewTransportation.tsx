@@ -66,7 +66,7 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
 
   const actionButtons = isRefunded ? null : isCancelled ? (
     <button 
-      className={`${styles.actionButton} ${styles.primaryButton}`} 
+      className={styles.primaryActionButton} 
       type="button"
       onClick={() => setIsRefundModalOpen(true)}
     >
@@ -76,14 +76,14 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
   ) : (
     <>
       <button 
-        className={`${styles.actionButton} ${styles.dangerButton}`}
+        className={styles.dangerActionButton}
         onClick={() => setIsCancelModalOpen(true)}
       >
         Cancel Booking
         <Image src="/images/dashboard/booking/trips/view/cancel.svg" alt="" width={20} height={20} />
       </button>
 
-      <button className={`${styles.actionButton} ${styles.primaryButton}`} type="button">
+      <button className={styles.primaryActionButton} type="button">
         Send Email Reminder
         <Image src="/images/dashboard/booking/trips/view/reminder.svg" alt="" width={20} height={20} />
       </button>

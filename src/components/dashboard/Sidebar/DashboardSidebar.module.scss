@@ -4,8 +4,8 @@
   position: sticky;
   top: 0.75rem;
   align-self: flex-start;
-  flex: 0 0 18rem;
-  width: 18rem;
+  flex: 0 0 clamp(14rem, 15vw, 18rem);
+  width: clamp(16rem, 15vw, 18rem);
   max-height: calc(100dvh - 1.5rem);
   padding: 0;
   color: $gray-500-zinc;
@@ -108,16 +108,17 @@
   margin-inline: -0.5rem;
   border-radius: 2rem;
   text-align: left;
-  font-size: 1rem;
+  font-size: $font-size-base;
   line-height: 1.5rem;
   opacity: 1;
   transition: background $transition-fast, color $transition-fast, opacity $transition-fast;
 
   span {
     flex: 1 1 auto;
-    display: flex;
-    align-items: center;
+    display: block;
     min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &:hover,
@@ -228,13 +229,15 @@
   gap: 0.625rem;
   padding: 0.5rem 0.875rem;
   border-radius: 2rem;
-  font-size: 0.875rem;
+  font-size: clamp(0.75rem, 0.667rem + 0.174vw, 0.875rem);
   line-height: 1.1875rem;
   color: $gray-400-zinc;
   transition: background $transition-fast, color $transition-fast;
 
   span {
-    overflow: visible;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &:hover,

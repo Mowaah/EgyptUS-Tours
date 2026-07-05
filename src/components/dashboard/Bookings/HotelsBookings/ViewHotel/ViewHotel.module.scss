@@ -1,5 +1,37 @@
 @use "@/styles/variables" as *;
 
+.primaryActionButton,
+.dangerActionButton {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 clamp(16px, 1.5vw, 24px);
+  gap: 8px;
+  border-radius: 32px;
+  font-weight: 500;
+  font-size: clamp($font-size-sm, 1vw, $font-size-lg);
+  line-height: 22px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: clamp(48px, 4.5vw, 56px);
+  min-width: clamp(130px, 12vw, 152px);
+}
+
+.primaryActionButton {
+  background: $primary;
+  color: $white;
+  border: 1px solid $primary;
+  &:hover { filter: brightness(0.94); }
+}
+
+.dangerActionButton {
+  background: $background;
+  border: 1px solid #FCA5A5;
+  color: $status-danger-dark;
+  &:hover { background: $background-danger; }
+}
+
+
 .contentWrapper {
   position: relative;
   padding: 0;
@@ -131,34 +163,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.actionButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 24px;
-  border-radius: 32px;
-  font-size: $font-size-lg;
-  font-weight: 500;
-  gap: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-  height: 56px;
-
-  &.dangerButton {
-    background: rgba(242, 107, 128, 0.02);
-    border: 1px solid rgba(185, 28, 28, 0.28);
-    color: $status-danger-dark;
-    &:hover { background: $background-danger-light; }
-  }
-
-  &.primaryButton {
-    background: $primary;
-    border: none;
-    color: $background;
-    &:hover { background: #1d5fd4; }
-  }
 }
 
 .nationalityBadge {

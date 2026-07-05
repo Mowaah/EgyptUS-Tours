@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
+import phStyles from "@/components/dashboard/shared/ProfileHeader/ProfileHeader.module.scss";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import pageStyles from "@/app/(dashboard)/dashboard/page.module.scss";
 import styles from "./ViewLead.module.scss";
@@ -104,32 +105,32 @@ export default function ViewLead({ leadId }: ViewLeadProps) {
               <>
                 {(lead.status === "New" || lead.status === "Contacted" || lead.status === "Qualified") && (
                   <>
-                    <button className={`${styles.actionButton} ${styles.dangerButton}`} type="button" onClick={() => setActiveModalKey("close_lead")}>
+                    <button className={phStyles.dangerActionButton} type="button" onClick={() => setActiveModalKey("close_lead")}>
                       <Image src="/images/dashboard/inquiries/close_lead.svg" alt="" width={20} height={20} />
                       Close Lead
                     </button>
 
-                    <button className={styles.actionButton} type="button" onClick={() => setActiveModalKey("add_note")}>
+                    <button className={phStyles.secondaryActionButton} type="button" onClick={() => setActiveModalKey("add_note")}>
                       <Image src="/images/dashboard/inquiries/add_note.svg" alt="" width={20} height={20} />
                       Add note
                     </button>
 
                     {lead.status === "New" && (
-                      <button className={styles.actionButton} type="button" onClick={() => setActiveModalKey("mark_contacted")}>
+                      <button className={phStyles.secondaryActionButton} type="button" onClick={() => setActiveModalKey("mark_contacted")}>
                         <Image src="/images/dashboard/inquiries/mark_complete.svg" alt="" width={20} height={20} />
                         Mark As Contacted
                       </button>
                     )}
 
                     {lead.status === "Contacted" && (
-                      <button className={styles.actionButton} type="button" onClick={() => setActiveModalKey("mark_qualified")}>
+                      <button className={phStyles.secondaryActionButton} type="button" onClick={() => setActiveModalKey("mark_qualified")}>
                         <Image src="/images/dashboard/inquiries/mark_complete.svg" alt="" width={20} height={20} />
                         Mark As Qualified
                       </button>
                     )}
 
                     {lead.status === "Qualified" && (
-                      <button className={styles.actionButton} type="button" onClick={() => setActiveModalKey("convert_lead")}>
+                      <button className={phStyles.secondaryActionButton} type="button" onClick={() => setActiveModalKey("convert_lead")}>
                         <Image src="/images/dashboard/inquiries/convert_lead.svg" alt="" width={20} height={20} />
                         Convert Lead
                       </button>
@@ -138,7 +139,7 @@ export default function ViewLead({ leadId }: ViewLeadProps) {
                 )}
 
                 {lead.status === "Converted" && (
-                  <button className={`${styles.actionButton} ${styles.primaryButton}`} type="button">
+                  <button className={phStyles.primaryActionButton} type="button">
                     View Request
                     <Image src="/images/dashboard/fields/eye.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
                   </button>
@@ -146,12 +147,12 @@ export default function ViewLead({ leadId }: ViewLeadProps) {
 
                 {lead.status === "Closed" && (
                   <>
-                    <button className={styles.actionButton} type="button" onClick={() => setActiveModalKey("add_note")}>
+                    <button className={phStyles.secondaryActionButton} type="button" onClick={() => setActiveModalKey("add_note")}>
                       <Image src="/images/dashboard/inquiries/add_note.svg" alt="" width={20} height={20} />
                       Add note
                     </button>
 
-                    <button className={styles.actionButton} type="button" onClick={() => setActiveModalKey("reopen_lead")}>
+                    <button className={phStyles.secondaryActionButton} type="button" onClick={() => setActiveModalKey("reopen_lead")}>
                       <Image src="/images/dashboard/inquiries/re-open_lead.svg" alt="" width={20} height={20} />
                       Re-open Lead
                     </button>

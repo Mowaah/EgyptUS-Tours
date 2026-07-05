@@ -1,7 +1,6 @@
 "use client";
 
 import { use, useState } from "react";
-import Image from "next/image";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
 import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/DashboardTabs";
@@ -66,23 +65,24 @@ export default function TripLayout({
               </svg> Featured
             </span>
           }
-          actionButtons={
-            <div className={styles.actionButtons}>
-              <button className={styles.btnEdit} type="button">
-                <Image src="/images/dashboard/edit.svg" alt="" width={20} height={20} /> Edit
-              </button>
-              <button className={styles.btnArchive} type="button">
-                <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M13 6.8125V12.6658C13 13.9992 12.6667 14.6658 11 14.6658H5C3.33333 14.6658 3 13.9992 3 12.6658V6.8125" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M3.33331 1.33203H12.6666C14 1.33203 14.6666 1.9987 14.6666 3.33203V4.66536C14.6666 5.9987 14 6.66536 12.6666 6.66536H3.33331C1.99998 6.66536 1.33331 5.9987 1.33331 4.66536V3.33203C1.33331 1.9987 1.99998 1.33203 3.33331 1.33203Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path opacity="0.34" d="M6.78668 9.33203H9.21335" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg> Archive
-              </button>
-              <button className={styles.btnDelete} type="button">
-                <Image src="/images/dashboard/delete.svg" alt="" width={24} height={24} /> Delete
-              </button>
-            </div>
-          }
+          secondaryAction={{
+            label: "Edit",
+            icon: "/images/dashboard/edit.svg",
+          }}
+          archiveAction={{
+            label: "Archive",
+            icon: (
+              <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13 6.8125V12.6658C13 13.9992 12.6667 14.6658 11 14.6658H5C3.33333 14.6658 3 13.9992 3 12.6658V6.8125" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M3.33331 1.33203H12.6666C14 1.33203 14.6666 1.9987 14.6666 3.33203V4.66536C14.6666 5.9987 14 6.66536 12.6666 6.66536H3.33331C1.99998 6.66536 1.33331 5.9987 1.33331 4.66536V3.33203C1.33331 1.9987 1.99998 1.33203 3.33331 1.33203Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path opacity="0.34" d="M6.78668 9.33203H9.21335" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            ),
+          }}
+          dangerAction={{
+            label: "Delete",
+            icon: "/images/dashboard/delete.svg",
+          }}
         />
       </DashboardNavbar>
 

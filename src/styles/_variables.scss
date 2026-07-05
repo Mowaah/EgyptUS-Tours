@@ -117,24 +117,24 @@ $font-size-xs: 0.75rem; // 12px
 $font-size-13: 0.8125rem; // 13px
 $font-size-sm: 0.875rem; // 14px
 $font-size-15: 0.9375rem; // 15px
-$font-size-base: clamp(0.875rem, 1.2vw + 0.5rem, 1rem); // 14px -> 16px
+$font-size-base: clamp(0.875rem, 0.792rem + 0.174vw, 1rem); // 14px -> 16px
 $font-size-17: 1.0625rem; // 17px
-$font-size-lg: clamp(1rem, 2vw, 1.125rem); // 16px -> 18px
-$font-size-19: clamp(1.125rem, 2.25vw, 1.1875rem); // 18px -> 19px
-$font-size-xl: clamp(1.125rem, 2.5vw, 1.25rem); // 18px -> 20px
-$font-size-22: clamp(1.125rem, 2.75vw, 1.375rem); // 18px -> 22px
-$font-size-2xl: clamp(1.25rem, 3vw, 1.5rem); // 20px -> 24px
-$font-size-26: clamp(1.375rem, 3.5vw, 1.625rem); // 22px -> 26px
-$font-size-28: clamp(1.5rem, 3.75vw, 1.75rem); // 24px -> 28px
-$font-size-29: clamp(1.5rem, 3.8vw, 1.8125rem); // 24px -> 29px
-$font-size-3xl: clamp(1.5rem, 4vw, 1.875rem); // 24px -> 30px
-$font-size-32: clamp(1.625rem, 4.2vw, 2rem); // 26px -> 32px
-$font-size-4xl: clamp(1.75rem, 5vw, 2.25rem); // 28px -> 36px
-$font-size-40: clamp(1.875rem, 5.5vw, 2.5rem); // 30px -> 40px
-$font-size-46: clamp(2rem, 5.8vw, 2.875rem); // 32px -> 46px
-$font-size-5xl: clamp(2.25rem, 6vw, 3rem); // 36px -> 48px
-$font-size-60: clamp(2.5rem, 7.5vw, 3.75rem); // 40px -> 60px
-$font-size-64: clamp(2.75rem, 8vw, 4rem); // 44px -> 64px
+$font-size-lg: clamp(1rem, 0.917rem + 0.174vw, 1.125rem); // 16px -> 18px
+$font-size-19: clamp(1.125rem, 1.083rem + 0.087vw, 1.1875rem); // 18px -> 19px
+$font-size-xl: clamp(1.125rem, 1.042rem + 0.174vw, 1.25rem); // 18px -> 20px
+$font-size-22: clamp(1.125rem, 0.958rem + 0.347vw, 1.375rem); // 18px -> 22px
+$font-size-2xl: clamp(1.25rem, 1.083rem + 0.347vw, 1.5rem); // 20px -> 24px
+$font-size-26: clamp(1.375rem, 1.208rem + 0.347vw, 1.625rem); // 22px -> 26px
+$font-size-28: clamp(1.5rem, 1.333rem + 0.347vw, 1.75rem); // 24px -> 28px
+$font-size-29: clamp(1.5rem, 1.292rem + 0.434vw, 1.8125rem); // 24px -> 29px
+$font-size-3xl: clamp(1.5rem, 1.25rem + 0.521vw, 1.875rem); // 24px -> 30px
+$font-size-32: clamp(1.625rem, 1.375rem + 0.521vw, 2rem); // 26px -> 32px
+$font-size-4xl: clamp(1.75rem, 1.417rem + 0.694vw, 2.25rem); // 28px -> 36px
+$font-size-40: clamp(1.875rem, 1.458rem + 0.868vw, 2.5rem); // 30px -> 40px
+$font-size-46: clamp(2rem, 1.417rem + 1.215vw, 2.875rem); // 32px -> 46px
+$font-size-5xl: clamp(2.25rem, 1.75rem + 1.042vw, 3rem); // 36px -> 48px
+$font-size-60: clamp(2.5rem, 1.667rem + 1.736vw, 3.75rem); // 40px -> 60px
+$font-size-64: clamp(2.75rem, 1.917rem + 1.736vw, 4rem); // 44px -> 64px
 
 $font-weight-normal: 400;
 $font-weight-medium: 500;

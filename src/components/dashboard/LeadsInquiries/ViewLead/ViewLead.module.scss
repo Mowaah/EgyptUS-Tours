@@ -185,58 +185,8 @@
   color: #565E71;
 }
 
-/* Header Actions Styles */
-.actionButton {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 12px 24px;
-  gap: 8px;
-  height: 56px;
-  background: $background;
-  border: 1px solid rgba(102, 107, 109, 0.24);
-  border-radius: 32px;
-  font-weight: 500;
-  font-size: $font-size-lg;
-  color: $gray-700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.actionButton:hover {
-  background: $gray-25-slate;
-}
-
-.dangerButton {
-  color: $status-danger-dark;
-  border: 1px solid rgba(185, 28, 28, 0.28);
-}
-
-.dangerButton:hover {
-  background: $background-danger;
-}
-
-.primaryButton {
-  background: $primary;
-  color: $background;
-  border: none;
-}
-
-.primaryButton:hover {
-  background: $primary;
-  filter: brightness(0.94);
-}
-
 .whiteIcon {
   filter: brightness(0) invert(1);
-}
-
-@media (max-width: 1440px) {
-  .actionButton {
-    height: 3rem;
-    padding: 0 24px;
-    font-size: $font-size-sm;
-  }
 }
 
 @media (max-width: 1200px) {

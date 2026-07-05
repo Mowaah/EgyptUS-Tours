@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";
+import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
 import MetricCard from "@/components/dashboard/DashboardHome/MetricCard/MetricCard";
 import styles from "./PostDetails.module.scss";
 
@@ -84,33 +85,24 @@ export default function PostDetails({ type, postId, post }: PostDetailsProps) {
           { label: "Details" }
         ]}
       >
-        <div className={styles.navBottomRow}>
-          <div className={styles.titleColumn}>
-            <div className={styles.titleRow}>
-              <h1 className={styles.pageTitle}>{post.title}</h1>
-              <span className={`${styles.statusPill} ${styles.statusPublished}`}>
-                <i aria-hidden />
-                {post.status}
-              </span>
-            </div>
-            <div className={styles.metaRow}>
-              <span className={styles.metaText}>Post ID: {post.id}</span>
-              <span className={styles.metaDot}>•</span>
-              <span className={styles.metaText}>{post.date}</span>
-            </div>
-          </div>
-
-          <div className={styles.actionsArea}>
-            <button className={styles.editBtn} onClick={() => router.push(`${basePath}/${postId}/edit`)}>
-              <Image src="/images/dashboard/edit.svg" alt="" width={20} height={20} />
-              Edit
-            </button>
-            <button className={styles.deleteBtn} onClick={() => setIsDeleteModalOpen(true)}>
-              Delete {entityName}
-              <Image src="/images/dashboard/delete.svg" alt="" width={24} height={24} />
-            </button>
-          </div>
-        </div>
+        <ProfileHeader
+          title={post.title}
+          pillLabel={post.status}
+          pillVariant={post.status.toLowerCase() === "published" ? "green" : "gray"}
+          subtitleElements={[`Post ID: ${post.id}`, post.date]}
+          secondaryAction={{
+            label: "Edit",
+            icon: "/images/dashboard/edit.svg",
+            onClick: () => router.push(`${basePath}/${postId}/edit`)
+          }}
+          dangerAction={{
+            label: `Delete ${entityName}`,
+            icon: "/images/dashboard/delete.svg",
+            iconPosition: "right",
+            iconSize: 24,
+            onClick: () => setIsDeleteModalOpen(true)
+          }}
+        />
       </DashboardNavbar>
 
       {/* Stats Row */}

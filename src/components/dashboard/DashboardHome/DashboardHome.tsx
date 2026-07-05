@@ -1,8 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { RecentBookingsTable } from "@/components/dashboard/RecentBookingsTable";
-import { TablePanel } from "@/components/dashboard/TablePanel";
 import { DestinationDonut } from "./DestinationDonut";
 import { DistributionChart } from "./DistributionChart";
 import { Legend } from "./Legend";
@@ -11,7 +9,6 @@ import { MetricCard } from "./MetricCard";
 import { PanelHeader } from "./PanelHeader";
 import { PendingActions } from "./PendingActions";
 import type { DashboardRange } from "./SegmentedControl";
-import { ChevronRightIcon } from "../Navbar/DashboardNavbar";
 import { domesticLines, metricCards, revenueLines } from "./dashboardHomeData";
 import type { ChartLine } from "./types";
 import styles from "./DashboardHome.module.scss";
@@ -54,7 +51,7 @@ export default function DashboardHome() {
         ))}
       </section>
 
-      <section className={styles.analyticsGrid}>
+      <section className={styles.fullWidthGrid}>
         <article className={`${styles.panel} ${styles.revenuePanel}`}>
           <PanelHeader
             icon="revenue"
@@ -65,15 +62,6 @@ export default function DashboardHome() {
           />
           <LineChart lines={revenueChartLines} />
           <Legend items={revenueChartLines} />
-        </article>
-
-        <article className={`${styles.panel} ${styles.distributionPanel}`}>
-          <PanelHeader
-            icon="booking-distribution"
-            title="Booking Distribution"
-            subtitle="By service type"
-          />
-          <DistributionChart />
         </article>
       </section>
 
@@ -101,26 +89,14 @@ export default function DashboardHome() {
       </section>
 
       <section className={styles.bottomGrid}>
-        <TablePanel
-          ariaLabel="Recent bookings"
-          className={styles.bookingsPanel}
-          header={
-            <div className={styles.tableHeader}>
-              <PanelHeader
-                className={styles.tablePanelHeader}
-                icon="recent-bookings"
-                title="Recent Bookings"
-                badge="Last 7 bookings across all services"
-              />
-              <a href="#" className={styles.viewAllLink}>
-                View All
-                <ChevronRightIcon className={styles.viewAllChevron} />
-              </a>
-            </div>
-          }
-        >
-          <RecentBookingsTable />
-        </TablePanel>
+        <article className={`${styles.panel} ${styles.distributionPanel}`}>
+          <PanelHeader
+            icon="booking-distribution"
+            title="Booking Distribution"
+            subtitle="By service type"
+          />
+          <DistributionChart />
+        </article>
 
         <article className={`${styles.panel} ${styles.actionsPanel}`}>
           <PanelHeader

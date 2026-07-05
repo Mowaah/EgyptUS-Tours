@@ -4,7 +4,8 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import { DashboardConfirmationModal } from "@/components/dashboard/shared";;
+import { DashboardConfirmationModal } from "@/components/dashboard/shared";
+import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import styles from "./PromotionDetails.module.scss";
 
@@ -93,35 +94,29 @@ export default function PromotionDetails({ promotionId }: PromotionDetailsProps)
         hideSearch
         hideFilterButton
       >
-        <div className={styles.navBottomRow}>
-          <div className={styles.titleColumn}>
-            <div className={styles.titleRow}>
-              <h1 className={styles.pageTitle}>{promotion.title}</h1>
-              <span className={styles.typePill}>
-                {promotion.appliesToType}
-              </span>
-              <span className={`${styles.statusPill} ${promotion.status === "Active" ? styles.statusActive : ""}`}>
-                <i aria-hidden />
-                {promotion.status}
-              </span>
-            </div>
-            <div className={styles.metaRow}>
-              <span className={styles.metaText}>Promotion ID: {promotion.offerId}</span>
-              <span className={styles.metaDot}>•</span>
-              <span className={styles.metaText}>{promotion.date}</span>
-            </div>
-          </div>
-          <div className={styles.actionsArea}>
-            <button className={styles.editBtn} onClick={() => router.push(`/dashboard/marketing/promotions/${promotionId}/edit`)}>
-              <Image src="/images/dashboard/edit.svg" alt="" width={20} height={20} />
-              Edit
-            </button>
-            <button className={styles.deleteBtn} onClick={() => setIsDeleteModalOpen(true)}>
-              Delete Promotion
-              <Image src="/images/dashboard/delete.svg" alt="" width={20} height={20} />
-            </button>
-          </div>
-        </div>
+        <ProfileHeader
+          title={promotion.title}
+          pillLabel={promotion.status}
+          pillVariant={promotion.status.toLowerCase() === "active" ? "green" : "gray"}
+          customPills={
+            <span className={styles.typePill}>
+              {promotion.appliesToType}
+            </span>
+          }
+          subtitleElements={[`Promotion ID: ${promotion.offerId}`, promotion.date]}
+          secondaryAction={{
+            label: "Edit",
+            icon: "/images/dashboard/edit.svg",
+            onClick: () => router.push(`/dashboard/marketing/promotions/${promotionId}/edit`)
+          }}
+          dangerAction={{
+            label: "Delete Promotion",
+            icon: "/images/dashboard/delete.svg",
+            iconPosition: "right",
+            iconSize: 20,
+            onClick: () => setIsDeleteModalOpen(true)
+          }}
+        />
       </DashboardNavbar>
 
       <React.Suspense fallback={null}>

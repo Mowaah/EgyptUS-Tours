@@ -27,55 +27,6 @@
   font-size: $font-size-xs;
 }
 
-.actionButtons {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  button {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    height: 48px;
-    padding: 12px 24px;
-    background: $background;
-    border: 1px solid rgba(102, 107, 109, 0.24);
-    border-radius: 32px;
-    font-weight: 500;
-    font-size: $font-size-lg;
-    cursor: pointer;
-    transition: background 0.2s;
-
-    &:hover {
-      background: $gray-50;
-    }
-  }
-
-  .btnEdit {
-    color: $gray-700;
-  }
-
-  .btnArchive {
-    border: 1px solid rgba(255, 102, 0, 0.25);
-    color: $secondary;
-
-    &:hover {
-      background: rgba(255, 102, 0, 0.05);
-    }
-  }
-
-  .btnDelete {
-    background: rgba(242, 107, 128, 0.02);
-    border: 1px solid rgba(185, 28, 28, 0.28);
-    color: $status-danger-dark;
-
-    &:hover {
-      background: rgba(242, 107, 128, 0.05);
-    }
-  }
-}
-
 .customFooter {
   min-height: 74px !important;
   height: 74px !important;
