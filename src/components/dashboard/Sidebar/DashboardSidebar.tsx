@@ -10,45 +10,21 @@ import { useSidebarContext } from "@/contexts/SidebarContext";
 
 interface NavItem {
   label: string;
+  href?: string;
   active?: boolean;
   defaultOpen?: boolean;
   children?: NavItem[];
 }
 
-const navRoutes: Record<string, string> = {
-  Dashboard: "/dashboard",
-  "Lead Management": "/dashboard/leads",
-  Trips: "/dashboard/bookings/trips",
-  Transportation: "/dashboard/bookings/transportation",
-  Hotels: "/dashboard/bookings/hotels",
-  Customers: "/dashboard/customers",
-  Reviews: "/dashboard/reviews",
-  "User Management": "/dashboard/settings/user-management",
-  "Access Control": "/dashboard/settings/access-control",
-  "System Configuration": "/dashboard/settings/system-configuration",
-  "Audit Log": "/dashboard/settings/audit-log",
-  "FAQ Management": "/dashboard/settings/faq-management",
-  "Terms & Conditions": "/dashboard/settings/terms-conditions",
-  "Privacy Policy": "/dashboard/settings/privacy-policy",
-  Blog: "/dashboard/marketing/blog",
-  Articles: "/dashboard/marketing/articles",
-  Promotions: "/dashboard/marketing/promotions",
-  Payments: "/dashboard/finance/payments",
-  Deposits: "/dashboard/finance/deposits",
-  "Financial Reports": "/dashboard/finance/reports",
-  "Reports & Analytics": "/dashboard/analytics",
-  "SEO Configuration": "/dashboard/seo",
-};
-
 const navItems: NavItem[] = [
-  { label: "Dashboard" },
-  { label: "Lead Management" },
+  { label: "Dashboard", href: "/dashboard" },
+  { label: "Lead Management", href: "/dashboard/leads" },
   {
     label: "Bookings",
     children: [
-      { label: "Trips" },
-      { label: "Transportation" },
-      { label: "Hotels" },
+      { label: "Trips", href: "/dashboard/bookings/trips" },
+      { label: "Transportation", href: "/dashboard/bookings/transportation" },
+      { label: "Hotels", href: "/dashboard/bookings/hotels" },
     ],
   },
   {
@@ -59,51 +35,51 @@ const navItems: NavItem[] = [
       { label: "MICE & Corporate" },
     ],
   },
-  { label: "Customers" },
+  { label: "Customers", href: "/dashboard/customers" },
   {
     label: "Catalog",
     children: [
-      { label: "Trips" },
-      { label: "Transportation" },
-      { label: "Hotels" },
+      { label: "Trips", href: "/dashboard/catalog/trips" },
+      { label: "Transportation", href: "/dashboard/catalog/transportation" },
+      { label: "Hotels", href: "/dashboard/catalog/hotels" },
     ],
   },
   {
     label: "Finance",
     children: [
-      { label: "Payments" },
-      { label: "Deposits" },
-      { label: "Financial Reports" },
+      { label: "Payments", href: "/dashboard/finance/payments" },
+      { label: "Deposits", href: "/dashboard/finance/deposits" },
+      { label: "Financial Reports", href: "/dashboard/finance/reports" },
     ],
   },
   {
     label: "Marketing",
     children: [
-      { label: "Blog" },
-      { label: "Articles" },
-      { label: "Promotions" },
+      { label: "Blog", href: "/dashboard/marketing/blog" },
+      { label: "Articles", href: "/dashboard/marketing/articles" },
+      { label: "Promotions", href: "/dashboard/marketing/promotions" },
     ],
   },
-  { label: "Reviews" },
-  { label: "Reports & Analytics" },
+  { label: "Reviews", href: "/dashboard/reviews" },
+  { label: "Reports & Analytics", href: "/dashboard/analytics" },
   {
     label: "Settings",
     children: [
-      { label: "User Management" },
-      { label: "Access Control" },
-      { label: "System Configuration" },
-      { label: "Audit Log" },
+      { label: "User Management", href: "/dashboard/settings/user-management" },
+      { label: "Access Control", href: "/dashboard/settings/access-control" },
+      { label: "System Configuration", href: "/dashboard/settings/system-configuration" },
+      { label: "Audit Log", href: "/dashboard/settings/audit-log" },
     ],
   },
   {
     label: "Legal & Help Center",
     children: [
-      { label: "FAQ Management" },
-      { label: "Terms & Conditions" },
-      { label: "Privacy Policy" },
+      { label: "FAQ Management", href: "/dashboard/settings/faq-management" },
+      { label: "Terms & Conditions", href: "/dashboard/settings/terms-conditions" },
+      { label: "Privacy Policy", href: "/dashboard/settings/privacy-policy" },
     ],
   },
-  { label: "SEO Configuration" },
+  { label: "SEO Configuration", href: "/dashboard/seo" },
 ];
 
 const toKebabCase = (value: string) =>
@@ -168,7 +144,7 @@ function NavChildren({
       <span className={styles.branch} aria-hidden />
       <ul className={styles.subnavList}>
         {items.map((item) => {
-          const href = navRoutes[item.label];
+          const href = item.href;
           const isActive = href
             ? pathname === href || (href !== "/dashboard" && pathname.startsWith(href + "/"))
             : false;
@@ -247,7 +223,7 @@ export default function DashboardSidebar() {
                 const hasChildren = Boolean(item.children?.length);
                 const isOpen = Boolean(openGroups[item.label]);
                 const subnavId = `dashboard-sidebar-${toKebabCase(item.label)}`;
-                const href = navRoutes[item.label];
+                const href = item.href;
                 const isActive = href
                   ? pathname === href || (href !== "/dashboard" && pathname.startsWith(href + "/"))
                   : false;

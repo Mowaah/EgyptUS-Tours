@@ -108,6 +108,7 @@ export default function DataTable<T>({
   columns,
   getRowId,
   selectable = false,
+  selectionType = "checkbox",
   rowActions,
   pageSizeOptions = DEFAULT_PAGE_SIZES,
   defaultPageSize = pageSizeOptions[0] ?? 5,
@@ -180,6 +181,7 @@ export default function DataTable<T>({
                   <td>
                     <input
                       type="checkbox"
+                      className={selectionType === "star" ? styles.starCheckbox : undefined}
                       checked={isSelected}
                       onChange={() => toggleRow(rowId)}
                       aria-label={`Select row ${rowId}`}

@@ -22,6 +22,7 @@ export interface DataTableProps<T> {
   getRowId: (row: T) => string;
   /** Show a leading checkbox column with row selection. */
   selectable?: boolean;
+  selectionType?: "checkbox" | "star";
   /** Optional per-row overflow menu (⋯). */
   rowActions?: (row: T) => DataTableRowAction<T>[];
   pageSizeOptions?: number[];
