@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { Trip, TripHotel } from "@/types";
-import styles from "./TripAccommodations.module.scss";
+import { IncludedHotelCard } from "@/components/shared";
 import HotelModal from "./HotelModal";
-import { RatingBadge } from "@/components/shared";
+import styles from "./TripAccommodations.module.scss";
 
 interface TripAccommodationsProps {
   trip: Trip;
@@ -41,46 +40,11 @@ export default function TripAccommodations({ trip }: TripAccommodationsProps) {
 
       <div className={styles.grid}>
         {hotels.map((hotel, i) => (
-          <article key={i} className={styles.card} onClick={() => setSelectedHotel(hotel)} style={{ cursor: "pointer" }}>
-            <div className={styles.imageWrap}>
-              <Image
-                src={hotel.image}
-                alt={hotel.name}
-                fill
-                sizes="400px"
-                className={styles.image}
-              />
-              <span className={styles.badge}>✓ INCLUDED</span>
-              <RatingBadge
-                rating={hotel.rating}
-                reviews={hotel.reviewCount}
-                size="sm"
-                className={styles.ratingBadge}
-              />
-            </div>
-
-            <div className={styles.content}>
-              <div className={styles.info}>
-                <h3 className={styles.name}>{hotel.name}</h3>
-                <p className={styles.location}>
-                  <Image src="/images/location-blue-filled.svg" alt="" width={14} height={14} />
-                  {hotel.location}
-                </p>
-              </div>
-              <p className={styles.description}>{hotel.description}</p>
-              <div className={styles.amenities}>
-                {hotel.amenities.map((a, ai) => {
-                  const icon = getAmenityIcon(a);
-                  return (
-                    <span key={ai} className={styles.amenity}>
-                      {icon && <Image src={icon} alt="" width={16} height={16} />}
-                      {a}
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-          </article>
+          <IncludedHotelCard 
+            key={i} 
+            hotel={hotel} 
+            onClick={() => setSelectedHotel(hotel)} 
+          />
         ))}
       </div>
 
