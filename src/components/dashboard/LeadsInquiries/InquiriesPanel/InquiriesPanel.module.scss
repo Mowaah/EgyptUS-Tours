@@ -2,7 +2,7 @@
 
 .idCell {
   font-weight: 700;
-  color: #374151;
+  color: $gray-700;
 }
 
 .pill {
@@ -44,24 +44,24 @@
 }
 
 .statusContacted {
-  color: #FF6600;
+  color: $secondary;
   background: #FFF0E6;
   i {
-    background: #FF6600;
+    background: $secondary;
   }
 }
 
 .statusNew {
-  color: #2971E6;
+  color: $primary;
   background: #F1F8FF;
   i {
-    background: #2971E6;
+    background: $primary;
   }
 }
 
 .statusConverted {
   color: #16A34A;
-  background: #DCFCE7;
+  background: $status-success-bg;
   i {
     background: #16A34A;
   }

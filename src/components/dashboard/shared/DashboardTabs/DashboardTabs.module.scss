@@ -1,10 +1,12 @@
+@use "@/styles/variables" as *;
+
 .tabCard {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 24px 32px;
-  background: #ffffff;
+  background: $background;
   border-radius: 24px;
 }
 
@@ -32,7 +34,7 @@
   background: none;
   cursor: pointer;
 
-  font-size: 16px;
+  font-size: $font-size-lg;
   line-height: 21px;
   font-weight: 400;
   color: #979797;
@@ -41,7 +43,7 @@
   transition: color 0.15s ease, border-color 0.15s ease;
 
   &:hover {
-    color: #2971e6;
+    color: $primary;
   }
 }
 
@@ -66,8 +68,8 @@
 }
 
 .tabActive {
-  border-bottom-color: #2971e6;
-  color: #2971e6;
+  border-bottom-color: $primary;
+  color: $primary;
   font-weight: 700;
 }
 

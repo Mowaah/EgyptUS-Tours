@@ -2,15 +2,15 @@
 
 .idCell {
   font-weight: 700;
-  color: #374151;
+  color: $gray-700;
 }
 
 .dateCell {
-  color: #6b7280;
+  color: $text-light;
 }
 
 .agentCell {
-  color: #4b5563;
+  color: $gray-600;
 }
 
 .sourcePill {
@@ -20,7 +20,7 @@
   height: 1.875rem;
   padding: 0 0.75rem;
   border-radius: 6rem;
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: 400;
   white-space: nowrap;
 

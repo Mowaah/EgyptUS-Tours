@@ -23,20 +23,20 @@
 
 .variantGreen {
   color: #16a34a;
-  background: #dcfce7;
+  background: $status-success-bg;
   i { background: #16a34a; }
 }
 
 .variantRed {
   color: #dc2626;
-  background: #fef2f2;
+  background: $background-danger;
   i { background: #dc2626; }
 }
 
 .variantBlue {
-  color: #2563eb;
-  background: #dbeafe;
-  i { background: #2563eb; }
+  color: $info;
+  background: $background-blue-soft;
+  i { background: $info; }
 }
 
 .variantOrange {
@@ -53,6 +53,6 @@
 
 .variantGray {
   color: #525252;
-  background: #f5f5f5;
+  background: $gray-100-zinc;
   i { background: #525252; }
 }

@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .whiteTabs {
-  background-color: #FFFFFF !important;
+  background-color: $background !important;
 }

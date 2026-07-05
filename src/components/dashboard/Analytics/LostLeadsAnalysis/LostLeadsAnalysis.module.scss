@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .donutWrapper {
   display: flex;
   align-items: center;
@@ -47,17 +49,17 @@
 }
 
 .legendValue {
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: 700;
   line-height: 24px;
   color: #1F2937;
 }
 
 .legendLabel {
-  font-size: 12px;
+  font-size: $font-size-xs;
   font-weight: 700;
   line-height: 20px;
-  color: #9CA3AF;
+  color: $gray-400;
   white-space: nowrap;
 }
 

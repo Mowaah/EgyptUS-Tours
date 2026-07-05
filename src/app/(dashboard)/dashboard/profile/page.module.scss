@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .page {
   display: flex;
   height: 100vh;
@@ -50,9 +52,9 @@
 
 .securityPlaceholder {
   padding: 32px;
-  background: #FFFFFF;
+  background: $background;
   border-radius: 24px;
   width: 100%;
   text-align: center;
-  color: #606978;
+  color: $text-muted;
 }

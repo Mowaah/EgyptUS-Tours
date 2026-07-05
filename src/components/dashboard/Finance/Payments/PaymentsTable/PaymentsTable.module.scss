@@ -1,6 +1,8 @@
+@use "@/styles/variables" as *;
+
 .idCell {
   font-weight: 700;
-  color: #374151;
+  color: $gray-700;
 }
 
 /* Service pills */
@@ -11,7 +13,7 @@
   height: 1.875rem;
   padding: 0.25rem 0.75rem;
   border-radius: 6rem;
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: 400;
   white-space: nowrap;
 }
@@ -32,7 +34,7 @@
 }
 
 .serviceB2B {
-  color: #0e2851;
+  color: $dark;
   background: rgba(14, 40, 81, 0.1);
 }
 
@@ -65,7 +67,7 @@
 
 .statusPaid {
   color: #16A34A;
-  background: #DCFCE7;
+  background: $status-success-bg;
 
   i {
     background: #16A34A;
@@ -74,7 +76,7 @@
 
 .statusRefunded {
   color: #DC2626;
-  background: #FEE2E2;
+  background: $background-danger-light;
 
   i {
     background: #DC2626;

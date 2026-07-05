@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .content {
   display: flex;
   align-items: center;
@@ -44,14 +46,14 @@
 
 .company {
   font-weight: 700;
-  font-size: 16px;
+  font-size: $font-size-lg;
   color: #353E5C;
 }
 
 .percentage {
   font-weight: 400;
-  font-size: 14px;
-  color: #6B7280;
+  font-size: $font-size-sm;
+  color: $text-light;
 }
 
 .line {

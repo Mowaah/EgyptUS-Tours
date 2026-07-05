@@ -7,14 +7,14 @@
   margin-left: auto;
   padding: 0.5rem;
   border-radius: 2rem;
-  background: #f8f9fb;
+  background: $dashboard-expandable-hover;
 
   button {
     min-width: 5.375rem;
     height: 2.25rem;
     padding: 0 1rem;
     border-radius: 1.5rem;
-    color: #111827;
+    color: $gray-900;
     font-size: 0.875rem;
     font-weight: 500;
     transform: none;

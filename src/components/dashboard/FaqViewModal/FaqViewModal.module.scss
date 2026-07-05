@@ -40,7 +40,7 @@
   flex-direction: column;
   gap: 1rem;
   padding: 1.25rem;
-  border: 1px solid #E5E7EB;
+  border: 1px solid $border-strong;
   border-radius: 2rem;
   background: $white;
 }
@@ -64,14 +64,14 @@
   font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: 0.01em;
-  color: #0E1835;
+  color: $dark-navy-deep;
 }
 
 .questionTitle {
   font-size: 1.25rem;
   font-weight: 400;
   letter-spacing: 0.01em;
-  color: #0E2851;
+  color: $dark;
   min-width: 0;
 }
 
@@ -82,14 +82,14 @@
   justify-content: center;
   width: 2.5rem;
   height: 2.5rem;
-  border: 1px solid #BDD3F7;
+  border: 1px solid $border-blue-deep;
   border-radius: 1.5rem;
   background: $white;
-  color: #2971E6;
+  color: $primary;
   transform: none;
 
   &:hover {
-    background: #EAF1FD;
+    background: $background-blue;
   }
 }
 
@@ -117,7 +117,7 @@
   font-weight: 400;
   line-height: 1.375;
   letter-spacing: 0.01em;
-  color: #6B7280;
+  color: $text-light;
 }
 
 

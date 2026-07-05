@@ -89,7 +89,7 @@
 
   &.down {
     color: #dc2626;
-    background: #fef2f2;
+    background: $background-danger;
   }
 }
 
@@ -106,7 +106,7 @@
   color: #3db37c;
 }
 .orange {
-  color: #ff6600;
+  color: $secondary;
 }
 .purple {
   color: #a855f7;

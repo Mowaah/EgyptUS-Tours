@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .container {
   display: flex;
   flex-direction: column;
@@ -5,7 +7,7 @@
   padding: 24px;
   gap: 32px;
   width: 100%;
-  background: #ffffff;
+  background: $background;
   border-radius: 24px;
 }
 
@@ -23,15 +25,15 @@
     align-items: center;
     width: 40px;
     height: 40px;
-    background: #f8f9fb;
+    background: $dashboard-expandable-hover;
     border-radius: 20px;
   }
 
   h2 {
     font-weight: 500;
-    font-size: 24px;
+    font-size: $font-size-28;
     line-height: 33px;
-    color: #0e2851;
+    color: $dark;
     margin: 0;
   }
 }

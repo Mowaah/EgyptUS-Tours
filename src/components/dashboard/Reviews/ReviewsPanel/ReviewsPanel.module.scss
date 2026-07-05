@@ -2,7 +2,7 @@
 
 .idCell {
   font-weight: 700;
-  color: #374151;
+  color: $gray-700;
 }
 
 /* ---- Category pills ---- */
@@ -14,7 +14,7 @@
   height: 1.875rem;
   padding: 0.25rem 0.75rem;
   border-radius: 6rem;
-  font-size: 12px;
+  font-size: $font-size-xs;
   font-weight: 500;
   white-space: nowrap;
 
@@ -52,7 +52,7 @@
 }
 
 .categoryB2B {
-  color: #0e2851;
+  color: $dark;
   background: rgba(14, 40, 81, 0.1);
 }
 
@@ -103,7 +103,7 @@
 
 .statusUploaded {
   color: #16a34a;
-  background: #dcfce7;
+  background: $status-success-bg;
 }
 
 .toastBanner {
@@ -113,9 +113,9 @@
 }
 
 .primaryBtn {
-  background: #1B8FFE;
-  border-color: #1B8FFE;
-  color: #FFFFFF;
+  background: $info-light;
+  border-color: $info-light;
+  color: $background;
   
   &:hover {
     background: #0077ED;

@@ -2,7 +2,7 @@
 
 .idCell {
   font-weight: 700;
-  color: #374151;
+  color: $gray-700;
 }
 
 .pill {
@@ -43,46 +43,46 @@
 }
 
 .statusContacted {
-  color: #FF6600;
+  color: $secondary;
   background: #FFF0E6;
   i {
-    background: #FF6600;
+    background: $secondary;
   }
 }
 
 .statusNew {
-  color: #2971E6;
+  color: $primary;
   background: #F1F8FF;
   i {
-    background: #2971E6;
+    background: $primary;
   }
 }
 
 .statusConverted {
   color: #16A34A;
-  background: #DCFCE7;
+  background: $status-success-bg;
   i {
     background: #16A34A;
   }
 }
 
 .pillPrivate {
-  color: #FF6600;
+  color: $secondary;
   background: #FFF5EE;
   i {
-    background: #FF6600;
+    background: $secondary;
   }
 }
 .pillGroup {
-  color: #2971E6;
+  color: $primary;
   background: rgba(41, 113, 230, 0.05);
   i {
-    background: #2971E6;
+    background: $primary;
   }
 }
 .pillPaid {
   color: #16A34A;
-  background: #DCFCE7;
+  background: $status-success-bg;
   i {
     background: #16A34A;
   }
@@ -102,9 +102,9 @@
   }
 }
 .pillUpcoming {
-  color: #2971E6;
+  color: $primary;
   background: #F1F8FF;
-  i { background: #2971E6; }
+  i { background: $primary; }
 }
 .pillCanceled {
   color: #D96066;
@@ -123,7 +123,7 @@
 }
 .pillCompleted {
   color: #16A34A;
-  background: #DCFCE7;
+  background: $status-success-bg;
   i { background: #16A34A; }
 }
 .pillWebsite {

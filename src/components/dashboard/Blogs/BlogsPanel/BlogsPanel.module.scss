@@ -2,7 +2,7 @@
 
 .idCell {
   font-weight: 700;
-  color: #374151;
+  color: $gray-700;
 }
 
 .pill {
@@ -30,12 +30,12 @@
 
 .categoryPill {
   color: #525252;
-  background: #f5f5f5;
+  background: $gray-100-zinc;
 }
 
 .statusPublished {
   color: #16a34a;
-  background: #dcfce7;
+  background: $status-success-bg;
   i {
     background: #16a34a;
   }
@@ -50,9 +50,9 @@
 }
 
 .statusScheduled {
-  color: #2971e6;
+  color: $primary;
   background: #f1f8ff;
   i {
-    background: #2971e6;
+    background: $primary;
   }
 }

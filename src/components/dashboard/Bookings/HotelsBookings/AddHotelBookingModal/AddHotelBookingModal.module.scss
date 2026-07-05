@@ -21,7 +21,7 @@
   width: 100%;
   max-width: 882px;
   max-height: 90vh;
-  background: #FFFFFF;
+  background: $background;
   box-shadow: 0px 20px 24px -4px rgba(16, 24, 40, 0.08), 0px 8px 8px -4px rgba(16, 24, 40, 0.03);
   border-radius: 2rem;
   overflow: hidden;
@@ -49,11 +49,11 @@
     background: transparent;
   }
   &::-webkit-scrollbar-thumb {
-    background: #E5E7EB;
+    background: $border-strong;
     border-radius: 10px;
   }
   &::-webkit-scrollbar-thumb:hover {
-    background: #D1D5DB;
+    background: $gray-tailwind-300;
   }
 }
 

@@ -11,9 +11,9 @@
 
 .label {
   font-weight: 500;
-  font-size: 14px;
+  font-size: $font-size-sm;
   line-height: 19px;
-  color: #4b5563;
+  color: $gray-600;
 }
 
 .inputRow {
@@ -39,14 +39,14 @@
   padding: 14px 16px;
   gap: 10px;
   flex: 1;
-  background: #ffffff;
-  border: 1px solid #e5e5e5;
+  background: $background;
+  border: 1px solid $gray-200-zinc;
   border-radius: 24px;
   height: 48px;
   transition: border-color 0.2s ease;
 
   &:focus-within {
-    border-color: #2971e6;
+    border-color: $primary;
   }
 }
 
@@ -56,12 +56,12 @@
   background: transparent;
   outline: none;
   font-weight: 400;
-  font-size: 12px;
+  font-size: $font-size-xs;
   line-height: 14px;
   color: #444a51;
   
   &::placeholder {
-    color: #9ca3af;
+    color: $gray-400;
   }
 }
 
@@ -71,7 +71,7 @@
   align-items: center;
   width: 48px;
   height: 48px;
-  background: #2971e6;
+  background: $primary;
   border-radius: 100px;
   border: none;
   cursor: pointer;
@@ -100,15 +100,15 @@
 
 .counter {
   font-weight: 400;
-  font-size: 12px;
+  font-size: $font-size-xs;
   line-height: 12px;
-  color: #9ca3af;
+  color: $gray-400;
   text-align: right;
   width: 100%;
 }
 
 .errorText {
-  font-size: 12px;
+  font-size: $font-size-xs;
   color: #dc2626;
   text-align: right;
   width: 100%;
@@ -138,9 +138,9 @@
 
 .tagText {
   font-weight: 400;
-  font-size: 12px;
+  font-size: $font-size-xs;
   line-height: 16px;
-  color: #2971e6;
+  color: $primary;
 }
 
 .removeBtn {
@@ -151,7 +151,7 @@
   border: none;
   cursor: pointer;
   padding: 0;
-  color: #2971e6;
+  color: $primary;
   transition: opacity 0.2s ease;
 
   &:hover {
@@ -160,7 +160,7 @@
 }
 
 .tagIcon {
-  color: #2971e6;
+  color: $primary;
   display: flex;
   align-items: center;
 }

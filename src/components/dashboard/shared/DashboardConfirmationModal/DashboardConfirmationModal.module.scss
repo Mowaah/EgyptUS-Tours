@@ -52,7 +52,7 @@
 
   h2 {
     margin: 0;
-    color: #0e2851;
+    color: $dark;
     font-size: 2.25rem;
     font-weight: 700;
     line-height: 1.11;
@@ -61,7 +61,7 @@
   p {
     max-width: 33.125rem;
     margin: 0 auto;
-    color: #4a5565;
+    color: $text-lighter;
     font-size: 1.25rem;
     font-weight: 400;
     line-height: 1.4;
@@ -111,12 +111,12 @@
 }
 
 .destructiveButton {
-  color: #b91c1c;
+  color: $status-danger-dark;
   font-weight: 500;
-  background: #fee2e2;
+  background: $background-danger-light;
 
   &:hover:not(:disabled) {
-    background: #fecaca;
+    background: $border-danger-light;
   }
 }
 
@@ -126,7 +126,7 @@
   background: #2f73e8;
 
   &:hover:not(:disabled) {
-    background: #2563eb;
+    background: $info;
   }
 }
 

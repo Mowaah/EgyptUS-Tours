@@ -2,7 +2,7 @@
 
 .idCell {
   font-weight: 700;
-  color: #374151;
+  color: $gray-700;
 }
 
 .teamPills {
@@ -42,7 +42,7 @@
 
 .teamSales {
   color: #16A34A;
-  background: #DCFCE7;
+  background: $status-success-bg;
   i {
     background: #16A34A;
   }
@@ -52,8 +52,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #4B5563;
-  font-size: 14px;
+  color: $gray-600;
+  font-size: $font-size-sm;
   font-weight: 400;
 
   img {

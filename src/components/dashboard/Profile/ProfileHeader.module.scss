@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .headerContainer {
   display: flex;
   flex-direction: row;
@@ -54,9 +56,9 @@
 
 .name {
   font-weight: 700;
-  font-size: 32px;
+  font-size: $font-size-46;
   line-height: 44px;
-  color: #0E2851;
+  color: $dark;
   margin: 0;
 }
 
@@ -70,9 +72,9 @@
   background: rgba(216, 0, 39, 0.05);
   border-radius: 100px;
   font-weight: 500;
-  font-size: 12px;
+  font-size: $font-size-xs;
   line-height: 21px;
-  color: #D80027;
+  color: $status-danger-text;
 }
 
 .badgeActive {
@@ -85,7 +87,7 @@
   background: rgba(61, 194, 111, 0.08);
   border-radius: 100px;
   font-weight: 500;
-  font-size: 12px;
+  font-size: $font-size-xs;
   line-height: 21px;
   color: #22C55E;
 }
@@ -100,16 +102,16 @@
 
 .metaText {
   font-weight: 400;
-  font-size: 16px;
+  font-size: $font-size-lg;
   line-height: 22px;
-  color: #606978;
+  color: $text-muted;
 }
 
 .metaDot {
   font-weight: 400;
-  font-size: 16px;
+  font-size: $font-size-lg;
   line-height: 22px;
-  color: #606978;
+  color: $text-muted;
 }
 
 .actions {
@@ -126,16 +128,16 @@
   gap: 8px;
   width: 200px;
   height: 56px;
-  background: #FEF2F2;
-  border: 1px solid #FEE2E2;
+  background: $background-danger;
+  border: 1px solid $background-danger-light;
   border-radius: 32px;
   cursor: pointer;
   
   span {
     font-weight: 700;
-    font-size: 16px;
+    font-size: $font-size-lg;
     line-height: 16px;
     text-align: center;
-    color: #B91C1C;
+    color: $status-danger-dark;
   }
 }

@@ -2,7 +2,7 @@
 
 .idCell {
   font-weight: 700;
-  color: #374151;
+  color: $gray-700;
 }
 
 .pill {
@@ -28,7 +28,7 @@
 
 .statusActive {
   color: #16a34a;
-  background: #dcfce7;
+  background: $status-success-bg;
   i {
     background: #16a34a;
   }
@@ -36,7 +36,7 @@
 
 .statusInactive {
   color: #525252;
-  background: #f5f5f5;
+  background: $gray-100-zinc;
   i {
     background: #525252;
   }
@@ -44,7 +44,7 @@
 
 .statusBlocked {
   color: #dc2626;
-  background: #fef2f2;
+  background: $background-danger;
   i {
     background: #dc2626;
   }

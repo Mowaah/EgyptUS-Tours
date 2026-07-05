@@ -44,7 +44,7 @@
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1.25rem;
-  color: #4B5563;
+  color: $gray-600;
 }
 
 .phoneInputWrapper {
@@ -54,13 +54,13 @@
   gap: 8px;
   height: 3rem;
   padding: 0 16px;
-  border: 1px solid #E5E5E5;
+  border: 1px solid $gray-200-zinc;
   border-radius: 24px;
-  background: #FFFFFF;
+  background: $background;
   transition: border-color 0.15s, box-shadow 0.15s;
   
   &:focus-within {
-    border-color: #2971E6;
+    border-color: $primary;
     box-shadow: 0 0 0 3px rgba(41,113,230,0.12);
   }
 }
@@ -79,7 +79,7 @@
   min-width: 0;
   
   &::placeholder {
-    color: #9CA3AF;
+    color: $gray-400;
   }
 }
 
@@ -113,8 +113,8 @@
   height: 3rem !important;
   min-height: 3rem !important;
   padding: 0 1rem !important;
-  background: #FFFFFF;
-  border: 1px solid #E5E5E5 !important;
+  background: $background;
+  border: 1px solid $gray-200-zinc !important;
   border-radius: 24px !important;
   font-family: inherit;
   font-size: 0.875rem;
@@ -124,12 +124,12 @@
 }
 
 .countrySelectWrap :global([class*="NationalitySelect_trigger"]):focus-within {
-  border-color: #2971E6 !important;
+  border-color: $primary !important;
   box-shadow: 0 0 0 3px rgba(41, 113, 230, 0.12) !important;
 }
 
 .countrySelectWrap :global([class*="NationalitySelect_placeholder"]) {
-  color: #9CA3AF !important;
+  color: $gray-400 !important;
 }
 
 .counterWrap {
@@ -151,14 +151,14 @@
 .counterLabel {
   font-weight: 700;
   font-size: 0.875rem;
-  color: #0E2851;
+  color: $dark;
   white-space: nowrap;
 }
 
 .counterHint {
   font-weight: 500;
   font-size: 0.75rem;
-  color: #6B7280;
+  color: $text-light;
 }
 
 .datePickerTrigger {

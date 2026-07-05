@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .container {
   display: flex;
   flex-direction: column;
@@ -14,7 +16,7 @@
   padding: 32px;
   gap: 24px;
   width: 100%;
-  background: #FFFFFF;
+  background: $background;
   border-radius: 24px;
   box-sizing: border-box;
 }
@@ -42,8 +44,8 @@
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 9999px;
-  color: #9CA3AF;
-  background: #f8f9fb;
+  color: $gray-400;
+  background: $dashboard-expandable-hover;
 }
 
 .assetIcon {
@@ -71,8 +73,8 @@
   padding: 16px;
   width: 100%;
   height: 112px;
-  background: #FFFFFF;
-  border: 1px solid #F5F5F5;
+  background: $background;
+  border: 1px solid $gray-100-zinc;
   border-radius: 24px;
   box-sizing: border-box;
 }
@@ -108,7 +110,7 @@
 
 .avatarTitle {
   font-weight: 500;
-  font-size: 20px;
+  font-size: $font-size-2xl;
   line-height: 27px;
   color: #11263B;
   margin: 0;
@@ -116,9 +118,9 @@
 
 .avatarSubtitle {
   font-weight: 400;
-  font-size: 14px;
+  font-size: $font-size-sm;
   line-height: 19px;
-  color: #606978;
+  color: $text-muted;
   opacity: 0.8;
   margin: 0;
 }
@@ -138,17 +140,17 @@
   padding: 0px 24px;
   gap: 8px;
   height: 48px;
-  background: #2971E6;
+  background: $primary;
   border-radius: 32px;
   border: none;
   cursor: pointer;
 
   span {
     font-weight: 500;
-    font-size: 16px;
+    font-size: $font-size-lg;
     line-height: 22px;
     text-align: center;
-    color: #FFFFFF;
+    color: $background;
   }
 }
 
@@ -160,20 +162,20 @@
   padding: 0px 32px;
   gap: 6px;
   height: 48px;
-  border: 1px solid #D1D5DB;
+  border: 1px solid $gray-tailwind-300;
   border-radius: 100px;
-  background: #FFFFFF;
+  background: $background;
   cursor: pointer;
 
   span {
     font-weight: 500;
-    font-size: 16px;
+    font-size: $font-size-lg;
     line-height: 18px;
     display: flex;
     align-items: center;
     text-align: center;
     letter-spacing: 0.005em;
-    color: #374151;
+    color: $gray-700;
   }
 }
 
@@ -182,7 +184,7 @@
   height: 16px;
   
   path {
-    stroke: #374151 !important;
+    stroke: $gray-700 !important;
   }
 }
 
@@ -192,7 +194,7 @@
   gap: 16px;
   padding: 16px;
   width: 100%;
-  background: #F9FAFB;
+  background: $gray-50;
   border-radius: 24px;
   box-sizing: border-box;
 }
@@ -217,21 +219,21 @@
 
   label {
     font-weight: 500;
-    font-size: 14px;
+    font-size: $font-size-sm;
     line-height: 19px;
-    color: #4B5563;
+    color: $gray-600;
     padding-left: 10px;
   }
 
   textarea {
     width: 100%;
     height: 96px;
-    background: #FFFFFF;
-    border: 1px solid #E5E5E5;
+    background: $background;
+    border: 1px solid $gray-200-zinc;
     border-radius: 24px;
     padding: 16px;
     font-weight: 400;
-    font-size: 12px;
+    font-size: $font-size-xs;
     line-height: 16px;
     color: #444A51;
     box-sizing: border-box;
@@ -239,7 +241,7 @@
 
     &:focus {
       outline: none;
-      border-color: #2971E6;
+      border-color: $primary;
     }
   }
 }

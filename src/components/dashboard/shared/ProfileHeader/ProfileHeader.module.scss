@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .headerContent {
   display: flex;
   flex-direction: row;
@@ -20,9 +22,9 @@
 
   h1 {
     font-weight: 700;
-    font-size: 32px;
+    font-size: $font-size-46;
     line-height: 44px;
-    color: #0E2851;
+    color: $dark;
     margin: 0;
   }
 }
@@ -36,7 +38,7 @@
   padding: 4px 12px;
   border-radius: 96px;
   font-weight: 500;
-  font-size: 12px;
+  font-size: $font-size-xs;
   line-height: 16px;
 
   i {
@@ -50,14 +52,14 @@
 /* Variant classes for the pill */
 .pillBlue {
   background: #F1F8FF;
-  color: #2971E6;
+  color: $primary;
   i {
-    background: #2971E6;
+    background: $primary;
   }
 }
 
 .pillGreen {
-  background: #DCFCE7;
+  background: $status-success-bg;
   color: #16A34A;
   i {
     background: #16A34A;
@@ -65,7 +67,7 @@
 }
 
 .pillRed {
-  background: #FEF2F2;
+  background: $background-danger;
   color: #DC2626;
   i {
     background: #DC2626;
@@ -81,10 +83,10 @@
 }
 
 .pillGray {
-  background: #F3F4F6;
-  color: #4B5563;
+  background: $gray-50-tailwind;
+  color: $gray-600;
   i {
-    background: #4B5563;
+    background: $gray-600;
   }
 }
 
@@ -105,13 +107,13 @@
 
   span {
     font-weight: 400;
-    font-size: 16px;
+    font-size: $font-size-lg;
     line-height: 22px;
-    color: #606978;
+    color: $text-muted;
   }
 
   .dot {
-    color: #606978;
+    color: $text-muted;
   }
 }
 
@@ -124,7 +126,7 @@
 
 @media (max-width: 1440px) {
   .titleRow h1 {
-    font-size: 24px;
+    font-size: $font-size-28;
     line-height: 32px;
   }
 }

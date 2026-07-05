@@ -2,11 +2,11 @@
 
 .idCell {
   font-weight: 700;
-  color: #374151;
+  color: $gray-700;
 }
 
 .dateCell {
-  color: #6b7280;
+  color: $text-light;
 }
 
 .priceCell {
@@ -14,7 +14,7 @@
 }
 
 .agentCell {
-  color: #4b5563;
+  color: $gray-600;
 }
 
 .actionCell {

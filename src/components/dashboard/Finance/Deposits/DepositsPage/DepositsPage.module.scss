@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .chartsGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -11,7 +13,7 @@
 }
 
 .chartCard {
-  background: #ffffff;
+  background: $background;
   border-radius: 24px;
   padding: 32px;
   display: flex;
@@ -29,7 +31,7 @@
 .iconBox {
   width: 40px;
   height: 40px;
-  background: #f8f9fb;
+  background: $dashboard-expandable-hover;
   border-radius: 20px;
   display: flex;
   align-items: center;
@@ -39,16 +41,16 @@
 
 .cardTitle {
   font-weight: 500;
-  font-size: 24px;
-  color: #0e2851;
+  font-size: $font-size-28;
+  color: $dark;
   margin: 0;
   line-height: 1.2;
 }
 
 .cardSubtitle {
   font-weight: 400;
-  font-size: 14px;
-  color: #9ca3af;
+  font-size: $font-size-sm;
+  color: $gray-400;
   margin: 4px 0 0 0;
 }
 
@@ -94,14 +96,14 @@
 
 .legendValue {
   font-weight: 500;
-  font-size: 14px;
+  font-size: $font-size-sm;
   line-height: 24px;
   color: #1F2937;
 }
 
 .legendLabel {
   font-weight: 500;
-  font-size: 12px;
+  font-size: $font-size-xs;
   line-height: 20px;
-  color: #9CA3AF;
+  color: $gray-400;
 }

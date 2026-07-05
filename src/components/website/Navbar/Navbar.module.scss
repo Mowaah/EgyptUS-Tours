@@ -160,16 +160,16 @@ $nav-desktop: 1150px;
   color: rgba(255, 255, 255, 0.9); // default: white on transparent navbar
 
   .scrolled & {
-    color: #4B5563;
+    color: $gray-600;
   }
 
   .lightPage:not(.scrolled) & {
-    color: #4B5563;
+    color: $gray-600;
   }
 
   // When parent link is active, pick up $primary from the link color
   .active & {
-    color: #2971E6;
+    color: $primary;
   }
 }
 
@@ -268,7 +268,7 @@ $nav-desktop: 1150px;
     background: rgba(41, 113, 230, 0.1) !important;
 
     .dropdownChevron {
-      color: #2971E6 !important;
+      color: $primary !important;
     }
   }
 }
@@ -317,9 +317,9 @@ $nav-desktop: 1150px;
 }
 
 .dropdownText {
-  font-size: 11px;
+  font-size: $font-size-2xs;
   font-weight: $font-weight-medium;
-  color: #123367;
+  color: $primary-deep;
   line-height: 11px;
   letter-spacing: 0.01em;
 }

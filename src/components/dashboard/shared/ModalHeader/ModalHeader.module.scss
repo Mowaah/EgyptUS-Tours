@@ -17,17 +17,17 @@
   flex-shrink: 0;
   border-radius: 50%;
   background: #F2F4F7;
-  color: #737373;
+  color: $gray-500-zinc;
   width: 64px;
   height: 64px;
-  border: 8px solid #F9FAFB;
+  border: 8px solid $gray-50;
 }
 
 .dangerIcon {
-  background: #FEF2F2; // $background-danger
-  color: #B91C1C; // $status-danger-dark
-  border: 8px solid #FEF2F2; // Wait, screenshot says border #FFFBFB and background #FFECEC.
-  // Actually, I'll use design tokens. $background-danger-light is #FEE2E2.
+  background: $background-danger; // $background-danger
+  color: $status-danger-dark; // $status-danger-dark
+  border: 8px solid $background-danger; // Wait, screenshot says border #FFFBFB and background #FFECEC.
+  // Actually, I'll use design tokens. $background-danger-light is $background-danger-light.
   // I will just use the ones from the screenshot snippet to be exact.
   background: #FFECEC;
   border-color: #FFFBFB;
@@ -47,7 +47,7 @@
 
   p {
     margin: 0;
-    color: #A3A3A3;
+    color: $gray-400-zinc;
     font-size: 0.875rem;
     font-weight: 400;
     line-height: 1.4;
@@ -64,13 +64,13 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #9CA3AF;
+  color: $gray-400;
   flex-shrink: 0;
   transition: background-color 0.15s ease, color 0.15s ease;
 
   &:hover {
-    background: #F9FAFB;
-    color: #374151;
+    background: $gray-50;
+    color: $gray-700;
   }
 }
 

@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .panel {
   margin-top: 1rem;
 }
@@ -9,7 +11,7 @@
   padding: 4px 12px;
   border-radius: 100px;
   font-weight: 500;
-  font-size: 13px;
+  font-size: $font-size-13;
   white-space: nowrap;
 }
 
@@ -26,7 +28,7 @@
 }
 
 .statusActive {
-  background: #DCFCE7;
+  background: $status-success-bg;
   color: #16A34A;
 
   i {
@@ -44,7 +46,7 @@
 }
 
 .statusDraft {
-  background: #F5F5F5;
+  background: $gray-100-zinc;
   color: #525252;
 
   i {

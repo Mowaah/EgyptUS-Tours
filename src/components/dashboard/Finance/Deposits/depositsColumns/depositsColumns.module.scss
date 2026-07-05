@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .serviceTrips {
   background-color: #E4F2FF;
   color: #1A84FF;
@@ -26,7 +28,7 @@
 .pill {
   padding: 4px 12px;
   border-radius: 96px;
-  font-size: 12px;
+  font-size: $font-size-xs;
   font-weight: 500;
   display: inline-flex;
   align-items: center;
@@ -40,7 +42,7 @@
   gap: 6px;
   padding: 4px 10px;
   border-radius: 12px;
-  font-size: 12px;
+  font-size: $font-size-xs;
   font-weight: 500;
   
   i {
@@ -57,12 +59,12 @@
 }
 
 .statusOverdue {
-  background-color: #FEE2E2;
-  color: #EF4444;
-  i { background-color: #EF4444; }
+  background-color: $background-danger-light;
+  color: $danger;
+  i { background-color: $danger; }
 }
 
 .overdueText {
-  color: #EF4444;
+  color: $danger;
   font-weight: 500;
 }

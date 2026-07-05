@@ -1,5 +1,7 @@
+@use "@/styles/variables" as *;
+
 .card {
-  background: #FFFFFF;
+  background: $background;
   border-radius: 24px;
   padding: 24px;
   display: flex;
@@ -10,8 +12,8 @@
 
 .cardTitle {
   font-weight: 500;
-  font-size: 24px;
-  color: #0E2851;
+  font-size: $font-size-28;
+  color: $dark;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -20,7 +22,7 @@
 .titleIcon {
   width: 40px;
   height: 40px;
-  background: #F8F9FB;
+  background: $dashboard-expandable-hover;
   border-radius: 20px;
   display: flex;
   justify-content: center;
@@ -70,7 +72,7 @@
 }
 
 .iconCompleted {
-  background: #FF6600;
+  background: $secondary;
   box-shadow: 0px 0px 0px 4px rgba(170, 48, 0, 0.1);
 }
 
@@ -100,14 +102,14 @@
 
 .milestoneTitle {
   font-weight: 500;
-  font-size: 16px;
+  font-size: $font-size-lg;
   line-height: 22px;
-  color: #0E2851;
+  color: $dark;
 }
 
 .milestoneTime {
   font-weight: 400;
-  font-size: 12px;
+  font-size: $font-size-xs;
   line-height: 16px;
   color: #565E71;
   text-align: right;
@@ -115,7 +117,7 @@
 
 .milestoneDesc {
   font-weight: 400;
-  font-size: 12px;
+  font-size: $font-size-xs;
   line-height: 12px;
   color: #565E71;
   margin: 0;

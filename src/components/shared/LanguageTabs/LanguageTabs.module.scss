@@ -1,15 +1,17 @@
+@use "@/styles/variables" as *;
+
 .langTabs {
   display: inline-flex;
   align-items: center;
   padding: 8px;
   gap: 4px;
-  background: #F9FAFB;
+  background: $gray-50;
   border-radius: 32px;
   align-self: flex-start;
 }
 
 .langTabsWhite {
-  background: #FFFFFF;
+  background: $background;
 }
 
 .langTab {
@@ -20,17 +22,17 @@
   background: transparent;
   font-size: 1rem;
   font-weight: 400;
-  color: #A3A3A3;
+  color: $gray-400-zinc;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
 
   &:hover:not(.langTabActive) {
-    color: #6B7280;
+    color: $text-light;
   }
 }
 
 .langTabActive {
-  background: #2971E6;
-  color: #fff;
+  background: $primary;
+  color: $background;
   font-weight: 500;
 }

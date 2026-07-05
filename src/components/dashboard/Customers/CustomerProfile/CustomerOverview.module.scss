@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .overviewContainer {
   display: flex;
   flex-direction: column;
@@ -13,7 +15,7 @@
 }
 
 .metricCard {
-  background: #FFFFFF;
+  background: $background;
   border-radius: 24px;
   padding: 16px 24px;
   display: flex;
@@ -41,14 +43,14 @@
 
 .blueIcon { background: #E9F1FC; }
 .redIcon { background: #FFF5EF; }
-.grayIcon { background: #F5F5F5; }
+.grayIcon { background: $gray-100-zinc; }
 .greenIcon { background: #E9F6F0; }
 
 .metricTitle {
   font-weight: 500;
-  font-size: 16px;
+  font-size: $font-size-lg;
   line-height: 22px;
-  color: #9CA3AF;
+  color: $gray-400;
   margin: 0;
 }
 
@@ -61,9 +63,9 @@
 
 .metricValue {
   font-weight: 700;
-  font-size: 32px;
+  font-size: $font-size-46;
   line-height: 44px;
-  color: #0E2851;
+  color: $dark;
   margin: 0;
 }
 
@@ -75,7 +77,7 @@
   padding: 4px 8px;
   border-radius: 84px;
   font-weight: 500;
-  font-size: 10px;
+  font-size: $font-size-10;
   line-height: 18px;
 }
 
@@ -85,12 +87,12 @@
 }
 
 .badgeDown {
-  background: #FEF2F2;
+  background: $background-danger;
   color: #DC2626;
 }
 
 .badgeNeutral {
-  background: #F5F5F5;
+  background: $gray-100-zinc;
   color: #525252;
 }
 

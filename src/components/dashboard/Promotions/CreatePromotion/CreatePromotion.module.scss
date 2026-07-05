@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .page {
   display: flex;
   flex-direction: row;
@@ -35,7 +37,7 @@
 }
 
 .whiteTabs {
-  background-color: #FFFFFF !important;
+  background-color: $background !important;
 }
 
 .fieldRow {
@@ -64,7 +66,7 @@
   padding: 32px;
   gap: 24px;
   width: 100%;
-  background: #FFFFFF;
+  background: $background;
   border-radius: 24px;
 }
 
@@ -85,7 +87,7 @@
   h3 {
     font-style: normal;
     font-weight: 500;
-    font-size: 24px;
+    font-size: $font-size-28;
     line-height: 33px;
     color: #11263B;
     margin: 0;
@@ -100,7 +102,7 @@
   padding: 12px;
   width: 44px;
   height: 44px;
-  background: #2971E6;
+  background: $primary;
   border-radius: 32px;
   border: none;
   cursor: pointer;
@@ -117,7 +119,7 @@
   align-items: center;
   gap: 16px;
   padding: 16px;
-  background: #F9FAFB;
+  background: $gray-50;
   border-radius: 16px;
   width: 100%;
 }
@@ -130,8 +132,8 @@
   padding: 16px;
   gap: 10px;
   flex: 1;
-  background: #FFFFFF;
-  border: 1px solid #F3F4F6;
+  background: $background;
+  border: 1px solid $gray-50-tailwind;
   border-radius: 99px;
   cursor: pointer;
   transition: all 0.2s;
@@ -139,33 +141,33 @@
   span {
     font-style: normal;
     font-weight: 400;
-    font-size: 12px;
+    font-size: $font-size-xs;
     line-height: 16px;
-    color: #9CA3AF;
+    color: $gray-400;
   }
 
   &.active {
     background: #FFF7ED;
-    border: 1px solid #FF6600;
+    border: 1px solid $secondary;
 
     span {
-      color: #FF6600;
+      color: $secondary;
     }
   }
 
   .radioCircle {
     width: 16px;
     height: 16px;
-    background: #FFFFFF;
-    border: 1px solid #C2C2C2;
+    background: $background;
+    border: 1px solid $border-input;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
 
     &.activeCircle {
-      background: #FF6600;
-      border: 1px solid #FF6600;
+      background: $secondary;
+      border: 1px solid $secondary;
     }
   }
 }
@@ -176,7 +178,7 @@
   gap: 16px;
   width: 100%;
   padding: 16px;
-  background: #F9FAFB;
+  background: $gray-50;
   border-radius: 16px;
 }
 
@@ -209,7 +211,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #EF4444;
+  color: $danger;
   margin-bottom: 24px; /* align with inputs visually */
 
   &:hover {

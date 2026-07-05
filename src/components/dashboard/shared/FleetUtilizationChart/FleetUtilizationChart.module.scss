@@ -25,13 +25,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 24px 12px 12px;
-  border: 1px solid #F5F5F5;
+  border: 1px solid $gray-100-zinc;
   border-radius: 32px;
-  background: #FFFFFF;
+  background: $background;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
-    border-color: #E2E8F0;
+    border-color: $gray-blue-200;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.02);
   }
 }
@@ -54,7 +54,7 @@
   border-radius: 36px;
   color: #2979FF;
   font-weight: 700;
-  font-size: 12px;
+  font-size: $font-size-xs;
   flex-shrink: 0;
 }
 
@@ -73,15 +73,15 @@
 
 .title {
   font-weight: 800;
-  font-size: 14px;
-  color: #0E2851;
+  font-size: $font-size-sm;
+  color: $dark;
   line-height: 1;
 }
 
 .subtitle {
   font-weight: 400;
-  font-size: 12px;
-  color: #6B7280;
+  font-size: $font-size-xs;
+  color: $text-light;
   line-height: 1;
 }
 
@@ -89,7 +89,7 @@
   position: relative;
   width: 184px;
   height: 4px;
-  background: #F3F4F6;
+  background: $gray-50-tailwind;
   border-radius: 58px;
   overflow: hidden;
 }
@@ -118,7 +118,7 @@
   border-radius: 18px;
   color: #2979FF;
   font-weight: 500;
-  font-size: 12px;
+  font-size: $font-size-xs;
 }
 
 .alertBanner {
@@ -133,7 +133,7 @@
   margin-top: 8px;
   
   font-weight: 700;
-  font-size: 12px;
-  color: #FF6600;
+  font-size: $font-size-xs;
+  color: $secondary;
   text-align: center;
 }

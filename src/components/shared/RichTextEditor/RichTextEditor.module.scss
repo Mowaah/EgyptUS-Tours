@@ -3,16 +3,16 @@
 .editorWrapper {
   display: flex;
   flex-direction: column;
-  border: 1px solid #E5E7EB;
+  border: 1px solid $border-strong;
   border-radius: 24px;
   overflow: hidden;
-  background: #fff;
+  background: $background;
   resize: vertical;
   min-height: 200px;
 }
 
 .editorError {
-  border: 1px solid #EF4444 !important;
+  border: 1px solid $danger !important;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05), 0px 0px 0px 4px #FEE4E2 !important;
 }
 
@@ -24,7 +24,7 @@
   gap: 8px;
   padding: 10px 14px;
   background: #F9F9F9;
-  border-bottom: 1.5px solid #E5E7EB;
+  border-bottom: 1.5px solid $border-strong;
 }
 
 .toolbarGroup {
@@ -46,13 +46,13 @@
   justify-content: space-between;
   font-size: 0.875rem;
   color: $primary;
-  background: #F3F4F6;
+  background: $gray-50-tailwind;
   border-radius: 100px;
   width: auto;
   font-weight: 600;
   
   &:hover {
-    background: #E5E7EB;
+    background: $border-strong;
   }
 }
 
@@ -60,18 +60,18 @@
   gap: 6px;
   padding: 0 10px;
   justify-content: center;
-  background: #F3F4F6;
+  background: $gray-50-tailwind;
   border-radius: 100px;
   width: auto;
-  color: #374151;
+  color: $gray-700;
   
   &:hover {
-    background: #E5E7EB;
+    background: $border-strong;
   }
   
   &.active {
     background: #EFF6FF;
-    color: #2971E6;
+    color: $primary;
     border-color: #BFDBFE;
   }
 }
@@ -92,8 +92,8 @@
   left: 0;
   z-index: 1500;
   min-width: 140px;
-  background: #fff;
-  border: 1px solid #E5E7EB;
+  background: $background;
+  border: 1px solid $border-strong;
   border-radius: 12px;
   box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
   overflow: hidden;
@@ -106,8 +106,8 @@
   left: 0;
   z-index: 1500;
   width: 120px;
-  background: #fff;
-  border: 1px solid #E5E7EB;
+  background: $background;
+  border: 1px solid $border-strong;
   border-radius: 12px;
   box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
   padding: 8px;
@@ -142,19 +142,19 @@
   transition: background 0.15s, color 0.15s;
   
   &:hover { 
-    background: #F9FAFB; 
+    background: $gray-50; 
   }
 }
 
 .dropdownItemActive {
-  background: #F3F4F6;
-  &:hover { background: #F3F4F6; }
+  background: $gray-50-tailwind;
+  &:hover { background: $gray-50-tailwind; }
 }
 
 .dropdownItemShort {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #6B7280;
+  color: $text-light;
   width: 20px;
 }
 
@@ -164,14 +164,14 @@
 
 .dropdownItemLabel {
   font-size: 0.875rem;
-  color: #374151;
+  color: $gray-700;
   white-space: nowrap;
 }
 
 .toolbarDivider {
   width: 1.5px;
   height: 20px;
-  background: #E5E7EB;
+  background: $border-strong;
   margin: 0 4px;
 }
 
@@ -184,20 +184,20 @@
   border: 1px solid transparent;
   border-radius: 6px;
   background: transparent;
-  color: #6B7280;
+  color: $text-light;
   font-size: 0.875rem;
   font-family: inherit;
   cursor: pointer;
   transition: all 0.15s ease;
 
   &:hover {
-    background: #F3F4F6;
-    color: #111827;
+    background: $gray-50-tailwind;
+    color: $gray-900;
   }
 
   &.active {
     background: #EFF6FF;
-    color: #2971E6;
+    color: $primary;
     border-color: #BFDBFE;
   }
 
@@ -226,7 +226,7 @@
   outline: none;
   font-size: 1rem;
   line-height: 1.6;
-  color: #374151;
+  color: $gray-700;
 
   p { margin: 0 0 0.8em; &:last-child { margin-bottom: 0; } }
   h1 { font-size: 1.75rem; font-weight: 700; margin: 0 0 0.5em; }
@@ -235,12 +235,12 @@
   ul { list-style-type: disc; padding-left: 1.5rem; margin: 0.5rem 0; }
   ol { list-style-type: decimal; padding-left: 1.5rem; margin: 0.5rem 0; }
   li { margin: 0.2rem 0; }
-  a { color: #2971E6; text-decoration: underline; }
+  a { color: $primary; text-decoration: underline; }
 
   /* Placeholder */
   p.is-editor-empty:first-child::before {
     content: attr(data-placeholder);
-    color: #9CA3AF;
+    color: $gray-400;
     pointer-events: none;
     float: left;
     height: 0;
@@ -271,7 +271,7 @@
   
   font-style: normal;
   font-weight: 400;
-  font-size: 12px;
+  font-size: $font-size-xs;
   line-height: 16px;
   color: #C11515;
 }

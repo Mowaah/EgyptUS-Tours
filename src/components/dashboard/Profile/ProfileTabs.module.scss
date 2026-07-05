@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .tabsContainer {
   display: flex;
   flex-direction: column;
@@ -6,7 +8,7 @@
   padding: 24px 32px;
   width: 100%;
   height: 88px;
-  background: #FFFFFF;
+  background: $background;
   border-radius: 24px;
   box-sizing: border-box;
 }
@@ -37,12 +39,12 @@
 }
 
 .tab.active {
-  border-bottom: 2px solid #2971E6;
+  border-bottom: 2px solid $primary;
 }
 
 .tabText {
   font-weight: 400;
-  font-size: 16px;
+  font-size: $font-size-lg;
   line-height: 21px;
   text-align: center;
   color: #979797;
@@ -51,5 +53,5 @@
 
 .tab.active .tabText {
   font-weight: 700;
-  color: #2971E6;
+  color: $primary;
 }

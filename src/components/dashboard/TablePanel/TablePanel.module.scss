@@ -39,7 +39,7 @@
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 1.25rem;
-  background: #f8f9fb;
+  background: $dashboard-expandable-hover;
 }
 
 .panelActions {
@@ -65,7 +65,7 @@
   transform: none;
 
   &:hover {
-    background: #f9fafb;
+    background: $gray-50;
   }
 }
 
@@ -98,8 +98,8 @@
 }
 
 .filterFieldOpen .filterPill {
-  border-color: #2971E6;
-  box-shadow: 0 1px 2px rgba(217, 217, 234, 0.05), 0 0 0 4px #E6F4FF;
+  border-color: $primary;
+  box-shadow: 0 1px 2px rgba(217, 217, 234, 0.05), 0 0 0 4px $background-blue-alt;
 }
 
 .filterPill {
@@ -137,8 +137,8 @@
   padding: 12px 14px;
   background: #F1F3F7;
   border-radius: 50px 0 0 50px;
-  color: #6b7280;
-  font-size: 14px;
+  color: $text-light;
+  font-size: $font-size-sm;
   font-weight: 500;
   white-space: nowrap;
 }
@@ -148,8 +148,8 @@
   flex: 1;
   min-width: 0;
   padding: 0 8px 0 12px;
-  color: #9ca3af;
-  font-size: 14px;
+  color: $gray-400;
+  font-size: $font-size-sm;
   font-weight: 500;
   text-align: left;
   white-space: nowrap;
@@ -184,8 +184,8 @@
   z-index: 50;
   width: 100%;
   min-width: 280px;
-  background: #ffffff;
-  border: 1px solid #F4F4F4;
+  background: $background;
+  border: 1px solid $border;
   border-radius: 16px;
   box-shadow: 0 8px 16px rgba(0, 0, 77, 0.08);
   overflow: hidden;
@@ -217,7 +217,7 @@
 }
 
 .filterDropdownItemSelected .filterDropdownItemInner {
-  background: #F4F4F4;
+  background: $border;
   border-radius: 16px;
 }
 
@@ -237,7 +237,7 @@
 }
 
 .filterDropdownItemSelected > * {
-  background: #F4F4F4;
+  background: $border;
   border-radius: 16px;
 }
 
@@ -245,9 +245,9 @@
 
 .filterOptionText {
   flex: 1;
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: 400;
-  color: #0E2851;
+  color: $dark;
   letter-spacing: 0.01em;
   line-height: 19px;
 }
@@ -274,13 +274,13 @@
   border-radius: 3.125rem;
   color: $dark;
   background: $white;
-  border: 1px solid #f2f2f2;
+  border: 1px solid $gray-50-alt;
   font-size: 0.875rem;
   font-weight: 500;
   transform: none;
 
   &:hover {
-    background: #f9fafb;
+    background: $gray-50;
   }
 }
 

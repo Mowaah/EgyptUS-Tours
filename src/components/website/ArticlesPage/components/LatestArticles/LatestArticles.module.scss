@@ -285,7 +285,7 @@
   margin: 0;
 
   @media (min-width: 1200px) {
-    font-size: 14px;
+    font-size: $font-size-sm;
     line-height: 14px;
   }
 }

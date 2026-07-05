@@ -1,9 +1,11 @@
+@use "@/styles/variables" as *;
+
 .cardSection {
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
   gap: 1.125rem;
-  background: #FFFFFF;
+  background: $background;
   border-radius: 1.5rem;
 }
 
@@ -19,14 +21,14 @@
   align-items: center;
   width: 2.5rem;
   height: 2.5rem;
-  background: #F8F9FB;
+  background: $dashboard-expandable-hover;
   border-radius: 1.25rem;
 }
 
 .cardTitle {
   font-weight: 500;
   font-size: 1.5rem;
-  color: #0E2851;
+  color: $dark;
   margin: 0;
 }
 
@@ -55,7 +57,7 @@
 .imageInfoValue {
   font-weight: 400;
   font-size: 1rem;
-  color: #9CA3AF;
+  color: $gray-400;
 }
 
 .metaKeywordsContainer {
@@ -74,7 +76,7 @@
   background: #E4F2FF;
   border-radius: 96px;
   font-weight: 400;
-  font-size: 12px;
+  font-size: $font-size-xs;
   line-height: 16px;
-  color: #2971E6;
+  color: $primary;
 }

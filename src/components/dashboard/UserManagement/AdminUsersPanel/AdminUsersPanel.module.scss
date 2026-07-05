@@ -2,7 +2,7 @@
 
 .idCell {
   font-weight: 700;
-  color: #374151;
+  color: $gray-700;
 }
 
 .pill {
@@ -36,7 +36,7 @@
 
 .roleSuperAdmin {
   color: #dc2626;
-  background: #fef2f2;
+  background: $background-danger;
   i {
     background: #dc2626;
   }
@@ -52,7 +52,7 @@
 
 .roleSales {
   color: #16a34a;
-  background: #dcfce7;
+  background: $status-success-bg;
   i {
     background: #16a34a;
   }
@@ -73,7 +73,7 @@
 }
 
 .stateInactive {
-  color: #D80027;
+  color: $status-danger-text;
   background: rgba(216, 0, 39, 0.05);
   border: none;
 }

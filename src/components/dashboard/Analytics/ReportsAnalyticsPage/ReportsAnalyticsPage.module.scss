@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .salesTab {
   display: flex;
   flex-direction: column;
@@ -83,7 +85,7 @@
 }
 
 .chartCard {
-  background: #FFFFFF;
+  background: $background;
   border-radius: 24px;
   padding: 24px;
   display: flex;
@@ -103,22 +105,22 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: #F8F9FB;
+  background: $dashboard-expandable-hover;
   border-radius: 20px;
   flex-shrink: 0;
 }
 
 .cardTitle {
   margin: 0;
-  font-size: 24px;
+  font-size: $font-size-28;
   font-weight: 700;
   line-height: 33px;
-  color: #0E2851;
+  color: $dark;
 }
 
 .cardSubtitle {
   margin: 4px 0 0 0;
-  font-size: 14px;
+  font-size: $font-size-sm;
   line-height: 14px;
-  color: #9CA3AF;
+  color: $gray-400;
 }

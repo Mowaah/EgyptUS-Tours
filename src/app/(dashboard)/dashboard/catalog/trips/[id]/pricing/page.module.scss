@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .container {
   display: flex;
   flex-direction: column;
@@ -5,7 +7,7 @@
   padding: 24px;
   gap: 32px;
   width: 100%;
-  background: #ffffff;
+  background: $background;
   border-radius: 24px;
 }
 
@@ -23,15 +25,15 @@
     align-items: center;
     width: 40px;
     height: 40px;
-    background: #f8f9fb;
+    background: $dashboard-expandable-hover;
     border-radius: 20px;
   }
 
   h2 {
     font-weight: 500;
-    font-size: 24px;
+    font-size: $font-size-28;
     line-height: 33px;
-    color: #0e2851;
+    color: $dark;
     margin: 0;
   }
 }
@@ -62,21 +64,21 @@
 
 .tourTitle {
   font-weight: 700;
-  font-size: 16px;
+  font-size: $font-size-lg;
   line-height: 16px;
   color: #1f2937;
 }
 
 .tourSubtitle {
   font-weight: 400;
-  font-size: 16px;
+  font-size: $font-size-lg;
   line-height: 16px;
-  color: #9ca3af;
+  color: $gray-400;
 }
 
 .headerPrice {
   font-weight: 500;
-  font-size: 20px;
+  font-size: $font-size-2xl;
   line-height: 27px;
   color: #0058c4;
 }
@@ -99,7 +101,7 @@
   align-items: flex-start;
   padding: 16px;
   gap: 8px;
-  background: #f9fafb;
+  background: $gray-50;
   border-radius: 16px;
   flex: 1;
   width: 100%;
@@ -107,9 +109,9 @@
 
 .seasonTitle {
   font-weight: 500;
-  font-size: 14px;
+  font-size: $font-size-sm;
   line-height: 17px;
-  color: #9ca3af;
+  color: $gray-400;
   margin: 0;
 }
 
@@ -120,7 +122,7 @@
   align-items: center;
   padding: 16px 12px;
   width: 100%;
-  background: #ffffff;
+  background: $background;
   border-radius: 12px;
   box-sizing: border-box;
 }
@@ -134,21 +136,21 @@
 
 .perPerson {
   font-weight: 700;
-  font-size: 16px;
+  font-size: $font-size-lg;
   line-height: 16px;
   color: #1f2937;
 }
 
 .roomType {
   font-weight: 400;
-  font-size: 16px;
+  font-size: $font-size-lg;
   line-height: 16px;
-  color: #9ca3af;
+  color: $gray-400;
 }
 
 .priceValue {
   font-weight: 500;
-  font-size: 20px;
+  font-size: $font-size-2xl;
   line-height: 27px;
   color: #0058c4;
 }

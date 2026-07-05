@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .overlay {
   position: fixed;
   inset: 0;
@@ -15,7 +17,7 @@
   align-items: stretch;
   padding: 0px;
   width: 647px;
-  background: #FFFFFF;
+  background: $background;
   box-shadow: 0px 20px 24px -4px rgba(16, 24, 40, 0.08), 0px 8px 8px -4px rgba(16, 24, 40, 0.03);
   border-radius: 32px;
 }
@@ -47,8 +49,8 @@
   gap: 24px;
   width: 100%;
   padding-top: 24px;
-  background: #FFFFFF;
-  border-bottom: 1px solid #E5E7EB;
+  background: $background;
+  border-bottom: 1px solid $border-strong;
 }
 
 .tab {
@@ -65,21 +67,21 @@
 
   font-style: normal;
   font-weight: 400;
-  font-size: 14px;
+  font-size: $font-size-sm;
   line-height: 19px;
   text-align: center;
-  color: #6B7280;
+  color: $text-light;
   white-space: nowrap;
   transition: color 0.15s ease, border-color 0.15s ease;
 }
 
 .tab:hover {
-  color: #1B8FFE;
+  color: $info-light;
 }
 
 .tabActive {
-  border-bottom-color: #1B8FFE;
-  color: #0E2851;
+  border-bottom-color: $info-light;
+  color: $dark;
   font-weight: 500;
 }
 
@@ -107,23 +109,23 @@
   height: 3rem !important;
   min-height: 3rem !important;
   padding: 0 1rem !important;
-  background: #FFFFFF;
-  border: 1px solid #f4f4f4 !important;
+  background: $background;
+  border: 1px solid $border !important;
   border-radius: 24px !important;
   font-family: inherit;
-  font-size: 14px;
+  font-size: $font-size-sm;
   line-height: 1.35;
   color: #444A51;
   box-shadow: none !important;
 }
 
 .countrySelectWrap button:focus-within {
-  border-color: #1B8FFE !important;
+  border-color: $info-light !important;
   box-shadow: 0 0 0 3px rgba(27, 143, 254, 0.1) !important;
 }
 
 .countrySelectWrap :global([class*="NationalitySelect_placeholder"]) {
-  color: #9CA3AF !important;
+  color: $gray-400 !important;
 }
 
 /* Override SelectDropdown inside the Rating field */
@@ -132,11 +134,11 @@
   height: 3rem !important;
   min-height: 3rem !important;
   padding: 0 1rem !important;
-  background: #FFFFFF;
-  border: 1px solid #f4f4f4 !important;
+  background: $background;
+  border: 1px solid $border !important;
   border-radius: 24px !important;
   font-family: inherit;
-  font-size: 14px;
+  font-size: $font-size-sm;
   line-height: 1.35;
   color: #444A51;
   box-shadow: none !important;
@@ -144,6 +146,6 @@
 }
 
 .ratingSelectWrap > div > div:first-child:focus-within {
-  border-color: #1B8FFE !important;
+  border-color: $info-light !important;
   box-shadow: 0 0 0 3px rgba(27, 143, 254, 0.1) !important;
 }

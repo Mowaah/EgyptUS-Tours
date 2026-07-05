@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .legend {
   display: flex;
   align-items: center;
@@ -5,7 +7,7 @@
   flex-wrap: wrap;
   gap: 2rem;
   margin-top: 1.25rem;
-  color: #9ca3af;
+  color: $gray-400;
   font-size: 0.75rem;
 
   span {

@@ -124,10 +124,10 @@
   align-items: center;
   gap: 5px;
   padding: 4px 12px;
-  background: rgba(255, 255, 255, 0.1);
+  background: $glass-nav-fill;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 20px;
-  font-size: 11px;
+  font-size: $font-size-2xs;
   font-weight: 700;
   letter-spacing: 0.55px;
   text-transform: uppercase;
@@ -168,7 +168,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
+  font-size: $font-size-13;
   line-height: 20px;
   color: rgba(255, 255, 255, 0.8);
 
@@ -206,7 +206,7 @@
   padding: 16px 12px;
   gap: 5px;
   background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid $glass-nav-fill;
   border-radius: 32px;
   box-sizing: border-box;
 
@@ -230,7 +230,7 @@
 }
 
 .countdownValue {
-  font-size: 32px;
+  font-size: $font-size-46;
   font-weight: 900;
   line-height: 1;
   text-align: center;
@@ -246,7 +246,7 @@
 }
 
 .countdownLabel {
-  font-size: 10px;
+  font-size: $font-size-10;
   font-weight: 500;
   line-height: 1.2;
   text-align: center;
@@ -255,7 +255,7 @@
   color: rgba(255, 255, 255, 0.4);
 
   @media (max-width: 380px) {
-    font-size: 8px;
+    font-size: $spacing-sm;
     letter-spacing: 0.04em;
   }
 }
@@ -269,7 +269,7 @@
   padding: 0 1px;
 
   @media (min-width: 768px) {
-    font-size: 28px;
+    font-size: $font-size-4xl;
     line-height: 28px;
   }
 }

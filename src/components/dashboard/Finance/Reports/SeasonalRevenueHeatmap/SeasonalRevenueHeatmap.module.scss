@@ -30,9 +30,9 @@
 }
 
 .rowLabel {
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: 400;
-  color: #A3A3A3;
+  color: $gray-400-zinc;
   padding-right: 12px;
 }
 
@@ -43,8 +43,8 @@
 .monthLabel {
   text-align: center;
   font-family: 'Inter Tight', sans-serif;
-  font-size: 12px;
-  color: #A3A3A3;
+  font-size: $font-size-xs;
+  color: $gray-400-zinc;
   padding-top: 8px;
 }
 
@@ -96,8 +96,8 @@
 }
 
 .legendLabel {
-  font-size: 14px;
-  color: #737373;
+  font-size: $font-size-sm;
+  color: $gray-500-zinc;
 }
 
 .legendColor {

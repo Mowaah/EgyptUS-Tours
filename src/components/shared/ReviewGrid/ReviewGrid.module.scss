@@ -35,7 +35,7 @@
   left: 0;
   right: 0;
   height: 288px;
-  background: linear-gradient(360deg, #FFFFFF 0%, rgba(255, 255, 255, 0.1) 100%);
+  background: linear-gradient(360deg, $background 0%, $glass-nav-fill 100%);
   pointer-events: none;
   z-index: 2;
 }

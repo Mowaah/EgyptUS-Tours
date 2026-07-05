@@ -18,7 +18,7 @@
   display: flex;
   flex-direction: column;
   width: 647px;
-  background: #FFFFFF;
+  background: $background;
   box-shadow: 0px 20px 24px -4px rgba(16, 24, 40, 0.08), 0px 8px 8px -4px rgba(16, 24, 40, 0.03);
   border-radius: 2rem; // 32px
   overflow: hidden;
@@ -52,7 +52,7 @@
   align-items: center;
   padding: 0.75rem; // 12px
   gap: 0.875rem; // 14.25px
-  background: #F9FAFB;
+  background: $gray-50;
   border-radius: 1.5rem; // 24px
   border: 1px solid transparent;
 }
@@ -66,7 +66,7 @@
     font-weight: 700;
     font-size: 1.125rem; // 18px
     line-height: 1.5;
-    color: #0E2851;
+    color: $dark;
     margin: 0;
   }
 
@@ -74,7 +74,7 @@
     font-weight: 400;
     font-size: 0.8125rem; // 13px
     line-height: 1.5;
-    color: #6B7280;
+    color: $text-light;
     margin: 0;
   }
 }
@@ -82,7 +82,7 @@
 .tourPrice {
   font-weight: 700;
   font-size: 1.625rem; // 26px
-  color: #2971E6;
+  color: $primary;
 }
 
 .actions {
@@ -100,10 +100,10 @@
   align-items: center;
   padding: 0.9rem 1.25rem; // 16px 20px
   gap: 0.5rem; // 8px
-  border: 1.5px solid #FF6600;
+  border: 1.5px solid $secondary;
   border-radius: 2.5rem; // 40px
   background: transparent;
-  color: #FF6600;
+  color: $secondary;
   font-weight: 500;
   font-size: 1rem; // 16px
   cursor: pointer;
@@ -121,10 +121,10 @@
   align-items: center;
   padding: 0.89rem 1.25rem; // 16px 20px
   gap: 0.5rem; // 8px
-  background: #FF6600;
-  border: 1.5px solid #FF6600;
+  background: $secondary;
+  border: 1.5px solid $secondary;
   border-radius: 2.5rem; // 40px
-  color: #FFFFFF;
+  color: $background;
   font-weight: 500;
   font-size: 1rem; // 16px
   cursor: pointer;

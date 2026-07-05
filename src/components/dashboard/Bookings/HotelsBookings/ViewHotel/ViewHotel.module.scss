@@ -41,7 +41,7 @@
 }
 
 .card {
-  background: #FFFFFF;
+  background: $background;
   border-radius: 24px;
   padding: 24px;
   display: flex;
@@ -62,8 +62,8 @@
   align-items: center;
   gap: 16px;
   font-weight: 500;
-  font-size: 24px;
-  color: #0E2851;
+  font-size: $font-size-28;
+  color: $dark;
 }
 
 .titleIcon {
@@ -72,7 +72,7 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: #F8F9FB;
+  background: $dashboard-expandable-hover;
   border-radius: 20px;
 }
 
@@ -87,7 +87,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid #F8FAFC;
+  border-bottom: 1px solid $gray-25-slate;
   width: 100%;
   
   &:last-child {
@@ -99,14 +99,14 @@
 .infoLabel {
   font-family: 'Urbanist', sans-serif;
   font-weight: 500;
-  font-size: 14px;
-  color: #A3A3A3;
+  font-size: $font-size-sm;
+  color: $gray-400-zinc;
 }
 
 .infoValue {
   font-weight: 500;
-  font-size: 16px;
-  color: #374151;
+  font-size: $font-size-lg;
+  color: $gray-700;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -117,13 +117,13 @@
   align-items: center;
   padding: 4px 12px;
   border-radius: 24px;
-  font-size: 12px;
+  font-size: $font-size-xs;
   font-weight: 500;
   gap: 8px;
 
   &.orange {
     background: #FFF5EE;
-    color: #FF6600;
+    color: $secondary;
   }
 }
 
@@ -139,7 +139,7 @@
   justify-content: center;
   padding: 12px 24px;
   border-radius: 32px;
-  font-size: 16px;
+  font-size: $font-size-lg;
   font-weight: 500;
   gap: 8px;
   cursor: pointer;
@@ -149,14 +149,14 @@
   &.dangerButton {
     background: rgba(242, 107, 128, 0.02);
     border: 1px solid rgba(185, 28, 28, 0.28);
-    color: #B91C1C;
-    &:hover { background: #FEE2E2; }
+    color: $status-danger-dark;
+    &:hover { background: $background-danger-light; }
   }
 
   &.primaryButton {
-    background: #2971E6;
+    background: $primary;
     border: none;
-    color: #FFFFFF;
+    color: $background;
     &:hover { background: #1d5fd4; }
   }
 }
@@ -166,10 +166,10 @@
   align-items: center;
   padding: 8px 12px;
   border-radius: 24px;
-  background: #EAF1FD;
+  background: $background-blue;
   gap: 8px;
-  font-size: 12px;
-  color: #0E2851;
+  font-size: $font-size-xs;
+  color: $dark;
 }
 
 .avatar {
@@ -207,7 +207,7 @@
   gap: 16px;
   flex: 59;
   justify-content: center;
-  background: #F9FAFB;
+  background: $gray-50;
   border-radius: 24px;
   padding: 24px;
   height: 205px;
@@ -243,9 +243,9 @@
 }
 
 .priceTitle {
-  font-size: 20px;
+  font-size: $font-size-2xl;
   font-weight: 700;
-  color: #0E2851;
+  color: $dark;
   text-decoration: underline;
   white-space: nowrap;
   overflow: hidden;
@@ -265,14 +265,14 @@
 }
 
 .priceItemName {
-  font-size: 14px;
-  color: #4A5565;
+  font-size: $font-size-sm;
+  color: $text-lighter;
 }
 
 .priceItemCost {
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: 700;
-  color: #0E2851;
+  color: $dark;
 }
 
 .bookingInfoWrapper {
@@ -287,7 +287,7 @@
 
 .bookingInfoBox {
   flex: 1;
-  background: #F9FAFB;
+  background: $gray-50;
   border-radius: 16px;
   padding: 16px;
   display: flex;
@@ -297,7 +297,7 @@
 
 .boxTitle {
   color: #C6C6C6;
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: 500;
 }
 
@@ -330,16 +330,16 @@
 }
 
 .dateLabel {
-  font-size: 16px;
-  color: #FF6600;
+  font-size: $font-size-lg;
+  color: $secondary;
   font-weight: 500;
   line-height: 22px;
   letter-spacing: 0.01em;
 }
 
 .dateValue {
-  font-size: 14px;
-  color: #0E2851;
+  font-size: $font-size-sm;
+  color: $dark;
   font-weight: 700;
   line-height: 14px;
   letter-spacing: 0.01em;
@@ -357,9 +357,9 @@
   align-items: center;
   padding: 8px 12px;
   border-radius: 24px;
-  background: #EAF1FD;
+  background: $background-blue;
   gap: 8px;
-  color: #0E2851;
+  color: $dark;
 }
 
 .roomBadgeText {
@@ -369,19 +369,19 @@
 }
 
 .roomBadgeTitle {
-  font-size: 12px;
+  font-size: $font-size-xs;
   font-weight: 500;
   line-height: 16px;
   letter-spacing: 0.01em;
-  color: #0E2851;
+  color: $dark;
 }
 
 .roomBadgeSubtitle {
-  font-size: 12px;
+  font-size: $font-size-xs;
   font-weight: 400;
   line-height: 16px;
   letter-spacing: 0.01em;
-  color: #0E2851;
+  color: $dark;
 }
 
 .roomBadgeList {
@@ -392,8 +392,8 @@
 }
 
 .paymentTotal {
-  color: #2971E6 !important;
-  font-size: 20px !important;
+  color: $primary !important;
+  font-size: $font-size-2xl !important;
   font-weight: 700 !important;
 }
 

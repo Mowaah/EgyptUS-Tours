@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .container {
   display: flex;
   flex-direction: column;
@@ -17,9 +19,9 @@
 .label {
   font-style: normal;
   font-weight: 700;
-  font-size: 14px;
+  font-size: $font-size-sm;
   line-height: 20px;
-  color: #0E2851;
+  color: $dark;
 }
 
 .optionsRow {
@@ -39,8 +41,8 @@
   gap: 12px;
   flex: 1;
   height: 56px;
-  background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  background: $background;
+  border: 1px solid $border-strong;
   border-radius: 32px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -48,20 +50,20 @@
 }
 
 .optionCard:hover {
-  background: #F9FAFB;
+  background: $gray-50;
 }
 
 .optionCard.selected {
   background: #FFF0E6;
-  border: 1px solid #FF6600;
+  border: 1px solid $secondary;
 }
 
 .radioCircle {
   box-sizing: border-box;
   width: 24px;
   height: 24px;
-  background: #FFFFFF;
-  border: 1.5px solid #C2C2C2;
+  background: $background;
+  border: 1.5px solid $border-input;
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -71,16 +73,16 @@
 }
 
 .optionCard.selected .radioCircle {
-  background: #FF6600;
-  border: 1.5px solid #FF6600;
+  background: $secondary;
+  border: 1.5px solid $secondary;
 }
 
 .optionText {
   font-style: normal;
   font-weight: 400;
-  font-size: 14px;
+  font-size: $font-size-sm;
   line-height: 24px;
-  color: #0E2851;
+  color: $dark;
 }
 
 .summaryBlock {
@@ -90,7 +92,7 @@
   padding: 20px 24px;
   gap: 24px;
   width: 100%;
-  background: #F9FAFB;
+  background: $gray-50;
   border-radius: 32px;
 }
 
@@ -105,17 +107,17 @@
 .summaryLabel {
   font-style: normal;
   font-weight: 400;
-  font-size: 14px;
+  font-size: $font-size-sm;
   line-height: 20px;
-  color: #6A7282;
+  color: $gray-500-alt;
 }
 
 .summaryValue {
   font-style: normal;
   font-weight: 800;
-  font-size: 16px;
+  font-size: $font-size-lg;
   line-height: 24px;
-  color: #0E2851;
+  color: $dark;
 }
 
 .generateLinkBtn {
@@ -129,7 +131,7 @@
   width: 100%;
   height: 56px;
   background: transparent;
-  border: 1px solid #2971E6;
+  border: 1px solid $primary;
   border-radius: 40px;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -142,10 +144,10 @@
 .generateLinkText {
   font-style: normal;
   font-weight: 700;
-  font-size: 16px;
+  font-size: $font-size-lg;
   line-height: 16px;
   letter-spacing: 0.01em;
-  color: #2971E6;
+  color: $primary;
 }
 
 .addCircleIcon {

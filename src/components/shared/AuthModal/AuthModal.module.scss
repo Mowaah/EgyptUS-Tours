@@ -278,7 +278,7 @@
 
   .modalInput {
     height: 48px;
-    font-size: 13px;
+    font-size: $font-size-13;
   }
 
   .passwordWrapper .modalInput {
@@ -296,7 +296,7 @@
 
   .loginBtn, .googleBtn {
     height: 48px;
-    font-size: 14px;
+    font-size: $font-size-sm;
   }
 
   .googleBtn gap {

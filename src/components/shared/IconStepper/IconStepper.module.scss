@@ -27,37 +27,37 @@
 }
 
 .stepIconWrapActive {
-  background: #2971E6;
-  color: #FFFFFF;
+  background: $primary;
+  color: $background;
 }
 
 .stepIconWrapCompleted {
   background: #EBF1FD; // Optional: A light blue for completed?
   /* The design didn't explicitly show completed vs active vs pending. 
      We'll just use active for current, pending for future, and maybe active for past? */
-  background: #2971E6;
-  color: #FFFFFF;
+  background: $primary;
+  color: $background;
 }
 
 .stepIconWrapPending {
-  background: #F8F9FB;
+  background: $dashboard-expandable-hover;
   color: #94A3B8;
 }
 
 .stepLabel {
   font-weight: 500;
-  font-size: 12px;
+  font-size: $font-size-xs;
   text-align: center;
   white-space: nowrap;
 }
 
 .stepLabelActive {
-  color: #0E2851;
-  font-size: 14px;
+  color: $dark;
+  font-size: $font-size-sm;
 }
 
 .stepLabelCompleted {
-  color: #0E2851;
+  color: $dark;
 }
 
 .stepLabelPending {
@@ -79,9 +79,9 @@
 }
 
 .stepDividerActive {
-  background: linear-gradient(to right, #2971E6 50%, #ECECF0 50%);
+  background: linear-gradient(to right, $primary 50%, #ECECF0 50%);
 }
 
 .stepDividerCompleted {
-  background: #2971E6;
+  background: $primary;
 }

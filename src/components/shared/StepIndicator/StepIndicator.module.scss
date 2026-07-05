@@ -90,15 +90,15 @@
 }
 
 .stepCircleInactive {
-  background: #F5F5F5;
-  color: #9CA3AF;
+  background: $gray-100-zinc;
+  color: $gray-400;
   border: 1.5px solid transparent;
 }
 
 .stepLabel {
-  font-size: 11px;
+  font-size: $font-size-2xs;
   font-weight: $font-weight-medium;
-  color: #9CA3AF;
+  color: $gray-400;
   white-space: nowrap;
   transition: color $transition-base, font-weight $transition-base;
 
@@ -120,7 +120,7 @@
 .stepLine {
   width: 16px;
   height: 2px;
-  background: #F5F5F5;
+  background: $gray-100-zinc;
   border-radius: 42px;
   margin-top: 15px;
   margin-inline: 4px;

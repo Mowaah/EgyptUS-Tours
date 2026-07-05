@@ -15,7 +15,7 @@
   font-size: $font-size-sm;
   font-weight: 500;
   line-height: 1.25rem;
-  color: #4B5563;
+  color: $gray-600;
 }
 
 .modalLabel {
@@ -25,7 +25,7 @@
 }
 
 .labelDisabled {
-  color: #D1D5DB;
+  color: $gray-tailwind-300;
 }
 
 .control {
@@ -45,7 +45,7 @@
   letter-spacing: 0.01em;
   color: #444A51;
   background: $white;
-  border: 1px solid #E5E5E5;
+  border: 1px solid $gray-200-zinc;
   border-radius: 24px;
   outline: none;
   transition: border-color $transition-fast, box-shadow $transition-fast;
@@ -60,7 +60,7 @@
   }
 
   &[aria-invalid="true"] {
-    border: 1px solid #EF4444 !important;
+    border: 1px solid $danger !important;
     box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05), 0px 0px 0px 4px #FEE4E2 !important;
   }
 
@@ -74,11 +74,11 @@
     margin: 12px 0;
   }
   &::-webkit-scrollbar-thumb {
-    background: #d1d5db;
+    background: $gray-tailwind-300;
     border-radius: 10px;
   }
   &::-webkit-scrollbar-thumb:hover {
-    background: #9ca3af;
+    background: $gray-400;
   }
 }
 
@@ -111,11 +111,11 @@
 }
 
 .inputError {
-  border-color: #EF4444 !important;
+  border-color: $danger !important;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05), 0px 0px 0px 4px #FEE4E2 !important;
 
   &:focus {
-    border-color: #EF4444 !important;
+    border-color: $danger !important;
     box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05), 0px 0px 0px 4px #FEE4E2 !important;
   }
 }
@@ -194,18 +194,18 @@
 }
 
 .multiSelectTagText {
-  color: #0E2851;
-  font-size: 14px;
+  color: $dark;
+  font-size: $font-size-sm;
   font-weight: 400;
   line-height: 14px;
 }
 
 .multiSelectTagPill {
   background: #FFF6F3;
-  color: #FF6600;
+  color: $secondary;
   border-radius: 20px;
   padding: 2px 8px;
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: 500;
   line-height: 19px;
 }
@@ -216,7 +216,7 @@
   min-width: 17.5rem;
   overflow: hidden;
   background: $white;
-  border: 1px solid #f4f4f4;
+  border: 1px solid $border;
   border-radius: 1rem;
   box-shadow: 0 8px 16px rgba(0, 0, 77, 0.08);
 }
@@ -251,7 +251,7 @@
 }
 
 .modalSelectDropdownItemSelected .modalSelectDropdownItemInner {
-  background: #f4f4f4;
+  background: $border;
   border-radius: 1rem;
 }
 
@@ -267,7 +267,7 @@
 
 .modalSelectOptionText {
   flex: 1;
-  color: #0e2851;
+  color: $dark;
   font-size: $font-size-sm;
   font-weight: 400;
   line-height: 1.35;
@@ -284,7 +284,7 @@
   
   font-style: normal;
   font-weight: 400;
-  font-size: 12px;
+  font-size: $font-size-xs;
   line-height: 16px;
   color: #C11515;
 }

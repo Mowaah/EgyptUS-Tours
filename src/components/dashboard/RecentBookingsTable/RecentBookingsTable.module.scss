@@ -1,6 +1,8 @@
+@use "@/styles/variables" as *;
+
 .idCell {
   font-weight: 500;
-  color: #374151;
+  color: $gray-700;
 }
 
 .priceCell {
@@ -10,9 +12,9 @@
 }
 
 .currencyIcon {
-  font-size: 18px;
+  font-size: $font-size-19;
   font-weight: 600;
-  color: #6b7280;
+  color: $text-light;
   flex-shrink: 0;
   line-height: 1;
 }
@@ -68,23 +70,23 @@
 }
 
 .cancelled {
-  color: #ef4444;
-  background: #fee2e2;
+  color: $danger;
+  background: $background-danger-light;
   &::before {
-    background: #ef4444;
+    background: $danger;
   }
 }
 .pending {
   color: #f59e0b;
-  background: #fef3c7;
+  background: $status-warning-bg;
   &::before {
     background: #f59e0b;
   }
 }
 .confirmed {
-  color: #10b981;
+  color: $success;
   background: #d1fae5;
   &::before {
-    background: #10b981;
+    background: $success;
   }
 }

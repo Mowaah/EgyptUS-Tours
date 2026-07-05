@@ -24,7 +24,7 @@
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    border: 1px solid #f4f4f4;
+    border: 1px solid $border;
     border-bottom: none;
     border-radius: 24px 24px 0 0;
   }
@@ -242,7 +242,7 @@
   background: $secondary;
   border: 1px solid $secondary;
   color: $white;
-  font-size: 16px;
+  font-size: $font-size-lg;
   font-weight: $font-weight-medium;
   line-height: 22px;
   letter-spacing: 0.01em;

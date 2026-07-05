@@ -64,7 +64,7 @@
   padding: 8px;
   gap: 4px;
   width: max-content;
-  background: #F9FAFB;
+  background: $gray-50;
   border-radius: 32px;
 }
 
@@ -81,16 +81,16 @@
   cursor: pointer;
   font-family: inherit;
   font-weight: 400;
-  font-size: 16px;
+  font-size: $font-size-lg;
   line-height: 21px;
   text-align: center;
-  color: #A3A3A3;
+  color: $gray-400-zinc;
   transition: all 0.2s ease-in-out;
 }
 
 .toggleBtnActive {
-  background: #FF6600;
-  color: #FFFFFF;
+  background: $secondary;
+  color: $background;
   font-weight: 700;
 }
 

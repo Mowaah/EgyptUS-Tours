@@ -223,7 +223,7 @@
   border-radius: 32px;
   color: $white;
   background: $primary;
-  font-size: 16px;
+  font-size: $font-size-lg;
   font-weight: 500;
   line-height: 22px;
   white-space: nowrap;
@@ -244,17 +244,17 @@
   height: 56px;
   padding: 12px 32px;
   border-radius: 32px;
-  color: #374151;
-  background: #FFFFFF;
+  color: $gray-700;
+  background: $background;
   border: 1px solid rgba(102, 107, 109, 0.24);
-  font-size: 16px;
+  font-size: $font-size-lg;
   font-weight: 500;
   line-height: 24px;
   white-space: nowrap;
   transition: background $transition-fast;
 
   &:hover {
-    background: #F9FAFB;
+    background: $gray-50;
   }
 }
 
@@ -302,7 +302,7 @@
     min-width: 160px;
     width: max-content;
     padding: 0 24px;
-    font-size: 14px;
+    font-size: $font-size-sm;
   }
 
   .secondaryActionButton {
@@ -310,7 +310,7 @@
     min-width: 130px;
     width: max-content;
     padding: 0 24px;
-    font-size: 14px;
+    font-size: $font-size-sm;
   }
 }
 

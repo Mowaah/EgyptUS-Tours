@@ -192,7 +192,7 @@
 
 .cancelX {
   font-weight: 900;
-  font-size: 12px;
+  font-size: $font-size-xs;
   line-height: 16px;
 }
 
@@ -221,7 +221,7 @@
   font-weight: $font-weight-medium;
   font-size: $font-size-sm;
   line-height: 24px;
-  color: #0f172a;
+  color: $slate-900;
 }
 
 .detailGrid {
@@ -369,14 +369,14 @@
 }
 
 .metaStrong {
-  font-size: 20px;
+  font-size: $font-size-2xl;
   font-weight: $font-weight-bold;
   line-height: 150%;
   color: $primary;
 }
 
 .metaPrice {
-  font-size: 20px;
+  font-size: $font-size-2xl;
   font-weight: $font-weight-normal;
   line-height: 150%;
   color: $primary;

@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .wrap {
   display: flex;
   flex: 1;
@@ -17,9 +19,9 @@
   padding-bottom: 24px; /* Space for X-axis text */
 
   span {
-    font-size: 14px;
+    font-size: $font-size-sm;
     font-weight: 400;
-    color: #A3A3A3;
+    color: $gray-400-zinc;
     line-height: 1;
   }
 }
@@ -127,9 +129,9 @@
 }
 
 .xLabel {
-  font-size: 12px;
+  font-size: $font-size-xs;
   font-weight: 400;
-  color: #A3A3A3;
+  color: $gray-400-zinc;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   white-space: nowrap;
