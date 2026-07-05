@@ -9,11 +9,13 @@ interface LanguageTabsProps {
   active: Language;
   onChange: (lang: Language) => void;
   className?: string;
+  variant?: "default" | "white";
 }
 
-export default function LanguageTabs({ active, onChange, className = "" }: LanguageTabsProps) {
+export default function LanguageTabs({ active, onChange, className = "", variant = "default" }: LanguageTabsProps) {
+  const bgClass = variant === "white" ? styles.langTabsWhite : "";
   return (
-    <div className={`${styles.langTabs} ${className}`} role="tablist" aria-label="Language">
+    <div className={`${styles.langTabs} ${bgClass} ${className}`} role="tablist" aria-label="Language">
       {LANGS.map((lang) => (
         <button
           key={lang}

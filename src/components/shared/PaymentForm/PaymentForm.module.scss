@@ -60,7 +60,6 @@
 }
 
 .cardTitle {
-  font-family: "Trip Sans";
   font-weight: 800;
   font-size: clamp(1.125rem, 3vw, 24px);
   color: $dark;
@@ -68,7 +67,6 @@
 }
 
 .cardSubtitle {
-  font-family: "Trip Sans";
   font-size: $font-size-13;
   color: $text-light;
   line-height: 1.5;
@@ -121,7 +119,6 @@
 
   strong {
     display: block;
-    font-family: "Trip Sans";
     font-size: $font-size-13;
     color: $dark;
     margin-bottom: 2px;

@@ -42,7 +42,6 @@
 }
 
 .title {
-  font-family: "Trip Sans";
   font-weight: 800;
   font-size: clamp(1.25rem, 4vw, 30px);
   line-height: 1.2;
@@ -51,7 +50,6 @@
 }
 
 .subtitle {
-  font-family: "Trip Sans";
   font-weight: 400;
   font-size: clamp(0.8125rem, 2.3vw, 16px);
   line-height: 1.5;
@@ -83,7 +81,6 @@
 }
 
 .label {
-  font-family: "Trip Sans";
   font-weight: 500;
   font-size: $font-size-13;
   color: $dark;
@@ -194,7 +191,6 @@
 }
 
 .typeLabel {
-  font-family: "Trip Sans";
   font-weight: 500;
   font-size: $font-size-13;
   line-height: 1.4;
@@ -267,7 +263,6 @@
 }
 
 .serviceLabel {
-  font-family: "Trip Sans";
   font-weight: 500;
   font-size: $font-size-13;
   color: $dark;
@@ -282,7 +277,6 @@
 }
 
 .servicePrice {
-  font-family: "Trip Sans";
   font-weight: 600;
   font-size: $font-size-xs;
   color: $secondary;

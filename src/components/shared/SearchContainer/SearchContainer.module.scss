@@ -194,7 +194,6 @@
   min-width: 0;
   border: none;
   outline: none;
-  font-family: 'Trip Sans';
   font-size: $font-size-xs;
   font-weight: 500;
   color: $dark;
@@ -219,7 +218,6 @@
 .searchBtn {
   background: $primary;
   color: $background;
-  font-family: 'Trip Sans';
   font-weight: 500;
   font-size: $font-size-xs;
   padding: 0 16px;
@@ -247,7 +245,6 @@
 
 .searchDesc {
   color: $text-light;
-  font-family: 'Trip Sans';
   font-weight: 400;
   font-size: $font-size-xs;
   line-height: 1.5;

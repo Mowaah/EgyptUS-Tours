@@ -142,7 +142,6 @@
 }
 
 .tripTitle {
-  font-family: 'Trip Sans', sans-serif;
   font-size: clamp(1.125rem, 4vw + 0.75rem, 24px);
   font-weight: 900;
   line-height: 1.2;
@@ -231,7 +230,6 @@
 }
 
 .countdownValue {
-  font-family: 'Trip Sans', sans-serif;
   font-size: 32px;
   font-weight: 900;
   line-height: 1;
@@ -248,7 +246,6 @@
 }
 
 .countdownLabel {
-  font-family: 'Trip Sans', sans-serif;
   font-size: 10px;
   font-weight: 500;
   line-height: 1.2;
@@ -265,7 +262,6 @@
 
 .separator {
   flex: 0 0 auto;
-  font-family: 'Trip Sans', sans-serif;
   font-size: clamp(1rem, 4vw, 28px);
   font-weight: 900;
   line-height: 1;

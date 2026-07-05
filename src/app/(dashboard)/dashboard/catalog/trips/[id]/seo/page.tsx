@@ -1,0 +1,7 @@
+export default function TripSeoPage() {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px', background: '#fff', borderRadius: '24px', color: '#9CA3AF', fontWeight: 500, fontSize: '16px' }}>
+      SEO — coming soon
+    </div>
+  );
+}

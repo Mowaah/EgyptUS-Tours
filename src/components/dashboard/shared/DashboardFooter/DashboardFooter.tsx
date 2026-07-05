@@ -6,6 +6,7 @@ interface DashboardFooterProps {
   onDiscard?: () => void;
   onSave?: () => void;
   isSubmit?: boolean;
+  hideActions?: boolean;
 }
 
 export function DashboardFooter({
@@ -13,6 +14,7 @@ export function DashboardFooter({
   onDiscard,
   onSave,
   isSubmit = false,
+  hideActions = false,
 }: DashboardFooterProps) {
   return (
     <footer className={styles.actionBar}>
@@ -24,25 +26,27 @@ export function DashboardFooter({
         <div /> /* Empty div to keep flex alignment if no date */
       )}
 
-      <div className={styles.actions}>
-        <button type="button" className={styles.discardButton} onClick={onDiscard}>
-          Discard
-        </button>
-        <button
-          type={isSubmit ? "submit" : "button"}
-          className={styles.saveButton}
-          onClick={onSave}
-        >
-          Save Changes
-          <Image
-            src="/images/dashboard/save.svg"
-            alt=""
-            width={22}
-            height={22}
-            className={styles.buttonIcon}
-          />
-        </button>
-      </div>
+      {!hideActions && (
+        <div className={styles.actions}>
+          <button type="button" className={styles.discardButton} onClick={onDiscard}>
+            Discard
+          </button>
+          <button
+            type={isSubmit ? "submit" : "button"}
+            className={styles.saveButton}
+            onClick={onSave}
+          >
+            Save Changes
+            <Image
+              src="/images/dashboard/save.svg"
+              alt=""
+              width={22}
+              height={22}
+              className={styles.buttonIcon}
+            />
+          </button>
+        </div>
+      )}
     </footer>
   );
 }

@@ -26,7 +26,6 @@
   }
 
   h2 {
-    font-family: 'Trip Sans', sans-serif;
     font-weight: 500;
     font-size: 1.5rem; // 24px
     color: #0E2851;
@@ -49,7 +48,6 @@
   }
 
   .value {
-    font-family: 'Trip Sans', sans-serif;
     font-weight: 500;
     font-size: 1rem; // 16px
     color: #374151;
@@ -63,7 +61,6 @@
     background: rgba(255, 102, 0, 0.1);
     border-radius: 8rem; // 128px
     color: #FF6600;
-    font-family: 'Trip Sans', sans-serif;
     font-weight: 500;
     font-size: 1rem;
   }
@@ -103,14 +100,12 @@
     justify-content: center;
 
     .fileName {
-      font-family: 'Trip Sans', sans-serif;
       font-size: 0.875rem; // 14px
       color: #2B2B38;
       margin: 0;
     }
 
     .fileSize {
-      font-family: 'Trip Sans', sans-serif;
       font-size: 0.8125rem; // 13px
       color: #606978;
     }
@@ -131,7 +126,6 @@
   }
 
   .noteText {
-    font-family: 'Trip Sans', sans-serif;
     font-weight: 500;
     font-size: 1rem;
     line-height: 1.375; // 22px

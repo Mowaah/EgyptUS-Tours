@@ -7,7 +7,7 @@
   align-items: flex-start;
   width: 100%;
   max-width: 1620px;
-  gap: 1.5rem;
+  gap: 0.75rem;
   padding-bottom: 2rem;
 }
 
@@ -38,7 +38,6 @@
 }
 
 .pageTitle {
-  font-family: 'Trip Sans', sans-serif;
   font-weight: 700;
   font-size: 2rem;
   color: #0E2851;
@@ -52,7 +51,6 @@
   padding: 0.85rem 0.75rem;
   gap: 0.25rem;
   border-radius: 6rem;
-  font-family: 'Trip Sans', sans-serif;
   font-weight: 500;
   font-size: 0.875rem;
   line-height: 1.2;
@@ -79,7 +77,6 @@
 }
 
 .metaText {
-  font-family: 'Trip Sans', sans-serif;
   font-size: 1rem;
   color: #606978;
 }
@@ -103,7 +100,6 @@
   background: #FFFFFF;
   border: 1px solid rgba(102, 107, 109, 0.24);
   border-radius: 2rem;
-  font-family: 'Trip Sans', sans-serif;
   font-weight: 500;
   font-size: 1rem;
   color: #374151;
@@ -122,7 +118,6 @@
   background: rgba(242, 107, 128, 0.02);
   border: 1px solid rgba(185, 28, 28, 0.28);
   border-radius: 2rem;
-  font-family: 'Trip Sans', sans-serif;
   font-weight: 500;
   font-size: 1rem;
   color: #B91C1C;
@@ -191,7 +186,6 @@
 }
 
 .cardTitle {
-  font-family: 'Trip Sans', sans-serif;
   font-weight: 500;
   font-size: 1.5rem;
   color: #0E2851;
@@ -265,7 +259,6 @@
   height: 32px;
   background: #E4F2FF;
   border-radius: 96px;
-  font-family: 'Trip Sans', sans-serif;
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
@@ -282,14 +275,12 @@
 }
 
 .imageInfoLabel {
-  font-family: 'Trip Sans', sans-serif;
   font-weight: 500;
   font-size: 1rem;
   color: #1F2937;
 }
 
 .imageInfoValue {
-  font-family: 'Trip Sans', sans-serif;
   font-weight: 400;
   font-size: 1rem;
   color: #9CA3AF;
@@ -321,7 +312,6 @@
   }
 
   h3 {
-    font-family: 'Trip Sans', sans-serif;
     font-size: 1.5rem;
     font-weight: 700;
     color: #0E2851;
@@ -329,7 +319,6 @@
   }
 
   h4 {
-    font-family: 'Trip Sans', sans-serif;
     font-size: 1.25rem;
     font-weight: 600;
     color: #1F2937;

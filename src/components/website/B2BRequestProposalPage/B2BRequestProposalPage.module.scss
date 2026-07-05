@@ -67,7 +67,6 @@
 }
 
 .formTitle {
-  font-family: 'Trip Sans';
   font-weight: 700;
   font-size: clamp(1.25rem, 3.5vw, 24px);
   color: $dark;
@@ -75,7 +74,6 @@
 }
 
 .formSubtitle {
-  font-family: 'Trip Sans';
   font-weight: 400;
   font-size: clamp(0.8125rem, 2.3vw, 16px);
   color: $text-light;
@@ -111,7 +109,6 @@
 }
 
 .fieldLabel {
-  font-family: 'Trip Sans';
   font-weight: 700;
   font-size: $font-size-sm;
   color: $gray-700;
@@ -146,7 +143,6 @@
   border: 1px solid $border-strong;
   border-radius: 12px;
   padding: 12px 14px;
-  font-family: 'Trip Sans';
   font-size: $font-size-sm;
   color: $gray-900;
   resize: vertical;
@@ -188,7 +184,6 @@
   border-radius: 12px;
   padding: 0 12px;
   height: 44px;
-  font-family: 'Trip Sans';
   font-size: $font-size-sm;
   color: $gray-900;
   box-sizing: border-box;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/dashboard/DataTable";
 import {
   TablePanel,
@@ -26,6 +27,8 @@ interface TripsPanelProps {
 }
 
 export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPanelProps) {
+  const router = useRouter();
+  
   const defaultFilters = {
     category: "All",
     destination: "All",
@@ -123,7 +126,11 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
         selectionType="star"
         rowActions={(row) =>
           catalogTripsRowActions((action, r) => {
-            console.log(`Action ${action} triggered for row`, r);
+            if (action === "View") {
+              router.push(`/dashboard/catalog/trips/${r.id}`);
+            } else {
+              console.log(`Action ${action} triggered for row`, r);
+            }
           })
         }
         defaultPageSize={10}
