@@ -34,8 +34,7 @@ export function InclusionsStep() {
     <div className={styles.inclusionsContainer}>
       <div className={styles.header}>
         <div className={styles.headerIcon}>
-          {/* using a placeholder icon, you might want to use a specific icon */}
-          <Image src="/images/dashboard/catalog/trips/overview.svg" alt="Inclusions" width={20} height={20} />
+          <Image src="/images/dashboard/catalog/trips/inclusions.svg" alt="Inclusions" width={20} height={20} />
         </div>
         <h2>Inclusions</h2>
       </div>

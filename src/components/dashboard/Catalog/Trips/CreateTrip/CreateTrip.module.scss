@@ -150,33 +150,87 @@
 
 .footerActions {
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-top: 1.5rem;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 16px 0px;
   width: 100%;
-  min-height: 5.5rem;
-  padding: 1.5rem 2rem;
-  background-color: $background;
+  height: 98px;
+  background: $background;
   border-radius: 24px;
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.02);
   box-sizing: border-box;
 }
 
-.nextButton {
-  display: inline-flex;
+.actionsContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
   align-items: center;
-  justify-content: center;
-  padding: 0 32px;
-  height: 48px;
-  background: #2f73e8;
-  color: $background;
-  border: none;
-  border-radius: 24px;
-  font-weight: 600;
-  font-size: $font-size-sm;
-  cursor: pointer;
+  padding: 24px;
   gap: 8px;
+  width: 100%;
+  height: 96px;
+  box-sizing: border-box;
+}
+
+.previousButton {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 24px;
+  gap: 8px;
+  width: 350px;
+  height: 48px;
+  background: transparent;
+  border: 1px solid $gray-tailwind-300;
+  border-radius: 100px;
+  cursor: pointer;
   transition: background-color 0.2s;
+
+  span {
+    font-family: 'Trip Sans', sans-serif;
+    font-weight: 500;
+    font-size: $font-size-lg;
+    line-height: 18px;
+    color: $gray-700;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: $gray-50;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.nextButton {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 24px;
+  gap: 8px;
+  width: 350px;
+  height: 48px;
+  background: $primary;
+  border-radius: 32px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  span {
+    font-family: 'Trip Sans', sans-serif;
+    font-weight: 500;
+    font-size: $font-size-lg;
+    line-height: 22px;
+    color: $background;
+  }
 
   &:hover {
     background: #1d5ec9;

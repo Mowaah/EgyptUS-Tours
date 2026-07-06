@@ -1,7 +1,7 @@
 "use client";
 
 import { use, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
 import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/DashboardTabs";
@@ -39,12 +39,17 @@ export default function TripLayout({
 }) {
   const { id } = use(params);
   const router = useRouter();
+  const pathname = usePathname();
   const [activeLang, setActiveLang] = useState<Language>("English");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false);
   const [isArchived, setIsArchived] = useState(false);
   const [bannerMessage, setBannerMessage] = useState<string | null>(null);
   const tabs = buildTabs(id);
+
+  if (pathname?.endsWith("/edit")) {
+    return <>{children}</>;
+  }
 
   return (
     <div className={styles.page}>
@@ -77,6 +82,7 @@ export default function TripLayout({
           secondaryAction={{
             label: "Edit",
             icon: "/images/dashboard/edit.svg",
+            onClick: () => router.push(`/dashboard/catalog/trips/${id}/edit`),
           }}
           primaryAction={
             isArchived

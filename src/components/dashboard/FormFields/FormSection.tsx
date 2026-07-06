@@ -7,12 +7,13 @@ interface FormSectionProps {
   iconSrc?: string;
   children: ReactNode;
   className?: string;
+  headerAction?: ReactNode;
 }
 
-export function FormSection({ title, iconSrc, children, className = "" }: FormSectionProps) {
+export function FormSection({ title, iconSrc, children, className = "", headerAction }: FormSectionProps) {
   return (
     <section className={`${styles.section} ${className}`}>
-      {(title || iconSrc) && (
+      {(title || iconSrc || headerAction) && (
         <div className={styles.sectionHeader}>
           {iconSrc && (
             <div className={styles.sectionIcon}>
@@ -20,6 +21,7 @@ export function FormSection({ title, iconSrc, children, className = "" }: FormSe
             </div>
           )}
           {title && <h2 className={styles.sectionTitle}>{title}</h2>}
+          {headerAction && <div className={styles.sectionAction}>{headerAction}</div>}
         </div>
       )}
       {children}

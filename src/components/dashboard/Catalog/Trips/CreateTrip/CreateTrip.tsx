@@ -8,6 +8,13 @@ import { createTripSchema, type CreateTripValues } from "./CreateTripSchema";
 import { IconStepper } from "@/components/shared";
 import { OverviewStep } from "./Steps/Overview/OverviewStep";
 import { InclusionsStep } from "./Steps/Inclusions/InclusionsStep";
+import { PricingStep } from "./Steps/Pricing/PricingStep";
+import { ItineraryStep } from "./Steps/Itinerary/ItineraryStep";
+import { DatesAvailabilityStep } from "./Steps/DatesAvailability/DatesAvailabilityStep";
+import { HotelsStep } from "./Steps/Hotels/HotelsStep";
+import { MediaStep } from "./Steps/Media/MediaStep";
+import { SEOStep } from "./Steps/SEO/SEOStep";
+import Image from "next/image";
 import styles from "./CreateTrip.module.scss";
 
 const STEPS = [
@@ -62,6 +69,18 @@ export function CreateTrip({ tripId }: { tripId?: string }) {
         return <OverviewStep />;
       case 1:
         return <InclusionsStep />;
+      case 2:
+        return <PricingStep />;
+      case 3:
+        return <ItineraryStep />;
+      case 4:
+        return <DatesAvailabilityStep />;
+      case 5:
+        return <HotelsStep />;
+      case 6:
+        return <MediaStep />;
+      case 7:
+        return <SEOStep />;
       default:
         return (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px', background: '#fff', borderRadius: '24px', color: '#9CA3AF', fontWeight: 500, fontSize: '16px' }}>
@@ -88,13 +107,23 @@ export function CreateTrip({ tripId }: { tripId?: string }) {
 
         {/* Bottom Actions */}
         <div className={styles.footerActions}>
-          <button type="submit" className={styles.nextButton}>
-            <span>Next</span>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9.62 3.97L13.65 8L9.62 12.03" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M2.3501 8H13.5301" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
+          <div className={styles.actionsContainer}>
+            <button 
+              type="button" 
+              className={styles.previousButton}
+              onClick={() => {
+                if (currentStep > 0) setCurrentStep(prev => prev - 1);
+              }}
+              disabled={currentStep === 0}
+            >
+              <Image src="/images/dashboard/previous.svg" alt="Previous" width={20} height={20} />
+              <span>Previous</span>
+            </button>
+            <button type="submit" className={styles.nextButton}>
+              <span>{currentStep === STEPS.length - 1 ? "Publish Trip" : "Next"}</span>
+              {currentStep !== STEPS.length - 1 && <Image src="/images/dashboard/next.svg" alt="Next" width={20} height={20} />}
+            </button>
+          </div>
         </div>
       </form>
     </FormProvider>

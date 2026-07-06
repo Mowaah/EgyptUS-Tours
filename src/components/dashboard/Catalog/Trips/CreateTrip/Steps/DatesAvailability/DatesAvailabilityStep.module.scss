@@ -1,0 +1,177 @@
+@use "@/styles/variables" as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  gap: 32px;
+  background: $background;
+  border-radius: 24px;
+  width: 100%;
+}
+
+// ─── Header ──────────────────────────────────────────────────────────────────
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px; // Spacing between the title block and the toggle switch
+}
+
+.headerLeftInner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.headerIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: $dashboard-expandable-hover;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.title {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: $font-size-28;
+  line-height: 33px;
+  color: $dark;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.addButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 44px;
+  height: 44px;
+  background: $primary;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+
+// ─── Dates Grid ──────────────────────────────────────────────────────────────
+
+.datesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  width: 100%;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ─── Date Card ───────────────────────────────────────────────────────────────
+
+.dateCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px;
+  gap: 12px;
+  background: $gray-50;
+  border-radius: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.cardFieldWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.labelRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 20px;
+}
+
+.fieldLabel {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: $font-size-sm;
+  line-height: 19px;
+  color: $gray-600;
+}
+
+.deleteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+// ─── Number Spinner ──────────────────────────────────────────────────────────
+
+.spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding-right: 8px;
+
+  button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-light;
+    height: 12px;
+    width: 20px;
+
+    &:hover {
+      color: $gray-700;
+    }
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+  }
+}

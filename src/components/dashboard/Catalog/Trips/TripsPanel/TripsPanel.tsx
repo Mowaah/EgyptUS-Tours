@@ -128,6 +128,8 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
           catalogTripsRowActions((action, r) => {
             if (action === "View") {
               router.push(`/dashboard/catalog/trips/${r.id}`);
+            } else if (action === "Edit") {
+              router.push(`/dashboard/catalog/trips/${r.id}/edit`);
             } else {
               console.log(`Action ${action} triggered for row`, r);
             }

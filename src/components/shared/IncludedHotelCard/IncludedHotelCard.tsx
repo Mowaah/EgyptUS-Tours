@@ -5,15 +5,20 @@ import styles from "./IncludedHotelCard.module.scss";
 
 interface IncludedHotelCardProps {
   hotel: TripHotel;
+  selected?: boolean;
   onClick?: () => void;
 }
 
-export default function IncludedHotelCard({ hotel, onClick }: IncludedHotelCardProps) {
+export default function IncludedHotelCard({ hotel, selected, onClick }: IncludedHotelCardProps) {
   // Use a placeholder if image fails or isn't provided (for mock data)
   const imageSrc = hotel.image && hotel.image.startsWith("/") ? hotel.image : "/images/hotels/hotel1.jpg";
 
   return (
-    <article className={styles.card} onClick={onClick} style={onClick ? { cursor: "pointer" } : undefined}>
+    <article 
+      className={`${styles.card} ${selected ? styles.selected : ""}`} 
+      onClick={onClick} 
+      style={onClick ? { cursor: "pointer" } : undefined}
+    >
       <div className={styles.imageWrap}>
         <div style={{ width: '100%', height: '100%', background: '#E2E8F0', display: 'block', position: 'relative' }}>
           <Image
@@ -22,10 +27,9 @@ export default function IncludedHotelCard({ hotel, onClick }: IncludedHotelCardP
             fill
             sizes="400px"
             className={styles.image}
-            style={{ objectFit: 'cover' }}
           />
         </div>
-        <span className={styles.badge}>✓ INCLUDED</span>
+        {selected && <span className={styles.badge}>✓ INCLUDED</span>}
         <RatingBadge
           rating={hotel.rating}
           reviews={hotel.reviewCount}
