@@ -1,0 +1,147 @@
+@use "@/styles/variables" as *;
+
+.inclusionsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px;
+  gap: 32px;
+  background: $background;
+  border-radius: 24px;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+
+  h2 {
+    font-family: 'Trip Sans', sans-serif;
+    font-weight: 500;
+    font-size: $font-size-28;
+    line-height: 33px;
+    color: $dark;
+    margin: 0;
+  }
+}
+
+.headerIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: $dashboard-expandable-hover;
+  border-radius: 20px;
+}
+
+.columnsWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px;
+  gap: 12px;
+  flex: 1;
+  background: $gray-50;
+  border-radius: 16px;
+}
+
+.columnHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  
+  h3 {
+    font-family: 'Urbanist', sans-serif;
+    font-weight: 500;
+    font-size: $font-size-sm;
+    line-height: 17px;
+    color: $text-light;
+    margin: 0;
+  }
+}
+
+.iconIncluded {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  background: $background-blue;
+  border: 2px solid $border-light;
+  border-radius: 50%;
+}
+
+.iconExcluded {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  background: $background-danger-light;
+  border: 2px solid $border-danger-light;
+  border-radius: 50%;
+}
+
+.tabsMargin {
+  margin-bottom: 12px;
+}
+
+.fieldsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+
+.deleteButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  
+  &:hover {
+    background: $gray-50-tailwind;
+  }
+}
+
+.addButton {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #E5EFFF;
+  border-radius: 32px;
+  border: none;
+  cursor: pointer;
+  
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 700;
+  font-size: $font-size-lg;
+  color: $primary;
+  margin-top: 4px;
+  transition: opacity 0.2s;
+  
+  &:hover {
+    opacity: 0.9;
+  }
+}

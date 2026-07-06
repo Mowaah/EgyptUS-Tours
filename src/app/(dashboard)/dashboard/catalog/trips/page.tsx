@@ -41,6 +41,7 @@ function StatusBanners() {
 }
 
 export default function CatalogTripsPage() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
@@ -52,6 +53,7 @@ export default function CatalogTripsPage() {
         title="Trips"
         subtitle="Manage all trip products visible on the website"
         primaryAction={{ label: "Add New Trip" }}
+        onPrimaryAction={() => router.push("/dashboard/catalog/trips/new")}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
       />

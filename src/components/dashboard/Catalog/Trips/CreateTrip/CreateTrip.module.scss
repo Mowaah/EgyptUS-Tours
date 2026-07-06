@@ -1,0 +1,184 @@
+@use "@/styles/variables" as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.stepIndicatorWrapper {
+  background: $background;
+  border-radius: 24px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  width: 100%;
+  overflow-x: auto;
+  -ms-overflow-style: none; 
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  > div {
+    width: 100%;
+  }
+}
+
+.columnsContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  width: 100%;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+  }
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+
+
+.fieldRow {
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+  width: 100%;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+  }
+}
+
+.uploadSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.fileList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.fileItem {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 16px;
+  background: $background;
+  border: 1px solid #f0f0f0;
+  border-radius: 16px;
+  gap: 12px;
+  position: relative;
+}
+
+.fileIcon {
+  flex-shrink: 0;
+}
+
+.fileDetails {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 4px;
+}
+
+.fileName {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: $font-size-sm;
+  color: $dark;
+  margin: 0;
+}
+
+.fileMeta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Trip Sans', sans-serif;
+  font-size: $font-size-xs;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.fileSuccess {
+  color: $success;
+  font-weight: 500;
+}
+
+.deleteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  color: $danger;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: $background-danger;
+  }
+}
+
+.footerActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  width: 100%;
+  min-height: 5.5rem;
+  padding: 1.5rem 2rem;
+  background-color: $background;
+  border-radius: 24px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.02);
+  box-sizing: border-box;
+}
+
+.nextButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 32px;
+  height: 48px;
+  background: #2f73e8;
+  color: $background;
+  border: none;
+  border-radius: 24px;
+  font-weight: 600;
+  font-size: $font-size-sm;
+  cursor: pointer;
+  gap: 8px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: #1d5ec9;
+  }
+}
