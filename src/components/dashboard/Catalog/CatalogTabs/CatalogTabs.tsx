@@ -4,9 +4,9 @@ import { usePathname, useRouter } from "next/navigation";
 import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/DashboardTabs";
 
 const TABS = [
-  { id: "trips", label: "Trips", path: "/dashboard/catalog/trips" },
-  { id: "destinations", label: "Destinations", path: "/dashboard/catalog/destinations" },
-  { id: "categories", label: "Categories", path: "/dashboard/catalog/categories" },
+  { id: "trips", label: "Trips", path: "/dashboard/catalog/trips", iconSrc: "/images/dashboard/catalog/trips.svg" },
+  { id: "destinations", label: "Destinations", path: "/dashboard/catalog/destinations", iconSrc: "/images/dashboard/catalog/destinations.svg" },
+  { id: "categories", label: "Categories", path: "/dashboard/catalog/categories", iconSrc: "/images/dashboard/catalog/categories.svg" },
 ];
 
 export default function CatalogTabs() {

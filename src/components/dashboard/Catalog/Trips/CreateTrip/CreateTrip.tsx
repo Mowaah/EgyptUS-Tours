@@ -14,6 +14,8 @@ import { DatesAvailabilityStep } from "./Steps/DatesAvailability/DatesAvailabili
 import { HotelsStep } from "./Steps/Hotels/HotelsStep";
 import { MediaStep } from "./Steps/Media/MediaStep";
 import { SEOStep } from "./Steps/SEO/SEOStep";
+import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
+import { DashboardFooter } from "@/components/dashboard/shared";
 import Image from "next/image";
 import styles from "./CreateTrip.module.scss";
 
@@ -31,6 +33,7 @@ const STEPS = [
 export function CreateTrip({ tripId }: { tripId?: string }) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0); // 0-indexed for IconStepper
+  const [isPublishedModalOpen, setIsPublishedModalOpen] = useState(false);
 
   const methods = useForm<CreateTripValues>({
     resolver: zodResolver(createTripSchema),
@@ -59,7 +62,7 @@ export function CreateTrip({ tripId }: { tripId?: string }) {
     if (currentStep < STEPS.length - 1) {
       setCurrentStep((prev) => prev + 1);
     } else {
-      router.push("/dashboard/catalog/trips?created=true");
+      setIsPublishedModalOpen(true);
     }
   };
 
@@ -106,26 +109,50 @@ export function CreateTrip({ tripId }: { tripId?: string }) {
         {renderStep()}
 
         {/* Bottom Actions */}
-        <div className={styles.footerActions}>
-          <div className={styles.actionsContainer}>
-            <button 
-              type="button" 
-              className={styles.previousButton}
-              onClick={() => {
-                if (currentStep > 0) setCurrentStep(prev => prev - 1);
-              }}
-              disabled={currentStep === 0}
-            >
-              <Image src="/images/dashboard/previous.svg" alt="Previous" width={20} height={20} />
-              <span>Previous</span>
-            </button>
-            <button type="submit" className={styles.nextButton}>
-              <span>{currentStep === STEPS.length - 1 ? "Publish Trip" : "Next"}</span>
-              {currentStep !== STEPS.length - 1 && <Image src="/images/dashboard/next.svg" alt="Next" width={20} height={20} />}
-            </button>
+        {tripId ? (
+          <DashboardFooter lastUpdateDate="6/6/2026" hideActions />
+        ) : (
+          <div className={styles.footerActions}>
+            <div className={styles.actionsContainer}>
+              <button 
+                type="button" 
+                className={styles.previousButton}
+                onClick={() => {
+                  if (currentStep > 0) setCurrentStep(prev => prev - 1);
+                }}
+                disabled={currentStep === 0}
+              >
+                <Image src="/images/dashboard/previous.svg" alt="Previous" width={20} height={20} />
+                <span>Previous</span>
+              </button>
+              <button type="submit" className={styles.nextButton}>
+                <span>{currentStep === STEPS.length - 1 ? "Publish Trip" : "Next"}</span>
+                {currentStep !== STEPS.length - 1 && <Image src="/images/dashboard/next.svg" alt="Next" width={20} height={20} />}
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </form>
+
+      {isPublishedModalOpen && (
+        <SuccessModal
+          title={tripId ? "Trip Updated Successfully" : "Trip Published Successfully"}
+          message={tripId ? "All changes have been saved and are now reflected across the system." : "Your trip package has been published and is now available for bookings and customer inquiries."}
+          primaryButtonText="View Trip"
+          buttonText="Back to Catalog"
+          hideSecondaryButton={!tripId}
+          onPrimaryClick={() => {
+            setIsPublishedModalOpen(false);
+            router.push(tripId ? `/dashboard/catalog/trips/${tripId}` : "/dashboard/catalog/trips?created=true");
+          }}
+          onClose={() => {
+            setIsPublishedModalOpen(false);
+            if (tripId) {
+              router.push("/dashboard/catalog/trips");
+            }
+          }}
+        />
+      )}
     </FormProvider>
   );
 }

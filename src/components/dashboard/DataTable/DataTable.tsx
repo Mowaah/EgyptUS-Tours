@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
-import { buildPageList } from "./buildPageList";
+import TablePagination from "../shared/TablePagination/TablePagination";
 import styles from "./DataTable.module.scss";
 import type { DataTableProps, DataTableRowAction } from "./types";
 
@@ -134,7 +134,6 @@ export default function DataTable<T>({
   const pageCount = Math.max(1, Math.ceil(data.length / rowsPerPage));
   const safePage = Math.min(page, pageCount);
   const visibleRows = data.slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage);
-  const pageList = buildPageList(safePage, pageCount);
   const hasActions = Boolean(rowActions);
 
   const toggleRow = (id: string) => {
@@ -209,92 +208,15 @@ export default function DataTable<T>({
         </tbody>
       </table>
 
-      <div className={styles.footer}>
-        <div className={styles.footerLeft}>
-          <div className={styles.selectWrapper}>
-            <select
-              className={styles.rowsSelect}
-              value={rowsPerPage}
-              onChange={(event) => changeRowsPerPage(Number(event.target.value))}
-              aria-label="Rows per page"
-            >
-              {pageSizeOptions.map((value) => (
-                <option value={value} key={value}>
-                  {value}
-                </option>
-              ))}
-            </select>
-            <Image
-              src="/images/dashboard/sidebar/chevron.svg"
-              alt=""
-              width={20}
-              height={20}
-              className={styles.selectChevron}
-              aria-hidden
-            />
-          </div>
-          <span className={styles.showLabel}>Show</span>
-          {selectedRows.length > 0 ? (
-            <span className={styles.selectionCount}>{selectedRows.length} selected</span>
-          ) : null}
-        </div>
-
-        <div className={styles.pagination}>
-          <button
-            type="button"
-            className={styles.paginationNav}
-            disabled={safePage === 1}
-            onClick={() => setPage((current) => Math.max(1, current - 1))}
-            aria-label="Previous page"
-          >
-            <Image
-              src="/images/dashboard/arrow-right.svg"
-              alt=""
-              width={16}
-              height={16}
-              className={styles.arrowLeft}
-            />
-            Previous
-          </button>
-
-          <div className={styles.pagesList}>
-            {pageList.map((p, i) =>
-              p === "..." ? (
-                <span key={`ellipsis-${i}`} className={styles.pageEllipsis}>
-                  ...
-                </span>
-              ) : (
-                <button
-                  type="button"
-                  key={p}
-                  className={p === safePage ? styles.pageActive : styles.pageBtn}
-                  aria-current={p === safePage ? "page" : undefined}
-                  onClick={() => setPage(p)}
-                >
-                  {p}
-                </button>
-              )
-            )}
-          </div>
-
-          <button
-            type="button"
-            className={styles.paginationNav}
-            disabled={safePage === pageCount}
-            onClick={() => setPage((current) => Math.min(pageCount, current + 1))}
-            aria-label="Next page"
-          >
-            Next
-            <Image
-              src="/images/dashboard/arrow-right.svg"
-              alt=""
-              width={16}
-              height={16}
-              aria-hidden
-            />
-          </button>
-        </div>
-      </div>
+      <TablePagination
+        page={page}
+        pageCount={pageCount}
+        rowsPerPage={rowsPerPage}
+        selectedCount={selectedRows.length}
+        pageSizeOptions={pageSizeOptions}
+        onChangePage={setPage}
+        onChangeRowsPerPage={changeRowsPerPage}
+      />
     </div>
   );
 }

@@ -55,7 +55,6 @@ export default function TripLayout({
     <div className={styles.page}>
       <DashboardNavbar
         breadcrumbTrail={[
-          { label: "Home", href: "/dashboard" },
           { label: "Catalog", href: "/dashboard/catalog/trips" },
           { label: "Trips" },
         ]}

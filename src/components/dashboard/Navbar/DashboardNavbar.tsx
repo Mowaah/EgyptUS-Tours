@@ -16,6 +16,7 @@ interface ActionConfig {
   iconSrc?: string;
   iconRotation?: number;
   hideIcon?: boolean;
+  variant?: "primary" | "secondary" | "tertiary";
 }
 
 interface DashboardNavbarProps {
@@ -48,6 +49,13 @@ export function ChevronRightIcon({ className, ...props }: React.SVGProps<SVGSVGE
     </svg>
   );
 }
+
+const getActionClass = (config: ActionConfig, defaultClass: string) => {
+  if (config.variant === "primary") return styles.primaryActionButton;
+  if (config.variant === "secondary") return styles.secondaryActionButton;
+  if (config.variant === "tertiary") return styles.tertiaryActionButton;
+  return defaultClass;
+};
 
 export default function DashboardNavbar({
   title,
@@ -196,7 +204,7 @@ export default function DashboardNavbar({
                 <button
                   type={visibleSecondaryAction.type || "button"}
                   form={visibleSecondaryAction.form}
-                  className={styles.secondaryActionButton}
+                  className={getActionClass(visibleSecondaryAction, styles.secondaryActionButton)}
                   onClick={onSecondaryAction}
                 >
                   {visibleSecondaryAction.iconSrc && (
@@ -217,7 +225,7 @@ export default function DashboardNavbar({
                 <button
                   type={visiblePrimaryAction.type || "button"}
                   form={visiblePrimaryAction.form}
-                  className={styles.primaryActionButton}
+                  className={getActionClass(visiblePrimaryAction, styles.primaryActionButton)}
                   onClick={onPrimaryAction}
                 >
                   {visiblePrimaryAction.label}

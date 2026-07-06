@@ -6,9 +6,10 @@
   display: flex;
   align-items: center;
   gap: 0.625rem;
-  width: min(calc(100% - 4rem), 49.625rem);
+  width: max-content;
+  max-width: calc(100% - 4rem);
   min-height: 4.375rem;
-  padding: 1rem;
+  padding: 1rem 1.5rem;
   border-radius: 0.75rem;
   font-size: 0.875rem;
   font-weight: 500;
@@ -101,7 +102,7 @@
   .banner {
     top: 0.75rem;
     right: 1rem;
-    width: calc(100% - 2rem);
+    max-width: calc(100% - 2rem);
   }
 }
 

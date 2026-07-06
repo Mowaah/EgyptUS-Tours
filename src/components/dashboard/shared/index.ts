@@ -26,3 +26,4 @@ export { default as RoundedDonutChart } from "./RoundedDonutChart/RoundedDonutCh
 export { default as RefundModal } from './RefundModal/RefundModal';
 export { default as RefundSummary, type RefundData } from './RefundSummary/RefundSummary';
 export { default as PaymentStep } from './PaymentStep/PaymentStep';
+export { default as TablePagination } from './TablePagination/TablePagination';

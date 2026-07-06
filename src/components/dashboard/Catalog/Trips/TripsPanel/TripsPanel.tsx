@@ -105,7 +105,7 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
     <TablePanel
       ariaLabel="Catalog trips table"
       title="Trips Packages"
-      iconSrc="/images/dashboard/sidebar/trips.svg"
+      iconSrc="/images/dashboard/catalog/trips.svg"
       headerActions={
         <>
           <TablePanelHeaderButton iconSrc="/images/dashboard/filter.svg">
