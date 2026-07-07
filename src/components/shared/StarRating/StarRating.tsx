@@ -22,9 +22,12 @@ export default function StarRating({
   size = 14,
   className = "",
 }: StarRatingProps) {
-  const filledCount = filled ?? (value !== undefined ? Math.floor(value) : 0);
-  const displayValue = value ?? filledCount;
-  const emptyCount = Math.max(0, 5 - filledCount);
+  const ratingValue = filled ?? value ?? 0;
+  const fullStars = Math.floor(ratingValue);
+  const hasHalfStar = ratingValue % 1 >= 0.5;
+  const emptyStars = Math.max(0, 5 - fullStars - (hasHalfStar ? 1 : 0));
+  
+  const displayValue = value ?? filled;
   const valueLabel =
     formatDisplayValue && typeof displayValue === "number"
       ? formatDisplayValue(displayValue)
@@ -32,7 +35,7 @@ export default function StarRating({
 
   return (
     <span className={`${styles.stars} ${className}`}>
-      {Array.from({ length: filledCount }, (_, i) => (
+      {Array.from({ length: fullStars }, (_, i) => (
         <svg
           key={`f-${i}`}
           width={size}
@@ -44,7 +47,29 @@ export default function StarRating({
           <path d={STAR_PATH} fill="#FDC700" />
         </svg>
       ))}
-      {Array.from({ length: emptyCount }, (_, i) => (
+      
+      {hasHalfStar && (
+        <svg
+          key="half"
+          width={size}
+          height={size}
+          viewBox="0 0 28 28"
+          fill="none"
+          aria-hidden
+        >
+          <defs>
+            <linearGradient id="half_star_grad" x1="0" y1="14" x2="28" y2="14" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#FDC700"/>
+              <stop offset="0.5" stopColor="#FDC700"/>
+              <stop offset="0.5" stopColor="#E5E7EB"/>
+              <stop offset="1" stopColor="#E5E7EB"/>
+            </linearGradient>
+          </defs>
+          <path d={STAR_PATH} fill="url(#half_star_grad)" />
+        </svg>
+      )}
+
+      {Array.from({ length: emptyStars }, (_, i) => (
         <svg
           key={`e-${i}`}
           width={size}

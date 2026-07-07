@@ -1,0 +1,102 @@
+@use "@/styles/variables" as *;
+
+.pricingLayout {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px;
+  gap: 32px;
+  background: $background; // or $background based on screenshot
+  border-radius: 24px;
+  width: 100%;
+}
+
+.titleRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+
+  .iconWrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background: $gray-50;
+    border-radius: 20px;
+  }
+
+  h2 {
+    font-weight: 500;
+    font-size: $font-size-28;
+    color: $dark;
+    margin: 0;
+  }
+}
+
+.pricingContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.pricingRow {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.priceCard {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  gap: 10px;
+  background: $gray-50;
+  border-radius: 16px;
+  flex: 1;
+
+  .label {
+    font-weight: 700;
+    font-size: $font-size-sm;
+    color: #1F2937;
+  }
+
+  .value {
+    font-weight: 700;
+    font-size: $font-size-2xl;
+    color: $gray-400;
+  }
+}
+
+.totalCard {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  gap: 10px;
+  background: $gray-50;
+  border-radius: 16px;
+  width: 100%;
+
+  .label {
+    font-weight: 700;
+    font-size: $font-size-sm;
+    color: #1F2937;
+  }
+
+  .value {
+    font-weight: 800;
+    font-size: $font-size-2xl;
+    color: $primary;
+  }
+}
