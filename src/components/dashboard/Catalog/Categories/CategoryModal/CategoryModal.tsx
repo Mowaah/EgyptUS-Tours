@@ -85,7 +85,7 @@ export default function CategoryModal({
           secondaryLabel="Cancel"
           secondaryOnClick={onClose}
           primaryOnClick={handleSave}
-          primaryDisabled={!name.trim()}
+          primaryDisabled={!name.trim() || (isEdit && name === initialName)}
         />
       </section>
     </div>

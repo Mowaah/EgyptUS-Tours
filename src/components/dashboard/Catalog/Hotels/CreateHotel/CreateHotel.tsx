@@ -12,21 +12,21 @@ import { MediaStep } from "./Steps/Media/MediaStep";
 import { SEOStep } from "./Steps/SEO/SEOStep";
 import { PricingStep } from "./Steps/Pricing/PricingStep";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
-import { DashboardFooter } from "@/components/dashboard/shared";
+import { WizardLayout } from "@/components/dashboard/shared";
+import { useWizard, WizardStepConfig } from "@/hooks/useWizard";
 import Image from "next/image";
 import styles from "./CreateHotel.module.scss";
 
-const STEPS = [
-  { label: "Overview", iconSrc: "/images/dashboard/catalog/trips/overview.svg" },
-  { label: "Rooms", iconSrc: "/images/dashboard/catalog/hotels/basic.svg" },
-  { label: "Pricing", iconSrc: "/images/dashboard/catalog/trips/pricing.svg" },
-  { label: "Media", iconSrc: "/images/dashboard/catalog/trips/media.svg" },
-  { label: "SEO", iconSrc: "/images/dashboard/catalog/trips/seo.svg" },
+const STEPS: WizardStepConfig[] = [
+  { label: "Overview", iconSrc: "/images/dashboard/catalog/trips/overview.svg", fieldsToValidate: ["hotelName", "totalRooms", "subtitle", "cityLocation", "starRating", "facilities", "description", "secondDescription"] },
+  { label: "Rooms", iconSrc: "/images/dashboard/catalog/hotels/basic.svg", fieldsToValidate: ["rooms"] },
+  { label: "Pricing", iconSrc: "/images/dashboard/catalog/trips/pricing.svg", fieldsToValidate: ["basePrice", "vat", "insurance"] },
+  { label: "Media", iconSrc: "/images/dashboard/catalog/trips/media.svg", fieldsToValidate: ["photos"] },
+  { label: "SEO", iconSrc: "/images/dashboard/catalog/trips/seo.svg", fieldsToValidate: ["seoTitle", "seoDescription", "seoKeywords", "seoSlug"] },
 ];
 
 export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDirtyChange?: (isDirty: boolean) => void }) {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(0); // 0-indexed for IconStepper
   const [isPublishedModalOpen, setIsPublishedModalOpen] = useState(false);
 
   const methods = useForm<CreateHotelValues>({
@@ -50,7 +50,15 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
           facilities: ["Daily VIP Treatment", "Bathroom with Shower", "49\" Smart TV", "Daily Access to the Spa", "Evening Turndown Service", "Coffee and Tea Service", "Air Conditioning", "Safety Deposit Box", "Minibar Drinks", "24-Hour Room Service", "Laundry Service", "Free WiFi"],
           photos: ["/images/dashboard/catalog/hotels/hotel-mock.png"]
         }
-      ]
+      ],
+      basePrice: "",
+      vat: "",
+      insurance: "",
+      photos: [],
+      seoTitle: "",
+      seoDescription: "",
+      seoKeywords: "",
+      seoSlug: ""
     } : {
       hotelName: "",
       totalRooms: "",
@@ -60,7 +68,15 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
       description: "",
       secondDescription: "",
       facilities: [],
-      rooms: []
+      rooms: [],
+      basePrice: "",
+      vat: "",
+      insurance: "",
+      photos: [],
+      seoTitle: "",
+      seoDescription: "",
+      seoKeywords: "",
+      seoSlug: ""
     },
   });
 
@@ -72,13 +88,20 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
 
   const onSubmit = (data: any) => {
     console.log("Submit Form Data:", data);
-    // Proceed to next step or submit if on last step
-    if (currentStep < STEPS.length - 1) {
-      setCurrentStep((prev) => prev + 1);
-    } else {
-      setIsPublishedModalOpen(true);
-    }
   };
+
+  const {
+    currentStep,
+    handleNext,
+    handlePrevious,
+    handleStepClick,
+  } = useWizard<CreateHotelValues>({
+    steps: STEPS,
+    methods,
+    onSubmit,
+    onFinished: () => setIsPublishedModalOpen(true),
+    isEdit: !!hotelId,
+  });
 
   const renderStep = () => {
     switch (currentStep) {
@@ -103,44 +126,20 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
 
   return (
     <FormProvider {...methods}>
-      <form id="create-hotel-form" className={styles.page} onSubmit={handleSubmit(onSubmit)}>
-        {/* Wrapper containing the dashboard IconStepper component */}
-        <div className={styles.stepIndicatorWrapper}>
-          <IconStepper 
-            steps={STEPS} 
-            currentStep={currentStep}
-            onStepClick={setCurrentStep}
-          />
-        </div>
-
-        {/* Main wizard forms */}
-        {renderStep()}
-
-        {/* Bottom Actions */}
-        {hotelId ? (
-          <DashboardFooter lastUpdateDate="6/6/2026" hideActions />
-        ) : (
-          <div className={styles.footerActions}>
-            <div className={styles.actionsContainer}>
-              <button 
-                type="button" 
-                className={styles.previousButton}
-                onClick={() => {
-                  if (currentStep > 0) setCurrentStep(prev => prev - 1);
-                }}
-                disabled={currentStep === 0}
-              >
-                <Image src="/images/dashboard/previous.svg" alt="Previous" width={20} height={20} />
-                <span>Previous</span>
-              </button>
-              <button type="submit" className={styles.nextButton}>
-                <span>{currentStep === STEPS.length - 1 ? "Publish Hotel" : "Next"}</span>
-                {currentStep !== STEPS.length - 1 && <Image src="/images/dashboard/next.svg" alt="Next" width={20} height={20} />}
-              </button>
-            </div>
-          </div>
-        )}
-      </form>
+      <div className={styles.page}>
+        <WizardLayout
+          steps={STEPS}
+          currentStep={currentStep}
+          isEdit={!!hotelId}
+          onNext={handleNext}
+          onPrevious={handlePrevious}
+          onStepClick={handleStepClick}
+          publishLabel="Publish Hotel"
+        >
+          {/* Main wizard forms */}
+          {renderStep()}
+        </WizardLayout>
+      </div>
 
       {isPublishedModalOpen && (
         <SuccessModal

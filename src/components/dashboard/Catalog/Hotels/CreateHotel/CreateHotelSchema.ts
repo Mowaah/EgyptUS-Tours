@@ -31,6 +31,9 @@ export const createHotelSchema = z.object({
   vat: z.string().optional(),
   insurance: z.string().optional(),
   
+  // Media
+  photos: z.array(z.any()).optional(),
+
   // Rooms
   rooms: z.array(roomSchema).default([]),
 });

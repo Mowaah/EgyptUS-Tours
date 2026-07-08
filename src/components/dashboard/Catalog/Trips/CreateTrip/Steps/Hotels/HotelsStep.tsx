@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useFormContext, Controller } from "react-hook-form";
+import { CreateTripValues } from "../../CreateTripSchema";
 import Image from "next/image";
 import { IncludedHotelCard } from "@/components/shared";
-import TablePanel from "@/components/dashboard/TablePanel/TablePanel";
 import { FilterSelect } from "@/components/dashboard/TablePanel/FilterSelect";
 import styles from "./HotelsStep.module.scss";
 
@@ -87,35 +88,58 @@ export function HotelsStep() {
     </div>
   );
 
-  const [selectedHotels, setSelectedHotels] = useState<number[]>([]);
-
-  const toggleHotel = (index: number) => {
-    if (selectedHotels.includes(index)) {
-      setSelectedHotels(selectedHotels.filter((i) => i !== index));
-    } else {
-      setSelectedHotels([...selectedHotels, index]);
-    }
-  };
+  const { control } = useFormContext<CreateTripValues>();
 
   return (
-    <TablePanel
-      ariaLabel="Hotels Selection"
-      title="Hotels"
-      iconSrc="/images/dashboard/catalog/trips/hotels.svg"
-      headerActions={searchBar}
-      toolbar={filterToolbar}
-      className={styles.hotelsPanel}
-    >
-      <div className={styles.grid}>
-        {HOTELS_DATA.map((hotel, i) => (
-          <IncludedHotelCard 
-            key={i} 
-            hotel={hotel as any} 
-            selected={selectedHotels.includes(i)}
-            onClick={() => toggleHotel(i)}
-          />
-        ))}
+    <div className={styles.hotelsPanel}>
+      <div className={styles.header}>
+        <div className={styles.headerLeft}>
+          <div className={styles.headerIcon}>
+            <Image src="/images/dashboard/catalog/trips/hotels.svg" alt="Hotels" width={20} height={20} />
+          </div>
+          <h2 className={styles.title}>Hotels</h2>
+        </div>
+        {searchBar}
       </div>
-    </TablePanel>
+
+      <div className={styles.content}>
+        <div className={styles.filtersSection}>
+          {filterToolbar}
+        </div>
+
+        <Controller
+          name="hotels"
+          control={control}
+          defaultValue={[]}
+          render={({ field }) => {
+            const selectedHotels = field.value || [];
+            
+            const toggleHotel = (index: number) => {
+              const idStr = index.toString();
+              if (selectedHotels.includes(idStr)) {
+                field.onChange(selectedHotels.filter((i) => i !== idStr));
+              } else {
+                field.onChange([...selectedHotels, idStr]);
+              }
+            };
+
+            return (
+              <div className={styles.tableSection}>
+                <div className={styles.grid}>
+                  {HOTELS_DATA.map((hotel, index) => (
+                    <IncludedHotelCard 
+                      key={index}
+                      hotel={hotel as any} 
+                      selected={selectedHotels.includes(index.toString())}
+                      onClick={() => toggleHotel(index)}
+                    />
+                  ))}
+                </div>
+              </div>
+            );
+          }}
+        />
+      </div>
+    </div>
   );
 }

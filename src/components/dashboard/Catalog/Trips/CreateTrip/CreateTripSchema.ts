@@ -65,6 +65,12 @@ export const createTripSchema = z.object({
     ).optional(),
   }).optional(),
 
+  // Hotels Step
+  hotels: z.array(z.string()).optional(),
+
+  // Media Step
+  photos: z.array(z.any()).optional(),
+
   // SEO Step
   metaTitle: z.string().optional(),
   metaDescription: z.string().optional(),

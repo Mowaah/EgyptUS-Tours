@@ -16,8 +16,8 @@ export interface PageCopy {
   breadcrumbTrail: BreadcrumbSegment[];
   searchPlaceholder?: string;
   hideSearch?: boolean;
-  primaryAction?: { label: string; iconSrc?: string; iconRotation?: number; form?: string; type?: "button" | "submit"; hideIcon?: boolean };
-  secondaryAction?: { label: string; iconSrc?: string; iconRotation?: number; form?: string; type?: "button" | "submit"; hideIcon?: boolean };
+  primaryAction?: { label: string; iconSrc?: string; iconRotation?: number; form?: string; type?: "button" | "submit" | "reset"; hideIcon?: boolean; variant?: "primary" | "secondary" | "tertiary"; disabled?: boolean };
+  secondaryAction?: { label: string; iconSrc?: string; iconRotation?: number; form?: string; type?: "button" | "submit" | "reset"; hideIcon?: boolean; variant?: "primary" | "secondary" | "tertiary"; disabled?: boolean };
   hideFilterButton?: boolean;
 }
 

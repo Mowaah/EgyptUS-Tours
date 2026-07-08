@@ -15,24 +15,24 @@ import { HotelsStep } from "./Steps/Hotels/HotelsStep";
 import { MediaStep } from "./Steps/Media/MediaStep";
 import { SEOStep } from "./Steps/SEO/SEOStep";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
-import { DashboardFooter } from "@/components/dashboard/shared";
+import { WizardLayout } from "@/components/dashboard/shared";
+import { useWizard, WizardStepConfig } from "@/hooks/useWizard";
 import Image from "next/image";
 import styles from "./CreateTrip.module.scss";
 
-const STEPS = [
-  { label: "Overview", iconSrc: "/images/dashboard/catalog/trips/overview.svg" },
-  { label: "Inclusions", iconSrc: "/images/dashboard/catalog/trips/inclusions.svg" },
-  { label: "Pricing", iconSrc: "/images/dashboard/catalog/trips/pricing.svg" },
-  { label: "Itinerary", iconSrc: "/images/dashboard/catalog/trips/itinerary.svg" },
-  { label: "Dates Availability", iconSrc: "/images/dashboard/catalog/trips/dates.svg" },
-  { label: "Hotels", iconSrc: "/images/dashboard/catalog/trips/hotels.svg" },
-  { label: "Media", iconSrc: "/images/dashboard/catalog/trips/media.svg" },
-  { label: "SEO", iconSrc: "/images/dashboard/catalog/trips/seo.svg" },
+const STEPS: WizardStepConfig[] = [
+  { label: "Overview", iconSrc: "/images/dashboard/catalog/trips/overview.svg", fieldsToValidate: ["tripName", "category", "destinations", "duration", "tourTypes", "description", "culturalValue", "whoIsTripFor"] },
+  { label: "Inclusions", iconSrc: "/images/dashboard/catalog/trips/inclusions.svg", fieldsToValidate: ["inclusions", "exclusions"] },
+  { label: "Pricing", iconSrc: "/images/dashboard/catalog/trips/pricing.svg", fieldsToValidate: ["pricing"] },
+  { label: "Itinerary", iconSrc: "/images/dashboard/catalog/trips/itinerary.svg", fieldsToValidate: ["itinerary"] },
+  { label: "Dates Availability", iconSrc: "/images/dashboard/catalog/trips/dates.svg", fieldsToValidate: ["datesAvailability"] },
+  { label: "Hotels", iconSrc: "/images/dashboard/catalog/trips/hotels.svg", fieldsToValidate: ["hotels"] },
+  { label: "Media", iconSrc: "/images/dashboard/catalog/trips/media.svg", fieldsToValidate: ["photos", "brochureFile"] },
+  { label: "SEO", iconSrc: "/images/dashboard/catalog/trips/seo.svg", fieldsToValidate: ["metaTitle", "metaDescription", "metaKeywords", "slug"] },
 ];
 
 export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirtyChange?: (isDirty: boolean) => void }) {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(0); // 0-indexed for IconStepper
   const [isPublishedModalOpen, setIsPublishedModalOpen] = useState(false);
 
   const methods = useForm<CreateTripValues>({
@@ -43,6 +43,7 @@ export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirty
       destinations: ["luxor-aswan"],
       duration: "4d-3n",
       tourTypes: ["private-tour", "group-tour"],
+      brochureFile: undefined,
       description: "Embark on an unforgettable journey through ancient Egypt along the legendary Nile River. Experience the magic of Luxor and Aswan with visits to magnificent temples, royal tombs, and timeless monuments. Sail aboard a luxury Nile cruise while exploring Karnak Temple, Valley of the Kings, Philae Temple, and the colossal Abu Simbel. Connect with 5,000 years of pharaonic history and ancient Egyptian civilization. Experience authentic Nubian culture, learn about hieroglyphics and ancient construction techniques, and participate in traditional felucca sailing. This journey offers insight into one of the world's oldest and most influential civilizations",
       culturalValue: "Connect with 5,000 years of pharaonic history and ancient Egyptian civilization. Experience authentic Nubian culture, learn about hieroglyphics and ancient construction techniques, and participate in traditional felucca sailing. This journey offers insight into one of the world's oldest and most influential civilizations",
       whoIsTripFor: "History enthusiasts, couples seeking romantic getaways, and culture lovers looking for an authentic Egyptian experience. Ideal for those who want to explore ancient wonders, learn about pharaonic dynasties, and experience the timeless beauty of the Nile River in comfort and luxury.",
@@ -50,12 +51,14 @@ export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirty
       exclusions: [],
       pricing: {
         privateTour: {
+          basePrice: "",
           seasons: [
             { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
             { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
           ],
         },
         groupTour: {
+          basePrice: "",
           seasons: [
             { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
             { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
@@ -63,20 +66,38 @@ export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirty
         },
       },
       itinerary: [
-        { title: "", subtitle: "", description: "", highlights: [] },
-        { title: "", subtitle: "", description: "", highlights: [] },
+        { title: "", subtitle: "", description: "", highlights: [], image: undefined },
+        { title: "", subtitle: "", description: "", highlights: [], image: undefined },
       ],
+      hotels: [],
+      photos: [],
+      datesAvailability: { enabled: false, dates: [] },
+      metaTitle: "",
+      metaDescription: "",
+      metaKeywords: "",
+      slug: ""
     } : {
+      tripName: "",
+      category: "",
+      destinations: [],
+      duration: "",
+      tourTypes: [],
+      brochureFile: undefined,
+      description: "",
+      culturalValue: "",
+      whoIsTripFor: "",
       inclusions: [],
       exclusions: [],
       pricing: {
         privateTour: {
+          basePrice: "",
           seasons: [
             { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
             { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
           ],
         },
         groupTour: {
+          basePrice: "",
           seasons: [
             { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
             { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
@@ -84,9 +105,16 @@ export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirty
         },
       },
       itinerary: [
-        { title: "", subtitle: "", description: "", highlights: [] },
-        { title: "", subtitle: "", description: "", highlights: [] },
+        { title: "", subtitle: "", description: "", highlights: [], image: undefined },
+        { title: "", subtitle: "", description: "", highlights: [], image: undefined },
       ],
+      hotels: [],
+      photos: [],
+      datesAvailability: { enabled: false, dates: [] },
+      metaTitle: "",
+      metaDescription: "",
+      metaKeywords: "",
+      slug: ""
     },
   });
 
@@ -98,13 +126,20 @@ export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirty
 
   const onSubmit = (data: CreateTripValues) => {
     console.log("Submit Form Data:", data);
-    // Proceed to next step or submit if on last step
-    if (currentStep < STEPS.length - 1) {
-      setCurrentStep((prev) => prev + 1);
-    } else {
-      setIsPublishedModalOpen(true);
-    }
   };
+
+  const {
+    currentStep,
+    handleNext,
+    handlePrevious,
+    handleStepClick,
+  } = useWizard<CreateTripValues>({
+    steps: STEPS,
+    methods,
+    onSubmit,
+    onFinished: () => setIsPublishedModalOpen(true),
+    isEdit: !!tripId,
+  });
 
   const renderStep = () => {
     switch (currentStep) {
@@ -135,44 +170,20 @@ export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirty
 
   return (
     <FormProvider {...methods}>
-      <form id="create-trip-form" className={styles.page} onSubmit={handleSubmit(onSubmit)}>
-        {/* Wrapper containing the dashboard IconStepper component */}
-        <div className={styles.stepIndicatorWrapper}>
-          <IconStepper 
-            steps={STEPS} 
-            currentStep={currentStep}
-            onStepClick={setCurrentStep}
-          />
-        </div>
-
-        {/* Main wizard forms */}
-        {renderStep()}
-
-        {/* Bottom Actions */}
-        {tripId ? (
-          <DashboardFooter lastUpdateDate="6/6/2026" hideActions />
-        ) : (
-          <div className={styles.footerActions}>
-            <div className={styles.actionsContainer}>
-              <button 
-                type="button" 
-                className={styles.previousButton}
-                onClick={() => {
-                  if (currentStep > 0) setCurrentStep(prev => prev - 1);
-                }}
-                disabled={currentStep === 0}
-              >
-                <Image src="/images/dashboard/previous.svg" alt="Previous" width={20} height={20} />
-                <span>Previous</span>
-              </button>
-              <button type="submit" className={styles.nextButton}>
-                <span>{currentStep === STEPS.length - 1 ? "Publish Trip" : "Next"}</span>
-                {currentStep !== STEPS.length - 1 && <Image src="/images/dashboard/next.svg" alt="Next" width={20} height={20} />}
-              </button>
-            </div>
-          </div>
-        )}
-      </form>
+      <div className={styles.page}>
+        <WizardLayout
+          steps={STEPS}
+          currentStep={currentStep}
+          isEdit={!!tripId}
+          onNext={handleNext}
+          onPrevious={handlePrevious}
+          onStepClick={handleStepClick}
+          publishLabel="Publish Trip"
+        >
+          {/* Main wizard forms */}
+          {renderStep()}
+        </WizardLayout>
+      </div>
 
       {isPublishedModalOpen && (
         <SuccessModal
