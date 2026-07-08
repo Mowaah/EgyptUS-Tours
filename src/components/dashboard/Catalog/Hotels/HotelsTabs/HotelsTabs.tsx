@@ -12,7 +12,7 @@ export default function HotelsTabs() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const activeTab = TABS.find((tab) => pathname === tab.path || pathname.startsWith(tab.path + "/"))?.id || "hotels";
+  const activeTab = [...TABS].sort((a, b) => b.path.length - a.path.length).find((tab) => pathname === tab.path || pathname.startsWith(tab.path + "/"))?.id || "hotels";
 
   const handleTabChange = (tabId: string) => {
     const selectedTab = TABS.find((tab) => tab.id === tabId);
