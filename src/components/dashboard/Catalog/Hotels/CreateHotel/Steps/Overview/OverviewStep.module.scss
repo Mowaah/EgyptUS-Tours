@@ -1,0 +1,121 @@
+@use "@/styles/variables" as *;
+
+.card {
+  padding: 32px;
+  border-radius: 24px;
+}
+
+.whiteTabs {
+  background: $white;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.inputRow {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  width: 100%;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+  }
+}
+
+.facilityInputWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  
+  input {
+    flex: 1;
+    height: 48px;
+    background: $background;
+    border: 1px solid $gray-200-zinc;
+    border-radius: 24px;
+    padding: 0 16px;
+    font-family: 'Trip Sans', sans-serif;
+    font-size: $font-size-sm;
+    color: #444A51;
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+    }
+  }
+
+  .addBtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 48px;
+    height: 48px;
+    background: $primary;
+    border-radius: 100px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+
+    &:hover:not(:disabled) {
+      background: darken($primary, 5%);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.facilitiesTags {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+}
+
+.facilityTag {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 12px;
+  gap: 4px;
+  height: 40px;
+  background: #E4F2FF;
+  border-radius: 96px;
+
+  span {
+    font-family: 'Trip Sans', sans-serif;
+    font-weight: 400;
+    font-size: $font-size-xs;
+    color: $primary;
+  }
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    color: $primary;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}

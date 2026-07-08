@@ -1,13 +1,13 @@
 "use client";
 
-import { Suspense, use, useState } from "react";
+import { use, Suspense, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CreateTrip } from "@/components/dashboard/Catalog/Trips/CreateTrip";
+import { CreateHotel } from "@/components/dashboard/Catalog/Hotels/CreateHotel/CreateHotel";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import { DashboardConfirmationModal } from "@/components/dashboard/shared";
 import styles from "../../page.module.scss";
 
-export default function EditTripPage({ params }: { params: Promise<{ id: string }> }) {
+export default function EditHotelPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const { id } = use(params);
   
@@ -15,7 +15,7 @@ export default function EditTripPage({ params }: { params: Promise<{ id: string 
   const [isDirty, setIsDirty] = useState(false);
 
   const handleSaveChanges = () => {
-    const form = document.getElementById("create-trip-form") as HTMLFormElement;
+    const form = document.getElementById("create-hotel-form") as HTMLFormElement;
     if (form) {
       form.requestSubmit();
     }
@@ -24,11 +24,12 @@ export default function EditTripPage({ params }: { params: Promise<{ id: string 
   return (
     <div className={styles.page}>
       <DashboardNavbar 
-        title="Edit Trip"
-        subtitle="Update trip details, pricing, itinerary, and availability information."
+        title="Edit Hotel"
+        subtitle="Update the details of this hotel"
         breadcrumbTrail={[
-          { label: "Catalog", href: "/dashboard/catalog/trips" },
-          { label: "Edit Trip" },
+          { label: "Catalog", href: "/dashboard/catalog/hotels" },
+          { label: "Hotels", href: "/dashboard/catalog/hotels" },
+          { label: "Edit Hotel" },
         ]}
         hideSearch={true}
         hideFilterButton={true}
@@ -38,7 +39,7 @@ export default function EditTripPage({ params }: { params: Promise<{ id: string 
         onPrimaryAction={handleSaveChanges}
       />
       <Suspense fallback={<div>Loading...</div>}>
-        <CreateTrip tripId={id} onDirtyChange={setIsDirty} />
+        <CreateHotel hotelId={id} onDirtyChange={setIsDirty} />
       </Suspense>
 
       <DashboardConfirmationModal
@@ -46,7 +47,7 @@ export default function EditTripPage({ params }: { params: Promise<{ id: string 
         variant="activate"
         onClose={() => {
           setIsDiscardModalOpen(false);
-          router.push("/dashboard/catalog/trips?discarded=true");
+          router.push("/dashboard/catalog/hotels?discarded=true");
         }}
         onConfirm={() => setIsDiscardModalOpen(false)}
         title="Discard Changes?"

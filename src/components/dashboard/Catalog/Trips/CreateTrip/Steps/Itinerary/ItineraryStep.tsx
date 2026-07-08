@@ -163,14 +163,7 @@ export function ItineraryStep() {
     } as never);
   };
 
-  // Pre-fill with 2 days if empty
-  useEffect(() => {
-    if (days.length === 0) {
-      appendDay({ title: "", subtitle: "", description: "", highlights: [], image: undefined } as never);
-      appendDay({ title: "", subtitle: "", description: "", highlights: [], image: undefined } as never);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // Days are now initialized in CreateTrip.tsx defaultValues
 
   return (
     <div className={styles.container}>

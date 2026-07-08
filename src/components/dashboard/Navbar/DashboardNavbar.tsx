@@ -17,6 +17,7 @@ interface ActionConfig {
   iconRotation?: number;
   hideIcon?: boolean;
   variant?: "primary" | "secondary" | "tertiary";
+  disabled?: boolean;
 }
 
 interface DashboardNavbarProps {
@@ -227,6 +228,7 @@ export default function DashboardNavbar({
                   form={visiblePrimaryAction.form}
                   className={getActionClass(visiblePrimaryAction, styles.primaryActionButton)}
                   onClick={onPrimaryAction}
+                  disabled={visiblePrimaryAction.disabled}
                 >
                   {visiblePrimaryAction.label}
                   {!visiblePrimaryAction.hideIcon && (

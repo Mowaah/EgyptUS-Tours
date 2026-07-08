@@ -12,7 +12,7 @@ interface FormSectionProps {
 
 export function FormSection({ title, iconSrc, children, className = "", headerAction }: FormSectionProps) {
   return (
-    <section className={`${styles.section} ${className}`}>
+    <div className={`${styles.section} ${className}`}>
       {(title || iconSrc || headerAction) && (
         <div className={styles.sectionHeader}>
           {iconSrc && (
@@ -25,6 +25,6 @@ export function FormSection({ title, iconSrc, children, className = "", headerAc
         </div>
       )}
       {children}
-    </section>
+    </div>
   );
 }

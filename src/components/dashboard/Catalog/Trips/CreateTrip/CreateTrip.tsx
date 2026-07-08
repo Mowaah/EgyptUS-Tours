@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,7 +30,7 @@ const STEPS = [
   { label: "SEO", iconSrc: "/images/dashboard/catalog/trips/seo.svg" },
 ];
 
-export function CreateTrip({ tripId }: { tripId?: string }) {
+export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirtyChange?: (isDirty: boolean) => void }) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0); // 0-indexed for IconStepper
   const [isPublishedModalOpen, setIsPublishedModalOpen] = useState(false);
@@ -47,14 +47,54 @@ export function CreateTrip({ tripId }: { tripId?: string }) {
       culturalValue: "Connect with 5,000 years of pharaonic history and ancient Egyptian civilization. Experience authentic Nubian culture, learn about hieroglyphics and ancient construction techniques, and participate in traditional felucca sailing. This journey offers insight into one of the world's oldest and most influential civilizations",
       whoIsTripFor: "History enthusiasts, couples seeking romantic getaways, and culture lovers looking for an authentic Egyptian experience. Ideal for those who want to explore ancient wonders, learn about pharaonic dynasties, and experience the timeless beauty of the Nile River in comfort and luxury.",
       inclusions: [],
-      exclusions: []
+      exclusions: [],
+      pricing: {
+        privateTour: {
+          seasons: [
+            { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
+            { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
+          ],
+        },
+        groupTour: {
+          seasons: [
+            { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
+            { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
+          ],
+        },
+      },
+      itinerary: [
+        { title: "", subtitle: "", description: "", highlights: [] },
+        { title: "", subtitle: "", description: "", highlights: [] },
+      ],
     } : {
       inclusions: [],
-      exclusions: []
+      exclusions: [],
+      pricing: {
+        privateTour: {
+          seasons: [
+            { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
+            { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
+          ],
+        },
+        groupTour: {
+          seasons: [
+            { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
+            { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
+          ],
+        },
+      },
+      itinerary: [
+        { title: "", subtitle: "", description: "", highlights: [] },
+        { title: "", subtitle: "", description: "", highlights: [] },
+      ],
     },
   });
 
-  const { handleSubmit } = methods;
+  const { handleSubmit, formState: { isDirty } } = methods;
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
 
   const onSubmit = (data: CreateTripValues) => {
     console.log("Submit Form Data:", data);

@@ -38,6 +38,7 @@ interface DashboardFieldSelectProps
   control: "select";
   options: { label: string; value: string; disabled?: boolean }[];
   multiple?: boolean;
+  placeholder?: string;
 }
 
 interface DashboardFieldTextareaProps
@@ -69,6 +70,7 @@ function ModalSelect({
   disabled,
   variant = "default",
   multiple,
+  placeholder,
 }: {
   id?: string;
   label: ReactNode;
@@ -81,6 +83,8 @@ function ModalSelect({
   disabled?: boolean;
   variant?: "default" | "modal";
   multiple?: boolean;
+  placeholder?: string;
+  name?: string;
 }) {
   const [open, setOpen] = useState(false);
   const initialValue = value ?? defaultValue ?? (multiple ? [] : "");
@@ -114,11 +118,11 @@ function ModalSelect({
         </div>
       );
     } else {
-      displayValue = options?.find((o) => o.disabled && o.value === "")?.label || "";
+      displayValue = options?.find((o) => o.disabled && o.value === "")?.label || placeholder || "";
     }
   } else {
     const selectedOption = options?.find((option) => option.value === stringValue);
-    displayValue = selectedOption?.label ?? stringValue;
+    displayValue = (selectedOption?.label ?? stringValue) || placeholder;
     isPlaceholder = !stringValue || selectedOption?.disabled || false;
   }
 
@@ -201,9 +205,9 @@ function ModalSelect({
         setInternalValue(optionValue);
       }
       onChange?.({
-        target: { value: optionValue },
-        currentTarget: { value: optionValue },
-      } as ChangeEvent<HTMLSelectElement>);
+        target: { value: optionValue, name: name },
+        currentTarget: { value: optionValue, name: name },
+      } as any);
       setOpen(false);
     }
   };
@@ -347,6 +351,8 @@ export default function DashboardField({
           disabled={(mergedProps as Omit<DashboardFieldSelectProps, "options">).disabled}
           onChange={(mergedProps as Omit<DashboardFieldSelectProps, "options">).onChange}
           multiple={(mergedProps as Omit<DashboardFieldSelectProps, "options">).multiple}
+          placeholder={(mergedProps as Omit<DashboardFieldSelectProps, "options">).placeholder}
+          name={(mergedProps as any).name}
         />
       ) : (
         <>

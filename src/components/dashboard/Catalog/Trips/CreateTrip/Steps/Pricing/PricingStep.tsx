@@ -4,75 +4,10 @@ import Image from "next/image";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import CustomDatePicker from "@/components/shared/CustomDatePicker/CustomDatePicker";
 import { CreateTripValues } from "../../CreateTripSchema";
+import { CurrencyField } from "@/components/dashboard/shared";
 import styles from "./PricingStep.module.scss";
 
-const NumberSpinnerAdornment = ({ fieldName }: { fieldName: string }) => {
-  const { getValues, setValue, setFocus } = useFormContext();
 
-  const handleIncrement = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const rawVal = String(getValues(fieldName) || "").replace(/[^0-9.]/g, "");
-    const current = parseFloat(rawVal) || 0;
-    setValue(fieldName, (current + 1).toString() + "$", { shouldValidate: true, shouldDirty: true });
-    setFocus(fieldName);
-  };
-
-  const handleDecrement = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const rawVal = String(getValues(fieldName) || "").replace(/[^0-9.]/g, "");
-    const current = parseFloat(rawVal) || 0;
-    if (current > 0) {
-      setValue(fieldName, (current - 1).toString() + "$", { shouldValidate: true, shouldDirty: true });
-    }
-    setFocus(fieldName);
-  };
-
-  return (
-    <div className={styles.numberAdornmentContainer}>
-      <div className={styles.numberAdornment}>
-        <button type="button" onClick={handleIncrement} onMouseDown={(e) => e.preventDefault()}>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="18 15 12 9 6 15"></polyline>
-          </svg>
-        </button>
-        <button type="button" onClick={handleDecrement} onMouseDown={(e) => e.preventDefault()}>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </button>
-      </div>
-    </div>
-  );
-};
-
-const CurrencyField = ({ name, label, control }: { name: any; label: string; control: any }) => {
-  return (
-    <Controller
-      name={name}
-      control={control}
-      render={({ field }) => (
-        <DashboardField
-          variant="modal"
-          label={label}
-          placeholder="0.0$"
-          inputMode="numeric"
-          type="text"
-          {...field}
-          value={field.value || ""}
-          onChange={(e) => {
-            const raw = e.target.value.replace(/[^0-9.]/g, "");
-            if (raw) {
-              field.onChange(raw + "$");
-            } else {
-              field.onChange("");
-            }
-          }}
-          endAdornment={<NumberSpinnerAdornment fieldName={name} />}
-        />
-      )}
-    />
-  );
-};
 
 const CalendarAdornment = () => (
   <div className={styles.calendarAdornment}>
@@ -99,24 +34,9 @@ export function PricingStep() {
     name: "pricing.groupTour.seasons" as never,
   });
 
-  const handleAddNewSeason = () => {
-    // Adds a new season to both private and group tours for convenience
-    appendPrivateSeason({ dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" });
-    appendGroupSeason({ dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" });
-  };
+  // No global handleAddNewSeason needed
 
-  // Pre-fill with two empty seasons if empty
-  useEffect(() => {
-    if (privateSeasons.length === 0) {
-      appendPrivateSeason({ dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" });
-      appendPrivateSeason({ dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" });
-    }
-    if (groupSeasons.length === 0) {
-      appendGroupSeason({ dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" });
-      appendGroupSeason({ dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" });
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // Seasons are now initialized in CreateTrip.tsx defaultValues
 
   return (
     <div className={styles.pricingContainer}>
@@ -127,19 +47,25 @@ export function PricingStep() {
           </div>
           <h2 className={styles.title}>General Pricing</h2>
         </div>
-        <button type="button" onClick={handleAddNewSeason} className={styles.addButton}>
-          <Image src="/images/dashboard/navbar/add-circle.svg" alt="Add" width={24} height={24} />
-        </button>
       </div>
 
       {/* Private Tour Section */}
       <div className={styles.tourSection}>
         <div className={styles.basePriceWrapper}>
-          <CurrencyField
-            label="Private Tour (Per person)"
-            name="pricing.privateTour.basePrice"
-            control={control}
-          />
+          <div className={styles.basePriceField}>
+            <CurrencyField
+              label="Private Tour (Per person)"
+              name="pricing.privateTour.basePrice"
+              control={control}
+            />
+          </div>
+          <button 
+            type="button" 
+            onClick={() => appendPrivateSeason({ dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" })} 
+            className={styles.addSeasonButton}
+          >
+            <Image src="/images/dashboard/navbar/add-circle.svg" alt="Add" width={24} height={24} />
+          </button>
         </div>
         <div className={styles.seasonsGrid}>
           {privateSeasons.map((field, index) => (
@@ -151,6 +77,7 @@ export function PricingStep() {
                   render={({ field }) => (
                     <CustomDatePicker
                       variant="custom"
+                      selectsRange={true}
                       value={field.value || ""}
                       onChange={field.onChange}
                       renderTrigger={(isOpen, setIsOpen, displayTxt) => (
@@ -160,7 +87,7 @@ export function PricingStep() {
                             label="Select trip date"
                             value={displayTxt || field.value || ""}
                             readOnly
-                            placeholder="Select date"
+                            placeholder="e.g. May - Sep"
                             endAdornment={<CalendarAdornment />}
                           />
                         </div>
@@ -200,11 +127,20 @@ export function PricingStep() {
       {/* Group Tour Section */}
       <div className={styles.tourSection}>
         <div className={styles.basePriceWrapper}>
-          <CurrencyField
-            label="Group Tour (Per person)"
-            name="pricing.groupTour.basePrice"
-            control={control}
-          />
+          <div className={styles.basePriceField}>
+            <CurrencyField
+              label="Group Tour (Per person)"
+              name="pricing.groupTour.basePrice"
+              control={control}
+            />
+          </div>
+          <button 
+            type="button" 
+            onClick={() => appendGroupSeason({ dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" })} 
+            className={styles.addSeasonButton}
+          >
+            <Image src="/images/dashboard/navbar/add-circle.svg" alt="Add" width={24} height={24} />
+          </button>
         </div>
         <div className={styles.seasonsGrid}>
           {groupSeasons.map((field, index) => (
@@ -216,6 +152,7 @@ export function PricingStep() {
                   render={({ field }) => (
                     <CustomDatePicker
                       variant="custom"
+                      selectsRange={true}
                       value={field.value || ""}
                       onChange={field.onChange}
                       renderTrigger={(isOpen, setIsOpen, displayTxt) => (
@@ -225,7 +162,7 @@ export function PricingStep() {
                             label="Select trip date"
                             value={displayTxt || field.value || ""}
                             readOnly
-                            placeholder="Select date"
+                            placeholder="e.g. May - Sep"
                             endAdornment={<CalendarAdornment />}
                           />
                         </div>

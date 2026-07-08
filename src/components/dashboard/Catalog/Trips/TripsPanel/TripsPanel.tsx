@@ -12,6 +12,8 @@ import { mockCatalogTrips } from "../mockCatalogTrips";
 import { catalogTripsColumns, catalogTripsRowActions } from "./catalogTripsColumns";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
+import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
+import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 
 const filterOptions = {
   category: ["All", "Multi Country Tours", "Honeymoon", "Family", "Adventure"],
@@ -39,10 +41,14 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
 
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
+  const [tripsData, setTripsData] = useState(mockCatalogTrips);
+  
+  const [confirmModal, setConfirmModal] = useState<{ open: boolean; action: "Archive" | "Delete" | null; row: any }>({ open: false, action: null, row: null });
+  const [banner, setBanner] = useState<{ show: boolean; message: string }>({ show: false, message: "" });
 
   const filteredTrips = useMemo(
     () =>
-      mockCatalogTrips.filter((trip) => {
+      tripsData.filter((trip) => {
         if (searchQuery) {
           const lowerQuery = searchQuery.toLowerCase();
           if (
@@ -130,12 +136,45 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
               router.push(`/dashboard/catalog/trips/${r.id}`);
             } else if (action === "Edit") {
               router.push(`/dashboard/catalog/trips/${r.id}/edit`);
+            } else if (action === "Archive") {
+              setConfirmModal({ open: true, action: "Archive", row: r });
+            } else if (action === "Delete") {
+              setConfirmModal({ open: true, action: "Delete", row: r });
             } else {
               console.log(`Action ${action} triggered for row`, r);
             }
           })
         }
         defaultPageSize={10}
+      />
+      <DashboardConfirmationModal
+        open={confirmModal.open}
+        variant={confirmModal.action === "Delete" ? "delete" : "activate"}
+        title={confirmModal.action === "Delete" ? "Delete Trip" : "Archive Trip?"}
+        message={
+          confirmModal.action === "Delete"
+            ? `Are you sure you want to delete "${confirmModal.row?.tripName}"? This action cannot be undone.`
+            : "The trip will no longer be available for bookings or visible in the catalog, but you can restore it at any time."
+        }
+        confirmLabel={confirmModal.action === "Delete" ? "Yes, delete it" : "Archive Trip"}
+        cancelLabel={confirmModal.action === "Delete" ? "Keep it" : "Cancel"}
+        onClose={() => setConfirmModal({ open: false, action: null, row: null })}
+        onConfirm={() => {
+          if (confirmModal.action === "Archive") {
+            setTripsData(prev => prev.map(t => t.id === confirmModal.row?.id ? { ...t, status: "Archived" } : t));
+            setBanner({ show: true, message: "The trip has been archived successfully and is no longer visible in the active trips list" });
+          } else if (confirmModal.action === "Delete") {
+            setTripsData(prev => prev.filter(t => t.id !== confirmModal.row?.id));
+            setBanner({ show: true, message: "The trip has been deleted successfully" });
+          }
+          setConfirmModal({ open: false, action: null, row: null });
+        }}
+      />
+      <DashboardStatusBanner
+        show={banner.show}
+        variant="success"
+        message={banner.message}
+        onClose={() => setBanner({ show: false, message: "" })}
       />
     </TablePanel>
   );

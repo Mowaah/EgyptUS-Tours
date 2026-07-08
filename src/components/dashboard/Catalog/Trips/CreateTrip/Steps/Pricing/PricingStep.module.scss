@@ -45,22 +45,7 @@
   margin: 0;
 }
 
-.addButton {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 44px;
-  height: 44px;
-  background: $primary;
-  border-radius: 100px;
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.2s;
 
-  &:hover {
-    opacity: 0.9;
-  }
-}
 
 .tourSection {
   display: flex;
@@ -71,18 +56,40 @@
 }
 
 .basePriceWrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
   width: 100%;
+}
+
+.basePriceField {
+  flex: 1;
+}
+
+.addSeasonButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 44px;
+  height: 44px;
+  background: $primary;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  transition: filter 0.2s;
+  flex-shrink: 0;
+  margin-bottom: 6px;
+
+  &:hover {
+    filter: brightness(0.9);
+  }
 }
 
 .seasonsGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 24px;
   width: 100%;
-
-  @media (max-width: 1280px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;

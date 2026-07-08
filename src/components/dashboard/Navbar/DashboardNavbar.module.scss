@@ -230,8 +230,13 @@
   transform: none;
   flex-shrink: 0;
 
-  &:hover {
+  &:hover:not(:disabled) {
     filter: brightness(0.94);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 
@@ -255,8 +260,15 @@
   transition: background $transition-fast;
   flex-shrink: 0;
 
-  &:hover {
-    background: $gray-50;
+  &:hover:not(:disabled) {
+    background: darken($background, 2%);
+    color: $dark;
+    border-color: rgba(102, 107, 109, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 
@@ -280,8 +292,13 @@
   transition: filter $transition-fast;
   flex-shrink: 0;
 
-  &:hover {
+  &:hover:not(:disabled) {
     filter: brightness(0.96);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 

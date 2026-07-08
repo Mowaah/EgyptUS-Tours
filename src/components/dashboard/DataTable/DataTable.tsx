@@ -78,7 +78,9 @@ function ActionsCell<T>({
                     ? styles.menuActionWarning
                     : styles.menuAction
                 }
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
                   action.onClick?.(row);
                   setOpenRowId(null);
                 }}

@@ -380,3 +380,125 @@ input:focus + .slider {
 input:checked + .slider:before {
   transform: translateX(20px);
 }
+
+.multiUploadWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+}
+
+.multiDropzoneBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  gap: 10px;
+  width: 100%;
+  min-height: 112px;
+  background: $background;
+  border: 1px dashed $border-strong;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: $gray-50;
+  }
+}
+
+.multiDropzoneContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.multiDropzoneTitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 700;
+  font-size: $font-size-xs;
+  line-height: 12px;
+  color: $gray-400;
+  margin: 0;
+}
+
+.multiDropzoneSubtitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 400;
+  font-size: $font-size-xs;
+  line-height: 16px;
+  color: $gray-400;
+  margin: 0;
+}
+
+.multiThumbnailList {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.multiThumbnailWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  gap: 4px;
+  width: 74px;
+  height: 86px;
+  background: $background;
+  border-radius: 10px;
+}
+
+.multiThumbnailHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  border-radius: 100px;
+}
+
+.multiThumbnailTitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 400;
+  font-size: $font-size-10;
+  line-height: 14px;
+  color: $gray-600;
+}
+
+.multiThumbnailBox {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 58px;
+  height: 52px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  position: relative;
+}
+
+.multiThumbnailDelete {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #FDF2F4;
+  border-radius: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+  
+  &:hover {
+    background: #FCE8EC;
+  }
+}

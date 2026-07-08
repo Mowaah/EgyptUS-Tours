@@ -1,0 +1,352 @@
+@use "@/styles/variables" as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  gap: 18px;
+  width: 100%;
+  background: $background;
+  border-radius: 24px;
+}
+
+.titleRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.titleLeft {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.iconWrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: $dashboard-expandable-hover;
+  border-radius: 20px;
+}
+
+.titleText {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: $font-size-28;
+  color: $dark;
+  margin: 0;
+}
+
+.iconBtnAdd {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 44px;
+  height: 44px;
+  background: $primary;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.roomsList {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 20px;
+  width: 100%;
+}
+
+.roomCard {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px;
+  gap: 16px;
+  width: calc(50% - 10px);
+  border: 1px solid rgba(225, 225, 225, 0.5);
+  border-radius: 24px;
+
+  @media (max-width: 1024px) {
+    width: 100%;
+  }
+}
+
+.roomHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.roomTitleWrap {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 12px;
+  gap: 8px;
+  height: 33px;
+  border-radius: 96px;
+}
+
+.roomTitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 700;
+  font-size: $font-size-19;
+  color: $gray-500-zinc;
+  margin: 0;
+}
+
+.deleteBtn {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  background: #FDF2F4;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background: #FCE8EC;
+  }
+}
+
+.formFieldsArea {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px;
+  gap: 8px;
+  width: 100%;
+  background: $gray-50;
+  border-radius: 16px;
+}
+
+.rowGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.fieldItem {
+  flex: 1;
+}
+
+.facilitiesField {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.facilitiesHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.facilitiesLabel {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 700;
+  font-size: $font-size-sm;
+  color: $gray-600;
+  margin: 0;
+}
+
+.facilitiesAddBtn {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 700;
+  font-size: $font-size-sm;
+  color: $primary;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.facilitiesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.facilityInputRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.facilityInputField {
+  flex: 1;
+  height: 48px;
+  background: $background;
+  border: 1px solid $gray-200-zinc;
+  border-radius: 24px;
+  padding: 0 16px;
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 400;
+  font-size: $font-size-sm;
+  color: $gray-700;
+  outline: none;
+
+  &::placeholder {
+    color: $gray-400;
+  }
+
+  &:focus {
+    border-color: $primary;
+  }
+}
+
+.standardFacilitiesBox {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  padding: 16px;
+  gap: 12px;
+  width: 100%;
+  background: $background;
+  border: 1px solid $gray-200-zinc;
+  border-radius: 24px;
+}
+
+.stdFacilityActive {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+  gap: 8px;
+  height: 36px;
+  background: #EAF3FF;
+  border-radius: 96px;
+}
+
+.stdFacilityRemoveBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.stdFacilityText {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 400;
+  font-size: $font-size-13;
+  color: #3B7BF5;
+}
+
+.photoSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.photoLabel {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 700;
+  font-size: $font-size-sm;
+  color: $gray-600;
+  margin: 0;
+}
+
+.previewSection {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 12px 16px;
+  gap: 10px;
+  width: 100%;
+  height: 67px;
+  background: $background;
+  border: 1px solid $gray-200-zinc;
+  border-radius: 24px;
+  margin-top: 24px;
+}
+
+.previewInner {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.previewLabel {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: $font-size-lg;
+  color: #1F2937;
+  margin: 0;
+}
+
+.previewText {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: $font-size-2xl;
+  color: $primary;
+  margin: 0;
+}

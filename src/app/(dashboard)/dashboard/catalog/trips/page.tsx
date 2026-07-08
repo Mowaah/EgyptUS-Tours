@@ -12,11 +12,17 @@ import styles from "./page.module.scss";
 function StatusBanners() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [show, setShow] = useState<"deleted" | null>(null);
+  const [show, setShow] = useState<"deleted" | "discarded" | "draft" | null>(null);
 
   useEffect(() => {
-    if (searchParams?.get("deleted") === "true") {
-      setShow("deleted");
+    const isDeleted = searchParams?.get("deleted") === "true";
+    const isDiscarded = searchParams?.get("discarded") === "true";
+    const isDraft = searchParams?.get("draft") === "true";
+
+    if (isDeleted || isDiscarded || isDraft) {
+      if (isDeleted) setShow("deleted");
+      else if (isDiscarded) setShow("discarded");
+      else if (isDraft) setShow("draft");
       // Clean URL params
       router.replace('/dashboard/catalog/trips');
     }
@@ -27,6 +33,10 @@ function StatusBanners() {
   let message = "";
   if (show === "deleted") {
     message = "The trip has been deleted successfully";
+  } else if (show === "discarded") {
+    message = "The trip has been discard successfully";
+  } else if (show === "draft") {
+    message = "The trip has been saved as a draft successfully";
   }
 
   return (

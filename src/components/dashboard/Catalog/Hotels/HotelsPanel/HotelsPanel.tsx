@@ -12,6 +12,8 @@ import { mockCatalogHotels } from "../mockCatalogHotels";
 import { catalogHotelsColumns, catalogHotelsRowActions } from "./catalogHotelsColumns";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
+import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
+import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 
 const filterOptions = {
   destination: ["All", "Cairo", "Luxor", "Aswan", "Alexandria"],
@@ -37,10 +39,14 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
 
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
+  const [hotelsData, setHotelsData] = useState(mockCatalogHotels);
+
+  const [confirmModal, setConfirmModal] = useState<{ open: boolean; action: "Archive" | "Delete" | null; row: any }>({ open: false, action: null, row: null });
+  const [banner, setBanner] = useState<{ show: boolean; message: string }>({ show: false, message: "" });
 
   const filteredHotels = useMemo(
     () =>
-      mockCatalogHotels.filter((hotel) => {
+      hotelsData.filter((hotel) => {
         if (searchQuery) {
           const lowerQuery = searchQuery.toLowerCase();
           if (
@@ -127,12 +133,45 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
               router.push(`/dashboard/catalog/hotels/${r.id}`);
             } else if (action === "Edit") {
               router.push(`/dashboard/catalog/hotels/${r.id}/edit`);
+            } else if (action === "Archive") {
+              setConfirmModal({ open: true, action: "Archive", row: r });
+            } else if (action === "Delete") {
+              setConfirmModal({ open: true, action: "Delete", row: r });
             } else {
               console.log(`Action ${action} triggered for row`, r);
             }
           })
         }
         defaultPageSize={10}
+      />
+      <DashboardConfirmationModal
+        open={confirmModal.open}
+        variant={confirmModal.action === "Delete" ? "delete" : "activate"}
+        title={confirmModal.action === "Delete" ? "Delete Hotel" : "Archive Hotel?"}
+        message={
+          confirmModal.action === "Delete"
+            ? `Are you sure you want to delete "${confirmModal.row?.hotelName}"? This action cannot be undone.`
+            : "The hotel will no longer be available for bookings or visible in the catalog, but you can restore it at any time."
+        }
+        confirmLabel={confirmModal.action === "Delete" ? "Yes, delete it" : "Archive Hotel"}
+        cancelLabel={confirmModal.action === "Delete" ? "Keep it" : "Cancel"}
+        onClose={() => setConfirmModal({ open: false, action: null, row: null })}
+        onConfirm={() => {
+          if (confirmModal.action === "Archive") {
+            setHotelsData(prev => prev.map(h => h.id === confirmModal.row?.id ? { ...h, status: "Archived" } : h));
+            setBanner({ show: true, message: "The hotel has been archived successfully and is no longer visible in the active hotels list" });
+          } else if (confirmModal.action === "Delete") {
+            setHotelsData(prev => prev.filter(h => h.id !== confirmModal.row?.id));
+            setBanner({ show: true, message: "The hotel has been deleted successfully" });
+          }
+          setConfirmModal({ open: false, action: null, row: null });
+        }}
+      />
+      <DashboardStatusBanner
+        show={banner.show}
+        variant="success"
+        message={banner.message}
+        onClose={() => setBanner({ show: false, message: "" })}
       />
     </TablePanel>
   );

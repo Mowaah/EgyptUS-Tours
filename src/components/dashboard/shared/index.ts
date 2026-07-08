@@ -9,6 +9,7 @@ export type {
   DashboardStatusBannerVariant,
 } from "./DashboardStatusBanner/DashboardStatusBanner";
 export { default as DashboardField } from "./DashboardField/DashboardField";
+export * from "./CurrencyField/CurrencyField";
 export { default as DashboardTabs } from "./DashboardTabs/DashboardTabs";
 export { DashboardFooter } from "./DashboardFooter/DashboardFooter";
 export { default as ProfileHeader } from "./ProfileHeader/ProfileHeader";

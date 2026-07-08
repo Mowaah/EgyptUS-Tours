@@ -12,6 +12,7 @@ interface CustomDatePickerProps {
   dropdownClassName?: string;
   variant?: "card" | "input" | "custom";
   renderTrigger?: (isOpen: boolean, setIsOpen: (o: boolean) => void, displayTxt: string) => React.ReactNode;
+  selectsRange?: boolean;
 }
 
 const WEEKDAYS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -44,7 +45,7 @@ const parseDateString = (val: string) => {
   return null;
 };
 
-export default function CustomDatePicker({ value, onChange, className, dropdownClassName = "", variant = "card", renderTrigger }: CustomDatePickerProps) {
+export default function CustomDatePicker({ value, onChange, className, dropdownClassName = "", variant = "card", renderTrigger, selectsRange = false }: CustomDatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const initialDate = parseDateString(value) || new Date();
 
@@ -104,11 +105,32 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
     const yyyy = d.getFullYear();
     const mm = String(d.getMonth() + 1).padStart(2, "0");
     const dd = String(d.getDate()).padStart(2, "0");
-    onChange(`${mm}/${dd}/${yyyy}`);
-    setIsOpen(false);
+    const dStr = `${mm}/${dd}/${yyyy}`;
+
+    if (selectsRange) {
+      const parts = (value || "").split(" - ");
+      const start = parts[0] || "";
+      const end = parts[1] || "";
+      if (start && !end && start !== dStr) {
+        // Have start, picking end
+        const startDate = parseDateString(start);
+        if (startDate && d < startDate) {
+          onChange(`${dStr} - ${start}`);
+        } else {
+          onChange(`${start} - ${dStr}`);
+        }
+        setIsOpen(false);
+      } else {
+        // Picking start
+        onChange(`${dStr} - `);
+      }
+    } else {
+      onChange(dStr);
+      setIsOpen(false);
+    }
   };
 
-  const selectedDateObj = parseDateString(value);
+  const selectedDateObj = parseDateString(selectsRange ? (value || "").split(" - ")[0] : value);
 
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();
@@ -205,7 +227,23 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
           placeholder="MM/DD/YYYY"
         />
       ) : variant === "custom" && renderTrigger ? (
-        renderTrigger(isOpen, setIsOpen, !selectedDateObj || Number.isNaN(selectedDateObj.getTime()) ? "" : `${String(selectedDateObj.getDate()).padStart(2, '0')} - ${String(selectedDateObj.getMonth() + 1).padStart(2, '0')} - ${selectedDateObj.getFullYear()}`)
+        renderTrigger(
+          isOpen, 
+          setIsOpen, 
+          selectsRange ? 
+            (() => {
+              const parts = (value || "").split(" - ");
+              const sDate = parseDateString(parts[0]);
+              const eDate = parseDateString(parts[1]);
+              if (!sDate) return "";
+              const formatOptions: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" };
+              const sFormatted = sDate.toLocaleDateString("en-US", formatOptions);
+              if (!eDate) return `${sFormatted} - `;
+              const eFormatted = eDate.toLocaleDateString("en-US", formatOptions);
+              return `${sFormatted} - ${eFormatted}`;
+            })()
+          : (!selectedDateObj || Number.isNaN(selectedDateObj.getTime()) ? "" : `${String(selectedDateObj.getDate()).padStart(2, '0')} - ${String(selectedDateObj.getMonth() + 1).padStart(2, '0')} - ${selectedDateObj.getFullYear()}`)
+        )
       ) : (
         <button
           type="button"
@@ -242,10 +280,21 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
 
           <div className={styles.daysGrid}>
             {calendarGrid.map((item, idx) => {
-              const isSelected = selectedDateObj &&
-                item.date.getDate() === selectedDateObj.getDate() &&
-                item.date.getMonth() === selectedDateObj.getMonth() &&
-                item.date.getFullYear() === selectedDateObj.getFullYear();
+              let isSelected = false;
+              if (selectsRange) {
+                const parts = (value || "").split(" - ");
+                const sDate = parseDateString(parts[0]);
+                const eDate = parseDateString(parts[1]);
+                const curTime = item.date.getTime();
+                if (sDate && curTime === sDate.getTime()) isSelected = true;
+                if (eDate && curTime === eDate.getTime()) isSelected = true;
+                if (sDate && eDate && curTime > sDate.getTime() && curTime < eDate.getTime()) isSelected = true;
+              } else {
+                isSelected = !!(selectedDateObj &&
+                  item.date.getDate() === selectedDateObj.getDate() &&
+                  item.date.getMonth() === selectedDateObj.getMonth() &&
+                  item.date.getFullYear() === selectedDateObj.getFullYear());
+              }
 
               return (
                 <button
