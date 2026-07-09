@@ -100,7 +100,7 @@ export const tripsColumns: DataTableColumn<TripBookingRow>[] = [
     id: "assignedAgent",
     header: "Assigned",
     render: (row) => (
-      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "12px", width: "max-content" }}>
         <Image
           src={row.assignedAgent === "Sara M." ? "/images/dashboard/sara.jpg" : "/images/dashboard/sidebar/user-management.svg"}
           alt={row.assignedAgent}
@@ -112,7 +112,7 @@ export const tripsColumns: DataTableColumn<TripBookingRow>[] = [
             ...(row.assignedAgent !== "Sara M." && { background: "#F0F1F3", padding: "6px" })
           }}
         />
-        <span style={{ color: "#4B5563", fontSize: "14px", fontWeight: 400 }}>{row.assignedAgent}</span>
+        <span style={{ color: "#4B5563", fontSize: "14px", fontWeight: 400, whiteSpace: "nowrap" }}>{row.assignedAgent}</span>
       </div>
     ),
   },

@@ -47,6 +47,9 @@ export const hotelsColumns: DataTableColumn<HotelBookingData>[] = [
             borderRadius: "100px",
             fontSize: "12px",
             fontWeight: 700,
+            whiteSpace: "nowrap",
+            width: "max-content",
+            flexShrink: 0,
           }}
         >
           <Image src="/images/dashboard/booking/hotels/rooms.svg" alt="" width={16} height={16} />
@@ -98,7 +101,7 @@ export const hotelsColumns: DataTableColumn<HotelBookingData>[] = [
     id: "assignedAgent",
     header: "Assigned",
     render: (row) => (
-      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "12px", width: "max-content" }}>
         <Image
           src={row.assignedAgent === "Sara M." ? "/images/dashboard/sara.jpg" : "/images/dashboard/sidebar/user-management.svg"}
           alt={row.assignedAgent}
@@ -110,7 +113,7 @@ export const hotelsColumns: DataTableColumn<HotelBookingData>[] = [
             ...(row.assignedAgent !== "Sara M." && { background: "#F0F1F3", padding: "6px" })
           }}
         />
-        <span style={{ color: "#4B5563", fontSize: "14px", fontWeight: 400 }}>{row.assignedAgent}</span>
+        <span style={{ color: "#4B5563", fontSize: "14px", fontWeight: 400, whiteSpace: "nowrap" }}>{row.assignedAgent}</span>
       </div>
     ),
   },

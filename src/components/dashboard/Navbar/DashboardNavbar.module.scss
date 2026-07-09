@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "@/styles/variables" as *;
 
 .navbar {
@@ -261,7 +262,7 @@
   flex-shrink: 0;
 
   &:hover:not(:disabled) {
-    background: darken($background, 2%);
+    background: color.adjust($background, $lightness: -2%);
     color: $dark;
     border-color: rgba(102, 107, 109, 0.4);
   }

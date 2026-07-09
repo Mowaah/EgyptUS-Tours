@@ -113,12 +113,12 @@ $font-size-7: 0.4375rem; // 7px
 $font-size-9: 0.5625rem; // 9px
 $font-size-10: 0.625rem; // 10px
 $font-size-2xs: 0.6875rem; // 11px
-$font-size-xs: 0.75rem; // 12px 
-$font-size-13: 0.8125rem; // 13px
-$font-size-sm: 0.875rem; // 14px
-$font-size-15: 0.9375rem; // 15px
+$font-size-xs: clamp(0.625rem, 0.542rem + 0.174vw, 0.75rem); // 10px -> 12px 
+$font-size-13: clamp(0.6875rem, 0.604rem + 0.174vw, 0.8125rem); // 11px -> 13px
+$font-size-sm: clamp(0.75rem, 0.667rem + 0.174vw, 0.875rem); // 12px -> 14px
+$font-size-15: clamp(0.8125rem, 0.729rem + 0.174vw, 0.9375rem); // 13px -> 15px
 $font-size-base: clamp(0.875rem, 0.792rem + 0.174vw, 1rem); // 14px -> 16px
-$font-size-17: 1.0625rem; // 17px
+$font-size-17: clamp(0.9375rem, 0.854rem + 0.174vw, 1.0625rem); // 15px -> 17px
 $font-size-lg: clamp(1rem, 0.917rem + 0.174vw, 1.125rem); // 16px -> 18px
 $font-size-19: clamp(1.125rem, 1.083rem + 0.087vw, 1.1875rem); // 18px -> 19px
 $font-size-xl: clamp(1.125rem, 1.042rem + 0.174vw, 1.25rem); // 18px -> 20px

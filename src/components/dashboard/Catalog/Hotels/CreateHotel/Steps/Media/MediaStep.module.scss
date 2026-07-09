@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "@/styles/variables" as *;
 
 .container {
@@ -93,6 +94,6 @@
   padding: 0;
 
   &:hover {
-    background: darken($primary, 5%);
+    background: color.adjust($primary, $lightness: -5%);
   }
 }
