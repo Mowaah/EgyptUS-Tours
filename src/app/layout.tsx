@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+
+export const runtime = 'edge';
 import ScrollToTop from "@/components/shared/ScrollToTop/ScrollToTop";
 import ScrollAnimationProvider from "@/components/shared/ScrollAnimationProvider/ScrollAnimationProvider";
 import "./globals.scss";
