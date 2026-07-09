@@ -46,7 +46,7 @@
   color: #444A51;
   background: $white;
   border: 1px solid $gray-200-zinc;
-  border-radius: 24px;
+  border-radius: 32px;
   outline: none;
   transition: border-color $transition-fast, box-shadow $transition-fast;
 
@@ -56,7 +56,7 @@
 
   &:focus {
     border-color: $primary;
-    box-shadow: 0 0 0 3px $primary-soft;
+    box-shadow: 0px 0px 0px 4px $background-blue-alt, 0px 1px 2px 0px rgba(217, 217, 234, 0.05);
   }
 
   &[aria-invalid="true"] {
@@ -177,7 +177,7 @@
 
 .modalSelectTriggerOpen {
   border-color: $primary;
-  box-shadow: 0 0 0 3px $primary-soft;
+  box-shadow: 0px 0px 0px 4px $background-blue-alt, 0px 1px 2px 0px rgba(217, 217, 234, 0.05);
 }
 
 .modalSelectValue {

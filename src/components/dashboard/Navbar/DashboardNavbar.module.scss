@@ -174,7 +174,7 @@
   &:focus-visible,
   &:active {
     border-color: $primary;
-    box-shadow: 0 0 0 3px $primary-soft;
+    box-shadow: 0px 0px 0px 4px $background-blue-alt, 0px 1px 2px 0px rgba(217, 217, 234, 0.05);
   }
 }
 
@@ -186,7 +186,7 @@
 
   &:focus-within {
     border-color: $primary;
-    box-shadow: 0 0 0 3px $primary-soft;
+    box-shadow: 0px 0px 0px 4px $background-blue-alt, 0px 1px 2px 0px rgba(217, 217, 234, 0.05);
   }
 
   input {
