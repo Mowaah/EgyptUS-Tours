@@ -57,7 +57,7 @@
 }
 
 .phoneLabel {
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
   font-weight: 600;
   color: $dark;
 }
@@ -112,7 +112,7 @@
   background: transparent;
   outline: none;
   font-family: inherit;
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
   line-height: 1.35;
   letter-spacing: 0.01em;
   color: #444A51;

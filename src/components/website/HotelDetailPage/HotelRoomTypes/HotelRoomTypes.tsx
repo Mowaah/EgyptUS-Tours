@@ -10,16 +10,19 @@ interface HotelRoomTypesProps {
   hotel: Hotel;
 }
 
-const TYPE_OPTIONS = ["All", "Single", "Double Room", "Superior Room", "Deluxe Room"];
-const VIEW_OPTIONS = ["Sea View", "Partial Sea View", "Nile View", "Pool View", "City View", "Garden View", "Lagoon View"];
+const TYPE_OPTIONS = ["All", "Single", "Double Room", "Triple Room"];
+const CATEGORY_OPTIONS = ["All", "Standard Room", "Deluxe Room", "Premium Room", "Suite"];
+const VIEW_OPTIONS = ["All", "Sea View", "Pool View", "Garden View"];
 
 export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
   const [roomType, setRoomType] = useState("All");
-  const [roomView, setRoomView] = useState("Sea View");
+  const [roomCategory, setRoomCategory] = useState("All");
+  const [roomView, setRoomView] = useState("All");
   const [priceRange, setPriceRange] = useState({ min: 1, max: 12000 });
 
   const [expanded, setExpanded] = useState({
     type: true,
+    category: true,
     view: true,
     price: true,
   });
@@ -27,14 +30,16 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (roomType !== "All") count++;
-    if (roomView !== "Sea View") count++;
+    if (roomCategory !== "All") count++;
+    if (roomView !== "All") count++;
     if (priceRange.min !== 1 || priceRange.max !== 12000) count++;
     return count;
-  }, [roomType, roomView, priceRange]);
+  }, [roomType, roomCategory, roomView, priceRange]);
 
   const handleReset = () => {
     setRoomType("All");
-    setRoomView("Sea View");
+    setRoomCategory("All");
+    setRoomView("All");
     setPriceRange({ min: 1, max: 12000 });
   };
 
@@ -43,9 +48,10 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
   // Filtering logic
   const filteredRooms = rooms.filter(room => {
     const matchesType = roomType === "All" || room.type === roomType;
-    const matchesView = roomView === "" || room.view === roomView;
+    const matchesCategory = roomCategory === "All" || room.category === roomCategory;
+    const matchesView = roomView === "All" || room.view === roomView;
     const matchesPrice = room.pricePerNight >= priceRange.min && room.pricePerNight <= priceRange.max;
-    return matchesType && matchesView && matchesPrice;
+    return matchesType && matchesCategory && matchesView && matchesPrice;
   });
 
   const toggleExpand = (key: keyof typeof expanded) => {
@@ -81,6 +87,20 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
               name="roomType"
               selectedValue={roomType}
               onChange={setRoomType}
+            />
+          </FilterGroup>
+
+          {/* Room Category */}
+          <FilterGroup
+            title="Room Category"
+            isExpanded={expanded.category}
+            onToggle={() => toggleExpand("category")}
+          >
+            <RadioFilterList
+              options={CATEGORY_OPTIONS}
+              name="roomCategory"
+              selectedValue={roomCategory}
+              onChange={setRoomCategory}
             />
           </FilterGroup>
 

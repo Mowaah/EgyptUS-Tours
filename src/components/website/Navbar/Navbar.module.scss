@@ -263,7 +263,7 @@ $nav-desktop: 1150px;
 
 .navbar.scrolled .linkItem:hover,
 .navbar.lightPage .linkItem:hover {
-  .hasDropdownLink:not(.active) {
+  .link:not(.active) {
     color: $primary !important;
     background: rgba(41, 113, 230, 0.1) !important;
 

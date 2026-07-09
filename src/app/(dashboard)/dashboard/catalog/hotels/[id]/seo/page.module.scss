@@ -27,7 +27,7 @@
 
 .cardTitle {
   font-weight: 500;
-  font-size: 1.5rem;
+  font-size: $font-size-28;
   color: $dark;
   margin: 0;
 }
@@ -50,13 +50,13 @@
 
 .imageInfoLabel {
   font-weight: 500;
-  font-size: 1rem;
+  font-size: $font-size-lg;
   color: #1F2937;
 }
 
 .imageInfoValue {
   font-weight: 400;
-  font-size: 1rem;
+  font-size: $font-size-lg;
   color: $gray-400;
 }
 

@@ -48,7 +48,7 @@
   }
 
   span {
-    font-size: 0.625rem; /* 10px */
+    font-size: $font-size-10; /* 10px */
     color: #FB923C;
     line-height: 1.4;
   }
@@ -73,7 +73,7 @@
 
 .categoryName {
   font-weight: 700;
-  font-size: 1rem; /* 16px */
+  font-size: $font-size-lg; /* 16px */
   color: #1F2937;
 }
 

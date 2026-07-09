@@ -26,7 +26,7 @@
   height: 1.75rem;
   padding: 4px 12px;
   border-radius: 96px;
-  font-size: 0.75rem;
+  font-size: $font-size-xs;
   font-weight: 500;
 }
 
@@ -39,7 +39,7 @@
   height: 1.75rem;
   padding: 4px 12px;
   border-radius: 128px;
-  font-size: 0.75rem;
+  font-size: $font-size-xs;
   font-weight: 500;
 
   &::before {

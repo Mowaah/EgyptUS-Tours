@@ -27,7 +27,7 @@
 
   h2 {
     font-weight: 500;
-    font-size: 1.5rem; // 24px
+    font-size: $font-size-28; // 24px
     color: $dark;
     margin: 0;
   }
@@ -43,13 +43,13 @@
   .label {
     font-family: 'Urbanist', sans-serif;
     font-weight: 500;
-    font-size: 0.875rem; // 14px
+    font-size: $font-size-sm; // 14px
     color: $gray-400-zinc;
   }
 
   .value {
     font-weight: 500;
-    font-size: 1rem; // 16px
+    font-size: $font-size-lg; // 16px
     color: $gray-700;
   }
 
@@ -62,7 +62,7 @@
     border-radius: 8rem; // 128px
     color: $secondary;
     font-weight: 500;
-    font-size: 1rem;
+    font-size: $font-size-lg;
   }
 }
 
@@ -76,7 +76,7 @@
   .label {
     font-family: 'Urbanist', sans-serif;
     font-weight: 500;
-    font-size: 0.875rem;
+    font-size: $font-size-sm;
     color: $gray-400-zinc;
   }
 }
@@ -100,13 +100,13 @@
     justify-content: center;
 
     .fileName {
-      font-size: 0.875rem; // 14px
+      font-size: $font-size-sm; // 14px
       color: $text;
       margin: 0;
     }
 
     .fileSize {
-      font-size: 0.8125rem; // 13px
+      font-size: $font-size-13; // 13px
       color: $text-muted;
     }
   }
@@ -121,13 +121,13 @@
   .label {
     font-family: 'Urbanist', sans-serif;
     font-weight: 500;
-    font-size: 0.875rem;
+    font-size: $font-size-sm;
     color: $gray-400-zinc;
   }
 
   .noteText {
     font-weight: 500;
-    font-size: 1rem;
+    font-size: $font-size-lg;
     line-height: 1.375; // 22px
     color: $gray-700;
     margin: 0;

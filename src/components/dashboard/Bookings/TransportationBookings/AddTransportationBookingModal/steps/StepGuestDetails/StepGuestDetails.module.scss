@@ -30,7 +30,7 @@
 
 .customLabel {
   font-weight: 700;
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
   color: #344054;
   margin-bottom: 0.25rem;
 }
@@ -41,7 +41,7 @@
 }
 
 .phoneLabel {
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
   font-weight: 500;
   line-height: 1.25rem;
   color: $gray-600; /* match DashboardField label color */
@@ -71,7 +71,7 @@
   background: transparent;
   outline: none;
   font-family: inherit;
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
   line-height: 1.35;
   letter-spacing: 0.01em;
   color: #444A51;
@@ -118,7 +118,7 @@
   border: 1px solid $gray-200-zinc !important;
   border-radius: 24px !important;
   font-family: inherit;
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
   line-height: 1.35;
   color: #444A51;
   box-shadow: none !important;
@@ -151,14 +151,14 @@
 
 .counterLabel {
   font-weight: 700;
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
   color: $dark;
   white-space: nowrap;
 }
 
 .counterHint {
   font-weight: 500;
-  font-size: 0.75rem;
+  font-size: $font-size-xs;
   color: $text-light;
 }
 

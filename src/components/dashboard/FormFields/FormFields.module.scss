@@ -35,7 +35,7 @@
 
 .sectionTitle {
   font-weight: 500;
-  font-size: 1.5rem;
+  font-size: $font-size-28;
   color: #11263b;
   margin: 0;
 }
@@ -68,7 +68,7 @@
   align-items: center;
   padding: 0 0.625rem;
   font-weight: 500;
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
   color: $gray-600;
   margin: 0;
 }
@@ -98,7 +98,7 @@
     outline: none;
     background: transparent;
     font-weight: 400;
-    font-size: 0.875rem;
+    font-size: $font-size-sm;
     color: #444a51;
 
     &::placeholder {
@@ -147,7 +147,7 @@
 
 .dropzoneTitle {
   font-weight: 500;
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
   color: $gray-400;
   margin: 0;
 }
@@ -192,7 +192,7 @@
 
 .fileName {
   font-weight: 400;
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
   color: $text;
   margin: 0;
   white-space: nowrap;
@@ -211,7 +211,7 @@
 
 .fileSize {
   font-weight: 400;
-  font-size: 0.8125rem;
+  font-size: $font-size-13;
   color: $text-muted;
 }
 
@@ -226,7 +226,7 @@
   align-items: center;
   gap: 0.25rem;
   font-weight: 400;
-  font-size: 0.8125rem;
+  font-size: $font-size-13;
   color: #079455;
 }
 
@@ -260,7 +260,7 @@
 .fileProgressPercentage {
   font-family: "Inter", sans-serif;
   font-weight: 500;
-  font-size: 0.8125rem;
+  font-size: $font-size-13;
   color: $text-muted;
   min-width: 2rem;
 }
@@ -287,14 +287,14 @@
 
 .dropzoneSubtitle {
   font-weight: 400;
-  font-size: 0.75rem;
+  font-size: $font-size-xs;
   color: $gray-400;
   margin: 0;
 }
 
 .charCount {
   font-weight: 400;
-  font-size: 0.75rem;
+  font-size: $font-size-xs;
   text-align: right;
   color: $gray-400;
   width: 100%;

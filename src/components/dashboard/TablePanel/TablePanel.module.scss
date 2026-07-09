@@ -26,7 +26,7 @@
   h2 {
     margin: 0;
     color: $dark;
-    font-size: 1.5rem;
+    font-size: $font-size-28;
     font-weight: 500;
     line-height: 1.375;
   }
@@ -60,7 +60,7 @@
   border-radius: $radius-full;
   color: #1f2937;
   background: $white;
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
   font-weight: 500;
   transform: none;
 
@@ -275,7 +275,7 @@
   color: $dark;
   background: $white;
   border: 1px solid $gray-50-alt;
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
   font-weight: 500;
   transform: none;
 
@@ -289,7 +289,7 @@
   border-radius: 3.125rem;
   color: $white;
   background: $dark;
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
   font-weight: 500;
   transform: none;
 

@@ -64,7 +64,7 @@
 
   h3 {
     font-weight: 700;
-    font-size: 1.125rem; // 18px
+    font-size: $font-size-19; // 18px
     line-height: 1.5;
     color: $dark;
     margin: 0;
@@ -72,7 +72,7 @@
 
   p {
     font-weight: 400;
-    font-size: 0.8125rem; // 13px
+    font-size: $font-size-13; // 13px
     line-height: 1.5;
     color: $text-light;
     margin: 0;
@@ -81,7 +81,7 @@
 
 .tourPrice {
   font-weight: 700;
-  font-size: 1.625rem; // 26px
+  font-size: $font-size-32; // 26px
   color: $primary;
 }
 
@@ -105,7 +105,7 @@
   background: transparent;
   color: $secondary;
   font-weight: 500;
-  font-size: 1rem; // 16px
+  font-size: $font-size-lg; // 16px
   cursor: pointer;
   transition: all 0.2s;
 
@@ -126,7 +126,7 @@
   border-radius: 2.5rem; // 40px
   color: $background;
   font-weight: 500;
-  font-size: 1rem; // 16px
+  font-size: $font-size-lg; // 16px
   cursor: pointer;
   transition: all 0.2s;
 

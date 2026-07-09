@@ -16,7 +16,7 @@
   p {
     margin: 0;
     color: $gray-600;
-    font-size: 0.8125rem;
+    font-size: $font-size-13;
     font-weight: 400;
     line-height: 1.385;
   }
@@ -41,7 +41,7 @@
   justify-content: center;
   height: 3rem;
   border-radius: $radius-full;
-  font-size: 1rem;
+  font-size: $font-size-lg;
   font-weight: 500;
   line-height: 1.375;
   white-space: nowrap;

@@ -1,30 +1,41 @@
-import React from 'react';
-import Image from 'next/image';
+"use client";
+
+import { TestimonialCard, ReviewGrid } from '@/components/shared';
+import type { Testimonial } from '@/components/shared/TestimonialCard/TestimonialCard';
 import styles from './EventsSuccessStories.module.scss';
 
-const STORIES = [
+const STORIES: Testimonial[] = [
   {
-    title: "Regional Finance Forum",
-    attendees: "650",
-    countries: "22 Countries",
-    quote: "Exceptional venue, seamless logistics, and competitive pricing made this our best event yet.",
+    name: "Regional Finance Forum",
+    location: "22 Countries",
+    quote: '"Exceptional venue, seamless logistics, and competitive pricing made this our best event yet."',
     image: "/images/event-story1.jpg",
+    rating: 5,
   },
   {
-    title: "Global Pharmaceutical Convention",
-    attendees: "1,800",
-    countries: "30 Countries",
-    quote: "Professional execution, world-class venues, and unforgettable cultural experiences for our delegates.",
+    name: "Global Pharmaceutical Convention",
+    location: "30 Countries",
+    quote: '"Professional execution, world-class venues, and unforgettable cultural experiences for our delegates."',
     image: "/images/event-story2.jpg",
+    rating: 5,
   },
   {
-    title: "International Technology Summit",
-    attendees: "+2500",
-    countries: "45 Countries",
-    quote: "The team delivered a flawless experience. Egypt exceeded our expectations as a MICE destination.",
+    name: "International Technology Summit",
+    location: "45 Countries",
+    quote: '"The team delivered a flawless experience. Egypt exceeded our expectations as a MICE destination."',
     image: "/images/event-story3.jpg",
+    rating: 5,
+  },
+  {
+    name: "Global Sustainability Conference",
+    location: "15 Countries",
+    quote: '"A breathtaking setting that inspired our delegates. Flawless execution from start to finish."',
+    image: "/images/event-story1.jpg",
+    rating: 5,
   },
 ];
+
+const PAGE_SIZE = 6;
 
 export default function EventsSuccessStories() {
   return (
@@ -38,43 +49,12 @@ export default function EventsSuccessStories() {
         <p className={styles.subtitle}>Proven track record with international organizations</p>
       </div>
 
-      <div className={styles.grid}>
-        {STORIES.map((story, idx) => (
-          <div key={idx} className={styles.card}>
-            <div className={styles.imageWrap}>
-              <Image src={story.image} alt={story.title} fill className={styles.image} />
-              <div className={styles.overlay} />
-              <button className={styles.playBtn}>
-                <Image src="/images/playbtn.svg" alt="" width={24} height={24} />
-              </button>
-            </div>
-
-            <div className={styles.content}>
-              <h3 className={styles.storyTitle}>{story.title}</h3>
-
-              <div className={styles.statsRow}>
-                <div className={styles.stat}>
-                  <span className={styles.statLabel}>Attendees</span>
-                  <span className={styles.statValueOrange}>{story.attendees}</span>
-                </div>
-                <div className={styles.stat}>
-                  <span className={styles.statLabel}>Countries</span>
-                  <span className={styles.statValueBlue}>{story.countries}</span>
-                </div>
-              </div>
-
-              <div className={styles.testimonial}>
-                <div className={styles.stars}>
-                  {[...Array(5)].map((_, i) => (
-                    <Image key={i} src="/images/star-yellow3.svg" alt="" width={16} height={16} />
-                  ))}
-                </div>
-                <p className={styles.quote}>"{story.quote}"</p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <ReviewGrid 
+        items={STORIES} 
+        pageSize={PAGE_SIZE} 
+        gridClassName={styles.grid}
+        renderItem={(t, i) => <TestimonialCard key={i} testimonial={t} />} 
+      />
     </section>
   );
 }

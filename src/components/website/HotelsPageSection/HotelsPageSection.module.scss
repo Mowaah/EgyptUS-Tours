@@ -267,7 +267,7 @@
 
 .sidebarMobileTitle {
   margin: 0;
-  font-size: 1.125rem;
+  font-size: $font-size-19;
   font-weight: $font-weight-bold;
   color: $dark;
 }
@@ -336,59 +336,7 @@
   color: $text-light;
 }
 
-// ── View Toggle ───────────────────────────────────────────────
-.viewToggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px;
-  background: rgba(14, 40, 81, 0.05);
-  border-radius: 80px;
-  align-self: stretch;
-  margin-bottom: 16px;
-  width: 100%;
-  box-sizing: border-box;
 
-  @media (min-width: 640px) {
-    align-self: flex-end;
-    width: auto;
-    margin-bottom: 20px;
-  }
-}
-
-.viewBtn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 9px 20px;
-  border-radius: $radius-full;
-  font-size: $font-size-13;
-  font-weight: $font-weight-medium;
-  color: $dark;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: background $transition-fast, color $transition-fast;
-  flex: 1;
-  justify-content: center;
-
-  @media (min-width: 640px) {
-    flex: 0 0 auto;
-    padding: 9px 24px;
-    font-size: $font-size-sm;
-  }
-
-  &:hover {
-    color: $dark;
-  }
-}
-
-.viewActive {
-  background: $white;
-  color: $dark;
-  box-shadow: $shadow-sm;
-}
 
 .gridView {
   display: grid;
@@ -405,11 +353,6 @@
   }
 }
 
-.listView {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
 
 .pagination {
   display: flex;

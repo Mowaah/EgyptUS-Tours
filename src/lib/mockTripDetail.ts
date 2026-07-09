@@ -124,6 +124,30 @@ export const mockTripDetail: Trip = {
       meals: 1,
       highlights: ["Aswan souq", "Airport transfer", "Departure"],
     },
+    {
+      day: 6,
+      title: "Arrival in Cairo",
+      subtitle: "City of a Thousand Minarets",
+      description:
+        "Arrive in Cairo and transfer to your hotel. Enjoy an evening sound and light show at the Pyramids.",
+      image: "/images/pyramids4.jpg",
+      value: 350,
+      durationHours: 4,
+      meals: 1,
+      highlights: ["Hotel check-in", "Sound & Light show"],
+    },
+    {
+      day: 7,
+      title: "Giza Pyramids & Sphinx",
+      subtitle: "Wonders of the Ancient World",
+      description:
+        "Spend the day exploring the Great Pyramids of Giza, the iconic Sphinx, and the Egyptian Museum.",
+      image: "/images/pyramids2.jpg",
+      value: 500,
+      durationHours: 8,
+      meals: 2,
+      highlights: ["Great Pyramids", "Sphinx", "Egyptian Museum"],
+    },
   ],
 
   availability: [

@@ -7,6 +7,7 @@ export interface HotelRoom {
   pricePerNight: number;
   discountPercent?: number;
   type: string;
+  category?: string;
   view: string;
 }
 

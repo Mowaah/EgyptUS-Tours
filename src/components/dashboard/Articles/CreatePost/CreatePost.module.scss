@@ -92,12 +92,12 @@
   gap: 0.25rem;
   
   .title {
-    font-size: 0.875rem;
+    font-size: $font-size-sm;
     color: $gray-600;
   }
   
   .subtitle {
-    font-size: 0.75rem;
+    font-size: $font-size-xs;
     color: $gray-400;
   }
 }

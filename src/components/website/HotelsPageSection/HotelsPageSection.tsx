@@ -80,7 +80,6 @@ const TOTAL_PAGES = 15;
 // ── Component ───────────────────────────────────────────────────
 export default function HotelsPageSection() {
   const [hotels, setHotels] = useState<Hotel[]>(DEMO_HOTELS);
-  const [view, setView] = useState<"list" | "grid">("list");
   const [ratingFilter, setRatingFilter] = useState("any");
   const [priceRange, setPriceRange] = useState({ min: 1, max: 12000 });
   const [priceExpanded, setPriceExpanded] = useState(true);
@@ -139,9 +138,6 @@ export default function HotelsPageSection() {
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
-
-  // List/Grid control is hidden below 768px; always use list layout there.
-  const cardView: "list" | "grid" = isLg ? view : "list";
 
   const handleResetSearch = () => setSearchQuery("");
 
@@ -300,34 +296,11 @@ export default function HotelsPageSection() {
           </aside>
 
           <div className={styles.main}>
-            {isLg && (
-              <div className={styles.viewToggle}>
-                <button
-                  className={`${styles.viewBtn} ${view === "list" ? styles.viewActive : ""}`}
-                  onClick={() => setView("list")}
-                  aria-label="List view"
-                  type="button"
-                >
-                  <Image src="/images/list-view.svg" alt="" width={15} height={15} />
-                  List
-                </button>
-                <button
-                  className={`${styles.viewBtn} ${view === "grid" ? styles.viewActive : ""}`}
-                  onClick={() => setView("grid")}
-                  aria-label="Grid view"
-                  type="button"
-                >
-                  <Image src="/images/grid-view.svg" alt="" width={16} height={16} />
-                  Grid
-                </button>
-              </div>
-            )}
-
             {filteredHotels.length > 0 ? (
               <>
-                <div className={cardView === "grid" ? styles.gridView : styles.listView}>
+                <div className={styles.gridView}>
                   {paginatedHotels.map((hotel) => (
-                    <HotelCard key={hotel.id} hotel={hotel} view={cardView} onFavoriteToggle={handleFavoriteToggle} />
+                    <HotelCard key={hotel.id} hotel={hotel} view="grid" onFavoriteToggle={handleFavoriteToggle} />
                   ))}
                 </div>
 

@@ -7,7 +7,7 @@
   gap: 2rem;
   padding-top: 1.5rem;
   color: $text-light;
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
 }
 
 .footerLeft {
@@ -18,7 +18,7 @@
 
 .showLabel {
   color: $text-light;
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
 }
 
 .selectionCount {

@@ -30,37 +30,89 @@ export default function TripItinerary({ trip }: Props) {
       {/* ── DESKTOP LAYOUT (Horizontal timeline + Detail card) ── */}
       <div className={styles.desktopLayout}>
         {/* Day selector timeline */}
-        <div className={styles.timeline}>
-          {days.map((day, i) => (
-            <button
-              key={i}
-              className={`${styles.dayBtn} ${active === i ? styles.dayBtnActive : ""}`}
-              onClick={() => setActive(i)}
-            >
-              <span className={`${styles.dayLabel} ${i <= active ? styles.dayLabelActive : ""}`}>
-                Day {day.day}
-              </span>
-              <div className={`
-                ${styles.thumbCircle}
-                ${i <= active ? styles.thumbCircleVisited : styles.thumbCircleInactive}
-                ${i === active ? styles.thumbCircleSelected : ''}
-              `}>
-                {day.image && (
-                  <Image src={day.image} alt={day.title} fill sizes="100px" className={styles.thumbImg} />
+        <div className={styles.timelineContainer}>
+          {Array.from({ length: Math.ceil(days.length / 5) }).map((_, rowIndex) => {
+            const chunk = days.slice(rowIndex * 5, (rowIndex + 1) * 5);
+            const isLtr = rowIndex % 2 === 0;
+            const hasNextRow = (rowIndex + 1) * 5 < days.length;
+            
+            // Check if the connection curve between this row and the next should be "active" (filled)
+            // It is active if the currently selected active day is on or after the first day of the NEXT row.
+            const nextRowFirstDayIndex = (rowIndex + 1) * 5;
+            const isCurveActive = active >= nextRowFirstDayIndex;
+
+            return (
+              <div key={rowIndex} className={`${styles.timelineRow} ${isLtr ? styles.ltr : styles.rtl}`}>
+                {chunk.map((day, chunkIndex) => {
+                  const i = rowIndex * 5 + chunkIndex;
+                  // For styling the connector inside the row
+                  // The line goes up to the *next* item. So if i < days.length - 1, we show a line.
+                  // But wait, the line in the item itself should only go to the edge if it's the last in the chunk!
+                  const isLastInChunk = chunkIndex === chunk.length - 1;
+                  const isLastTotal = i === days.length - 1;
+
+                  return (
+                    <button
+                      key={i}
+                      className={`${styles.dayBtn} ${active === i ? styles.dayBtnActive : ""}`}
+                      onClick={() => setActive(i)}
+                    >
+                      <span className={`${styles.dayLabel} ${i <= active ? styles.dayLabelActive : ""}`}>
+                        Day {day.day}
+                      </span>
+                      <div className={`
+                        ${styles.thumbCircle}
+                        ${i <= active ? styles.thumbCircleVisited : styles.thumbCircleInactive}
+                        ${i === active ? styles.thumbCircleSelected : ''}
+                      `}>
+                        {day.image && (
+                          <Image src={day.image} alt={day.title} fill sizes="100px" className={styles.thumbImg} />
+                        )}
+                      </div>
+                      
+                      <div className={styles.connectorWrap}>
+                        {/* Extension for the very first item (Day 1) */}
+                        {(i === 0) && (
+                          <div className={styles.connectorExtensionStart} />
+                        )}
+                        
+                        {/* Track to the next item in the same row. 
+                            We omit this for the last item in a chunk because the curve handles the outbound path. */}
+                        {(!isLastInChunk && !isLastTotal) && <div className={styles.connectorTrack} />}
+                        
+                        {/* Active fill up to the active day */}
+                        {(i < active && !isLastInChunk) && <div className={styles.connectorFill} />}
+                        {(i === active && !isLastInChunk) && <div className={styles.connectorFillActiveDay} />}
+                        
+                        
+                        {/* Extension for the very last item */}
+                        {(isLastTotal) && (
+                          <div className={`${styles.connectorExtensionEnd} ${i <= active ? styles.connectorExtensionEndActive : styles.connectorTrackBase}`} />
+                        )}
+
+                        <div className={`${styles.connectorDot} ${i <= active ? styles.connectorDotActive : ''}`} />
+                      </div>
+                      
+                      <div className={styles.dayInfo}>
+                        <p className={styles.dayTitle}>{day.title}</p>
+                        {day.subtitle && <p className={styles.daySubtitle}>{day.subtitle}</p>}
+                      </div>
+                    </button>
+                  );
+                })}
+
+                {/* Fill empty spots to keep flex-basis 20% aligned */}
+                {chunk.length < 5 && Array.from({ length: 5 - chunk.length }).map((_, emptyIdx) => (
+                  <div key={`empty-${emptyIdx}`} className={styles.dayBtnEmpty} />
+                ))}
+
+                {/* The curved connector to the next row */}
+                {hasNextRow && (
+                  <div className={`${styles.rowCurve} ${isCurveActive ? styles.rowCurveActive : ''}`} />
                 )}
               </div>
-              <div className={styles.connectorWrap}>
-                {i < days.length - 1 && <div className={styles.connectorTrack} />}
-                {i < active && <div className={styles.connectorFill} />}
-                {i === active && i < days.length - 1 && <div className={styles.connectorFillActiveDay} />}
-                <div className={`${styles.connectorDot} ${i <= active ? styles.connectorDotActive : ''}`} />
-              </div>
-              <div className={styles.dayInfo}>
-                <p className={styles.dayTitle}>{day.title}</p>
-                {day.subtitle && <p className={styles.daySubtitle}>{day.subtitle}</p>}
-              </div>
-            </button>
-          ))}
+            );
+          })}
         </div>
 
         {/* Active day detail */}
@@ -82,20 +134,7 @@ export default function TripItinerary({ trip }: Props) {
 
             {/* Right: info */}
             <div className={styles.detailInfo}>
-              <div className={styles.metaRow}>
-                <span className={styles.metaItem}>
-                  <Image src="/images/clock-blue.svg" alt="Duration" width={19} height={19} />
-                  {current.durationHours} hours
-                </span>
-                <span className={styles.metaItem}>
-                  <Image src="/images/meal-orange.svg" alt="Meals" width={19} height={19} />
-                  {current.meals} meals
-                </span>
-                <span className={styles.metaItem}>
-                  <Image src="/images/photo.svg" alt="Photos" width={17} height={17} />
-                  Photos
-                </span>
-              </div>
+
 
               <p className={styles.detailDesc}>{current.description}</p>
 
@@ -131,8 +170,8 @@ export default function TripItinerary({ trip }: Props) {
               <div key={i} className={styles.mobileDayWrapper}>
                 {/* Timeline line and dot */}
                 <div className={styles.mobileTimelineGraphics}>
-                  <div className={styles.mobileLine} />
-                  <div className={`${styles.mobileDot} ${isActive ? styles.mobileDotActive : ''}`} />
+                  <div className={`${styles.mobileLine} ${i < active ? styles.mobileLineActive : ''}`} />
+                  <div className={`${styles.mobileDot} ${i <= active ? styles.mobileDotActive : ''}`} />
                 </div>
                 
                 <div className={styles.mobileDayContent}>
@@ -176,20 +215,7 @@ export default function TripItinerary({ trip }: Props) {
                         </div>
 
                         <div className={styles.mobileExpandedInfo}>
-                          <div className={styles.metaRow}>
-                            <span className={styles.metaItem}>
-                              <Image src="/images/clock-blue.svg" alt="Duration" width={16} height={16} />
-                              {day.durationHours} hours
-                            </span>
-                            <span className={styles.metaItem}>
-                              <Image src="/images/meal-orange.svg" alt="Meals" width={16} height={16} />
-                              {day.meals} meals
-                            </span>
-                            <span className={styles.metaItem}>
-                              <Image src="/images/photo.svg" alt="Photos" width={14} height={14} />
-                              Photos
-                            </span>
-                          </div>
+
 
                           <p className={styles.detailDesc}>{day.description}</p>
 

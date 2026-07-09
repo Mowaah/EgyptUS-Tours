@@ -78,7 +78,7 @@
   border-radius: 32px;
   border: none;
   background: transparent;
-  font-size: 1rem;
+  font-size: $font-size-lg;
   font-weight: 400;
   color: $gray-400-zinc;
   cursor: pointer;
@@ -100,7 +100,7 @@
 }
 
 .fieldLabel {
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
   font-weight: 600;
   color: $dark;
 }
@@ -111,7 +111,7 @@
   border: 1.5px solid $border-strong;
   border-radius: 100px;
   background: $gray-50;
-  font-size: 1rem;
+  font-size: $font-size-lg;
   color: #11263B;
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -140,7 +140,7 @@
 }
 
 .statusTitle {
-  font-size: 0.9375rem;
+  font-size: $font-size-15;
   font-weight: 600;
   color: $dark;
 }
@@ -148,7 +148,7 @@
 
 
 .statusDesc {
-  font-size: 0.8125rem;
+  font-size: $font-size-13;
   color: $text-light;
 }
 

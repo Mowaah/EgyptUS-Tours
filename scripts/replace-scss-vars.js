@@ -38,15 +38,22 @@ while ((colorMatch = colorRegex.exec(variablesContent)) !== null) {
   }
 }
 
-const fontRegex = /^\$([a-zA-Z0-9-]+):\s*[^;]+;\s*\/\/\s*(\d+px)/gm;
+const fontRegex = /^\$([a-zA-Z0-9-]+):\s*[^;]+;\s*\/\/\s*(\d+)px/gm;
 let fontMatch;
 while ((fontMatch = fontRegex.exec(variablesContent)) !== null) {
   const varName = `$${fontMatch[1]}`;
-  const value = fontMatch[2]; // e.g. '14px'
+  const pxVal = parseInt(fontMatch[2], 10);
+  const pxString = `${pxVal}px`;
+  const remString = `${pxVal / 16}rem`;
   
-  if (!fontSizeMap.has(value)) {
-    fontSizeMap.set(value, varName);
+  if (!fontSizeMap.has(pxString)) {
+    fontSizeMap.set(pxString, varName);
   }
+  // If the rem value is cleanly parsed, map it too
+  if (!fontSizeMap.has(remString)) {
+    fontSizeMap.set(remString, varName);
+  }
+  // Some people might use 1rem instead of 1.0rem, javascript handles this automatically
 }
 
 console.log(`Loaded ${colorMap.size} colors and ${fontSizeMap.size} font sizes.`);
@@ -108,9 +115,9 @@ for (const file of scssFiles) {
   });
 
   // More context-aware font-size replacement:
-  content = content.replace(/(font-size\s*:\s*)(\d+px)/g, (match, prefix, pxValue) => {
-    if (fontSizeMap.has(pxValue)) {
-      return prefix + fontSizeMap.get(pxValue);
+  content = content.replace(/(font-size\s*:\s*)(\d+px|\d*\.?\d+rem)/g, (match, prefix, val) => {
+    if (fontSizeMap.has(val)) {
+      return prefix + fontSizeMap.get(val);
     }
     return match;
   });

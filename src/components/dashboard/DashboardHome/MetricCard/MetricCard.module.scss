@@ -17,7 +17,7 @@
   align-items: center;
   gap: 0.5rem;
   color: $gray-400;
-  font-size: 1rem;
+  font-size: $font-size-base;
   font-weight: 500;
   line-height: 1.375;
   white-space: nowrap;
@@ -65,7 +65,7 @@
   strong {
     min-width: 0;
     color: $dark;
-    font-size: 2rem;
+    font-size: $font-size-32;
     font-weight: 700;
     line-height: 1.375;
     white-space: nowrap;
@@ -82,7 +82,7 @@
   border-radius: 5.25rem;
   color: #0c9d61;
   background: #f2faf6;
-  font-size: 0.625rem;
+  font-size: $font-size-10;
   font-weight: 500;
   line-height: 1;
   white-space: nowrap;
