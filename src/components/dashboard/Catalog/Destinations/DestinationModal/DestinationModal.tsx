@@ -6,6 +6,7 @@ import ModalFooter from "@/components/dashboard/shared/ModalFooter/ModalFooter";
 import { UploadDropzone } from "@/components/dashboard/FormFields";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import fieldStyles from "@/components/dashboard/shared/DashboardField/DashboardField.module.scss";
+import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import styles from "./DestinationModal.module.scss";
 
 interface DestinationModalProps {
@@ -23,15 +24,13 @@ export default function DestinationModal({
   initialName = "",
   isEdit = false,
 }: DestinationModalProps) {
-  const [name, setName] = useState(initialName);
+  const [lang, setLang] = useState<Language>("English");
+  const [names, setNames] = useState<Record<Language, string>>({
+    English: initialName,
+    Italian: "",
+    Spanish: "",
+  });
   const [file, setFile] = useState<File | undefined>(undefined);
-
-  useEffect(() => {
-    if (open) {
-      setName(initialName);
-      setFile(undefined);
-    }
-  }, [open, initialName]);
 
   useEffect(() => {
     if (!open) return;
@@ -54,7 +53,7 @@ export default function DestinationModal({
   if (!open) return null;
 
   const handleSave = () => {
-    onSave({ name, file });
+    onSave({ name: names.English, file });
   };
 
   return (
@@ -74,12 +73,13 @@ export default function DestinationModal({
         />
 
         <div className={styles.body}>
+          <LanguageTabs active={lang} onChange={setLang} />
           <DashboardField
             label="Destination Name"
-            id="destination-name"
+            id={`destination-name-${lang}`}
             placeholder="Enter destination name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={names[lang]}
+            onChange={(e) => setNames((prev) => ({ ...prev, [lang]: e.target.value }))}
             variant="modal"
           />
 
@@ -101,7 +101,7 @@ export default function DestinationModal({
           secondaryOnClick={onClose}
           primaryLabel={isEdit ? "Save" : "Add"}
           primaryOnClick={handleSave}
-          primaryDisabled={!name.trim()}
+          primaryDisabled={!names.English.trim()}
         />
       </section>
     </div>

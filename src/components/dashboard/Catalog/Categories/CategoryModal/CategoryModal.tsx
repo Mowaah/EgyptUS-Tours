@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import ModalHeader from "@/components/dashboard/shared/ModalHeader/ModalHeader";
 import ModalFooter from "@/components/dashboard/shared/ModalFooter/ModalFooter";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
+import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import styles from "./CategoryModal.module.scss";
 
 interface CategoryModalProps {
@@ -21,13 +22,12 @@ export default function CategoryModal({
   initialName = "",
   isEdit = false,
 }: CategoryModalProps) {
-  const [name, setName] = useState(initialName);
-
-  useEffect(() => {
-    if (open) {
-      setName(initialName);
-    }
-  }, [open, initialName]);
+  const [lang, setLang] = useState<Language>("English");
+  const [names, setNames] = useState<Record<Language, string>>({
+    English: initialName,
+    Italian: "",
+    Spanish: "",
+  });
 
   useEffect(() => {
     if (!open) return;
@@ -50,7 +50,7 @@ export default function CategoryModal({
   if (!open) return null;
 
   const handleSave = () => {
-    onSave({ name });
+    onSave({ name: names.English });
   };
 
   return (
@@ -70,12 +70,13 @@ export default function CategoryModal({
         />
 
         <div className={styles.body}>
+          <LanguageTabs active={lang} onChange={setLang} />
           <DashboardField
             label="Trip Category Name"
-            id="category-name"
+            id={`category-name-${lang}`}
             placeholder="Enter trip category name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={names[lang]}
+            onChange={(e) => setNames((prev) => ({ ...prev, [lang]: e.target.value }))}
             variant="modal"
           />
         </div>
@@ -85,7 +86,7 @@ export default function CategoryModal({
           secondaryLabel="Cancel"
           secondaryOnClick={onClose}
           primaryOnClick={handleSave}
-          primaryDisabled={!name.trim() || (isEdit && name === initialName)}
+          primaryDisabled={!names.English.trim() || (isEdit && names.English === initialName)}
         />
       </section>
     </div>

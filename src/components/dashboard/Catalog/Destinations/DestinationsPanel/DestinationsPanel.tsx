@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { TablePagination } from "@/components/dashboard/shared";
 import DestinationCard, { Destination } from "../DestinationCard/DestinationCard";
+import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import styles from "./DestinationsPanel.module.scss";
 
 const MOCK_DESTINATIONS: Destination[] = [
@@ -27,6 +28,7 @@ interface DestinationsPanelProps {
 }
 
 export default function DestinationsPanel({ onEditDestination, onDeleteDestination }: DestinationsPanelProps = {}) {
+  const [lang, setLang] = useState<Language>("English");
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(12);
 
@@ -62,6 +64,8 @@ export default function DestinationsPanel({ onEditDestination, onDeleteDestinati
           Export Data
         </button>
       </div>
+
+      <LanguageTabs active={lang} onChange={setLang} />
 
       <div className={styles.grid}>
         {visibleDestinations.map((dest) => (

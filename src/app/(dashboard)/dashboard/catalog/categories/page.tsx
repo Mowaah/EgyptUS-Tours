@@ -67,6 +67,7 @@ export default function CatalogCategoriesPage() {
       </div>
 
       <CategoryModal
+        key={`${modalOpen ? "open" : "closed"}-${editingCategory?.id || "new"}`}
         open={modalOpen}
         onClose={handleCloseModal}
         onSave={handleSaveModal}
@@ -80,7 +81,7 @@ export default function CatalogCategoriesPage() {
         title="Delete Trip Category"
         message={
           <>
-            <strong>"{deletingCategory?.name}"</strong> is linked to 12 trips.<br />
+            <strong>{`"${deletingCategory?.name}"`}</strong> is linked to 12 trips.<br />
             Deleting it will remove this category from those trips
           </>
         }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import LocationCard, { Location } from "../LocationCard/LocationCard";
 import TablePagination from "@/components/dashboard/shared/TablePagination/TablePagination";
+import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import styles from "./LocationsPanel.module.scss";
 
 const MOCK_LOCATIONS: Location[] = [
@@ -31,6 +32,7 @@ interface LocationsPanelProps {
 }
 
 export default function LocationsPanel({ onEditLocation, onDeleteLocation }: LocationsPanelProps = {}) {
+  const [lang, setLang] = useState<Language>("English");
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(12);
 
@@ -77,6 +79,8 @@ export default function LocationsPanel({ onEditLocation, onDeleteLocation }: Loc
           Export Data
         </button>
       </header>
+
+      <LanguageTabs active={lang} onChange={setLang} />
 
       <div className={styles.grid}>
         {visibleLocations.map((Location) => (

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import ModalHeader from "@/components/dashboard/shared/ModalHeader/ModalHeader";
 import ModalFooter from "@/components/dashboard/shared/ModalFooter/ModalFooter";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
+import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import styles from "./LocationModal.module.scss";
 
 interface LocationModalProps {
@@ -21,13 +22,12 @@ export default function LocationModal({
   initialName = "",
   isEdit = false,
 }: LocationModalProps) {
-  const [name, setName] = useState(initialName);
-
-  useEffect(() => {
-    if (open) {
-      setName(initialName);
-    }
-  }, [open, initialName]);
+  const [lang, setLang] = useState<Language>("English");
+  const [names, setNames] = useState<Record<Language, string>>({
+    English: initialName,
+    Italian: "",
+    Spanish: "",
+  });
 
   useEffect(() => {
     if (!open) return;
@@ -50,7 +50,7 @@ export default function LocationModal({
   if (!open) return null;
 
   const handleSave = () => {
-    onSave({ name });
+    onSave({ name: names.English });
   };
 
   return (
@@ -70,12 +70,13 @@ export default function LocationModal({
         />
 
         <div className={styles.body}>
+          <LanguageTabs active={lang} onChange={setLang} />
           <DashboardField
             label="Location"
-            id="Location-name"
+            id={`Location-name-${lang}`}
             placeholder="Enter Location name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={names[lang]}
+            onChange={(e) => setNames((prev) => ({ ...prev, [lang]: e.target.value }))}
             variant="modal"
           />
         </div>
@@ -85,7 +86,7 @@ export default function LocationModal({
           secondaryLabel="Cancel"
           secondaryOnClick={onClose}
           primaryOnClick={handleSave}
-          primaryDisabled={!name.trim() || (isEdit && name === initialName)}
+          primaryDisabled={!names.English.trim() || (isEdit && names.English === initialName)}
         />
       </section>
     </div>

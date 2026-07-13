@@ -67,6 +67,7 @@ export default function CatalogLocationsPage() {
       </div>
 
       <LocationModal
+        key={`${modalOpen ? "open" : "closed"}-${editingLocation?.id || "new"}`}
         open={modalOpen}
         onClose={handleCloseModal}
         onSave={handleSaveModal}
@@ -80,7 +81,7 @@ export default function CatalogLocationsPage() {
         title="Delete Location?"
         message={
           <>
-            <strong>"{deletingLocation?.name}"</strong> is linked to 12 hotels.<br />
+            <strong>{`"${deletingLocation?.name}"`}</strong> is linked to 12 hotels.<br />
             Deleting it will remove this location from those hotels
           </>
         }

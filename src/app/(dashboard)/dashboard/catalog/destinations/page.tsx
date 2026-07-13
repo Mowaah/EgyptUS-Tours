@@ -67,6 +67,7 @@ export default function CatalogDestinationsPage() {
       </div>
 
       <DestinationModal
+        key={`${modalOpen ? "open" : "closed"}-${editingDest?.id || "new"}`}
         open={modalOpen}
         onClose={handleCloseModal}
         onSave={handleSaveModal}
@@ -80,7 +81,7 @@ export default function CatalogDestinationsPage() {
         title="Delete Destination"
         message={
           <>
-            <strong>"{deletingDest?.name}"</strong> is linked to 12 trips.<br />
+            <strong>{`"${deletingDest?.name}"`}</strong> is linked to 12 trips.<br />
             Are you sure you want to delete it?
           </>
         }

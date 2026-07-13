@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import CategoryCard, { Category } from "../CategoryCard/CategoryCard";
 import TablePagination from "@/components/dashboard/shared/TablePagination/TablePagination";
+import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import styles from "./CategoriesPanel.module.scss";
 
 const MOCK_CATEGORIES: Category[] = [
@@ -31,6 +32,7 @@ interface CategoriesPanelProps {
 }
 
 export default function CategoriesPanel({ onEditCategory, onDeleteCategory }: CategoriesPanelProps = {}) {
+  const [lang, setLang] = useState<Language>("English");
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(12);
 
@@ -77,6 +79,8 @@ export default function CategoriesPanel({ onEditCategory, onDeleteCategory }: Ca
           Export Data
         </button>
       </header>
+
+      <LanguageTabs active={lang} onChange={setLang} />
 
       <div className={styles.grid}>
         {visibleCategories.map((category) => (
