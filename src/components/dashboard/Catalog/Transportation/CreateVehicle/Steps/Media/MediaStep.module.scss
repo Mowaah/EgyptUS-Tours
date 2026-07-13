@@ -1,0 +1,99 @@
+@use "sass:color";
+@use "@/styles/variables" as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: $white;
+  border-radius: 24px;
+  padding: 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+  @media (max-width: 1100px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  border: 1px solid #F0F0F0;
+  padding: 24px 16px;
+  border-radius: 24px;
+}
+
+.dropzoneWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.attachmentLabelWrap {
+  display: flex;
+  width: 100%;
+}
+
+.attachmentLabel {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: $font-size-13;
+  color: $text;
+  margin: 0;
+  padding-bottom: 0.25rem;
+}
+
+.whiteTabs {
+  background: $white;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.iconBtnDelete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #FEE4E2;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  padding: 0;
+
+  &:hover {
+    background: #FCE4E8;
+  }
+}
+
+.iconBtnAdd {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: $primary;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  padding: 0;
+
+  &:hover {
+    background: color.adjust($primary, $lightness: -5%);
+  }
+}

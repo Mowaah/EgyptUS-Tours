@@ -1,0 +1,214 @@
+@use "@/styles/variables" as *;
+
+.viewLayout {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+  }
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px;
+  gap: 18px;
+  width: 100%;
+  max-width: 1000px;
+  background: $background;
+  border-radius: 24px;
+  flex: 1;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  flex: 1;
+}
+
+.titleRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+
+  .iconWrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background: $gray-50;
+    border-radius: 20px;
+  }
+
+  h2 {
+    font-weight: 500;
+    font-size: $font-size-28;
+    line-height: 33px;
+    color: $dark;
+    margin: 0;
+  }
+}
+
+.infoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.horizontalBorder {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  width: 100%;
+  border-bottom: 1px solid $gray-25-slate;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .label {
+    font-weight: 500;
+    font-size: $font-size-sm;
+    color: $gray-400;
+  }
+
+  .value {
+    font-weight: 600;
+    font-size: $font-size-base;
+    color: $gray-700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+/* Vehicle Content */
+.contentCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px;
+  gap: 32px;
+  width: 100%;
+  background: $background;
+  border-radius: 24px;
+}
+
+.specsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.specItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px;
+  gap: 8px;
+  width: 100%;
+  background: $gray-50;
+  border-radius: 16px;
+
+  .specLabel {
+    font-weight: 500;
+    font-size: $font-size-sm;
+    color: $gray-400;
+    margin: 0;
+  }
+
+  .specBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    gap: 10px;
+    width: 100%;
+    background: $background;
+    border-radius: 12px;
+
+    .specText {
+      font-weight: 600;
+      font-size: $font-size-sm;
+      line-height: 20px;
+      color: $gray-500-zinc;
+      margin: 0;
+      width: 100%;
+    }
+  }
+}
+
+/* Features */
+.facilitiesCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px;
+  gap: 32px;
+  width: 100%;
+  background: $background;
+  border-radius: 24px;
+}
+
+.facilitiesContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.facilityTag {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 16px;
+  gap: 6px;
+  background: $gray-100-zinc;
+  border-radius: 32px;
+
+  span {
+    font-weight: 400;
+    font-size: $font-size-sm;
+    color: #7A7A7A;
+  }
+}
+
+.starRatingWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .stars {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .ratingText {
+    font-weight: 500;
+    font-size: $font-size-base;
+    color: $text-lighter;
+  }
+}

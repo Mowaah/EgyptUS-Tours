@@ -47,6 +47,22 @@ const pageCopyByPath: Record<string, PageCopy> = {
     searchPlaceholder: "Search transfers, guests...",
     primaryAction: { label: "New Booking", iconSrc: "/images/dashboard/navbar/add-circle.svg" },
   },
+  "/dashboard/catalog/transportation": {
+    title: "Vehicles",
+    subtitle: "Manage your vehicle fleet for transfers and tours.",
+    breadcrumbTrail: [{ label: "Catalog" }, { label: "Vehicles" }],
+    searchPlaceholder: "Search Vehicles...",
+    primaryAction: { label: "Add New Vehicles" },
+  },
+  "/dashboard/catalog/transportation/new": {
+    title: "Add New Vehicle",
+    subtitle: "Add a new vehicle and configure its specifications, pricing, and availability.",
+    breadcrumbTrail: [{ label: "Catalog", href: "/dashboard/catalog/transportation" }, { label: "Add New Vehicle" }],
+    hideSearch: true,
+    hideFilterButton: true,
+    primaryAction: { label: "Save as draft", iconSrc: "/images/dashboard/save2.svg", variant: "tertiary" },
+    secondaryAction: { label: "Discard" },
+  },
   "/dashboard/bookings/hotels": {
     title: "Hotel Bookings",
     subtitle: "Approve, follow up on payments and manage upcoming stays in one place.",

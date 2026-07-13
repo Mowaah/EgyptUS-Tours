@@ -1,0 +1,51 @@
+@use "@/styles/variables" as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  background: $white;
+  border-radius: 24px;
+  text-align: center;
+  gap: 1rem;
+  
+  h3 {
+    font-size: $font-size-28;
+    font-weight: 600;
+    color: $dark;
+    margin: 0;
+  }
+  
+  p {
+    color: $gray-400;
+  }
+  
+  .viewButton {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: $primary;
+    color: $white;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+}

@@ -1,0 +1,119 @@
+@use "@/styles/variables" as *;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  gap: 32px;
+  background: $background;
+  border-radius: 24px;
+  width: 100%;
+}
+
+.titleRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  align-self: stretch;
+
+  .iconWrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background: $dashboard-expandable-hover;
+    border-radius: 20px;
+    flex-shrink: 0;
+  }
+
+  h2 {
+    font-weight: 500;
+    font-size: $font-size-28;
+    line-height: 33px;
+    color: $dark;
+    margin: 0;
+  }
+}
+
+/* Grid of price cells */
+.priceGrid {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  align-self: stretch;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.priceCell {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 16px;
+  gap: 10px;
+  background: $gray-50;
+  border-radius: 16px;
+  flex: 1;
+
+  .cellLabel {
+    font-weight: 500;
+    font-size: $font-size-lg;
+    line-height: 22px;
+    color: #1F2937;
+  }
+
+  .cellValue {
+    font-weight: 500;
+    font-size: $font-size-2xl;
+    line-height: 27px;
+    color: $gray-400;
+    text-align: right;
+  }
+}
+
+/* Total row */
+.totalRow {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 23.5px 16px;
+  gap: 10px;
+  background: $gray-50;
+  border-radius: 16px;
+  align-self: stretch;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  .totalLabel {
+    font-weight: 700;
+    font-size: $font-size-lg;
+    line-height: 16px;
+    color: #1F2937;
+  }
+
+  .totalValue {
+    font-weight: 800;
+    font-size: $font-size-2xl;
+    line-height: 20px;
+    color: $primary;
+  }
+}

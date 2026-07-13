@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "@/styles/variables" as *;
 
 .card {
@@ -91,32 +92,3 @@
   color: #0058C4;
 }
 
-.numberAdornmentContainer {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.numberAdornment {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 2px;
-  color: $gray-400;
-
-  button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: inherit;
-    
-    &:hover {
-      color: $gray-700;
-    }
-  }
-}
