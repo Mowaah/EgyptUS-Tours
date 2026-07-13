@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
+import profileStyles from "@/components/dashboard/shared/ProfileHeader/ProfileHeader.module.scss";
 import styles from "./ViewTrip.module.scss";
 
 import GuestDetails from "./GuestDetails";

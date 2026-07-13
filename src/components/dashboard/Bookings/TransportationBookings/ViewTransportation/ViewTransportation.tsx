@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
+import profileStyles from "@/components/dashboard/shared/ProfileHeader/ProfileHeader.module.scss";
 import styles from "./ViewTransportation.module.scss";
 
 import PassengerInformation from "./PassengerInformation";

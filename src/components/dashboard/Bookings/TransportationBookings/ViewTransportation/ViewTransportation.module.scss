@@ -15,6 +15,11 @@
   transition: all 0.2s ease;
   height: clamp(48px, 4.5vw, 56px);
   min-width: clamp(130px, 12vw, 152px);
+
+  img, svg {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .primaryActionButton {
@@ -31,6 +36,34 @@
   &:hover { background: $background-danger; }
 }
 
+@media (max-width: 1500px) {
+  .primaryActionButton,
+  .dangerActionButton {
+    height: 40px;
+    padding: 0 20px;
+    font-size: $font-size-15;
+    min-width: unset;
+
+    img, svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .primaryActionButton,
+  .dangerActionButton {
+    height: 36px;
+    padding: 0 16px;
+    font-size: $font-size-sm;
+
+    img, svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
 
 .contentWrapper {
   position: relative;
