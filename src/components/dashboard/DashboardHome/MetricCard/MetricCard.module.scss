@@ -118,8 +118,45 @@
   color: #d58a2f;
 }
 
+@media (max-width: 1500px) {
+  .card {
+    height: 9.5rem;
+    padding: 1.25rem 1.25rem 0.75rem;
+    border-radius: 1.25rem;
+  }
+  .top {
+    font-size: $font-size-base;
+  }
+  .icon {
+    width: 2rem;
+    height: 2rem;
+  }
+  .valueRow strong {
+    font-size: $font-size-28;
+  }
+}
+
+@media (max-width: 1024px) {
+  .card {
+    height: 8.5rem;
+    padding: 1rem 1rem 0.5rem;
+    border-radius: 1rem;
+  }
+  .top {
+    font-size: $font-size-15;
+  }
+  .icon {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+  .valueRow strong {
+    font-size: $font-size-2xl;
+  }
+}
+
 @media (max-width: 760px) {
   .card {
+    height: auto;
     border-radius: 1rem;
     padding: 1rem;
   }

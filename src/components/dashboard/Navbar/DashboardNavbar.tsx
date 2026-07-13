@@ -212,9 +212,10 @@ export default function DashboardNavbar({
                     <Image
                       src={visibleSecondaryAction.iconSrc}
                       alt=""
-                      width={20}
-                      height={20}
+                      width={24}
+                      height={24}
                       aria-hidden
+                      className={styles.actionIcon}
                       style={visibleSecondaryAction.iconRotation ? { transform: `rotate(${visibleSecondaryAction.iconRotation}deg)` } : undefined}
                     />
                   )}
@@ -238,6 +239,7 @@ export default function DashboardNavbar({
                       width={24}
                       height={24}
                       aria-hidden
+                      className={styles.actionIcon}
                       style={visiblePrimaryAction.iconRotation ? { transform: `rotate(${visiblePrimaryAction.iconRotation}deg)` } : undefined}
                     />
                   )}
