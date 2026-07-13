@@ -9,6 +9,7 @@ import Button from "@/components/shared/Button/Button";
 import { GlassCard, AuthModal } from "@/components/shared";
 import UserMenu from "./UserMenu";
 import { useScrollLock } from "@/hooks/useScrollLock";
+import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import styles from "./Navbar.module.scss";
 
 const NAV_LINKS = [
@@ -87,6 +88,7 @@ export default function Navbar() {
   const [expandedDropdown, setExpandedDropdown] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const pathname = usePathname();
   const isBookingPage = pathname === "/booking";
@@ -287,7 +289,8 @@ export default function Navbar() {
               lightNavBackground={lightNavBackground}
               isLoggedIn={isLoggedIn}
               setIsLoggedIn={setIsLoggedIn}
-              openAuthModal={() => { setIsAuthModalOpen(true); setIsLoggedIn(true); }}
+              openAuthModal={() => setIsAuthModalOpen(true)}
+              onLogoutClick={() => setIsLogoutModalOpen(true)}
             />
           </div>
         </div>
@@ -393,7 +396,7 @@ export default function Navbar() {
                     ))}
                     <li className={styles.drawerDivider} />
                     <li>
-                      <button className={styles.drawerUserLink} onClick={() => { setIsLoggedIn(false); setMobileOpen(false); }}>
+                      <button className={styles.drawerUserLink} onClick={() => { setMobileOpen(false); setIsLogoutModalOpen(true); }}>
                         <Image src="/images/logout.svg" alt="" width={22} height={22} />
                         <span>Log out</span>
                       </button>
@@ -412,7 +415,7 @@ export default function Navbar() {
                     </li>
                     <li className={styles.drawerDivider} />
                     <li>
-                      <button className={`${styles.drawerUserLink} ${styles.drawerGuestLink}`} onClick={() => { setMobileOpen(false); setIsAuthModalOpen(true); setIsLoggedIn(true); }}>
+                      <button className={`${styles.drawerUserLink} ${styles.drawerGuestLink}`} onClick={() => { setMobileOpen(false); setIsAuthModalOpen(true); }}>
                         <Image src="/images/profile-gray.svg" alt="" width={22} height={22} />
                         <span>Login / Sign up</span>
                       </button>
@@ -434,6 +437,20 @@ export default function Navbar() {
           onLoginSuccess={() => setIsLoggedIn(true)}
         />
       )}
+
+      <DashboardConfirmationModal
+        open={isLogoutModalOpen}
+        variant="logout"
+        title="Logout?"
+        message="You'll need to sign in again to access your bookings, profile, and account information."
+        cancelLabel="Stay Logged In"
+        confirmLabel="Logout"
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={() => {
+          setIsLogoutModalOpen(false);
+          setIsLoggedIn(false);
+        }}
+      />
     </>
   );
 }

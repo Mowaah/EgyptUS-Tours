@@ -125,7 +125,7 @@ export default function Footer() {
             rel="noopener noreferrer"
             className={styles.poweredBy}
           >
-            Devora
+            DevOra
           </a>
         </p>
       </div>

@@ -12,9 +12,10 @@ interface UserMenuProps {
   isLoggedIn: boolean;
   setIsLoggedIn: (val: boolean) => void;
   openAuthModal: () => void;
+  onLogoutClick: () => void;
 }
 
-export default function UserMenu({ scrolled, lightNavBackground, isLoggedIn, setIsLoggedIn, openAuthModal }: UserMenuProps) {
+export default function UserMenu({ scrolled, lightNavBackground, isLoggedIn, setIsLoggedIn, openAuthModal, onLogoutClick }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -97,7 +98,7 @@ export default function UserMenu({ scrolled, lightNavBackground, isLoggedIn, set
 
             <div className={styles.divider} />
 
-            <button className={`${styles.menuItem} ${styles.logoutBtn}`} onClick={() => setIsLoggedIn(false)}>
+            <button className={`${styles.menuItem} ${styles.logoutBtn}`} onClick={() => { setIsOpen(false); onLogoutClick(); }}>
               <span>Log out</span>
               <Image src="/images/logout.svg" alt="" width={24} height={24} className={styles.logoutIcon} />
             </button>

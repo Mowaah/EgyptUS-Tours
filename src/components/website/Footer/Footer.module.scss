@@ -208,7 +208,7 @@
 }
 
 .copyright {
-  font-size: $font-size-xs;
+  font-size: $font-size-lg;
   font-weight: $font-weight-normal;
   color: $white;
   text-align: center;
@@ -217,7 +217,7 @@
 
   .poweredBy {
     color: $primary;
-    font-weight: $font-weight-semibold;
+    font-weight: $font-weight-medium;
     text-decoration: none;
     transition: color $transition-fast;
 
