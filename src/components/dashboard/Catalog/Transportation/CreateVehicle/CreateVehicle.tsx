@@ -42,7 +42,14 @@ export function CreateVehicle({ vehicleId, onDirtyChange }: { vehicleId?: string
       vat: "",
       insurance: "",
       pricePerKm: "",
-      additionalServices: [],
+      additionalServices: [
+        "Meet & Greet",
+        "Extra Luggage",
+        "Child Seat",
+        "Waiting Time (Per Hour)",
+        "Airport Parking Fee",
+        "Night Service"
+      ],
       photos: [],
       seoTitle: "",
       seoDescription: "",

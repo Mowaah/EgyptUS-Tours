@@ -8,7 +8,6 @@ import styles from "./PricingStep.module.scss";
 
 export function PricingStep() {
   const { watch, control, setValue } = useFormContext<CreateVehicleValues>();
-  const [serviceInput, setServiceInput] = useState("");
 
   const basePrice = watch("basePrice");
   const vat = watch("vat");
@@ -23,16 +22,21 @@ export function PricingStep() {
   const mockExtraLuggage = 15;
   const total = numBase + numVat + numInsurance + mockMeetAndGreet + mockExtraLuggage;
 
-  const handleAddService = () => {
-    const trimmed = serviceInput.trim();
-    if (trimmed && !additionalServices.includes(trimmed)) {
-      setValue("additionalServices", [...additionalServices, trimmed]);
-      setServiceInput("");
-    }
-  };
+  const ALL_SERVICES = [
+    "Meet & Greet",
+    "Extra Luggage",
+    "Child Seat",
+    "Waiting Time (Per Hour)",
+    "Airport Parking Fee",
+    "Night Service"
+  ];
 
-  const handleRemoveService = (tag: string) => {
-    setValue("additionalServices", additionalServices.filter((s) => s !== tag));
+  const handleToggleService = (tag: string) => {
+    if (additionalServices.includes(tag)) {
+      setValue("additionalServices", additionalServices.filter((s) => s !== tag));
+    } else {
+      setValue("additionalServices", [...additionalServices, tag]);
+    }
   };
 
   return (
@@ -77,50 +81,34 @@ export function PricingStep() {
           iconSrc="/images/dashboard/catalog/hotels/facilities.svg"
           className={styles.card}
         >
-          <div className={styles.inputGroup}>
-            <div className={styles.facilityInputWrapper}>
-              <input
-                type="text"
-                placeholder="Enter service (e.g. Meet & Greet)"
-                value={serviceInput}
-                onChange={(e) => setServiceInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddService();
-                  }
-                }}
-              />
-              <button
-                type="button"
-                className={styles.addBtn}
-                onClick={handleAddService}
-                disabled={!serviceInput.trim()}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M8 12H16" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M12 16V8" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
-            </div>
-
-            {additionalServices.length > 0 && (
-              <div className={styles.facilitiesTags}>
-                {additionalServices.map((service) => (
-                  <div key={service} className={styles.facilityTag}>
-                    <span>{service}</span>
-                    <button type="button" onClick={() => handleRemoveService(service)}>
+          <div className={styles.facilitiesTags}>
+            {ALL_SERVICES.map((service) => {
+              const isActive = additionalServices.includes(service);
+              return (
+                <div 
+                  key={service} 
+                  className={`${styles.facilityTag} ${isActive ? '' : styles.inactiveTag}`}
+                  onClick={() => handleToggleService(service)}
+                >
+                  <span>{service}</span>
+                  <button type="button">
+                    {isActive ? (
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                         <path d="M9.17 14.83L14.83 9.17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                         <path d="M14.83 14.83L9.17 9.17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+                    ) : (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M8 12H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M12 16V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </FormSection>
       </div>

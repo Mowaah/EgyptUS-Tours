@@ -92,3 +92,58 @@
   color: #0058C4;
 }
 
+.facilitiesTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.facilityTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: #E4F2FF;
+  border-radius: 96px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  span {
+    font-family: 'Trip Sans', sans-serif;
+    font-size: $font-size-base;
+    font-weight: 500;
+    color: $primary;
+  }
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: $primary;
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &.inactiveTag {
+    background-color: $gray-50-tailwind;
+    
+    span {
+      color: $text-light;
+    }
+    
+    button {
+      color: $gray-400;
+    }
+  }
+}
