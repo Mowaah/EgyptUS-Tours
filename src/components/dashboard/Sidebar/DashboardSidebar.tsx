@@ -30,7 +30,7 @@ const navItems: NavItem[] = [
   {
     label: "Requests",
     children: [
-      { label: "Plan Your Trip" },
+      { label: "Plan Your Trip", href: "/dashboard/requests/plan-your-trip" },
       { label: "B2B Programs" },
       { label: "MICE & Corporate" },
     ],

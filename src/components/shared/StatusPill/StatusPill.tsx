@@ -1,6 +1,23 @@
 import styles from "./StatusPill.module.scss";
 
-export type StatusPillVariant = "green" | "red" | "blue" | "orange" | "pink" | "gray";
+export type StatusPillVariant =
+  | "green"
+  | "red"
+  | "blue"
+  | "orange"
+  | "pink"
+  | "gray"
+  | "orangeDark"
+  | "orangeLight"
+  | "teal"
+  | "redSoft"
+  | "grayDark"
+  | "pinkSoft"
+  | "lightBlue"
+  | "purple"
+  | "magenta"
+  | "darkBlue"
+  | "blueDark";
 
 interface StatusPillProps {
   label: React.ReactNode;

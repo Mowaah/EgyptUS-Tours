@@ -47,7 +47,7 @@ export default function SummaryCard({
   customBadgeIcon,
 }: SummaryCardProps) {
   // Determine if tone is one of the predefined styles
-  const isPredefinedTone = ["blue", "orange", "pink", "purple", "green", "gray"].includes(tone);
+  const isPredefinedTone = ["blue", "orange", "pink", "purple", "green", "gray", "red"].includes(tone);
   const toneClass = isPredefinedTone ? styles[tone] : "";
 
   return (

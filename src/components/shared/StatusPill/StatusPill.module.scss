@@ -57,3 +57,69 @@
   background: $gray-100-zinc;
   i { background: #525252; }
 }
+
+.variantOrangeDark {
+  color: #cc5200;
+  background: #fff5ee;
+  i { background: #cc5200; }
+}
+
+.variantOrangeLight {
+  color: $secondary;
+  background: #fff0e6;
+  i { background: $secondary; }
+}
+
+.variantTeal {
+  color: #138b8f;
+  background: rgba(19, 139, 143, 0.19);
+  i { background: #138b8f; }
+}
+
+.variantRedSoft {
+  color: #d96066;
+  background: #f9e9ea;
+  i { background: #d96066; }
+}
+
+.variantGrayDark {
+  color: #505866;
+  background: #e7e8ea;
+  i { background: #505866; }
+}
+
+.variantPinkSoft {
+  color: #b86e9f;
+  background: rgba(184, 110, 159, 0.1);
+  i { background: #b86e9f; }
+}
+
+.variantLightBlue {
+  color: #00aaff;
+  background: rgba(0, 170, 255, 0.1);
+  i { background: #00aaff; }
+}
+
+.variantPurple {
+  color: #8000ff;
+  background: rgba(128, 0, 255, 0.1);
+  i { background: #8000ff; }
+}
+
+.variantMagenta {
+  color: #ff00b7;
+  background: rgba(255, 0, 183, 0.1);
+  i { background: #ff00b7; }
+}
+
+.variantDarkBlue {
+  color: $primary-darker;
+  background: rgba(23, 63, 128, 0.1);
+  i { background: $primary-darker; }
+}
+
+.variantBlueDark {
+  color: $primary;
+  background: #f1f8ff;
+  i { background: $primary; }
+}

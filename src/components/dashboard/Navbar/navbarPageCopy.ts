@@ -22,6 +22,13 @@ export interface PageCopy {
 }
 
 const pageCopyByPath: Record<string, PageCopy> = {
+  "/dashboard/requests/plan-your-trip": {
+    title: "Plan Your trip",
+    subtitle: "Capture, qualify and convert every lead — from first contact to completed deal.",
+    breadcrumbTrail: [{ label: "Requests" }, { label: "Plan Your trip" }],
+    searchPlaceholder: "Search bookings, customers...",
+    primaryAction: { label: "New Trip Request", iconSrc: "/images/dashboard/navbar/add-circle.svg" },
+  },
   "/dashboard": {
     title: "Dashboard Overview",
     subtitle: "Let's review your update for today",
