@@ -31,7 +31,7 @@ const navItems: NavItem[] = [
     label: "Requests",
     children: [
       { label: "Plan Your Trip", href: "/dashboard/requests/plan-your-trip" },
-      { label: "B2B Programs" },
+      { label: "B2B Programs", href: "/dashboard/requests/b2b-programs" },
       { label: "MICE & Corporate", href: "/dashboard/requests/mice-corporate" },
     ],
   },

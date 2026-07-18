@@ -27,12 +27,13 @@ export const mockMiceData: MiceItem[] = [
 ];
 
 export const getMiceDetails = (id: string) => {
+  const summary = mockMiceData.find((t) => t.id === id) || mockMiceData[0];
   return {
-    id,
+    id: summary.ref,
     applicantName: "Ahmed Hassan",
-    requestNumber: "CTP-002",
-    date: "April 10, 2025 at 1:20 PM",
-    status: "New",
+    requestNumber: summary.ref,
+    date: summary.submittedOn,
+    status: summary.status,
     organization: {
       organizationName: "Nile Horizon Events",
       industry: "Tourism & Event Management",
@@ -61,6 +62,13 @@ export const getMiceDetails = (id: string) => {
       estimatedBudget: "$25,000",
       budgetFlexibility: "Fixed Budget",
       source: "Instagram Advertisement",
+    },
+    paymentOverview: {
+      paymentPlan: "30% Deposit",
+      paymentMethod: "Paymob",
+      totalPackage: 25000,
+      depositAmount: 7500,
+      remainingAmount: 17500
     }
   };
 };

@@ -33,7 +33,7 @@ export const mockPlanYourTrips: PlanYourTripItem[] = [
     pax: "2A/2C/0I",
     submittedOn: "Apr 10, 2026 • 12:30 PM...",
     source: "Agent",
-    status: "In Progress",
+    status: "Fully Paid",
     agent: "Sara M.",
   },
   {
@@ -201,6 +201,13 @@ export function getPlanYourTripDetails(id: string) {
       activities: "Snorkeling & Diving, Snorkeling & Diving",
       contactMethod: "Whatsapp",
       specialRequest: "We are looking for a complete tourism management solution to manage bookings, customer inquiries, transportation services, and partner coordination more efficiently.",
+    },
+    paymentOverview: {
+      paymentPlan: "30% Deposit",
+      paymentMethod: "Paymob",
+      totalPackage: 2500,
+      depositAmount: 750,
+      remainingAmount: 1750
     }
   };
 }

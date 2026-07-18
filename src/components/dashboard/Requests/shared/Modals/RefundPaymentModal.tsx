@@ -1,0 +1,106 @@
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";
+import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
+import { UploadDropzone } from "@/components/dashboard/FormFields/UploadDropzone";
+import styles from "./RequestModals.module.scss";
+
+interface RefundPaymentModalProps {
+  open: boolean;
+  onClose: () => void;
+  onSubmit: () => void;
+}
+
+export default function RefundPaymentModal({ open, onClose, onSubmit }: RefundPaymentModalProps) {
+  const [file, setFile] = useState<File | undefined>(undefined);
+
+  useEffect(() => {
+    if (!open) return;
+    setFile(undefined);
+  }, [open]);
+
+  if (!open) return null;
+
+  return (
+    <div className={styles.overlay} onMouseDown={onClose}>
+      <div className={styles.modal} style={{ width: "600px" }} onMouseDown={(e) => e.stopPropagation()}>
+        <ModalHeader
+          title="Refund Payment"
+          iconSrc="/images/dashboard/refresh.svg"
+          onClose={onClose}
+        />
+        <div className={styles.body}>
+        <div style={{ display: "flex", flexDirection: "column", width: "100%", marginBottom: "24px" }}>
+          
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #F8FAFC" }}>
+            <span style={{ color: "#A3A3A3", fontSize: "14px", fontWeight: 500 }}>Package Total</span>
+            <span style={{ color: "#374151", fontSize: "16px", fontFamily: "Trip Sans", fontWeight: 500 }}>$2,500</span>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #F8FAFC" }}>
+            <span style={{ color: "#A3A3A3", fontSize: "14px", fontWeight: 500 }}>Days Before Travel</span>
+            <span style={{ color: "#374151", fontSize: "16px", fontFamily: "Trip Sans", fontWeight: 500 }}>20 Days</span>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #F8FAFC" }}>
+            <span style={{ color: "#A3A3A3", fontSize: "14px", fontWeight: 500 }}>Cancellation Policy Applied</span>
+            <span style={{ color: "#374151", fontSize: "16px", fontFamily: "Trip Sans", fontWeight: 500 }}>29-15 days before service</span>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #F8FAFC" }}>
+            <span style={{ color: "#A3A3A3", fontSize: "14px", fontWeight: 500 }}>Deduction</span>
+            <span style={{ color: "#374151", fontSize: "16px", fontFamily: "Trip Sans", fontWeight: 500 }}>40%</span>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #F8FAFC" }}>
+            <span style={{ color: "#A3A3A3", fontSize: "14px", fontWeight: 500 }}>Deduction Amount</span>
+            <span style={{ color: "#374151", fontSize: "16px", fontFamily: "Trip Sans", fontWeight: 500 }}>$1,000</span>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #F8FAFC" }}>
+            <span style={{ color: "#A3A3A3", fontSize: "14px", fontWeight: 500 }}>Refund Amount</span>
+            <div style={{ background: "rgba(255, 102, 0, 0.1)", borderRadius: "128px", padding: "4px 12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ color: "#FF6600", fontSize: "16px", fontFamily: "Trip Sans", fontWeight: 500 }}>$1,500</span>
+            </div>
+          </div>
+          
+        </div>
+
+        <DashboardField 
+          label="Transaction Reference" 
+          variant="modal" 
+          required 
+          id="txn-ref"
+          placeholder="Enter transaction/reference number"
+        />
+        
+        <div className={styles.fieldGroup} style={{ marginTop: "16px" }}>
+          <label className={styles.fieldLabel}>Upload Refund Receipt <span style={{ color: "#EF4444" }}>*</span></label>
+          <UploadDropzone
+            value={file}
+            onFileSelect={setFile}
+            accept="application/pdf, image/png, image/jpeg"
+            title="Click to upload a PDF File or PNG"
+            subtitle="up to 10MB"
+          />
+        </div>
+
+        <DashboardField 
+          label="Notes" 
+          control="textarea" 
+          variant="modal" 
+          id="notes"
+          placeholder="Add any additional notes or important details related to this refund here."
+          rows={4}
+        />
+      </div>
+      <ModalFooter
+        secondaryLabel="Cancel"
+        primaryLabel="Confirm Refund"
+        secondaryOnClick={onClose}
+        primaryOnClick={onSubmit}
+      />
+      </div>
+    </div>
+  );
+}

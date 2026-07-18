@@ -1,0 +1,108 @@
+@use "@/styles/variables" as *;
+
+.modalBody {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 16px;
+  max-height: 700px;
+  overflow-y: auto;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fieldLabel {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 700;
+  font-size: $font-size-base;
+  line-height: 20px;
+  color: $dark;
+}
+
+.radioGroupRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.radioCard {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 16px;
+  gap: 8px;
+  flex: 1;
+  background: $white;
+  border: 1px solid $gray-200;
+  border-radius: 32px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &.selected {
+    background: #FFF0E6;
+    border: 1px solid $secondary;
+  }
+}
+
+.radioCircle {
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  border: 1.5px solid $border-input;
+  background: $white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &.selected {
+    background: $secondary;
+    border-color: $secondary;
+  }
+}
+
+.radioLabel {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 400;
+  font-size: $font-size-base;
+  line-height: 24px;
+  color: $dark;
+}
+
+.summaryBox {
+  display: flex;
+  flex-direction: row;
+  padding: 20px;
+  gap: 24px;
+  background: $gray-50;
+  border-radius: 32px;
+  margin-top: 8px;
+}
+
+.summaryCol {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.summaryTitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 400;
+  font-size: $font-size-base;
+  line-height: 20px;
+  color: $gray-500-alt;
+}
+
+.summaryValue {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 700;
+  font-size: $font-size-lg;
+  line-height: 24px;
+  color: $dark;
+}

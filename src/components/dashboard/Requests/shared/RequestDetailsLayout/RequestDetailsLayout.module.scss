@@ -4,7 +4,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 0.75rem;
 }
 
 .toastBanner {
@@ -22,9 +22,9 @@
 
 .footer {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   padding: 24px;
   gap: 28px;
   background: $background;
@@ -47,8 +47,8 @@
 .footerActions {
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
   align-items: center;
+  justify-content: flex-end;
   gap: 16px;
   flex-grow: 1;
 }
@@ -68,6 +68,7 @@
   cursor: pointer;
   transition: opacity 0.2s;
   flex: 1;
+  white-space: nowrap;
   max-width: 708px;
   
   &:hover {
@@ -98,11 +99,25 @@
 .leftColumn, .rightColumn {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 0.75rem;
 }
 
 @media (max-width: 1200px) {
   .gridContainer {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1600px) {
+  .footer {
+    padding: 20px;
+    gap: 20px;
+  }
+  .footerActions {
+    gap: 12px;
+  }
+  .reassignBtn, .createProposalBtn {
+    padding: 10px 16px;
+    font-size: $font-size-base;
   }
 }
