@@ -15,6 +15,8 @@ export { DashboardFooter } from "./DashboardFooter/DashboardFooter";
 export { default as ProfileHeader } from "./ProfileHeader/ProfileHeader";
 export { default as ActivityTimeline } from "./ActivityTimeline/ActivityTimeline";
 export type { Milestone, MilestoneStatus } from "./ActivityTimeline/ActivityTimeline";
+export { default as InfoCard } from "./InfoCard/InfoCard";
+export type { InfoCardData } from "./InfoCard/InfoCard";
 export { default as ModalHeader } from "./ModalHeader/ModalHeader";
 export { default as ModalFooter } from "./ModalFooter/ModalFooter";
 export * from "./ReassignModal";

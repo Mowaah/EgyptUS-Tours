@@ -3,7 +3,8 @@
 import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";;
+import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";
+import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import styles from "./ReassignModal.module.scss";
 
 export interface Agent {
@@ -15,8 +16,11 @@ export interface Agent {
 interface ReassignModalProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: (agentId: string) => void;
+  onConfirm: (agentId: string, reason?: string) => void;
   agents?: Agent[];
+  title?: string;
+  subtitle?: string;
+  showReasonField?: boolean;
 }
 
 const DEFAULT_AGENTS: Agent[] = [
@@ -30,8 +34,12 @@ export default function ReassignModal({
   onClose,
   onConfirm,
   agents = DEFAULT_AGENTS,
+  title = "Re-Assign To",
+  subtitle = "Choose an agent to handle this request",
+  showReasonField = false,
 }: ReassignModalProps) {
   const [selectedAgentId, setSelectedAgentId] = useState<string>(agents[0]?.id || "");
+  const [reason, setReason] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dropdownMenuRef = useRef<HTMLUListElement>(null);
@@ -61,8 +69,9 @@ export default function ReassignModal({
 
   useEffect(() => {
     if (!open) return;
-    // reset selection to first agent when opened (or keep it if you prefer)
+    // reset selection to first agent when opened
     setSelectedAgentId(agents[0]?.id || "");
+    setReason("");
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => {
@@ -110,8 +119,8 @@ export default function ReassignModal({
         <ModalHeader
           onClose={onClose}
           iconSrc="/images/dashboard/user-add.svg"
-          title="Re-Assign To"
-          subtitle="Choose an agent to handle this request"
+          title={title}
+          subtitle={subtitle}
           id="reassign-modal-title"
         />
 
@@ -187,13 +196,28 @@ export default function ReassignModal({
               )}
             </div>
           </div>
+
+          {showReasonField && (
+            <div className={styles.fieldGroup} style={{ marginTop: '16px' }}>
+              <DashboardField
+                control="textarea"
+                id="reason-for-reassign"
+                label="Reason for Re-Assign"
+                variant="modal"
+                placeholder="Enter the reason for re-assign this request..."
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                style={{ minHeight: "120px", resize: "none" }}
+              />
+            </div>
+          )}
         </div>
 
         <ModalFooter
           secondaryLabel="Cancel"
           secondaryOnClick={onClose}
           primaryLabel="Confirm"
-          primaryOnClick={() => onConfirm(selectedAgentId)}
+          primaryOnClick={() => onConfirm(selectedAgentId, reason)}
         />
       </section>
     </div>

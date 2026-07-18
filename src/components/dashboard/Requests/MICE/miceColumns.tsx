@@ -2,9 +2,10 @@ import type { DataTableColumn } from "@/components/dashboard/DataTable";
 import StatusPill from "@/components/shared/StatusPill/StatusPill";
 import type { StatusPillVariant } from "@/components/shared/StatusPill/StatusPill";
 import ViewButton from "@/components/shared/ViewButton/ViewButton";
-import type { PlanYourTripItem } from "./mockPlanYourTripData";
-import styles from "./PlanYourTrip.module.scss";
+import type { MiceItem } from "./mockMiceData";
+import styles from "./MICE.module.scss";
 
+// Export this so we can reuse it in the View request page
 export const getStatusVariant = (status: string): StatusPillVariant => {
   switch (status) {
     case "New":
@@ -37,26 +38,26 @@ export const getStatusVariant = (status: string): StatusPillVariant => {
   }
 };
 
-export const planYourTripColumns: DataTableColumn<PlanYourTripItem>[] = [
+export const miceColumns: DataTableColumn<MiceItem>[] = [
   {
     id: "ref",
     header: "Ref",
     render: (row) => <span className={styles.idCell}>{row.ref}</span>,
   },
   {
-    id: "destination",
-    header: "Destination",
-    render: (row) => <span>{row.destination}</span>,
+    id: "organizationName",
+    header: "Organization Name",
+    render: (row) => <span>{row.organizationName}</span>,
   },
   {
-    id: "dates",
-    header: "Dates",
-    render: (row) => <span className={styles.dateCell}>{row.dates}</span>,
+    id: "industry",
+    header: "Industry",
+    render: (row) => <span>{row.industry}</span>,
   },
   {
-    id: "pax",
-    header: "Pax",
-    render: (row) => <span>{row.pax}</span>,
+    id: "email",
+    header: "Email",
+    render: (row) => <span>{row.email}</span>,
   },
   {
     id: "submittedOn",
@@ -103,7 +104,7 @@ export const planYourTripColumns: DataTableColumn<PlanYourTripItem>[] = [
     header: "",
     cellClassName: styles.actionCell,
     render: (row) => (
-      <ViewButton onClick={() => window.location.href = `/dashboard/requests/plan-your-trip/${row.id}`} />
+      <ViewButton onClick={() => window.location.href = `/dashboard/requests/mice-corporate/${row.id}`} />
     ),
   },
 ];
