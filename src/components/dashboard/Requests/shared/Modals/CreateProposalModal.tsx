@@ -47,7 +47,7 @@ export default function CreateProposalModal({ open, onClose, onSubmit }: CreateP
       <div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}>
         <ModalHeader
           title="Create Proposal"
-          iconSrc="/images/dashboard/send.svg"
+          iconSrc="/images/dashboard/requests/footer/create-proposal.svg"
           onClose={onClose}
           id="create-proposal-modal"
         />

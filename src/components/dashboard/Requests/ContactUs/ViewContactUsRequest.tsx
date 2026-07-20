@@ -26,20 +26,21 @@ export default function ViewContactUsRequest({ requestId }: { requestId: string 
   if (requestData.status === "New") {
     prependActionButtons = (onAction: (key: string) => void) => (
       <button className={phStyles.secondaryActionButton} type="button" onClick={() => onAction("mark_closed")}>
-        <Image src="/images/dashboard/requests/mark-closed.svg" alt="" width={20} height={20} />
+        <Image src="/images/dashboard/requests/contact-us/mark-as-closed.svg" alt="" width={20} height={20} />
         Mark as Closed
       </button>
     );
 
     appendActionButtons = () => (
       <button className={phStyles.primaryActionButton} type="button">
-        <Image src="/images/dashboard/requests/reply-email.svg" alt="" width={20} height={20} />
+        <Image src="/images/dashboard/requests/contact-us/reply-via-email.svg" alt="" width={20} height={20} />
         Reply via Email
       </button>
     );
   } else if (requestData.status === "Replied") {
     appendActionButtons = (onAction: (key: string) => void) => (
       <button className={phStyles.primaryActionButton} type="button" onClick={() => onAction("mark_closed")}>
+        <Image src="/images/dashboard/requests/contact-us/mark-as-closed.svg" alt="" width={20} height={20} className={phStyles.whiteIcon} />
         Mark as Closed
       </button>
     );

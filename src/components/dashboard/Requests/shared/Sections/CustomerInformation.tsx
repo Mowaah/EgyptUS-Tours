@@ -21,7 +21,7 @@ export default function CustomerInformation({ request }: CustomerInformationProp
   return (
     <InfoCard
       title="Customer Information"
-      iconSrc="/images/dashboard/sidebar/user.svg"
+      iconSrc="/images/dashboard/requests/plan-your-trip/customer-info.svg"
       data={data}
     />
   );

@@ -45,7 +45,7 @@ export default function RejectRequestModal({ open, onClose, onSubmit }: RejectRe
         <ModalHeader
           title="Mark As Rejected"
           subtitle="Provide the reason for rejecting this request."
-          iconSrc="/images/dashboard/cancel.svg"
+          iconSrc="/images/dashboard/requests/footer/mark-as-rejected.svg"
           onClose={onClose}
           id="reject-request-modal"
         />

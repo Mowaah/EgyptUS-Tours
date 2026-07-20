@@ -44,7 +44,7 @@ export default function RecordDepositPaymentModal({ open, onClose, onSubmit }: R
       <div className={rootStyles.modal} style={{ width: "647px" }} onMouseDown={(e) => e.stopPropagation()}>
         <ModalHeader
           title="Record Deposit Payment"
-          iconSrc="/images/dashboard/requests/coin.svg"
+          iconSrc="/images/dashboard/requests/footer/record-deposit-payment.svg"
           onClose={onClose}
           id="record-deposit-payment-modal"
         />

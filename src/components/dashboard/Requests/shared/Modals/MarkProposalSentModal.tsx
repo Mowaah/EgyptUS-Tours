@@ -44,7 +44,7 @@ export default function MarkProposalSentModal({ open, onClose, onSubmit }: MarkP
       <div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}>
         <ModalHeader
           title="Mark Proposal As Sent"
-          iconSrc="/images/dashboard/inquiries/mark_complete.svg"
+          iconSrc="/images/dashboard/requests/footer/mark-proposal-as-sent.svg"
           onClose={onClose}
           id="mark-proposal-sent-modal"
         />

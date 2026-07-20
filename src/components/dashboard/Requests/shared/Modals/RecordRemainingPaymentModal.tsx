@@ -44,7 +44,7 @@ export default function RecordRemainingPaymentModal({ open, onClose, onSubmit }:
       <div className={rootStyles.modal} style={{ width: "647px" }} onMouseDown={(e) => e.stopPropagation()}>
         <ModalHeader
           title="Record Remaining Payment"
-          iconSrc="/images/dashboard/requests/coin.svg"
+          iconSrc="/images/dashboard/requests/footer/record-deposit-payment.svg"
           onClose={onClose}
           id="record-remaining-payment-modal"
         />

@@ -44,7 +44,7 @@ export default function StartNegotiationModal({ open, onClose, onSubmit }: Start
       <div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}>
         <ModalHeader
           title="Start Negotiation"
-          iconSrc="/images/dashboard/send.svg"
+          iconSrc="/images/dashboard/requests/footer/start-negotiation.svg"
           onClose={onClose}
           id="start-negotiation-modal"
         />

@@ -17,7 +17,7 @@ export default function CancelTripModal({ open, onClose, onSubmit }: CancelTripM
       <div className={styles.modal} style={{ width: "600px" }} onMouseDown={(e) => e.stopPropagation()}>
         <ModalHeader
           title="Cancel Trip"
-          iconSrc="/images/dashboard/cancel.svg"
+          iconSrc="/images/dashboard/requests/footer/cancel-trip.svg"
           onClose={onClose}
         />
         <div className={styles.body}>

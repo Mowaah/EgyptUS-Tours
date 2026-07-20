@@ -47,7 +47,7 @@ export default function UploadRevisedProposalModal({ open, onClose, onSubmit }: 
       <div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}>
         <ModalHeader
           title="Upload Revised Proposal"
-          iconSrc="/images/dashboard/upload.svg"
+          iconSrc="/images/dashboard/requests/footer/create-proposal.svg"
           onClose={onClose}
           id="upload-revised-proposal-modal"
         />

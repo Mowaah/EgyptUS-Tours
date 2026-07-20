@@ -154,15 +154,11 @@ export default function RequestDetailsLayout({
       </DashboardNavbar>
 
       <div className={styles.contentWrapper}>
-        {bannerMessage && (
-          <div className={styles.toastBanner}>
-            <DashboardStatusBanner 
-              message={bannerMessage} 
-              show={!!bannerMessage} 
-              onClose={() => setBannerMessage("")} 
-            />
-          </div>
-        )}
+        <DashboardStatusBanner 
+          message={bannerMessage} 
+          show={!!bannerMessage} 
+          onClose={() => setBannerMessage("")} 
+        />
         
         <div className={styles.gridContainer}>
           <div className={styles.leftColumn}>
@@ -187,7 +183,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("assign")}
                   >
-                    <Image src="/images/dashboard/refresh.svg" alt="" width={20} height={20} />
+                    <Image src="/images/dashboard/requests/footer/re-assign.svg" alt="" width={20} height={20} />
                     Re-Assign to Employee
                   </button>
                   <button
@@ -195,7 +191,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("mark_rejected")}
                   >
-                    <Image src="/images/dashboard/cancel.svg" alt="" width={20} height={20} />
+                    <Image src="/images/dashboard/requests/footer/mark-as-rejected.svg" alt="" width={20} height={20} />
                     Mark as Rejected
                   </button>
                   <button
@@ -203,7 +199,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("upload_revised_proposal")}
                   >
-                    <Image src="/images/dashboard/upload.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
+                    <Image src="/images/dashboard/requests/footer/create-proposal.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
                     Upload Revised Proposal
                   </button>
                 </>
@@ -214,7 +210,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("assign")}
                   >
-                    <Image src="/images/dashboard/refresh.svg" alt="" width={20} height={20} />
+                    <Image src="/images/dashboard/requests/footer/re-assign.svg" alt="" width={20} height={20} />
                     Re-Assign to Employee
                   </button>
                   <button
@@ -222,7 +218,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("mark_rejected")}
                   >
-                    <Image src="/images/dashboard/cancel.svg" alt="" width={20} height={20} />
+                    <Image src="/images/dashboard/requests/footer/mark-as-rejected.svg" alt="" width={20} height={20} />
                     Mark as Rejected
                   </button>
                   <button
@@ -230,7 +226,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setBannerMessage("Email reminder sent")}
                   >
-                    <Image src="/images/dashboard/notification-bing.svg" alt="" width={20} height={20} />
+                    <Image src="/images/dashboard/requests/footer/send-email-remainder.svg" alt="" width={20} height={20} />
                     Send Email Reminder
                   </button>
                   <button
@@ -238,7 +234,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("record_deposit")}
                   >
-                    <Image src="/images/dashboard/finance/deposits.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
+                    <Image src="/images/dashboard/requests/footer/record-deposit-payment.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
                     Record Deposit Payment
                   </button>
                 </>
@@ -249,7 +245,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("assign")}
                   >
-                    <Image src="/images/dashboard/refresh.svg" alt="" width={20} height={20} />
+                    <Image src="/images/dashboard/requests/footer/re-assign.svg" alt="" width={20} height={20} />
                     Re-Assign to Employee
                   </button>
                   <button
@@ -257,7 +253,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("cancel_trip")}
                   >
-                    <Image src="/images/dashboard/cancel.svg" alt="" width={20} height={20} />
+                    <Image src="/images/dashboard/requests/footer/cancel-trip.svg" alt="" width={20} height={20} />
                     Cancel Trip
                   </button>
                   <button
@@ -265,7 +261,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setBannerMessage("Remaining payment reminder sent")}
                   >
-                    <Image src="/images/dashboard/notification-bing.svg" alt="" width={20} height={20} />
+                    <Image src="/images/dashboard/requests/footer/send-email-remainder.svg" alt="" width={20} height={20} />
                     Send Remaining Payment Reminder
                   </button>
                   <button
@@ -273,7 +269,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("record_remaining")}
                   >
-                    <Image src="/images/dashboard/finance/deposits.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
+                    <Image src="/images/dashboard/requests/footer/record-deposit-payment.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
                     Record Remaining Payment
                   </button>
                 </>
@@ -284,7 +280,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("assign")}
                   >
-                    <Image src="/images/dashboard/refresh.svg" alt="" width={20} height={20} />
+                    <Image src="/images/dashboard/requests/footer/re-assign.svg" alt="" width={20} height={20} />
                     Re-Assign to Employee
                   </button>
                   <button
@@ -292,7 +288,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("cancel_trip")}
                   >
-                    <Image src="/images/dashboard/cancel.svg" alt="" width={20} height={20} />
+                    <Image src="/images/dashboard/requests/footer/cancel-trip.svg" alt="" width={20} height={20} />
                     Cancel Trip
                   </button>
                   <button
@@ -300,7 +296,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setBannerMessage("The Trip Reminder send via email Successfully")}
                   >
-                    <Image src="/images/dashboard/notification-bing.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
+                    <Image src="/images/dashboard/requests/footer/send-email-remainder.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
                     Send Email Reminder
                   </button>
                 </>
@@ -312,7 +308,7 @@ export default function RequestDetailsLayout({
                   type="button"
                   onClick={() => setBannerMessage("Customer Review Opened")}
                 >
-                  <Image src="/images/dashboard/reviews.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
+                  <Image src="/images/dashboard/requests/footer/view-customer-review.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
                   View Customer Review
                 </button>
               ) : status === "Cancelled" ? (
@@ -322,7 +318,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("assign")}
                   >
-                    <Image src="/images/dashboard/refresh.svg" alt="" width={20} height={20} />
+                    <Image src="/images/dashboard/requests/footer/re-assign.svg" alt="" width={20} height={20} />
                     Re-Assign to Employee
                   </button>
                   <button
@@ -330,7 +326,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("refund_payment")}
                   >
-                    <Image src="/images/dashboard/refresh.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
+                    <Image src="/images/dashboard/requests/footer/refund-payment.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
                     Refund Payment
                   </button>
                 </>
@@ -340,7 +336,7 @@ export default function RequestDetailsLayout({
                   type="button"
                   onClick={() => setActiveModalKey("reopen")}
                 >
-                  <Image src="/images/dashboard/refresh.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
+                  <Image src="/images/dashboard/requests/footer/reopen-request.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
                   Reopen Request
                 </button>
               ) : status === "Proposal Sent" ? (
@@ -350,7 +346,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("assign")}
                   >
-                    <Image src="/images/dashboard/refresh.svg" alt="" width={20} height={20} />
+                    <Image src="/images/dashboard/requests/footer/re-assign.svg" alt="" width={20} height={20} />
                     Re-Assign to Employee
                   </button>
                   <button
@@ -358,7 +354,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("mark_rejected")}
                   >
-                    <Image src="/images/dashboard/cancel.svg" alt="" width={20} height={20} />
+                    <Image src="/images/dashboard/requests/footer/mark-as-rejected.svg" alt="" width={20} height={20} />
                     Mark as Rejected
                   </button>
                   <button
@@ -366,7 +362,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("start_negotiation")}
                   >
-                    <Image src="/images/dashboard/send.svg" alt="" width={20} height={20} />
+                    <Image src="/images/dashboard/requests/footer/start-negotiation.svg" alt="" width={20} height={20} />
                     Start Negotiation
                   </button>
                   <button
@@ -374,7 +370,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("approve")}
                   >
-                    <Image src="/images/dashboard/inquiries/mark_complete.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
+                    <Image src="/images/dashboard/requests/footer/mark-as-approved.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
                     Mark as Approved
                   </button>
                 </>
@@ -385,7 +381,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("assign")}
                   >
-                    <Image src="/images/dashboard/refresh.svg" alt="" width={20} height={20} />
+                    <Image src="/images/dashboard/requests/footer/re-assign.svg" alt="" width={20} height={20} />
                     Re-Assign to Employee
                   </button>
                   <button
@@ -393,9 +389,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("mark_proposal_sent")}
                   >
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className={styles.whiteIcon}>
-                      <path d="M7.5 10L9.16667 11.6667L12.5 8.33333M17.5 10C17.5 14.1421 14.1421 17.5 10 17.5C5.85786 17.5 2.5 14.1421 2.5 10C2.5 5.85786 5.85786 2.5 10 2.5C14.1421 2.5 17.5 5.85786 17.5 10Z" stroke="currentColor" strokeWidth="1.67" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
+                    <Image src="/images/dashboard/requests/footer/mark-proposal-as-sent.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
                     Mark proposal as sent
                   </button>
                 </>
@@ -406,7 +400,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("assign")}
                   >
-                    <Image src="/images/dashboard/refresh.svg" alt="" width={20} height={20} />
+                    <Image src="/images/dashboard/requests/footer/re-assign.svg" alt="" width={20} height={20} />
                     Re-Assign to Employee
                   </button>
                   <button
@@ -414,7 +408,7 @@ export default function RequestDetailsLayout({
                     type="button"
                     onClick={() => setActiveModalKey("create_proposal")}
                   >
-                    <Image src="/images/dashboard/send.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
+                    <Image src="/images/dashboard/requests/footer/create-proposal.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
                     Create Proposal
                   </button>
                 </>

@@ -29,7 +29,7 @@ export default function OrganizationInformation({ request }: OrganizationInforma
   return (
     <InfoCard
       title="Organization Information"
-      iconSrc="/images/dashboard/sidebar/dashboard.svg"
+      iconSrc="/images/dashboard/requests/plan-your-trip/trip-details.svg"
       data={data}
     />
   );

@@ -29,7 +29,7 @@ export default function CompanyInformation({ request }: CompanyInformationProps)
   return (
     <InfoCard
       title="Company Information"
-      iconSrc="/images/dashboard/requests/plan-your-trip/personal-info.svg"
+      iconSrc="/images/dashboard/requests/plan-your-trip/trip-details.svg"
       data={data}
     />
   );

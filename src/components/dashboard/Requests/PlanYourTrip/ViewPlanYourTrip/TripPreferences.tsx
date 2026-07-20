@@ -21,7 +21,7 @@ export default function TripPreferences({ request }: TripPreferencesProps) {
   return (
     <InfoCard
       title="Trip Preferences"
-      iconSrc="/images/dashboard/sidebar/itinerary.svg"
+      iconSrc="/images/dashboard/requests/plan-your-trip/trip-pref.svg"
       data={data}
     />
   );

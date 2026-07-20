@@ -4,7 +4,7 @@ import styles from "./ProposalFile.module.scss";
 
 export default function ProposalFile() {
   return (
-    <InfoCard title="Proposal File" iconSrc="/images/dashboard/send.svg">
+    <InfoCard title="Proposal File" iconSrc="/images/dashboard/requests/proposal-file.svg">
       <div className={styles.fileItem}>
         <div className={styles.fileIconWrapper}>
           <Image src="/images/dashboard/file/pdf.svg" alt="PDF" width={40} height={40} />

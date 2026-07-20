@@ -26,7 +26,7 @@ export default function RefundPaymentModal({ open, onClose, onSubmit }: RefundPa
       <div className={styles.modal} style={{ width: "600px" }} onMouseDown={(e) => e.stopPropagation()}>
         <ModalHeader
           title="Refund Payment"
-          iconSrc="/images/dashboard/refresh.svg"
+          iconSrc="/images/dashboard/requests/footer/refund-payment.svg"
           onClose={onClose}
         />
         <div className={styles.body}>

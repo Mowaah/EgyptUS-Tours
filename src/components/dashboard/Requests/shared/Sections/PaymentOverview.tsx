@@ -30,7 +30,7 @@ export default function PaymentOverview({ request }: PaymentOverviewProps) {
   return (
     <InfoCard
       title="Payment Overview"
-      iconSrc="/images/dashboard/requests/coin.svg"
+      iconSrc="/images/dashboard/requests/payment-overview.svg"
       data={data}
     />
   );

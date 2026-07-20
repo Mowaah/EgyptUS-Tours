@@ -44,7 +44,7 @@ export default function ReopenRequestModal({ open, onClose, onSubmit }: ReopenRe
       <div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}>
         <ModalHeader
           title="Reopen Request"
-          iconSrc="/images/dashboard/refresh.svg"
+          iconSrc="/images/dashboard/requests/footer/reopen-request.svg"
           onClose={onClose}
           id="reopen-request-modal"
         />

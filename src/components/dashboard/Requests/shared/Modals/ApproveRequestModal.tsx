@@ -70,7 +70,7 @@ export default function ApproveRequestModal({ open, onClose, onSubmit }: Approve
       <div className={rootStyles.modal} style={{ width: "647px" }} onMouseDown={(e) => e.stopPropagation()}>
         <ModalHeader
           title="Approve Request"
-          iconSrc="/images/dashboard/tick-square.svg"
+          iconSrc="/images/dashboard/requests/footer/mark-as-approved.svg"
           onClose={onClose}
           id="approve-request-modal"
         />

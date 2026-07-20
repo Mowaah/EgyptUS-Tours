@@ -19,7 +19,7 @@ export default function MarkAsClosedModal({ isOpen, onClose, onSubmit }: MarkAsC
       onSubmit={handleConfirm}
       config={{
         title: "Mark As Closed",
-        iconSrc: "/images/dashboard/requests/mark-closed.svg", // Using the icon we just created
+        iconSrc: "/images/dashboard/requests/contact-us/mark-as-closed.svg",
         label: "Note",
         primaryLabel: "Mark as Closed",
         placeholder: "Summarize the outcome of this conversation...",

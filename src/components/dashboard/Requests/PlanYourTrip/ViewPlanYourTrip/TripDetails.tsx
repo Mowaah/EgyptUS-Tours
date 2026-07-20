@@ -38,7 +38,7 @@ export default function TripDetails({ request }: TripDetailsProps) {
   return (
     <InfoCard
       title="Trip Details"
-      iconSrc="/images/dashboard/sidebar/requests.svg"
+      iconSrc="/images/dashboard/requests/plan-your-trip/trip-details.svg"
       data={data}
     />
   );
