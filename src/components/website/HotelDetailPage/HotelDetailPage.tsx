@@ -14,6 +14,7 @@ import styles from "./HotelDetailPage.module.scss";
 
 interface HotelDetailPageProps {
   hotel: Hotel;
+  similarHotels?: Hotel[];
 }
 
 const HOTEL_TABS = [
@@ -24,7 +25,7 @@ const HOTEL_TABS = [
   { id: "similar-hotels", label: "Similar Hotels" },
 ];
 
-export default function HotelDetailPage({ hotel }: HotelDetailPageProps) {
+export default function HotelDetailPage({ hotel, similarHotels }: HotelDetailPageProps) {
   const [isFavorite, setIsFavorite] = useState(hotel.isFavorite ?? false);
   const toggleFavorite = () => setIsFavorite((prev) => !prev);
 
@@ -97,9 +98,11 @@ export default function HotelDetailPage({ hotel }: HotelDetailPageProps) {
         <HotelRoomTypes hotel={hotel} />
       </div>
 
-      <div className={styles.container}>
-        <SimilarHotels hotel={hotel} />
-      </div>
+      {similarHotels && similarHotels.length > 0 && (
+        <div className={styles.container}>
+          <SimilarHotels similarHotels={similarHotels} />
+        </div>
+      )}
     </div>
   );
 }

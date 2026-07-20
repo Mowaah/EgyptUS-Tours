@@ -4,3 +4,6 @@ export interface PaginatedResponse<T> {
   previous: string | null;
   results: T[];
 }
+
+export * from "./articles";
+export * from "./hotels";

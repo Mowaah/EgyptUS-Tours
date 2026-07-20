@@ -22,6 +22,7 @@ import styles from "./HotelsPageSection.module.scss";
 
 // ── Data ────────────────────────────────────────────────────────
 const LOCATION_TABS_ROW1 = [
+  "All Locations",
   "Giza",
   "Cairo",
   "Luxor",
@@ -75,16 +76,39 @@ const DEMO_HOTELS: Hotel[] = Array.from({ length: 8 }, (_, i) => ({
 }));
 
 const ITEMS_PER_PAGE = 6;
-const TOTAL_PAGES = 15;
 
 // ── Component ───────────────────────────────────────────────────
-export default function HotelsPageSection() {
-  const [hotels, setHotels] = useState<Hotel[]>(DEMO_HOTELS);
+import { HotelList } from "@/types/api";
+
+interface HotelsPageSectionProps {
+  initialHotels?: HotelList[];
+}
+
+export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSectionProps) {
+  // Map backend initialHotels to frontend Hotel type
+  const mappedHotels: Hotel[] = initialHotels.length > 0 
+    ? initialHotels.map(h => ({
+        id: h.slug,
+        name: h.name,
+        location: h.location_text || "",
+        image: h.hero_image || "/images/pyramids.jpg",
+        stars: h.stars,
+        rating: parseFloat(h.rating_avg) || 0,
+        rooms: h.rooms,
+        pricePerNight: parseFloat(h.price_per_night) || 0,
+        reviews: h.review_count,
+        isFavorite: h.is_favorite
+      }))
+    : DEMO_HOTELS;
+
+  const [hotels, setHotels] = useState<Hotel[]>(mappedHotels);
   const [ratingFilter, setRatingFilter] = useState("any");
   const [priceRange, setPriceRange] = useState({ min: 1, max: 12000 });
   const [priceExpanded, setPriceExpanded] = useState(true);
   const [ratingExpanded, setRatingExpanded] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("All Locations");
+  const [sortOption, setSortOption] = useState("recommended");
   const [currentPage, setCurrentPage] = useState(1);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [isLg, setIsLg] = useState(false);
@@ -128,21 +152,55 @@ export default function HotelsPageSection() {
     return () => window.removeEventListener("keydown", onKey);
   }, [filtersOpen]);
 
-  const filteredHotels = hotels.filter(
-    (h) =>
+  // Apply Filters
+  const filteredHotels = hotels.filter((h) => {
+    // Search
+    const matchesSearch =
       h.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      h.location.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+      h.location.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // Location Tab
+    const matchesLocation =
+      selectedLocation === "All Locations" ||
+      h.location.toLowerCase().includes(selectedLocation.toLowerCase());
+    
+    // Rating
+    const matchesRating =
+      ratingFilter === "any" || h.rating >= parseFloat(ratingFilter);
+    
+    // Price
+    const matchesPrice =
+      h.pricePerNight >= priceRange.min && h.pricePerNight <= priceRange.max;
 
-  const paginatedHotels = filteredHotels.slice(
+    return matchesSearch && matchesLocation && matchesRating && matchesPrice;
+  });
+
+  // Apply Sorting
+  const sortedHotels = [...filteredHotels].sort((a, b) => {
+    if (sortOption === "price-low") return a.pricePerNight - b.pricePerNight;
+    if (sortOption === "price-high") return b.pricePerNight - a.pricePerNight;
+    if (sortOption === "rating") return b.rating - a.rating;
+    return 0; // recommended
+  });
+
+  const totalPages = Math.max(1, Math.ceil(sortedHotels.length / ITEMS_PER_PAGE));
+
+  const paginatedHotels = sortedHotels.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
 
-  const handleResetSearch = () => setSearchQuery("");
+  const handleResetSearch = () => {
+    setSearchQuery("");
+    setRatingFilter("any");
+    setPriceRange({ min: 1, max: 12000 });
+    setSelectedLocation("All Locations");
+    setSortOption("recommended");
+    setCurrentPage(1);
+  };
 
   const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= TOTAL_PAGES) setCurrentPage(page);
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
   return (
@@ -165,7 +223,7 @@ export default function HotelsPageSection() {
           </div>
 
           <div className={styles.toolbarRight}>
-            {isLg && <SortButton options={SORT_OPTIONS} defaultValue="recommended" />}
+            {isLg && <SortButton options={SORT_OPTIONS} defaultValue="recommended" onChange={setSortOption} />}
             <SearchInput
               placeholder="Search hotels, cities, or countries…"
               value={searchQuery}
@@ -175,7 +233,14 @@ export default function HotelsPageSection() {
           </div>
         </div>
 
-        <CategoryTabs tabs={ALL_TABS} wrap />
+        <CategoryTabs 
+          tabs={ALL_TABS} 
+          wrap 
+          onTabChange={(tab) => {
+            setSelectedLocation(tab);
+            setCurrentPage(1);
+          }}
+        />
 
         {filtersOpen && (
           <button
@@ -211,7 +276,7 @@ export default function HotelsPageSection() {
               </span>
             </button>
             <div className={styles.filterSortRowSort}>
-              <SortButton options={SORT_OPTIONS} defaultValue="recommended" showLabel={false} />
+              <SortButton options={SORT_OPTIONS} defaultValue="recommended" showLabel={false} onChange={setSortOption} />
             </div>
           </div>
         )}
@@ -307,7 +372,7 @@ export default function HotelsPageSection() {
                 <div className={styles.pagination}>
                   <Pagination
                     currentPage={currentPage}
-                    totalPages={TOTAL_PAGES}
+                    totalPages={totalPages}
                     onPageChange={handlePageChange}
                   />
                 </div>

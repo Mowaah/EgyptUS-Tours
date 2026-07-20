@@ -4,23 +4,10 @@ import { Hotel } from "@/types";
 import styles from "./SimilarHotels.module.scss";
 
 interface SimilarHotelsProps {
-  hotel: Hotel;
+  similarHotels: Hotel[];
 }
 
-// Mocking similar hotels
-const SIMILAR_HOTELS: Hotel[] = Array(4).fill({
-  id: "similar-hotel-mock",
-  name: "Pyramids View Luxury Hotel",
-  location: "Giza",
-  image: "/images/hotels/hotel1.jpg",
-  stars: 5,
-  rating: 4.2,
-  rooms: 245,
-  pricePerNight: 180,
-  reviews: 1847,
-} as Hotel);
-
-export default function SimilarHotels({ hotel }: SimilarHotelsProps) {
+export default function SimilarHotels({ similarHotels }: SimilarHotelsProps) {
   return (
     <section id="similar-hotels" className={styles.section}>
       <div className={styles.header}>
@@ -47,8 +34,8 @@ export default function SimilarHotels({ hotel }: SimilarHotelsProps) {
       </div>
 
       <div className={styles.grid}>
-        {SIMILAR_HOTELS.map((h, i) => (
-          <HotelCard key={i} hotel={h} imageHeight={225} />
+        {similarHotels.map((h, i) => (
+          <HotelCard key={h.id || i} hotel={h} imageHeight={225} />
         ))}
       </div>
     </section>
