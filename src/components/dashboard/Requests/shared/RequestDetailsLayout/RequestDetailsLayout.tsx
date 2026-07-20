@@ -19,7 +19,8 @@ import {
   RecordDepositPaymentModal,
   RecordRemainingPaymentModal,
   RefundPaymentModal,
-  CancelTripModal
+  CancelTripModal,
+  MarkAsClosedModal
 } from "@/components/dashboard/Requests/shared/Modals";
 import StatusPill from "@/components/shared/StatusPill/StatusPill";
 import { getStatusVariant } from "../../PlanYourTrip/planYourTripColumns";
@@ -41,6 +42,12 @@ interface RequestDetailsLayoutProps {
   date: string;
   leftColumnContent: React.ReactNode;
   rightColumnContent: React.ReactNode;
+  prependActionButtons?: React.ReactNode | ((onAction: (key: string) => void) => React.ReactNode);
+  appendActionButtons?: React.ReactNode | ((onAction: (key: string) => void) => React.ReactNode);
+  breadcrumbCurrent?: string;
+  hideDefaultActions?: boolean;
+  statusVariant?: string;
+  hideFooter?: boolean;
 }
 
 export default function RequestDetailsLayout({
@@ -50,7 +57,13 @@ export default function RequestDetailsLayout({
   status,
   date,
   leftColumnContent,
-  rightColumnContent
+  rightColumnContent,
+  prependActionButtons,
+  appendActionButtons,
+  breadcrumbCurrent,
+  hideDefaultActions,
+  statusVariant,
+  hideFooter
 }: RequestDetailsLayoutProps) {
   const [activeModalKey, setActiveModalKey] = useState<string | null>(null);
   const [bannerMessage, setBannerMessage] = useState("");
@@ -60,7 +73,9 @@ export default function RequestDetailsLayout({
     if (action === "add_note") {
       successMessage = "The Note has been added successfully";
     } else if (action === "assign") {
-      successMessage = "The Request has been Re-Assigned to the selected employee";
+      successMessage = "The Request has been assigned to employee successfully";
+    } else if (action === "mark_closed") {
+      successMessage = "The Request has been marked as closed successfully";
     } else if (action === "create_proposal") {
       successMessage = "The Proposal uploaded successfully";
     } else if (action === "mark_proposal_sent") {
@@ -95,7 +110,7 @@ export default function RequestDetailsLayout({
         breadcrumbTrail={[
           { label: "Requests" },
           { label: breadcrumbLabel, href: breadcrumbHref },
-          { label: requestTitle.split(" - ")[1] || "Details" }
+          { label: breadcrumbCurrent || requestTitle.split(" - ")[1] || "Details" }
         ]}
       >
         <ProfileHeader
@@ -103,42 +118,51 @@ export default function RequestDetailsLayout({
           customPills={
             <StatusPill 
               label={status} 
-              variant={getStatusVariant(status)} 
+              variant={(statusVariant as any) || getStatusVariant(status)} 
             />
           }
           subtitleElements={[date]}
           actionButtons={
             <>
-              <button 
-                className={phStyles.secondaryActionButton} 
-                type="button" 
-                onClick={() => setActiveModalKey("add_note")}
-              >
-                <Image src="/images/dashboard/inquiries/add_note.svg" alt="" width={20} height={20} />
-                Add note
-              </button>
-              {status === "New" && (
-                <button 
-                  className={phStyles.secondaryActionButton} 
-                  type="button" 
-                  onClick={() => setActiveModalKey("assign")}
-                >
-                  <Image src="/images/dashboard/user-add.svg" alt="" width={20} height={20} />
-                  Assign to Employee
-                </button>
+              {typeof prependActionButtons === 'function' ? prependActionButtons(setActiveModalKey) : prependActionButtons}
+              {!hideDefaultActions && (
+                <>
+                  <button 
+                    className={phStyles.secondaryActionButton} 
+                    type="button" 
+                    onClick={() => setActiveModalKey("add_note")}
+                  >
+                    <Image src="/images/dashboard/inquiries/add_note.svg" alt="" width={20} height={20} />
+                    Add note
+                  </button>
+                  {status === "New" && (
+                    <button 
+                      className={phStyles.secondaryActionButton} 
+                      type="button" 
+                      onClick={() => setActiveModalKey("assign")}
+                    >
+                      <Image src="/images/dashboard/user-add.svg" alt="" width={20} height={20} />
+                      Assign to Employee
+                    </button>
+                  )}
+                </>
               )}
+              {typeof appendActionButtons === 'function' ? appendActionButtons(setActiveModalKey) : appendActionButtons}
             </>
           }
         />
       </DashboardNavbar>
 
       <div className={styles.contentWrapper}>
-        <DashboardStatusBanner 
-          message={bannerMessage} 
-          show={!!bannerMessage} 
-          onClose={() => setBannerMessage("")} 
-          className={styles.toastBanner}
-        />
+        {bannerMessage && (
+          <div className={styles.toastBanner}>
+            <DashboardStatusBanner 
+              message={bannerMessage} 
+              show={!!bannerMessage} 
+              onClose={() => setBannerMessage("")} 
+            />
+          </div>
+        )}
         
         <div className={styles.gridContainer}>
           <div className={styles.leftColumn}>
@@ -150,7 +174,7 @@ export default function RequestDetailsLayout({
           </div>
         </div>
 
-        {status !== "New" && (
+        {!hideFooter && status !== "New" && (
           <div className={styles.footer}>
             <div className={styles.footerDate}>
               Last Update: <br/> <strong>42/6/206</strong>
@@ -480,6 +504,11 @@ export default function RequestDetailsLayout({
         open={activeModalKey === "cancel_trip"}
         onClose={() => setActiveModalKey(null)}
         onSubmit={() => handleModalSubmit("cancel_trip")}
+      />
+      <MarkAsClosedModal
+        isOpen={activeModalKey === "mark_closed"}
+        onClose={() => setActiveModalKey(null)}
+        onSubmit={() => handleModalSubmit("mark_closed")}
       />
     </>
   );
