@@ -169,7 +169,9 @@ export default function ArticleDetailPage({ content }: ArticleDetailPageProps) {
 
           {/* Sidebar */}
           <aside className={styles.sidebar}>
-            <h4 className={styles.relatedTitle}>Related Articles</h4>
+            <h4 className={styles.relatedTitle}>
+              {content.type === "blog" ? "More Blogs" : "More Articles"}
+            </h4>
             <div className={styles.relatedList}>
               {content.relatedArticles.map((article) => (
                 <Link

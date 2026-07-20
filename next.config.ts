@@ -4,6 +4,16 @@ import path from "path";
 const nextConfig: NextConfig = {
   images: {
     qualities: [75, 100],
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "127.0.0.1",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+      }
+    ],
   },
   sassOptions: {
     includePaths: [path.join(__dirname, "src/styles")],

@@ -27,7 +27,14 @@ const BLOG_FAQS = [
   },
 ];
 
-export default function BlogsPage() {
+import { ArticleList } from "@/types/api/articles";
+
+interface BlogsPageProps {
+  initialBlogs?: ArticleList[];
+  initialFeatured?: ArticleList[];
+}
+
+export default function BlogsPage({ initialBlogs = [], initialFeatured = [] }: BlogsPageProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (query: string) => {
@@ -43,7 +50,12 @@ export default function BlogsPage() {
     <main className={styles.page}>
       <BlogHero searchQuery={searchQuery} onSearch={handleSearch} />
       <div id="blog-trending">
-        <BlogTrending searchQuery={searchQuery} onClearSearch={() => setSearchQuery("")} />
+        <BlogTrending 
+          searchQuery={searchQuery} 
+          onClearSearch={() => setSearchQuery("")} 
+          initialBlogs={initialBlogs}
+          initialFeatured={initialFeatured}
+        />
       </div>
       <FaqSection
         items={BLOG_FAQS}

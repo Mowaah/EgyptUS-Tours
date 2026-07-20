@@ -6,68 +6,34 @@ import { SectionHeader, EmptyState, BlogCard } from "@/components/shared";
 import { Blog } from "@/types";
 import styles from "./LatestArticles.module.scss";
 
+import { ArticleList } from "@/types/api/articles";
+
 interface LatestArticlesProps {
   searchQuery?: string;
   onClearSearch?: () => void;
+  initialArticles?: ArticleList[];
+  initialFeatured?: ArticleList[];
 }
 
-// Mock data based on Figma
-const FEATURED_ARTICLE = {
-  id: "featured-1",
-  tag: "Travel Insights",
-  title: "The Seasonal Showdown\nChoosing Between Egypt’s Sun and Breeze.",
-  author: "Ahmed Hassan",
-  date: "03 March 2026",
-  image: "/images/article.jpg" // Placeholder image
-};
-
-const SMALL_ARTICLES = [
-  {
-    id: "small-1",
-    tag: "Cultural Events",
-    title: "10 Most Important Artifacts to See in the Egyptian Museum.",
-    author: "Sara Ibrahim",
-    date: "14 April 2026",
-    image: "/images/article.jpg"
-  },
-  {
-    id: "small-2",
-    tag: "Travel Tips",
-    title: "How to Haggle the Right Way at Khan el-Khalili Bazaar.",
-    author: "Omar Youssef",
-    date: "22 February 2026",
-    image: "/images/article.jpg"
-  },
-  {
-    id: "small-3",
-    tag: "Luxury Travel",
-    title: "Cruising the Nile: A Review of the Top 5 Luxury Yachts.",
-    author: "Nadine Safwat",
-    date: "05 January 2026",
-    image: "/images/article.jpg"
-  },
-  {
-    id: "small-4",
-    tag: "History",
-    title: "The Pharaohs’ Curse: Fact or Fiction? Unraveling the Myth.",
-    author: "Khaled Zaki",
-    date: "12 May 2026",
-    image: "/images/article.jpg"
-  }
-];
-
-export default function LatestArticles({ searchQuery = "", onClearSearch }: LatestArticlesProps) {
+export default function LatestArticles({ 
+  searchQuery = "", 
+  onClearSearch,
+  initialArticles = [],
+  initialFeatured = []
+}: LatestArticlesProps) {
   const isSearching = !!searchQuery.trim();
 
+  const featured = initialFeatured.length > 0 ? initialFeatured[0] : null;
+  
   // Unified list maps articles to Blog interface for the active search UI grid
-  const ALL_ARTICLES: Blog[] = [FEATURED_ARTICLE, ...SMALL_ARTICLES].map(a => ({
-    id: a.id,
-    category: a.tag.split(" ")[0] || "Travel", // Just roughly matching standard Blog category
+  const ALL_ARTICLES: Blog[] = initialArticles.map(a => ({
+    id: a.slug,
+    category: a.category?.name || "Travel", 
     categoryColor: "blue",
     title: a.title,
-    excerpt: "loreumipsum loreumipsum loreumipsum loreumipsum loreumipsum loreumipsum loreumipsum loreumipsum",
-    date: a.date,
-    image: a.image
+    excerpt: a.excerpt,
+    date: new Date(a.published_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }),
+    image: a.featured_image || "/images/home/hero-bg.png"
   }));
 
   const filteredSearch = isSearching
@@ -124,31 +90,33 @@ export default function LatestArticles({ searchQuery = "", onClearSearch }: Late
             />
 
             {/* Featured Article */}
-            <Link href={`/articles/${FEATURED_ARTICLE.id}`} className={styles.featuredCard}>
-              <div className={styles.featuredImageWrap}>
-                <Image
-                  src={FEATURED_ARTICLE.image}
-                  alt={FEATURED_ARTICLE.title}
-                  fill
-                  className={styles.image}
-                  style={{ objectFit: "cover" }}
-                />
-                <div className={styles.gradientOverlay}></div>
-              </div>
-              <div className={styles.featuredContent}>
-                <div className={styles.tag}>{FEATURED_ARTICLE.tag}</div>
-                <h3 className={styles.featuredTitle}>{FEATURED_ARTICLE.title}</h3>
-                <p className={styles.meta}>By {FEATURED_ARTICLE.author} &bull; {FEATURED_ARTICLE.date}</p>
-              </div>
-            </Link>
+            {featured && (
+              <Link href={`/articles/${featured.slug}`} className={styles.featuredCard}>
+                <div className={styles.featuredImageWrap}>
+                  <Image
+                    src={featured.hero_image || featured.featured_image || "/images/home/hero-bg.png"}
+                    alt={featured.title}
+                    fill
+                    className={styles.image}
+                    style={{ objectFit: "cover" }}
+                  />
+                  <div className={styles.gradientOverlay}></div>
+                </div>
+                <div className={styles.featuredContent}>
+                  <div className={styles.tag}>{featured.category?.name || 'Article'}</div>
+                  <h3 className={styles.featuredTitle}>{featured.title}</h3>
+                  <p className={styles.meta}>By {featured.display_author_name} &bull; {new Date(featured.published_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+                </div>
+              </Link>
+            )}
 
             {/* Small Articles Grid */}
             <div className={styles.grid}>
-              {SMALL_ARTICLES.map((article) => (
-                <Link key={article.id} href={`/articles/${article.id}`} className={styles.smallCard}>
+              {initialArticles.map((article) => (
+                <Link key={article.id} href={`/articles/${article.slug}`} className={styles.smallCard}>
                   <div className={styles.smallImageWrap}>
                     <Image
-                      src={article.image}
+                      src={article.featured_image || "/images/home/hero-bg.png"}
                       alt={article.title}
                       fill
                       className={styles.image}
@@ -157,9 +125,9 @@ export default function LatestArticles({ searchQuery = "", onClearSearch }: Late
                     <div className={styles.gradientOverlay}></div>
                   </div>
                   <div className={styles.smallContent}>
-                    <div className={styles.tagSmall}>{article.tag}</div>
+                    <div className={styles.tagSmall}>{article.category?.name || 'Article'}</div>
                     <h4 className={styles.smallTitle}>{article.title}</h4>
-                    <p className={styles.metaSmall}>By {article.author} &bull; {article.date}</p>
+                    <p className={styles.metaSmall}>By {article.display_author_name} &bull; {new Date(article.published_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
                   </div>
                 </Link>
               ))}

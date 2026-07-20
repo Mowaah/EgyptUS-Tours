@@ -6,79 +6,47 @@ import { BlogCard, SectionHeader, Pagination, EmptyState } from "@/components/sh
 import { Blog } from "@/types";
 import styles from "./BlogTrending.module.scss";
 
+import { ArticleList } from "@/types/api/articles";
+
 interface BlogTrendingProps {
   searchQuery?: string;
   onClearSearch?: () => void;
+  initialBlogs?: ArticleList[];
+  initialFeatured?: ArticleList[];
 }
 
-// Mock data based on the Figma design
-const BLOGS: Blog[] = [
-  {
-    id: "1",
-    category: "Destinations",
-    categoryColor: "blue",
-    title: "Egypt in Summer vs Winter: When Is the Best Time?",
-    excerpt: "Should you brave the heat or aim for the breezy nights? Find out when perfectly fits your travel style.",
-    date: "03 March 2026",
-    image: "/images/home/hero-bg.png",
-  },
-  {
-    id: "2",
-    category: "Culture",
-    categoryColor: "orange",
-    title: "A Deep Dive into Ancient Pharaonic Burial Rituals",
-    excerpt: "Discover the mysteries and fascinating steps that ancient Egyptians took to secure eternal life.",
-    date: "12 May 2026",
-    image: "/images/home/hero-bg.png",
-  },
-  {
-    id: "3",
-    category: "Adventure",
-    categoryColor: "orange",
-    title: "7 Adventures in Egypt That'll Make You Forget Everything Else",
-    excerpt: "From dune bashing in the White Desert to snorkeling in the Red Sea, here are our top picks for thrill seekers.",
-    date: "15 April 2026",
-    image: "/images/home/hero-bg.png",
-  },
-  {
-    id: "4",
-    category: "Cuisine",
-    categoryColor: "blue",
-    title: "Top 10 Traditional Egyptian Dishes You Must Try",
-    excerpt: "Koshary, Molokhia, and more! Bring an empty stomach to experience the true flavor of Cairo.",
-    date: "21 July 2026",
-    image: "/images/home/hero-bg.png",
-  },
-  {
-    id: "5",
-    category: "Destinations",
-    categoryColor: "blue",
-    title: "Hidden Gems of Alexandria: Beyond the Library",
-    excerpt: "Skip the heavy crowds and explore the coastal ruins and underground catacombs of the old Greek capital.",
-    date: "08 August 2026",
-    image: "/images/home/hero-bg.png",
-  },
-  {
-    id: "6",
-    category: "Luxury",
-    categoryColor: "orange",
-    title: "The Ultimate Guide to Luxor's 5-Star River Cruises",
-    excerpt: "Watch the temples glide by from a rooftop pool deck. We review the best high-end vessels on the Nile.",
-    date: "29 September 2026",
-    image: "/images/home/hero-bg.png",
-  },
-];
-
-export default function BlogTrending({ searchQuery = "", onClearSearch }: BlogTrendingProps) {
+export default function BlogTrending({ 
+  searchQuery = "", 
+  onClearSearch,
+  initialBlogs = [],
+  initialFeatured = []
+}: BlogTrendingProps) {
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 15;
 
   const isSearching = !!searchQuery.trim();
+  
+  const BLOGS: Blog[] = initialBlogs.map(a => ({
+    id: a.slug,
+    category: a.category?.name || "Blog", 
+    categoryColor: "blue",
+    title: a.title,
+    excerpt: a.excerpt,
+    date: new Date(a.published_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }),
+    image: a.featured_image || "/images/home/hero-bg.png"
+  }));
 
   const filteredBlogs = BLOGS.filter((blog) => 
     !searchQuery || 
     blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     blog.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const ITEMS_PER_PAGE = 6;
+  const totalPages = Math.ceil(filteredBlogs.length / ITEMS_PER_PAGE) || 1;
+
+  const currentBlogs = filteredBlogs.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
   );
 
   return (
@@ -113,8 +81,8 @@ export default function BlogTrending({ searchQuery = "", onClearSearch }: BlogTr
         ) : (
           <>
             <div className={isSearching ? styles.searchResultsGrid : styles.grid}>
-              {filteredBlogs.map((blog) => (
-                <BlogCard key={blog.id} blog={blog} />
+              {currentBlogs.map((blog) => (
+                <BlogCard key={blog.id} blog={blog} href={`/blogs/${blog.id}`} />
               ))}
             </div>
 

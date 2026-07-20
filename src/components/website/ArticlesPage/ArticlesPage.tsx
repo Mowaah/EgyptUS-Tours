@@ -26,7 +26,14 @@ const ARTICLES_FAQ = [
   }
 ];
 
-export default function ArticlesPage() {
+import { ArticleList } from "@/types/api/articles";
+
+interface ArticlesPageProps {
+  initialArticles?: ArticleList[];
+  initialFeatured?: ArticleList[];
+}
+
+export default function ArticlesPage({ initialArticles = [], initialFeatured = [] }: ArticlesPageProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (query: string) => {
@@ -42,7 +49,12 @@ export default function ArticlesPage() {
     <main className={styles.page}>
       <ArticlesHero searchQuery={searchQuery} onSearch={handleSearch} />
       <div id="latest-articles">
-        <LatestArticles searchQuery={searchQuery} onClearSearch={() => setSearchQuery("")} />
+        <LatestArticles 
+          searchQuery={searchQuery} 
+          onClearSearch={() => setSearchQuery("")} 
+          initialArticles={initialArticles}
+          initialFeatured={initialFeatured}
+        />
       </div>
       <FaqSection
         items={ARTICLES_FAQ}
