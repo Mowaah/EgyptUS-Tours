@@ -14,6 +14,7 @@ interface MultiSelectDropdownProps {
   placeholder?: string;
   dropdownClassName?: string;
   checkboxStyle?: "radio" | "checkbox" | "none";
+  error?: boolean;
 }
 
 export default function MultiSelectDropdown({
@@ -25,6 +26,7 @@ export default function MultiSelectDropdown({
   placeholder = "Select options",
   dropdownClassName = "",
   checkboxStyle = "checkbox",
+  error,
 }: MultiSelectDropdownProps) {
   return (
     <CheckboxDropdown
@@ -37,7 +39,7 @@ export default function MultiSelectDropdown({
       renderTrigger={(isOpen, setIsOpen) => (
         <div
           id={id}
-          className={`${baseStyles.dropdownTrigger} ${isOpen ? baseStyles.dropdownTriggerOpen : ""}`}
+          className={`${baseStyles.dropdownTrigger} ${isOpen ? baseStyles.dropdownTriggerOpen : ""} ${error ? baseStyles.error : ""}`}
           role="combobox"
           aria-expanded={isOpen}
           aria-label={label}

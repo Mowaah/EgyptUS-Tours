@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { BookingStepFooter, FormField, PhonePrefixSelect, CustomDatePicker, NationalitySelect, CounterPill } from "@/components/shared";
+import { isValidEmail, isValidPhone } from "@/utils/validators";
 
 import pageStyles from "../../PlanYourTripPage.module.scss";
 import styles from "./StepTravelerInfo.module.scss";
@@ -32,6 +34,32 @@ export default function StepTravelerInfo({
   onPrevious: () => void;
   onContinue: () => void;
 }) {
+  const [showErrors, setShowErrors] = useState(false);
+
+  const isDateInvalid = travelerInfo.startDate && travelerInfo.endDate 
+    ? new Date(travelerInfo.endDate) < new Date(travelerInfo.startDate)
+    : false;
+
+  const emailValid = isValidEmail(travelerInfo.email);
+  const phoneValid = isValidPhone(travelerInfo.phone);
+
+  const handleContinueClick = () => {
+    setShowErrors(true);
+    const isValid = 
+      travelerInfo.name.trim() !== "" &&
+      emailValid &&
+      phoneValid &&
+      travelerInfo.nationality !== "" &&
+      travelerInfo.startDate !== "" &&
+      travelerInfo.endDate !== "" &&
+      !isDateInvalid &&
+      travelerInfo.adults > 0;
+      
+    if (isValid) {
+      onContinue();
+    }
+  };
+
   return (
     <div className={pageStyles.stepFormCard}>
       <header className={pageStyles.stepFormCardHeader}>
@@ -54,6 +82,7 @@ export default function StepTravelerInfo({
             value={travelerInfo.name}
             onChange={(e) => onTravelerChange("name", e.target.value)}
             required
+            error={showErrors && !travelerInfo.name.trim() ? "This field is required" : undefined}
           />
 
           <FormField
@@ -65,12 +94,14 @@ export default function StepTravelerInfo({
             value={travelerInfo.email}
             onChange={(e) => onTravelerChange("email", e.target.value)}
             required
+            error={showErrors ? (travelerInfo.email.trim() === "" ? "This field is required" : !emailValid ? "Please enter a valid email address" : undefined) : undefined}
           />
 
           <FormField
             id="pti-phone"
             label="Phone Number"
             required
+            error={showErrors ? (travelerInfo.phone.trim() === "" ? "This field is required" : !phoneValid ? "Please enter a valid phone number" : undefined) : undefined}
           >
             <div className={styles.phoneRow}>
               <PhonePrefixSelect
@@ -82,20 +113,31 @@ export default function StepTravelerInfo({
                 type="tel"
                 className={`${formStyles.input} ${styles.inputPhone}`}
                 value={travelerInfo.phone}
-                onChange={(e) => onTravelerChange("phone", e.target.value)}
+                onChange={(e) => {
+                  const sanitized = e.target.value.replace(/[^0-9+\-()\s]/g, "");
+                  onTravelerChange("phone", sanitized);
+                }}
                 placeholder="+1 555-0000"
               />
             </div>
           </FormField>
 
-          <FormField label="Select Your Nationality" required>
+          <FormField 
+            label="Select Your Nationality" 
+            required
+            error={showErrors && !travelerInfo.nationality ? "This field is required" : undefined}
+          >
             <NationalitySelect
               value={travelerInfo.nationality}
               onChange={(val) => onTravelerChange("nationality", val)}
             />
           </FormField>
 
-          <FormField label="Start Date" required>
+          <FormField 
+            label="Start Date" 
+            required
+            error={showErrors && !travelerInfo.startDate ? "This field is required" : undefined}
+          >
             <CustomDatePicker
               variant="input"
               className={`${formStyles.input} ${pageStyles.dateInput}`}
@@ -104,7 +146,11 @@ export default function StepTravelerInfo({
             />
           </FormField>
 
-          <FormField label="End Date" required>
+          <FormField 
+            label="End Date" 
+            required
+            error={showErrors ? (!travelerInfo.endDate ? "This field is required" : isDateInvalid ? "End date cannot be before start date" : undefined) : undefined}
+          >
             <CustomDatePicker
               variant="input"
               className={`${formStyles.input} ${pageStyles.dateInput}`}
@@ -129,6 +175,14 @@ export default function StepTravelerInfo({
                   onDecrease={() => onNumberChange(type, false)}
                   required={type === "adults"}
                 />
+                {type === "adults" && showErrors && travelerInfo.adults === 0 && (
+                  <div className={formStyles.errorMessage} style={{ marginTop: '4px' }}>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M6 1C3.23858 1 1 3.23858 1 6C1 8.76142 3.23858 11 6 11C8.76142 11 11 8.76142 11 6C11 3.23858 8.76142 1 6 1ZM6.5 8.5H5.5V5.5H6.5V8.5ZM6.5 4.5H5.5V3.5H6.5V4.5Z" fill="#D32F2F" />
+                    </svg>
+                    <span>At least 1 adult is required</span>
+                  </div>
+                )}
               </div>
             );
           })}
@@ -137,7 +191,7 @@ export default function StepTravelerInfo({
 
       <BookingStepFooter
         onPrevious={onPrevious}
-        onContinue={onContinue}
+        onContinue={handleContinueClick}
         continueLabel="Continue"
       />
     </div>

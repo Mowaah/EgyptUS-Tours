@@ -16,8 +16,8 @@ export default function StepDestination({
   continueDisabled,
 }: {
   destinations: PlanDestination[];
-  selectedDestinationIds: string[];
-  onToggleDestination: (id: string) => void;
+  selectedDestinationIds: (string | number)[];
+  onToggleDestination: (id: string | number) => void;
   onContinue: () => void;
   continueDisabled: boolean;
 }) {
@@ -44,7 +44,7 @@ export default function StepDestination({
                 onClick={() => onToggleDestination(destination.id)}
               >
                 <div className={styles.destinationImageWrapper}>
-                  <img src={destination.image} alt={destination.name} />
+                  <img src={destination.image || undefined} alt={destination.name} />
                   <CheckboxIndicator
                     variant="square"
                     surface="overlay"

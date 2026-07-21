@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   BookingStepFooter,
   StarRating,
@@ -56,6 +57,25 @@ export default function StepPreferences({
   onPrevious: () => void;
   onContinue: () => void;
 }) {
+  const [showErrors, setShowErrors] = useState(false);
+
+  const handleContinueClick = () => {
+    setShowErrors(true);
+    const isValid =
+      preferences.tripCategory.length > 0 &&
+      preferences.duration !== "" &&
+      preferences.budget !== "" &&
+      preferences.hotelCategory !== "" &&
+      preferences.roomType.length > 0 &&
+      preferences.transportation !== "" &&
+      preferences.experiences.length > 0 &&
+      preferences.contactMethod !== "";
+
+    if (isValid) {
+      onContinue();
+    }
+  };
+
   return (
     <div className={planPage.stepFormCard}>
       <header className={planPage.stepFormCardHeader}>
@@ -71,6 +91,7 @@ export default function StepPreferences({
             id="pti-trip-category-trigger"
             label="Trip category"
             required
+            error={showErrors && preferences.tripCategory.length === 0 ? "This field is required" : undefined}
           >
             <MultiSelectDropdown
               id="pti-trip-category-trigger"
@@ -79,6 +100,7 @@ export default function StepPreferences({
               onChange={(val) => onSetPreferences({ tripCategory: val })}
               placeholder="Select Trip Category"
               checkboxStyle="radio"
+              error={showErrors && preferences.tripCategory.length === 0}
             />
           </FormField>
 
@@ -86,6 +108,7 @@ export default function StepPreferences({
             id="pti-duration-trigger"
             label="Number of Days"
             required
+            error={showErrors && preferences.duration === "" ? "This field is required" : undefined}
           >
             <SelectDropdown
               id="pti-duration-trigger"
@@ -93,6 +116,7 @@ export default function StepPreferences({
               value={preferences.duration}
               onChange={(val) => onSetPreferences({ duration: val })}
               label="Select Duration"
+              error={showErrors && preferences.duration === ""}
             />
           </FormField>
 
@@ -100,6 +124,7 @@ export default function StepPreferences({
             id="pti-budget-trigger"
             label="Budget"
             required
+            error={showErrors && preferences.budget === "" ? "This field is required" : undefined}
           >
             <SelectDropdown
               id="pti-budget-trigger"
@@ -107,6 +132,7 @@ export default function StepPreferences({
               value={preferences.budget}
               onChange={(val) => onSetPreferences({ budget: val })}
               label="Select Budget"
+              error={showErrors && preferences.budget === ""}
             />
           </FormField>
 
@@ -114,6 +140,7 @@ export default function StepPreferences({
             id="pti-hotel-trigger"
             label="Preferred hotel category"
             required
+            error={showErrors && preferences.hotelCategory === "" ? "This field is required" : undefined}
           >
             <SelectDropdown
               id="pti-hotel-trigger"
@@ -121,6 +148,7 @@ export default function StepPreferences({
               value={preferences.hotelCategory}
               onChange={(val) => onSetPreferences({ hotelCategory: val })}
               label="Select hotel category"
+              error={showErrors && preferences.hotelCategory === ""}
               renderValue={(v) => {
                 const stars = starsFromHotelValue(v);
                 return stars !== null ? (
@@ -161,6 +189,7 @@ export default function StepPreferences({
             id="pti-room-trigger"
             label="Ideal room type"
             required
+            error={showErrors && preferences.roomType.length === 0 ? "This field is required" : undefined}
           >
             <MultiSelectDropdown
               id="pti-room-trigger"
@@ -169,6 +198,7 @@ export default function StepPreferences({
               onChange={(val) => onSetPreferences({ roomType: val })}
               placeholder="Select room types"
               checkboxStyle="radio"
+              error={showErrors && preferences.roomType.length === 0}
             />
           </FormField>
 
@@ -176,6 +206,7 @@ export default function StepPreferences({
             id="pti-transport-trigger"
             label="Transportation Preferences"
             required
+            error={showErrors && preferences.transportation === "" ? "This field is required" : undefined}
           >
             <SelectDropdown
               id="pti-transport-trigger"
@@ -183,6 +214,7 @@ export default function StepPreferences({
               value={preferences.transportation}
               onChange={(val) => onSetPreferences({ transportation: val })}
               label="Select Transportation"
+              error={showErrors && preferences.transportation === ""}
             />
           </FormField>
 
@@ -190,6 +222,7 @@ export default function StepPreferences({
             id="pti-experience-trigger"
             label="Additional Experiences"
             required
+            error={showErrors && preferences.experiences.length === 0 ? "This field is required" : undefined}
           >
             <MultiSelectDropdown
               id="pti-experience-trigger"
@@ -198,6 +231,7 @@ export default function StepPreferences({
               onChange={(val) => onSetPreferences({ experiences: val })}
               placeholder="Select Experiences"
               checkboxStyle="checkbox"
+              error={showErrors && preferences.experiences.length === 0}
             />
           </FormField>
 
@@ -219,6 +253,7 @@ export default function StepPreferences({
             id="pti-contact-trigger"
             label="Preferred Contact Method"
             required
+            error={showErrors && preferences.contactMethod === "" ? "This field is required" : undefined}
           >
             <SelectDropdown
               id="pti-contact-trigger"
@@ -226,6 +261,7 @@ export default function StepPreferences({
               value={preferences.contactMethod}
               onChange={(val) => onSetPreferences({ contactMethod: val })}
               label="Select Contact Method"
+              error={showErrors && preferences.contactMethod === ""}
             />
           </FormField>
 
@@ -244,7 +280,7 @@ export default function StepPreferences({
 
       <BookingStepFooter
         onPrevious={onPrevious}
-        onContinue={onContinue}
+        onContinue={handleContinueClick}
         continueLabel="Continue"
       />
     </div>

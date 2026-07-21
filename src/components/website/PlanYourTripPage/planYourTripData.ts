@@ -1,44 +1,4 @@
-import type { PlanDestination, PlanStep } from "./planYourTripTypes";
-
-export const DESTINATIONS: PlanDestination[] = [
-  {
-    id: "egypt",
-    name: "Egypt",
-    image:
-      "/images/planyourtrip/egypt.jpg",
-  },
-  {
-    id: "spain",
-    name: "Spain",
-    image:
-      "/images/planyourtrip/spain.jpg",
-  },
-  {
-    id: "dubai",
-    name: "Dubai",
-    image:
-      "/images/planyourtrip/dubai.jpg",
-  },
-  {
-    id: "italy",
-    name: "Italy",
-    image:
-      "/images/planyourtrip/italy.jpg",
-  },
-  {
-    id: "brazil",
-    name: "Brazil",
-    image:
-      "/images/planyourtrip/brazil.jpg",
-  },
-  {
-    id: "greece",
-    name: "Greece",
-    image:
-      "/images/planyourtrip/greece.jpg",
-  },
-];
-
+import type { PlanStep } from "./planYourTripTypes";
 export const TRANSPORT_OPTIONS = [
   "Shared Transport",
   "Private Transport",

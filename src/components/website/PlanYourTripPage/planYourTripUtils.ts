@@ -10,6 +10,9 @@ export function clampMin0(n: number) {
   return Math.max(0, n);
 }
 
-export function toggleInArray(arr: string[], value: string) {
-  return arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value];
+export function toggleInArray<T extends string | number>(array: T[], value: T): T[] {
+  if (array.includes(value)) {
+    return array.filter((v) => v !== value);
+  }
+  return [...array, value];
 }

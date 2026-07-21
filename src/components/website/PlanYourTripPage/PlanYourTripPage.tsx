@@ -6,14 +6,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import styles from "./PlanYourTripPage.module.scss";
-import { DESTINATIONS, EXPERIENCE_OPTIONS, STEPS, TRANSPORT_OPTIONS } from "./planYourTripData";
-import type { PlanStep, TripData } from "./planYourTripTypes";
+import { EXPERIENCE_OPTIONS, STEPS, TRANSPORT_OPTIONS } from "./planYourTripData";
+import type { PlanStep, TripData, PlanDestination } from "./planYourTripTypes";
 import { clampMin0, toggleInArray } from "./planYourTripUtils";
 import { SuccessModal, Breadcrumb, PageHeader, StepIndicator } from "@/components/shared";
 import StepDestination from "./steps/Destination/StepDestination";
 import StepTravelerInfo from "./steps/TravelerInfo/StepTravelerInfo";
 import StepPreferences from "./steps/Preferences/StepPreferences";
 import StepReview from "./steps/Review/StepReview";
+import { getDestinations } from "@/lib/api";
 
 const initialTripData: TripData = {
   destinations: [],
@@ -47,9 +48,32 @@ export default function PlanYourTripPage() {
   const [currentStep, setCurrentStep] = useState<PlanStep>(1);
   const [showModal, setShowModal] = useState(false);
   const [tripData, setTripData] = useState<TripData>(initialTripData);
+  const [availableDestinations, setAvailableDestinations] = useState<PlanDestination[]>([]);
+
+  useEffect(() => {
+    async function fetchDestinations() {
+      try {
+        const data = await getDestinations();
+        if (data?.results) {
+          const apiDests: PlanDestination[] = data.results.map((d: any) => ({
+            id: d.id,
+            name: d.name,
+            region: d.region_display || "Africa",
+            image: d.image || ""
+          }));
+          
+          setAvailableDestinations(apiDests);
+        }
+      } catch (err) {
+        console.error("Failed to fetch destinations", err);
+      }
+    }
+    fetchDestinations();
+  }, []);
+
   const stepIndicatorRef = useRef<HTMLDivElement | null>(null);
 
-  const toggleDestination = (id: string) => {
+  const toggleDestination = (id: string | number) => {
     setTripData((prev) => ({
       ...prev,
       destinations: toggleInArray(prev.destinations, id),
@@ -87,12 +111,50 @@ export default function PlanYourTripPage() {
     }));
   };
 
-  const handleContinue = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const handleContinue = async () => {
     if (currentStep < 4) {
       setCurrentStep((s) => (s + 1) as PlanStep);
       return;
     }
-    setShowModal(true);
+    
+    // Step 4: Submit to API
+    try {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      
+      const { createCustomTripRequest } = await import("@/lib/api");
+      
+      const validIds: number[] = [];
+      const invalidNames: string[] = [];
+
+      for (const destId of tripData.destinations) {
+        if (typeof destId === "number") {
+          validIds.push(destId);
+        } else {
+          const destObj = availableDestinations.find((d) => d.id === destId);
+          invalidNames.push(destObj ? destObj.name : String(destId));
+        }
+      }
+
+      // If there are unmapped destinations, append them to tripDetails
+      const finalTripData = { ...tripData };
+      finalTripData.destinations = validIds;
+      if (invalidNames.length > 0) {
+        const appendText = `\n\nRequested Additional Destinations: ${invalidNames.join(", ")}`;
+        finalTripData.travelerInfo.tripDetails += appendText;
+      }
+
+      await createCustomTripRequest(finalTripData);
+      
+      setShowModal(true);
+    } catch (err: any) {
+      setSubmitError(err.message || "Something went wrong submitting your request. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handlePrevious = () => {
@@ -128,7 +190,7 @@ export default function PlanYourTripPage() {
         <div className={styles.content}>
           {currentStep === 1 && (
             <StepDestination
-              destinations={DESTINATIONS}
+              destinations={availableDestinations}
               selectedDestinationIds={tripData.destinations}
               onToggleDestination={toggleDestination}
               onContinue={handleContinue}
@@ -160,6 +222,8 @@ export default function PlanYourTripPage() {
           {currentStep === 4 && (
             <StepReview
               tripData={tripData}
+              isSubmitting={isSubmitting}
+              submitError={submitError}
               onPrevious={handlePrevious}
               onContinue={handleContinue}
             />

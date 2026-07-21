@@ -4,6 +4,8 @@ import type { TripData } from "../../planYourTripTypes";
 
 interface StepReviewProps {
   tripData: TripData;
+  isSubmitting?: boolean;
+  submitError?: string | null;
   onPrevious: () => void;
   onContinue: () => void;
 }
@@ -46,13 +48,15 @@ const formatHotelCategory = (cat: string) => {
 
 export default function StepReview({
   tripData,
+  isSubmitting,
+  submitError,
   onPrevious,
   onContinue,
 }: StepReviewProps) {
   const { travelerInfo, preferences, destinations } = tripData;
 
   const destinationLabel = destinations
-    .map((id) => id.charAt(0).toUpperCase() + id.slice(1))
+    .map((id) => typeof id === 'string' ? id.charAt(0).toUpperCase() + id.slice(1) : String(id))
     .join(", ");
 
   const travelersParts = [];
@@ -65,7 +69,7 @@ export default function StepReview({
   if (travelerInfo.infants > 0) {
     travelersParts.push(`${travelerInfo.infants} ${travelerInfo.infants === 1 ? 'Infant' : 'Infants'}`);
   }
-  const travelersValue = travelersParts.join(" â€¢ ") || "None";
+  const travelersValue = travelersParts.join(" • ") || "None";
 
   const sections = [
     {
@@ -115,19 +119,26 @@ export default function StepReview({
         <div className={pageStyles.formHeaderColumn}>
           <h2 className={pageStyles.formTitle}>Review & Submit</h2>
           <p className={pageStyles.formSubtitle}>
-            Hereâ€™s a summary of your personalized trip request.
+            Here's a summary of your personalized trip request.
           </p>
         </div>
       </header>
 
       <div className={pageStyles.stepFormCardScroll}>
         <BookingDetailsSections sections={sections} />
+        
+        {submitError && (
+          <div style={{ padding: '1rem', backgroundColor: '#fee2e2', color: '#b91c1c', borderRadius: '8px', marginTop: '1rem', fontSize: '14px' }}>
+            {submitError}
+          </div>
+        )}
       </div>
 
       <BookingStepFooter
         onPrevious={onPrevious}
         onContinue={onContinue}
-        continueLabel="Submit Trip Request"
+        continueLabel={isSubmitting ? "Submitting..." : "Submit Trip Request"}
+        continueDisabled={isSubmitting}
       />
     </div>
   );

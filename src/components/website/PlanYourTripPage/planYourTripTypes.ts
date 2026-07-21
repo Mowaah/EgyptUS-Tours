@@ -1,13 +1,13 @@
 export type PlanStep = 1 | 2 | 3 | 4;
 
 export type PlanDestination = {
-  id: string;
+  id: string | number;
   name: string;
   image: string;
 };
 
 export type TripData = {
-  destinations: string[];
+  destinations: (string | number)[];
   travelerInfo: {
     name: string;
     email: string;
