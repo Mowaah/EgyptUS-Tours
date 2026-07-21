@@ -14,7 +14,15 @@ const MORE_TRIPS: Trip[] = Array(8).fill({
   image: "/images/pyramids4.jpg",
 } as Trip);
 
-export default function TripMoreTrips() {
+interface TripMoreTripsProps {
+  relatedTrips?: Trip[];
+}
+
+export default function TripMoreTrips({ relatedTrips = [] }: TripMoreTripsProps) {
+  if (!relatedTrips || relatedTrips.length === 0) {
+    return null;
+  }
+
   return (
     <section id="more-trips" className={styles.section}>
       <div className={styles.header}>
@@ -42,7 +50,7 @@ export default function TripMoreTrips() {
       </div>
 
       <div className={styles.grid}>
-        {MORE_TRIPS.map((trip, i) => (
+        {relatedTrips.slice(0, 4).map((trip, i) => (
           <TripCard key={i} trip={trip} />
         ))}
       </div>

@@ -48,19 +48,6 @@ const HOME_CATEGORIES = [
   "Egypt Shore Excursions",
 ];
 
-const DEMO_TRIPS: Trip[] = Array.from({ length: 6 }, (_, i) => ({
-  id: `trip-${i + 1}`,
-  title: "Luxury 5 days Luxor and Aswan Nile Cruise",
-  description:
-    "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
-  image: "/images/home/hero-bg.png",
-  location: "Luxor & Aswan",
-  price: 2000,
-  currency: "$",
-  duration: { days: 8, nights: 7 },
-  isFavorite: false,
-}));
-
 const DURATION_OPTIONS = ["Any", "Less than 10 days", "10-15 Days", "15-20 Days", "More than 20 days"];
 const SPECIAL_OFFERS = [
   "Any",
@@ -88,6 +75,7 @@ interface TripsSectionProps {
   variant?: "home" | "page";
   /** When provided (redirected from SearchBar) renders Search Results mode */
   searchParams?: SearchParams;
+  initialTrips?: Trip[];
 }
 
 interface FilterPill {
@@ -96,7 +84,7 @@ interface FilterPill {
   value: string;
 }
 
-export default function TripsSection({ variant = "home", searchParams }: TripsSectionProps) {
+export default function TripsSection({ variant = "home", searchParams, initialTrips = [] }: TripsSectionProps) {
   const isPage = variant === "page";
   const isSearchResults = isPage && !!searchParams;
 
@@ -118,8 +106,17 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const totalPages = 15;
-  const [trips, setTrips] = useState<Trip[]>(DEMO_TRIPS);
+  const [sortBy, setSortBy] = useState("recommended");
+  const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
+  
+  const PAGE_SIZE = 6;
+  const [trips, setTrips] = useState<Trip[]>(initialTrips);
+
+  useEffect(() => {
+    if (initialTrips.length > 0) {
+      setTrips(initialTrips);
+    }
+  }, [initialTrips]);
 
   const activeFilterCount = useMemo(() => {
     let n = 0;
@@ -153,10 +150,56 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
     return () => window.removeEventListener("keydown", onKey);
   }, [filtersOpen]);
 
-  const filteredTrips = trips.filter(
+  // 1. Filter by Search Query
+  let processedTrips = trips.filter(
     (trip) =>
       trip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       trip.location.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // 2. Filter by Price
+  processedTrips = processedTrips.filter(
+    (trip) => trip.price >= expanded.priceRange.min && trip.price <= expanded.priceRange.max
+  );
+
+  // 3. Filter by Duration
+  if (durationFilter !== "Any") {
+    processedTrips = processedTrips.filter((trip) => {
+      const days = trip.duration.days;
+      if (durationFilter === "Less than 10 days") return days < 10;
+      if (durationFilter === "10-15 Days") return days >= 10 && days <= 15;
+      if (durationFilter === "15-20 Days") return days >= 15 && days <= 20;
+      if (durationFilter === "More than 20 days") return days > 20;
+      return true;
+    });
+  }
+
+  // 4. Sort
+  processedTrips = [...processedTrips].sort((a, b) => {
+    if (sortBy === "price-low") return a.price - b.price;
+    if (sortBy === "price-high") return b.price - a.price;
+    return 0; // recommended stays same for now
+  });
+
+  // 5. Filter by Category Tab
+  const selectedCategory = (isPage ? PAGE_CATEGORIES : HOME_CATEGORIES)[activeCategoryIndex];
+  if (selectedCategory) {
+    const catFilter = selectedCategory.toLowerCase().replace(" tours", "").replace(" cruises", "").trim();
+    processedTrips = processedTrips.filter((trip) => {
+      return (
+        trip.tags?.some((t) => t.toLowerCase().includes(catFilter)) ||
+        trip.title.toLowerCase().includes(catFilter) ||
+        trip.description.toLowerCase().includes(catFilter)
+      );
+    });
+  }
+
+  const totalPages = Math.max(1, Math.ceil(processedTrips.length / PAGE_SIZE));
+  
+  // 6. Paginate
+  const paginatedTrips = processedTrips.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
   );
 
   const handleFavoriteToggle = (id: string) => {
@@ -263,14 +306,20 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
             )}
             <span className={styles.countSearch}>
               {isPage
-                ? `${filteredTrips.length} Trips found for your route`
-                : `Found ${filteredTrips.length} Tours`}
+                ? `${processedTrips.length} Trips found for your route`
+                : `Found ${processedTrips.length} Tours`}
             </span>
           </div>
 
           {isPage ? (
             <div className={styles.toolbarRight}>
-              {isLg && <SortButton options={SORT_OPTIONS} defaultValue="recommended" />}
+              {isLg && (
+                <SortButton 
+                  options={SORT_OPTIONS} 
+                  defaultValue="recommended" 
+                  onChange={(val) => setSortBy(val)} 
+                />
+              )}
               <SearchInput
                 placeholder="Search trips, destinations, or keywords…"
                 value={searchQuery}
@@ -281,13 +330,25 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
           ) : (
             isLg && (
               <div className={styles.toolbarSortHome}>
-                <SortButton options={SORT_OPTIONS} defaultValue="recommended" />
+                <SortButton 
+                  options={SORT_OPTIONS} 
+                  defaultValue="recommended" 
+                  onChange={(val) => setSortBy(val)} 
+                />
               </div>
             )
           )}
         </div>
 
-        <CategoryTabs tabs={isPage ? PAGE_CATEGORIES : HOME_CATEGORIES} wrap={isPage} />
+        <CategoryTabs 
+          tabs={isPage ? PAGE_CATEGORIES : HOME_CATEGORIES} 
+          wrap={isPage} 
+          active={activeCategoryIndex}
+          onTabChange={(_, index) => {
+            setActiveCategoryIndex(index);
+            setCurrentPage(1); // Reset pagination on category change
+          }}
+        />
 
         {filtersOpen && (
           <button
@@ -323,7 +384,12 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
               </span>
             </button>
             <div className={styles.filterSortRowSort}>
-              <SortButton options={SORT_OPTIONS} defaultValue="recommended" showLabel={false} />
+              <SortButton 
+                options={SORT_OPTIONS} 
+                defaultValue="recommended" 
+                showLabel={false} 
+                onChange={(val) => setSortBy(val)} 
+              />
             </div>
           </div>
         )}
@@ -413,10 +479,10 @@ export default function TripsSection({ variant = "home", searchParams }: TripsSe
 
           {/* ── Trip grid ── */}
           <div className={styles.main}>
-            {filteredTrips.length > 0 ? (
+            {paginatedTrips.length > 0 ? (
               <>
                 <div className={styles.grid}>
-                  {filteredTrips.map((trip, index) => (
+                  {paginatedTrips.map((trip, index) => (
                     <TripCard
                       key={trip.id}
                       trip={trip}

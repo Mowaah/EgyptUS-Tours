@@ -1,0 +1,130 @@
+export interface TripTag {
+  id: number;
+  name: string;
+  slug: string;
+  category: string;
+}
+
+export interface TripOverview {
+  description: string;
+  cultural_value: string;
+  who_is_it_for: string;
+}
+
+export interface TripItineraryDay {
+  day_number: number;
+  title: string;
+  subtitle: string;
+  description: string;
+  image: string | null;
+  value_amount: string | null;
+  duration_hours: number | null;
+  meals_count: number | null;
+  highlights: string[];
+  order: number;
+}
+
+export interface TripAvailabilitySlot {
+  start_date: string;
+  end_date: string;
+  capacity_total: number;
+  capacity_remaining: number;
+  order: number;
+}
+
+export interface TripVipExperience {
+  title: string;
+  description: string;
+  image: string | null;
+  rating: string;
+  review_count: number;
+  original_price: string;
+  discounted_price: string;
+  savings_amount: string;
+  badge: string;
+  features: string[];
+  is_added_default: boolean;
+  order: number;
+}
+
+export interface TripImportantLink {
+  label: string;
+  href: string;
+  order: number;
+}
+
+export interface TripSeasonTier {
+  label: string;
+  price: string;
+  order: number;
+}
+
+export interface TripSeasonPricing {
+  season_label: string;
+  start_date: string | null;
+  end_date: string | null;
+  order: number;
+  tiers: TripSeasonTier[];
+}
+
+export interface TripHotelLink {
+  order: number;
+  hotel: {
+    id: number;
+    slug: string;
+    name: string;
+    location_text: string;
+    hero_image: string | null;
+  };
+}
+
+export interface TripReview {
+  id: number;
+  author_name: string;
+  rating: string;
+  title: string;
+  body: string;
+  review_date: string;
+  is_verified_booking: boolean;
+  author_country: string | null;
+}
+
+export interface TripList {
+  id: number;
+  slug: string;
+  title: string;
+  short_description: string;
+  location_text: string;
+  base_price: string;
+  currency_code: string;
+  price_label: string;
+  duration_days: number;
+  duration_nights: number;
+  duration: { days: number; nights: number };
+  rating_avg: string;
+  review_count: number;
+  is_featured: boolean;
+  image: string | null;
+  is_favorite: boolean;
+  tags: TripTag[];
+}
+
+export interface TripDetail extends TripList {
+  description: string;
+  private_price: string | null;
+  group_price: string | null;
+  overview: TripOverview;
+  included: string[];
+  excluded: string[];
+  itinerary: TripItineraryDay[];
+  availability: TripAvailabilitySlot[];
+  vip_experiences: TripVipExperience[];
+  important_links: TripImportantLink[];
+  pricing: TripSeasonPricing[];
+  images: string[];
+  traveler_photos: string[];
+  hotels: TripHotelLink[];
+  trip_reviews: TripReview[];
+  created_at: string;
+  updated_at: string;
+}

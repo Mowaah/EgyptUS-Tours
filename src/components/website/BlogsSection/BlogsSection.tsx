@@ -51,10 +51,15 @@ const BLOGS: Blog[] = [
 
 const VISIBLE_COUNT = 2;
 
-export default function BlogsSection() {
+interface BlogsSectionProps {
+  blogs?: Blog[];
+}
+
+export default function BlogsSection({ blogs }: BlogsSectionProps) {
   const [startIndex, setStartIndex] = useState(0);
 
-  const visibleBlogs = BLOGS.slice(startIndex, startIndex + VISIBLE_COUNT);
+  const displayBlogs = blogs && blogs.length > 0 ? blogs : BLOGS;
+  const visibleBlogs = displayBlogs.slice(startIndex, startIndex + VISIBLE_COUNT);
 
   const handlePrev = () => {
     setStartIndex((prev) => Math.max(0, prev - 1));
@@ -62,7 +67,7 @@ export default function BlogsSection() {
 
   const handleNext = () => {
     setStartIndex((prev) =>
-      Math.min(BLOGS.length - VISIBLE_COUNT, prev + 1)
+      Math.min(displayBlogs.length - VISIBLE_COUNT, prev + 1)
     );
   };
 
@@ -107,7 +112,7 @@ export default function BlogsSection() {
                 onPrev={handlePrev}
                 onNext={handleNext}
                 prevDisabled={startIndex === 0}
-                nextDisabled={startIndex >= BLOGS.length - VISIBLE_COUNT}
+                nextDisabled={startIndex >= displayBlogs.length - VISIBLE_COUNT}
               />
             </div>
           </div>

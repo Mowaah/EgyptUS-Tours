@@ -95,26 +95,22 @@ export default function TransportationPage({ vehicles }: TransportationPageProps
 
   // Fake filtering logic for demonstration
   const filteredVehicles = vehicles.filter(v => {
-    // Search match
-    if (searchQuery && !v.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+    if (searchQuery && !v.title.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
     }
     if (isSearchResults) {
-      const vType = (v.type || "").toLowerCase();
       const sVehicle = (searchVehicle || "").toLowerCase();
-      if (sVehicle && sVehicle !== "all vehicles" && !vType.includes(sVehicle)) {
-        // loose matching based on dropdown names in the search widget
-        if (sVehicle === "sedan" && !vType.includes("sedan")) return false;
-        if (sVehicle === "suv" && !vType.includes("suv") && !vType.includes("luxury")) return false;
-        if (sVehicle === "van" && !vType.includes("van") && !vType.includes("hiace")) return false;
-        if (sVehicle === "bus" && !vType.includes("bus") && !vType.includes("coach")) return false;
+      if (sVehicle && sVehicle !== "all vehicles") {
+        if (v.id !== searchVehicle && v.title.toLowerCase() !== sVehicle) {
+          return false;
+        }
       }
       return true;
     }
     // Tab match
     const tabItem = CATEGORIES[activeTab];
     if (tabItem !== "All Vehicles") {
-      const vType = (v.type || "").toLowerCase();
+      const vType = (v.title || "").toLowerCase();
       if (tabItem === "Sedan" && !vType.includes("sedan")) return false;
       if (tabItem === "SUV & Luxury" && !vType.includes("suv") && !vType.includes("luxury")) return false;
       if (tabItem === "Van & Hiace" && !vType.includes("van") && !vType.includes("hiace")) return false;
@@ -153,11 +149,11 @@ export default function TransportationPage({ vehicles }: TransportationPageProps
   }, [activeTab, searchQuery, isSearchResults]);
 
   const getVehicleName = (id: string | null) => {
-    if (id === "sedan") return "Sedan";
-    if (id === "hiace") return "Hiace";
-    if (id === "bus") return "Bus";
-    if (id === "luxury") return "Luxury Cars";
-    return "Sedan";
+    if (!id || id === "all vehicles") return "All Vehicles";
+    const found = vehicles.find(v => v.id === id);
+    if (found) return found.title;
+    // Capitalize first letter as fallback
+    return id.charAt(0).toUpperCase() + id.slice(1);
   };
 
   return (
@@ -178,7 +174,7 @@ export default function TransportationPage({ vehicles }: TransportationPageProps
               <Image src="/images/calendar-orange.svg" alt="" width={20} height={20} />
               <div className={styles.summaryText}>
                 <span className={styles.summaryLabel}>Date</span>
-                <span className={styles.summaryValue}>{searchDate || "Fri, 29 Aug 2026"}</span>
+                <span className={styles.summaryValue}>{searchDate || "Any Date"}</span>
               </div>
             </div>
             <div className={styles.summaryItem}>

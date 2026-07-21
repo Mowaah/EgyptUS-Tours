@@ -6,17 +6,23 @@ import { SectionHeader, Button, CustomDatePicker } from "@/components/shared";
 import Image from "next/image";
 import styles from "./TransportationSection.module.scss";
 
-const VEHICLES = [
-  { id: "sedan", name: "Sedan", passengers: "1-3 passengers" },
-  { id: "hiace", name: "Hiace", passengers: "1-10 passengers" },
-  { id: "bus", name: "Bus", passengers: "15-30 passengers" },
-  { id: "luxury", name: "Luxury Cars", passengers: "1-3 passengers" },
-];
 
-export default function TransportationSection() {
+
+interface VehicleData {
+  id: string;
+  name: string;
+  passengers: string;
+}
+
+interface TransportationSectionProps {
+  initialVehicles?: VehicleData[];
+}
+
+export default function TransportationSection({ initialVehicles = [] }: TransportationSectionProps) {
   const router = useRouter();
-  const [selected, setSelected] = useState("sedan");
-  const [pickupDate, setPickupDate] = useState("08/29/2026");
+  const [vehicles] = useState<VehicleData[]>(initialVehicles);
+  const [selected, setSelected] = useState(vehicles[0]?.id || "sedan");
+  const [pickupDate, setPickupDate] = useState("");
 
   const handleSearch = () => {
     // Basic date formatting/passthrough for demo purposes
@@ -60,7 +66,7 @@ export default function TransportationSection() {
               </p>
 
               <div className={styles.vehicleGrid}>
-                {VEHICLES.map((v) => (
+                {vehicles.map((v) => (
                   <button
                     key={v.id}
                     className={`${styles.vehicleBtn} ${selected === v.id ? styles.vehicleBtnActive : ""}`}
@@ -77,7 +83,7 @@ export default function TransportationSection() {
                 <Image src="/images/calendar.svg" alt="" width={16} height={16} />
                 Pickup Date
               </p>
-              <CustomDatePicker value={pickupDate} onChange={setPickupDate} />
+              <CustomDatePicker value={pickupDate} onChange={setPickupDate} placeholder="Any Date" />
 
               <Button
                 variant="secondary"

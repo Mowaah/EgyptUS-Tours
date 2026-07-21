@@ -7,12 +7,14 @@ import {
   Button,
   SortButton,
   PaginationArrows,
+  EmptyState,
 } from "@/components/shared";
 import { Hotel } from "@/types";
 import styles from "./HotelsSection.module.scss";
 import Image from "next/image";
 
 const LOCATION_TABS = [
+  "All",
   "Giza",
   "Cairo",
   "Luxor",
@@ -26,23 +28,34 @@ const LOCATION_TABS = [
   "Port Said",
 ];
 
-const DEMO_HOTELS: Hotel[] = Array.from({ length: 4 }, (_, i) => ({
-  id: `hotel-${i + 1}`,
-  name: "Pyramids View Luxury Hotel",
-  location: "Giza",
-  image: "/images/pyramids.jpg",
-  stars: 5,
-  rating: 4.2,
-  rooms: 245,
-  pricePerNight: 180,
-  reviews: 1847,
-}));
-
 import { useState, useRef } from "react";
 
-export default function HotelsSection() {
-  const [hotels, setHotels] = useState<Hotel[]>(DEMO_HOTELS);
+export default function HotelsSection({ initialHotels = [] }: { initialHotels?: Hotel[] }) {
+  const [hotels, setHotels] = useState<Hotel[]>(initialHotels);
+  const [activeTab, setActiveTab] = useState(0);
+  const [sortOption, setSortOption] = useState("recommended");
   const sliderRef = useRef<HTMLDivElement>(null);
+
+  const activeLocation = LOCATION_TABS[activeTab];
+
+  let filteredHotels = [...hotels];
+
+  if (activeLocation && activeLocation !== "All") {
+    filteredHotels = filteredHotels.filter(
+      (h) => h.location && h.location.toLowerCase().includes(activeLocation.toLowerCase())
+    );
+  }
+
+  if (sortOption === "price-low") {
+    filteredHotels.sort((a, b) => a.pricePerNight - b.pricePerNight);
+  } else if (sortOption === "price-high") {
+    filteredHotels.sort((a, b) => b.pricePerNight - a.pricePerNight);
+  } else if (sortOption === "rating") {
+    filteredHotels.sort((a, b) => b.rating - a.rating);
+  } else {
+    // Recommended
+    filteredHotels.sort((a, b) => b.reviews - a.reviews);
+  }
 
   const handleFavoriteToggle = (id: string) => {
     setHotels((prev) =>
@@ -75,7 +88,11 @@ export default function HotelsSection() {
         />
 
         <div className={styles.tabsRow}>
-          <CategoryTabs tabs={LOCATION_TABS} />
+          <CategoryTabs 
+            tabs={LOCATION_TABS} 
+            active={activeTab}
+            onTabChange={(_, idx) => setActiveTab(idx)}
+          />
         </div>
 
         <div className={styles.toolbar}>
@@ -86,7 +103,8 @@ export default function HotelsSection() {
               { value: "price-high", label: "Price: High to Low" },
               { value: "rating", label: "Rating" },
             ]}
-            defaultValue="recommended"
+            defaultValue={sortOption}
+            onChange={setSortOption}
           />
           <div className={styles.arrows}>
             <PaginationArrows
@@ -100,14 +118,23 @@ export default function HotelsSection() {
           </div>
         </div>
 
-        {/* Removed margin/padding bleed logic if tracking within container, 
-            but kept the slider robust */}
         <div className={styles.slider} ref={sliderRef}>
-          {hotels.map((hotel) => (
-            <div key={hotel.id} className={styles.slide}>
-              <HotelCard hotel={hotel} onFavoriteToggle={handleFavoriteToggle} />
+          {filteredHotels.length > 0 ? (
+            filteredHotels.map((hotel) => (
+              <div key={hotel.id} className={styles.slide}>
+                <HotelCard hotel={hotel} onFavoriteToggle={handleFavoriteToggle} />
+              </div>
+            ))
+          ) : (
+            <div style={{ width: "100%", padding: "20px 0" }}>
+              <EmptyState 
+                title="No Hotels Found" 
+                description={`We couldn't find any hotels in ${activeLocation}. Try another location.`} 
+                buttonText="Clear Filter"
+                onButtonClick={() => setActiveTab(0)}
+              />
             </div>
-          ))}
+          )}
         </div>
 
         <div className={styles.viewAll}>

@@ -63,18 +63,6 @@ const SORT_OPTIONS = [
   { value: "rating", label: "Rating" },
 ];
 
-const DEMO_HOTELS: Hotel[] = Array.from({ length: 8 }, (_, i) => ({
-  id: `hotel-${i + 1}`,
-  name: "Pyramids View Luxury Hotel",
-  location: "Giza",
-  image: "/images/pyramids.jpg",
-  stars: 5,
-  rating: 4.2,
-  rooms: 245,
-  pricePerNight: 180,
-  reviews: 1847,
-}));
-
 const ITEMS_PER_PAGE = 6;
 
 // ── Component ───────────────────────────────────────────────────
@@ -85,21 +73,18 @@ interface HotelsPageSectionProps {
 }
 
 export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSectionProps) {
-  // Map backend initialHotels to frontend Hotel type
-  const mappedHotels: Hotel[] = initialHotels.length > 0 
-    ? initialHotels.map(h => ({
-        id: h.slug,
-        name: h.name,
-        location: h.location_text || "",
-        image: h.hero_image || "/images/pyramids.jpg",
-        stars: h.stars,
-        rating: parseFloat(h.rating_avg) || 0,
-        rooms: h.rooms,
-        pricePerNight: parseFloat(h.price_per_night) || 0,
-        reviews: h.review_count,
-        isFavorite: h.is_favorite
-      }))
-    : DEMO_HOTELS;
+  const mappedHotels: Hotel[] = initialHotels.map(h => ({
+    id: h.slug,
+    name: h.name,
+    location: h.location_text || "",
+    image: h.hero_image || "/images/pyramids.jpg",
+    stars: h.stars,
+    rating: parseFloat(h.rating_avg) || 0,
+    rooms: h.rooms,
+    pricePerNight: parseFloat(h.price_per_night) || 0,
+    reviews: h.review_count,
+    isFavorite: h.is_favorite
+  }));
 
   const [hotels, setHotels] = useState<Hotel[]>(mappedHotels);
   const [ratingFilter, setRatingFilter] = useState("any");

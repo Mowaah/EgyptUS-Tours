@@ -8,3 +8,4 @@ export interface PaginatedResponse<T> {
 export * from "./articles";
 export * from "./hotels";
 export * from "./vehicles";
+export * from "./trips";

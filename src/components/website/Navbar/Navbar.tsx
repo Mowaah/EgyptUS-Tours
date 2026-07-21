@@ -52,20 +52,10 @@ const DESTINATION_LINKS = [
   { label: "Oman", href: "/destinations/oman" },
 ];
 
-const TRIP_LINKS = [
-  { label: "Classic Tours", href: "/trips/classic" },
-  { label: "Christmas Tours", href: "/trips/christmas" },
-  { label: "Nile Cruises", href: "/trips/nile-cruises" },
-  { label: "Classic Tours", href: "/trips/classic" },
-  { label: "Christmas Tours", href: "/trips/christmas" },
-  { label: "Nile Cruises", href: "/trips/nile-cruises" },
-  { label: "Classic Tours", href: "/trips/classic" },
-  { label: "Christmas Tours", href: "/trips/christmas" },
-  { label: "Nile Cruises", href: "/trips/nile-cruises" },
-  { label: "Classic Tours", href: "/trips/classic" },
-  { label: "Christmas Tours", href: "/trips/christmas" },
-  { label: "Nile Cruises", href: "/trips/nile-cruises" },
-];
+export interface NavLinkItem {
+  label: string;
+  href: string;
+}
 
 const MOBILE_USER_LINKS = [
   { label: "Favorites", href: "/profile?tab=favorites", icon: "/images/heart-outline.svg" },
@@ -81,7 +71,12 @@ function isTripDetailPage(pathname: string): boolean {
   return !TRIP_LISTING_SLUGS.has(match[1]);
 }
 
-export default function Navbar() {
+interface NavbarProps {
+  tripLinks?: NavLinkItem[];
+}
+
+export default function Navbar({ tripLinks = [] }: NavbarProps) {
+  const finalTripLinks = tripLinks;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -261,7 +256,7 @@ export default function Navbar() {
                     <div className={styles.dropdownWrapper}>
                       <div className={styles.dropdownCard}>
                         <div className={styles.dropdownGrid}>
-                          {(link.label === "Destinations" ? DESTINATION_LINKS : TRIP_LINKS).map((opt, i) => (
+                          {(link.label === "Destinations" ? DESTINATION_LINKS : finalTripLinks).map((opt, i) => (
                             <Link key={i} href={opt.href} className={styles.dropdownOption}>
                               <Image src="/images/➢.svg" alt="" width={15} height={12} className={styles.dropdownIcon} />
                               <span className={styles.dropdownText}>{opt.label}</span>
@@ -332,7 +327,7 @@ export default function Navbar() {
                   const subLinks = link.hasDropdown
                     ? link.label === "Destinations"
                       ? DESTINATION_LINKS
-                      : TRIP_LINKS
+                      : finalTripLinks
                     : [];
 
                   return (

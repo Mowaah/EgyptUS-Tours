@@ -13,6 +13,7 @@ interface CustomDatePickerProps {
   variant?: "card" | "input" | "custom";
   renderTrigger?: (isOpen: boolean, setIsOpen: (o: boolean) => void, displayTxt: string) => React.ReactNode;
   selectsRange?: boolean;
+  placeholder?: string;
 }
 
 const WEEKDAYS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -45,7 +46,7 @@ const parseDateString = (val: string) => {
   return null;
 };
 
-export default function CustomDatePicker({ value, onChange, className, dropdownClassName = "", variant = "card", renderTrigger, selectsRange = false }: CustomDatePickerProps) {
+export default function CustomDatePicker({ value, onChange, className, dropdownClassName = "", variant = "card", renderTrigger, selectsRange = false, placeholder }: CustomDatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const initialDate = parseDateString(value) || new Date();
 
@@ -171,7 +172,7 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
   const formattedMonthYear = viewDate.toLocaleDateString(undefined, { month: "long", year: "numeric" });
 
   const formattedPickup = (() => {
-    if (!selectedDateObj || Number.isNaN(selectedDateObj.getTime())) return { main: "Select date", year: "" };
+    if (!selectedDateObj || Number.isNaN(selectedDateObj.getTime())) return { main: placeholder || "Select date", year: "" };
 
     return {
       main: selectedDateObj.toLocaleDateString(undefined, {

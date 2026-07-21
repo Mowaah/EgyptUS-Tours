@@ -91,4 +91,14 @@ export interface Trip {
   travelerPhotos?: string[];
 
   hotels?: TripHotel[];
+
+  reviews?: Array<{
+    image: string;
+    quote: string;
+    name: string;
+    location: string;
+    rating: number;
+  }>;
+
+  relatedTrips?: Trip[];
 }

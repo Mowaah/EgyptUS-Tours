@@ -19,10 +19,14 @@ import TripVIPExperiences from "./TripVIPExperiences/TripVIPExperiences";
 import TripAccommodations from "./TripAccommodations/TripAccommodations";
 import TripReviews from "./TripReviews/TripReviews";
 import TripMoreTrips from "./TripMoreTrips/TripMoreTrips";
+import TestimonialsSection from "@/components/website/TestimonialsSection/TestimonialsSection";
 import styles from "./TripDetailPage.module.scss";
+
+import { BackendTestimonial } from "@/services/testimonialsService";
 
 interface TripDetailPageProps {
   trip: Trip;
+  testimonials?: BackendTestimonial[];
 }
 
 const TRIP_TABS = [
@@ -38,7 +42,7 @@ const TRIP_TABS = [
   { id: "more-trips", label: "More Inspiring Trips" },
 ];
 
-export default function TripDetailPage({ trip }: TripDetailPageProps) {
+export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPageProps) {
   const [isFavorite, setIsFavorite] = useState(trip.isFavorite ?? false);
   const toggleFavorite = () => setIsFavorite((prev) => !prev);
 
@@ -164,12 +168,12 @@ export default function TripDetailPage({ trip }: TripDetailPageProps) {
 
       {/* ── Traveler Reviews ── */}
       <div className={styles.container}>
-        <TripReviews />
+        <TestimonialsSection initialTestimonials={testimonials} />
       </div>
 
       {/* ── More Inspiring Trips ── */}
       <div className={styles.container}>
-        <TripMoreTrips />
+        <TripMoreTrips relatedTrips={trip.relatedTrips} />
       </div>
     </div>
   );
