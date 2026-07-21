@@ -5,28 +5,32 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 export async function getAllTrips(params?: Record<string, string>): Promise<TripList[]> {
   try {
     const url = new URL(`${API_BASE_URL}/api/v1/trips/`);
-    
+
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
-        if (value) {
+        if (value && key !== "page_size") {
           url.searchParams.append(key, value);
         }
       });
     }
 
-    const res = await fetch(url.toString(), {
-      next: { revalidate: 60 },
-      headers: {
-        'Accept': 'application/json',
-      }
-    });
+    const allResults: TripList[] = [];
+    let nextUrl: string | null = url.toString();
 
-    if (!res.ok) {
-      throw new Error(`Failed to fetch trips: ${res.statusText}`);
+    while (nextUrl) {
+      const res = await fetch(nextUrl, {
+        next: { revalidate: 60 },
+        headers: { "Accept": "application/json" },
+      });
+
+      if (!res.ok) throw new Error(`Failed to fetch trips: ${res.statusText}`);
+
+      const data: PaginatedResponse<TripList> = await res.json();
+      allResults.push(...data.results);
+      nextUrl = data.next ?? null;
     }
 
-    const data: PaginatedResponse<TripList> = await res.json();
-    return data.results;
+    return allResults;
   } catch (error) {
     console.error("Error in getAllTrips:", error);
     return [];

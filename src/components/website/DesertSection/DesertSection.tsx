@@ -47,6 +47,7 @@ export default function DesertSection() {
                 title={desert.title}
                 description={desert.description}
                 image={desert.image}
+                href={`/trips?tripType=desert&category=${encodeURIComponent(desert.title)}`}
               />
             ))}
           </div>

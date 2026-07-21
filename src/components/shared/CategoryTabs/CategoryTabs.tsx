@@ -187,16 +187,23 @@ export default function CategoryTabs({
       setMeasuredRows([]);
       return;
     }
-    measureTabs();
-  }, [measureTabs, useWrapLayout]);
+    // If we already have measured rows but tabs changed, we must reset to [] first to trigger Pass 1
+    setMeasuredRows([]);
+  }, [tabs, useWrapLayout]);
+
+  useLayoutEffect(() => {
+    if (useWrapLayout && measuredRows.length === 0) {
+      measureTabs();
+    }
+  }, [measureTabs, useWrapLayout, measuredRows.length]);
 
   // Re-measure on window resize to ensure fluid wrapping exactly like CSS
   useEffect(() => {
     if (!useWrapLayout) return;
-    const handleResize = () => measureTabs();
+    const handleResize = () => setMeasuredRows([]);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [measureTabs, useWrapLayout]);
+  }, [useWrapLayout]);
 
   /** Shared inline style for the indicator pill */
   const indicatorStyle: React.CSSProperties = {

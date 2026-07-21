@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useLayoutEffect, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import {
   Button,
@@ -41,6 +42,7 @@ export interface SearchParams {
   destination?: string;
   budget?: string;
   tripType?: string;
+  category?: string;
 }
 
 interface TripsSectionProps {
@@ -81,7 +83,23 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
   const [currentPage, setCurrentPage] = useState(1);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [sortBy, setSortBy] = useState("recommended");
-  const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
+  const DESERT_CATEGORIES = ["Western Desert", "Sinai Desert", "Oasis Desert", "Safari Trips"];
+
+  // Read category directly from URL so it reacts instantly to client-side navigation
+  const urlSearchParams = useSearchParams();
+  const urlCategory = urlSearchParams.get("category");
+  const categoryFromUrl = useMemo(() => {
+    if (!urlCategory) return 0;
+    const idx = DESERT_CATEGORIES.indexOf(urlCategory);
+    return idx >= 0 ? idx : 0;
+  }, [urlCategory]);
+
+  const [activeCategoryIndex, setActiveCategoryIndex] = useState(categoryFromUrl);
+
+  // Sync whenever the URL's category param changes (e.g. navigating between desert cards)
+  useEffect(() => {
+    setActiveCategoryIndex(categoryFromUrl);
+  }, [categoryFromUrl]);
   
   const PAGE_SIZE = 6;
   const [trips, setTrips] = useState<Trip[]>(initialTrips);
@@ -91,8 +109,13 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
     trips.forEach((trip) => {
       trip.tags?.forEach((tag) => cats.add(tag));
     });
+    
+    if (searchParams?.tripType?.toLowerCase() === "desert") {
+      return ["Western Desert", "Sinai Desert", "Oasis Desert", "Safari Trips"];
+    }
+    
     return ["All Trips", ...Array.from(cats)];
-  }, [trips]);
+  }, [trips, searchParams?.tripType]);
 
   useEffect(() => {
     if (initialTrips.length > 0) {
@@ -167,6 +190,9 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
   const selectedCategory = dynamicCategories[activeCategoryIndex];
   if (selectedCategory && selectedCategory !== "All Trips") {
     processedTrips = processedTrips.filter((trip) => {
+      if (selectedCategory === "Safari Trips") {
+        return trip.tags?.some(tag => tag.toLowerCase().includes("safari"));
+      }
       return trip.tags?.includes(selectedCategory);
     });
   }
@@ -199,11 +225,9 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
   const filterPills: FilterPill[] = [];
   if (searchParams?.date)
     filterPills.push({ icon: "calendar", label: "Date", value: searchParams.date });
-  if (searchParams?.destination)
-    filterPills.push({ icon: "location", label: "Destination", value: searchParams.destination });
   if (searchParams?.budget)
     filterPills.push({ icon: "budget", label: "Budget", value: searchParams.budget });
-  if (searchParams?.tripType)
+  if (searchParams?.tripType && searchParams.tripType.toLowerCase() !== "desert")
     filterPills.push({ icon: "trip-type", label: "Trip Type", value: searchParams.tripType });
 
   return (
@@ -214,14 +238,24 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
         <PageHeader
           breadcrumbs={[{ label: "Trips", isCurrent: true }]}
           title={
-            <>
-              Choose The Right Trip For Your Adventure In{" "}
-              <span className={styles.highlight}>
-                {searchParams?.destination ? searchParams.destination.toUpperCase() : "EGYPT"}
-              </span>
-            </>
+            searchParams?.tripType?.toLowerCase() === "desert" ? (
+              <>
+                Find Your Perfect <span className={styles.highlight}>Desert</span> Escape in Egypt
+              </>
+            ) : (
+              <>
+                Choose The Right Trip For Your Adventure In{" "}
+                <span className={styles.highlight}>
+                  {searchParams?.destination ? searchParams.destination.toUpperCase() : "EGYPT"}
+                </span>
+              </>
+            )
           }
-          subtitle="We make trip planning easy. Discover handpicked journeys, compare destinations, and book trips crafted around your travel style."
+          subtitle={
+            searchParams?.tripType?.toLowerCase() === "desert"
+              ? "Browse our curated collection of desert adventures, including the White Desert, Sinai, Egypt's oases, and unforgettable safari experiences."
+              : "We make trip planning easy. Discover handpicked journeys, compare destinations, and book trips crafted around your travel style."
+          }
           decorationSrc="/images/dotted-line4.svg"
           subtitleMaxWidth="550px"
           titleMaxWidth="800px"

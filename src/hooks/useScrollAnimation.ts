@@ -77,15 +77,23 @@ export function useScrollAnimation() {
       });
     };
 
-    observeAll();
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    const scheduleObserve = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(observeAll, 300);
+    };
+
+    scheduleObserve();
 
     // Re-scan when React renders new content (route changes, modals, lazy loads)
-    const mutationObserver = new MutationObserver(observeAll);
+    const mutationObserver = new MutationObserver(scheduleObserve);
     mutationObserver.observe(document.body, { childList: true, subtree: true });
 
     return () => {
       observer.disconnect();
       mutationObserver.disconnect();
+      clearTimeout(timeoutId);
     };
   }, []);
 }
