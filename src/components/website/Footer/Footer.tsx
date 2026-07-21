@@ -10,7 +10,7 @@ const NAV_LINKS: NavLinksType = {
   "Egypt Us": [
     { label: "Home", href: "/" },
     { label: "Trips", href: "/trips" },
-    { label: "Destinations", href: "/destinations" },
+    { label: "Destinations", href: "/trips" },
     { label: "Hotels", href: "/hotels" },
     { label: "Transportation", href: "/transportation" },
     { label: "Events", href: "/events" },

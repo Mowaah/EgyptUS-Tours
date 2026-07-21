@@ -15,7 +15,7 @@ import styles from "./Navbar.module.scss";
 const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Trips", href: "/trips", hasDropdown: true },
-  { label: "Destinations", href: "/destinations", hasDropdown: true },
+  { label: "Destinations", href: "/trips", hasDropdown: true },
   { label: "Hotels", href: "/hotels" },
   { label: "Transportation", href: "/transportation" },
   { label: "Events", href: "/events" },
@@ -37,20 +37,7 @@ const LIGHT_NAV_PATHS = [
   "/b2b-proposals",
   "/events-proposals"
 ];
-const DESTINATION_LINKS = [
-  { label: "Saudi Arabia", href: "/destinations/saudi-arabia" },
-  { label: "Turkey", href: "/destinations/turkey" },
-  { label: "Greece", href: "/destinations/greece" },
-  { label: "Jordan", href: "/destinations/jordan" },
-  { label: "African Safari", href: "/destinations/african-safari" },
-  { label: "Peru", href: "/destinations/peru" },
-  { label: "Dubai", href: "/destinations/dubai" },
-  { label: "India", href: "/destinations/india" },
-  { label: "Sri Lanka Tours", href: "/destinations/sri-lanka" },
-  { label: "Morocco", href: "/destinations/morocco" },
-  { label: "Tunisia", href: "/destinations/tunisia" },
-  { label: "Oman", href: "/destinations/oman" },
-];
+
 
 export interface NavLinkItem {
   label: string;
@@ -73,10 +60,12 @@ function isTripDetailPage(pathname: string): boolean {
 
 interface NavbarProps {
   tripLinks?: NavLinkItem[];
+  destinationLinks?: NavLinkItem[];
 }
 
-export default function Navbar({ tripLinks = [] }: NavbarProps) {
+export default function Navbar({ tripLinks = [], destinationLinks = [] }: NavbarProps) {
   const finalTripLinks = tripLinks;
+  const finalDestinationLinks = destinationLinks;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -234,7 +223,7 @@ export default function Navbar({ tripLinks = [] }: NavbarProps) {
               );
 
               return (
-                <li key={link.href} className={styles.linkItem}>
+                <li key={link.label} className={styles.linkItem}>
                   {useGlass ? (
                     <GlassCard
                       as={Link}
@@ -256,7 +245,7 @@ export default function Navbar({ tripLinks = [] }: NavbarProps) {
                     <div className={styles.dropdownWrapper}>
                       <div className={styles.dropdownCard}>
                         <div className={styles.dropdownGrid}>
-                          {(link.label === "Destinations" ? DESTINATION_LINKS : finalTripLinks).map((opt, i) => (
+                          {(link.label === "Destinations" ? finalDestinationLinks : finalTripLinks).map((opt, i) => (
                             <Link key={i} href={opt.href} className={styles.dropdownOption}>
                               <Image src="/images/➢.svg" alt="" width={15} height={12} className={styles.dropdownIcon} />
                               <span className={styles.dropdownText}>{opt.label}</span>
@@ -326,12 +315,12 @@ export default function Navbar({ tripLinks = [] }: NavbarProps) {
                   const expanded = expandedDropdown === link.label;
                   const subLinks = link.hasDropdown
                     ? link.label === "Destinations"
-                      ? DESTINATION_LINKS
+                      ? finalDestinationLinks
                       : finalTripLinks
                     : [];
 
                   return (
-                    <li key={link.href} className={styles.drawerLinkItem}>
+                    <li key={link.label} className={styles.drawerLinkItem}>
                       <div className={styles.drawerLinkRow}>
                         <Link
                           href={link.href}

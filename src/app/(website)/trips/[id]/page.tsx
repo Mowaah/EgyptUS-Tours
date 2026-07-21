@@ -25,7 +25,7 @@ export default async function TripDetailRoutePage({ params }: PageProps) {
   const [backendTrip, relatedTripsData, backendTestimonials] = await Promise.all([
     getTripById(id),
     getAllTrips(),
-    getTestimonials()
+    getTestimonials({ category: 'trip' })
   ]);
   
   if (!backendTrip) {

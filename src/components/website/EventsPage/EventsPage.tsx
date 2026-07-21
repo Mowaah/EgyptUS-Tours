@@ -16,8 +16,13 @@ const MOCK_IMAGES = [
   "/images/events1.png",
   "/images/events5.jpg",
 ];
+import type { BackendTestimonial } from "@/services/testimonialsService";
 
-export default function EventsPage() {
+interface EventsPageProps {
+  testimonials?: BackendTestimonial[];
+}
+
+export default function EventsPage({ testimonials }: EventsPageProps) {
   return (
     <div className={styles.page}>
       <PageHeader
@@ -26,7 +31,7 @@ export default function EventsPage() {
           { label: "MICE & Corporate Events", isCurrent: true },
         ]}
         title="Professional Corporate Events & MICE Solutions in Egypt"
-        subtitle="From executive meetings to large-scale conferences and incentive retreats â€” we handle everything."
+        subtitle="From executive meetings to large-scale conferences and incentive retreats — we handle everything."
         decorationSrc="/images/dotted-line3.svg"
         titleMaxWidth="900px"
         subtitleMaxWidth="900px"
@@ -51,7 +56,7 @@ export default function EventsPage() {
         <EventsProcess />
         <EventsStats />
         <EventsFeatured />
-        <EventsSuccessStories />
+        <EventsSuccessStories testimonials={testimonials} />
       </div>
       <EventsCTA />
     </div>

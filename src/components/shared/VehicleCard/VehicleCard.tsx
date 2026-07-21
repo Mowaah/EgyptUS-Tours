@@ -6,6 +6,7 @@ import styles from "./VehicleCard.module.scss";
 export interface Vehicle {
   id: string;
   title: string;
+  type?: string;
   description?: string;
   image: string;
   passengers: number;

@@ -18,7 +18,13 @@ const MOCK_IMAGES = [
   "/images/b2bpage/b2b5.jpg",
 ];
 
-export default function B2BProgramsPage() {
+import type { BackendTestimonial } from "@/services/testimonialsService";
+
+interface B2BProgramsPageProps {
+  testimonials?: BackendTestimonial[];
+}
+
+export default function B2BProgramsPage({ testimonials }: B2BProgramsPageProps) {
   return (
     <div className={styles.page}>
       <PageHeader
@@ -27,7 +33,7 @@ export default function B2BProgramsPage() {
           { label: "B2B Programs", isCurrent: true },
         ]}
         title="Corporate Travel & Event Experiences Designed for Results"
-        subtitle="From executive retreats to large-scale company events â€” we handle everything with precision."
+        subtitle="From executive retreats to large-scale company events — we handle everything with precision."
         decorationSrc="/images/dotted-line3.svg"
         titleMaxWidth="950px"
         subtitleMaxWidth="900px"
@@ -53,7 +59,7 @@ export default function B2BProgramsPage() {
       </div>
       <B2BStats />
       <div className={styles.container}>
-        <B2BTestimonials />
+        <B2BTestimonials testimonials={testimonials} />
         <B2BCaseStudy />
       </div>
       <B2BCTA />

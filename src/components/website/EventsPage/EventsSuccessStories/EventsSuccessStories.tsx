@@ -4,40 +4,28 @@ import { TestimonialCard, ReviewGrid } from '@/components/shared';
 import type { Testimonial } from '@/components/shared/TestimonialCard/TestimonialCard';
 import styles from './EventsSuccessStories.module.scss';
 
-const STORIES: Testimonial[] = [
-  {
-    name: "Regional Finance Forum",
-    location: "22 Countries",
-    quote: '"Exceptional venue, seamless logistics, and competitive pricing made this our best event yet."',
-    image: "/images/event-story1.jpg",
-    rating: 5,
-  },
-  {
-    name: "Global Pharmaceutical Convention",
-    location: "30 Countries",
-    quote: '"Professional execution, world-class venues, and unforgettable cultural experiences for our delegates."',
-    image: "/images/event-story2.jpg",
-    rating: 5,
-  },
-  {
-    name: "International Technology Summit",
-    location: "45 Countries",
-    quote: '"The team delivered a flawless experience. Egypt exceeded our expectations as a MICE destination."',
-    image: "/images/event-story3.jpg",
-    rating: 5,
-  },
-  {
-    name: "Global Sustainability Conference",
-    location: "15 Countries",
-    quote: '"A breathtaking setting that inspired our delegates. Flawless execution from start to finish."',
-    image: "/images/event-story1.jpg",
-    rating: 5,
-  },
-];
+import type { BackendTestimonial } from "@/services/testimonialsService";
+
+interface EventsSuccessStoriesProps {
+  testimonials?: BackendTestimonial[];
+}
 
 const PAGE_SIZE = 6;
 
-export default function EventsSuccessStories() {
+export default function EventsSuccessStories({ testimonials = [] }: EventsSuccessStoriesProps) {
+  if (testimonials.length === 0) {
+    return null;
+  }
+
+  const mappedStories: Testimonial[] = testimonials.map(t => ({
+    name: t.customer_name,
+    location: t.country || "Guest",
+    rating: t.rating || 5,
+    quote: `"${t.title}"\n\n${t.description}`,
+    videoUrl: t.video_url || "", 
+    image: "", // We rely on the video thumbnail internally
+  }));
+
   return (
     <section className={styles.section}>
       <div className={styles.topBadge}>
@@ -50,7 +38,7 @@ export default function EventsSuccessStories() {
       </div>
 
       <ReviewGrid 
-        items={STORIES} 
+        items={mappedStories} 
         pageSize={PAGE_SIZE} 
         gridClassName={styles.grid}
         renderItem={(t, i) => <TestimonialCard key={i} testimonial={t} />} 

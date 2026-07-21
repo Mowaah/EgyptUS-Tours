@@ -6,13 +6,6 @@ import { useRouter } from "next/navigation";
 import styles from "./SearchBar.module.scss";
 import { GlassCard, CheckboxDropdown, CustomDatePicker } from "@/components/shared";
 
-const DESTINATION_OPTIONS = [
-  { label: "Egypt", value: "Egypt" },
-  { label: "Dubai", value: "Dubai" },
-  { label: "Jordan", value: "Jordan" },
-  { label: "Brazil", value: "Brazil" },
-];
-
 const BUDGET_OPTIONS = [
   { label: "less than 1,000$", value: "less than 1,000$" },
   { label: "1,000$ - 2,000$", value: "1,000$ - 2,000$" },
@@ -27,7 +20,11 @@ const TRIP_TYPE_OPTIONS = [
   { label: "Private Tour", value: "Private Tour" },
 ];
 
-export default function SearchBar() {
+interface SearchBarProps {
+  destinations?: { label: string; value: string }[];
+}
+
+export default function SearchBar({ destinations = [] }: SearchBarProps) {
   const [date, setDate] = useState("");
   const [destination, setDestination] = useState("");
   const [budget, setBudget] = useState("");
@@ -78,7 +75,7 @@ export default function SearchBar() {
 
         <div className={styles.filterWrapper}>
           <CheckboxDropdown
-            options={DESTINATION_OPTIONS}
+            options={destinations}
             value={destination}
             onChange={setDestination}
             dropdownClassName={styles.searchDropdown}

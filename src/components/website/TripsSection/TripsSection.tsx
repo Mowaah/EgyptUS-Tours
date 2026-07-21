@@ -20,33 +20,7 @@ import { useScrollLock } from "@/hooks/useScrollLock";
 import { Trip } from "@/types";
 import styles from "./TripsSection.module.scss";
 
-// Categories shown only on the dedicated /trips page
-const PAGE_CATEGORIES = [
-  "Classic Tours",
-  "Christmas Tours",
-  "Nile Cruises",
-  "Dahabilyas",
-  "Luxury Tours",
-  "Honeymoon Tours",
-  "Christmas Cruises",
-  "Desert Tours",
-  "Luxury Nile Cruises",
-  "GEM Tours",
-  "Egypt Excursions",
-  "Egypt Shore Excursions",
-];
-
-// Condensed set used on the homepage
-const HOME_CATEGORIES = [
-  "Classic Tours",
-  "Christmas Tours",
-  "Nile Cruises",
-  "Luxury Tours",
-  "Honeymoon Tours",
-  "Luxury Nile Cruises",
-  "GEM Tours",
-  "Egypt Shore Excursions",
-];
+// Dynamic categories are generated based on the loaded trips
 
 const DURATION_OPTIONS = ["Any", "Less than 10 days", "10-15 Days", "15-20 Days", "More than 20 days"];
 const SPECIAL_OFFERS = [
@@ -111,6 +85,14 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
   
   const PAGE_SIZE = 6;
   const [trips, setTrips] = useState<Trip[]>(initialTrips);
+
+  const dynamicCategories = useMemo(() => {
+    const cats = new Set<string>();
+    trips.forEach((trip) => {
+      trip.tags?.forEach((tag) => cats.add(tag));
+    });
+    return ["All Trips", ...Array.from(cats)];
+  }, [trips]);
 
   useEffect(() => {
     if (initialTrips.length > 0) {
@@ -182,15 +164,10 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
   });
 
   // 5. Filter by Category Tab
-  const selectedCategory = (isPage ? PAGE_CATEGORIES : HOME_CATEGORIES)[activeCategoryIndex];
-  if (selectedCategory) {
-    const catFilter = selectedCategory.toLowerCase().replace(" tours", "").replace(" cruises", "").trim();
+  const selectedCategory = dynamicCategories[activeCategoryIndex];
+  if (selectedCategory && selectedCategory !== "All Trips") {
     processedTrips = processedTrips.filter((trip) => {
-      return (
-        trip.tags?.some((t) => t.toLowerCase().includes(catFilter)) ||
-        trip.title.toLowerCase().includes(catFilter) ||
-        trip.description.toLowerCase().includes(catFilter)
-      );
+      return trip.tags?.includes(selectedCategory);
     });
   }
 
@@ -234,29 +211,21 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
 
       {/* ── Header ── */}
       {isPage ? (
-        isSearchResults ? (
-          <PageHeader
-            breadcrumbs={[{ label: "Trips", isCurrent: true }]}
-            title="Search Results"
-            subtitle="We make trip planning easy. Discover handpicked journeys, compare destinations, and book trips crafted around your travel style."
-            decorationSrc="/images/dotted-line4.svg"
-            subtitleMaxWidth="550px"
-          />
-        ) : (
-          <PageHeader
-            breadcrumbs={[{ label: "Trips", isCurrent: true }]}
-            title={
-              <>
-                Choose The Right Trip For Your Adventure In{" "}
-                <span className={styles.highlight}>EGYPT</span>
-              </>
-            }
-            subtitle="We make trip planning easy. Discover handpicked journeys, compare destinations, and book trips crafted around your travel style."
-            decorationSrc="/images/dotted-line4.svg"
-            subtitleMaxWidth="550px"
-            titleMaxWidth="800px"
-          />
-        )
+        <PageHeader
+          breadcrumbs={[{ label: "Trips", isCurrent: true }]}
+          title={
+            <>
+              Choose The Right Trip For Your Adventure In{" "}
+              <span className={styles.highlight}>
+                {searchParams?.destination ? searchParams.destination.toUpperCase() : "EGYPT"}
+              </span>
+            </>
+          }
+          subtitle="We make trip planning easy. Discover handpicked journeys, compare destinations, and book trips crafted around your travel style."
+          decorationSrc="/images/dotted-line4.svg"
+          subtitleMaxWidth="550px"
+          titleMaxWidth="800px"
+        />
       ) : (
         <div className={styles.container}>
           <SectionHeader
@@ -341,7 +310,7 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
         </div>
 
         <CategoryTabs 
-          tabs={isPage ? PAGE_CATEGORIES : HOME_CATEGORIES} 
+          tabs={dynamicCategories} 
           wrap={isPage} 
           active={activeCategoryIndex}
           onTabChange={(_, index) => {

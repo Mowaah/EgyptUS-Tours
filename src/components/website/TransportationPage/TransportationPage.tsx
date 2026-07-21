@@ -26,7 +26,6 @@ interface TransportationPageProps {
 // If original image isn't available, we fallback to a known one like pyramids or missing.
 // The user provided screenshots with a black SUV. We'll assume public/images/car.png exists or will be replaced.
 
-const CATEGORIES = ["All Vehicles", "Sedan", "SUV & Luxury", "Van & Hiace", "Bus"];
 const SORT_OPTIONS = [
   { value: "recommended", label: "Recommended" },
   { value: "price_asc", label: "Price: Low to High" },
@@ -69,6 +68,9 @@ export default function TransportationPage({ vehicles, faqs }: TransportationPag
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 6;
 
+  // Dynamically generate categories from the available vehicles
+  const dynamicCategories = ["All Vehicles", ...Array.from(new Set(vehicles.map(v => v.type).filter(Boolean) as string[]))];
+
   useLayoutEffect(() => {
     const mq = window.matchMedia("(min-width: 768px)");
     const apply = () => setIsLg(mq.matches);
@@ -77,42 +79,48 @@ export default function TransportationPage({ vehicles, faqs }: TransportationPag
     return () => mq.removeEventListener("change", apply);
   }, []);
 
-  // Fake filtering logic for demonstration
   const filteredVehicles = vehicles.filter(v => {
+    // 1. Filter by search query (toolbar text search)
     if (searchQuery && !v.title.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
     }
-    if (isSearchResults) {
-      const sVehicle = (searchVehicle || "").toLowerCase();
-      if (sVehicle && sVehicle !== "all vehicles") {
-        if (v.id !== searchVehicle && v.title.toLowerCase() !== sVehicle) {
-          return false;
-        }
+
+    // 2. Filter by search results (URL parameters)
+    if (isSearchResults && searchVehicle && searchVehicle.toLowerCase() !== "all vehicles") {
+      const sVehicle = searchVehicle.toLowerCase();
+      // Try to match the exact slug/ID first
+      if (v.id === searchVehicle) {
+        return true;
       }
-      return true;
+      // If it doesn't match ID, check if it matches the vehicle type (from Hero search)
+      if (v.type && v.type.toLowerCase() === sVehicle) {
+        return true;
+      }
+      // Otherwise filter it out
+      return false;
     }
-    // Tab match
-    const tabItem = CATEGORIES[activeTab];
-    if (tabItem !== "All Vehicles") {
-      const vType = (v.title || "").toLowerCase();
-      if (tabItem === "Sedan" && !vType.includes("sedan")) return false;
-      if (tabItem === "SUV & Luxury" && !vType.includes("suv") && !vType.includes("luxury")) return false;
-      if (tabItem === "Van & Hiace" && !vType.includes("van") && !vType.includes("hiace")) return false;
-      if (tabItem === "Bus" && !vType.includes("bus") && !vType.includes("coach")) return false;
+
+    // 3. Filter by Tabs (if not doing a specific URL search for a vehicle)
+    const tabItem = dynamicCategories[activeTab];
+    if (tabItem && tabItem !== "All Vehicles") {
+      if (v.type !== tabItem) {
+        return false;
+      }
     }
+    
     return true;
   });
 
   // Sorting Logic
   filteredVehicles.sort((a, b) => {
     if (sortOption === "price_asc") {
-      const priceA = parseFloat(a.price.replace(/[^0-9.-]+/g, "")) || 0;
-      const priceB = parseFloat(b.price.replace(/[^0-9.-]+/g, "")) || 0;
+      const priceA = parseFloat(a.price.toString().replace(/[^0-9.-]+/g, "")) || 0;
+      const priceB = parseFloat(b.price.toString().replace(/[^0-9.-]+/g, "")) || 0;
       return priceA - priceB;
     }
     if (sortOption === "price_desc") {
-      const priceA = parseFloat(a.price.replace(/[^0-9.-]+/g, "")) || 0;
-      const priceB = parseFloat(b.price.replace(/[^0-9.-]+/g, "")) || 0;
+      const priceA = parseFloat(a.price.toString().replace(/[^0-9.-]+/g, "")) || 0;
+      const priceB = parseFloat(b.price.toString().replace(/[^0-9.-]+/g, "")) || 0;
       return priceB - priceA;
     }
     if (sortOption === "recommended") {
@@ -130,7 +138,7 @@ export default function TransportationPage({ vehicles, faqs }: TransportationPag
   // Reset to first page when filtering
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [activeTab, searchQuery, isSearchResults]);
+  }, [activeTab, searchQuery, isSearchResults, searchVehicle]);
 
   const getVehicleName = (id: string | null) => {
     if (!id || id === "all vehicles") return "All Vehicles";
@@ -205,7 +213,7 @@ export default function TransportationPage({ vehicles, faqs }: TransportationPag
         {!isSearchResults && (
           <div className={styles.tabsRow}>
             <CategoryTabs
-              tabs={CATEGORIES}
+              tabs={dynamicCategories}
               active={activeTab}
               onTabChange={(_, index) => setActiveTab(index)}
               wrap

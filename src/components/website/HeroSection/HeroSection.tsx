@@ -1,9 +1,16 @@
 import Image from "next/image";
 import Button from "@/components/shared/Button/Button";
 import SearchBar from "../SearchBar/SearchBar";
+import { getAllDestinations } from "@/services/destinationsService";
 import styles from "./HeroSection.module.scss";
 
-export default function HeroSection() {
+export default async function HeroSection() {
+  const backendDestinations = await getAllDestinations();
+  const destinations = backendDestinations.map(d => ({
+    label: d.name,
+    value: d.name,
+  }));
+
   return (
     <section className={styles.hero}>
       <div className={styles.background}>
@@ -44,7 +51,7 @@ export default function HeroSection() {
         </div>
 
         <div className={styles.searchBarWrapper}>
-          <SearchBar />
+          <SearchBar destinations={destinations} />
         </div>
       </div>
     </section>

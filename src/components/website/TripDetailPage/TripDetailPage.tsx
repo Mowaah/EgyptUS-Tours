@@ -19,7 +19,6 @@ import TripVIPExperiences from "./TripVIPExperiences/TripVIPExperiences";
 import TripAccommodations from "./TripAccommodations/TripAccommodations";
 import TripReviews from "./TripReviews/TripReviews";
 import TripMoreTrips from "./TripMoreTrips/TripMoreTrips";
-import TestimonialsSection from "@/components/website/TestimonialsSection/TestimonialsSection";
 import styles from "./TripDetailPage.module.scss";
 
 import { BackendTestimonial } from "@/services/testimonialsService";
@@ -168,7 +167,14 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
 
       {/* ── Traveler Reviews ── */}
       <div className={styles.container}>
-        <TestimonialsSection initialTestimonials={testimonials} />
+        <TripReviews reviews={testimonials.map(t => ({
+          name: t.customer_name,
+          location: t.country || "Unknown",
+          rating: t.rating || 5,
+          quote: `"${t.title}"\n\n${t.description}`,
+          videoUrl: t.video_url || "",
+          image: "", 
+        }))} />
       </div>
 
       {/* ── More Inspiring Trips ── */}

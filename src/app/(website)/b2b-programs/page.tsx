@@ -6,6 +6,9 @@ export const metadata = {
   description: "Our B2B division is dedicated to building long-term partnerships with companies seeking reliable, results-driven corporate event and travel solutions.",
 };
 
-export default function Page() {
-  return <B2BProgramsPage />;
+import { getTestimonials } from '@/services/testimonialsService';
+
+export default async function Page() {
+  const testimonials = await getTestimonials({ category: 'mice' });
+  return <B2BProgramsPage testimonials={testimonials} />;
 }
