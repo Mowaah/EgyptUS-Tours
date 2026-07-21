@@ -1,8 +1,13 @@
 import FaqSection from "@/components/website/FaqSection/FaqSection";
 import Image from "next/image";
 import styles from "./FaqPage.module.scss";
+import { BackendFaq } from "@/services/legalHelpService";
 
-export default function FaqPage() {
+interface Props {
+  initialFaqs?: BackendFaq[];
+}
+
+export default function FaqPage({ initialFaqs }: Props) {
   return (
     <div className={styles.page}>
       <header className={styles.headerSection}>
@@ -19,14 +24,14 @@ export default function FaqPage() {
         <div className={styles.headerInner}>
           <h1 className={styles.title}>Frequently Asked Questions</h1>
           <p className={styles.subtitle}>
-            Find quick answers to common questions about loans, eligibility, and the application process.
+            Find quick answers to common questions about our trips, bookings, and services.
           </p>
         </div>
       </header>
 
       <div className={styles.contentSection}>
         <div className={styles.contentInner}>
-          <FaqSection hideHeader noPadding />
+          <FaqSection items={initialFaqs && initialFaqs.length > 0 ? initialFaqs : undefined} hideHeader noPadding />
         </div>
       </div>
     </div>

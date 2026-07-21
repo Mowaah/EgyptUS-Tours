@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import TransportationPage from "@/components/website/TransportationPage/TransportationPage";
 import { getAllVehicles } from "@/services/transportationService";
+import { getFaqs } from "@/services/legalHelpService";
 import { Vehicle } from "@/components/shared";
 
 export const metadata = {
@@ -8,8 +9,13 @@ export const metadata = {
   description: "Choose the perfect vehicle for every journey — from city rides to luxury transfers.",
 };
 
+export const revalidate = 60;
+
 export default async function Page() {
-  const backendVehicles = await getAllVehicles();
+  const [backendVehicles, faqs] = await Promise.all([
+    getAllVehicles(),
+    getFaqs()
+  ]);
   
   const vehicles: Vehicle[] = backendVehicles.map(v => ({
     id: v.slug,
@@ -30,7 +36,7 @@ export default async function Page() {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <TransportationPage vehicles={vehicles} />
+      <TransportationPage vehicles={vehicles} faqs={faqs} />
     </Suspense>
   );
 }

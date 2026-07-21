@@ -99,24 +99,10 @@ export default function LegalPage({ data }: LegalPageProps) {
                 <h2 className={styles.sectionTitle}>{section.title}</h2>
               </div>
               
-              <div className={styles.paragraphs}>
-                {section.paragraphs.map((p, i) => (
-                  <p key={i} className={styles.para}>{p}</p>
-                ))}
-              </div>
-
-              {section.subsections && section.subsections.length > 0 && (
-                <div className={styles.subsections}>
-                  {section.subsections.map((sub, i) => (
-                    <div key={i} className={styles.subBlock}>
-                      <h3 className={styles.subTitle}>{sub.title}</h3>
-                      <div className={styles.subContent}>
-                        <p>{sub.content}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <div 
+                className={styles.richTextContent}
+                dangerouslySetInnerHTML={{ __html: section.content }}
+              />
             </section>
           ))}
         </div>

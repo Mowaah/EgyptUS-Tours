@@ -4,6 +4,7 @@ import BlogsSection from "@/components/website/BlogsSection/BlogsSection";
 import type { Metadata } from "next";
 import { getAllTrips } from "@/services/tripsService";
 import { getLatestBlogs } from "@/services/blogsService";
+import { getFaqs } from "@/services/legalHelpService";
 import { Trip, Blog } from "@/types";
 
 export const metadata: Metadata = {
@@ -11,6 +12,8 @@ export const metadata: Metadata = {
   description:
     "Browse our handpicked collection of Egypt tours. Filter by duration, special offers, and price range to find your perfect adventure.",
 };
+
+export const revalidate = 60;
 
 interface TripsPageProps {
   searchParams: Promise<{
@@ -28,9 +31,10 @@ export default async function TripsPage({ searchParams }: TripsPageProps) {
   const apiParams: Record<string, string> = {};
   if (params.destination) apiParams.search = params.destination;
 
-  const [backendTrips, latestBlogsApi] = await Promise.all([
+  const [backendTrips, latestBlogsApi, faqs] = await Promise.all([
     getAllTrips(apiParams),
     getLatestBlogs(),
+    getFaqs(),
   ]);
 
   const initialTrips: Trip[] = backendTrips.map(t => ({
@@ -71,7 +75,7 @@ export default async function TripsPage({ searchParams }: TripsPageProps) {
         } : undefined}
         initialTrips={initialTrips}
       />
-      <FaqSection />
+      <FaqSection items={faqs && faqs.length > 0 ? faqs : undefined} />
       <BlogsSection blogs={initialBlogs} />
     </>
   );

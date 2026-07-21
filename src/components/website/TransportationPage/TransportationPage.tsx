@@ -16,8 +16,11 @@ import SortButton from "@/components/shared/SortButton/SortButton";
 import FaqSection from "@/components/website/FaqSection/FaqSection";
 import styles from "./TransportationPage.module.scss";
 
+import { BackendFaq } from "@/services/legalHelpService";
+
 interface TransportationPageProps {
   vehicles: Vehicle[];
+  faqs?: BackendFaq[];
 }
 
 // If original image isn't available, we fallback to a known one like pyramids or missing.
@@ -28,25 +31,6 @@ const SORT_OPTIONS = [
   { value: "recommended", label: "Recommended" },
   { value: "price_asc", label: "Price: Low to High" },
   { value: "price_desc", label: "Price: High to Low" },
-];
-
-const TRANSPORT_FAQS = [
-  {
-    question: "How is the transportation price calculated?",
-    answer: "The price is calculated based on the selected vehicle type, travel distance, date, and time. You'll see the final price instantly before confirming your booking — with no hidden fees."
-  },
-  {
-    question: "Can I modify or cancel my booking after confirmation?",
-    answer: "Yes, you can request modifications or cancellations before your scheduled trip time. Our support team is available to assist you and guide you through any applicable policies."
-  },
-  {
-    question: "What vehicle options are available for groups?",
-    answer: "We offer multiple options including Sedan, Hiace, Bus, and Luxury Cars. Whether you're traveling solo or with a large group, you can choose the vehicle that best fits your needs."
-  },
-  {
-    question: "Are your drivers licensed and professionally trained?",
-    answer: "Absolutely. All our drivers are licensed, experienced, and professionally trained to ensure a safe, comfortable, and reliable journey."
-  }
 ];
 
 const FEATURES = [
@@ -72,7 +56,7 @@ const FEATURES = [
   }
 ];
 
-export default function TransportationPage({ vehicles }: TransportationPageProps) {
+export default function TransportationPage({ vehicles, faqs }: TransportationPageProps) {
   const searchParams = useSearchParams();
   const searchVehicle = searchParams.get("vehicle");
   const searchDate = searchParams.get("date");
@@ -288,7 +272,7 @@ export default function TransportationPage({ vehicles }: TransportationPageProps
           </div>
         </div>
 
-        <FaqSection items={TRANSPORT_FAQS} />
+        <FaqSection items={faqs} />
       </div>
     </div>
   );

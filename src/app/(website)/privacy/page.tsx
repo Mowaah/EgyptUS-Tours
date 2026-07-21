@@ -1,11 +1,28 @@
 import LegalPage from "@/components/website/LegalPage/LegalPage";
-import { PRIVACY_DATA } from "@/components/website/LegalPage/legalData";
+import { LegalSection } from "@/components/website/LegalPage/legalData";
+import { getPrivacy } from "@/services/legalHelpService";
 
 export const metadata = {
-  title: "Privacy and Policy | Egypt Us Tours",
+  title: "Privacy Policy | Egypt Us Tours",
   description: "Learn how we collect, use, and protect your personal information.",
 };
 
-export default function Page() {
-  return <LegalPage data={PRIVACY_DATA} />;
+export const revalidate = 60;
+
+export default async function Page() {
+  const backendPrivacy = await getPrivacy();
+
+  const sections: LegalSection[] = backendPrivacy.map(t => ({
+    id: `section-${t.id}`,
+    title: t.title,
+    content: t.content || ""
+  }));
+
+  const finalData = {
+    title: "Privacy and Policy",
+    subtitle: "Learn how we collect, use, and protect your personal information to ensure your privacy and security.",
+    sections
+  };
+
+  return <LegalPage data={finalData} />;
 }

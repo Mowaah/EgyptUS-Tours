@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { SectionHeader } from "@/components/shared";
-import ChevronIcon from "@public/images/arrows/chevron-blue.svg";
 import styles from "./FaqSection.module.scss";
 
 export interface FaqItem {
@@ -10,33 +9,13 @@ export interface FaqItem {
   answer: string;
 }
 
-const FAQ_ITEMS: FaqItem[] = [
-  {
-    question: "What's included in the trip price?",
-    answer:
-      "Each trip includes clearly listed services such as accommodation, transportation, guided tours, and selected meals. Full details are available on the trip details page.",
-  },
-  {
-    question: "Can I customize a trip or book a private tour?",
-    answer:
-      "Yes! You can choose between group or private trips, and customize your itinerary based on your preferences, budget, and travel style.",
-  },
-  {
-    question: "How do I book a trip and confirm availability?",
-    answer:
-      "Simply select your trip, check available dates, and proceed with booking. A trip manager will contact you to confirm all details after reservation.",
-  },
-  {
-    question: "What is the cancellation or refund policy?",
-    answer:
-      "Cancellations made 14+ days before departure receive a full refund. Within 14 days, partial refunds apply. Please review the full cancellation policy on the booking confirmation page.",
-  },
-  {
-    question: "Are meals included during the trip?",
-    answer:
-      "Meal inclusion varies per trip. Most packages include breakfast and selected dinners. The specific meal plan is clearly stated on each trip's detail page.",
-  },
-];
+function ChevronUpIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+      <path d="m6 15 6-6 6 6" />
+    </svg>
+  );
+}
 
 interface FaqSectionProps {
   items?: FaqItem[];
@@ -46,12 +25,16 @@ interface FaqSectionProps {
 }
 
 export default function FaqSection({
-  items = FAQ_ITEMS,
+  items = [],
   description = "We've got answers. Find everything you need to know to plan your perfect trip.",
   hideHeader = false,
   noPadding = false
 }: FaqSectionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  if (!items || items.length === 0) {
+    return null;
+  }
 
   const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
 
@@ -87,7 +70,7 @@ export default function FaqSection({
                   </span>
                   <span className={styles.questionText}>{item.question}</span>
                   <span className={styles.icon}>
-                    <ChevronIcon
+                    <ChevronUpIcon
                       className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ""}`}
                     />
                   </span>
