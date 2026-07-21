@@ -29,6 +29,22 @@ export default function HotelDetailPage({ hotel, similarHotels }: HotelDetailPag
   const [isFavorite, setIsFavorite] = useState(hotel.isFavorite ?? false);
   const toggleFavorite = () => setIsFavorite((prev) => !prev);
 
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: hotel.name,
+          url: window.location.href,
+        });
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Link copied to clipboard!');
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
+
   return (
     <div className={styles.page}>
       <PageHeader
@@ -69,6 +85,7 @@ export default function HotelDetailPage({ hotel, similarHotels }: HotelDetailPag
                 className={styles.actionBtn}
                 icon={<Image src="/images/share.svg" alt="" width={18} height={18} />}
                 iconPosition="left"
+                onClick={handleShare}
               >
                 Share
               </Button>

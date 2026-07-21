@@ -20,6 +20,7 @@ export default function SimilarHotels({ similarHotels }: SimilarHotelsProps) {
         <Button
           variant="primary"
           size="md"
+          href="/hotels"
           icon={
             <Image
               src="/images/arrows/arrow-right.svg"

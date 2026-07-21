@@ -6,12 +6,12 @@ import styles from "./VehicleCard.module.scss";
 export interface Vehicle {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   image: string;
   passengers: number;
-  luggage: number;
-  durationHours: string;
-  features: string[]; // e.g. ["WIFI", "Water Bottles", "Air Conditioning"]
+  luggage: string;
+  durationHours?: string;
+  features?: string[]; // e.g. ["WIFI", "Water Bottles", "Air Conditioning"]
   rating: number;
   reviews: number;
   price: string;
@@ -29,8 +29,8 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
     <div className={`${styles.card} ${isList ? styles.listCard : ""}`}>
       <Link href={vehicleDetailsHref} className={`${styles.imageArea} ${isList ? styles.listImageArea : ""}`}>
         <Image
-          src={vehicle.image}
-          alt={vehicle.title}
+          src={vehicle.image || "/images/sedan.png"}
+          alt={vehicle.title || "Vehicle Image"}
           fill
           className={styles.image}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -47,7 +47,7 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
                 <span>1-{vehicle.passengers}</span>
               </div>
             </div>
-            <p className={styles.description}>{vehicle.description}</p>
+            {vehicle.description && <p className={styles.description}>{vehicle.description}</p>}
           </div>
           <div className={`${styles.rating} ${isList ? styles.listRating : ""}`}>
             <Image src="/images/star-yellow3.svg" alt="" width={12} height={12} />
@@ -64,16 +64,18 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
           </div>
           <div className={styles.specItem}>
             <span className={styles.specLabel}>Luggage</span>
-            <span className={styles.specValue}>{vehicle.luggage} bags</span>
+            <span className={styles.specValue}>{vehicle.luggage}</span>
           </div>
-          <div className={styles.specItem}>
-            <span className={styles.specLabel}>Duration</span>
-            <span className={styles.specValue}>{vehicle.durationHours} hours</span>
-          </div>
+          {vehicle.durationHours && (
+            <div className={styles.specItem}>
+              <span className={styles.specLabel}>Duration</span>
+              <span className={styles.specValue}>{vehicle.durationHours} hours</span>
+            </div>
+          )}
         </div>
 
         <div className={styles.features}>
-          {vehicle.features.map((feature, idx) => (
+          {(vehicle.features || []).map((feature, idx) => (
             <div key={idx} className={styles.featureTag}>
               <Image src="/images/summary/checkmark-green.svg" alt="" width={14} height={14} />
               <span>{feature}</span>

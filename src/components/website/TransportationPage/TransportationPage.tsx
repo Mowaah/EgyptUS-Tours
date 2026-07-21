@@ -16,21 +16,9 @@ import SortButton from "@/components/shared/SortButton/SortButton";
 import FaqSection from "@/components/website/FaqSection/FaqSection";
 import styles from "./TransportationPage.module.scss";
 
-const MOCK_VEHICLES: Vehicle[] = [
-  ...Array(10).fill(null).map((_, i) => ({
-    id: `v-${i}`,
-    title: "Premium Sedan",
-    description: "Perfect for business trips and airport transfers. Our premium sedans offer comfort and style.",
-    image: "/images/sedan.png",
-    passengers: 3,
-    luggage: 2,
-    durationHours: "7-8",
-    features: ["WIFI", "Water Bottles", "Air Conditioning"],
-    rating: 4.9,
-    reviews: 248,
-    price: "$180",
-  })),
-];
+interface TransportationPageProps {
+  vehicles: Vehicle[];
+}
 
 // If original image isn't available, we fallback to a known one like pyramids or missing.
 // The user provided screenshots with a black SUV. We'll assume public/images/car.png exists or will be replaced.
@@ -84,7 +72,7 @@ const FEATURES = [
   }
 ];
 
-export default function TransportationPage() {
+export default function TransportationPage({ vehicles }: TransportationPageProps) {
   const searchParams = useSearchParams();
   const searchVehicle = searchParams.get("vehicle");
   const searchDate = searchParams.get("date");
@@ -106,24 +94,54 @@ export default function TransportationPage() {
   }, []);
 
   // Fake filtering logic for demonstration
-  const filteredVehicles = MOCK_VEHICLES.filter(v => {
+  const filteredVehicles = vehicles.filter(v => {
     // Search match
-    if (searchQuery && !v.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+    if (searchQuery && !v.name.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
     }
     if (isSearchResults) {
-      // Mock filtering logic based on URL search query
+      const vType = (v.type || "").toLowerCase();
+      const sVehicle = (searchVehicle || "").toLowerCase();
+      if (sVehicle && sVehicle !== "all vehicles" && !vType.includes(sVehicle)) {
+        // loose matching based on dropdown names in the search widget
+        if (sVehicle === "sedan" && !vType.includes("sedan")) return false;
+        if (sVehicle === "suv" && !vType.includes("suv") && !vType.includes("luxury")) return false;
+        if (sVehicle === "van" && !vType.includes("van") && !vType.includes("hiace")) return false;
+        if (sVehicle === "bus" && !vType.includes("bus") && !vType.includes("coach")) return false;
+      }
       return true;
     }
     // Tab match
     const tabItem = CATEGORIES[activeTab];
     if (tabItem !== "All Vehicles") {
-      if (tabItem === "Bus" || tabItem === "Van & Hiace") return false;
+      const vType = (v.type || "").toLowerCase();
+      if (tabItem === "Sedan" && !vType.includes("sedan")) return false;
+      if (tabItem === "SUV & Luxury" && !vType.includes("suv") && !vType.includes("luxury")) return false;
+      if (tabItem === "Van & Hiace" && !vType.includes("van") && !vType.includes("hiace")) return false;
+      if (tabItem === "Bus" && !vType.includes("bus") && !vType.includes("coach")) return false;
     }
     return true;
   });
 
-  const totalPages = Math.ceil(filteredVehicles.length / PAGE_SIZE);
+  // Sorting Logic
+  filteredVehicles.sort((a, b) => {
+    if (sortOption === "price_asc") {
+      const priceA = parseFloat(a.price.replace(/[^0-9.-]+/g, "")) || 0;
+      const priceB = parseFloat(b.price.replace(/[^0-9.-]+/g, "")) || 0;
+      return priceA - priceB;
+    }
+    if (sortOption === "price_desc") {
+      const priceA = parseFloat(a.price.replace(/[^0-9.-]+/g, "")) || 0;
+      const priceB = parseFloat(b.price.replace(/[^0-9.-]+/g, "")) || 0;
+      return priceB - priceA;
+    }
+    if (sortOption === "recommended") {
+      return b.rating - a.rating;
+    }
+    return 0;
+  });
+
+  const totalPages = Math.max(1, Math.ceil(filteredVehicles.length / PAGE_SIZE));
   const paginatedVehicles = filteredVehicles.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE
