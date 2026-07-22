@@ -1,33 +1,35 @@
 import { PaginatedResponse, TripList, TripDetail } from "@/types/api";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+import { serverFetch } from "@/lib/api";
 
 export async function getAllTrips(params?: Record<string, string>): Promise<TripList[]> {
   try {
-    const url = new URL(`${API_BASE_URL}/api/v1/trips/`);
-
+    const query = new URLSearchParams();
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
         if (value && key !== "page_size") {
-          url.searchParams.append(key, value);
+          query.append(key, value);
         }
       });
     }
 
     const allResults: TripList[] = [];
-    let nextUrl: string | null = url.toString();
+    let endpoint = `/trips/?${query.toString()}`;
 
-    while (nextUrl) {
-      const res = await fetch(nextUrl, {
-        next: { revalidate: 60 },
-        headers: { "Accept": "application/json" },
+    while (endpoint) {
+      const data = await serverFetch<PaginatedResponse<TripList>>(endpoint, {
+        next: { revalidate: 60 }
       });
-
-      if (!res.ok) throw new Error(`Failed to fetch trips: ${res.statusText}`);
-
-      const data: PaginatedResponse<TripList> = await res.json();
       allResults.push(...data.results);
-      nextUrl = data.next ?? null;
+      
+      // serverFetch expects relative paths, data.next gives absolute URL.
+      if (data.next) {
+        const url = new URL(data.next);
+        endpoint = url.pathname + url.search;
+        // Adjust if api/v1 is included in the path, serverFetch prepends /api/v1
+        endpoint = endpoint.replace('/api/v1', '');
+      } else {
+        break;
+      }
     }
 
     return allResults;
@@ -39,23 +41,11 @@ export async function getAllTrips(params?: Record<string, string>): Promise<Trip
 
 export async function getTripById(idOrSlug: string): Promise<TripDetail | null> {
   try {
-    const url = new URL(`${API_BASE_URL}/api/v1/trips/${idOrSlug}/`);
-    
-    const res = await fetch(url.toString(), {
-      next: { revalidate: 60 },
-      headers: {
-        'Accept': 'application/json',
-      }
+    return await serverFetch<TripDetail>(`/trips/${idOrSlug}/`, {
+      next: { revalidate: 60 }
     });
-
-    if (!res.ok) {
-      if (res.status === 404) return null;
-      throw new Error(`Failed to fetch trip details: ${res.statusText}`);
-    }
-
-    const data: TripDetail = await res.json();
-    return data;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message?.includes('404')) return null;
     console.error(`Error in getTripById(${idOrSlug}):`, error);
     return null;
   }

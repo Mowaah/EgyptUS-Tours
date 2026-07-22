@@ -10,12 +10,13 @@ interface UserMenuProps {
   scrolled: boolean;
   lightNavBackground: boolean;
   isLoggedIn: boolean;
+  userName?: string;
   setIsLoggedIn: (val: boolean) => void;
   openAuthModal: () => void;
   onLogoutClick: () => void;
 }
 
-export default function UserMenu({ scrolled, lightNavBackground, isLoggedIn, setIsLoggedIn, openAuthModal, onLogoutClick }: UserMenuProps) {
+export default function UserMenu({ scrolled, lightNavBackground, isLoggedIn, userName, setIsLoggedIn, openAuthModal, onLogoutClick }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -76,7 +77,7 @@ export default function UserMenu({ scrolled, lightNavBackground, isLoggedIn, set
               <div className={styles.avatarWrapper}>
                 <Image src="/images/profile-orange.svg" alt="" width={22} height={22} className={styles.avatarIcon} />
               </div>
-              <span className={styles.username}>Username</span>
+              <span className={styles.username}>{userName || "Profile"}</span>
             </Link>
 
             <div className={styles.divider} />

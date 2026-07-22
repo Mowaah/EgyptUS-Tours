@@ -1,8 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Hotel } from "@/types";
 import Button from "../Button/Button";
 import { StarRating } from "@/components/shared";
+import { useFavorite } from "@/hooks/useFavorite";
+import { useAuth } from "@/contexts/AuthContext";
 import styles from "./HotelCard.module.scss";
 
 interface HotelCardProps {
@@ -17,6 +21,20 @@ interface HotelCardProps {
 export default function HotelCard({ hotel, view = "grid", imageHeight, onFavoriteToggle }: HotelCardProps) {
   const isList = view === "list";
   const hotelDetailsHref = `/hotels/${hotel.id}`;
+  const { isAuthenticated } = useAuth();
+  const { isFavorite, isLoading, toggle } = useFavorite({
+    slug: hotel.id,
+    kind: "hotel",
+    initialFavorite: hotel.isFavorite ?? false,
+  });
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    await toggle();
+    // Notify parent for backwards compatibility
+    if (onFavoriteToggle) onFavoriteToggle(hotel.id);
+  };
 
   return (
     <div className={`${styles.card} ${isList ? styles.listCard : ""}`}>
@@ -33,17 +51,14 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
           <h3 className={styles.name}>{hotel.name}</h3>
           <span className={styles.location}>{hotel.location}</span>
         </div>
-        {onFavoriteToggle && (
+        {isAuthenticated && (
           <button
-            className={`${styles.favorite} ${hotel.isFavorite ? styles.active : ""}`}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onFavoriteToggle(hotel.id);
-            }}
+            className={`${styles.favorite} ${isFavorite ? styles.active : ""} ${isLoading ? styles.loading : ""}`}
+            onClick={handleFavoriteClick}
             aria-label="Toggle favorite"
+            disabled={isLoading}
           >
-            {hotel.isFavorite ? (
+            {isFavorite ? (
               <svg
                 width="20"
                 height="20"

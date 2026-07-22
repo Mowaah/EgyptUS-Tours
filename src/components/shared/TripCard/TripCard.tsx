@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Trip } from "@/types";
 import Button from "../Button/Button";
+import { useFavorite } from "@/hooks/useFavorite";
+import { useAuth } from "@/contexts/AuthContext";
 import styles from "./TripCard.module.scss";
 
 interface TripCardProps {
@@ -15,6 +17,20 @@ interface TripCardProps {
 
 export default function TripCard({ trip, onFavoriteToggle, discountLabel, className = "" }: TripCardProps) {
   const tripDetailsHref = `/trips/${trip.id}`;
+  const { isAuthenticated } = useAuth();
+  const { isFavorite, isLoading, toggle } = useFavorite({
+    slug: trip.id,
+    kind: "trip",
+    initialFavorite: trip.isFavorite ?? false,
+  });
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    await toggle();
+    // Notify parent for backwards compatibility
+    if (onFavoriteToggle) onFavoriteToggle(trip.id);
+  };
 
   return (
     <div className={`${styles.card} ${className}`}>
@@ -31,17 +47,14 @@ export default function TripCard({ trip, onFavoriteToggle, discountLabel, classN
             <span>{discountLabel}</span>
           </div>
         )}
-        {onFavoriteToggle && (
+        {isAuthenticated && (
           <button
-            className={`${styles.favorite} ${trip.isFavorite ? styles.active : ""}`}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onFavoriteToggle(trip.id);
-            }}
+            className={`${styles.favorite} ${isFavorite ? styles.active : ""} ${isLoading ? styles.loading : ""}`}
+            onClick={handleFavoriteClick}
             aria-label="Toggle favorite"
+            disabled={isLoading}
           >
-            {trip.isFavorite ? (
+            {isFavorite ? (
               <svg
                 width="20"
                 height="20"

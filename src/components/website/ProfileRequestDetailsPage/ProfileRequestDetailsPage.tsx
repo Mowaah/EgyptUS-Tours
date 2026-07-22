@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { getProfileRequestDetail } from "@/lib/api";
 import {
   BookingDetailsSections,
   PageHeader,
@@ -34,21 +36,43 @@ function getStatus(value: string | null): RequestStatus {
 
 export default function ProfileRequestDetailsPage() {
   const searchParams = useSearchParams();
-  const status = getStatus(searchParams.get("status"));
+  const requestId = searchParams.get("id");
   const requestType = searchParams.get("type") || "events";
   
   const isPlanYourTrip = requestType === "plan_your_trip";
   const isB2B = requestType === "b2b";
 
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (requestId && requestType) {
+      const fetchData = async () => {
+        setLoading(true);
+        try {
+          const res = await getProfileRequestDetail(requestType, requestId);
+          setData(res);
+        } catch (err) {
+          console.error("Failed to load request detail", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchData();
+    }
+  }, [requestId, requestType]);
+
+  const currentStatus = getStatus(data?.status || "proposal_in_progress");
+
   let sections: BookingDetailsSection[] = [];
 
-  if (isPlanYourTrip) {
+  if (data && isPlanYourTrip) {
     sections = [
       {
         title: "Destination",
         icon: "/images/summary/trip.svg",
         fields: [
-          { label: "Selected Destinations", value: "Egypt, Dubai, Greece" },
+          { label: "Selected Destinations", value: data.details?.destination || "" },
         ],
         fieldsColumns: 1,
       },
@@ -56,12 +80,12 @@ export default function ProfileRequestDetailsPage() {
         title: "Traveler Information",
         icon: "/images/summary/contact.svg",
         fields: [
-          { label: "Full Name", value: "Mohamed Hassan" },
-          { label: "Email", value: "mohamed.hassan@gmail.com" },
-          { label: "Phone Number", value: "+20 100 123 4567" },
-          { label: "Nationality", value: "Egyptian" },
-          { label: "Travel Dates", value: "May 10 -> May 17, 2026" },
-          { label: "Travelers", value: "2 Adults • 1 Child" },
+          { label: "Full Name", value: data.contact?.full_name || "" },
+          { label: "Email", value: data.contact?.email || "" },
+          { label: "Phone Number", value: data.contact?.phone || "" },
+          { label: "Nationality", value: data.contact?.nationality || "" },
+          { label: "Travel Dates", value: data.details?.travel_dates || "" },
+          { label: "Travelers", value: data.details?.travelers_label || "" },
         ],
         fieldsColumns: 3,
       },
@@ -69,56 +93,65 @@ export default function ProfileRequestDetailsPage() {
         title: "Trip Details & Preferences",
         icon: "/images/summary/special.svg",
         fields: [
-          { label: "Trip Category", value: "Luxury Tour" },
-          { label: "Number of Days", value: "7-10 Days" },
-          { label: "Budget", value: "$3,000 - $5,000" },
-          { label: "Hotel Category", value: "5-Star Hotels" },
-          { label: "Room Type", value: "Deluxe , Single & Sea view Rooms" },
-          { label: "Transportation", value: "Private Transport" },
-          { label: "Additional Experiences", value: "Private Tour Guide, VIP Airport Pickup" },
-          { label: "Activities", value: "Snorkeling, Desert Safari, Food Tours" },
-          { label: "Contact Method", value: "Whatsup" },
+          { label: "Trip Category", value: data.details?.trip_category || "" },
+          { label: "Number of Days", value: data.details?.duration_label || "" },
+          { label: "Budget", value: data.details?.budget || "Not Specified" },
+          { label: "Hotel Category", value: data.preferences?.hotel_category || "" },
+          { 
+            label: "Room Type", 
+            value: (() => {
+              const rt = data.preferences?.room_type;
+              if (Array.isArray(rt)) return rt.join(", ");
+              if (typeof rt === "string") {
+                try {
+                  const parsed = JSON.parse(rt.replace(/'/g, '"'));
+                  if (Array.isArray(parsed)) return parsed.join(", ");
+                } catch {
+                  // ignore
+                }
+              }
+              return rt || "";
+            })()
+          },
+          { label: "Transportation", value: data.preferences?.transportation_type || "" },
+          { label: "Additional Experiences", value: (data.preferences?.experiences || []).join(", ") },
         ],
         fieldsColumns: 3,
         descriptionLabel: "Special Requests",
-        description: "Honeymoon room setup, vegetarian meals, and airport fast-track assistance.",
+        description: data.trip_details_text || "",
       },
     ];
-  } else if (isB2B) {
+  } else if (data && isB2B) {
     sections = [
       {
         title: "Company Information",
         icon: "/images/profile/detail/organization-info.svg",
         fieldsColumns: 3,
         fields: [
-          { label: "Company Name", value: "NileTech Solutions" },
-          { label: "Country", value: "Egypt" },
-          { label: "Contact Person", value: "Ahmed Hassan" },
-          { label: "Job Title", value: "Event Manager" },
-          { label: "Email Address", value: "ahmed.hassan@bluehorizonevents.com" },
-          { label: "Phone Number", value: "+20 100 123 4567" },
-          { label: "Website", value: "www.bluehorizonevents.com" },
+          { label: "Contact Person", value: data.contact?.contact_person || "" },
+          { label: "Job Title", value: data.contact?.job_title || "" },
+          { label: "Email Address", value: data.contact?.email || "" },
+          { label: "Phone Number", value: data.contact?.phone || "" },
         ],
         descriptionLabel: "Request Details",
-        description:
-          "We are planning a corporate event for approximately 120 attendees. We are looking for a full-service package including venue booking, accommodation, transportation, and event management. Preferred location is Cairo or El Gouna, with tentative dates in early May 2026.",
+        description: data.request_details || "",
       },
     ];
-  } else {
+  } else if (data) {
     sections = [
       {
         title: "Organization Information",
         icon: "/images/profile/detail/organization-info.svg",
         fieldsColumns: 3,
         fields: [
-          { label: "Organization Name", value: "Blue Horizon Events" },
-          { label: "Industry", value: "Event Management" },
-          { label: "Country", value: "Egypt" },
-          { label: "Website", value: "www.bluehorizonevents.com" },
-          { label: "Contact Person", value: "Ahmed Hassan" },
-          { label: "Job Title", value: "Event Manager" },
-          { label: "Email Address", value: "ahmed.hassan@bluehorizonevents.com" },
-          { label: "Phone Number", value: "+20 100 123 4567" },
+          { label: "Organization Name", value: data.organization?.organization_name || "" },
+          { label: "Industry", value: data.organization?.industry || "" },
+          { label: "Country", value: data.organization?.country || "" },
+          { label: "Website", value: data.organization?.website || "" },
+          { label: "Contact Person", value: data.contact?.contact_person || "" },
+          { label: "Job Title", value: data.contact?.job_title || "" },
+          { label: "Email Address", value: data.contact?.email || "" },
+          { label: "Phone Number", value: data.contact?.phone || "" },
         ],
       },
       {
@@ -126,37 +159,33 @@ export default function ProfileRequestDetailsPage() {
         icon: "/images/profile/detail/event-details.svg",
         fieldsColumns: 3,
         fields: [
-          { label: "Event Type", value: "Corporate Conference" },
-          { label: "Event Name", value: "Annual Sales Conference 2026" },
-          { label: "Expected Attendees", value: "150 - 200 Attendees" },
-          { label: "Preferred City", value: "Cairo, Egypt" },
-          { label: "Start Date", value: "March 15, 2026" },
-          { label: "End Date", value: "March 18, 2026" },
+          { label: "Event Type", value: data.event?.event_type || "" },
+          { label: "Event Name", value: data.event?.event_name || "" },
+          { label: "Expected Attendees", value: data.event?.expected_attendees || "" },
+          { label: "Preferred City", value: data.event?.preferred_city || "" },
+          { label: "Start Date", value: data.event?.start_date || "" },
+          { label: "End Date", value: data.event?.end_date || "" },
         ],
         descriptionLabel: "Event Description",
-        description:
-          "A 4-day corporate conference focused on annual performance review, strategy alignment, and team-building activities. The event will include keynote presentations, breakout sessions, workshops, and networking opportunities. Accommodation, transportation, and full event management services are required.",
+        description: data.description || "",
       },
       {
         title: "Event Requirements",
         icon: "/images/profile/detail/event-requirements.svg",
         fieldsColumns: 2,
         fields: [
-          { label: "Venue Type", value: "Conference Hotel / Resort" },
-          { label: "Additional Services", value: "Hotel Accommodation , Transportation , Technical Support" },
+          { label: "Venue Type", value: data.event?.venue_type || "" },
+          { label: "Additional Services", value: (data.event?.additional_services || []).join(" , ") },
         ],
         descriptionLabel: "Additional Requirements",
-        description:
-          "We require a 5-star conference hotel with a main hall for 200 attendees and 3 breakout rooms. High-speed internet, AV equipment, and on-site technical support are essential. Airport transfers and daily transportation should be arranged for all attendees.",
+        description: data.additional_requirements || "",
       },
       {
         title: "Budget Information",
         icon: "/images/profile/detail/budget-info.svg",
         fieldsColumns: 3,
         fields: [
-          { label: "Estimated Budget", value: "$5,000 - $10,000" },
-          { label: "Budget Flexibility", value: "Fixed Budget" },
-          { label: "How did you hear about us?", value: "Facebook , Instagram" },
+          { label: "Estimated Budget", value: data.event?.estimated_budget_range || "" },
         ],
       },
     ];
@@ -192,15 +221,21 @@ export default function ProfileRequestDetailsPage() {
                     : "Here are the details of your submitted event and its current status"}
               </p>
             </div>
-            <span className={`${styles.statusBadge} ${status === "proposal_sent" ? styles.sent : styles.inProgress}`}>
+            <span className={`${styles.statusBadge} ${currentStatus === "proposal_sent" ? styles.sent : styles.inProgress}`}>
               <span className={styles.statusIcon}>
-                {status === "proposal_sent" ? "✓" : <LoadingGlyph />}
+                {currentStatus === "proposal_sent" ? "✓" : <LoadingGlyph />}
               </span>
-              {status === "proposal_sent" ? "Proposal Sent" : "Proposal in progress"}
+              {currentStatus === "proposal_sent" ? "Proposal Sent" : "Proposal in progress"}
             </span>
           </header>
 
-          <BookingDetailsSections sections={sections} className={styles.sections} />
+          {loading ? (
+            <div style={{ padding: "4rem", textAlign: "center", color: "#666" }}>
+              Loading request details...
+            </div>
+          ) : (
+            <BookingDetailsSections sections={sections} className={styles.sections} />
+          )}
         </section>
       </div>
     </div>

@@ -224,12 +224,12 @@ export default function TripBookingCard(props: TripBookingCardProps) {
               )}
               {(status === "confirmed" || status === "proposal_sent") && (
                 <span className={styles.statusConfirmed}>
-                  âœ“ {status === "proposal_sent" ? "Proposal Sent" : "Confirmed"}
+                  ✓ {status === "proposal_sent" ? "Proposal Sent" : "Confirmed"}
                 </span>
               )}
               {status === "cancelled" && (
                 <span className={styles.statusCancelled}>
-                  <span className={styles.cancelX}>âœ•</span>
+                  <span className={styles.cancelX}>✕</span>
                   <span>Cancelled</span>
                 </span>
               )}
@@ -514,7 +514,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                 remainingAmount != null && (
                   <p className={styles.metaPartial}>
                     <span className={styles.metaMuted}>Paid {formatUsd(paidAmount)}</span>
-                    <span className={styles.metaBullet}>â€¢</span>
+                    <span className={styles.metaBullet}>•</span>
                     <span className={styles.metaStrong}>
                       Remaining {formatUsd(remainingAmount)}
                     </span>
@@ -523,7 +523,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
               {status === "confirmed" && totalAmount != null && (
                 <p className={styles.metaConfirmed}>
                   <span className={styles.metaMuted}>Fully Paid</span>
-                  <span className={styles.metaBullet}>â€¢</span>
+                  <span className={styles.metaBullet}>•</span>
                   <span className={styles.metaPrice}>{formatUsd(totalAmount)}</span>
                 </p>
               )}
@@ -531,7 +531,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                 <p className={styles.metaCancelled}>{cancelledLabel}</p>
               )}
               {(status === "proposal_in_progress" || status === "proposal_sent") && infoMessage && (
-                <p className={styles.metaInfo}>â€¢ {infoMessage}</p>
+                <p className={styles.metaInfo}>• {infoMessage}</p>
               )}
             </div>
             <Button

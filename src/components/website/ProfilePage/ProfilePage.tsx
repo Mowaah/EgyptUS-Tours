@@ -1,35 +1,26 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   PageHeader,
-  TripCard,
-  HotelCard,
-  TripBookingCard,
-  UpcomingTripBanner,
   ProfileSidebar,
   EmptyState,
   CategoryTabs,
+  TripCard,
+  HotelCard,
+  TripBookingCard,
 } from "@/components/shared";
-import type { TabType } from "@/components/shared";
+import type { TabType, TripBookingCardProps } from "@/components/shared";
 import { Trip, Hotel } from "@/types";
 import {
-  mockProfileUser,
-  mockUpcomingTrip,
-  mockFavoriteTrips,
-  mockFavoriteHotels,
   profileFavoriteCategoryTabs,
   profileBookingCategoryTabs,
   profileRequestCategoryTabs,
-  mockTripBookings,
-  mockHotelBookings,
-  mockTransportBookings,
-  mockMiceRequests,
-  mockB2BRequests,
-  mockPlanYourTripRequests,
 } from "@/data/profilePageMocks";
+import { useAuth } from "@/contexts/AuthContext";
+import { getFavoriteTrips, getFavoriteHotels, getProfileRequests } from "@/lib/api";
 import styles from "./ProfilePage.module.scss";
 
 function parseProfileTab(param: string | null): TabType {
@@ -42,6 +33,7 @@ function parseProfileTab(param: string | null): TabType {
 export default function ProfilePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const activeTab = useMemo(
     () => parseProfileTab(searchParams.get("tab")),
     [searchParams]
@@ -54,31 +46,153 @@ export default function ProfilePage() {
     [router]
   );
 
-  const [favoriteTrips, setFavoriteTrips] = useState<Trip[]>(mockFavoriteTrips);
-  const [favoriteHotels, setFavoriteHotels] = useState<Hotel[]>(mockFavoriteHotels);
+  // Redirect unauthenticated users to home
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.replace("/");
+    }
+  }, [isLoading, isAuthenticated, router]);
+
   const [favoriteCategoryIndex, setFavoriteCategoryIndex] = useState(0);
   const [bookingCategoryIndex, setBookingCategoryIndex] = useState(0);
   const [requestCategoryIndex, setRequestCategoryIndex] = useState(0);
 
-  const handleTripFavoriteToggle = (id: string) => {
-    setFavoriteTrips((prev) =>
-      prev.map((trip) =>
-        trip.id === id ? { ...trip, isFavorite: !trip.isFavorite } : trip
-      )
-    );
-  };
+  const [favoriteTrips, setFavoriteTrips] = useState<Trip[]>([]);
+  const [favoriteHotels, setFavoriteHotels] = useState<Hotel[]>([]);
+  const [favoritesLoading, setFavoritesLoading] = useState(false);
 
-  const handleHotelFavoriteToggle = (id: string) => {
-    setFavoriteHotels((prev) =>
-      prev.map((hotel) =>
-        hotel.id === id ? { ...hotel, isFavorite: !hotel.isFavorite } : hotel
-      )
-    );
-  };
+  const [planYourTripRequests, setPlanYourTripRequests] = useState<TripBookingCardProps[]>([]);
+  const [eventsRequests, setEventsRequests] = useState<TripBookingCardProps[]>([]);
+  const [b2bRequests, setB2bRequests] = useState<TripBookingCardProps[]>([]);
+  const [requestsLoading, setRequestsLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated && activeTab === "favorites") {
+      const fetchFavorites = async () => {
+        setFavoritesLoading(true);
+        try {
+          const [tripsData, hotelsData] = await Promise.all([
+            getFavoriteTrips(),
+            getFavoriteHotels(),
+          ]);
+
+          setFavoriteTrips(
+            tripsData.map((t) => ({
+              id: t.slug,
+              title: t.title,
+              description: t.short_description,
+              location: t.location_text,
+              price: parseFloat(t.base_price),
+              currency: t.currency_code === "USD" ? "$" : t.currency_code,
+              priceLabel: t.price_label,
+              duration: t.duration,
+              image: t.image || "/images/trip-placeholder.jpg",
+              isFavorite: t.is_favorite,
+            }))
+          );
+
+          setFavoriteHotels(
+            hotelsData.map((h) => ({
+              id: h.slug,
+              name: h.name,
+              location: h.location_text,
+              image: h.hero_image || "/images/hotel-placeholder.jpg",
+              stars: h.stars,
+              rating: h.rating_avg,
+              reviews: h.review_count,
+              rooms: h.rooms,
+              pricePerNight: parseFloat(h.price_per_night),
+              currency: h.currency_code === "USD" ? "$" : h.currency_code,
+              isFavorite: h.is_favorite,
+            }))
+          );
+        } catch (error) {
+          console.error("Failed to fetch favorites:", error);
+        } finally {
+          setFavoritesLoading(false);
+        }
+      };
+
+      fetchFavorites();
+    }
+  }, [isAuthenticated, activeTab]);
+
+  useEffect(() => {
+    if (isAuthenticated && activeTab === "requests") {
+      const fetchRequests = async () => {
+        setRequestsLoading(true);
+        try {
+          const [planData, eventsData, b2bData] = await Promise.all([
+            getProfileRequests("plan_your_trip"),
+            getProfileRequests("events"),
+            getProfileRequests("b2b"),
+          ]);
+
+          const mapRequest = (req: any, defaultImage: string): TripBookingCardProps => {
+            let mappedDetails = {};
+            if (req.type === "plan_your_trip") {
+              mappedDetails = {
+                destination: req.details?.destination || "",
+                tripCategory: req.details?.trip_category || "",
+                durationLabel: req.details?.duration_label || "",
+                travelDates: req.details?.travel_dates || "",
+                budget: req.details?.budget || "Not Specified",
+                travelersLabel: req.details?.travelers_label || "",
+              };
+            } else if (req.type === "events") {
+              mappedDetails = {
+                organization: req.details?.organization || "",
+                preferredCity: req.details?.preferred_city || "",
+                eventType: req.details?.event_type || "",
+                expectedAttendees: req.details?.expected_attendees || "",
+                startDate: req.details?.start_date || "",
+                endDate: req.details?.end_date || "",
+                eventTime: req.details?.event_time || "",
+                durationLabel: req.details?.duration_label || "",
+              };
+            } else if (req.type === "b2b") {
+              mappedDetails = {
+                companyName: req.details?.company_name || "",
+                country: req.details?.country || "",
+                contactPerson: req.details?.contact_person || "",
+                emailAddress: req.details?.email_address || "",
+                phoneNumber: req.details?.phone_number || "",
+                website: req.details?.website || "",
+              };
+            }
+
+            return {
+              variant: req.type as any,
+              imageSrc: req.image || defaultImage,
+              tripTitle: req.title || req.event_name || req.company_name || "",
+              status: req.status || "proposal_in_progress",
+              infoMessage: req.info_message || "Proposal expected within 24-48 hrs",
+              details: mappedDetails as any,
+              primaryLabel: "View Details",
+              primaryHref: `/profile/requests-details?type=${req.type}&id=${req.id}`,
+            };
+          };
+
+          setPlanYourTripRequests(planData.map((req: any) => mapRequest(req, "/images/pyramids.jpg")));
+          setEventsRequests(eventsData.map((req: any) => mapRequest(req, "/images/events1.png")));
+          setB2bRequests(b2bData.map((req: any) => mapRequest(req, "/images/contact1.jpg")));
+        } catch (error) {
+          console.error("Failed to fetch requests:", error);
+        } finally {
+          setRequestsLoading(false);
+        }
+      };
+      fetchRequests();
+    }
+  }, [isAuthenticated, activeTab]);
 
   const renderTabContent = () => {
     switch (activeTab) {
       case "favorites":
+        if (favoritesLoading) {
+          return <div className={styles.loading}>Loading favorites...</div>;
+        }
+
         if (favoriteCategoryIndex === 0) {
           if (favoriteTrips.length === 0) {
             return (
@@ -100,8 +214,11 @@ export default function ProfilePage() {
                 <TripCard
                   key={trip.id}
                   trip={trip}
-                  onFavoriteToggle={handleTripFavoriteToggle}
                   className={styles.profileTripCard}
+                  onFavoriteToggle={(id) => {
+                    // Optimistically remove from list when unfavorited
+                    setFavoriteTrips((prev) => prev.filter((t) => t.id !== id));
+                  }}
                 />
               ))}
             </div>
@@ -127,145 +244,81 @@ export default function ProfilePage() {
                 <HotelCard
                   key={hotel.id}
                   hotel={hotel}
-                  onFavoriteToggle={handleHotelFavoriteToggle}
+                  onFavoriteToggle={(id) => {
+                    // Optimistically remove from list when unfavorited
+                    setFavoriteHotels((prev) => prev.filter((h) => h.id !== id));
+                  }}
                 />
               ))}
             </div>
           );
         }
       case "bookings":
-        if (bookingCategoryIndex === 0) {
-          if (mockTripBookings.length === 0) {
-            return (
-              <EmptyState
-                framedIcon
-                iconSrc="/images/profile/glyphs/trips.svg"
-                iconWidth={90}
-                iconHeight={90}
-                title="No bookings yet"
-                description="When you book a trip, your itinerary and details will appear here."
-                buttonText="Explore Trips"
-                buttonHref="/trips"
-              />
-            );
-          }
-          return (
-            <div className={styles.bookingsList}>
-              {mockTripBookings.map((booking, index) => (
-                <TripBookingCard key={`trip-booking-${index}`} {...booking} />
-              ))}
-            </div>
-          );
-        }
-        if (bookingCategoryIndex === 1) {
-          if (mockHotelBookings.length === 0) {
-            return (
-              <EmptyState
-                framedIcon
-                iconSrc="/images/profile/glyphs/hotels.svg"
-                iconWidth={90}
-                iconHeight={90}
-                title="No hotel bookings yet"
-                description="When you book a hotel, your stay details will appear here."
-                buttonText="Browse Hotels"
-                buttonHref="/hotels"
-              />
-            );
-          }
-          return (
-            <div className={styles.bookingsList}>
-              {mockHotelBookings.map((booking, index) => (
-                <TripBookingCard key={`hotel-booking-${index}`} {...booking} />
-              ))}
-            </div>
-          );
-        }
-        if (mockTransportBookings.length === 0) {
-          return (
-            <EmptyState
-              framedIcon
-              iconSrc="/images/profile/glyphs/transportations.svg"
-              iconWidth={90}
-              iconHeight={90}
-              title="No transportation bookings yet"
-              description="When you add transfers or transport, your arrangements will appear here."
-              buttonText="Book Transportation"
-              buttonHref="/transportation"
-            />
-          );
-        }
         return (
-          <div className={styles.bookingsList}>
-            {mockTransportBookings.map((booking, index) => (
-              <TripBookingCard key={`transport-booking-${index}`} {...booking} />
-            ))}
-          </div>
+          <EmptyState
+            framedIcon
+            iconSrc={bookingCategoryIndex === 0 ? "/images/profile/glyphs/trips.svg" : bookingCategoryIndex === 1 ? "/images/profile/glyphs/hotels.svg" : "/images/profile/glyphs/transportations.svg"}
+            iconWidth={90}
+            iconHeight={90}
+            title={bookingCategoryIndex === 0 ? "No bookings yet" : bookingCategoryIndex === 1 ? "No hotel bookings yet" : "No transportation bookings yet"}
+            description={bookingCategoryIndex === 0 ? "When you book a trip, your itinerary and details will appear here." : bookingCategoryIndex === 1 ? "When you book a hotel, your stay details will appear here." : "When you add transfers or transport, your arrangements will appear here."}
+            buttonText={bookingCategoryIndex === 0 ? "Explore Trips" : bookingCategoryIndex === 1 ? "Browse Hotels" : "Book Transportation"}
+            buttonHref={bookingCategoryIndex === 0 ? "/trips" : bookingCategoryIndex === 1 ? "/hotels" : "/transportation"}
+          />
         );
       case "requests":
+        if (requestsLoading) {
+          return <div className={styles.loading}>Loading requests...</div>;
+        }
+        let items: TripBookingCardProps[] = [];
+        let emptyIcon = "";
+        let emptyTitle = "";
+        let emptyDesc = "";
+        let emptyBtn = "";
+        let emptyHref = "";
+
         if (requestCategoryIndex === 0) {
-          if (mockPlanYourTripRequests.length === 0) {
-            return (
-              <EmptyState
-                framedIcon
-                iconSrc="/images/profile/glyphs/requests.svg"
-                iconWidth={150}
-                iconHeight={150}
-                title="No custom trip requests yet"
-                description="Use our Plan Your Trip planner to build your custom itinerary and get a proposal."
-                buttonText="Plan your trip"
-                buttonHref="/plan-your-trip"
-              />
-            );
-          }
-          return (
-            <div className={styles.bookingsList}>
-              {mockPlanYourTripRequests.map((request, index) => (
-                <TripBookingCard key={`plan-your-trip-request-${index}`} {...request} />
-              ))}
-            </div>
-          );
+          items = planYourTripRequests;
+          emptyIcon = "/images/profile/glyphs/requests.svg";
+          emptyTitle = "No custom trip requests yet";
+          emptyDesc = "Use our Plan Your Trip planner to build your custom itinerary and get a proposal.";
+          emptyBtn = "Plan your trip";
+          emptyHref = "/plan-your-trip";
+        } else if (requestCategoryIndex === 1) {
+          items = eventsRequests;
+          emptyIcon = "/images/profile/glyphs/requests.svg";
+          emptyTitle = "No MICE requests yet";
+          emptyDesc = "Create your first event or corporate experience and get a tailored proposal.";
+          emptyBtn = "Request a proposal";
+          emptyHref = "/events/request-proposal";
+        } else {
+          items = b2bRequests;
+          emptyIcon = "/images/profile/glyphs/requests.svg";
+          emptyTitle = "No business requests yet";
+          emptyDesc = "Partner with us to create tailored travel experiences for your company.";
+          emptyBtn = "Request a proposal";
+          emptyHref = "/b2b-programs/request-proposal";
         }
-        if (requestCategoryIndex === 1) {
-          if (mockMiceRequests.length === 0) {
-            return (
-              <EmptyState
-                framedIcon
-                iconSrc="/images/profile/glyphs/requests.svg"
-                iconWidth={150}
-                iconHeight={150}
-                title="No MICE requests yet"
-                description="Create your first event or corporate experience and get a tailored proposal."
-                buttonText="Request a proposal"
-                buttonHref="/events/request-proposal"
-              />
-            );
-          }
-          return (
-            <div className={styles.bookingsList}>
-              {mockMiceRequests.map((request, index) => (
-                <TripBookingCard key={`mice-request-${index}`} {...request} />
-              ))}
-            </div>
-          );
-        }
-        if (mockB2BRequests.length === 0) {
+
+        if (items.length === 0) {
           return (
             <EmptyState
               framedIcon
-              iconSrc="/images/profile/glyphs/requests.svg"
+              iconSrc={emptyIcon}
               iconWidth={150}
               iconHeight={150}
-              title="No business requests yet"
-              description="Partner with us to create tailored travel experiences for your company."
-              buttonText="Request a proposal"
-              buttonHref="/b2b-programs/request-proposal"
+              title={emptyTitle}
+              description={emptyDesc}
+              buttonText={emptyBtn}
+              buttonHref={emptyHref}
             />
           );
         }
+
         return (
           <div className={styles.bookingsList}>
-            {mockB2BRequests.map((request, index) => (
-              <TripBookingCard key={`b2b-request-${index}`} {...request} />
+            {items.map((item, idx) => (
+              <TripBookingCard key={idx} {...item} />
             ))}
           </div>
         );
@@ -314,15 +367,18 @@ export default function ProfilePage() {
       />
 
       <div className={styles.container}>
-        {/* Premium Banner - Upcoming Trip */}
-        <UpcomingTripBanner trip={mockUpcomingTrip} />
-
         {/* Main Layout */}
         <div className={styles.mainLayout}>
           {/* Sidebar Column */}
           <div className={styles.sidebarColumn}>
             <ProfileSidebar
-              user={mockProfileUser}
+              user={{
+                name: user?.full_name ?? "",
+                email: user?.email ?? "",
+                avatar: null,
+                bookingsCount: 0,
+                requestsCount: 0,
+              }}
               activeTab={activeTab}
               onTabChange={handleTabChange}
             />

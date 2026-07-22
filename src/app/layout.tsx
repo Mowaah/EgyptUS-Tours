@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 
 import ScrollToTop from "@/components/shared/ScrollToTop/ScrollToTop";
 import ScrollAnimationProvider from "@/components/shared/ScrollAnimationProvider/ScrollAnimationProvider";
+import { AuthProvider } from "@/contexts/AuthContext";
 import "./globals.scss";
 
 export const metadata: Metadata = {
@@ -18,9 +19,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <ScrollToTop />
-        <ScrollAnimationProvider />
-        {children}
+        <AuthProvider>
+          <ScrollToTop />
+          <ScrollAnimationProvider />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

@@ -10,6 +10,7 @@ import { GlassCard, AuthModal } from "@/components/shared";
 import UserMenu from "./UserMenu";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
+import { useAuth } from "@/contexts/AuthContext";
 import styles from "./Navbar.module.scss";
 
 const NAV_LINKS = [
@@ -70,7 +71,7 @@ export default function Navbar({ tripLinks = [], destinationLinks = [] }: Navbar
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [expandedDropdown, setExpandedDropdown] = useState<string | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isAuthenticated, user, logout } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
@@ -271,8 +272,9 @@ export default function Navbar({ tripLinks = [], destinationLinks = [] }: Navbar
             <UserMenu
               scrolled={shouldShowScrolled}
               lightNavBackground={lightNavBackground}
-              isLoggedIn={isLoggedIn}
-              setIsLoggedIn={setIsLoggedIn}
+              isLoggedIn={isAuthenticated}
+              userName={user?.full_name}
+              setIsLoggedIn={() => {}}
               openAuthModal={() => setIsAuthModalOpen(true)}
               onLogoutClick={() => setIsLogoutModalOpen(true)}
             />
@@ -361,13 +363,13 @@ export default function Navbar({ tripLinks = [], destinationLinks = [] }: Navbar
               <div className={styles.drawerDivider} />
 
               <ul className={styles.drawerUserLinks}>
-                {isLoggedIn ? (
+                {isAuthenticated ? (
                   <>
                     <li className={styles.drawerGuestHeader}>
                       <div className={styles.drawerAvatarWrapper}>
                         <Image src="/images/profile-orange.svg" alt="" width={22} height={22} />
                       </div>
-                      <span className={styles.drawerUsername}>Username</span>
+                      <span className={styles.drawerUsername}>{user?.full_name || "Profile"}</span>
                     </li>
                     <li className={styles.drawerDivider} />
                     {MOBILE_USER_LINKS.map((link) => (
@@ -378,7 +380,6 @@ export default function Navbar({ tripLinks = [], destinationLinks = [] }: Navbar
                         </Link>
                       </li>
                     ))}
-                    <li className={styles.drawerDivider} />
                     <li>
                       <button className={styles.drawerUserLink} onClick={() => { setMobileOpen(false); setIsLogoutModalOpen(true); }}>
                         <Image src="/images/logout.svg" alt="" width={22} height={22} />
@@ -418,23 +419,25 @@ export default function Navbar({ tripLinks = [], destinationLinks = [] }: Navbar
       {isAuthModalOpen && (
         <AuthModal
           onClose={() => setIsAuthModalOpen(false)}
-          onLoginSuccess={() => setIsLoggedIn(true)}
+          onLoginSuccess={() => {}}
         />
       )}
 
-      <DashboardConfirmationModal
-        open={isLogoutModalOpen}
-        variant="logout"
-        title="Logout?"
-        message="You'll need to sign in again to access your bookings, profile, and account information."
-        cancelLabel="Stay Logged In"
-        confirmLabel="Logout"
-        onClose={() => setIsLogoutModalOpen(false)}
-        onConfirm={() => {
-          setIsLogoutModalOpen(false);
-          setIsLoggedIn(false);
-        }}
-      />
+      {isLogoutModalOpen && (
+        <DashboardConfirmationModal
+          open={isLogoutModalOpen}
+          variant="logout"
+          title="Logout?"
+          message="You'll need to sign in again to access your bookings, profile, and account information."
+          cancelLabel="Stay Logged In"
+          confirmLabel="Logout"
+          onClose={() => setIsLogoutModalOpen(false)}
+          onConfirm={() => {
+            logout();
+            setIsLogoutModalOpen(false);
+          }}
+        />
+      )}
     </>
   );
 }
