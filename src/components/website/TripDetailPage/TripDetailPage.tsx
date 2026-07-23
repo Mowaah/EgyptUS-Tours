@@ -22,6 +22,7 @@ import TripMoreTrips from "./TripMoreTrips/TripMoreTrips";
 import styles from "./TripDetailPage.module.scss";
 
 import { BackendTestimonial } from "@/services/testimonialsService";
+import { useFavorite } from "@/hooks/useFavorite";
 
 interface TripDetailPageProps {
   trip: Trip;
@@ -42,8 +43,27 @@ const TRIP_TABS = [
 ];
 
 export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPageProps) {
-  const [isFavorite, setIsFavorite] = useState(trip.isFavorite ?? false);
-  const toggleFavorite = () => setIsFavorite((prev) => !prev);
+  const { isFavorite, isLoading, toggle } = useFavorite({
+    slug: trip.id,
+    kind: "trip",
+    initialFavorite: trip.isFavorite ?? false,
+  });
+
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: trip.title,
+          url: window.location.href,
+        });
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        alert("Link copied to clipboard!");
+      }
+    } catch (error) {
+      console.error("Error sharing:", error);
+    }
+  };
 
   return (
     <div className={styles.page}>
@@ -56,7 +76,7 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
         backButton={{ text: "Back to Trips", href: "/trips" }}
         showMobileActions={true}
         isFavorite={isFavorite}
-        onFavoriteToggle={toggleFavorite}
+        onFavoriteToggle={toggle}
       />
 
       {/* ── Gallery & Hero Bar ── */}
@@ -77,7 +97,7 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
               rating={trip.rating ?? 0}
               reviewCount={trip.reviewCount ?? 0}
               isFavorite={isFavorite}
-              onFavoriteToggle={toggleFavorite}
+              onFavoriteToggle={toggle}
               location={trip.location || "Luxor & Aswan"}
               duration={`${trip.duration.days} days / ${trip.duration.nights} nights`}
               mobileBrochureButton={
@@ -107,6 +127,7 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
                 className={styles.actionBtn}
                 icon={<Image src="/images/share.svg" alt="" width={18} height={18} />}
                 iconPosition="left"
+                onClick={handleShare}
               >
                 Share
               </Button>

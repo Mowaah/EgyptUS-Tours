@@ -203,6 +203,7 @@ export default function ProfileBookingDetailsPage() {
   const isPaymentView = searchParams.get("view") === "payment";
   const [showSuccess, setShowSuccess] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+
   const statusUi = getStatusUi(status);
   const isPartiallyPaid = status === "partially_paid";
   const showCancelAction = status !== "cancelled";

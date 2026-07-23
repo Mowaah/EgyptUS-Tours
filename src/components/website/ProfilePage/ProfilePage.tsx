@@ -20,7 +20,7 @@ import {
   profileRequestCategoryTabs,
 } from "@/data/profilePageMocks";
 import { useAuth } from "@/contexts/AuthContext";
-import { getFavoriteTrips, getFavoriteHotels, getProfileRequests } from "@/lib/api";
+import { getFavoriteTrips, getFavoriteHotels, getProfileRequests, getProfileSummary } from "@/lib/api";
 import styles from "./ProfilePage.module.scss";
 
 function parseProfileTab(param: string | null): TabType {
@@ -61,10 +61,23 @@ export default function ProfilePage() {
   const [favoriteHotels, setFavoriteHotels] = useState<Hotel[]>([]);
   const [favoritesLoading, setFavoritesLoading] = useState(false);
 
+  const [summary, setSummary] = useState<{ bookings_count: number; requests_count: number }>({
+    bookings_count: 0,
+    requests_count: 0,
+  });
+
   const [planYourTripRequests, setPlanYourTripRequests] = useState<TripBookingCardProps[]>([]);
   const [eventsRequests, setEventsRequests] = useState<TripBookingCardProps[]>([]);
   const [b2bRequests, setB2bRequests] = useState<TripBookingCardProps[]>([]);
   const [requestsLoading, setRequestsLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      getProfileSummary()
+        .then((data) => setSummary(data))
+        .catch((err) => console.error("Failed to fetch profile summary:", err));
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (isAuthenticated && activeTab === "favorites") {
@@ -376,8 +389,8 @@ export default function ProfilePage() {
                 name: user?.full_name ?? "",
                 email: user?.email ?? "",
                 avatar: null,
-                bookingsCount: 0,
-                requestsCount: 0,
+                bookingsCount: summary.bookings_count,
+                requestsCount: summary.requests_count,
               }}
               activeTab={activeTab}
               onTabChange={handleTabChange}

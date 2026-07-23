@@ -221,6 +221,10 @@ export async function removeHotelFavorite(slug: string): Promise<any> {
 }
 
 // --- Requests & Bookings ---
+export async function getProfileSummary(): Promise<{ bookings_count: number; requests_count: number }> {
+  return await apiClient.get('/profile/summary/');
+}
+
 export async function getProfileRequests(type: string): Promise<any[]> {
   const res: any = await apiClient.get(`/profile/requests/?type=${type}&page_size=100`);
   return res?.results ?? [];

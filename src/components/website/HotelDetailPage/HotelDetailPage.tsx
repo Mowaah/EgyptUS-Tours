@@ -10,6 +10,7 @@ import HotelLocation from "./HotelLocation/HotelLocation";
 import HotelRoomTypes from "./HotelRoomTypes/HotelRoomTypes";
 import SimilarHotels from "./SimilarHotels/SimilarHotels";
 import HotelBookingWidget from "./HotelBookingWidget/HotelBookingWidget";
+import { useFavorite } from "@/hooks/useFavorite";
 import styles from "./HotelDetailPage.module.scss";
 
 interface HotelDetailPageProps {
@@ -26,8 +27,11 @@ const HOTEL_TABS = [
 ];
 
 export default function HotelDetailPage({ hotel, similarHotels }: HotelDetailPageProps) {
-  const [isFavorite, setIsFavorite] = useState(hotel.isFavorite ?? false);
-  const toggleFavorite = () => setIsFavorite((prev) => !prev);
+  const { isFavorite, isLoading, toggle } = useFavorite({
+    slug: hotel.id, // Assuming hotel.id is the slug used for favorites based on HotelCard
+    kind: "hotel",
+    initialFavorite: hotel.isFavorite ?? false,
+  });
 
   const handleShare = async () => {
     try {
@@ -56,7 +60,7 @@ export default function HotelDetailPage({ hotel, similarHotels }: HotelDetailPag
         backButton={{ text: "Back To Hotels", href: "/hotels" }}
         showMobileActions={true}
         isFavorite={isFavorite}
-        onFavoriteToggle={toggleFavorite}
+        onFavoriteToggle={toggle}
       />
 
       <div className={styles.heroSection}>
@@ -77,7 +81,7 @@ export default function HotelDetailPage({ hotel, similarHotels }: HotelDetailPag
               reviewCount={hotel.reviews ?? 0}
               showReviews={false}
               isFavorite={isFavorite}
-              onFavoriteToggle={toggleFavorite}
+              onFavoriteToggle={toggle}
             >
               <Button
                 variant="primary"

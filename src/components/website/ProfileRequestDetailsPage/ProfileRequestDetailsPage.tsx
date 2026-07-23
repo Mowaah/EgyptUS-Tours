@@ -42,23 +42,15 @@ export default function ProfileRequestDetailsPage() {
   const isPlanYourTrip = requestType === "plan_your_trip";
   const isB2B = requestType === "b2b";
 
-  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<any>(null);
 
   useEffect(() => {
     if (requestId && requestType) {
-      const fetchData = async () => {
-        setLoading(true);
-        try {
-          const res = await getProfileRequestDetail(requestType, requestId);
-          setData(res);
-        } catch (err) {
-          console.error("Failed to load request detail", err);
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchData();
+      getProfileRequestDetail(requestType, requestId)
+        .then(setData)
+        .catch(console.error)
+        .finally(() => setLoading(false));
     }
   }, [requestId, requestType]);
 
