@@ -9,8 +9,7 @@ import B2BCaseStudy from "./components/B2BCaseStudy/B2BCaseStudy";
 import B2BCTA from "./components/B2BCTA/B2BCTA";
 import styles from "./B2BProgramsPage.module.scss";
 
-// Reusing MOCK_IMAGES or replacing with actual B2B images
-const MOCK_IMAGES = [
+const GALLERY_IMAGES = [
   "/images/b2bpage/b2b1.jpg",
   "/images/b2bpage/b2b2.jpg",
   "/images/b2bpage/b2b3.jpg",
@@ -18,10 +17,10 @@ const MOCK_IMAGES = [
   "/images/b2bpage/b2b5.jpg",
 ];
 
-import type { BackendTestimonial } from "@/services/testimonialsService";
+import type { TestimonialData } from "@/services/testimonialsService";
 
 interface B2BProgramsPageProps {
-  testimonials?: BackendTestimonial[];
+  testimonials?: TestimonialData[];
 }
 
 export default function B2BProgramsPage({ testimonials }: B2BProgramsPageProps) {
@@ -41,7 +40,7 @@ export default function B2BProgramsPage({ testimonials }: B2BProgramsPageProps) 
 
       <div className={styles.heroSection}>
         <div className={styles.galleryWrap}>
-          <DetailGallery images={MOCK_IMAGES} title="Corporate Travel Experiences" />
+          <DetailGallery images={GALLERY_IMAGES} title="Corporate Travel Experiences" />
         </div>
       </div>
 

@@ -141,7 +141,7 @@ export default function MiceSection() {
         <div className={styles.viewAll}>
           <Button
             variant="outline"
-            href="/mice"
+            href="/events"
             icon={
               <Image
                 src="/images/arrows/arrow-right-blue.svg"

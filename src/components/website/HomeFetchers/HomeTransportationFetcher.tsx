@@ -3,9 +3,9 @@ import { getAllVehicles } from "@/services/transportationService";
 
 export default async function HomeTransportationFetcher() {
   try {
-    const backendVehicles = await getAllVehicles();
+    const vehiclesData = await getAllVehicles();
 
-    const initialVehicles = backendVehicles.map((v) => ({
+    const initialVehicles = vehiclesData.map((v) => ({
       id: v.slug,
       name: v.name || v.title,
       passengers: `1-${v.passengers} passengers`,

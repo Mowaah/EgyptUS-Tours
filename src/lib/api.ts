@@ -57,6 +57,19 @@ apiClient.interceptors.response.use(
           Cookies.remove('access_token');
           Cookies.remove('refresh_token');
         }
+      } else {
+        Cookies.remove('access_token');
+        Cookies.remove('refresh_token');
+      }
+
+      // If refresh failed or wasn't present, retry without Authorization header if it's a GET request
+      if (originalRequest.method?.toLowerCase() === 'get' && originalRequest.headers?.Authorization) {
+        delete originalRequest.headers.Authorization;
+        try {
+          return await apiClient(originalRequest);
+        } catch (e) {
+          // Ignore fallback error and reject original
+        }
       }
     }
     return Promise.reject(error);
@@ -90,10 +103,20 @@ export async function serverFetch<T>(
     }
   }
 
-  const response = await fetch(url, {
+  let response = await fetch(url, {
     ...options,
     headers,
   });
+
+  // If we get a 401 and an Authorization header was sent, retry without it so public endpoints still load!
+  if (response.status === 401 && (headers as Record<string, string>)['Authorization']) {
+    const fallbackHeaders = { ...headers as Record<string, string> };
+    delete fallbackHeaders['Authorization'];
+    response = await fetch(url, {
+      ...options,
+      headers: fallbackHeaders,
+    });
+  }
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => null);
@@ -242,3 +265,136 @@ export async function getProfileBookings(type: string): Promise<any[]> {
 export async function getProfileBookingDetail(type: string, id: string): Promise<any> {
   return await apiClient.get(`/profile/bookings/${id}/?type=${type}`);
 }
+
+export async function submitHotelBooking(data: any): Promise<any> {
+  return await apiClient.post('/booking-requests/hotels/', data);
+}
+
+export async function submitTripBooking(data: any): Promise<any> {
+  return await apiClient.post('/booking-requests/trips/', data);
+}
+
+export async function submitTransportationBooking(data: any): Promise<any> {
+  return await apiClient.post('/booking-requests/transportation/', data);
+}
+
+function formatUrlForBackend(url?: string): string {
+  if (!url) return "";
+  const trimmed = url.trim();
+  if (!trimmed) return "";
+  
+  // Fix common typos like http:/ or https:/ (with only 1 slash or 3+ slashes) and normalize to exactly two slashes
+  if (/^https?:\/+([^\/].*)$/i.test(trimmed)) {
+    return trimmed.replace(/^https?:\/+/i, (match) => {
+      return match.toLowerCase().startsWith("http:") ? "http://" : "https://";
+    });
+  }
+  
+  // If it doesn't start with any valid scheme (like http://, https://, ftp://), prepend https://
+  if (!/^[a-z]+:\/\//i.test(trimmed)) {
+    return `https://${trimmed}`;
+  }
+  return trimmed;
+}
+
+export function extractApiError(err: any, defaultMessage = "Something went wrong while submitting your request. Please try again."): string {
+  if (err?.response?.data) {
+    const data = err.response.data;
+    if (typeof data === "string") {
+      return data;
+    }
+    if (typeof data === "object" && !Array.isArray(data)) {
+      const messages: string[] = [];
+      for (const [key, val] of Object.entries(data)) {
+        const fieldName = key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+        if (Array.isArray(val)) {
+          messages.push(`${fieldName}: ${val.join(" ")}`);
+        } else if (typeof val === "string") {
+          messages.push(`${fieldName}: ${val}`);
+        } else if (typeof val === "object" && val !== null) {
+          for (const [subKey, subVal] of Object.entries(val as any)) {
+            const subFieldName = subKey.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+            if (Array.isArray(subVal)) {
+              messages.push(`${fieldName} -> ${subFieldName}: ${subVal.join(" ")}`);
+            } else if (typeof subVal === "string") {
+              messages.push(`${fieldName} -> ${subFieldName}: ${subVal}`);
+            }
+          }
+        }
+      }
+      if (messages.length > 0) {
+        return messages.join(" ");
+      }
+    }
+  }
+  return err?.message || defaultMessage;
+}
+
+export function extractFieldErrors(err: any): Record<string, string> {
+  const result: Record<string, string> = {};
+  if (err?.response?.data && typeof err.response.data === "object" && !Array.isArray(err.response.data)) {
+    for (const [key, val] of Object.entries(err.response.data)) {
+      if (Array.isArray(val) && val.length > 0) {
+        result[key] = val.join(" ");
+      } else if (typeof val === "string") {
+        result[key] = val;
+      }
+    }
+  }
+  return result;
+}
+
+export async function submitEventProposal(data: any): Promise<any> {
+  const payload = {
+    organization: {
+      name: data.organization?.name || "",
+      industry: data.organization?.industry || "",
+      country: data.organization?.country || "",
+      website: formatUrlForBackend(data.organization?.website),
+      contact_person: data.organization?.contactPerson || "",
+      job_title: data.organization?.jobTitle || "",
+      email: data.organization?.email || "",
+      phone: data.organization?.phone || "",
+    },
+    event_details: {
+      event_type: data.eventDetails?.eventType || "",
+      event_name: data.eventDetails?.eventName || "",
+      expected_attendees: parseInt(data.eventDetails?.expectedAttendees, 10) || 0,
+      preferred_city: data.eventDetails?.preferredCity || "",
+      start_date: formatDateForBackend(data.eventDetails?.startDate),
+      end_date: formatDateForBackend(data.eventDetails?.endDate),
+      description: data.eventDetails?.description || "",
+    },
+    requirements: {
+      venue_type: data.requirements?.venueType || "",
+      additional_services: data.requirements?.additionalServices || [],
+      additional_requirements: data.requirements?.additionalRequirements || "",
+    },
+    budget: {
+      estimated_budget_range: data.budget?.estimatedBudget || "",
+      budget_flexibility: data.budget?.budgetFlexibility || "",
+      hear_about_us: data.budget?.hearAboutUs || "",
+    },
+  };
+  return await apiClient.post('/proposals/events/', payload);
+}
+
+export async function submitB2BProposal(data: any): Promise<any> {
+  const payload = {
+    company_name: data.companyName || "",
+    country: data.country || "",
+    contact_person: data.contactPerson || "",
+    job_title: data.jobTitle || "",
+    email: data.email || "",
+    phone: data.phone || "",
+    website: formatUrlForBackend(data.website),
+    request_details: data.requestDetails || "",
+  };
+  return await apiClient.post('/proposals/b2b/', payload);
+}
+
+export async function submitContactInquiry(data: { full_name: string; email: string; message: string }): Promise<any> {
+  return await apiClient.post('/contact/', data);
+}
+
+

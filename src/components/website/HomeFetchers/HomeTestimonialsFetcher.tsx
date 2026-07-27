@@ -3,8 +3,8 @@ import { getTestimonials } from "@/services/testimonialsService";
 
 export default async function HomeTestimonialsFetcher() {
   try {
-    const backendTestimonials = await getTestimonials();
-    return <TestimonialsSection initialTestimonials={backendTestimonials} />;
+    const testimonialsData = await getTestimonials();
+    return <TestimonialsSection initialTestimonials={testimonialsData} />;
   } catch (error) {
     console.error("Failed to fetch testimonials:", error);
     return null;

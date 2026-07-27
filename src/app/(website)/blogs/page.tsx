@@ -1,5 +1,6 @@
 import BlogsPage from "@/components/website/BlogsPage/BlogsPage";
 import { getAllBlogs, getFeaturedBlogs } from "@/services/blogsService";
+import { getFaqs } from "@/services/legalHelpService";
 
 export const metadata = {
   title: "Blogs | Egypt US Tours",
@@ -7,10 +8,11 @@ export const metadata = {
 };
 
 export default async function Page() {
-  const [blogsRes, featuredBlogs] = await Promise.all([
+  const [blogsRes, featuredBlogs, faqs] = await Promise.all([
     getAllBlogs(),
-    getFeaturedBlogs()
+    getFeaturedBlogs(),
+    getFaqs()
   ]);
 
-  return <BlogsPage initialBlogs={blogsRes || []} initialFeatured={featuredBlogs} />;
+  return <BlogsPage initialBlogs={blogsRes || []} initialFeatured={featuredBlogs} initialFaqs={faqs} />;
 }

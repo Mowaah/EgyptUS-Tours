@@ -10,17 +10,17 @@ export default async function WebsiteLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [backendTrips, backendDestinations] = await Promise.all([
+  const [tripsData, destinationsData] = await Promise.all([
     getAllTrips(),
     getAllDestinations(),
   ]);
 
-  const tripLinks = backendTrips.slice(0, 12).map((t) => ({
+  const tripLinks = tripsData.slice(0, 12).map((t) => ({
     label: t.title,
     href: `/trips/${t.slug}`,
   }));
 
-  const destinationLinks = backendDestinations.map((d) => ({
+  const destinationLinks = destinationsData.map((d) => ({
     label: d.name,
     href: `/trips?destination=${d.name}`, // passing the name to the search bar/filter
   }));

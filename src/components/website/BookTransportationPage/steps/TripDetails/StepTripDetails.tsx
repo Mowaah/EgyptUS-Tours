@@ -30,6 +30,7 @@ interface StepTripDetailsProps {
   onChange: (patch: Partial<TransportationBookingData>) => void;
   onContinue: () => void;
   vehicle: Vehicle;
+  errors?: Record<string, string>;
 }
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
@@ -171,6 +172,7 @@ export default function StepTripDetails({
   formData,
   onChange,
   onContinue,
+  errors = {},
 }: StepTripDetailsProps) {
   return (
     <div className={styles.stepCard}>
@@ -192,6 +194,7 @@ export default function StepTripDetails({
           wrapperClassName={styles.formField}
           className={styles.tallInput}
           required
+          error={errors.pickupLocation}
         />
         <FormField
           label="Drop-off Location"
@@ -201,6 +204,7 @@ export default function StepTripDetails({
           wrapperClassName={styles.formField}
           className={styles.tallInput}
           required
+          error={errors.dropoffLocation}
         />
 
         {/* Trip Type */}
@@ -211,7 +215,7 @@ export default function StepTripDetails({
 
         {/* Date & Time */}
         <div className={styles.twoColumn}>
-          <FormField label="Pickup Date" required wrapperClassName={styles.formField}>
+          <FormField label="Pickup Date" required wrapperClassName={styles.formField} error={errors.pickupDate}>
             <div className={styles.inputWithIcon}>
               <div className={styles.inputIcon}>
                 <Image src="/images/calendar-gray.svg" alt="" width={20} height={20} />
@@ -224,7 +228,7 @@ export default function StepTripDetails({
               />
             </div>
           </FormField>
-          <FormField label="Pickup Time" required wrapperClassName={styles.formField}>
+          <FormField label="Pickup Time" required wrapperClassName={styles.formField} error={errors.pickupTime}>
             <TimePickerField
               value={formData.pickupTime}
               onChange={(val) => onChange({ pickupTime: val })}

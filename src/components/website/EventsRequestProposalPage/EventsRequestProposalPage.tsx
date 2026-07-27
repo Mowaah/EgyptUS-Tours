@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { submitEventProposal, extractApiError } from "@/lib/api";
 
 import styles from "./EventsRequestProposalPage.module.scss";
 import { STEPS } from "./eventsRequestProposalData";
@@ -51,6 +52,10 @@ export default function EventsRequestProposalPage() {
   const [showModal, setShowModal] = useState(false);
   const stepIndicatorRef = useRef<HTMLDivElement | null>(null);
   const [proposalData, setProposalData] = useState<EventProposalData>(initialData);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submittedId, setSubmittedId] = useState<string | number>("");
 
   const updateOrganization = (patch: Partial<EventProposalData["organization"]>) => {
     setProposalData((prev) => ({
@@ -80,12 +85,89 @@ export default function EventsRequestProposalPage() {
     }));
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
+    setSubmitError(null);
+
+    if (currentStep === 1) {
+      const org = proposalData.organization;
+      const newErrors: Record<string, string> = {};
+      if (!org.name.trim()) newErrors.name = "Organization Name is required.";
+      if (!org.contactPerson.trim()) newErrors.contactPerson = "Contact Person is required.";
+      if (!org.email.trim()) {
+        newErrors.email = "Email Address is required.";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(org.email.trim())) {
+        newErrors.email = "Please enter a valid email address.";
+      }
+      const phoneDigits = org.phone.replace(/\D/g, "");
+      if (!org.phone.trim() || phoneDigits.length === 0) {
+        newErrors.phone = "Phone Number is required.";
+      } else if (phoneDigits.length < 10) {
+        newErrors.phone = "Please enter a valid phone number with country code.";
+      }
+      if (Object.keys(newErrors).length > 0) {
+        setFieldErrors(newErrors);
+        return;
+      }
+      setFieldErrors({});
+    }
+
+    if (currentStep === 2) {
+      const evt = proposalData.eventDetails;
+      const newErrors: Record<string, string> = {};
+      if (!evt.eventType) newErrors.eventType = "Event Type is required.";
+      if (!evt.eventName.trim()) newErrors.eventName = "Event Name is required.";
+      if (!evt.expectedAttendees) newErrors.expectedAttendees = "Expected Attendees is required.";
+      if (!evt.preferredCity) newErrors.preferredCity = "Preferred City is required.";
+      if (!evt.startDate) newErrors.startDate = "Start Date is required.";
+      if (!evt.endDate) newErrors.endDate = "End Date is required.";
+      if (Object.keys(newErrors).length > 0) {
+        setFieldErrors(newErrors);
+        return;
+      }
+      setFieldErrors({});
+    }
+
+    if (currentStep === 3) {
+      const req = proposalData.requirements;
+      const newErrors: Record<string, string> = {};
+      if (!req.venueType) newErrors.venueType = "Venue Type is required.";
+      if (Object.keys(newErrors).length > 0) {
+        setFieldErrors(newErrors);
+        return;
+      }
+      setFieldErrors({});
+    }
+
+    if (currentStep === 4) {
+      const bud = proposalData.budget;
+      const newErrors: Record<string, string> = {};
+      if (!bud.estimatedBudget) newErrors.estimatedBudget = "Estimated Budget is required.";
+      if (!bud.budgetFlexibility) newErrors.budgetFlexibility = "Budget Flexibility is required.";
+      if (Object.keys(newErrors).length > 0) {
+        setFieldErrors(newErrors);
+        return;
+      }
+      setFieldErrors({});
+    }
     if (currentStep < 4) {
       setCurrentStep((s) => (s + 1) as EventStep);
       return;
     }
-    setShowModal(true);
+    try {
+      setIsSubmitting(true);
+      const res = await submitEventProposal(proposalData);
+      if (res && res.id) {
+        setSubmittedId(res.id);
+      } else {
+        setSubmittedId(Math.floor(100000 + Math.random() * 900000));
+      }
+      setShowModal(true);
+    } catch (err: any) {
+      console.error("Failed to submit event proposal:", err);
+      setSubmitError(extractApiError(err));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handlePrevious = () => {
@@ -125,36 +207,42 @@ export default function EventsRequestProposalPage() {
           {currentStep === 1 && (
             <StepOrganization
               data={proposalData.organization}
-              onChange={updateOrganization}
+              onChange={(patch) => { updateOrganization(patch); setFieldErrors({}); }}
               onContinue={handleContinue}
               onPrevious={handlePrevious}
+              errors={fieldErrors}
             />
           )}
 
           {currentStep === 2 && (
             <StepEventDetails
               data={proposalData.eventDetails}
-              onChange={updateEventDetails}
+              onChange={(patch) => { updateEventDetails(patch); setFieldErrors({}); }}
               onContinue={handleContinue}
               onPrevious={handlePrevious}
+              errors={fieldErrors}
             />
           )}
 
           {currentStep === 3 && (
             <StepRequirements
               data={proposalData.requirements}
-              onChange={updateRequirements}
+              onChange={(patch) => { updateRequirements(patch); setFieldErrors({}); }}
               onContinue={handleContinue}
               onPrevious={handlePrevious}
+              errors={fieldErrors}
             />
           )}
 
           {currentStep === 4 && (
             <StepBudget
               data={proposalData.budget}
-              onChange={updateBudget}
+              onChange={(patch) => { updateBudget(patch); setFieldErrors({}); }}
               onContinue={handleContinue}
               onPrevious={handlePrevious}
+              isSubmitting={isSubmitting}
+              submitError={submitError}
+              errors={fieldErrors}
             />
           )}
         </div>
@@ -166,10 +254,10 @@ export default function EventsRequestProposalPage() {
           message="Thank you for your interest. Our MICE team will review your requirements and contact you within 24 hours."
           primaryButtonText="View Request"
           buttonText="Back to Home"
-          onPrimaryClick={handleReset}
+          onPrimaryClick={() => router.push("/profile?tab=requests")}
           onClose={handleReset}
           metadata={[
-            { label: "Reference Number", value: "#MICE059208" },
+            { label: "Reference Number", value: `#MICE-${submittedId || "059208"}` },
             { label: "Organization", value: proposalData.organization.name || "AUS Agency" },
             { label: "Event Type", value: proposalData.eventDetails.eventType || "Incentive" },
             { label: "Expected Attendees", value: proposalData.eventDetails.expectedAttendees || "101-250" },

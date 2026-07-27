@@ -1,0 +1,12 @@
+@use "@/styles/variables" as *;
+
+.phoneRow {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: stretch;
+}
+
+.inputPhone {
+  flex: 1;
+  min-width: 0;
+}

@@ -4,10 +4,10 @@ import { TestimonialCard, ReviewGrid } from '@/components/shared';
 import type { Testimonial } from '@/components/shared/TestimonialCard/TestimonialCard';
 import styles from './B2BTestimonials.module.scss';
 
-import type { BackendTestimonial } from "@/services/testimonialsService";
+import type { TestimonialData } from "@/services/testimonialsService";
 
 interface B2BTestimonialsProps {
-  testimonials?: BackendTestimonial[];
+  testimonials?: TestimonialData[];
 }
 
 const PAGE_SIZE = 8;

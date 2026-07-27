@@ -15,6 +15,7 @@ interface StepRequirementsProps {
   onChange: (patch: Partial<EventProposalData["requirements"]>) => void;
   onContinue: () => void;
   onPrevious: () => void;
+  errors?: Record<string, string>;
 }
 
 export default function StepRequirements({
@@ -22,6 +23,7 @@ export default function StepRequirements({
   onChange,
   onContinue,
   onPrevious,
+  errors = {},
 }: StepRequirementsProps) {
 
   const toggleService = (id: string) => {
@@ -42,7 +44,7 @@ export default function StepRequirements({
 
       <div className={pageStyles.stepFormCardScroll}>
         <div className={pageStyles.formGrid}>
-          <FormField label="Venue Type" required wrapperClassName={styles.formGroupFull}>
+          <FormField label="Venue Type" required wrapperClassName={styles.formGroupFull} error={errors.venueType}>
             <div style={{ width: '100%', maxWidth: '344px' }}>
               <SelectDropdown
                 id="req-venue"

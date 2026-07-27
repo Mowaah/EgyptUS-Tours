@@ -1,13 +1,18 @@
-import { MOCK_HOTEL_DETAIL } from "@/data/hotelDetails";
+import { notFound } from "next/navigation";
 import BookHotelPage from "@/components/website/BookHotelPage/BookHotelPage";
+import { getFullHotelBySlug } from "@/services/hotelsService";
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-export default function BookHotelRoute({ params }: Props) {
-  // TODO: fetch real hotel by params.id
-  const hotel = MOCK_HOTEL_DETAIL;
+export default async function BookHotelRoute({ params }: Props) {
+  const { id } = await params;
+  const hotel = await getFullHotelBySlug(id);
+
+  if (!hotel) {
+    notFound();
+  }
 
   return <BookHotelPage hotel={hotel} />;
 }

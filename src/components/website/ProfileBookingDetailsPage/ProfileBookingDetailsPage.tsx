@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BookingDetailsSections,
   BookingSidebar,
@@ -15,151 +15,14 @@ import {
 } from "@/components/shared";
 import TransportBookingSummary from "@/components/website/BookTransportationPage/BookingSummary/BookingSummary";
 import type { BookingData, Hotel, TransportationBookingData, Trip, Vehicle } from "@/types";
+import { getProfileBookingDetail } from "@/lib/api";
 import styles from "./ProfileBookingDetailsPage.module.scss";
 
 type TripDetailsStatus = Extract<TripBookingStatus, "confirmed" | "partially_paid" | "cancelled">;
 
+
+
 const FALLBACK_STATUS: TripDetailsStatus = "confirmed";
-
-const detailSections = [
-  {
-    title: "Contact Info",
-    icon: "/images/summary/contact.svg",
-    rows: [
-      { label: "Name", value: "Ahmed Hassan" },
-      { label: "Email", value: "ahmed.hassan@gmail.com" },
-      { label: "Phone Number", value: "+20 100 123 4567" },
-      { label: "Nationality", value: "Egyptian" },
-    ],
-  },
-  {
-    title: "Trip Info",
-    icon: "/images/summary/trip.svg",
-    rows: [
-      { label: "Trip Name", value: "Mediterranean" },
-      { label: "Destination", value: "Santorini, Greece" },
-      { label: "Travel Type", value: "Group" },
-      { label: "Duration", value: "7 Nights / 8 Days" },
-    ],
-  },
-];
-
-const rooms = [
-  "2 x Double Room - Sea View",
-  "1 x Double Room - Garden View",
-  "1 x Triple Room - Garden View",
-];
-
-const specialRequests = [
-  "High floor room with sea view if available , Non-smoking room , Late check-in around 10 PM.",
-];
-
-const bookingData: BookingData = {
-  name: "Ahmed Hassan",
-  email: "ahmed.hassan@gmail.com",
-  phone: "+20 100 123 4567",
-  nationality: "Egyptian",
-  startDate: "Sun, Mar 15",
-  endDate: "Sun, Mar 15",
-  adults: 2,
-  children: 2,
-  infants: 2,
-  rooms: {
-    single: 0,
-    double: 1,
-    triple: 1,
-  },
-  specialRequests: specialRequests.join(", "),
-  termsAccepted: true,
-  cardNumber: "",
-  cardName: "",
-  expiry: "",
-  cvv: "",
-};
-
-const trip: Trip = {
-  id: "profile-trip-details",
-  title: "Luxor & Aswan Nile Cruise Experience",
-  description: "Trip details page mock data for profile booking details.",
-  image: "/images/home/hero-bg.png",
-  location: "Luxor & Aswan",
-  price: 4900,
-  currency: "$",
-  duration: { days: 8, nights: 7 },
-};
-
-const hotel: Hotel = {
-  id: "profile-hotel-booking",
-  name: "Nile Palace Hotel",
-  location: "Luxor, Egypt",
-  image: "/images/hotels/hotel6.png",
-  stars: 5,
-  rating: 4.9,
-  rooms: 120,
-  pricePerNight: 85.42,
-  reviews: 248,
-};
-
-const hotelBookingData: BookingData = {
-  name: "Ahmed Hassan",
-  email: "ahmed.hassan@gmail.com",
-  phone: "+20 100 123 4567",
-  nationality: "Egyptian",
-  startDate: "Sun, Mar 15",
-  endDate: "Sun, Mar 15",
-  adults: 2,
-  children: 0,
-  infants: 0,
-  rooms: {
-    single: 0,
-    double: 2,
-    triple: 1,
-  },
-  specialRequests: "High floor room with sea view if available , Non-smoking room , Late check-in around 10 PM.",
-  termsAccepted: true,
-  cardNumber: "",
-  cardName: "",
-  expiry: "",
-  cvv: "",
-};
-
-const transportBookingData: TransportationBookingData = {
-  pickupLocation: "Santorini, Greece",
-  dropoffLocation: "Santorini, Greece",
-  tripType: "One Way",
-  pickupDate: "April 22, 2026",
-  pickupTime: "2:20 AM",
-  passengers: 4,
-  luggage: 2,
-  services: {
-    childSeat: false,
-    extraLuggage: false,
-    meetAndGreet: false,
-  },
-  name: "Ahmed Hassan",
-  email: "ahmed.hassan@gmail.com",
-  phone: "+20 100 123 4567",
-  nationality: "Egyptian",
-  specialRequests: "High floor room with sea view if available , Non-smoking room , Late check-in around 10 PM.",
-  termsAccepted: true,
-  cardNumber: "",
-  cardName: "",
-  expiry: "",
-  cvv: "",
-};
-
-const transportVehicle: Vehicle = {
-  id: "profile-transport-booking",
-  name: "Mercedes S-Class",
-  type: "Premium Sedan",
-  image: "/images/sedan.png",
-  price: "$100.42",
-  passengers: 4,
-  luggage: 2,
-  description: "Premium sedan for private transfer",
-  rating: 4.9,
-  reviews: 248,
-};
 
 function getStatusFromParam(value: string | null): TripDetailsStatus {
   if (value === "confirmed" || value === "partially_paid" || value === "cancelled") {
@@ -195,63 +58,117 @@ function getStatusUi(status: TripDetailsStatus) {
 export default function ProfileBookingDetailsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const status = getStatusFromParam(searchParams.get("status"));
   const queryType = searchParams.get("type");
   const detailsType = queryType === "transport" || queryType === "hotel" ? queryType : "trip";
+  const id = searchParams.get("id");
   const isTransport = detailsType === "transport";
   const isHotel = detailsType === "hotel";
   const isPaymentView = searchParams.get("view") === "payment";
+
+  const [bookingDetail, setBookingDetail] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (id) {
+      setLoading(true);
+      getProfileBookingDetail(detailsType, id)
+        .then(setBookingDetail)
+        .catch((err) => console.error("Failed to fetch booking:", err))
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, [id, detailsType]);
+
+  const rawStatus = bookingDetail?.status || searchParams.get("status");
+  const status = getStatusFromParam(rawStatus);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
-
   const statusUi = getStatusUi(status);
   const isPartiallyPaid = status === "partially_paid";
   const showCancelAction = status !== "cancelled";
   const showPayAction = isPartiallyPaid;
   const showFooter = showCancelAction || showPayAction;
-  const totalAmount = 4900;
-  const depositAmount = 1470;
-  const hotelTotalRooms =
-    hotelBookingData.rooms.single + hotelBookingData.rooms.double + hotelBookingData.rooms.triple;
-  const hotelTotalGuests = hotelBookingData.adults + hotelBookingData.children + hotelBookingData.infants;
-  const hotelTotalAmount = hotel.pricePerNight * Math.max(hotelTotalRooms, 1);
+  
+  const bData = bookingDetail || {};
+  const contact = bData.contact || {};
+  const payment = bData.payment_summary || {};
+  const roomsObj = bData.rooms || { single: 0, double: 0, triple: 0 };
+  const specialRequests = [bData.special_requests || "None"];
+  
+  const formatDate = (dateStr: string) => {
+    if (!dateStr || dateStr === "—") return "";
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).format(d);
+    } catch (e) {
+      return dateStr;
+    }
+  };
+
+  const formatPhone = (phone: string) => {
+    if (!phone) return "";
+    return phone.startsWith("+") ? phone : `+${phone}`;
+  };
+
+  const safeFormData = {
+    ...bData,
+    name: contact.full_name || "",
+    email: contact.email || "",
+    phone: formatPhone(contact.phone),
+    nationality: contact.nationality || "",
+    adults: bData.adults || 0,
+    children: bData.children || 0,
+    infants: bData.infants || 0,
+    startDate: formatDate(bData.check_in_date || bData.start_date || ""),
+    endDate: formatDate(bData.check_out_date || bData.end_date || ""),
+    rooms: {
+      single: roomsObj.single || 0,
+      double: roomsObj.double || 0,
+      triple: roomsObj.triple || 0,
+    },
+  };
+  
+  const totalAmount = parseFloat(payment.total_amount || bData.total_price || bData.price || "0");
+  const depositAmount = totalAmount * 0.3; // Using 30% for deposit
+  
+  const hotelTotalRooms = safeFormData.rooms.single + safeFormData.rooms.double + safeFormData.rooms.triple;
+  const hotelTotalGuests = safeFormData.adults + safeFormData.children + safeFormData.infants;
+  
+  const hotelTotalAmount = totalAmount; 
   const hotelVatAmount = hotelTotalAmount * 0.1;
   const hotelDepositAmount = (hotelTotalAmount + hotelVatAmount) * 0.3;
+  
   const hotelRoomsList = [
-    hotelBookingData.rooms.single > 0
-      ? `${hotelBookingData.rooms.single} × Single Room - Garden View`
-      : null,
-    hotelBookingData.rooms.double > 0
-      ? `${hotelBookingData.rooms.double} × Double Room - Sea View`
-      : null,
-    hotelBookingData.rooms.triple > 0
-      ? `${hotelBookingData.rooms.triple} × Triple Room - Garden View`
-      : null,
+    safeFormData.rooms.single > 0 ? `${safeFormData.rooms.single} × Single Room` : null,
+    safeFormData.rooms.double > 0 ? `${safeFormData.rooms.double} × Double Room` : null,
+    safeFormData.rooms.triple > 0 ? `${safeFormData.rooms.triple} × Triple Room` : null,
   ].filter((room): room is string => Boolean(room));
+
   const sections: BookingDetailsSection[] = isTransport
     ? [
         {
           title: "Contact Info",
           icon: "/images/summary/contact.svg",
           fields: [
-            { label: "Name", value: transportBookingData.name },
-            { label: "Email", value: transportBookingData.email },
-            { label: "Phone Number", value: transportBookingData.phone },
-            { label: "Nationality", value: transportBookingData.nationality },
+            { label: "Name", value: contact.full_name || "" },
+            { label: "Email", value: contact.email || "" },
+            { label: "Phone Number", value: safeFormData.phone || "" },
+            { label: "Nationality", value: contact.nationality || "" },
           ],
         },
         {
           title: "Trip Info",
           icon: "/images/summary/trip.svg",
           fields: [
-            { label: "Pickup Location", value: transportBookingData.pickupLocation },
-            { label: "Drop-off Location", value: transportBookingData.dropoffLocation },
-            { label: "Trip Type", value: transportBookingData.tripType },
-            { label: "Duration", value: "8 hours" },
-            { label: "Pickup Time", value: transportBookingData.pickupTime },
-            { label: "Pickup Date", value: transportBookingData.pickupDate },
-            { label: "Passengers", value: `${transportBookingData.passengers} Passengers` },
-            { label: "Luggage", value: `${transportBookingData.luggage} Bags` },
+            { label: "Pickup Location", value: bData.pickup_location || bData.details?.pickup_location || "" },
+            { label: "Drop-off Location", value: bData.dropoff_location || bData.details?.dropoff_location || "" },
+            { label: "Trip Type", value: bData.trip_type || bData.details?.trip_type || "" },
+            { label: "Pickup Time", value: bData.pickup_time || bData.details?.pickup_time || "" },
+            { label: "Pickup Date", value: bData.pickup_date || bData.details?.pickup_date || "" },
+            { label: "Passengers", value: bData.details?.passengers_label || `${bData.passengers || 0} Passengers` },
+            { label: "Luggage", value: bData.details?.luggage_label || `${bData.luggage || 0} Bags` },
           ],
         },
         {
@@ -266,16 +183,16 @@ export default function ProfileBookingDetailsPage() {
             title: "Contact Info",
             icon: "/images/summary/contact.svg",
             fields: [
-              { label: "Name", value: hotelBookingData.name },
-              { label: "Email", value: hotelBookingData.email },
-              { label: "Phone Number", value: hotelBookingData.phone },
-              { label: "Nationality", value: hotelBookingData.nationality },
+              { label: "Name", value: contact.full_name || "" },
+              { label: "Email", value: contact.email || "" },
+              { label: "Phone Number", value: safeFormData.phone || "" },
+              { label: "Nationality", value: contact.nationality || "" },
             ],
           },
           {
             title: "Rooms",
             icon: "/images/summary/rooms.svg",
-            listItems: hotelRoomsList,
+            listItems: hotelRoomsList.length ? hotelRoomsList : ["Standard Room"],
           },
           {
             title: "Special Requests",
@@ -283,23 +200,38 @@ export default function ProfileBookingDetailsPage() {
             listItems: specialRequests,
           },
         ]
-    : [
-        ...detailSections.map((section) => ({
-          title: section.title,
-          icon: section.icon,
-          fields: section.rows,
-        })),
-        {
-          title: "Rooms",
-          icon: "/images/summary/rooms.svg",
-          listItems: rooms,
-        },
-        {
-          title: "Special Requests",
-          icon: "/images/summary/special.svg",
-          listItems: specialRequests,
-        },
-      ];
+      : [
+          {
+            title: "Contact Info",
+            icon: "/images/summary/contact.svg",
+            fields: [
+              { label: "Name", value: contact.full_name || "" },
+              { label: "Email", value: contact.email || "" },
+              { label: "Phone Number", value: safeFormData.phone || "" },
+              { label: "Nationality", value: contact.nationality || "" },
+            ],
+          },
+          {
+            title: "Trip Info",
+            icon: "/images/summary/trip.svg",
+            fields: [
+              { label: "Trip Name", value: bData.details?.trip_name || bData.title || bData.trip?.title || "" },
+              { label: "Destination", value: bData.details?.destination || bData.trip?.location_text || "" },
+              { label: "Duration", value: bData.details?.duration_label || `${bData.trip?.duration?.nights || 0} Nights / ${bData.trip?.duration?.days || 0} Days` },
+            ],
+          },
+          {
+            title: "Rooms",
+            icon: "/images/summary/rooms.svg",
+            listItems: hotelRoomsList.length ? hotelRoomsList : ["Standard Room"],
+          },
+          {
+            title: "Special Requests",
+            icon: "/images/summary/special.svg",
+            listItems: specialRequests,
+          },
+        ];
+
   const buildDetailsHref = (view?: "payment") => {
     const params = new URLSearchParams(searchParams.toString());
     if (view) {
@@ -311,11 +243,35 @@ export default function ProfileBookingDetailsPage() {
   };
 
   const paymentSidebar = isTransport ? (
-    <TransportBookingSummary vehicle={transportVehicle} formData={transportBookingData} />
+    <TransportBookingSummary 
+      vehicle={{
+        id: bData.id || bData.vehicle?.id || "vehicle",
+        name: bData.details?.vehicle_name || bData.title || bData.vehicle?.name || "Vehicle",
+        type: bData.details?.trip_type || bData.vehicle?.type || "",
+        image: bData.image || bData.vehicle?.image || "/images/sedan.png",
+        price: bData.total_amount || bData.total_price || "0",
+        passengers: bData.vehicle?.passengers || 4,
+        luggage: bData.vehicle?.luggage || 2,
+        description: bData.vehicle?.description || "",
+        rating: 5.0,
+        reviews: 0
+      }} 
+      formData={safeFormData as any} 
+    />
   ) : isHotel ? (
     <BookingSidebar
-      hotel={hotel}
-      formData={hotelBookingData}
+      hotel={{
+        id: bData.id || bData.hotel?.id || "hotel",
+        name: bData.details?.hotel_name || bData.title || bData.hotel?.name || "Hotel",
+        location: bData.details?.location || bData.hotel?.location_text || "",
+        image: bData.image || bData.hotel?.hero_image || "/images/hotels/hotel6.png",
+        stars: bData.hotel?.stars || 5,
+        rating: bData.hotel?.rating_avg || 5.0,
+        rooms: bData.hotel?.rooms || 0,
+        pricePerNight: parseFloat(bData.hotel?.price_per_night || "0"),
+        reviews: bData.hotel?.review_count || 0
+      }}
+      formData={safeFormData as any}
       totalAmount={hotelTotalAmount + hotelVatAmount}
       vatAmount={hotelVatAmount}
       depositAmount={hotelDepositAmount}
@@ -324,8 +280,17 @@ export default function ProfileBookingDetailsPage() {
     />
   ) : (
     <BookingSidebar
-      trip={trip}
-      formData={bookingData}
+      trip={{
+        id: bData.id || bData.trip?.id || "trip",
+        title: bData.details?.trip_name || bData.title || bData.trip?.title || "Trip",
+        description: bData.details?.travel_type || bData.trip?.short_description || "",
+        image: bData.image || bData.trip?.image || "/images/home/hero-bg.png",
+        location: bData.details?.destination || bData.trip?.location_text || "",
+        price: parseFloat(bData.total_amount || bData.trip?.base_price || "0"),
+        currency: bData.payment_summary?.currency_code || bData.trip?.currency_code || "$",
+        duration: { days: 0, nights: 0, label: bData.details?.duration_label } as any
+      }}
+      formData={safeFormData as any}
       totalAmount={totalAmount}
       depositAmount={depositAmount}
     />
@@ -342,10 +307,19 @@ export default function ProfileBookingDetailsPage() {
         subtitle="Easily access all your travel bookings and submitted requests in one organized place, with clear details about your trips, hotel stays, transportation, and upcoming plans."
       />
 
+      {loading ? (
+        <div className={styles.container}>
+          <div className={styles.loading}>Loading booking details...</div>
+        </div>
+      ) : !bookingDetail ? (
+        <div className={styles.container}>
+          <div className={styles.loading}>Booking not found.</div>
+        </div>
+      ) : (
       <div className={styles.container}>
         {isPaymentView ? (
           <PaymentForm
-            formData={isTransport ? transportBookingData : isHotel ? hotelBookingData : bookingData}
+            formData={safeFormData as any}
             onChange={() => undefined}
             confirmLabel={`Confirm & Pay $${(isHotel ? hotelDepositAmount : depositAmount).toLocaleString()} Deposit`}
             onPrevious={() => router.push(buildDetailsHref())}
@@ -406,6 +380,7 @@ export default function ProfileBookingDetailsPage() {
           </section>
         )}
       </div>
+      )}
 
       {showSuccess && (
         <SuccessModal
@@ -422,27 +397,27 @@ export default function ProfileBookingDetailsPage() {
           onPrimaryClick={() => router.push("/profile?tab=bookings")}
           onClose={() => router.push("/")}
           metadata={[
-            { label: "Booking Reference", value: `#BK${Math.floor(Math.random() * 90000000 + 10000000)}` },
+            { label: "Booking Reference", value: `#BK${bData.id || "0000"}` },
             {
               label: isTransport ? "Vehicle" : isHotel ? "Hotel" : "Trip Name",
               value: isTransport
-                ? `${transportVehicle.type} - ${transportVehicle.name}`
+                ? bData.details?.vehicle_name || bData.title || bData.vehicle?.name || "Vehicle"
                 : isHotel
-                  ? hotel.name
-                  : trip.title,
+                  ? bData.details?.hotel_name || bData.title || bData.hotel?.name || "Hotel"
+                  : bData.details?.trip_name || bData.title || bData.trip?.title || "Trip",
             },
             {
-              label: isTransport ? "Pickup Date" : isHotel ? "Check-in" : "Pickup Date",
+              label: isTransport ? "Pickup Date" : isHotel ? "Check-in" : "Start Date",
               value: isTransport
-                ? transportBookingData.pickupDate || "2026-01-22"
+                ? bData.pickup_date || bData.details?.pickup_date || "—"
                 : isHotel
-                  ? hotelBookingData.startDate || "2026-03-15"
-                  : bookingData.startDate || "2026-03-15",
+                  ? bData.check_in_date || bData.start_date || "—"
+                  : bData.start_date || "—",
             },
             {
               label: "Total Paid",
               value: isTransport
-                ? "$110.42"
+                ? `$${depositAmount.toFixed(2)}`
                 : isHotel
                   ? `$${hotelDepositAmount.toFixed(2)}`
                   : `$${depositAmount.toLocaleString()}`,

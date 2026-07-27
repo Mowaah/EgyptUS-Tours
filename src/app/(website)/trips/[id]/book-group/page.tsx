@@ -1,6 +1,6 @@
 import BookPrivateTripPage from "@/components/website/BookPrivateTripPage/BookPrivateTripPage";
 import { notFound } from "next/navigation";
-import { mockTripDetail } from "@/lib/mockTripDetail";
+import { getFullTripById } from "@/services/tripsService";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -9,7 +9,7 @@ interface PageProps {
 export default async function BookGroupTrip({ params }: PageProps) {
   const { id } = await params;
 
-  const trip = id === mockTripDetail.id ? mockTripDetail : null;
+  const trip = await getFullTripById(id);
 
   if (!trip) {
     notFound();

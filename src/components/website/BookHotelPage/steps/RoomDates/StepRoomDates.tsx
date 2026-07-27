@@ -47,6 +47,23 @@ export default function StepRoomDates({ formData, onChange, onContinue }: StepRo
     onChange({ [type]: Math.max(0, formData[type] + (increment ? 1 : -1)) });
   };
 
+  const handleContinue = () => {
+    if (!formData.startDate || !formData.endDate) {
+      alert("Please select your Check-in and Check-out dates.");
+      return;
+    }
+    const totalRooms = formData.rooms.single + formData.rooms.double + formData.rooms.triple;
+    if (totalRooms === 0) {
+      alert("Please select at least one room.");
+      return;
+    }
+    if (formData.adults === 0) {
+      alert("Please select at least one adult.");
+      return;
+    }
+    onContinue();
+  };
+
   return (
     <div className={planPage.stepFormCard}>
       <header className={planPage.stepFormCardHeader}>
@@ -177,7 +194,7 @@ export default function StepRoomDates({ formData, onChange, onContinue }: StepRo
       </div>
 
       <BookingStepFooter
-        onContinue={onContinue}
+        onContinue={handleContinue}
         continueLabel="Continue"
       />
     </div>

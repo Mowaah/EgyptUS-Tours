@@ -9,17 +9,17 @@ import EventsSuccessStories from "./EventsSuccessStories/EventsSuccessStories";
 import EventsCTA from "./EventsCTA/EventsCTA";
 import styles from "./EventsPage.module.scss";
 
-const MOCK_IMAGES = [
+const GALLERY_IMAGES = [
   "/images/events4.jpg",
   "/images/events2.jpg",
   "/images/events3.jpg",
   "/images/events1.png",
   "/images/events5.jpg",
 ];
-import type { BackendTestimonial } from "@/services/testimonialsService";
+import type { TestimonialData } from "@/services/testimonialsService";
 
 interface EventsPageProps {
-  testimonials?: BackendTestimonial[];
+  testimonials?: TestimonialData[];
 }
 
 export default function EventsPage({ testimonials }: EventsPageProps) {
@@ -39,7 +39,7 @@ export default function EventsPage({ testimonials }: EventsPageProps) {
 
       <div className={styles.heroSection}>
         <div className={styles.galleryWrap}>
-          <DetailGallery images={MOCK_IMAGES} title="Corporate Events in Egypt" />
+          <DetailGallery images={GALLERY_IMAGES} title="Corporate Events in Egypt" />
         </div>
       </div>
 

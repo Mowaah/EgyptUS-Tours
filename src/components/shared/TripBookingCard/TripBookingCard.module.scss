@@ -291,6 +291,9 @@
   font-size: $font-size-xs;
   line-height: 1.2;
   color: $dark;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
 }
 
 .roomRow {

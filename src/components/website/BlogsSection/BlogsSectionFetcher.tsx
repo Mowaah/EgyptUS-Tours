@@ -3,7 +3,7 @@ import { getLatestBlogs } from "@/services/blogsService";
 import { Blog } from "@/types";
 
 export default async function BlogsSectionFetcher() {
-  const latestBlogsApi = await getLatestBlogs();
+  const latestBlogsApi = await getLatestBlogs().catch(() => []);
   
   const initialBlogs: Blog[] = (latestBlogsApi || []).slice(0, 4).map(b => ({
     id: b.slug || String(b.id),

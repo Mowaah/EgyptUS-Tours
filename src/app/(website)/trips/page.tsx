@@ -26,7 +26,7 @@ export default async function TripsPage({ searchParams }: TripsPageProps) {
   const params = await searchParams;
 
   const apiParams: Record<string, string> = {};
-  if (params.destination) {
+  if (params.destination && params.destination.toLowerCase() !== "all") {
     apiParams.search = params.destination;
   } else if (params.tripType && params.tripType.toLowerCase() !== "desert") {
     apiParams.category = params.tripType;

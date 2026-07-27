@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BookingStepFooter, FormField, PhonePrefixSelect, CustomDatePicker, NationalitySelect, CounterPill } from "@/components/shared";
+import { BookingStepFooter, FormField, CustomDatePicker, NationalitySelect, CounterPill, PhoneInput } from "@/components/shared";
 import { isValidEmail, isValidPhone } from "@/utils/validators";
 
 import pageStyles from "../../PlanYourTripPage.module.scss";
@@ -75,6 +75,8 @@ export default function StepTravelerInfo({
         <div className={pageStyles.formGrid}>
           <FormField
             id="pti-name"
+            name="name"
+            autoComplete="name"
             label="Enter your Name"
             className={pageStyles.formInput}
             type="text"
@@ -87,6 +89,8 @@ export default function StepTravelerInfo({
 
           <FormField
             id="pti-email"
+            name="email"
+            autoComplete="email"
             label="Enter your E-mail"
             className={pageStyles.formInput}
             type="email"
@@ -103,23 +107,13 @@ export default function StepTravelerInfo({
             required
             error={showErrors ? (travelerInfo.phone.trim() === "" ? "This field is required" : !phoneValid ? "Please enter a valid phone number" : undefined) : undefined}
           >
-            <div className={styles.phoneRow}>
-              <PhonePrefixSelect
-                phoneValue={travelerInfo.phone}
-                onPhoneChange={(val) => onTravelerChange("phone", val)}
-              />
-              <input
-                id="pti-phone"
-                type="tel"
-                className={`${formStyles.input} ${styles.inputPhone}`}
-                value={travelerInfo.phone}
-                onChange={(e) => {
-                  const sanitized = e.target.value.replace(/[^0-9+\-()\s]/g, "");
-                  onTravelerChange("phone", sanitized);
-                }}
-                placeholder="+1 555-0000"
-              />
-            </div>
+            <PhoneInput 
+              id="pti-phone"
+              name="tel"
+              autoComplete="tel"
+              value={travelerInfo.phone}
+              onChange={(val) => onTravelerChange("phone", val)}
+            />
           </FormField>
 
           <FormField 

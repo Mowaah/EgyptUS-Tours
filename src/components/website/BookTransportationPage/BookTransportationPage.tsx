@@ -29,12 +29,39 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
   const [showSuccess, setShowSuccess] = useState(false);
   const stepIndicatorRef = useRef<HTMLDivElement | null>(null);
   const [formData, setFormData] = useState<TransportationBookingData>(INITIAL_TRANSPORT_BOOKING);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const handleChange = (patch: Partial<TransportationBookingData>) => {
     setFormData((prev) => ({ ...prev, ...patch }));
+    setFieldErrors({});
   };
 
   const handleContinue = () => {
+    const errs: Record<string, string> = {};
+    if (currentStep === 1) {
+      if (!formData.pickupLocation?.trim()) errs.pickupLocation = "Pickup location is required.";
+      if (!formData.dropoffLocation?.trim()) errs.dropoffLocation = "Drop-off location is required.";
+      if (!formData.pickupDate?.trim()) errs.pickupDate = "Pickup date is required.";
+      if (!formData.pickupTime?.trim()) errs.pickupTime = "Pickup time is required.";
+    } else if (currentStep === 2) {
+      if (!formData.name?.trim()) errs.name = "Full name is required.";
+      if (!formData.email?.trim()) {
+        errs.email = "Email address is required.";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        errs.email = "Please enter a valid email address.";
+      }
+      if (!formData.phone?.trim() || formData.phone.trim() === "+1" || formData.phone.trim() === "+20") {
+        errs.phone = "Phone number is required.";
+      }
+      if (!formData.nationality?.trim()) errs.nationality = "Nationality is required.";
+    }
+
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs);
+      return;
+    }
+
+    setFieldErrors({});
     if (currentStep < 3) setCurrentStep((s) => s + 1);
     else setShowSuccess(true);
   };
@@ -53,6 +80,7 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
     onChange: handleChange,
     onPrevious: handlePrevious,
     onContinue: handleContinue,
+    errors: fieldErrors,
   };
 
   return (

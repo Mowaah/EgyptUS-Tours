@@ -1,13 +1,13 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-export interface BackendFaq {
+export interface FaqData {
   id: number;
   question: string;
   answer: string;
   order: number;
 }
 
-export interface BackendLegalSection {
+export interface LegalSectionData {
   id: number;
   title: string;
   content: string;
@@ -29,7 +29,7 @@ async function fetchFromApi(endpoint: string) {
   return Array.isArray(data) ? data : (data.results || []);
 }
 
-export async function getFaqs(lang: string = "en"): Promise<BackendFaq[]> {
+export async function getFaqs(lang: string = "en"): Promise<FaqData[]> {
   try {
     return await fetchFromApi(`faqs/?lang=${lang}`);
   } catch (error) {
@@ -38,7 +38,7 @@ export async function getFaqs(lang: string = "en"): Promise<BackendFaq[]> {
   }
 }
 
-export async function getTerms(lang: string = "en"): Promise<BackendLegalSection[]> {
+export async function getTerms(lang: string = "en"): Promise<LegalSectionData[]> {
   try {
     return await fetchFromApi(`terms/?lang=${lang}`);
   } catch (error) {
@@ -47,7 +47,7 @@ export async function getTerms(lang: string = "en"): Promise<BackendLegalSection
   }
 }
 
-export async function getPrivacy(lang: string = "en"): Promise<BackendLegalSection[]> {
+export async function getPrivacy(lang: string = "en"): Promise<LegalSectionData[]> {
   try {
     return await fetchFromApi(`privacy/?lang=${lang}`);
   } catch (error) {

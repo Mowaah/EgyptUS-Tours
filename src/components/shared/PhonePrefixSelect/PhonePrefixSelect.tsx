@@ -25,21 +25,27 @@ export default function PhonePrefixSelect({ phoneValue = "", onPhoneChange, vari
   useEffect(() => {
     // Attempt to auto-detect the user's country based on IP 
     const detectCountry = async () => {
+      let matchedCountry = PHONE_CODES[0]; // Default US
       try {
         const res = await fetch("https://ipapi.co/json/");
-        if (!res.ok) return;
-
-        const data = await res.json();
-        if (data.country_code) {
-          const matchedCountry = PHONE_CODES.find(
-            (c) => c.code.toLowerCase() === data.country_code.toLowerCase()
-          );
-          if (matchedCountry && !phoneValue) {
-            setSelected(matchedCountry);
-            if (onPhoneChange) onPhoneChange(`${matchedCountry.dial} `);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.country_code) {
+            const found = PHONE_CODES.find(
+              (c) => c.code.toLowerCase() === data.country_code.toLowerCase()
+            );
+            if (found) {
+              matchedCountry = found;
+            }
           }
         }
       } catch (err) {
+        // Ignore error and use default
+      }
+      
+      if (!phoneValue && onPhoneChange) {
+        setSelected(matchedCountry);
+        onPhoneChange(`${matchedCountry.dial} `);
       }
     };
 

@@ -179,7 +179,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
       ? "Hotel Booking"
       : props.variant === "transport"
         ? "Transportation Booking"
-        : props.variant === "mice"
+        : props.variant === "mice" || props.variant === ("events" as any)
           ? "MICE Event"
           : props.variant === "b2b"
             ? "B2B Event"
@@ -210,7 +210,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
             <div className={styles.badges}>
               {showTimer && (
                 <span className={styles.timerBadge}>
-                  <span className={styles.timerDot} aria-hidden />
+                  {timerLabel !== "In the past" && <span className={styles.timerDot} aria-hidden />}
                   <span className={styles.timerText}>{timerLabel}</span>
                 </span>
               )}
@@ -342,50 +342,53 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                 iconSize={16}
               />
             </div>
-          ) : props.variant === "mice" ? (
-            <div className={styles.detailGrid}>
-              <DetailCell
-                icon={MICE_ICONS.organization}
-                label="Organization"
-                value={props.details.organization}
-              />
-              <DetailCell
-                icon={MICE_ICONS.city}
-                label="Preferred City"
-                value={props.details.preferredCity}
-              />
-              <DetailCell
-                icon={MICE_ICONS.eventType}
-                label="Event Type"
-                value={props.details.eventType}
-              />
-              <DetailCell
-                icon={MICE_ICONS.attendees}
-                label="Expected Attendees"
-                value={props.details.expectedAttendees}
-              />
-              <DetailCell
-                icon={MICE_ICONS.startDate}
-                label="Start Date"
-                value={props.details.startDate}
-              />
-              <DetailCell
-                icon={MICE_ICONS.endDate}
-                label="End Date"
-                value={props.details.endDate}
-              />
-              <DetailCell
-                icon={MICE_ICONS.eventTime}
-                label="Event time"
-                value={props.details.eventTime}
-              />
-              <DetailCell
-                icon={MICE_ICONS.duration}
-                label="Duration"
-                value={props.details.durationLabel}
-              />
-            </div>
-          ) : props.variant === "b2b" ? (
+          ) : props.variant === "mice" || props.variant === ("events" as any) ? (() => {
+            const d = props.details as MiceRequestDetails;
+            return (
+              <div className={styles.detailGrid}>
+                <DetailCell
+                  icon={MICE_ICONS.organization}
+                  label="Organization"
+                  value={d.organization}
+                />
+                <DetailCell
+                  icon={MICE_ICONS.city}
+                  label="Preferred City"
+                  value={d.preferredCity}
+                />
+                <DetailCell
+                  icon={MICE_ICONS.eventType}
+                  label="Event Type"
+                  value={d.eventType}
+                />
+                <DetailCell
+                  icon={MICE_ICONS.attendees}
+                  label="Expected Attendees"
+                  value={d.expectedAttendees}
+                />
+                <DetailCell
+                  icon={MICE_ICONS.startDate}
+                  label="Start Date"
+                  value={d.startDate}
+                />
+                <DetailCell
+                  icon={MICE_ICONS.endDate}
+                  label="End Date"
+                  value={d.endDate}
+                />
+                <DetailCell
+                  icon={MICE_ICONS.eventTime}
+                  label="Event time"
+                  value={d.eventTime}
+                />
+                <DetailCell
+                  icon={MICE_ICONS.duration}
+                  label="Duration"
+                  value={d.durationLabel}
+                />
+              </div>
+            );
+          })() : props.variant === "b2b" ? (
             <div className={styles.detailGridHotel}>
               <DetailCell
                 icon={B2B_ICONS.companyName}

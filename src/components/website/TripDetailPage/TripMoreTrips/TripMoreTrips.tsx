@@ -4,16 +4,6 @@ import Image from "next/image";
 import type { Trip } from "@/types";
 import styles from "./TripMoreTrips.module.scss";
 
-// Mocking 8 identical trips based on visual mockup showing "Luxury 5 days Luxor and Aswan Nile Cruise"
-const MORE_TRIPS: Trip[] = Array(8).fill({
-  id: "more-trip-mock",
-  title: "Luxury 5 days Luxor and Aswan Nile Cruise",
-  location: "Luxor & Aswan",
-  price: 2000,
-  duration: { days: 8, nights: 7 },
-  image: "/images/pyramids4.jpg",
-} as Trip);
-
 interface TripMoreTripsProps {
   relatedTrips?: Trip[];
 }

@@ -4,7 +4,7 @@ import {
   BookingStepFooter,
   CheckboxIndicator,
   FormField,
-  PhonePrefixSelect,
+  PhoneInput,
   CustomDatePicker,
   SelectDropdown,
   NationalitySelect,
@@ -87,6 +87,8 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
         <div className={planPage.formGrid}>
           <FormField
             id="pti-name"
+            name="name"
+            autoComplete="name"
             label="Enter your Name"
             className={planPage.formInput}
             type="text"
@@ -98,6 +100,8 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
 
           <FormField
             id="pti-email"
+            name="email"
+            autoComplete="email"
             label="Enter your E-mail"
             className={planPage.formInput}
             type="email"
@@ -112,20 +116,13 @@ export default function StepYourDetails({ formData, onChange, onContinue, isGrou
             label="Phone Number"
             required
           >
-            <div className={travelerStyles.phoneRow}>
-              <PhonePrefixSelect
-                phoneValue={formData.phone}
-                onPhoneChange={(val) => onChange({ phone: val })}
-              />
-              <input
-                id="pti-phone"
-                type="tel"
-                className={`${formStyles.input} ${travelerStyles.inputPhone}`}
-                value={formData.phone}
-                onChange={(e) => onChange({ phone: e.target.value })}
-                placeholder="+1 555-0000"
-              />
-            </div>
+            <PhoneInput
+              id="pti-phone"
+              name="tel"
+              autoComplete="tel"
+              value={formData.phone}
+              onChange={(val) => onChange({ phone: val })}
+            />
           </FormField>
 
           <FormField label="Select Your Nationality" required>

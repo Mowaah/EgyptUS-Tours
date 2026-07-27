@@ -1,9 +1,8 @@
 "use client";
 
-import { BookingStepFooter, FormField, PhonePrefixSelect } from "@/components/shared";
+import { BookingStepFooter, FormField, PhoneInput } from "@/components/shared";
 import SelectDropdown from "@/components/shared/SelectDropdown/SelectDropdown";
 import pageStyles from "../../EventsRequestProposalPage.module.scss";
-import formStyles from "@/components/shared/FormField/FormField.module.scss";
 import styles from "./StepOrganization.module.scss";
 import type { EventProposalData } from "../../eventsRequestProposalTypes";
 import { INDUSTRIES } from "../../eventsRequestProposalData";
@@ -13,12 +12,14 @@ interface StepOrganizationProps {
   onChange: (patch: Partial<EventProposalData["organization"]>) => void;
   onContinue: () => void;
   onPrevious: () => void;
+  errors?: Record<string, string>;
 }
 
 export default function StepOrganization({
   data,
   onChange,
   onContinue,
+  errors = {},
 }: StepOrganizationProps) {
   return (
     <div className={pageStyles.stepFormCard}>
@@ -39,6 +40,7 @@ export default function StepOrganization({
             placeholder="Company or Organization Name"
             value={data.name}
             onChange={(e) => onChange({ name: e.target.value })}
+            error={errors.name}
           />
 
           <FormField label="Industry" required>
@@ -61,6 +63,7 @@ export default function StepOrganization({
             placeholder="Headquarters Country"
             value={data.country}
             onChange={(e) => onChange({ country: e.target.value })}
+            error={errors.country}
           />
 
           <FormField
@@ -72,10 +75,13 @@ export default function StepOrganization({
             placeholder="www.company.com"
             value={data.website}
             onChange={(e) => onChange({ website: e.target.value })}
+            error={errors.website}
           />
 
           <FormField
             id="org-contact"
+            name="name"
+            autoComplete="name"
             label="Contact Person"
             className={pageStyles.formInput}
             type="text"
@@ -83,10 +89,13 @@ export default function StepOrganization({
             placeholder="Full Name"
             value={data.contactPerson}
             onChange={(e) => onChange({ contactPerson: e.target.value })}
+            error={errors.contactPerson}
           />
 
           <FormField
             id="org-job"
+            name="organization-title"
+            autoComplete="organization-title"
             label="Job Title"
             className={pageStyles.formInput}
             type="text"
@@ -94,10 +103,13 @@ export default function StepOrganization({
             placeholder="Your Position"
             value={data.jobTitle}
             onChange={(e) => onChange({ jobTitle: e.target.value })}
+            error={errors.jobTitle}
           />
 
           <FormField
             id="org-email"
+            name="email"
+            autoComplete="email"
             label="Email Address"
             className={pageStyles.formInput}
             type="email"
@@ -105,27 +117,21 @@ export default function StepOrganization({
             placeholder="youremail@company.com"
             value={data.email}
             onChange={(e) => onChange({ email: e.target.value })}
+            error={errors.email}
           />
 
           <FormField label="Phone Number" required>
-            <div className={styles.phoneRow}>
-              <PhonePrefixSelect
-                phoneValue={data.phone}
-                onPhoneChange={(val) => onChange({ phone: val })}
-              />
-              <input
-                id="org-phone"
-                type="tel"
-                className={`${formStyles.input} ${styles.phoneInput}`}
-                value={data.phone}
-                onChange={(e) => onChange({ phone: e.target.value })}
-                placeholder="+1 (555) 000-0000"
-              />
-            </div>
+            <PhoneInput
+              id="org-phone"
+              name="tel"
+              autoComplete="tel"
+              value={data.phone}
+              onChange={(val) => onChange({ phone: val })}
+              error={errors.phone}
+            />
           </FormField>
         </div>
       </div>
-
 
       <BookingStepFooter onContinue={onContinue} />
     </div>

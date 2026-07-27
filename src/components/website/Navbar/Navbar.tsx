@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import Button from "@/components/shared/Button/Button";
 import { GlassCard, AuthModal } from "@/components/shared";
 import UserMenu from "./UserMenu";
@@ -16,7 +16,7 @@ import styles from "./Navbar.module.scss";
 const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Trips", href: "/trips", hasDropdown: true },
-  { label: "Destinations", href: "/trips", hasDropdown: true },
+  { label: "Destinations", href: "/trips?destination=all", hasDropdown: true },
   { label: "Hotels", href: "/hotels" },
   { label: "Transportation", href: "/transportation" },
   { label: "Events", href: "/events" },
@@ -76,7 +76,19 @@ export default function Navbar({ tripLinks = [], destinationLinks = [] }: Navbar
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const destinationParam = searchParams?.get("destination");
   const isBookingPage = pathname === "/booking";
+
+  const isLinkActive = (link: { label: string; href: string }) => {
+    if (link.label === "Destinations") {
+      return pathname.startsWith("/trips") && !!destinationParam && destinationParam !== "";
+    }
+    if (link.label === "Trips") {
+      return pathname.startsWith("/trips") && (!destinationParam || destinationParam === "");
+    }
+    return pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+  };
 
   // Portal requires the client DOM — track mount to avoid SSR mismatch.
   useEffect(() => { setMounted(true); }, []);
@@ -193,7 +205,7 @@ export default function Navbar({ tripLinks = [], destinationLinks = [] }: Navbar
           {/* Desktop links */}
           <ul className={styles.links}>
             {NAV_LINKS.map((link) => {
-              const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+              const isActive = isLinkActive(link);
               const isLightBg = shouldShowScrolled || lightNavBackground;
               const useGlass = isActive && !shouldShowScrolled && !lightNavBackground;
 
@@ -313,7 +325,7 @@ export default function Navbar({ tripLinks = [], destinationLinks = [] }: Navbar
             <nav className={styles.drawerNav} aria-label="Mobile primary">
               <ul className={styles.drawerLinks}>
                 {NAV_LINKS.map((link) => {
-                  const isActive = pathname === link.href;
+                  const isActive = isLinkActive(link);
                   const expanded = expandedDropdown === link.label;
                   const subLinks = link.hasDropdown
                     ? link.label === "Destinations"

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { TransportationBookingData, Vehicle } from "@/types";
 import { 
   FormField, 
-  PhonePrefixSelect, 
+  PhoneInput, 
   CheckboxIndicator, 
   Button,
   NationalitySelect,
@@ -22,10 +22,11 @@ interface StepPersonalInfoProps {
   onPrevious: () => void;
   onContinue: () => void;
   vehicle: Vehicle;
+  errors?: Record<string, string>;
 }
 
 export default function StepPersonalInfo({
-  formData, onChange, onPrevious, onContinue, vehicle
+  formData, onChange, onPrevious, onContinue, vehicle, errors = {},
 }: StepPersonalInfoProps) {
   const [showTermsModal, setShowTermsModal] = useState(false);
 
@@ -39,35 +40,40 @@ export default function StepPersonalInfo({
       <div className={styles.formSection}>
         <div className={styles.twoColumn}>
           <FormField
+            id="trans-name"
+            name="name"
+            autoComplete="name"
             label="Enter your Name"
             placeholder="John Doe"
             value={formData.name}
             onChange={(e) => onChange({ name: e.target.value })}
             required
+            error={errors.name}
           />
           <FormField
+            id="trans-email"
+            name="email"
+            autoComplete="email"
             label="Enter your E-mail"
             placeholder="Example@Gmail.Com"
             value={formData.email}
             onChange={(e) => onChange({ email: e.target.value })}
             required
+            error={errors.email}
           />
         </div>
 
         <div className={styles.twoColumn}>
-          <FormField label="Enter your Phone Number" required>
-            <div className={travelerStyles.phoneRow}>
-              <PhonePrefixSelect phoneValue={formData.phone} onPhoneChange={(val) => onChange({ phone: val })} />
-              <input
-                type="tel"
-                className={`${formStyles.input} ${travelerStyles.inputPhone}`}
-                value={formData.phone}
-                onChange={(e) => onChange({ phone: e.target.value })}
-                placeholder="000-0000"
-              />
-            </div>
+          <FormField label="Enter your Phone Number" required error={errors.phone}>
+            <PhoneInput
+              id="trans-phone"
+              name="tel"
+              autoComplete="tel"
+              value={formData.phone}
+              onChange={(val) => onChange({ phone: val })}
+            />
           </FormField>
-          <FormField label="Select Your Nationality" required>
+          <FormField label="Select Your Nationality" required error={errors.nationality}>
             <NationalitySelect 
               value={formData.nationality}
               onChange={(val) => onChange({ nationality: val })}
@@ -86,9 +92,15 @@ export default function StepPersonalInfo({
           />
         </div>
 
-        <label className={styles.checkboxRow} onClick={() => onChange({ termsAccepted: !formData.termsAccepted })}>
+        <label className={styles.checkboxRow}>
+          <input
+            type="checkbox"
+            checked={formData.termsAccepted}
+            onChange={(e) => onChange({ termsAccepted: e.target.checked })}
+            style={{ display: "none" }}
+          />
           <div className={styles.checkboxWrap}>
-            <CheckboxIndicator variant="square" size="md" selected={formData.termsAccepted} />
+            <CheckboxIndicator variant="square" size="md" selected={formData.termsAccepted} aria-hidden />
           </div>
           <span className={styles.checkboxLabel}>
             I have read and agree to the{" "}

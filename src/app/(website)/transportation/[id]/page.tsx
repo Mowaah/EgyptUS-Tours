@@ -18,10 +18,9 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const { id } = await params;
   
   try {
-    const backendVehicle = await getVehicleBySlug(id);
+    const vehicleDetail = await getVehicleBySlug(id);
     
-    // Pass backendVehicle to TransportationDetailPage which will map it to frontend type
-    return <TransportationDetailPage backendVehicle={backendVehicle} />;
+    return <TransportationDetailPage vehicleDetail={vehicleDetail} />;
   } catch (error) {
     return <div>Vehicle Not Found</div>;
   }

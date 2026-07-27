@@ -5,8 +5,8 @@ import { getAllDestinations } from "@/services/destinationsService";
 import styles from "./HeroSection.module.scss";
 
 export default async function HeroSection() {
-  const backendDestinations = await getAllDestinations();
-  const destinations = backendDestinations.map(d => ({
+  const destinationsData = await getAllDestinations();
+  const destinations = destinationsData.map(d => ({
     label: d.name,
     value: d.name,
   }));

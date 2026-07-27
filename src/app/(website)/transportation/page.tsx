@@ -12,12 +12,12 @@ export const metadata = {
 export const revalidate = 60;
 
 export default async function Page() {
-  const [backendVehicles, faqs] = await Promise.all([
+  const [vehiclesData, faqs] = await Promise.all([
     getAllVehicles(),
     getFaqs()
   ]);
   
-  const vehicles: Vehicle[] = backendVehicles.map(v => ({
+  const vehicles: Vehicle[] = vehiclesData.map(v => ({
     id: v.slug,
     title: v.title || v.name,
     type: v.type || v.vehicle_type,

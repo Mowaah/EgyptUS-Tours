@@ -14,9 +14,9 @@ interface TripsSectionFetcherProps {
 }
 
 export default async function TripsSectionFetcher({ apiParams, searchParams }: TripsSectionFetcherProps) {
-  const backendTrips = await getAllTrips(apiParams);
+  const tripsData = await getAllTrips(apiParams).catch(() => []);
 
-  const initialTrips: Trip[] = backendTrips.map(t => ({
+  const initialTrips: Trip[] = tripsData.map(t => ({
     id: t.slug,
     title: t.title,
     description: t.short_description || t.title,

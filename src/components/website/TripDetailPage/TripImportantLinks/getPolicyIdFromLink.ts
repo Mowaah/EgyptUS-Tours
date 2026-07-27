@@ -1,6 +1,6 @@
 import type { PolicyId } from "./policyModalTypes";
 
-/** Map CMS / mock link label or href to a policy tab. */
+/** Map link label or href to a policy tab. */
 export function getPolicyIdFromLink(link: { label: string; href: string }): PolicyId {
   const label = link.label.toLowerCase();
   const href = link.href.toLowerCase();

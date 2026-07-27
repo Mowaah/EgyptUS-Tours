@@ -5,9 +5,9 @@ import { Trip } from "@/types";
 
 export default async function HomeTripsFetcher() {
   try {
-    const backendTrips = await getAllTrips();
+    const tripsData = await getAllTrips();
 
-    const initialTrips: Trip[] = backendTrips.map((t) => ({
+    const initialTrips: Trip[] = tripsData.map((t) => ({
       id: t.slug,
       title: t.title,
       description: t.short_description || t.title,

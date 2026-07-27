@@ -23,6 +23,7 @@ interface PaymentFormProps {
   onConfirm: () => void;
   /** Optional sidebar rendered to the right of the card (hotel summary, trip summary, etc.) */
   sidebar?: React.ReactNode;
+  isLoading?: boolean;
 }
 
 export default function PaymentForm({
@@ -32,6 +33,7 @@ export default function PaymentForm({
   onPrevious,
   onConfirm,
   sidebar,
+  isLoading,
 }: PaymentFormProps) {
   return (
     <div className={sidebar ? styles.twoCol : undefined}>
@@ -97,11 +99,12 @@ export default function PaymentForm({
             your card details.
           </div>
         </div>
-
+        {/* ── Footer ── */}
         <BookingStepFooter
           onPrevious={onPrevious}
           onContinue={onConfirm}
-          continueLabel={confirmLabel}
+          continueLabel={isLoading ? "Processing..." : confirmLabel}
+          continueDisabled={isLoading}
           showMoneyIcon
         />
       </div>

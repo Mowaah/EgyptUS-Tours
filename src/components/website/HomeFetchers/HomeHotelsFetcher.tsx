@@ -4,9 +4,9 @@ import { Hotel } from "@/types";
 
 export default async function HomeHotelsFetcher() {
   try {
-    const backendHotels = await getAllHotels();
+    const hotelsData = await getAllHotels();
 
-    const initialHotels: Hotel[] = backendHotels.map((h) => ({
+    const initialHotels: Hotel[] = hotelsData.map((h) => ({
       id: h.slug,
       name: h.name,
       location: h.location_text || "Egypt",

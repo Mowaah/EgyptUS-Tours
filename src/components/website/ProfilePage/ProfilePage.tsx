@@ -14,14 +14,13 @@ import {
 } from "@/components/shared";
 import type { TabType, TripBookingCardProps } from "@/components/shared";
 import { Trip, Hotel } from "@/types";
-import {
-  profileFavoriteCategoryTabs,
-  profileBookingCategoryTabs,
-  profileRequestCategoryTabs,
-} from "@/data/profilePageMocks";
 import { useAuth } from "@/contexts/AuthContext";
-import { getFavoriteTrips, getFavoriteHotels, getProfileRequests, getProfileSummary } from "@/lib/api";
+import { getFavoriteTrips, getFavoriteHotels, getProfileRequests, getProfileSummary, getProfileBookings } from "@/lib/api";
 import styles from "./ProfilePage.module.scss";
+
+const profileFavoriteCategoryTabs = ["Trips", "Hotels"];
+const profileBookingCategoryTabs = ["Trips", "Hotels", "Transportation"];
+const profileRequestCategoryTabs = ["Plan Your Trip", "Events (MICE)", "B2B"];
 
 function parseProfileTab(param: string | null): TabType {
   if (param === "favorites" || param === "bookings" || param === "requests") {
@@ -70,6 +69,11 @@ export default function ProfilePage() {
   const [eventsRequests, setEventsRequests] = useState<TripBookingCardProps[]>([]);
   const [b2bRequests, setB2bRequests] = useState<TripBookingCardProps[]>([]);
   const [requestsLoading, setRequestsLoading] = useState(false);
+
+  const [tripBookings, setTripBookings] = useState<TripBookingCardProps[]>([]);
+  const [hotelBookings, setHotelBookings] = useState<TripBookingCardProps[]>([]);
+  const [transportBookings, setTransportBookings] = useState<TripBookingCardProps[]>([]);
+  const [bookingsLoading, setBookingsLoading] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -175,14 +179,14 @@ export default function ProfilePage() {
             }
 
             return {
-              variant: req.type as any,
+              variant: (req.type === "events" ? "mice" : req.type) as any,
               imageSrc: req.image || defaultImage,
               tripTitle: req.title || req.event_name || req.company_name || "",
               status: req.status || "proposal_in_progress",
               infoMessage: req.info_message || "Proposal expected within 24-48 hrs",
               details: mappedDetails as any,
               primaryLabel: "View Details",
-              primaryHref: `/profile/requests-details?type=${req.type}&id=${req.id}`,
+              primaryHref: `/profile/requests-details?type=${req.type}&id=${req.id}&status=${req.status || "proposal_in_progress"}`,
             };
           };
 
@@ -196,6 +200,93 @@ export default function ProfilePage() {
         }
       };
       fetchRequests();
+    }
+  }, [isAuthenticated, activeTab]);
+
+  useEffect(() => {
+    if (isAuthenticated && activeTab === "bookings") {
+      const fetchBookings = async () => {
+        setBookingsLoading(true);
+        try {
+          const [tripData, hotelData, transportData] = await Promise.all([
+            getProfileBookings("trip"),
+            getProfileBookings("hotel"),
+            getProfileBookings("transport"),
+          ]);
+
+          const mapBooking = (bk: any, type: string, defaultImage: string): TripBookingCardProps => {
+            let mappedDetails: any = {};
+            const d = bk.details || {};
+
+            if (type === "trip") {
+              mappedDetails = {
+                tripName: d.trip_name || bk.title || "",
+                destination: d.destination || bk.destination || "",
+                departureDate: d.departure_date || "",
+                returnDate: d.return_date || "",
+                travelType: d.travel_type || "",
+                durationLabel: d.duration_label || "",
+                roomType: d.room_type || "",
+                roomExtraCount: d.room_extra_count,
+                travelersLabel: d.travelers_label || "",
+              };
+            } else if (type === "hotel") {
+              mappedDetails = {
+                checkIn: d.check_in || "",
+                checkOut: d.check_out || "",
+                nights: d.nights || "",
+                roomType: d.room_type || "",
+                roomNumber: d.room_number || "",
+                guests: d.guests || "",
+              };
+            } else if (type === "transport") {
+              mappedDetails = {
+                pickupLocation: d.pickup_location || bk.pickup_location || "",
+                dropoffLocation: d.dropoff_location || bk.dropoff_location || "",
+                pickupDate: d.pickup_date || bk.pickup_date || "",
+                pickupTime: d.pickup_time || bk.pickup_time || "",
+                durationLabel: d.duration_label || "",
+                passengersLabel: d.passengers_label || (bk.passengers ? `${bk.passengers} Passengers` : ""),
+                tripType: d.trip_type || bk.trip_type || "",
+                luggageLabel: d.luggage_label || (bk.luggage !== undefined ? `${bk.luggage} Bags` : ""),
+              };
+            }
+            const statusVal = bk.status || "confirmed";
+            const isPartiallyPaid = statusVal === "partially_paid";
+            const isCancelled = statusVal === "cancelled";
+
+            let primaryLabel = "View Details";
+            if (isPartiallyPaid) {
+              primaryLabel = "Complete Payment";
+            }
+
+            return {
+              variant: type as any,
+              imageSrc: bk.image || defaultImage,
+              tripTitle: bk.title || bk.hotel_name || bk.vehicle_name || "",
+              status: statusVal,
+              timerLabel: bk.timer_label || (isCancelled ? undefined : "In the past"),
+              paidAmount: bk.paid_amount ?? (isPartiallyPaid ? 1470 : undefined),
+              remainingAmount: bk.remaining_amount ?? (isPartiallyPaid ? 3430 : undefined),
+              totalAmount: bk.total_amount ?? (!isPartiallyPaid && !isCancelled ? 4900 : undefined),
+              cancelledLabel: bk.cancelled_label || (isCancelled ? "Cancelled by You — Apr 1, 2026" : undefined),
+              infoMessage: "",
+              details: mappedDetails,
+              primaryLabel,
+              primaryHref: `/profile/bookings-details?type=${type}&id=${bk.id}&status=${statusVal}`,
+            };
+          };
+
+          setTripBookings(tripData.map((b: any) => mapBooking(b, "trip", "/images/pyramids.jpg")));
+          setHotelBookings(hotelData.map((b: any) => mapBooking(b, "hotel", "/images/hotels/hotel6.png")));
+          setTransportBookings(transportData.map((b: any) => mapBooking(b, "transport", "/images/sedan.png")));
+        } catch (error) {
+          console.error("Failed to fetch bookings:", error);
+        } finally {
+          setBookingsLoading(false);
+        }
+      };
+      fetchBookings();
     }
   }, [isAuthenticated, activeTab]);
 
@@ -267,17 +358,61 @@ export default function ProfilePage() {
           );
         }
       case "bookings":
+        if (bookingsLoading) {
+          return <div className={styles.loading}>Loading bookings...</div>;
+        }
+
+        let bookingItems: TripBookingCardProps[] = [];
+        let emptyBIcon = "";
+        let emptyBTitle = "";
+        let emptyBDesc = "";
+        let emptyBBtn = "";
+        let emptyBHref = "";
+
+        if (bookingCategoryIndex === 0) {
+          bookingItems = tripBookings;
+          emptyBIcon = "/images/profile/glyphs/trips.svg";
+          emptyBTitle = "No bookings yet";
+          emptyBDesc = "When you book a trip, your itinerary and details will appear here.";
+          emptyBBtn = "Explore Trips";
+          emptyBHref = "/trips";
+        } else if (bookingCategoryIndex === 1) {
+          bookingItems = hotelBookings;
+          emptyBIcon = "/images/profile/glyphs/hotels.svg";
+          emptyBTitle = "No hotel bookings yet";
+          emptyBDesc = "When you book a hotel, your stay details will appear here.";
+          emptyBBtn = "Browse Hotels";
+          emptyBHref = "/hotels";
+        } else {
+          bookingItems = transportBookings;
+          emptyBIcon = "/images/profile/glyphs/transportations.svg";
+          emptyBTitle = "No transportation bookings yet";
+          emptyBDesc = "When you add transfers or transport, your arrangements will appear here.";
+          emptyBBtn = "Book Transportation";
+          emptyBHref = "/transportation";
+        }
+
+        if (bookingItems.length === 0) {
+          return (
+            <EmptyState
+              framedIcon
+              iconSrc={emptyBIcon}
+              iconWidth={90}
+              iconHeight={90}
+              title={emptyBTitle}
+              description={emptyBDesc}
+              buttonText={emptyBBtn}
+              buttonHref={emptyBHref}
+            />
+          );
+        }
+
         return (
-          <EmptyState
-            framedIcon
-            iconSrc={bookingCategoryIndex === 0 ? "/images/profile/glyphs/trips.svg" : bookingCategoryIndex === 1 ? "/images/profile/glyphs/hotels.svg" : "/images/profile/glyphs/transportations.svg"}
-            iconWidth={90}
-            iconHeight={90}
-            title={bookingCategoryIndex === 0 ? "No bookings yet" : bookingCategoryIndex === 1 ? "No hotel bookings yet" : "No transportation bookings yet"}
-            description={bookingCategoryIndex === 0 ? "When you book a trip, your itinerary and details will appear here." : bookingCategoryIndex === 1 ? "When you book a hotel, your stay details will appear here." : "When you add transfers or transport, your arrangements will appear here."}
-            buttonText={bookingCategoryIndex === 0 ? "Explore Trips" : bookingCategoryIndex === 1 ? "Browse Hotels" : "Book Transportation"}
-            buttonHref={bookingCategoryIndex === 0 ? "/trips" : bookingCategoryIndex === 1 ? "/hotels" : "/transportation"}
-          />
+          <div className={styles.bookingsList}>
+            {bookingItems.map((item, idx) => (
+              <TripBookingCard key={idx} {...item} />
+            ))}
+          </div>
         );
       case "requests":
         if (requestsLoading) {

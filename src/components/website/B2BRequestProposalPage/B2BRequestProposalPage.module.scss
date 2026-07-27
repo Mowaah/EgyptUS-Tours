@@ -227,3 +227,24 @@
     height: 56px;
   }
 }
+
+.errorBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  background-color: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-left: 4px solid #e53e3e;
+  border-radius: 10px;
+  color: #c53030;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: 1.5;
+  margin-bottom: 16px;
+
+  svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+}

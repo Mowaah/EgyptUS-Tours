@@ -4,10 +4,10 @@ import { TestimonialCard, ReviewGrid } from '@/components/shared';
 import type { Testimonial } from '@/components/shared/TestimonialCard/TestimonialCard';
 import styles from './EventsSuccessStories.module.scss';
 
-import type { BackendTestimonial } from "@/services/testimonialsService";
+import type { TestimonialData } from "@/services/testimonialsService";
 
 interface EventsSuccessStoriesProps {
-  testimonials?: BackendTestimonial[];
+  testimonials?: TestimonialData[];
 }
 
 const PAGE_SIZE = 6;

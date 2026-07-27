@@ -12,6 +12,7 @@ interface StepEventDetailsProps {
   onChange: (patch: Partial<EventProposalData["eventDetails"]>) => void;
   onContinue: () => void;
   onPrevious: () => void;
+  errors?: Record<string, string>;
 }
 
 export default function StepEventDetails({
@@ -19,6 +20,7 @@ export default function StepEventDetails({
   onChange,
   onContinue,
   onPrevious,
+  errors = {},
 }: StepEventDetailsProps) {
   return (
     <div className={pageStyles.stepFormCard}>
@@ -30,7 +32,7 @@ export default function StepEventDetails({
 
       <div className={pageStyles.stepFormCardScroll}>
         <div className={pageStyles.formGrid}>
-          <FormField label="Event Type" required>
+          <FormField label="Event Type" required error={errors.eventType}>
             <SelectDropdown
               id="evt-type"
               label="Select Type"
@@ -50,9 +52,10 @@ export default function StepEventDetails({
             placeholder="ex. Annual sales conferences 2026"
             value={data.eventName}
             onChange={(e) => onChange({ eventName: e.target.value })}
+            error={errors.eventName}
           />
 
-          <FormField label="Expected Attendees" required>
+          <FormField label="Expected Attendees" required error={errors.expectedAttendees}>
             <SelectDropdown
               id="evt-attendees"
               label="Select Range"
@@ -63,7 +66,7 @@ export default function StepEventDetails({
             />
           </FormField>
 
-          <FormField label="Preferred City" required>
+          <FormField label="Preferred City" required error={errors.preferredCity}>
             <SelectDropdown
               id="evt-city"
               label="Select City"
@@ -74,7 +77,7 @@ export default function StepEventDetails({
             />
           </FormField>
 
-          <FormField label="Start Date" required>
+          <FormField label="Start Date" required error={errors.startDate}>
             <CustomDatePicker
               variant="input"
               className={`${formStyles.input} ${pageStyles.dateInput}`}
@@ -83,7 +86,7 @@ export default function StepEventDetails({
             />
           </FormField>
 
-          <FormField label="End Date" required>
+          <FormField label="End Date" required error={errors.endDate}>
             <CustomDatePicker
               variant="input"
               className={`${formStyles.input} ${pageStyles.dateInput}`}

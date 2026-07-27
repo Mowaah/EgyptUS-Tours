@@ -2,7 +2,7 @@ import { PaginatedResponse } from "@/types/api";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-export interface BackendTestimonial {
+export interface TestimonialData {
   id: number;
   testimonial_number: string;
   customer_name: string;
@@ -17,7 +17,7 @@ export interface BackendTestimonial {
   created_at: string;
 }
 
-export async function getTestimonials(params?: Record<string, string>): Promise<BackendTestimonial[]> {
+export async function getTestimonials(params?: Record<string, string>): Promise<TestimonialData[]> {
   try {
     const url = new URL(`${API_BASE_URL}/api/v1/testimonials/`);
     
@@ -40,7 +40,7 @@ export async function getTestimonials(params?: Record<string, string>): Promise<
       throw new Error(`Failed to fetch testimonials: ${res.statusText}`);
     }
 
-    const data: PaginatedResponse<BackendTestimonial> = await res.json();
+    const data: PaginatedResponse<TestimonialData> = await res.json();
     return data.results || [];
   } catch (error) {
     console.error("Error in getTestimonials:", error);

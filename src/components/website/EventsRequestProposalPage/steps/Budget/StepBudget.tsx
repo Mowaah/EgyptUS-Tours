@@ -14,6 +14,9 @@ interface StepBudgetProps {
   onChange: (patch: Partial<EventProposalData["budget"]>) => void;
   onContinue: () => void;
   onPrevious: () => void;
+  isSubmitting?: boolean;
+  submitError?: string | null;
+  errors?: Record<string, string>;
 }
 
 export default function StepBudget({
@@ -21,6 +24,9 @@ export default function StepBudget({
   onChange,
   onContinue,
   onPrevious,
+  isSubmitting,
+  submitError,
+  errors = {},
 }: StepBudgetProps) {
   return (
     <div className={pageStyles.stepFormCard}>
@@ -32,7 +38,7 @@ export default function StepBudget({
 
       <div className={pageStyles.stepFormCardScroll}>
         <div className={pageStyles.formGrid}>
-          <FormField label="Estimated Budget In USD" required>
+          <FormField label="Estimated Budget In USD" required error={errors.estimatedBudget}>
             <SelectDropdown
               id="bud-est"
               label="Select Type"
@@ -43,7 +49,7 @@ export default function StepBudget({
             />
           </FormField>
 
-          <FormField label="Budget Flexibility" required>
+          <FormField label="Budget Flexibility" required error={errors.budgetFlexibility}>
             <SelectDropdown
               id="bud-flex"
               label="Select Type"
@@ -93,8 +99,18 @@ export default function StepBudget({
         </div>
       </div>
 
+      {submitError && (
+        <div style={{ color: "#e53e3e", marginBottom: "16px", padding: "12px", backgroundColor: "#fff5f5", borderRadius: "8px", border: "1px solid #fed7d7", fontSize: "0.9rem" }}>
+          {submitError}
+        </div>
+      )}
 
-      <BookingStepFooter onPrevious={onPrevious} onContinue={onContinue} continueLabel="Submit Request" />
+      <BookingStepFooter
+        onPrevious={onPrevious}
+        onContinue={onContinue}
+        continueLabel={isSubmitting ? "Submitting..." : "Submit Request"}
+        continueDisabled={isSubmitting}
+      />
     </div>
   );
 }

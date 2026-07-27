@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { SectionHeader, Pagination, TestimonialCard } from "@/components/shared";
 import type { Testimonial } from "@/components/shared/TestimonialCard/TestimonialCard";
-import type { BackendTestimonial } from "@/services/testimonialsService";
+import type { TestimonialData } from "@/services/testimonialsService";
 import styles from "./TestimonialsSection.module.scss";
 
 
@@ -11,7 +11,7 @@ import styles from "./TestimonialsSection.module.scss";
 export default function TestimonialsSection({
   initialTestimonials = [],
 }: {
-  initialTestimonials?: BackendTestimonial[];
+  initialTestimonials?: TestimonialData[];
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.max(1, Math.ceil(initialTestimonials.length / 4) || 15);

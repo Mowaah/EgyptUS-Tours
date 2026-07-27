@@ -1,10 +1,10 @@
 import FaqSection from "@/components/website/FaqSection/FaqSection";
 import Image from "next/image";
 import styles from "./FaqPage.module.scss";
-import { BackendFaq } from "@/services/legalHelpService";
+import { FaqData } from "@/services/legalHelpService";
 
 interface Props {
-  initialFaqs?: BackendFaq[];
+  initialFaqs?: FaqData[];
 }
 
 export default function FaqPage({ initialFaqs }: Props) {

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { PageHeader, DetailGallery, DetailHeroBar, DetailTabNav } from "@/components/shared";
 import Image from "next/image";
 import Button from "@/components/shared/Button/Button";
@@ -13,7 +12,7 @@ import styles from "./TransportationDetailPage.module.scss";
 import { VehicleDetail } from "@/types/api";
 
 interface TransportationDetailPageProps {
-  backendVehicle: VehicleDetail;
+  vehicleDetail: VehicleDetail;
 }
 
 const TABS = [
@@ -22,37 +21,36 @@ const TABS = [
   { id: "reviews", label: "Traveler Reviews" },
 ];
 
-export default function TransportationDetailPage({ backendVehicle }: TransportationDetailPageProps) {
-  const [isFavorite, setIsFavorite] = useState(false);
-  const toggleFavorite = () => setIsFavorite((prev) => !prev);
-
+export default function TransportationDetailPage({ vehicleDetail }: TransportationDetailPageProps) {
   const vehicle = {
-    id: backendVehicle.slug,
-    title: backendVehicle.title || backendVehicle.name,
-    description: backendVehicle.description,
-    rating: parseFloat(backendVehicle.rating_avg) || 0,
-    reviews: backendVehicle.review_count,
-    images: backendVehicle.gallery && backendVehicle.gallery.length > 0
-      ? backendVehicle.gallery.map(g => g.image)
-      : [backendVehicle.image || "/images/sedan.png"],
-    price: backendVehicle.price_amount,
+    id: vehicleDetail.slug,
+    title: vehicleDetail.title || vehicleDetail.name,
+    description: vehicleDetail.description,
+    rating: parseFloat(vehicleDetail.rating_avg) || 0,
+    reviews: vehicleDetail.review_count,
+    images: vehicleDetail.gallery && vehicleDetail.gallery.length > 0
+      ? vehicleDetail.gallery.map(g => g.image)
+      : [vehicleDetail.image || "/images/sedan.png"],
+    price: vehicleDetail.price_amount,
   };
 
   const handleShare = async () => {
-    try {
-      if (navigator.share) {
+    if (navigator.share) {
+      try {
         await navigator.share({
           title: vehicle.title,
+          text: vehicle.description,
           url: window.location.href,
         });
-      } else {
-        await navigator.clipboard.writeText(window.location.href);
-        alert('Link copied to clipboard!');
+      } catch (err) {
+        console.log("Error sharing:", err);
       }
-    } catch (error) {
-      console.error('Error sharing:', error);
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      alert("Link copied to clipboard!");
     }
   };
+
 
   return (
     <div className={styles.page}>
@@ -60,10 +58,11 @@ export default function TransportationDetailPage({ backendVehicle }: Transportat
         className={styles.pageHeader}
         breadcrumbs={[
           { label: "Transportation", href: "/transportation" },
-          { label: "Details", isCurrent: true },
+          { label: vehicle.title, isCurrent: true },
         ]}
-        backButton={{ text: "Transportation", href: "/transportation" }}
-        showMobileActions={true}
+        title={vehicle.title}
+        subtitle="Experience seamless travel across Egypt in our premium, modern fleet with professional drivers."
+        decorationSrc="/images/dotted-line3.svg"
       />
 
       <div className={styles.heroSection}>
@@ -82,7 +81,7 @@ export default function TransportationDetailPage({ backendVehicle }: Transportat
               description={vehicle.description}
               rating={vehicle.rating}
               reviewCount={vehicle.reviews}
-              isFavorite={false}
+              showFavorite={false}
             >
               <Button
                 variant="primary"
@@ -106,12 +105,12 @@ export default function TransportationDetailPage({ backendVehicle }: Transportat
           <div className={styles.mainContent}>
             <TransportationOverview
               description={vehicle.description}
-              luggage={backendVehicle.luggage}
-              passengers={backendVehicle.passengers}
-              durationHoursMin={backendVehicle.duration_hours_min}
-              durationHoursMax={backendVehicle.duration_hours_max}
+              luggage={vehicleDetail.luggage}
+              passengers={vehicleDetail.passengers}
+              durationHoursMin={vehicleDetail.duration_hours_min}
+              durationHoursMax={vehicleDetail.duration_hours_max}
             />
-            <TransportationFeatures features={backendVehicle.features || []} />
+            <TransportationFeatures features={vehicleDetail.features || []} />
           </div>
 
           <div className={styles.bookingSidebar}>
@@ -121,7 +120,7 @@ export default function TransportationDetailPage({ backendVehicle }: Transportat
       </div>
 
       <div className={styles.container}>
-        <TransportationReviews reviews={backendVehicle.vehicle_reviews || []} />
+        <TransportationReviews reviews={vehicleDetail.vehicle_reviews || []} />
       </div>
     </div>
   );

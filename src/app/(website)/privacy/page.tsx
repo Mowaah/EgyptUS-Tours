@@ -10,9 +10,9 @@ export const metadata = {
 export const revalidate = 60;
 
 export default async function Page() {
-  const backendPrivacy = await getPrivacy();
+  const privacyData = await getPrivacy();
 
-  const sections: LegalSection[] = backendPrivacy.map(t => ({
+  const sections: LegalSection[] = privacyData.map(t => ({
     id: `section-${t.id}`,
     title: t.title,
     content: t.content || ""

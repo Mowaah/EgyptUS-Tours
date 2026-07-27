@@ -109,6 +109,7 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
               onContinue={handleContinue}
               totalAmount={totalAmount}
               depositAmount={depositAmount}
+              isGroupTrip={isGroupTrip}
             />
           )}
         </div>

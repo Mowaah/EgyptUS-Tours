@@ -10,9 +10,9 @@ export const metadata = {
 export const revalidate = 60;
 
 export default async function Page() {
-  const backendTerms = await getTerms();
+  const termsData = await getTerms();
 
-  const sections: LegalSection[] = backendTerms.map(t => ({
+  const sections: LegalSection[] = termsData.map(t => ({
     id: `section-${t.id}`,
     title: t.title,
     content: t.content || ""

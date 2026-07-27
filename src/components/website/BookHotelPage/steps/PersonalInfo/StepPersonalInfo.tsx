@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import {
   BookingStepFooter,
   FormField,
-  PhonePrefixSelect,
+  PhoneInput,
   CheckboxIndicator,
   NationalitySelect,
 } from "@/components/shared";
+import { isValidEmail, isValidPhone } from "@/utils/validators";
 import planPage from "../../../PlanYourTripPage/PlanYourTripPage.module.scss";
 import travelerStyles from "../../../PlanYourTripPage/steps/TravelerInfo/StepTravelerInfo.module.scss";
 import formStyles from "@/components/shared/FormField/FormField.module.scss";
@@ -33,6 +34,25 @@ export default function StepPersonalInfo({
   totalAmount, vatAmount, depositAmount, totalRooms, totalGuests,
 }: StepPersonalInfoProps) {
   const [showTermsModal, setShowTermsModal] = useState(false);
+
+  const handleContinue = () => {
+    if (!formData.name || !formData.email || !formData.phone || !formData.nationality) {
+      alert("Please fill in all required personal information fields.");
+      return;
+    }
+    
+    if (!isValidEmail(formData.email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    if (!isValidPhone(formData.phone)) {
+      alert("Please enter a valid phone number.");
+      return;
+    }
+
+    onContinue();
+  };
 
   return (
     <div>
@@ -63,6 +83,8 @@ export default function StepPersonalInfo({
             <div className={planPage.formGrid}>
               <FormField
                 id="pi-name"
+                name="name"
+                autoComplete="name"
                 label="Enter your Name"
                 className={planPage.formInput}
                 type="text"
@@ -73,6 +95,8 @@ export default function StepPersonalInfo({
               />
               <FormField
                 id="pi-email"
+                name="email"
+                autoComplete="email"
                 label="Enter your E-mail"
                 className={planPage.formInput}
                 type="email"
@@ -85,17 +109,13 @@ export default function StepPersonalInfo({
                 label="Enter your Phone Number"
                 required
               >
-                <div className={travelerStyles.phoneRow}>
-                  <PhonePrefixSelect phoneValue={formData.phone} onPhoneChange={(val) => onChange({ phone: val })} />
-                  <input
-                    id="pi-phone"
-                    type="tel"
-                    className={`${formStyles.input} ${travelerStyles.inputPhone}`}
-                    value={formData.phone}
-                    onChange={(e) => onChange({ phone: e.target.value })}
-                    placeholder="000-0000"
-                  />
-                </div>
+                <PhoneInput 
+                  id="pi-phone"
+                  name="tel"
+                  autoComplete="tel"
+                  value={formData.phone}
+                  onChange={(val) => onChange({ phone: val })}
+                />
               </FormField>
 
               <FormField
@@ -137,7 +157,7 @@ export default function StepPersonalInfo({
 
             <BookingStepFooter
               onPrevious={onPrevious}
-              onContinue={onContinue}
+              onContinue={handleContinue}
               continueLabel="Continue To Payment"
               continueDisabled={!formData.termsAccepted}
               showMoneyIcon

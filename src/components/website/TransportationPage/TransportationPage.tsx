@@ -16,11 +16,11 @@ import SortButton from "@/components/shared/SortButton/SortButton";
 import FaqSection from "@/components/website/FaqSection/FaqSection";
 import styles from "./TransportationPage.module.scss";
 
-import { BackendFaq } from "@/services/legalHelpService";
+import { FaqData } from "@/services/legalHelpService";
 
 interface TransportationPageProps {
   vehicles: Vehicle[];
-  faqs?: BackendFaq[];
+  faqs?: FaqData[];
 }
 
 // If original image isn't available, we fallback to a known one like pyramids or missing.

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button, SuccessModal, FormField } from "@/components/shared";
+import { submitContactInquiry, extractApiError } from "@/lib/api";
 import Image from "next/image";
 import styles from "./ContactSection.module.scss";
 
@@ -12,9 +13,38 @@ const AVATARS = [
 ];
 
 export default function ContactSection() {
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const isEmailInvalid = email.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const handleSubmit = async () => {
+    if (!fullName.trim() || !email.trim() || !message.trim() || isEmailInvalid) {
+      setSubmitError("Please fill out all required fields with a valid email address.");
+      return;
+    }
+    try {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      await submitContactInquiry({
+        full_name: fullName.trim(),
+        email: email.trim(),
+        message: message.trim(),
+      });
+      setShowSuccess(true);
+      setFullName("");
+      setEmail("");
+      setMessage("");
+    } catch (err: any) {
+      console.error("Failed to submit contact inquiry:", err);
+      setSubmitError(extractApiError(err, "Something went wrong sending your message. Please try again."));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <section className={styles.section}>
@@ -51,9 +81,22 @@ export default function ContactSection() {
           </div>
 
           <div className={styles.formCard}>
-            <FormField label="Full Name" type="text" placeholder="Full name here..." required />
+            <FormField
+              id="contactFullName"
+              name="name"
+              autoComplete="name"
+              label="Full Name"
+              type="text"
+              placeholder="Full name here..."
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+            />
 
             <FormField
+              id="contactEmail"
+              name="email"
+              autoComplete="email"
               label="Email"
               type="email"
               placeholder="Your email here..."
@@ -64,19 +107,28 @@ export default function ContactSection() {
             />
 
             <FormField
+              id="contactMessage"
+              name="message"
               label="Message"
               isTextarea
               placeholder="How we can help you?"
               rows={5}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
               required
             />
+
+            {submitError && (
+              <div style={{ color: "#e53e3e", marginBottom: "16px", padding: "12px", backgroundColor: "#fff5f5", borderRadius: "8px", border: "1px solid #fed7d7", fontSize: "0.9rem" }}>
+                {submitError}
+              </div>
+            )}
 
             <Button
               variant="secondary"
               fullWidth
-              onClick={() => {
-                if (!isEmailInvalid) setShowSuccess(true);
-              }}
+              onClick={handleSubmit}
+              disabled={isSubmitting}
               icon={
                 <Image
                   src="/images/arrows/arrow-right.svg"
@@ -87,7 +139,7 @@ export default function ContactSection() {
                 />
               }
             >
-              Send
+              {isSubmitting ? "Sending..." : "Send"}
             </Button>
           </div>
         </div>

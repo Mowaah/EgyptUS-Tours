@@ -21,12 +21,12 @@ import TripReviews from "./TripReviews/TripReviews";
 import TripMoreTrips from "./TripMoreTrips/TripMoreTrips";
 import styles from "./TripDetailPage.module.scss";
 
-import { BackendTestimonial } from "@/services/testimonialsService";
+import { TestimonialData } from "@/services/testimonialsService";
 import { useFavorite } from "@/hooks/useFavorite";
 
 interface TripDetailPageProps {
   trip: Trip;
-  testimonials?: BackendTestimonial[];
+  testimonials?: TestimonialData[];
 }
 
 const TRIP_TABS = [
