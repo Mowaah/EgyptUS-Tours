@@ -17,7 +17,9 @@ export default function ForgotPasswordPage() {
 
   const isFormValid = email.trim() !== "" && !validateEmail(email);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const emailMsg = validateEmail(email);
@@ -25,12 +27,22 @@ export default function ForgotPasswordPage() {
 
     if (emailMsg) return;
 
-    // Simulate incorrect email
-    setEmailError("We couldn't find an account with that email address.");
-    return;
+    setIsSubmitting(true);
+    setSuccessMessage("");
     
-    // setIsSubmitting(true);
-    // router.push("/dashboard/otp-confirmation");
+    try {
+      const { forgotAdminPassword } = await import("@/lib/adminApi");
+      const res = await forgotAdminPassword({ email });
+      setSuccessMessage(res.detail || "A reset link has been sent to your email.");
+    } catch (err: any) {
+      if (err.response?.data?.detail) {
+        setEmailError(err.response.data.detail);
+      } else {
+        setEmailError("We couldn't process your request at this time.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -46,29 +58,40 @@ export default function ForgotPasswordPage() {
           </p>
         </header>
 
-        <form className={styles.form} onSubmit={handleSubmit} noValidate>
-          <DashboardField
-            id="forgot-password-email"
-            label="E-mail"
-            type="email"
-            autoComplete="email"
-            placeholder="Example@Gmail.Com"
-            value={email}
-            error={emailError}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              if (emailError) setEmailError("");
-            }}
-          />
+        {successMessage ? (
+          <div className={styles.form} style={{ textAlign: "center" }}>
+            <div style={{ color: "#039855", marginBottom: "24px", padding: "16px", backgroundColor: "#ECFDF3", borderRadius: "8px" }}>
+              {successMessage}
+            </div>
+            <AuthSubmitButton type="button" onClick={() => router.push("/dashboard/login")}>
+              Return to Login
+            </AuthSubmitButton>
+          </div>
+        ) : (
+          <form className={styles.form} onSubmit={handleSubmit} noValidate>
+            <DashboardField
+              id="forgot-password-email"
+              label="E-mail"
+              type="email"
+              autoComplete="email"
+              placeholder="Example@Gmail.Com"
+              value={email}
+              error={emailError}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (emailError) setEmailError("");
+              }}
+            />
 
-          <AuthSubmitButton
-            type="submit"
-            disabled={isSubmitting}
-            isLoading={isSubmitting}
-          >
-            Send OTP
-          </AuthSubmitButton>
-        </form>
+            <AuthSubmitButton
+              type="submit"
+              disabled={isSubmitting}
+              isLoading={isSubmitting}
+            >
+              Send Reset Link
+            </AuthSubmitButton>
+          </form>
+        )}
       </div>
     </DashboardAuthLayout>
   );

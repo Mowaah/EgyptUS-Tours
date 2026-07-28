@@ -7,39 +7,54 @@ import {
   type ChangeEvent,
   type FormEvent,
 } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { QRCodeSVG } from "qrcode.react";
 import AuthBackLink from "../AuthBackLink/AuthBackLink";
 import AuthSubmitButton from "../AuthSubmitButton/AuthSubmitButton";
 import DashboardAuthLayout from "../DashboardAuthLayout/DashboardAuthLayout";
 import styles from "./OtpConfirmationPage.module.scss";
 
-const OTP_LENGTH = 4;
-const RESEND_COOLDOWN_SECONDS = 30;
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
+import { verifyAdminTotp, enrollAdminTotp, confirmAdminTotp } from "@/lib/adminApi";
+
+const OTP_LENGTH = 6;
 
 export default function OtpConfirmationPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const action = searchParams.get("action"); // 'setup' | 'verify'
+  const token = searchParams.get("token");
+
+  const { loginAdminTokens } = useAdminAuth();
+
   const [code, setCode] = useState(Array(OTP_LENGTH).fill(""));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const [cooldownSeconds, setCooldownSeconds] = useState(
-    RESEND_COOLDOWN_SECONDS,
-  );
+  const [errorMsg, setErrorMsg] = useState("");
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
 
+  const [qrCodeData, setQrCodeData] = useState<{ otpauth_url: string; secret: string } | null>(null);
+
   const isFormValid = code.every(Boolean);
-  const isResendDisabled = cooldownSeconds > 0;
-  const formattedCooldown = `00:${cooldownSeconds.toString().padStart(2, "0")}`;
 
   useEffect(() => {
-    if (cooldownSeconds === 0) return;
+    if (!action || !token) {
+      router.replace("/dashboard/login");
+      return;
+    }
 
-    const timer = window.setTimeout(() => {
-      setCooldownSeconds((seconds) => Math.max(seconds - 1, 0));
-    }, 1000);
-
-    return () => window.clearTimeout(timer);
-  }, [cooldownSeconds]);
+    if (action === "setup" && !qrCodeData) {
+      enrollAdminTotp({ setup_token: token })
+        .then((res) => {
+          setQrCodeData(res);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch TOTP enrollment", err);
+          setErrorMsg("Failed to start setup. Please login again.");
+        });
+    }
+  }, [action, token, router, qrCodeData]);
 
   const handleDigitChange = (
     index: number,
@@ -49,51 +64,82 @@ export default function OtpConfirmationPage() {
     const nextCode = [...code];
     nextCode[index] = nextValue;
     setCode(nextCode);
-    if (hasError) setHasError(false);
+    if (hasError) {
+      setHasError(false);
+      setErrorMsg("");
+    }
 
     if (nextValue && index < OTP_LENGTH - 1) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!isFormValid) {
       setHasError(true);
+      setErrorMsg("Please enter the complete 6-digit code.");
       return;
     }
 
-    // Simulate incorrect OTP
-    setHasError(true);
-    return;
-    
-    // setIsSubmitting(true);
-    // router.push("/dashboard/create-new-password");
-  };
+    setIsSubmitting(true);
+    setHasError(false);
+    setErrorMsg("");
 
-  const handleResend = () => {
-    if (isResendDisabled) return;
+    const totpCode = code.join("");
 
-    // TODO: wire to resend OTP API
-    setCooldownSeconds(RESEND_COOLDOWN_SECONDS);
+    try {
+      if (action === "setup") {
+        const res = await confirmAdminTotp({ setup_token: token as string, code: totpCode });
+        loginAdminTokens(res.access, res.refresh, res.user);
+        router.push("/dashboard");
+      } else if (action === "verify") {
+        const res = await verifyAdminTotp({ challenge_token: token as string, code: totpCode });
+        loginAdminTokens(res.access, res.refresh, res.user);
+        router.push("/dashboard");
+      }
+    } catch (err: any) {
+      setHasError(true);
+      if (err.response?.data?.detail) {
+        setErrorMsg(err.response.data.detail);
+      } else {
+        setErrorMsg("Wrong OTP code.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <DashboardAuthLayout compactTop>
-      <AuthBackLink href="/dashboard/forgot-password" />
+      <AuthBackLink href="/dashboard/login" />
 
       <div className={styles.content}>
         <header className={styles.welcome}>
-          <h1 className={styles.title}>OTP Confirmation</h1>
+          <h1 className={styles.title}>
+            {action === "setup" ? "Set up Two-Factor Auth" : "Two-Factor Verification"}
+          </h1>
           <p className={styles.subtitle}>
-            A 4-digit verification code has been sent to ad@.... It will be
-            available within one minute.
+            {action === "setup"
+              ? "Scan the QR code with your Authenticator app (like Google Authenticator), then enter the 6-digit code below."
+              : "Open your Authenticator app and enter the 6-digit verification code below."}
           </p>
         </header>
 
+        {action === "setup" && qrCodeData && (
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "32px" }}>
+            <div style={{ background: "white", padding: "16px", borderRadius: "8px", border: "1px solid #EAECF0" }}>
+              <QRCodeSVG value={qrCodeData.otpauth_url} size={150} />
+            </div>
+            <p style={{ marginTop: "16px", fontSize: "14px", color: "#667085" }}>
+              Manual setup secret: <strong style={{ color: "#1D2939" }}>{qrCodeData.secret}</strong>
+            </p>
+          </div>
+        )}
+
         <form className={styles.form} onSubmit={handleSubmit} noValidate>
           <div className={styles.codeGroup}>
-            <label className={styles.codeLabel}>Enter the code you received</label>
+            <label className={styles.codeLabel}>Enter 6-digit code</label>
             <div className={styles.codeInputs}>
               {code.map((digit, index) => (
                 <input
@@ -124,7 +170,7 @@ export default function OtpConfirmationPage() {
             {hasError && (
               <div className={styles.errorText}>
                 <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
-                <span>Wrong OTP code</span>
+                <span>{errorMsg}</span>
               </div>
             )}
           </div>
@@ -134,23 +180,9 @@ export default function OtpConfirmationPage() {
             disabled={isSubmitting}
             isLoading={isSubmitting}
           >
-            Verify
+            Verify Code
           </AuthSubmitButton>
         </form>
-
-        <p className={styles.resendText}>
-          <span className={styles.resendPrompt}>
-            <span>Having trouble receiving the code?</span>
-            <strong>{formattedCooldown}</strong>
-          </span>
-          <button
-            type="button"
-            disabled={isResendDisabled}
-            onClick={handleResend}
-          >
-            Resend
-          </button>
-        </p>
       </div>
     </DashboardAuthLayout>
   );

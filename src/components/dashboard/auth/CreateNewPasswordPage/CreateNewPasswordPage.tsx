@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { PasswordToggleButton } from "@/components/shared";
 import { DashboardField } from "@/components/dashboard/shared";;
 import { validatePassword } from "@/utils/validation";
@@ -9,9 +9,14 @@ import AuthBackLink from "../AuthBackLink/AuthBackLink";
 import AuthSubmitButton from "../AuthSubmitButton/AuthSubmitButton";
 import DashboardAuthLayout from "../DashboardAuthLayout/DashboardAuthLayout";
 import styles from "./CreateNewPasswordPage.module.scss";
+import { resetAdminPassword } from "@/lib/adminApi";
 
 export default function CreateNewPasswordPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const uidb64 = searchParams.get("uidb64");
+  const token = searchParams.get("token");
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -19,6 +24,7 @@ export default function CreateNewPasswordPage() {
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
 
   const passwordsMatch =
     confirmPassword.trim() !== "" && password === confirmPassword;
@@ -28,7 +34,7 @@ export default function CreateNewPasswordPage() {
     !validatePassword(password) &&
     passwordsMatch;
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const nextPasswordError = validatePassword(password);
@@ -42,10 +48,28 @@ export default function CreateNewPasswordPage() {
     setConfirmPasswordError(nextConfirmPasswordError ?? "");
 
     if (nextPasswordError || nextConfirmPasswordError) return;
+    
+    if (!uidb64 || !token) {
+      setPasswordError("Invalid reset link. Please request a new one.");
+      return;
+    }
 
     setIsSubmitting(true);
-    // TODO: wire to password reset API
-    router.push("/dashboard/login");
+    try {
+      await resetAdminPassword({ uidb64, token, new_password: password });
+      setSuccessMsg("Your password has been reset successfully. You can now login.");
+      setTimeout(() => {
+        router.push("/dashboard/login");
+      }, 3000);
+    } catch (err: any) {
+      if (err.response?.data?.detail) {
+        setPasswordError(err.response.data.detail);
+      } else {
+        setPasswordError("Failed to reset password. The link might be expired.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -62,67 +86,75 @@ export default function CreateNewPasswordPage() {
         </header>
 
         <form className={styles.form} onSubmit={handleSubmit} noValidate>
-          <div className={styles.fields}>
-            <DashboardField
-              id="new-password"
-              label={
-                <>
-                  New Password <span className={styles.requiredMark}>*</span>
-                </>
-              }
-              type={showPassword ? "text" : "password"}
-              autoComplete="new-password"
-              placeholder="************"
-              value={password}
-              error={passwordError}
-              onChange={(event) => {
-                setPassword(event.target.value);
-                if (passwordError) setPasswordError("");
-                if (confirmPasswordError) setConfirmPasswordError("");
-              }}
-              endAdornment={
-                <PasswordToggleButton
-                  isVisible={showPassword}
-                  className={styles.eyeBtn}
-                  onToggle={() => setShowPassword((value) => !value)}
-                />
-              }
-            />
+          {successMsg ? (
+            <div style={{ textAlign: "center", color: "#039855", marginBottom: "24px", padding: "16px", backgroundColor: "#ECFDF3", borderRadius: "8px" }}>
+              {successMsg}
+            </div>
+          ) : (
+            <div className={styles.fields}>
+              <DashboardField
+                id="new-password"
+                label={
+                  <>
+                    New Password <span className={styles.requiredMark}>*</span>
+                  </>
+                }
+                type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
+                placeholder="************"
+                value={password}
+                error={passwordError}
+                onChange={(event) => {
+                  setPassword(event.target.value);
+                  if (passwordError) setPasswordError("");
+                  if (confirmPasswordError) setConfirmPasswordError("");
+                }}
+                endAdornment={
+                  <PasswordToggleButton
+                    isVisible={showPassword}
+                    className={styles.eyeBtn}
+                    onToggle={() => setShowPassword((value) => !value)}
+                  />
+                }
+              />
 
-            <DashboardField
-              id="confirm-new-password"
-              label={
-                <>
-                  Confirm New Password{" "}
-                  <span className={styles.requiredMark}>*</span>
-                </>
-              }
-              type={showConfirmPassword ? "text" : "password"}
-              autoComplete="new-password"
-              placeholder="************"
-              value={confirmPassword}
-              error={confirmPasswordError}
-              onChange={(event) => {
-                setConfirmPassword(event.target.value);
-                if (confirmPasswordError) setConfirmPasswordError("");
-              }}
-              endAdornment={
-                <PasswordToggleButton
-                  isVisible={showConfirmPassword}
-                  className={styles.eyeBtn}
-                  onToggle={() => setShowConfirmPassword((value) => !value)}
-                />
-              }
-            />
-          </div>
+              <DashboardField
+                id="confirm-new-password"
+                label={
+                  <>
+                    Confirm New Password{" "}
+                    <span className={styles.requiredMark}>*</span>
+                  </>
+                }
+                type={showConfirmPassword ? "text" : "password"}
+                autoComplete="new-password"
+                placeholder="************"
+                value={confirmPassword}
+                error={confirmPasswordError}
+                onChange={(event) => {
+                  setConfirmPassword(event.target.value);
+                  if (confirmPasswordError) setConfirmPasswordError("");
+                }}
+                endAdornment={
+                  <PasswordToggleButton
+                    isVisible={showConfirmPassword}
+                    className={styles.eyeBtn}
+                    onToggle={() => setShowConfirmPassword((value) => !value)}
+                  />
+                }
+              />
+            </div>
+          )}
 
-          <AuthSubmitButton
-            type="submit"
-            disabled={isSubmitting}
-            isLoading={isSubmitting}
-          >
-            Reset Password
-          </AuthSubmitButton>
+          {!successMsg && (
+            <AuthSubmitButton
+              type="submit"
+              disabled={isSubmitting}
+              isLoading={isSubmitting}
+            >
+              Reset Password
+            </AuthSubmitButton>
+          )}
         </form>
       </div>
     </DashboardAuthLayout>

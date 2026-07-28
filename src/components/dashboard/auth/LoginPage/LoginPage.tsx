@@ -10,8 +10,12 @@ import AuthSubmitButton from "../AuthSubmitButton/AuthSubmitButton";
 import DashboardAuthLayout from "../DashboardAuthLayout/DashboardAuthLayout";
 import styles from "./LoginPage.module.scss";
 
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
+import { loginAdmin } from "@/lib/adminApi";
+
 export default function LoginPage() {
   const router = useRouter();
+  const { loginAdminTokens } = useAdminAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -25,7 +29,7 @@ export default function LoginPage() {
     !validateEmail(email) &&
     !validatePassword(password);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const emailMsg = validateEmail(email);
@@ -35,12 +39,27 @@ export default function LoginPage() {
 
     if (emailMsg || passwordMsg) return;
 
-    // Simulate incorrect password
-    setPasswordError("The password you entered is incorrect.");
-    return;
-    
-    // setIsSubmitting(true);
-    // router.push("/dashboard");
+    setIsSubmitting(true);
+    try {
+      const res = await loginAdmin({ email, password });
+      if (res.requires_totp) {
+        router.push(`/dashboard/otp-confirmation?action=verify&token=${res.challenge_token}`);
+      } else if (res.requires_totp_setup) {
+        router.push(`/dashboard/otp-confirmation?action=setup&token=${res.setup_token}`);
+      } else if (res.access && res.refresh) {
+        // Fallback in case TOTP is completely disabled and JWT is returned immediately
+        loginAdminTokens(res.access, res.refresh, res.user);
+        router.push("/dashboard");
+      }
+    } catch (err: any) {
+      if (err.response?.data?.detail) {
+        setPasswordError(err.response.data.detail);
+      } else {
+        setPasswordError("An unexpected error occurred. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
