@@ -4,10 +4,17 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import styles from "./ProfileHeader.module.scss";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 export function ProfileHeader() {
   const router = useRouter();
+  const { adminUser, logoutAdminTokens } = useAdminAuth();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
+  const formattedLastLogin = adminUser?.last_login 
+    ? new Date(adminUser.last_login).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) 
+    : "Never";
+
   return (
     <div className={styles.headerContainer}>
       <div className={styles.content}>
@@ -15,20 +22,24 @@ export function ProfileHeader() {
         {/* User Info Left Side */}
         <div className={styles.userInfo}>
           <div className={styles.avatarWrapper}>
-            <div className={styles.avatarPlaceholder} />
+            {adminUser?.profile_picture ? (
+              <img src={adminUser.profile_picture} alt="Avatar" className={styles.avatarImage} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+            ) : (
+              <div className={styles.avatarPlaceholder} />
+            )}
           </div>
 
           <div className={styles.textGroup}>
             <div className={styles.titleRow}>
-              <h1 className={styles.name}>Adam Saed Bakr</h1>
-              <span className={styles.badgeSuperAdmin}>Super Admin</span>
-              <span className={styles.badgeActive}>Active</span>
+              <h1 className={styles.name}>{adminUser?.full_name || "Loading..."}</h1>
+              <span className={styles.badgeSuperAdmin}>{adminUser?.role_label || adminUser?.role || "Admin"}</span>
+              {adminUser?.is_active && <span className={styles.badgeActive}>Active</span>}
             </div>
 
             <div className={styles.subtitleRow}>
-              <span className={styles.metaText}>IP : 124.33.12.4</span>
+              <span className={styles.metaText}>{adminUser?.email}</span>
               <span className={styles.metaDot}>•</span>
-              <span className={styles.metaText}>Last log in Today, 9:01 AM</span>
+              <span className={styles.metaText}>Last log in: {formattedLastLogin}</span>
             </div>
           </div>
         </div>
@@ -60,6 +71,7 @@ export function ProfileHeader() {
         onClose={() => setIsLogoutModalOpen(false)}
         onConfirm={() => {
           setIsLogoutModalOpen(false);
+          logoutAdminTokens();
           router.push("/dashboard/login");
         }}
       />

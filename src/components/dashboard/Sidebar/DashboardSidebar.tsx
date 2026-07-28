@@ -7,6 +7,7 @@ import { useState, useRef, useLayoutEffect, useEffect } from "react";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import styles from "./DashboardSidebar.module.scss";
 import { useSidebarContext } from "@/contexts/SidebarContext";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 interface NavItem {
   label: string;
@@ -186,6 +187,7 @@ export default function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { openGroups, toggleGroup } = useSidebarContext();
+  const { adminUser, logoutAdminTokens } = useAdminAuth();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -285,10 +287,14 @@ export default function DashboardSidebar() {
           <div className={styles.profileDivider} />
           <div className={styles.profileRow}>
             <Link href="/dashboard/profile" className={styles.profileLink}>
-              <div className={styles.avatar} aria-hidden />
+              {adminUser?.profile_picture ? (
+                <img src={adminUser.profile_picture} alt="Avatar" className={styles.avatarImage} />
+              ) : (
+                <div className={styles.avatar} aria-hidden />
+              )}
               <div className={styles.profileText}>
-                <strong>Adam Saed</strong>
-                <span>Admin</span>
+                <strong>{adminUser?.full_name || "Name"}</strong>
+                <span>{adminUser?.job_title || "Admin"}</span>
               </div>
             </Link>
             <button 
@@ -310,7 +316,8 @@ export default function DashboardSidebar() {
         message="Your account will remain safe and secure"
         confirmLabel="Logout"
         onClose={() => setIsLogoutModalOpen(false)}
-        onConfirm={() => {
+        onConfirm={async () => {
+          await logoutAdminTokens();
           setIsLogoutModalOpen(false);
           router.push("/dashboard/login");
         }}

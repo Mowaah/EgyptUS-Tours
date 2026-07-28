@@ -7,11 +7,18 @@ import { getAdminProfile, logoutAdmin } from "@/lib/adminApi";
 interface AdminUser {
   id: number;
   email: string;
-  first_name: string;
-  last_name: string;
+  full_name: string;
+  phone?: string;
+  bio?: string;
+  job_title?: string;
+  department?: string;
   role: string;
+  role_label?: string;
   is_active: boolean;
-  avatar: string | null;
+  totp_enabled?: boolean;
+  profile_picture?: string | null;
+  last_login?: string | null;
+  updated_at?: string;
 }
 
 interface AdminAuthContextType {
@@ -20,6 +27,7 @@ interface AdminAuthContextType {
   isLoadingAdmin: boolean;
   loginAdminTokens: (access: string, refresh: string, userData: AdminUser) => void;
   logoutAdminTokens: () => void;
+  updateAdminUser: (userData: AdminUser) => void;
 }
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
@@ -65,6 +73,10 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     setAdminUser(null);
   };
 
+  const updateAdminUser = (userData: AdminUser) => {
+    setAdminUser(userData);
+  };
+
   return (
     <AdminAuthContext.Provider 
       value={{ 
@@ -72,7 +84,8 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
         isAdminAuthenticated: !!adminUser, 
         isLoadingAdmin, 
         loginAdminTokens, 
-        logoutAdminTokens 
+        logoutAdminTokens,
+        updateAdminUser
       }}
     >
       {children}

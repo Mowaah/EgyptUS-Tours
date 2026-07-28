@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import { ProfileHeader } from "@/components/dashboard/Profile/ProfileHeader";
-import { ProfileTabs } from "@/components/dashboard/Profile/ProfileTabs";
-import { PersonalInfoTab } from "@/components/dashboard/Profile/PersonalInfoTab";
-import { SecurityTab } from "@/components/dashboard/Profile/SecurityTab";
+import { ProfileHeader } from "@/components/dashboard/Profile/ProfileHeader/ProfileHeader";
+import { ProfileTabs } from "@/components/dashboard/Profile/ProfileTabs/ProfileTabs";
+import { PersonalInfoTab } from "@/components/dashboard/Profile/PersonalInfoTab/PersonalInfoTab";
+import { SecurityTab } from "@/components/dashboard/Profile/SecurityTab/SecurityTab";
 import styles from "./page.module.scss";
 
 export default function ProfilePage() {

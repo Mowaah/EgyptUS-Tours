@@ -296,6 +296,13 @@
   background: $dashboard-avatar;
 }
 
+.avatarImage {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .profileText {
   display: flex;
   flex-direction: column;

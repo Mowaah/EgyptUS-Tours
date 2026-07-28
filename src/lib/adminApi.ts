@@ -110,6 +110,10 @@ export async function getAdminProfile(): Promise<any> {
   return await adminApiClient.get('/me/');
 }
 
+export async function updateAdminProfile(payload: any): Promise<any> {
+  return await adminApiClient.patch('/me/', payload);
+}
+
 export async function logoutAdmin(payload: { refresh: string }, accessToken?: string): Promise<any> {
   const config = accessToken ? { headers: { Authorization: `Bearer ${accessToken}` } } : {};
   return await adminApiClient.post('/logout/', payload, config);

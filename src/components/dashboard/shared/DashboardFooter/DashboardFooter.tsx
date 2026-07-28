@@ -7,6 +7,8 @@ interface DashboardFooterProps {
   onSave?: () => void;
   isSubmit?: boolean;
   hideActions?: boolean;
+  isSaveDisabled?: boolean;
+  isDiscardDisabled?: boolean;
   className?: string;
 }
 
@@ -16,6 +18,8 @@ export function DashboardFooter({
   onSave,
   isSubmit = false,
   hideActions = false,
+  isSaveDisabled = false,
+  isDiscardDisabled = false,
   className = "",
 }: DashboardFooterProps) {
   return (
@@ -30,13 +34,19 @@ export function DashboardFooter({
 
       {!hideActions && (
         <div className={styles.actions}>
-          <button type="button" className={styles.discardButton} onClick={onDiscard}>
+          <button 
+            type="button" 
+            className={styles.discardButton} 
+            onClick={onDiscard}
+            disabled={isDiscardDisabled}
+          >
             Discard
           </button>
           <button
             type={isSubmit ? "submit" : "button"}
             className={styles.saveButton}
             onClick={onSave}
+            disabled={isSaveDisabled}
           >
             Save Changes
             <Image

@@ -1,9 +1,14 @@
+"use client";
+
 import { useState } from "react";
 import { PasswordToggleButton } from "@/components/shared";
-import { DashboardField, DashboardFooter } from "@/components/dashboard/shared";;
+import { DashboardField, DashboardFooter, DashboardStatusBanner } from "@/components/dashboard/shared";
 import styles from "./SecurityTab.module.scss";
+import { changeAdminPassword } from "@/lib/adminApi";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 export function SecurityTab() {
+  const { adminUser } = useAdminAuth();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -11,6 +16,66 @@ export function SecurityTab() {
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const handleSave = async () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setErrorMessage("Please fill all password fields.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setErrorMessage("New passwords do not match.");
+      return;
+    }
+
+    setIsSaving(true);
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    try {
+      await changeAdminPassword({
+        current_password: currentPassword,
+        new_password: newPassword,
+        confirm_password: confirmPassword,
+      });
+
+      setSuccessMessage("Password has been changed successfully.");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      console.error(err);
+      if (err.response?.data?.detail) {
+        setErrorMessage(err.response.data.detail);
+      } else if (err.response?.data?.confirm_password) {
+        setErrorMessage(err.response.data.confirm_password[0] || "Passwords do not match.");
+      } else if (err.response?.data?.new_password) {
+        setErrorMessage(err.response.data.new_password[0] || "Invalid password format.");
+      } else {
+        setErrorMessage("An error occurred while changing password.");
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDiscard = () => {
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setErrorMessage("");
+    setSuccessMessage("");
+  };
+
+  const isDirty = currentPassword !== "" || newPassword !== "" || confirmPassword !== "";
+
+  const formattedDate = adminUser?.updated_at 
+    ? new Date(adminUser.updated_at).toLocaleDateString('en-GB') 
+    : "Never";
 
   return (
     <div className={styles.container}>
@@ -22,6 +87,21 @@ export function SecurityTab() {
           </span>
           <h2 id="security-title">Change password</h2>
         </div>
+
+        {errorMessage && (
+          <DashboardStatusBanner 
+            message={errorMessage} 
+            variant="warning" 
+            onClose={() => setErrorMessage("")} 
+          />
+        )}
+        {successMessage && (
+          <DashboardStatusBanner 
+            message={successMessage} 
+            variant="success" 
+            onClose={() => setSuccessMessage("")} 
+          />
+        )}
 
         {/* Form Fields Area */}
         <div className={styles.formArea}>
@@ -81,7 +161,13 @@ export function SecurityTab() {
       </div>
 
       {/* Footer Area */}
-      <DashboardFooter lastUpdateDate="42/6/206" />
+      <DashboardFooter 
+        lastUpdateDate={formattedDate} 
+        onSave={handleSave} 
+        onDiscard={handleDiscard}
+        isSaveDisabled={!isDirty || isSaving}
+        isDiscardDisabled={!isDirty || isSaving}
+      />
     </div>
   );
 }
