@@ -191,6 +191,10 @@ export async function signupCustomer(payload: any): Promise<any> {
   return await apiClient.post('/auth/signup/', payload);
 }
 
+export async function googleLoginCustomer(idToken: string): Promise<any> {
+  return await apiClient.post('/auth/google/', { id_token: idToken });
+}
+
 export async function verifyCustomerEmail(payload: { token: string }): Promise<any> {
   return await apiClient.post('/auth/email/verify/', payload);
 }

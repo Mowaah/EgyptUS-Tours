@@ -14,7 +14,7 @@ export default function CtaBanner({
   heading = "Ready to Plan Your Next Corporate Event?",
   description = "Our expert team is ready to create a customized proposal for your organization's unique requirements.",
   buttonText = "Request a Proposal",
-  buttonHref = "/contact",
+  buttonHref = "/events/request-proposal",
   buttonIcon,
 }: CtaBannerProps) {
   return (

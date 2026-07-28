@@ -337,7 +337,7 @@ export default function ProfilePage() {
                 iconHeight={150}
                 title="Your favorite hotels list is empty"
                 description="Save hotels you're interested in and come back anytime to complete your booking."
-                buttonText="Browse Hotels"
+                buttonText="Explore Hotels"
                 buttonHref="/hotels"
               />
             );
@@ -388,7 +388,7 @@ export default function ProfilePage() {
           emptyBIcon = "/images/profile/glyphs/transportations.svg";
           emptyBTitle = "No transportation bookings yet";
           emptyBDesc = "When you add transfers or transport, your arrangements will appear here.";
-          emptyBBtn = "Book Transportation";
+          emptyBBtn = "Browse Transportation";
           emptyBHref = "/transportation";
         }
 

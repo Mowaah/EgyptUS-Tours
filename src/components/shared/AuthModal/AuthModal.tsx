@@ -7,7 +7,8 @@ import FormField from "@/components/shared/FormField/FormField";
 import PasswordToggleButton from "@/components/shared/PasswordToggleButton/PasswordToggleButton";
 import { validateEmail, validatePassword, validateName } from "@/utils/validation";
 import { useAuth } from "@/contexts/AuthContext";
-import { loginCustomer, signupCustomer, resendCustomerEmailVerification } from "@/lib/api";
+import { GoogleLogin } from "@react-oauth/google";
+import { loginCustomer, signupCustomer, googleLoginCustomer, resendCustomerEmailVerification } from "@/lib/api";
 import styles from "./AuthModal.module.scss";
 
 export interface AuthModalProps {
@@ -133,6 +134,24 @@ export default function AuthModal({ onClose, onLoginSuccess }: AuthModalProps) {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    if (!credentialResponse.credential) return;
+    setIsSubmitting(true);
+    setGlobalError("");
+    try {
+      const res = await googleLoginCustomer(credentialResponse.credential);
+      if (res.access && res.refresh) {
+        login(res.access, res.refresh, res.customer);
+        if (onLoginSuccess) onLoginSuccess();
+        onClose();
+      }
+    } catch (err: any) {
+      setGlobalError(err?.response?.data?.detail || "Google sign-in failed. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const content = (
     <div className={styles.overlay} onClick={onClose} role="dialog" aria-modal="true">
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
@@ -226,6 +245,30 @@ export default function AuthModal({ onClose, onLoginSuccess }: AuthModalProps) {
           <button className={styles.loginBtn} onClick={handleLogin} disabled={isSubmitting}>
             {isSubmitting ? "Please wait..." : mode === "reset" ? "Reset Password" : mode === "login" ? "Login" : "Signup"}
           </button>
+
+          {mode !== "reset" && (
+            <>
+              <div className={styles.dividerWrapper}>
+                <div className={styles.line} />
+                <span className={styles.orText}>OR</span>
+                <div className={styles.line} />
+              </div>
+              <div className={styles.googleBtnContainer}>
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={() => {
+                    setGlobalError("Google sign-in failed. Please try again.");
+                  }}
+                  theme="outline"
+                  size="large"
+                  text="continue_with"
+                  logo_alignment="center"
+                  shape="pill"
+                  width="400"
+                />
+              </div>
+            </>
+          )}
         </div>
 
 

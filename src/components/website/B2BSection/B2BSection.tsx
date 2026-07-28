@@ -114,7 +114,7 @@ export default function B2BSection() {
             </p>
             <Button
               variant="outline"
-              href="/b2b"
+              href="/b2b-programs"
               icon={
                 <Image
                   src="/images/arrows/arrow-right-blue.svg"

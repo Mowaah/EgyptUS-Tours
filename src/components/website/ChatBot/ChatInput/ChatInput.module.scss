@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "@/styles/variables" as *;
 
 .footer {
@@ -79,7 +80,7 @@
 
   &:hover:not(:disabled) {
     transform: scale(1.06);
-    background: darken($primary, 5%);
+    background: color.adjust($primary, $lightness: -5%);
   }
 
   &:disabled {
