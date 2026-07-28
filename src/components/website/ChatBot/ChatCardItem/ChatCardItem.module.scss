@@ -1,0 +1,16 @@
+@use "@/styles/variables" as *;
+
+.cardContainer {
+  width: 100%;
+  max-width: 320px;
+  margin: 6px 0;
+  transition: transform 0.2s ease;
+
+  @media (max-width: 480px) {
+    max-width: 275px;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}

@@ -1,0 +1,159 @@
+@use "@/styles/variables" as *;
+
+.chatBody {
+  flex: 1;
+  padding: 24px 16px 12px 16px;
+  background: $white;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+
+  @media (max-width: 480px) {
+    padding: 16px 12px 8px 12px;
+    gap: 16px;
+  }
+}
+
+.messageRow {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+
+  &.userRow {
+    justify-content: flex-end;
+  }
+}
+
+.miniAvatar {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.botContentWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 85%;
+  min-width: 0;
+}
+
+.botMessage {
+  background: $background-blue;
+  padding: 12px 16px;
+  border-radius: 0 16px 16px 16px;
+  color: $dark;
+  font-size: $font-size-sm;
+  line-height: 1.6;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+
+  @media (max-width: 768px) {
+    padding: 8px 12px;
+    font-size: $font-size-15;
+  }
+}
+
+.userMessage {
+  background: $gray-50-alt;
+  padding: 12px 16px;
+  border-radius: 16px 16px 0 16px;
+  color: #333;
+  font-size: $font-size-sm;
+  line-height: 1.6;
+  max-width: 85%;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+
+  @media (max-width: 768px) {
+    padding: 8px 12px;
+    font-size: $font-size-15;
+  }
+}
+
+.cardsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+
+.typingIndicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 18px;
+  background: $background-blue;
+  border-radius: 0 16px 16px 16px;
+  width: fit-content;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: $primary;
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out both;
+
+  &:nth-child(1) {
+    animation-delay: -0.32s;
+  }
+  &:nth-child(2) {
+    animation-delay: -0.16s;
+  }
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-left: 44px;
+
+  @media (max-width: 480px) {
+    padding-left: 0;
+  }
+}
+
+.suggestionPill {
+  background: $background-chatbot;
+  border: 1px solid $primary;
+  border-radius: 16px;
+  padding: 8px 16px;
+  color: $primary;
+  font-size: $font-size-xs;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: $primary;
+    color: $white;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: $gray-300;
+    color: $gray-400;
+    background: $gray-100;
+  }
+
+  @media (max-width: 480px) {
+    padding: 6px 12px;
+    font-size: $font-size-2xs;
+  }
+}

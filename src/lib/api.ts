@@ -397,4 +397,62 @@ export async function submitContactInquiry(data: { full_name: string; email: str
   return await apiClient.post('/contact/', data);
 }
 
+// ----------------------------------------------------------------------
+// AI Assistant API & Types
+// ----------------------------------------------------------------------
+export interface AssistantQuickReply {
+  label: string;
+  message: string;
+}
+
+export interface AssistantCard {
+  type: 'trip' | 'hotel' | 'vehicle';
+  id: number;
+  slug: string;
+  title: string;
+  subtitle: string;
+  image?: string | null;
+  price: string;
+  currency_code: string;
+  rating: string;
+  review_count: number;
+  cta_label: string;
+  href: string;
+}
+
+export interface AssistantEscalation {
+  should_escalate: boolean;
+  label: string;
+  message: string;
+  href: string;
+}
+
+export interface AssistantConfig {
+  name: string;
+  subtitle: string;
+  status: 'online' | 'offline' | string;
+  greeting: string;
+  quick_replies: AssistantQuickReply[];
+  chat_endpoint: string;
+}
+
+export interface AssistantChatResponse {
+  message: string;
+  kind: string;
+  cards: AssistantCard[];
+  quick_replies: AssistantQuickReply[];
+  escalation: AssistantEscalation;
+  source: string;
+}
+
+export async function getAssistantConfig(): Promise<AssistantConfig> {
+  return await apiClient.get('/assistant/config/');
+}
+
+export async function sendAssistantMessage(message: string, currentPath: string = ''): Promise<AssistantChatResponse> {
+  return await apiClient.post('/assistant/chat/', {
+    message,
+    current_path: currentPath,
+  });
+}
 
