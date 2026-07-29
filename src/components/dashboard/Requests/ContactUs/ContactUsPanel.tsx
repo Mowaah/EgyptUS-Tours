@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   TablePanel,
   TablePanelFilterBar,
@@ -31,6 +31,7 @@ export default function ContactUsPanel({ searchQuery = "" }: ContactUsPanelProps
     exportCsvApi: exportContactUsCSV,
     exportFilename: "contact_us.csv",
   });
+  const [isFilterBarOpen, setIsFilterBarOpen] = useState(true);
 
   const filterFields = useMemo(
     () => [
@@ -81,7 +82,8 @@ export default function ContactUsPanel({ searchQuery = "" }: ContactUsPanelProps
       showFilters
       showExport
       onExportClick={handleExport}
-      toolbar={<TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} />}
+      onFilterClick={() => setIsFilterBarOpen((prev) => !prev)}
+      toolbar={isFilterBarOpen ? <TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} /> : undefined}
     >
       {data.length > 0 ? (
         <DataTable

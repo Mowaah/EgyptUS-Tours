@@ -18,70 +18,226 @@ import CustomDatePicker from "@/components/shared/CustomDatePicker/CustomDatePic
 import CreateCategoryModal from "./CreateCategoryModal/CreateCategoryModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
-import { createPostSchema, type CreatePostValues } from "./CreatePostSchema";
+import { marketingCreatePostSchema, type MarketingCreatePostValues } from "./MarketingCreatePostSchema";
 import SEOSettingsSection from "@/components/dashboard/shared/SEOSettingsSection/SEOSettingsSection";
-import styles from "./CreatePost.module.scss";
+import styles from "./MarketingCreatePost.module.scss";
+import type { ContentType } from "../types";
+import { 
+  getAdminMarketingCategories,
+  getAdminArticleById,
+  getAdminBlogById,
+  createAdminArticle,
+  createAdminBlog,
+  updateAdminArticle,
+  updateAdminBlog
+} from "@/lib/adminApi";
 
-export function CreatePost({ postId }: { postId?: string }) {
+interface MarketingCreatePostProps {
+  contentType: ContentType;
+  postId?: string;
+  onDirtyChange?: (isDirty: boolean) => void;
+}
+
+const fileToBase64 = (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+
+export function MarketingCreatePost({ contentType, postId, onDirtyChange }: MarketingCreatePostProps) {
   const [thumbnailLang, setThumbnailLang] = useState<Language>("English");
   const [imageLang, setImageLang] = useState<Language>("English");
   const [contentLang, setContentLang] = useState<Language>("English");
   const [detailsLang, setDetailsLang] = useState<Language>("English");
   const [seoLang, setSeoLang] = useState<Language>("English");
+  
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
-  const [categories, setCategories] = useState([
-    { label: "Adventure Tours", value: "adventure-tours" },
-    { label: "Luxury Hotels", value: "luxury-hotels" }
-  ]);
+  const [categories, setCategories] = useState<{ label: string; value: string }[]>([]);
   const [showToast, setShowToast] = useState(false);
   const [showPublishModal, setShowPublishModal] = useState(false);
+
+  useEffect(() => {
+    getAdminMarketingCategories()
+      .then((data: any) => {
+        const items = Array.isArray(data) ? data : (data?.results ?? []);
+        setCategories(items.map((c: any) => ({ label: c.name, value: String(c.id) })));
+      })
+      .catch(() => {});
+  }, []);
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const fromList = searchParams?.get("from") === "list";
-
-
-
-
 
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors },
-  } = useForm<CreatePostValues>({
-    resolver: zodResolver(createPostSchema),
-    defaultValues: postId ? {
+    reset,
+    formState: { errors, isDirty, dirtyFields },
+  } = useForm<MarketingCreatePostValues>({
+    resolver: zodResolver(marketingCreatePostSchema),
+    defaultValues: {
+      title: "",
+      content: "",
+      category: "",
+      author: "",
       autoApply: false,
-      title: "Top 10 Things to Do in Cairo",
-      shortDescription: "Discover the vibrant culture and history of Egypt's capital city with our ultimate guide.",
-      content: "<p>Cairo is a fascinating city...</p>",
-      thumbnailTitle: "Cairo Skyline at Sunset",
-      thumbnailAlt: "cairo, sunset, skyline, egypt",
-      imageTitle: "Pyramids of Giza",
-      imageAlt: "pyramids, giza, sphinx",
-      scheduledDate: "10/25/2026",
-      metaTitle: "Top 10 Things to Do in Cairo - EgyptUS Tours",
-      metaDescription: "Explore the best activities in Cairo.",
-      metaKeywords: "cairo, travel, activities",
-      category: "adventure-tours",
-      author: "Admin User"
-    } : {
-      autoApply: false,
+      status: "Draft" as const,
     },
   });
 
-  const onSubmit = (data: CreatePostValues) => {
-    console.log("Form Payload:", data);
-    if (postId) {
-      if (fromList) {
-        router.push(`/dashboard/marketing/articles?editSaved=true`);
-      } else {
-        router.push(`/dashboard/marketing/articles/${postId}?editSaved=true`);
+  const getFullImageUrl = (path: string | undefined | null) => {
+    if (!path) return "";
+    if (path.startsWith("http") || path.startsWith("data:")) return path;
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    return `${baseUrl.replace(/\/$/, '')}${path.startsWith('/') ? '' : '/'}${path}`;
+  };
+
+  useEffect(() => {
+    if (onDirtyChange) {
+      onDirtyChange(isDirty);
+    }
+  }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    async function loadPost() {
+      if (postId) {
+        try {
+          const data = contentType === "articles" 
+            ? await getAdminArticleById(postId) 
+            : await getAdminBlogById(postId);
+          const translation = data.translations?.en ?? {};
+          reset({
+            title: translation.title || data.title || "",
+            shortDescription: translation.short_description || data.excerpt || "",
+            content: translation.content || data.content || "",
+            category: String(data.category_id ?? data.category?.id ?? ""),
+            author: "admin",
+            status: data.status ? data.status.charAt(0).toUpperCase() + data.status.slice(1) : "Draft",
+            thumbnailFile: getFullImageUrl(data.hero_image),
+            imageFile: getFullImageUrl(data.featured_image),
+            thumbnailTitle: translation.thumbnail_title || "",
+            thumbnailAlt: translation.thumbnail_alt || "",
+            imageTitle: translation.image_title || "",
+            imageAlt: translation.image_alt || "",
+            metaTitle: translation.meta_title || "",
+            metaDescription: translation.meta_description || "",
+            metaKeywords: Array.isArray(translation.meta_keywords) ? translation.meta_keywords.join(', ') : (translation.meta_keywords || ""),
+            slug: translation.slug || "",
+            autoApply: false,
+            scheduledDate: data.published_at ? new Date(data.published_at).toISOString().split('T')[0] : "",
+          });
+        } catch (error) {
+          console.error(`Failed to load ${contentType}:`, error);
+        }
       }
-    } else {
-      setShowPublishModal(true);
+    }
+    loadPost();
+  }, [postId, reset, contentType]);
+
+  const onSubmit = async (data: MarketingCreatePostValues, e?: React.BaseSyntheticEvent) => {
+    try {
+      const submitter = (e?.nativeEvent as SubmitEvent)?.submitter as HTMLButtonElement | undefined;
+      const btnText = (submitter?.innerText || submitter?.textContent || "").toLowerCase();
+      
+      let computedStatus = "published";
+      if (btnText.includes("draft") || btnText.includes("save draft") || btnText.includes("save as draft")) {
+        computedStatus = "draft";
+      } else if (data.scheduledDate) {
+        computedStatus = "scheduled";
+      }
+
+      let hero_image: string | null | undefined = undefined;
+      if (data.thumbnailFile instanceof File) {
+        hero_image = await fileToBase64(data.thumbnailFile);
+      } else if (typeof data.thumbnailFile === "string" && data.thumbnailFile.startsWith("data:")) {
+        hero_image = data.thumbnailFile;
+      } else if (!data.thumbnailFile) {
+        hero_image = null; // Explicitly remove
+      }
+
+      let featured_image: string | null | undefined = undefined;
+      if (data.imageFile instanceof File) {
+        featured_image = await fileToBase64(data.imageFile);
+      } else if (typeof data.imageFile === "string" && data.imageFile.startsWith("data:")) {
+        featured_image = data.imageFile;
+      } else if (!data.imageFile) {
+        featured_image = null; // Explicitly remove
+      }
+
+      let formattedScheduledAt: string | null = null;
+      if (data.scheduledDate) {
+        const d = new Date(data.scheduledDate);
+        if (!Number.isNaN(d.getTime())) {
+          formattedScheduledAt = d.toISOString();
+        }
+      }
+
+      const payload: Record<string, any> = {
+        translations: {
+          en: {
+            title: data.title,
+            short_description: data.shortDescription ?? "",
+            content: data.content,
+            meta_title: data.metaTitle ?? "",
+            meta_description: data.metaDescription ?? "",
+            meta_keywords: data.metaKeywords ? data.metaKeywords.split(",").map(k => k.trim()).filter(Boolean) : [],
+            slug: data.slug ?? "",
+            thumbnail_title: data.thumbnailTitle ?? "",
+            thumbnail_alt: data.thumbnailAlt ?? "",
+            image_title: data.imageTitle ?? "",
+            image_alt: data.imageAlt ?? "",
+          },
+        },
+        status: computedStatus,
+        scheduled_at: formattedScheduledAt,
+      };
+
+      if (hero_image !== undefined) payload.hero_image = hero_image;
+      if (featured_image !== undefined) payload.featured_image = featured_image;
+
+      const categoryIdNum = Number(data.category);
+      if (!Number.isNaN(categoryIdNum) && categoryIdNum > 0) {
+        payload.category_id = categoryIdNum;
+      }
+
+      if (postId) {
+        if (contentType === "articles") {
+          await updateAdminArticle(postId, payload);
+        } else {
+          await updateAdminBlog(postId, payload);
+        }
+        
+        if (fromList) {
+          router.push(`/dashboard/marketing/${contentType}?editSaved=true`);
+        } else {
+          router.push(`/dashboard/marketing/${contentType}/${postId}?editSaved=true`);
+        }
+      } else {
+        if (contentType === "articles") {
+          await createAdminArticle(payload);
+        } else {
+          await createAdminBlog(payload);
+        }
+        
+        if (computedStatus === "draft") {
+          router.push(`/dashboard/marketing/${contentType}?draftSaved=true`);
+        } else {
+          setShowPublishModal(true);
+        }
+      }
+    } catch (error: any) {
+      console.error(`Failed to save ${contentType}:`, error);
+      if (error.response?.data) {
+        console.error('Backend validation error:', error.response.data);
+      }
     }
   };
+
+  const itemName = contentType === "articles" ? "Article" : "Blog Post";
 
   return (
     <form id="create-post-form" className={styles.page} onSubmit={handleSubmit(onSubmit)}>
@@ -120,7 +276,7 @@ export function CreatePost({ postId }: { postId?: string }) {
           </FormSpec>
         </FormSection>
 
-        <FormSection title="Article Content" iconSrc="/images/dashboard/fields/article-content.svg">
+        <FormSection title={`${itemName} Content`} iconSrc="/images/dashboard/fields/article-content.svg">
           <FormSpec>
             <LanguageTabs active={contentLang} onChange={setContentLang} className={styles.whiteTabs} />
             <DashboardField label="Title" placeholder="e.g. Summer Special 20% Off ..." {...register("title")} error={errors.title?.message} />
@@ -246,6 +402,7 @@ export function CreatePost({ postId }: { postId?: string }) {
                   label="Author"
                   options={[
                     { label: "Select Author .....", value: "", disabled: true },
+                    { label: "Admin User", value: "admin" },
                     { label: "John Doe", value: "john" },
                     { label: "Jane Smith", value: "jane" },
                   ]}
@@ -265,7 +422,7 @@ export function CreatePost({ postId }: { postId?: string }) {
           message="Your post has been successfully published and is now live on the platform, making it visible and accessible to your audience across all relevant sections."
           hideSecondaryButton
           primaryButtonText="View Details"
-          onPrimaryClick={() => router.push("/dashboard/marketing/articles")}
+          onPrimaryClick={() => router.push(`/dashboard/marketing/${contentType}`)}
           onClose={() => setShowPublishModal(false)}
         />
       )}
@@ -279,8 +436,6 @@ export function CreatePost({ postId }: { postId?: string }) {
           className={styles.toastBanner}
         />
       )}
-
-
 
       <CreateCategoryModal 
         isOpen={isCategoryModalOpen} 

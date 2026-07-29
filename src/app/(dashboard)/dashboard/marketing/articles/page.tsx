@@ -2,7 +2,8 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Articles } from "@/components/dashboard/Articles";
+import { MarketingContentPanel } from "@/components/dashboard/Marketing";
+import { getAdminArticles, deleteAdminArticle } from "@/lib/adminApi";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import styles from "../../page.module.scss";
@@ -53,8 +54,6 @@ export default function ArticlesPage() {
 
   return (
     <>
-      
-      
         <Suspense fallback={null}>
           <StatusBanners />
         </Suspense>
@@ -63,7 +62,13 @@ export default function ArticlesPage() {
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
         />
-        <Articles searchQuery={searchQuery} onClearSearch={() => setSearchQuery("")} />
+        <MarketingContentPanel 
+          contentType="articles" 
+          searchQuery={searchQuery} 
+          onClearSearch={() => setSearchQuery("")} 
+          fetchApi={getAdminArticles} 
+          deleteApi={deleteAdminArticle} 
+        />
       
     </>
   );

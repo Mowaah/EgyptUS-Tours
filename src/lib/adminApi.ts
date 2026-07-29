@@ -453,3 +453,65 @@ export async function getB2BDetails(id: number | string): Promise<any> {
 export async function getEventsDetails(id: number | string): Promise<any> {
   return await adminDataClient.get(`/requests/mice-events/${id}/`);
 }
+
+// ----------------------------------------------------------------------
+// 4. Admin Marketing API (Blogs & Articles)
+// ----------------------------------------------------------------------
+
+export async function getAdminBlogs(params?: any): Promise<any> {
+  return await adminDataClient.get('/marketing/blogs/', { params });
+}
+
+export async function getAdminBlogById(id: number | string): Promise<any> {
+  return await adminDataClient.get(`/marketing/blogs/${id}/`);
+}
+
+export async function getAdminMarketingCategories(): Promise<any> {
+  return await adminDataClient.get('/marketing/categories/');
+}
+
+export async function createAdminBlog(payload: any): Promise<any> {
+  return await adminDataClient.post('/marketing/blogs/', payload);
+}
+
+export async function updateAdminBlog(id: number | string, payload: any): Promise<any> {
+  return await adminDataClient.patch(`/marketing/blogs/${id}/`, payload);
+}
+
+export async function deleteAdminBlog(id: number | string): Promise<any> {
+  return await adminDataClient.delete(`/marketing/blogs/${id}/`);
+}
+
+export async function exportAdminBlogsCSV(params?: any): Promise<Blob> {
+  return await adminDataClient.get('/marketing/blogs/export/', { 
+    params, 
+    responseType: 'blob' 
+  });
+}
+
+export async function getAdminArticles(params?: any): Promise<any> {
+  return await adminDataClient.get('/marketing/articles/', { params });
+}
+
+export async function getAdminArticleById(id: number | string): Promise<any> {
+  return await adminDataClient.get(`/marketing/articles/${id}/`);
+}
+
+export async function createAdminArticle(payload: any): Promise<any> {
+  return await adminDataClient.post('/marketing/articles/', payload);
+}
+
+export async function updateAdminArticle(id: number | string, payload: any): Promise<any> {
+  return await adminDataClient.patch(`/marketing/articles/${id}/`, payload);
+}
+
+export async function deleteAdminArticle(id: number | string): Promise<any> {
+  return await adminDataClient.delete(`/marketing/articles/${id}/`);
+}
+
+export async function exportAdminArticlesCSV(params?: any): Promise<Blob> {
+  return await adminDataClient.get('/marketing/articles/export/', { 
+    params, 
+    responseType: 'blob' 
+  });
+}

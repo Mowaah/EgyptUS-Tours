@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   TablePanel,
   TablePanelFilterBar,
@@ -31,13 +31,13 @@ export default function CustomTripRequestsPanel({ searchQuery }: CustomTripReque
   } = useRequestPanel<PlanYourTripApiItem>({
     searchQuery,
     fetchRequestsApi: getAllPlanYourTripRequests,
-    exportCsvApi: async () => {
+    exportCsvApi: async (params: any) => {
       const { exportPlanYourTripCSV } = await import("@/lib/adminApi");
-      const { buildRequestFilterParams } = await import("@/lib/utils");
-      return exportPlanYourTripCSV(buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter));
+      return exportPlanYourTripCSV(params);
     },
     exportFilename: "plan_your_trip.csv",
   });
+  const [isFilterBarOpen, setIsFilterBarOpen] = useState(true);
 
   const filterFields = useMemo(
     () => [
@@ -92,7 +92,8 @@ export default function CustomTripRequestsPanel({ searchQuery }: CustomTripReque
       showFilters
       showExport
       onExportClick={handleExport}
-      toolbar={<TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} />}
+      onFilterClick={() => setIsFilterBarOpen((prev) => !prev)}
+      toolbar={isFilterBarOpen ? <TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} /> : undefined}
     >
       {loading ? (
         <div style={{ padding: "40px", textAlign: "center", color: "#666" }}>Loading requests...</div>

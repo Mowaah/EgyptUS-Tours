@@ -18,7 +18,7 @@ import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { createPromotionSchema, type CreatePromotionValues } from "./CreatePromotionSchema";
 import styles from "./CreatePromotion.module.scss";
 
-export function CreatePromotion({ promotionId }: { promotionId?: string }) {
+export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: string, onDirtyChange?: (isDirty: boolean) => void }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const fromList = searchParams?.get("from") === "list";
@@ -32,7 +32,7 @@ export function CreatePromotion({ promotionId }: { promotionId?: string }) {
     watch,
     setValue,
     reset,
-    formState: { errors },
+    formState: { errors, isDirty, dirtyFields },
   } = useForm<CreatePromotionValues>({
     resolver: zodResolver(createPromotionSchema),
     defaultValues: {
@@ -48,6 +48,11 @@ export function CreatePromotion({ promotionId }: { promotionId?: string }) {
       endDate: "",
     },
   });
+
+  useEffect(() => {
+    console.log("CreatePromotion Form isDirty:", isDirty, "dirtyFields:", dirtyFields);
+    if (onDirtyChange) onDirtyChange(isDirty);
+  }, [isDirty, dirtyFields, onDirtyChange]);
 
   useEffect(() => {
     if (promotionId) {

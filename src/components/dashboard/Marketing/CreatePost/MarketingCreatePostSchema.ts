@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const createPostSchema = z.object({
+export const marketingCreatePostSchema = z.object({
   // Upload Thumbnail
   thumbnailFile: z.any().optional(), // Using any since File is browser specific
   thumbnailTitle: z.string().optional(),
@@ -11,14 +11,15 @@ export const createPostSchema = z.object({
   imageTitle: z.string().optional(),
   imageAlt: z.string().optional(),
 
-  // Article Content
+  // Content
   title: z.string({ message: "Title is required" }).min(1, "Title is required"),
   shortDescription: z.string().max(300, "Short description must be 300 characters or less").optional(),
   content: z.string({ message: "Content is required" }).min(1, "Content is required"),
 
   // Publish Settings
   scheduledDate: z.string().optional(),
-  autoApply: z.boolean(),
+  autoApply: z.boolean().optional(),
+  status: z.string().optional(),
 
   // Details
   category: z.string({ message: "Category is required" }).min(1, "Category is required"),
@@ -33,4 +34,4 @@ export const createPostSchema = z.object({
   author: z.string({ message: "Author is required" }).min(1, "Author is required"),
 });
 
-export type CreatePostValues = z.infer<typeof createPostSchema>;
+export type MarketingCreatePostValues = z.infer<typeof marketingCreatePostSchema>;

@@ -153,7 +153,7 @@ const pageCopyByPath: Record<string, PageCopy> = {
     hideFilterButton: true,
     hideSearch: true,
     primaryAction: { label: "Publish Post", iconSrc: "/images/dashboard/arrow-up.svg", iconRotation: 90, form: "create-post-form", type: "submit" },
-    secondaryAction: { label: "Save draft", iconSrc: "/images/dashboard/save2.svg" },
+    secondaryAction: { label: "Save draft", iconSrc: "/images/dashboard/save2.svg", form: "create-post-form", type: "submit" },
   },
   "/dashboard/marketing/articles": {
     title: "Articles",
@@ -170,7 +170,7 @@ const pageCopyByPath: Record<string, PageCopy> = {
     hideFilterButton: true,
     hideSearch: true,
     primaryAction: { label: "Publish Post", iconSrc: "/images/dashboard/arrow-up.svg", iconRotation: 90, form: "create-post-form", type: "submit" },
-    secondaryAction: { label: "Save draft", iconSrc: "/images/dashboard/save2.svg" },
+    secondaryAction: { label: "Save draft", iconSrc: "/images/dashboard/save2.svg", form: "create-post-form", type: "submit" },
   },
   "/dashboard/marketing/promotions": {
     title: "Promotions",

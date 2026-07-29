@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   TablePanel,
   TablePanelFilterBar,
@@ -31,14 +31,14 @@ export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPane
   } = useRequestPanel<any>({
     searchQuery,
     fetchRequestsApi: getAllMiceRequests,
-    exportCsvApi: async () => {
+    exportCsvApi: async (params: any) => {
       const { exportMiceCSV } = await import("@/lib/adminApi");
-      const { buildRequestFilterParams } = await import("@/lib/utils");
-      return exportMiceCSV(buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter));
+      return exportMiceCSV(params);
     },
     exportFilename: "mice_requests.csv",
   });
 
+  const [isFilterBarOpen, setIsFilterBarOpen] = useState(true);
 
   const filterFields = useMemo(
     () => [
@@ -104,7 +104,8 @@ export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPane
       showFilters
       showExport
       onExportClick={handleExport}
-      toolbar={<TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} />}
+      onFilterClick={() => setIsFilterBarOpen((prev) => !prev)}
+      toolbar={isFilterBarOpen ? <TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} /> : undefined}
     >
       <DataTable
         data={data}

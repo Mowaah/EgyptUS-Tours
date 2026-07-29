@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import TablePagination from "../shared/TablePagination/TablePagination";
 import styles from "./DataTable.module.scss";
 import type { DataTableProps, DataTableRowAction } from "./types";
@@ -26,6 +27,7 @@ function ActionsCell<T>({
   isLastRow,
 }: ActionsCellProps<T>) {
   const [openUpward, setOpenUpward] = useState(false);
+  const [coords, setCoords] = useState({ top: 0, right: 0 });
   const cellRef = useRef<HTMLTableCellElement>(null);
   const isOpen = openRowId === rowId;
 
@@ -34,13 +36,17 @@ function ActionsCell<T>({
       const rect = cellRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
       const spaceBelow = viewportHeight - rect.bottom;
+      const spaceAbove = rect.top;
       const dropdownHeight = 130;
 
-      if (isLastRow || (spaceBelow < dropdownHeight && rect.top > spaceBelow)) {
-        setOpenUpward(true);
-      } else {
-        setOpenUpward(false);
-      }
+      // Only open upward if there's no space below AND there is more space above
+      const shouldOpenUpward = spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
+      
+      setOpenUpward(shouldOpenUpward);
+      setCoords({
+        top: shouldOpenUpward ? rect.top - 4 : rect.bottom + 4,
+        right: window.innerWidth - rect.right,
+      });
     }
     setOpenRowId(isOpen ? null : rowId);
   };
@@ -59,47 +65,57 @@ function ActionsCell<T>({
         >
           <span className={styles.dotsIcon} aria-hidden />
         </button>
-        {isOpen ? (
-          <div
-            className={`${styles.rowMenu} ${
-              openUpward ? styles.rowMenuUpward : ""
-            }`}
-          >
-            {actions.map((action) => (
-              <button
-                type="button"
-                key={action.label}
-                className={
-                  action.variant === "danger"
-                    ? styles.menuActionDanger
-                    : action.variant === "success"
-                    ? styles.menuActionSuccess
-                    : action.variant === "warning"
-                    ? styles.menuActionWarning
-                    : styles.menuAction
-                }
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  action.onClick?.(row);
-                  setOpenRowId(null);
+        {isOpen && typeof document !== "undefined"
+          ? createPortal(
+              <div
+                className={`${styles.rowMenu} ${
+                  openUpward ? styles.rowMenuUpward : ""
+                }`}
+                style={{
+                  position: "fixed",
+                  top: openUpward ? "auto" : coords.top,
+                  bottom: openUpward ? window.innerHeight - coords.top : "auto",
+                  right: coords.right,
+                  zIndex: 9999,
                 }}
               >
-                {action.iconSrc ? (
-                  <span
-                    className={styles.actionIcon}
-                    style={{
-                      maskImage: `url(${action.iconSrc})`,
-                      WebkitMaskImage: `url(${action.iconSrc})`,
+                {actions.map((action) => (
+                  <button
+                    type="button"
+                    key={action.label}
+                    className={
+                      action.variant === "danger"
+                        ? styles.menuActionDanger
+                        : action.variant === "success"
+                        ? styles.menuActionSuccess
+                        : action.variant === "warning"
+                        ? styles.menuActionWarning
+                        : styles.menuAction
+                    }
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      action.onClick?.(row);
+                      setOpenRowId(null);
                     }}
-                    aria-hidden
-                  />
-                ) : null}
-                <span>{action.label}</span>
-              </button>
-            ))}
-          </div>
-        ) : null}
+                  >
+                    {action.iconSrc ? (
+                      <span
+                        className={styles.actionIcon}
+                        style={{
+                          maskImage: `url(${action.iconSrc})`,
+                          WebkitMaskImage: `url(${action.iconSrc})`,
+                        }}
+                        aria-hidden
+                      />
+                    ) : null}
+                    <span>{action.label}</span>
+                  </button>
+                ))}
+              </div>,
+              document.body
+            )
+          : null}
       </div>
     </td>
   );
@@ -125,12 +141,26 @@ export default function DataTable<T>({
     if (openRowId === null) return;
     const handleOutsideClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (!target.closest(`.${styles.moreCell}`)) {
+      if (!target.closest(`.${styles.moreCell}`) && !target.closest(`.${styles.rowMenu}`)) {
         setOpenRowId(null);
       }
     };
+    
+    const handleScroll = (e: Event) => {
+      // Don't close if they are just scrolling inside the rowMenu itself
+      const target = e.target as HTMLElement;
+      if (!target?.closest?.(`.${styles.rowMenu}`)) {
+        setOpenRowId(null);
+      }
+    };
+
     document.addEventListener("click", handleOutsideClick);
-    return () => document.removeEventListener("click", handleOutsideClick);
+    window.addEventListener("scroll", handleScroll, { capture: true });
+    
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+      window.removeEventListener("scroll", handleScroll, { capture: true });
+    };
   }, [openRowId]);
 
   const pageCount = Math.max(1, Math.ceil(data.length / rowsPerPage));

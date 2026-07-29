@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   TablePanel,
   TablePanelFilterBar,
@@ -31,14 +31,14 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
   } = useRequestPanel<B2BApiItem>({
     searchQuery,
     fetchRequestsApi: getAllB2BRequests,
-    exportCsvApi: async () => {
+    exportCsvApi: async (params: any) => {
       const { exportB2BCSV } = await import("@/lib/adminApi");
-      const { buildRequestFilterParams } = await import("@/lib/utils");
-      return exportB2BCSV(buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter));
+      return exportB2BCSV(params);
     },
     exportFilename: "b2b_proposals.csv",
   });
 
+  const [isFilterBarOpen, setIsFilterBarOpen] = useState(true);
 
   const filterFields = useMemo(
     () => [
@@ -93,7 +93,8 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
       showFilters
       showExport
       onExportClick={handleExport}
-      toolbar={<TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} />}
+      onFilterClick={() => setIsFilterBarOpen((prev) => !prev)}
+      toolbar={isFilterBarOpen ? <TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} /> : undefined}
     >
       {loading ? (
         <div style={{ padding: "40px", textAlign: "center", color: "#666" }}>Loading requests...</div>

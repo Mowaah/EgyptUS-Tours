@@ -7,6 +7,7 @@ import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
 import MetricCard from "@/components/dashboard/DashboardHome/MetricCard/MetricCard";
+import { deleteAdminBlog, deleteAdminArticle } from "@/lib/adminApi";
 import styles from "./PostDetails.module.scss";
 
 export interface PostData {
@@ -25,6 +26,12 @@ export interface PostData {
   metaDescription: string;
   metaKeywords: string;
   slug: string;
+  content: string;
+  views: number;
+  shares: number;
+  readTime: number;
+  heroImage: string;
+  featuredImage: string;
 }
 
 interface PostDetailsProps {
@@ -67,9 +74,20 @@ export default function PostDetails({ type, postId, post }: PostDetailsProps) {
   const entityName = isBlog ? "Blog" : "Article";
   const basePath = `/dashboard/marketing/${isBlog ? "blog" : "articles"}`;
 
-  const handleConfirmDelete = () => {
-    setIsDeleteModalOpen(false);
-    router.push(`${basePath}?deleted=true`);
+  const handleConfirmDelete = async () => {
+    try {
+      if (isBlog) {
+        await deleteAdminBlog(postId);
+      } else {
+        await deleteAdminArticle(postId);
+      }
+      setIsDeleteModalOpen(false);
+      router.push(`${basePath}?deleted=true`);
+    } catch (error) {
+      console.error(`Failed to delete ${entityName}:`, error);
+      // Optional: Add a toast notification here for failure
+      setIsDeleteModalOpen(false);
+    }
   };
 
   return (
@@ -107,9 +125,9 @@ export default function PostDetails({ type, postId, post }: PostDetailsProps) {
 
       {/* Stats Row */}
       <div className={styles.statsRow}>
-        <MetricCard card={{ label: "Total Views", value: "1,284", change: "+12.5%", trend: "up", tone: "blue", icon: "blog/eye", spark: "" }} />
-        <MetricCard card={{ label: "Share", value: "34", change: "+8.2%", trend: "up", tone: "green", icon: "blog/share", spark: "" }} />
-        <MetricCard card={{ label: "Read", value: "6 min", change: "+16.2%", trend: "up", tone: "purple", icon: "blog/read", spark: "" }} />
+        <MetricCard card={{ label: "Total Views", value: post.views.toLocaleString(), change: "", trend: "up", tone: "blue", icon: "blog/eye", spark: "" }} />
+        <MetricCard card={{ label: "Shares", value: post.shares.toLocaleString(), change: "", trend: "up", tone: "green", icon: "blog/share", spark: "" }} />
+        <MetricCard card={{ label: "Read Time", value: `${post.readTime} min`, change: "", trend: "up", tone: "purple", icon: "blog/read", spark: "" }} />
       </div>
 
       {/* Main Content Grid */}
@@ -149,7 +167,11 @@ export default function PostDetails({ type, postId, post }: PostDetailsProps) {
               <h2 className={styles.cardTitle}>Thumbnail</h2>
             </div>
             <div className={styles.imagePreviewWrapper}>
-              <Image src="/images/pyramids.jpg" alt={post.thumbnailAlt} fill className={styles.previewImage} style={{ objectFit: 'cover' }} />
+              {post.heroImage ? (
+                <Image src={post.heroImage} alt={post.thumbnailAlt} fill className={styles.previewImage} style={{ objectFit: 'cover' }} unoptimized />
+              ) : (
+                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', color: '#999' }}>No Image Uploaded</div>
+              )}
             </div>
             <div className={styles.imageInfoList}>
               <div className={styles.imageInfoItem}>
@@ -172,7 +194,11 @@ export default function PostDetails({ type, postId, post }: PostDetailsProps) {
               <h2 className={styles.cardTitle}>Image</h2>
             </div>
             <div className={styles.imagePreviewWrapper}>
-              <Image src="/images/pyramids.jpg" alt={post.imageAlt} fill className={styles.previewImage} style={{ objectFit: 'cover' }} />
+              {post.featuredImage ? (
+                <Image src={post.featuredImage} alt={post.imageAlt} fill className={styles.previewImage} style={{ objectFit: 'cover' }} unoptimized />
+              ) : (
+                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', color: '#999' }}>No Image Uploaded</div>
+              )}
             </div>
             <div className={styles.imageInfoList}>
               <div className={styles.imageInfoItem}>
@@ -235,24 +261,10 @@ export default function PostDetails({ type, postId, post }: PostDetailsProps) {
               </div>
               <h2 className={styles.cardTitle}>Content Preview</h2>
             </div>
-            <div className={styles.contentPreviewBody}>
-              <p>Egypt isn't just a destination — it's a question of timing. The land of pharaohs shifts dramatically between seasons, offering two entirely different travel experiences separated only by a few months on the calendar. Whether you're drawn to the fierce clarity of a desert summer or the gentle warmth of a winter sun, Egypt holds something extraordinary for every kind of traveler.</p>
-              
-              <p>Egypt isn't just a destination — it's a question of timing. The land of pharaohs shifts dramatically between seasons, offering two entirely different travel experiences separated only by a few months on the calendar. Whether you're drawn to the fierce clarity of a desert summer or the gentle warmth of a winter sun, Egypt holds something extraordinary for every kind of traveler.</p>
-
-              <h3>Winter: The Golden Season</h3>
-              <p>From November through February, Egypt transforms into the world's most civilized outdoor museum. Temperatures in Cairo hover around a pleasant 15-22°C, while Luxor and Aswan sit warmer at 20-28°C — ideal for long afternoons exploring temple complexes without the weight of summer heat pressing down on you.</p>
-
-              <p>The Valley of the Kings, the temples of Karnak, and the Abu Simbel complex reveal their full grandeur when you're not battling a 45°C sun. Tourist crowds are present but manageable, and the Nile cruise season is at its absolute peak — dhows and feluccas glide past golden banks in light that photographers dream about.</p>
-
-              <h4>What winter does best</h4>
-              <p>The desert nights in winter are genuinely cold, dropping to near 5°C in some areas. This creates a remarkable contrast — blazing blue skies by day, star-heavy darkness by night. Camping near the White Desert or spending a night at a desert camp in Siwa becomes a genuinely magical experience rather than a survival test.</p>
-
-              <h3>Summer: For the Bold Traveler</h3>
-              <p>Summer in Egypt is not for the faint-hearted. Cairo in July sits at 35-40°C, and Upper Egypt can push past 45°C by mid-afternoon. Yet there's a counterintuitive logic to visiting in summer: the crowds thin dramatically, prices drop across hotels and flights, and the Mediterranean coast — Alexandria, Marsa Matrouh, and the North Coast — bursts into life as Egyptians themselves seek the sea.</p>
-
-              <p>The Red Sea resorts of Hurghada and Sharm el-Sheikh maintain excellent diving conditions year-round, but summer brings calmer winds and exceptional visibility.</p>
-            </div>
+            <div 
+              className={styles.contentPreviewBody}
+              dangerouslySetInnerHTML={{ __html: post.content || "<p>No content available.</p>" }}
+            />
           </div>
         </div>
       </div>
