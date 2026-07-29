@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { getB2BDetails } from "../mockB2BData";
 import CompanyInformation from "./CompanyInformation";
 import ActivityTimeline from "./ActivityTimeline";
 import RequestDetailsLayout from "../../shared/RequestDetailsLayout/RequestDetailsLayout";
@@ -94,6 +93,7 @@ export default function ViewB2BRequest({ requestId }: { requestId: string }) {
       requestTitle={`${requestData.company_name} - ${requestData.request_code}`}
       status={requestData.display_status.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')}
       date={new Date(requestData.created_at).toLocaleString()}
+      lastUpdated={requestData.updated_at}
       leftColumnContent={
         <>
           <CompanyInformation request={requestData.company_information} />

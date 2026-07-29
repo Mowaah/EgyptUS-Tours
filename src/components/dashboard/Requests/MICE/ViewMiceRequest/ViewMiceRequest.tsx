@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { ProposalFile, PaymentOverview } from "../../shared/Sections";
-import { getMiceDetails } from "../mockMiceData";
 import RefundSummary from "@/components/dashboard/shared/RefundSummary/RefundSummary";
 import OrganizationInformation from "./OrganizationInformation";
 import EventDetails from "./EventDetails";
@@ -98,6 +97,7 @@ export default function ViewMiceRequest({ requestId }: { requestId: string }) {
       requestTitle={`${requestData.organization_name || requestData.organization_information?.organization_name || "MICE"} - ${requestData.request_code}`}
       status={requestData.display_status.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')}
       date={new Date(requestData.created_at).toLocaleString()}
+      lastUpdated={requestData.updated_at}
       leftColumnContent={
         <>
           <OrganizationInformation request={requestData.organization_information} />

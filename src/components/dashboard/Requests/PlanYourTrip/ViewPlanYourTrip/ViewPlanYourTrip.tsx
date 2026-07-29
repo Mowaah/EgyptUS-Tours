@@ -97,6 +97,7 @@ export default function ViewPlanYourTrip({ requestId }: { requestId: string }) {
       requestTitle={`${requestData.full_name} - ${requestData.request_code}`}
       status={requestData.display_status.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')}
       date={new Date(requestData.created_at).toLocaleString()}
+      lastUpdated={requestData.updated_at}
       leftColumnContent={
         <>
           <CustomerInformation 

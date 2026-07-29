@@ -9,12 +9,13 @@ import styles from "./RequestModals.module.scss";
 interface CreateProposalModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (file: File | undefined, note: string) => void;
+  onSubmit: (file: File | undefined, note: string) => Promise<void>;
 }
 
 export default function CreateProposalModal({ open, onClose, onSubmit }: CreateProposalModalProps) {
   const [file, setFile] = useState<File | undefined>(undefined);
   const [note, setNote] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -37,9 +38,17 @@ export default function CreateProposalModal({ open, onClose, onSubmit }: CreateP
 
   if (!open) return null;
 
-  const handleSubmit = () => {
-    onSubmit(file, note);
-    onClose();
+  const handleSubmit = async () => {
+    if (!file) return;
+    setSubmitting(true);
+    try {
+      await onSubmit(file, note);
+      onClose();
+    } catch (err) {
+      console.error("Proposal upload failed:", err);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -79,10 +88,11 @@ export default function CreateProposalModal({ open, onClose, onSubmit }: CreateP
           
         </div>
         <ModalFooter
-          primaryLabel="Upload Proposal"
+          primaryLabel={submitting ? "Uploading..." : "Upload Proposal"}
           secondaryLabel="Cancel"
           primaryOnClick={handleSubmit}
           secondaryOnClick={onClose}
+          primaryDisabled={submitting || !file}
         />
       </div>
     </div>

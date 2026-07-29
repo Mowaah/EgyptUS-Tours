@@ -203,9 +203,48 @@ export async function getAllPlanYourTripRequests(params: any = {}): Promise<any[
       promises.push(getPlanYourTripRequests({ ...params, page: i }));
     }
     const pages = await Promise.all(promises);
-    pages.forEach(p => results.push(...(p.results || [])));
+    for (const page of pages) {
+      if (page.results) results.push(...page.results);
+      else if (Array.isArray(page)) results.push(...page);
+    }
   }
   
+  return results;
+}
+
+export async function getB2BRequests(params?: any): Promise<any> {
+  return await adminDataClient.get('/requests/b2b-proposals/', { params });
+}
+
+export async function getB2BStats(params?: any): Promise<any> {
+  return await adminDataClient.get('/requests/b2b-proposals/stats/', { params });
+}
+
+export async function getAllB2BRequests(params: any = {}): Promise<any[]> {
+  const firstPage = await getB2BRequests(params);
+  const results = firstPage.results ? [...firstPage.results] : (Array.isArray(firstPage) ? [...firstPage] : []);
+  
+  if (!firstPage.count) return results;
+
+  const actualPageSize = results.length;
+  if (actualPageSize === 0 || firstPage.count <= actualPageSize) {
+    return results;
+  }
+
+  const totalPages = Math.ceil(firstPage.count / actualPageSize);
+  
+  if (totalPages > 1) {
+    const promises = [];
+    for (let page = 2; page <= totalPages; page++) {
+      promises.push(getB2BRequests({ ...params, page }));
+    }
+    const pages = await Promise.all(promises);
+    for (const page of pages) {
+      if (page.results) results.push(...page.results);
+      else if (Array.isArray(page)) results.push(...page);
+    }
+  }
+
   return results;
 }
 

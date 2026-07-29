@@ -40,6 +40,7 @@ interface RequestDetailsLayoutProps {
   requestTitle: string;
   status: string;
   date: string;
+  lastUpdated?: string;
   leftColumnContent: React.ReactNode;
   rightColumnContent: React.ReactNode;
   prependActionButtons?: React.ReactNode | ((onAction: (key: string) => void) => React.ReactNode);
@@ -57,6 +58,7 @@ export default function RequestDetailsLayout({
   requestTitle,
   status,
   date,
+  lastUpdated,
   leftColumnContent,
   rightColumnContent,
   prependActionButtons,
@@ -205,7 +207,7 @@ export default function RequestDetailsLayout({
         {!hideFooter && status !== "New" && (
           <div className={styles.footer}>
             <div className={styles.footerDate}>
-              Last Update: <br/> <strong>42/6/206</strong>
+              Last Update: <br/> <strong>{lastUpdated ? (() => { const d = new Date(lastUpdated); return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`; })() : "—"}</strong>
             </div>
             <div className={styles.footerActions}>
               {status === "Negotiation" ? (
