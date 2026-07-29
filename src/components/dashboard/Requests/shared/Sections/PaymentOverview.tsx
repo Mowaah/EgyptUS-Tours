@@ -3,28 +3,36 @@ import { InfoCard, InfoCardData } from "@/components/dashboard/shared";
 
 interface PaymentOverviewProps {
   request: {
-    paymentPlan: string;
-    paymentMethod: string;
-    totalPackage: number;
-    depositAmount: number;
-    remainingAmount: number;
+    payment_plan: string;
+    payment_method: string;
+    total_price: string;
+    deposit_amount: string;
+    remaining_balance: string;
+    currency: string;
+    deposit_percentage: number;
   };
 }
 
 export default function PaymentOverview({ request }: PaymentOverviewProps) {
+  const formatMoney = (val: string) => {
+    const num = parseFloat(val);
+    if (isNaN(num)) return "0";
+    return num.toLocaleString();
+  };
+
   const data: InfoCardData[] = [
-    { label: "Payment Plan", value: request.paymentPlan },
-    { label: "Payment Method", value: request.paymentMethod },
+    { label: "Payment Plan", value: request.payment_plan },
+    { label: "Payment Method", value: request.payment_method },
     { 
       label: "Total Package", 
       value: (
         <span style={{ color: "#0066FF", fontWeight: "700" }}>
-          ${request.totalPackage.toLocaleString()}
+          ${formatMoney(request.total_price)}
         </span>
       ) 
     },
-    { label: "Deposit (30%)", value: `$${request.depositAmount.toLocaleString()}` },
-    { label: "Remaining (70%)", value: `$${request.remainingAmount.toLocaleString()}` },
+    { label: `Deposit (${request.deposit_percentage}%)`, value: `$${formatMoney(request.deposit_amount)}` },
+    { label: `Remaining (${100 - request.deposit_percentage}%)`, value: `$${formatMoney(request.remaining_balance)}` },
   ];
 
   return (

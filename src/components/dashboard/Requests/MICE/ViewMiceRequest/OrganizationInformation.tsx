@@ -3,12 +3,12 @@ import { InfoCard, InfoCardData } from "@/components/dashboard/shared";
 
 interface OrganizationInformationProps {
   request: {
-    organizationName: string;
+    organization_name: string;
     industry: string;
     country: string;
     website: string;
-    contactPerson: string;
-    jobTitle: string;
+    contact_person: string;
+    job_title: string;
     email: string;
     phone: string;
   };
@@ -16,12 +16,12 @@ interface OrganizationInformationProps {
 
 export default function OrganizationInformation({ request }: OrganizationInformationProps) {
   const data: InfoCardData[] = [
-    { label: "Organization Name", value: request.organizationName },
+    { label: "Organization Name", value: request.organization_name },
     { label: "Industry", value: request.industry },
     { label: "Country", value: request.country },
     { label: "Website", value: request.website },
-    { label: "Contact Person", value: request.contactPerson },
-    { label: "Job Title", value: request.jobTitle },
+    { label: "Contact Person", value: request.contact_person },
+    { label: "Job Title", value: request.job_title },
     { label: "Email Address", value: request.email },
     { label: "Phone Number", value: request.phone },
   ];

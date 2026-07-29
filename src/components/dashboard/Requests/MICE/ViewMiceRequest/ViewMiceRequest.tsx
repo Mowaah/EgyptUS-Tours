@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { ProposalFile, PaymentOverview } from "../../shared/Sections";
 import { getMiceDetails } from "../mockMiceData";
 import RefundSummary from "@/components/dashboard/shared/RefundSummary/RefundSummary";
@@ -12,42 +12,115 @@ import ActivityTimeline from "./ActivityTimeline";
 import RequestDetailsLayout from "../../shared/RequestDetailsLayout/RequestDetailsLayout";
 
 export default function ViewMiceRequest({ requestId }: { requestId: string }) {
-  const requestData = getMiceDetails(requestId);
+  const [requestData, setRequestData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchDetails = async () => {
+    try {
+      const { getEventsDetails } = await import("@/lib/adminApi");
+      const data = await getEventsDetails(requestId);
+      setRequestData(data);
+    } catch (err) {
+      console.error("Failed to fetch Events details:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDetails();
+  }, [requestId]);
+
+  const handleActionSubmit = async (action: string, payload?: any) => {
+    try {
+      const { eventsActions } = await import("@/lib/adminApi");
+      
+      switch (action) {
+        case "add_note":
+          if (payload?.note) await eventsActions.addNote(requestId, payload.note);
+          break;
+        case "assign":
+          if (payload?.agentId) await eventsActions.assign(requestId, payload.agentId, payload.reason);
+          break;
+        case "create_proposal":
+        case "upload_revised_proposal":
+          if (payload?.file) await eventsActions.uploadProposal(requestId, payload.file, payload.note);
+          break;
+        case "mark_proposal_sent":
+          await eventsActions.markProposalSent(requestId, payload?.note);
+          break;
+        case "start_negotiation":
+          if (payload?.reason) await eventsActions.startNegotiation(requestId, payload.reason);
+          break;
+        case "mark_rejected":
+          if (payload?.reason) await eventsActions.reject(requestId, payload.reason);
+          break;
+        case "reopen":
+          if (payload?.reason) await eventsActions.reopen(requestId, payload.reason);
+          break;
+        case "approve":
+          if (payload) await eventsActions.approve(requestId, payload);
+          break;
+        case "record_deposit":
+        case "record_remaining":
+          if (payload) await eventsActions.recordPayment(requestId, payload);
+          break;
+        case "cancel_trip":
+          if (payload?.reason) await eventsActions.cancel(requestId, payload.reason);
+          break;
+        case "refund_payment":
+          if (payload) await eventsActions.refund(requestId, payload);
+          break;
+        case "mark_closed":
+          await eventsActions.completeTrip(requestId);
+          break;
+      }
+      
+      await fetchDetails();
+    } catch (err) {
+      console.error("Action failed:", err);
+      throw err; 
+    }
+  };
+
+  if (loading) {
+    return <div style={{ padding: "40px", textAlign: "center" }}>Loading request details...</div>;
+  }
+
+  if (!requestData) {
+    return <div style={{ padding: "40px", textAlign: "center", color: "red" }}>Request not found.</div>;
+  }
 
   return (
     <RequestDetailsLayout
       breadcrumbLabel="MICE Corporate"
       breadcrumbHref="/dashboard/requests/mice-corporate"
-      requestTitle={`${requestData.applicantName} - ${requestData.requestNumber}`}
-      status={requestData.status}
-      date={requestData.date}
+      requestTitle={`${requestData.organization_name || requestData.organization_information?.organization_name || "MICE"} - ${requestData.request_code}`}
+      status={requestData.display_status.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')}
+      date={new Date(requestData.created_at).toLocaleString()}
       leftColumnContent={
         <>
-          <OrganizationInformation request={requestData.organization} />
-          <EventRequirements request={requestData.eventRequirements} />
-          <BudgetInformation request={requestData.budget} />
-          {(["Proposal Ready", "Proposal Sent", "30% Pending Payment", "Deposit Paid", "Fully Paid", "In Trip", "Completed", "Cancelled", "Refund Completed"].includes(requestData.status)) && (
-            <ProposalFile />
+          <OrganizationInformation request={requestData.organization_information} />
+          <EventRequirements request={requestData.event_requirements} />
+          <BudgetInformation request={requestData.budget_information} />
+          {requestData.proposal_files && requestData.proposal_files.length > 0 && (
+            <ProposalFile files={requestData.proposal_files} />
           )}
-          {(["30% Pending Payment", "Deposit Paid", "Fully Paid", "In Trip", "Completed", "Cancelled", "Refund Completed"].includes(requestData.status)) && requestData.paymentOverview && (
-            <PaymentOverview request={requestData.paymentOverview} />
+          {requestData.payment_overview && (
+            <PaymentOverview request={requestData.payment_overview} />
           )}
-          {requestData.status === "Refund Completed" && (
-            <RefundSummary 
-              data={{
-                reference: "FT24032658791",
-                notes: "We are looking for a complete tourism management solution to manage bookings, customer inquiries, transportation services, and partner coordination more efficiently."
-              }}
-            />
+          {requestData.refund_summary && (
+            <RefundSummary data={requestData.refund_summary} />
           )}
         </>
       }
       rightColumnContent={
         <>
-          <EventDetails request={requestData.eventDetails} />
-          <ActivityTimeline />
+          <EventDetails request={requestData.event_details} />
+          <ActivityTimeline timelineRows={requestData.activity_timeline} />
         </>
       }
+      onActionSubmit={handleActionSubmit}
     />
   );
 }

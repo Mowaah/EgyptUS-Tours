@@ -145,7 +145,7 @@ export default function ReassignModal({
                 <div className={styles.selectContent}>
                   {selectedAgent && (
                     <>
-                      <Image
+                      <img
                         src={selectedAgent.avatarSrc}
                         alt={selectedAgent.name}
                         width={32}
@@ -181,7 +181,7 @@ export default function ReassignModal({
                         setIsDropdownOpen(false);
                       }}
                     >
-                      <Image
+                      <img
                         src={agent.avatarSrc}
                         alt={agent.name}
                         width={32}

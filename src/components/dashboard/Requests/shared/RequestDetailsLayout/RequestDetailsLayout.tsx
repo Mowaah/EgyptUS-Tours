@@ -48,6 +48,7 @@ interface RequestDetailsLayoutProps {
   hideDefaultActions?: boolean;
   statusVariant?: string;
   hideFooter?: boolean;
+  onActionSubmit?: (action: string, payload?: any) => Promise<void>;
 }
 
 export default function RequestDetailsLayout({
@@ -63,45 +64,76 @@ export default function RequestDetailsLayout({
   breadcrumbCurrent,
   hideDefaultActions,
   statusVariant,
-  hideFooter
+  hideFooter,
+  onActionSubmit
 }: RequestDetailsLayoutProps) {
   const [activeModalKey, setActiveModalKey] = useState<string | null>(null);
   const [bannerMessage, setBannerMessage] = useState("");
+  const [agents, setAgents] = useState<any[]>([]);
 
-  const handleModalSubmit = (action: string) => {
-    let successMessage = "";
-    if (action === "add_note") {
-      successMessage = "The Note has been added successfully";
-    } else if (action === "assign") {
-      successMessage = "The Request has been assigned to employee successfully";
-    } else if (action === "mark_closed") {
-      successMessage = "The Request has been marked as closed successfully";
-    } else if (action === "create_proposal") {
-      successMessage = "The Proposal uploaded successfully";
-    } else if (action === "mark_proposal_sent") {
-      successMessage = "Proposal marked as sent successfully";
-    } else if (action === "mark_rejected") {
-      successMessage = "The Request has been rejected successfully";
-    } else if (action === "reopen") {
-      successMessage = "The Request has been reopened successfully";
-    } else if (action === "approve") {
-      successMessage = "The Request has been Approved successfully";
-    } else if (action === "record_deposit") {
-      successMessage = "The Deposit Payment Recorded Successfully";
-    } else if (action === "record_remaining") {
-      successMessage = "The Remaining Payment Recorded Successfully";
-    } else if (action === "start_negotiation") {
-      successMessage = "The request has been moved to the Negotiation stage";
-    } else if (action === "upload_revised_proposal") {
-      successMessage = "The Revised Proposal uploaded successfully";
-    } else if (action === "refund_payment") {
-      successMessage = "The Refund Processed Successfully";
-    } else if (action === "cancel_trip") {
-      successMessage = "The Trip Cancelled Successfully";
+  React.useEffect(() => {
+    if (activeModalKey === "assign") {
+      const fetchAgents = async () => {
+        try {
+          const { getAdminUsers } = await import("@/lib/adminApi");
+          const res = await getAdminUsers({ is_active: true });
+          const users = res.results || res;
+          const formattedAgents = users.map((u: any) => ({
+            id: u.id.toString(),
+            name: u.full_name,
+            avatarSrc: u.profile_picture || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.full_name || 'A')}&background=F4EDE6&color=4A3D36` // Dynamic generic avatar
+          }));
+          setAgents(formattedAgents);
+        } catch (err) {
+          console.error("Failed to fetch agents", err);
+        }
+      };
+      fetchAgents();
     }
-    
-    setBannerMessage(successMessage);
-    setActiveModalKey(null);
+  }, [activeModalKey]);
+
+  const handleModalSubmit = async (action: string, payload?: any) => {
+    try {
+      if (onActionSubmit) {
+        await onActionSubmit(action, payload);
+      }
+      let successMessage = "";
+      if (action === "add_note") {
+        successMessage = "The Note has been added successfully";
+      } else if (action === "assign") {
+        successMessage = "The Request has been assigned to employee successfully";
+      } else if (action === "mark_closed") {
+        successMessage = "The Request has been marked as closed successfully";
+      } else if (action === "create_proposal") {
+        successMessage = "The Proposal uploaded successfully";
+      } else if (action === "mark_proposal_sent") {
+        successMessage = "Proposal marked as sent successfully";
+      } else if (action === "mark_rejected") {
+        successMessage = "The Request has been rejected successfully";
+      } else if (action === "reopen") {
+        successMessage = "The Request has been reopened successfully";
+      } else if (action === "approve") {
+        successMessage = "The Request has been Approved successfully";
+      } else if (action === "record_deposit") {
+        successMessage = "The Deposit Payment Recorded Successfully";
+      } else if (action === "record_remaining") {
+        successMessage = "The Remaining Payment Recorded Successfully";
+      } else if (action === "start_negotiation") {
+        successMessage = "The request has been moved to the Negotiation stage";
+      } else if (action === "upload_revised_proposal") {
+        successMessage = "The Revised Proposal uploaded successfully";
+      } else if (action === "refund_payment") {
+        successMessage = "The Refund Processed Successfully";
+      } else if (action === "cancel_trip") {
+        successMessage = "The Trip Cancelled Successfully";
+      }
+      
+      setBannerMessage(successMessage);
+      setActiveModalKey(null);
+    } catch (err) {
+      console.error("Action failed:", err);
+      // Optional: set an error banner
+    }
   };
 
   return (
@@ -422,13 +454,14 @@ export default function RequestDetailsLayout({
         open={activeModalKey === "add_note"}
         config={ADD_NOTE_CONFIG}
         onClose={() => setActiveModalKey(null)} 
-        onSubmit={() => handleModalSubmit("add_note")} 
+        onSubmit={(note) => handleModalSubmit("add_note", { note })} 
       />
       
       <ReassignModal
         open={activeModalKey === "assign"}
         onClose={() => setActiveModalKey(null)}
-        onConfirm={() => handleModalSubmit("assign")}
+        onConfirm={(agentId, reason) => handleModalSubmit("assign", { agentId, reason })}
+        agents={agents.length > 0 ? agents : undefined}
         showReasonField={status !== "New"}
         title={status === "New" ? "Assign to Employee" : "Re-Assign to Employee"}
         subtitle=""
@@ -437,67 +470,67 @@ export default function RequestDetailsLayout({
       <CreateProposalModal
         open={activeModalKey === "create_proposal"}
         onClose={() => setActiveModalKey(null)}
-        onSubmit={() => handleModalSubmit("create_proposal")}
+        onSubmit={(file, note) => handleModalSubmit("create_proposal", { file, note })}
       />
 
       <MarkProposalSentModal
         open={activeModalKey === "mark_proposal_sent"}
         onClose={() => setActiveModalKey(null)}
-        onSubmit={() => handleModalSubmit("mark_proposal_sent")}
+        onSubmit={(note) => handleModalSubmit("mark_proposal_sent", { note })}
       />
 
       <RejectRequestModal
         open={activeModalKey === "mark_rejected"}
         onClose={() => setActiveModalKey(null)}
-        onSubmit={() => handleModalSubmit("mark_rejected")}
+        onSubmit={(reason) => handleModalSubmit("mark_rejected", { reason })}
       />
 
       <ReopenRequestModal
         open={activeModalKey === "reopen"}
         onClose={() => setActiveModalKey(null)}
-        onSubmit={() => handleModalSubmit("reopen")}
+        onSubmit={(reason) => handleModalSubmit("reopen", { reason })}
       />
 
       <StartNegotiationModal
         open={activeModalKey === "start_negotiation"}
         onClose={() => setActiveModalKey(null)}
-        onSubmit={() => handleModalSubmit("start_negotiation")}
+        onSubmit={(reason) => handleModalSubmit("start_negotiation", { reason })}
       />
 
       <UploadRevisedProposalModal
         open={activeModalKey === "upload_revised_proposal"}
         onClose={() => setActiveModalKey(null)}
-        onSubmit={() => handleModalSubmit("upload_revised_proposal")}
+        onSubmit={(file, note) => handleModalSubmit("upload_revised_proposal", { file, note })}
       />
 
       <ApproveRequestModal
         open={activeModalKey === "approve"}
         onClose={() => setActiveModalKey(null)}
-        onSubmit={() => handleModalSubmit("approve")}
+        onSubmit={(data) => handleModalSubmit("approve", data)}
       />
 
       <RecordDepositPaymentModal
         open={activeModalKey === "record_deposit"}
         onClose={() => setActiveModalKey(null)}
-        onSubmit={() => handleModalSubmit("record_deposit")}
+        onSubmit={(data) => handleModalSubmit("record_deposit", data)}
       />
 
       <RecordRemainingPaymentModal
         open={activeModalKey === "record_remaining"}
         onClose={() => setActiveModalKey(null)}
-        onSubmit={() => handleModalSubmit("record_remaining")}
+        onSubmit={(data) => handleModalSubmit("record_remaining", data)}
       />
 
       <RefundPaymentModal
         open={activeModalKey === "refund_payment"}
         onClose={() => setActiveModalKey(null)}
-        onSubmit={() => handleModalSubmit("refund_payment")}
+        onSubmit={(data) => handleModalSubmit("refund_payment", data)}
       />
 
       <CancelTripModal
         open={activeModalKey === "cancel_trip"}
         onClose={() => setActiveModalKey(null)}
-        onSubmit={() => handleModalSubmit("cancel_trip")}
+        onSubmit={(reason) => handleModalSubmit("cancel_trip", { reason })}
       />
       <MarkAsClosedModal
         isOpen={activeModalKey === "mark_closed"}

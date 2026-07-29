@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import styles from "./RequestModals.module.scss";
@@ -6,10 +6,18 @@ import styles from "./RequestModals.module.scss";
 interface CancelTripModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: (reason: string) => void;
 }
 
 export default function CancelTripModal({ open, onClose, onSubmit }: CancelTripModalProps) {
+  const [reason, setReason] = useState("");
+
+  React.useEffect(() => {
+    if (open) {
+      setReason("");
+    }
+  }, [open]);
+
   if (!open) return null;
 
   return (
@@ -28,13 +36,15 @@ export default function CancelTripModal({ open, onClose, onSubmit }: CancelTripM
             id="cancel_reason"
             placeholder="Describe the reason for cancelling this trip..."
             rows={6}
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
           />
         </div>
         <ModalFooter
           secondaryLabel="Cancel"
           primaryLabel="Cancel Trip"
           secondaryOnClick={onClose}
-          primaryOnClick={onSubmit}
+          primaryOnClick={() => onSubmit(reason)}
           isDanger={true}
         />
       </div>

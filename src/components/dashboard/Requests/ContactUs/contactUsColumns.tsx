@@ -63,8 +63,13 @@ export const contactUsColumns: DataTableColumn<ContactUsItem>[] = [
     id: "actions",
     header: "",
     cellClassName: styles.actionCell,
-    render: (row) => (
-      <ViewButton onClick={() => window.location.href = `/dashboard/requests/contact-us/${row.id}`} />
-    ),
+    render: (row) => <ViewAction id={row.id} />,
   },
 ];
+
+import { useRouter } from "next/navigation";
+
+function ViewAction({ id }: { id: number }) {
+  const router = useRouter();
+  return <ViewButton onClick={() => router.push(`/dashboard/requests/contact-us/${id}`)} />;
+}

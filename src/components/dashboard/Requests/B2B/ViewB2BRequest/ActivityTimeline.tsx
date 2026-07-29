@@ -1,51 +1,43 @@
 import React from "react";
-import { ActivityTimeline as SharedTimeline, Milestone } from "@/components/dashboard/shared";
+import { ActivityTimeline, Milestone } from "@/components/dashboard/shared";
 
-const mockActivities: Milestone[] = [
-  {
-    id: "1",
-    title: "Lead Submitted",
-    description: "Customer submitted a new inquiry for a corporate event in Dubai.",
-    time: "Oct 26, 09:14 AM",
-    status: "completed",
-  },
-  {
-    id: "2",
-    title: "Assigned to Ahmed Hassan",
-    description: "Request assigned to Ahmed Hassan for review.",
-    time: "Oct 26, 09:14 AM",
-    status: "pending",
-  },
-  {
-    id: "3",
-    title: "Note Added",
-    description: "Customer prefers luxury hotels",
-    time: "Oct 26, 09:14 AM",
-    status: "pending",
-  },
-  {
-    id: "4",
-    title: "Proposal Created",
-    description: "A customized proposal has been prepared.",
-    time: "Oct 26, 09:14 AM",
-    status: "pending",
-  },
-  {
-    id: "5",
-    title: "Proposal Sent",
-    description: "Proposal sent to the customer via email.",
-    time: "Oct 26, 09:14 AM",
-    status: "pending",
-  },
-  {
-    id: "6",
-    title: "Proposal Approved",
-    description: "Customer approved the submitted proposal.",
-    time: "Oct 26, 09:14 AM",
-    status: "pending",
+interface TimelineRow {
+  activity_type: string;
+  description: string;
+  created_at: string;
+  actor_name?: string;
+}
+
+interface ActivityTimelineWrapperProps {
+  timelineRows?: TimelineRow[];
+}
+
+export default function ActivityTimelineWrapper({ timelineRows = [] }: ActivityTimelineWrapperProps) {
+  const milestones: Milestone[] = timelineRows.map((row, index) => {
+    const date = new Date(row.created_at);
+    const timeString = `${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}, ${date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`;
+    
+    let title = row.activity_type.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+    if (row.actor_name) {
+      title += ` by ${row.actor_name}`;
+    }
+
+    return {
+      id: index.toString(),
+      title,
+      description: row.description || "Status updated.",
+      time: timeString,
+      status: "completed"
+    };
+  });
+
+  if (milestones.length === 0) {
+    return (
+      <div style={{ color: "#666", fontStyle: "italic", padding: "10px 0" }}>
+        No activity yet.
+      </div>
+    );
   }
-];
 
-export default function ActivityTimeline() {
-  return <SharedTimeline milestones={mockActivities} />;
+  return <ActivityTimeline milestones={milestones} />;
 }

@@ -75,8 +75,13 @@ export const b2bColumns: DataTableColumn<B2BItem>[] = [
     id: "actions",
     header: "",
     cellClassName: styles.actionCell,
-    render: (row) => (
-      <ViewButton onClick={() => window.location.href = `/dashboard/requests/b2b-programs/${row.id}`} />
-    ),
+    render: (row) => <ViewAction id={row.id} />,
   },
 ];
+
+import { useRouter } from "next/navigation";
+
+function ViewAction({ id }: { id: number }) {
+  const router = useRouter();
+  return <ViewButton onClick={() => router.push(`/dashboard/requests/b2b-programs/${id}`)} />;
+}

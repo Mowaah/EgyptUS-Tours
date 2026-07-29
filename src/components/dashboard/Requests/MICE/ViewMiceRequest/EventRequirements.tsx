@@ -3,17 +3,17 @@ import { InfoCard, InfoCardData } from "@/components/dashboard/shared";
 
 interface EventRequirementsProps {
   request: {
-    venueType: string;
-    additionalServices: string;
-    additionalRequirements: string;
+    venue_type: string;
+    additional_services: string;
+    additional_requirements: string;
   };
 }
 
 export default function EventRequirements({ request }: EventRequirementsProps) {
   const data: InfoCardData[] = [
-    { label: "Venue Type", value: request.venueType },
-    { label: "Additional Services", value: request.additionalServices },
-    { label: "Additional Requirements", value: request.additionalRequirements, isColumn: true },
+    { label: "Venue Type", value: request.venue_type },
+    { label: "Additional Services", value: request.additional_services },
+    { label: "Additional Requirements", value: request.additional_requirements, isColumn: true },
   ];
 
   return (

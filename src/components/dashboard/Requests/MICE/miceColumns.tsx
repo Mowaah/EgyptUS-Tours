@@ -103,8 +103,13 @@ export const miceColumns: DataTableColumn<MiceItem>[] = [
     id: "actions",
     header: "",
     cellClassName: styles.actionCell,
-    render: (row) => (
-      <ViewButton onClick={() => window.location.href = `/dashboard/requests/mice-corporate/${row.id}`} />
-    ),
+    render: (row) => <ViewAction id={row.id} />,
   },
 ];
+
+import { useRouter } from "next/navigation";
+
+function ViewAction({ id }: { id: number }) {
+  const router = useRouter();
+  return <ViewButton onClick={() => router.push(`/dashboard/requests/mice-corporate/${id}`)} />;
+}

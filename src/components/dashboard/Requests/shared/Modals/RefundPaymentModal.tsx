@@ -8,18 +8,32 @@ import styles from "./RequestModals.module.scss";
 interface RefundPaymentModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: (data: { transaction_ref: string; notes: string; file: File | undefined }) => void;
 }
 
 export default function RefundPaymentModal({ open, onClose, onSubmit }: RefundPaymentModalProps) {
   const [file, setFile] = useState<File | undefined>(undefined);
+  const [transactionRef, setTransactionRef] = useState("");
+  const [notes, setNotes] = useState("");
 
   useEffect(() => {
-    if (!open) return;
-    setFile(undefined);
+    if (open) {
+      setFile(undefined);
+      setTransactionRef("");
+      setNotes("");
+    }
   }, [open]);
 
   if (!open) return null;
+
+  const handleSubmit = () => {
+    onSubmit({
+      transaction_ref: transactionRef,
+      notes,
+      file,
+    });
+    onClose();
+  };
 
   return (
     <div className={styles.overlay} onMouseDown={onClose}>
@@ -72,6 +86,8 @@ export default function RefundPaymentModal({ open, onClose, onSubmit }: RefundPa
           required 
           id="txn-ref"
           placeholder="Enter transaction/reference number"
+          value={transactionRef}
+          onChange={(e) => setTransactionRef(e.target.value)}
         />
         
         <div className={styles.fieldGroup} style={{ marginTop: "16px" }}>
@@ -92,13 +108,15 @@ export default function RefundPaymentModal({ open, onClose, onSubmit }: RefundPa
           id="notes"
           placeholder="Add any additional notes or important details related to this refund here."
           rows={4}
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
         />
       </div>
       <ModalFooter
         secondaryLabel="Cancel"
         primaryLabel="Confirm Refund"
         secondaryOnClick={onClose}
-        primaryOnClick={onSubmit}
+        primaryOnClick={handleSubmit}
       />
       </div>
     </div>

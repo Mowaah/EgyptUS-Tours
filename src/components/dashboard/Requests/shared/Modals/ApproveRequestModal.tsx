@@ -44,11 +44,11 @@ export default function ApproveRequestModal({ open, onClose, onSubmit }: Approve
 
   const handleSubmit = () => {
     onSubmit({
-      totalCost,
-      paymentPlan,
-      paymentMethod,
-      paymentStatus,
-      approvalNote
+      total_price: totalCost,
+      payment_plan: paymentPlan === "30% Deposit" ? "deposit" : "full",
+      payment_method: paymentMethod.toLowerCase(),
+      initial_payment_state: paymentStatus === "Pending" ? "pending" : "paid",
+      approval_notes: approvalNote
     });
     onClose();
   };
