@@ -45,25 +45,38 @@ export const b2bColumns: DataTableColumn<B2BApiItem>[] = [
     render: (row) => <span>{row.country || "-"}</span>,
   },
   {
-    id: "source",
-    header: "Source",
-    render: (row) => <span>{row.source || "Website"}</span>,
-  },
-  {
-    id: "assigned",
-    header: "Assigned To",
-    render: (row) => (
-      <span className={row.assigned_to ? styles.assignedText : styles.unassignedText}>
-        {row.assigned_to ? row.assigned_to.full_name : "Unassigned"}
-      </span>
-    ),
-  },
-  {
     id: "date",
-    header: "Request Date",
+    header: "Submitted On",
     render: (row) => {
       const date = new Date(row.created_at);
-      return <span>{date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>;
+      return (
+        <span className={styles.dateCell}>
+          {date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} •{" "}
+          {date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+        </span>
+      );
+    },
+  },
+  {
+    id: "source",
+    header: "Source",
+    render: (row) => {
+      const source = row.source ? row.source.toLowerCase() : "website";
+      const isWebsite = source === "website";
+      const displaySource = source.charAt(0).toUpperCase() + source.slice(1);
+      return (
+        <div className={`${styles.sourcePill} ${isWebsite ? styles.sourceWebsite : styles.sourceAgent}`}>
+          <span
+            className={styles.sourceIcon}
+            style={{
+              maskImage: `url('/images/dashboard/customers/custom/${isWebsite ? "website" : "agent"}.svg')`,
+              WebkitMaskImage: `url('/images/dashboard/customers/custom/${isWebsite ? "website" : "agent"}.svg')`,
+            }}
+            aria-hidden
+          />
+          {displaySource}
+        </div>
+      );
     },
   },
   {
@@ -78,6 +91,15 @@ export const b2bColumns: DataTableColumn<B2BApiItem>[] = [
         />
       );
     },
+  },
+  {
+    id: "agent",
+    header: "Agent",
+    render: (row) => (
+      <span className={row.assigned_to ? styles.assignedText : styles.unassignedText}>
+        {row.assigned_to ? row.assigned_to.full_name : "Unassigned"}
+      </span>
+    ),
   },
   {
     id: "actions",

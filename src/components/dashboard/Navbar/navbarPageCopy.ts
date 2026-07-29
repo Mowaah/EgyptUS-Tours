@@ -22,6 +22,13 @@ export interface PageCopy {
 }
 
 const pageCopyByPath: Record<string, PageCopy> = {
+  "/dashboard/requests/mice-corporate": {
+    title: "MICE & Corporate",
+    subtitle: "Capture, qualify and convert every lead — from first contact to completed deal.",
+    breadcrumbTrail: [{ label: "Requests" }, { label: "MICE & Corporate" }],
+    searchPlaceholder: "Search bookings, customers...",
+    primaryAction: { label: "New MICE Request", iconSrc: "/images/dashboard/navbar/add-circle.svg" },
+  },
   "/dashboard/requests/plan-your-trip": {
     title: "Plan Your trip",
     subtitle: "Capture, qualify and convert every lead — from first contact to completed deal.",

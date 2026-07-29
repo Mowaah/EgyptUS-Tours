@@ -40,6 +40,7 @@ export default function ReassignModal({
 }: ReassignModalProps) {
   const [selectedAgentId, setSelectedAgentId] = useState<string>(agents[0]?.id || "");
   const [reason, setReason] = useState("");
+  const [error, setError] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dropdownMenuRef = useRef<HTMLUListElement>(null);
@@ -72,6 +73,7 @@ export default function ReassignModal({
     // reset selection to first agent when opened
     setSelectedAgentId(agents[0]?.id || "");
     setReason("");
+    setError("");
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => {
@@ -206,7 +208,11 @@ export default function ReassignModal({
                 variant="modal"
                 placeholder="Enter the reason for re-assign this request..."
                 value={reason}
-                onChange={(e) => setReason(e.target.value)}
+                onChange={(e) => {
+                  setReason(e.target.value);
+                  if (error) setError("");
+                }}
+                error={error}
                 style={{ minHeight: "120px", resize: "none" }}
               />
             </div>
@@ -217,7 +223,13 @@ export default function ReassignModal({
           secondaryLabel="Cancel"
           secondaryOnClick={onClose}
           primaryLabel="Confirm"
-          primaryOnClick={() => onConfirm(selectedAgentId, reason)}
+          primaryOnClick={() => {
+            if (showReasonField && !reason.trim()) {
+              setError("Reason is required.");
+              return;
+            }
+            onConfirm(selectedAgentId, reason);
+          }}
         />
       </section>
     </div>

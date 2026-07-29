@@ -248,6 +248,42 @@ export async function getAllB2BRequests(params: any = {}): Promise<any[]> {
   return results;
 }
 
+export async function getMiceRequests(params?: any): Promise<any> {
+  return await adminDataClient.get('/requests/mice-events/', { params });
+}
+
+export async function getMiceStats(params?: any): Promise<any> {
+  return await adminDataClient.get('/requests/mice-events/stats/', { params });
+}
+
+export async function getAllMiceRequests(params: any = {}): Promise<any[]> {
+  const firstPage = await getMiceRequests(params);
+  const results = firstPage.results ? [...firstPage.results] : (Array.isArray(firstPage) ? [...firstPage] : []);
+  
+  if (!firstPage.count) return results;
+
+  const actualPageSize = results.length;
+  if (actualPageSize === 0 || firstPage.count <= actualPageSize) {
+    return results;
+  }
+
+  const totalPages = Math.ceil(firstPage.count / actualPageSize);
+  
+  if (totalPages > 1) {
+    const promises = [];
+    for (let page = 2; page <= totalPages; page++) {
+      promises.push(getMiceRequests({ ...params, page }));
+    }
+    const pages = await Promise.all(promises);
+    for (const page of pages) {
+      if (page.results) results.push(...page.results);
+      else if (Array.isArray(page)) results.push(...page);
+    }
+  }
+
+  return results;
+}
+
 export async function getPlanYourTripStats(params?: any): Promise<any> {
   return await adminDataClient.get('/requests/plan-your-trip/stats/', { params });
 }

@@ -19,14 +19,23 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
   const [loading, setLoading] = useState(true);
   const [sourceFilter, setSourceFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [appliedSourceFilter, setAppliedSourceFilter] = useState("");
+  const [appliedStatusFilter, setAppliedStatusFilter] = useState("");
 
   const fetchRequests = async () => {
     setLoading(true);
     try {
       const params: any = {};
       if (searchQuery) params.search = searchQuery;
-      if (sourceFilter && sourceFilter !== "All") params.source = sourceFilter.toLowerCase();
-      if (statusFilter && statusFilter !== "All") params.status = statusFilter.toLowerCase().replace(/ /g, "_");
+      if (appliedSourceFilter && appliedSourceFilter !== "All") params.source = appliedSourceFilter.toLowerCase();
+      
+      if (appliedStatusFilter && appliedStatusFilter !== "All") {
+        let apiStatus = appliedStatusFilter.toLowerCase().replace(/ /g, "_");
+        if (apiStatus === "refund_completed") apiStatus = "refunded";
+        if (apiStatus === "pending_payment" || apiStatus === "30%_pending_payment") apiStatus = "awaiting_payment"; // fallback
+        params.status = apiStatus;
+      }
+      
       params.page_size = 100;
 
       const results = await getAllB2BRequests(params);
@@ -40,7 +49,12 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
 
   useEffect(() => {
     fetchRequests();
-  }, [searchQuery, sourceFilter, statusFilter]);
+  }, [searchQuery, appliedSourceFilter, appliedStatusFilter]);
+
+  const handleApply = () => {
+    setAppliedSourceFilter(sourceFilter);
+    setAppliedStatusFilter(statusFilter);
+  };
 
   const filterFields = useMemo(
     () => [
@@ -80,9 +94,11 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
   const handleClean = () => {
     setSourceFilter("");
     setStatusFilter("");
+    setAppliedSourceFilter("");
+    setAppliedStatusFilter("");
   };
 
-  if (!loading && data.length === 0 && !searchQuery && !sourceFilter && !statusFilter) {
+  if (!loading && data.length === 0 && !searchQuery && !appliedSourceFilter && !appliedStatusFilter) {
     return (
       <DashboardEmptyState
         title="No B2B Requests Yet"
@@ -98,7 +114,7 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
       iconSrc="/images/dashboard/sidebar/b2b-programs.svg"
       showFilters
       showExport
-      toolbar={<TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={() => {}} />}
+      toolbar={<TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} />}
     >
       {loading ? (
         <div style={{ padding: "40px", textAlign: "center", color: "#666" }}>Loading requests...</div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   TablePanel,
   TablePanelFilterBar,
@@ -8,22 +8,72 @@ import {
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { miceColumns } from "./miceColumns";
-import { mockMiceData } from "./mockMiceData";
+import { getAllMiceRequests } from "@/lib/adminApi";
 
-export default function MiceRequestsPanel() {
+interface MiceRequestsPanelProps {
+  searchQuery?: string;
+}
+
+export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPanelProps) {
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [sourceFilter, setSourceFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [appliedSourceFilter, setAppliedSourceFilter] = useState("");
+  const [appliedStatusFilter, setAppliedStatusFilter] = useState("");
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      setLoading(true);
+      try {
+        const params: any = {};
+        if (searchQuery) params.search = searchQuery;
+        if (appliedSourceFilter && appliedSourceFilter !== "All") params.source = appliedSourceFilter.toLowerCase();
+        
+        if (appliedStatusFilter && appliedStatusFilter !== "All") {
+          let apiStatus = appliedStatusFilter.toLowerCase().replace(/ /g, "_");
+          if (apiStatus === "refund_completed") apiStatus = "refunded";
+          if (apiStatus === "pending_payment" || apiStatus === "30%_pending_payment") apiStatus = "awaiting_payment";
+          params.status = apiStatus;
+        }
+        params.page_size = 100;
+        
+        const results = await getAllMiceRequests(params);
+        setData(results);
+      } catch (err) {
+        console.error("Failed to fetch MICE requests:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRequests();
+  }, [searchQuery, appliedSourceFilter, appliedStatusFilter]);
+
+  const handleApply = () => {
+    setAppliedSourceFilter(sourceFilter);
+    setAppliedStatusFilter(statusFilter);
+  };
+
+  const handleClean = () => {
+    setSourceFilter("");
+    setStatusFilter("");
+    setAppliedSourceFilter("");
+    setAppliedStatusFilter("");
+  };
+
   const filterFields = useMemo(
     () => [
       {
         id: "source",
         label: "Source",
-        value: "All",
+        value: sourceFilter || "All",
         options: ["All", "Website", "Agent"],
-        onChange: () => {},
+        onChange: (val: string) => setSourceFilter(val),
       },
       {
         id: "status",
         label: "Status",
-        value: "All",
+        value: statusFilter || "All",
         options: [
           "All",
           "New",
@@ -40,13 +90,25 @@ export default function MiceRequestsPanel() {
           "Cancelled",
           "Refund Completed",
         ],
-        onChange: () => {},
+        onChange: (val: string) => setStatusFilter(val),
       },
     ],
-    []
+    [sourceFilter, statusFilter]
   );
 
-  if (mockMiceData.length === 0) {
+  if (loading) {
+    return (
+      <TablePanel
+        ariaLabel="MICE requests"
+        title="MICE & Corporate Request"
+        iconSrc="/images/dashboard/sidebar/mice-corporate.svg"
+      >
+        <div style={{ padding: "40px", textAlign: "center" }}>Loading MICE Requests...</div>
+      </TablePanel>
+    );
+  }
+
+  if (!loading && data.length === 0 && !searchQuery && !appliedSourceFilter && !appliedStatusFilter) {
     return (
       <DashboardEmptyState
         title="No MICE & Corporate Requests Yet"
@@ -62,10 +124,10 @@ export default function MiceRequestsPanel() {
       iconSrc="/images/dashboard/sidebar/mice-corporate.svg"
       showFilters
       showExport
-      toolbar={<TablePanelFilterBar fields={filterFields} onClean={() => {}} onApply={() => {}} />}
+      toolbar={<TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} />}
     >
       <DataTable
-        data={mockMiceData}
+        data={data}
         columns={miceColumns}
         getRowId={(row) => row.id}
         selectable

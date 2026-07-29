@@ -2,7 +2,6 @@ import type { DataTableColumn } from "@/components/dashboard/DataTable";
 import StatusPill from "@/components/shared/StatusPill/StatusPill";
 import type { StatusPillVariant } from "@/components/shared/StatusPill/StatusPill";
 import ViewButton from "@/components/shared/ViewButton/ViewButton";
-import type { MiceItem } from "./mockMiceData";
 import styles from "./MICE.module.scss";
 
 // Export this so we can reuse it in the View request page
@@ -38,16 +37,16 @@ export const getStatusVariant = (status: string): StatusPillVariant => {
   }
 };
 
-export const miceColumns: DataTableColumn<MiceItem>[] = [
+export const miceColumns: DataTableColumn<any>[] = [
   {
     id: "ref",
     header: "Ref",
-    render: (row) => <span className={styles.idCell}>{row.ref}</span>,
+    render: (row) => <span className={styles.idCell}>{row.request_code}</span>,
   },
   {
     id: "organizationName",
     header: "Organization Name",
-    render: (row) => <span>{row.organizationName}</span>,
+    render: (row) => <span>{row.organization_name}</span>,
   },
   {
     id: "industry",
@@ -62,13 +61,23 @@ export const miceColumns: DataTableColumn<MiceItem>[] = [
   {
     id: "submittedOn",
     header: "Submitted On",
-    render: (row) => <span className={styles.dateCell}>{row.submittedOn}</span>,
+    render: (row) => {
+      const date = new Date(row.submitted_on);
+      return (
+        <span className={styles.dateCell}>
+          {date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} •{" "}
+          {date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+        </span>
+      );
+    },
   },
   {
     id: "source",
     header: "Source",
     render: (row) => {
-      const isWebsite = row.source === "Website";
+      const source = row.source.toLowerCase();
+      const isWebsite = source === "website";
+      const displaySource = source.charAt(0).toUpperCase() + source.slice(1);
       return (
         <div className={`${styles.sourcePill} ${isWebsite ? styles.sourceWebsite : styles.sourceAgent}`}>
           <span
@@ -79,7 +88,7 @@ export const miceColumns: DataTableColumn<MiceItem>[] = [
             }}
             aria-hidden
           />
-          {row.source}
+          {displaySource}
         </div>
       );
     },
@@ -87,17 +96,20 @@ export const miceColumns: DataTableColumn<MiceItem>[] = [
   {
     id: "status",
     header: "Status",
-    render: (row) => (
-      <StatusPill 
-        label={row.status} 
-        variant={getStatusVariant(row.status)} 
-      />
-    ),
+    render: (row) => {
+      const displayStatus = row.display_status.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+      return (
+        <StatusPill 
+          label={displayStatus} 
+          variant={getStatusVariant(displayStatus)} 
+        />
+      );
+    },
   },
   {
     id: "agent",
-    header: "Assigned",
-    render: (row) => <span className={styles.agentCell}>{row.agent}</span>,
+    header: "Agent",
+    render: (row) => <span className={row.assigned_to ? styles.assignedText : styles.unassignedText}>{row.assigned_to ? row.assigned_to.full_name : "Unassigned"}</span>,
   },
   {
     id: "actions",
