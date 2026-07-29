@@ -2,9 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import CompanyInformation from "./CompanyInformation";
-import ActivityTimeline from "./ActivityTimeline";
 import RequestDetailsLayout from "../../shared/RequestDetailsLayout/RequestDetailsLayout";
-import { ProposalFile, PaymentOverview } from "../../shared/Sections";
+import { ProposalFile, PaymentOverview, ActivityTimeline } from "../../shared/Sections";
 
 export default function ViewB2BRequest({ requestId }: { requestId: string }) {
   const [requestData, setRequestData] = useState<any>(null);

@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { CustomerInformation, ProposalFile, PaymentOverview } from "../../shared/Sections";
+import { CustomerInformation, ProposalFile, PaymentOverview, ActivityTimeline } from "../../shared/Sections";
 import { getPlanYourTripDetails } from "@/lib/adminApi";
 import TripPreferences from "./TripPreferences";
 import TripDetails from "./TripDetails";
-import ActivityTimeline from "./ActivityTimeline";
 import RequestDetailsLayout from "../../shared/RequestDetailsLayout/RequestDetailsLayout";
 import RefundSummary from "@/components/dashboard/shared/RefundSummary/RefundSummary";
 

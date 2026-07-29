@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import {
   TablePanel,
   TablePanelFilterBar,
@@ -8,55 +8,36 @@ import {
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { planYourTripColumns, PlanYourTripApiItem } from "./planYourTripColumns";
-import { getPlanYourTripRequests, getAllPlanYourTripRequests } from "@/lib/adminApi";
-import { buildRequestFilterParams, downloadBlobAsCSV } from "@/lib/utils";
+import { getAllPlanYourTripRequests } from "@/lib/adminApi";
+import { useRequestPanel } from "@/hooks/useRequestPanel";
 
 interface CustomTripRequestsPanelProps {
   searchQuery: string;
 }
 
 export default function CustomTripRequestsPanel({ searchQuery }: CustomTripRequestsPanelProps) {
-  const [data, setData] = useState<PlanYourTripApiItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [sourceFilter, setSourceFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [appliedSourceFilter, setAppliedSourceFilter] = useState("");
-  const [appliedStatusFilter, setAppliedStatusFilter] = useState("");
-
-  const fetchRequests = async () => {
-    setLoading(true);
-    try {
-      const params = buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter);
-      params.page_size = 100; // Fetch more records so client-side pagination can handle them
-
-      const results = await getAllPlanYourTripRequests(params);
-      setData(results);
-    } catch (err) {
-      console.error("Failed to fetch plan your trip requests:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchRequests();
-  }, [searchQuery, appliedSourceFilter, appliedStatusFilter]);
-
-  const handleApply = () => {
-    setAppliedSourceFilter(sourceFilter);
-    setAppliedStatusFilter(statusFilter);
-  };
-
-  const handleExport = async () => {
-    try {
-      const params = buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter);
+  const {
+    data,
+    loading,
+    sourceFilter,
+    setSourceFilter,
+    statusFilter,
+    setStatusFilter,
+    handleApply,
+    handleClean,
+    handleExport,
+    appliedSourceFilter,
+    appliedStatusFilter,
+  } = useRequestPanel<PlanYourTripApiItem>({
+    searchQuery,
+    fetchRequestsApi: getAllPlanYourTripRequests,
+    exportCsvApi: async () => {
       const { exportPlanYourTripCSV } = await import("@/lib/adminApi");
-      const blob = await exportPlanYourTripCSV(params);
-      downloadBlobAsCSV(blob, "plan_your_trip.csv");
-    } catch (err) {
-      console.error("Failed to export:", err);
-    }
-  };
+      const { buildRequestFilterParams } = await import("@/lib/utils");
+      return exportPlanYourTripCSV(buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter));
+    },
+    exportFilename: "plan_your_trip.csv",
+  });
 
   const filterFields = useMemo(
     () => [
@@ -93,12 +74,6 @@ export default function CustomTripRequestsPanel({ searchQuery }: CustomTripReque
     [sourceFilter, statusFilter]
   );
 
-  const handleClean = () => {
-    setSourceFilter("");
-    setStatusFilter("");
-    setAppliedSourceFilter("");
-    setAppliedStatusFilter("");
-  };
 
   if (!loading && data.length === 0 && !searchQuery && !appliedSourceFilter && !appliedStatusFilter) {
     return (

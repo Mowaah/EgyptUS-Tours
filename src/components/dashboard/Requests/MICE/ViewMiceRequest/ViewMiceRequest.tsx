@@ -1,13 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ProposalFile, PaymentOverview } from "../../shared/Sections";
+import { ProposalFile, PaymentOverview, ActivityTimeline } from "../../shared/Sections";
 import RefundSummary from "@/components/dashboard/shared/RefundSummary/RefundSummary";
 import OrganizationInformation from "./OrganizationInformation";
 import EventDetails from "./EventDetails";
 import EventRequirements from "./EventRequirements";
 import BudgetInformation from "./BudgetInformation";
-import ActivityTimeline from "./ActivityTimeline";
 import RequestDetailsLayout from "../../shared/RequestDetailsLayout/RequestDetailsLayout";
 
 export default function ViewMiceRequest({ requestId }: { requestId: string }) {

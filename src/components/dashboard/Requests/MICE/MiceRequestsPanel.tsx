@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import {
   TablePanel,
   TablePanelFilterBar,
@@ -9,60 +9,36 @@ import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/Dash
 import { DataTable } from "@/components/dashboard/DataTable";
 import { miceColumns } from "./miceColumns";
 import { getAllMiceRequests } from "@/lib/adminApi";
-import { buildRequestFilterParams, downloadBlobAsCSV } from "@/lib/utils";
+import { useRequestPanel } from "@/hooks/useRequestPanel";
 
 interface MiceRequestsPanelProps {
   searchQuery?: string;
 }
 
 export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPanelProps) {
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [sourceFilter, setSourceFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [appliedSourceFilter, setAppliedSourceFilter] = useState("");
-  const [appliedStatusFilter, setAppliedStatusFilter] = useState("");
-
-  useEffect(() => {
-    const fetchRequests = async () => {
-      setLoading(true);
-      try {
-        const params = buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter);
-        params.page_size = 100;
-        
-        const results = await getAllMiceRequests(params);
-        setData(results);
-      } catch (err) {
-        console.error("Failed to fetch MICE requests:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRequests();
-  }, [searchQuery, appliedSourceFilter, appliedStatusFilter]);
-
-  const handleApply = () => {
-    setAppliedSourceFilter(sourceFilter);
-    setAppliedStatusFilter(statusFilter);
-  };
-
-  const handleExport = async () => {
-    try {
-      const params = buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter);
+  const {
+    data,
+    loading,
+    sourceFilter,
+    setSourceFilter,
+    statusFilter,
+    setStatusFilter,
+    handleApply,
+    handleClean,
+    handleExport,
+    appliedSourceFilter,
+    appliedStatusFilter,
+  } = useRequestPanel<any>({
+    searchQuery,
+    fetchRequestsApi: getAllMiceRequests,
+    exportCsvApi: async () => {
       const { exportMiceCSV } = await import("@/lib/adminApi");
-      const blob = await exportMiceCSV(params);
-      downloadBlobAsCSV(blob, "mice_requests.csv");
-    } catch (err) {
-      console.error("Failed to export:", err);
-    }
-  };
+      const { buildRequestFilterParams } = await import("@/lib/utils");
+      return exportMiceCSV(buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter));
+    },
+    exportFilename: "mice_requests.csv",
+  });
 
-  const handleClean = () => {
-    setSourceFilter("");
-    setStatusFilter("");
-    setAppliedSourceFilter("");
-    setAppliedStatusFilter("");
-  };
 
   const filterFields = useMemo(
     () => [

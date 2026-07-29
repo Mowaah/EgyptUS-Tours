@@ -5,7 +5,7 @@ import Image from "next/image";
 import { getContactUsDetails, getContactUsTimeline, contactUsActions } from "@/lib/adminApi";
 import { getContactUsStatusVariant } from "./contactUsColumns";
 import RequestDetailsLayout from "../shared/RequestDetailsLayout/RequestDetailsLayout";
-import ActivityTimeline from "./ActivityTimeline";
+import { ActivityTimeline } from "../shared/Sections";
 import InquiryDetails from "./InquiryDetails";
 import phStyles from "@/components/dashboard/shared/ProfileHeader/ProfileHeader.module.scss";
 

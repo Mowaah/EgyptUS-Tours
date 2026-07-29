@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import {
   TablePanel,
   TablePanelFilterBar,
@@ -9,54 +9,28 @@ import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/Dash
 import { DataTable } from "@/components/dashboard/DataTable";
 import { contactUsColumns } from "./contactUsColumns";
 import { getAllContactUsRequests, exportContactUsCSV } from "@/lib/adminApi";
-import { buildRequestFilterParams, downloadBlobAsCSV } from "@/lib/utils";
+import { useRequestPanel } from "@/hooks/useRequestPanel";
 
 interface ContactUsPanelProps {
   searchQuery?: string;
 }
 
 export default function ContactUsPanel({ searchQuery = "" }: ContactUsPanelProps) {
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState("");
-  const [appliedStatusFilter, setAppliedStatusFilter] = useState("");
-
-  useEffect(() => {
-    const fetchRequests = async () => {
-      setLoading(true);
-      try {
-        const params = buildRequestFilterParams(searchQuery, undefined, appliedStatusFilter);
-        params.page_size = 100;
-        
-        const results = await getAllContactUsRequests(params);
-        setData(results);
-      } catch (err) {
-        console.error("Failed to fetch Contact Us requests:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRequests();
-  }, [searchQuery, appliedStatusFilter]);
-
-  const handleApply = () => {
-    setAppliedStatusFilter(statusFilter);
-  };
-
-  const handleClean = () => {
-    setStatusFilter("");
-    setAppliedStatusFilter("");
-  };
-
-  const handleExport = async () => {
-    try {
-      const params = buildRequestFilterParams(searchQuery, undefined, appliedStatusFilter);
-      const blob = await exportContactUsCSV(params);
-      downloadBlobAsCSV(blob, "contact_us.csv");
-    } catch (err) {
-      console.error("Failed to export:", err);
-    }
-  };
+  const {
+    data,
+    loading,
+    statusFilter,
+    setStatusFilter,
+    handleApply,
+    handleClean,
+    handleExport,
+    appliedStatusFilter,
+  } = useRequestPanel<any>({
+    searchQuery,
+    fetchRequestsApi: getAllContactUsRequests,
+    exportCsvApi: exportContactUsCSV,
+    exportFilename: "contact_us.csv",
+  });
 
   const filterFields = useMemo(
     () => [
