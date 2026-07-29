@@ -9,6 +9,7 @@ import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/Dash
 import { DataTable } from "@/components/dashboard/DataTable";
 import { planYourTripColumns, PlanYourTripApiItem } from "./planYourTripColumns";
 import { getPlanYourTripRequests, getAllPlanYourTripRequests } from "@/lib/adminApi";
+import { buildRequestFilterParams, downloadBlobAsCSV } from "@/lib/utils";
 
 interface CustomTripRequestsPanelProps {
   searchQuery: string;
@@ -25,16 +26,7 @@ export default function CustomTripRequestsPanel({ searchQuery }: CustomTripReque
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      const params: any = {};
-      if (searchQuery) params.search = searchQuery;
-      if (appliedSourceFilter && appliedSourceFilter !== "All") params.source = appliedSourceFilter.toLowerCase();
-      
-      if (appliedStatusFilter && appliedStatusFilter !== "All") {
-        let apiStatus = appliedStatusFilter.toLowerCase().replace(/ /g, "_");
-        if (apiStatus === "refund_completed") apiStatus = "refunded";
-        if (apiStatus === "pending_payment" || apiStatus === "30%_pending_payment") apiStatus = "awaiting_payment";
-        params.status = apiStatus;
-      }
+      const params = buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter);
       params.page_size = 100; // Fetch more records so client-side pagination can handle them
 
       const results = await getAllPlanYourTripRequests(params);
@@ -53,6 +45,17 @@ export default function CustomTripRequestsPanel({ searchQuery }: CustomTripReque
   const handleApply = () => {
     setAppliedSourceFilter(sourceFilter);
     setAppliedStatusFilter(statusFilter);
+  };
+
+  const handleExport = async () => {
+    try {
+      const params = buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter);
+      const { exportPlanYourTripCSV } = await import("@/lib/adminApi");
+      const blob = await exportPlanYourTripCSV(params);
+      downloadBlobAsCSV(blob, "plan_your_trip.csv");
+    } catch (err) {
+      console.error("Failed to export:", err);
+    }
   };
 
   const filterFields = useMemo(
@@ -113,6 +116,7 @@ export default function CustomTripRequestsPanel({ searchQuery }: CustomTripReque
       iconSrc="/images/dashboard/sidebar/plan-your-trip.svg"
       showFilters
       showExport
+      onExportClick={handleExport}
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} />}
     >
       {loading ? (

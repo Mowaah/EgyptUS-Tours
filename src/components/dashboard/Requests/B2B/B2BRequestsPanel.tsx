@@ -9,6 +9,7 @@ import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/Dash
 import { DataTable } from "@/components/dashboard/DataTable";
 import { b2bColumns, B2BApiItem } from "./b2bColumns";
 import { getAllB2BRequests } from "@/lib/adminApi";
+import { buildRequestFilterParams, downloadBlobAsCSV } from "@/lib/utils";
 
 interface B2BRequestsPanelProps {
   searchQuery?: string;
@@ -25,17 +26,7 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      const params: any = {};
-      if (searchQuery) params.search = searchQuery;
-      if (appliedSourceFilter && appliedSourceFilter !== "All") params.source = appliedSourceFilter.toLowerCase();
-      
-      if (appliedStatusFilter && appliedStatusFilter !== "All") {
-        let apiStatus = appliedStatusFilter.toLowerCase().replace(/ /g, "_");
-        if (apiStatus === "refund_completed") apiStatus = "refunded";
-        if (apiStatus === "pending_payment" || apiStatus === "30%_pending_payment") apiStatus = "awaiting_payment"; // fallback
-        params.status = apiStatus;
-      }
-      
+      const params = buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter);
       params.page_size = 100;
 
       const results = await getAllB2BRequests(params);
@@ -54,6 +45,24 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
   const handleApply = () => {
     setAppliedSourceFilter(sourceFilter);
     setAppliedStatusFilter(statusFilter);
+  };
+
+  const handleExport = async () => {
+    try {
+      const params = buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter);
+      const { exportB2BCSV } = await import("@/lib/adminApi");
+      const blob = await exportB2BCSV(params);
+      downloadBlobAsCSV(blob, "b2b_proposals.csv");
+    } catch (err) {
+      console.error("Failed to export:", err);
+    }
+  };
+
+  const handleClean = () => {
+    setSourceFilter("");
+    setStatusFilter("");
+    setAppliedSourceFilter("");
+    setAppliedStatusFilter("");
   };
 
   const filterFields = useMemo(
@@ -91,12 +100,6 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
     [sourceFilter, statusFilter]
   );
 
-  const handleClean = () => {
-    setSourceFilter("");
-    setStatusFilter("");
-    setAppliedSourceFilter("");
-    setAppliedStatusFilter("");
-  };
 
   if (!loading && data.length === 0 && !searchQuery && !appliedSourceFilter && !appliedStatusFilter) {
     return (
@@ -114,6 +117,7 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
       iconSrc="/images/dashboard/sidebar/b2b-programs.svg"
       showFilters
       showExport
+      onExportClick={handleExport}
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} />}
     >
       {loading ? (

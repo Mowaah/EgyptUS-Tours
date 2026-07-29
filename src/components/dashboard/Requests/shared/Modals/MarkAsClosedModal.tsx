@@ -4,12 +4,12 @@ import ActionNoteModal from "@/components/dashboard/LeadsInquiries/ActionNoteMod
 interface MarkAsClosedModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: (note: string) => void;
 }
 
 export default function MarkAsClosedModal({ isOpen, onClose, onSubmit }: MarkAsClosedModalProps) {
-  const handleConfirm = () => {
-    onSubmit();
+  const handleConfirm = (note: string) => {
+    onSubmit(note);
   };
 
   return (

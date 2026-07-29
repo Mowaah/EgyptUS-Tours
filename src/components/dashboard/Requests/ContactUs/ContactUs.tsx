@@ -18,7 +18,7 @@ export default function ContactUs() {
       />
       
       {/* Notice there are no summary cards here based on the design! */}
-      <ContactUsPanel />
+      <ContactUsPanel searchQuery={searchQuery} />
     </div>
   );
 }

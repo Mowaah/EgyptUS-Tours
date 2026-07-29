@@ -535,9 +535,21 @@ export default function RequestDetailsLayout({
         onSubmit={(reason) => handleModalSubmit("cancel_trip", { reason })}
       />
       <MarkAsClosedModal
-        isOpen={activeModalKey === "mark_closed"}
+        isOpen={activeModalKey === "close"}
         onClose={() => setActiveModalKey(null)}
-        onSubmit={() => handleModalSubmit("mark_closed")}
+        onSubmit={(note) => handleModalSubmit("close", { note })}
+      />
+      <ActionNoteModal
+        open={activeModalKey === "reply"}
+        onClose={() => setActiveModalKey(null)}
+        onSubmit={(message) => handleModalSubmit("reply", { message })}
+        config={{
+          title: "Reply via Email",
+          iconSrc: "/images/dashboard/requests/contact-us/reply-via-email.svg",
+          label: "Message",
+          primaryLabel: "Send Reply",
+          placeholder: "Type your reply to the customer...",
+        }}
       />
     </>
   );

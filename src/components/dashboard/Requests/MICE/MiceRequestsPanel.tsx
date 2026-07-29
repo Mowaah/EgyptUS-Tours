@@ -9,6 +9,7 @@ import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/Dash
 import { DataTable } from "@/components/dashboard/DataTable";
 import { miceColumns } from "./miceColumns";
 import { getAllMiceRequests } from "@/lib/adminApi";
+import { buildRequestFilterParams, downloadBlobAsCSV } from "@/lib/utils";
 
 interface MiceRequestsPanelProps {
   searchQuery?: string;
@@ -26,16 +27,7 @@ export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPane
     const fetchRequests = async () => {
       setLoading(true);
       try {
-        const params: any = {};
-        if (searchQuery) params.search = searchQuery;
-        if (appliedSourceFilter && appliedSourceFilter !== "All") params.source = appliedSourceFilter.toLowerCase();
-        
-        if (appliedStatusFilter && appliedStatusFilter !== "All") {
-          let apiStatus = appliedStatusFilter.toLowerCase().replace(/ /g, "_");
-          if (apiStatus === "refund_completed") apiStatus = "refunded";
-          if (apiStatus === "pending_payment" || apiStatus === "30%_pending_payment") apiStatus = "awaiting_payment";
-          params.status = apiStatus;
-        }
+        const params = buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter);
         params.page_size = 100;
         
         const results = await getAllMiceRequests(params);
@@ -52,6 +44,17 @@ export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPane
   const handleApply = () => {
     setAppliedSourceFilter(sourceFilter);
     setAppliedStatusFilter(statusFilter);
+  };
+
+  const handleExport = async () => {
+    try {
+      const params = buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter);
+      const { exportMiceCSV } = await import("@/lib/adminApi");
+      const blob = await exportMiceCSV(params);
+      downloadBlobAsCSV(blob, "mice_requests.csv");
+    } catch (err) {
+      console.error("Failed to export:", err);
+    }
   };
 
   const handleClean = () => {
@@ -124,6 +127,7 @@ export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPane
       iconSrc="/images/dashboard/sidebar/mice-corporate.svg"
       showFilters
       showExport
+      onExportClick={handleExport}
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} />}
     >
       <DataTable

@@ -2,32 +2,32 @@ import type { DataTableColumn } from "@/components/dashboard/DataTable";
 import StatusPill from "@/components/shared/StatusPill/StatusPill";
 import type { StatusPillVariant } from "@/components/shared/StatusPill/StatusPill";
 import ViewButton from "@/components/shared/ViewButton/ViewButton";
-import type { ContactUsItem } from "./mockContactUsData";
 import styles from "./ContactUs.module.scss";
 
 export const getContactUsStatusVariant = (status: string): StatusPillVariant => {
-  switch (status) {
-    case "New":
+  switch (status?.toLowerCase()) {
+    case "new":
       return "green";
-    case "Replied":
+    case "replied":
+    case "in_progress":
       return "orangeLight";
-    case "Closed":
+    case "closed":
       return "gray";
     default:
       return "gray";
   }
 };
 
-export const contactUsColumns: DataTableColumn<ContactUsItem>[] = [
+export const contactUsColumns: DataTableColumn<any>[] = [
   {
-    id: "ref",
+    id: "inquiry_code",
     header: "Ref",
-    render: (row) => <span className={styles.idCell}>{row.ref}</span>,
+    render: (row) => <span className={styles.idCell}>{row.inquiry_code}</span>,
   },
   {
-    id: "fullName",
+    id: "full_name",
     header: "Full Name",
-    render: (row) => <span>{row.fullName}</span>,
+    render: (row) => <span>{row.full_name}</span>,
   },
   {
     id: "email",
@@ -35,34 +35,40 @@ export const contactUsColumns: DataTableColumn<ContactUsItem>[] = [
     render: (row) => <span>{row.email}</span>,
   },
   {
-    id: "message",
+    id: "message_preview",
     header: "Message",
-    render: (row) => <span className={styles.messageCell}>{row.message}</span>,
+    render: (row) => <span className={styles.messageCell}>{row.message_preview}</span>,
   },
   {
-    id: "submittedOn",
+    id: "submitted_on",
     header: "Submitted On",
-    render: (row) => <span className={styles.dateCell}>{row.submittedOn}</span>,
+    render: (row) => {
+      let dateStr = "-";
+      if (row.submitted_on) {
+        const date = new Date(row.submitted_on);
+        dateStr = `${date.toLocaleDateString("en-US", { day: "2-digit", month: "short", year: "numeric" })}, ${date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false })}`;
+      }
+      return <span className={styles.dateCell}>{dateStr}</span>;
+    },
   },
   {
-    id: "status",
+    id: "display_status",
     header: "Status",
     render: (row) => (
       <StatusPill 
-        label={row.status} 
+        label={row.display_status || row.status} 
         variant={getContactUsStatusVariant(row.status)} 
       />
     ),
   },
   {
-    id: "assigned",
+    id: "assigned_to",
     header: "Assigned",
-    render: (row) => <span className={styles.agentCell}>{row.assigned}</span>,
+    render: (row) => <span className={styles.agentCell}>{row.assigned_to?.full_name || "-"}</span>,
   },
   {
     id: "actions",
-    header: "",
-    cellClassName: styles.actionCell,
+    header: "Actions",
     render: (row) => <ViewAction id={row.id} />,
   },
 ];

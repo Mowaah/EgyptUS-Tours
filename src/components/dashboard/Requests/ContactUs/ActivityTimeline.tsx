@@ -1,44 +1,43 @@
 import React from "react";
 import { ActivityTimeline as SharedTimeline, Milestone } from "@/components/dashboard/shared";
 
-const mockActivities: Milestone[] = [
-  {
-    id: "1",
-    title: "Contact Request Submitted",
-    description: "Customer submitted a new contact request.",
-    time: "Oct 26, 09:14 AM",
-    status: "completed",
-  },
-  {
-    id: "2",
-    title: "Assigned to Ahmed Hassan",
-    description: "Request assigned to Ahmed Hassan for review.",
-    time: "Oct 26, 09:14 AM",
-    status: "pending",
-  },
-  {
-    id: "3",
-    title: "Note Added",
-    description: "Customer prefers luxury hotels",
-    time: "Oct 26, 09:14 AM",
-    status: "pending",
-  },
-  {
-    id: "4",
-    title: "Reply Sent",
-    description: "A response was sent to the customer via email.",
-    time: "Oct 26, 09:14 AM",
-    status: "pending",
-  },
-  {
-    id: "5",
-    title: "Conversation Closed",
-    description: "Conversation marked as closed.",
-    time: "Oct 26, 09:14 AM",
-    status: "pending",
-  }
-];
+interface TimelineRow {
+  activity_type: string;
+  description: string;
+  created_at: string;
+  actor_name?: string;
+}
 
-export default function ActivityTimeline() {
-  return <SharedTimeline milestones={mockActivities} />;
+interface ActivityTimelineWrapperProps {
+  timelineRows?: TimelineRow[];
+}
+
+export default function ActivityTimelineWrapper({ timelineRows = [] }: ActivityTimelineWrapperProps) {
+  const milestones: Milestone[] = timelineRows.map((row, index) => {
+    const date = new Date(row.created_at);
+    const timeString = `${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}, ${date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`;
+    
+    let title = row.activity_type.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+    if (row.actor_name) {
+      title += ` by ${row.actor_name}`;
+    }
+
+    return {
+      id: index.toString(),
+      title,
+      description: row.description || "Status updated.",
+      time: timeString,
+      status: "completed"
+    };
+  });
+
+  if (milestones.length === 0) {
+    return (
+      <div style={{ color: "#666", fontStyle: "italic", padding: "10px 0" }}>
+        No activity yet.
+      </div>
+    );
+  }
+
+  return <SharedTimeline milestones={milestones} />;
 }

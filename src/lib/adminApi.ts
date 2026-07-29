@@ -212,12 +212,26 @@ export async function getAllPlanYourTripRequests(params: any = {}): Promise<any[
   return results;
 }
 
+export async function exportPlanYourTripCSV(params?: any): Promise<Blob> {
+  return await adminDataClient.get('/requests/plan-your-trip/export/', { 
+    params, 
+    responseType: 'blob' 
+  });
+}
+
 export async function getB2BRequests(params?: any): Promise<any> {
   return await adminDataClient.get('/requests/b2b-proposals/', { params });
 }
 
 export async function getB2BStats(params?: any): Promise<any> {
   return await adminDataClient.get('/requests/b2b-proposals/stats/', { params });
+}
+
+export async function exportB2BCSV(params?: any): Promise<Blob> {
+  return await adminDataClient.get('/requests/b2b-proposals/export/', { 
+    params, 
+    responseType: 'blob' 
+  });
 }
 
 export async function getAllB2BRequests(params: any = {}): Promise<any[]> {
@@ -256,6 +270,13 @@ export async function getMiceStats(params?: any): Promise<any> {
   return await adminDataClient.get('/requests/mice-events/stats/', { params });
 }
 
+export async function exportMiceCSV(params?: any): Promise<Blob> {
+  return await adminDataClient.get('/requests/mice-events/export/', { 
+    params, 
+    responseType: 'blob' 
+  });
+}
+
 export async function getAllMiceRequests(params: any = {}): Promise<any[]> {
   const firstPage = await getMiceRequests(params);
   const results = firstPage.results ? [...firstPage.results] : (Array.isArray(firstPage) ? [...firstPage] : []);
@@ -290,6 +311,53 @@ export async function getPlanYourTripStats(params?: any): Promise<any> {
 
 export async function getPlanYourTripDetails(id: number | string): Promise<any> {
   return await adminDataClient.get(`/requests/plan-your-trip/${id}/`);
+}
+
+export async function getContactUsRequests(params?: any): Promise<any> {
+  return await adminDataClient.get('/requests/contact-us/', { params });
+}
+
+export async function getContactUsStats(params?: any): Promise<any> {
+  return await adminDataClient.get('/requests/contact-us/stats/', { params });
+}
+
+export async function exportContactUsCSV(params?: any): Promise<Blob> {
+  return await adminDataClient.get('/requests/contact-us/export/', { 
+    params, 
+    responseType: 'blob' 
+  });
+}
+
+export async function getAllContactUsRequests(params: any = {}): Promise<any[]> {
+  const firstPage = await getContactUsRequests(params);
+  const results = firstPage.results ? [...firstPage.results] : (Array.isArray(firstPage) ? [...firstPage] : []);
+  
+  if (!firstPage.count) return results;
+
+  const actualPageSize = results.length;
+  if (actualPageSize === 0 || firstPage.count <= actualPageSize) {
+    return results;
+  }
+
+  const totalPages = Math.ceil(firstPage.count / actualPageSize);
+  
+  if (totalPages > 1) {
+    const promises = [];
+    for (let page = 2; page <= totalPages; page++) {
+      promises.push(getContactUsRequests({ ...params, page }));
+    }
+    const pages = await Promise.all(promises);
+    for (const page of pages) {
+      if (page.results) results.push(...page.results);
+      else if (Array.isArray(page)) results.push(...page);
+    }
+  }
+
+  return results;
+}
+
+export async function getContactUsDetails(id: number | string): Promise<any> {
+  return await adminDataClient.get(`/requests/contact-us/${id}/`);
 }
 
 export function createRequestActions(resourceBaseUrl: string) {
@@ -347,6 +415,12 @@ export function createRequestActions(resourceBaseUrl: string) {
     },
     async completeTrip(id: string | number) {
       return await adminDataClient.post(`${resourceBaseUrl}/${id}/complete-trip/`);
+    },
+    async reply(id: string | number, message: string) {
+      return await adminDataClient.post(`${resourceBaseUrl}/${id}/reply/`, { message });
+    },
+    async close(id: string | number, note: string) {
+      return await adminDataClient.post(`${resourceBaseUrl}/${id}/close/`, { note });
     }
   };
 }
@@ -354,9 +428,22 @@ export function createRequestActions(resourceBaseUrl: string) {
 export const planYourTripActions = createRequestActions('/requests/plan-your-trip');
 export const b2bActions = createRequestActions('/requests/b2b-proposals');
 export const eventsActions = createRequestActions('/requests/mice-events');
+export const contactUsActions = createRequestActions('/requests/contact-us');
 
 export async function getPlanYourTripTimeline(id: number | string): Promise<any> {
   return await adminDataClient.get(`/requests/plan-your-trip/${id}/timeline/`);
+}
+
+export async function getMiceTimeline(id: number | string): Promise<any> {
+  return await adminDataClient.get(`/requests/mice-events/${id}/timeline/`);
+}
+
+export async function getB2BTimeline(id: number | string): Promise<any> {
+  return await adminDataClient.get(`/requests/b2b-proposals/${id}/timeline/`);
+}
+
+export async function getContactUsTimeline(id: number | string): Promise<any> {
+  return await adminDataClient.get(`/requests/contact-us/${id}/timeline/`);
 }
 
 export async function getB2BDetails(id: number | string): Promise<any> {
