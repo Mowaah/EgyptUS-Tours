@@ -8,7 +8,7 @@ import {
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { miceColumns } from "./miceColumns";
-import { getAllMiceRequests } from "@/lib/adminApi";
+import { getAllMiceRequests } from "@/services/admin/adminRequestsService";
 import { useRequestPanel } from "@/hooks/useRequestPanel";
 
 interface MiceRequestsPanelProps {
@@ -32,13 +32,13 @@ export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPane
     searchQuery,
     fetchRequestsApi: getAllMiceRequests,
     exportCsvApi: async (params: any) => {
-      const { exportMiceCSV } = await import("@/lib/adminApi");
+      const { exportMiceCSV } = await import("@/services/admin/adminRequestsService");
       return exportMiceCSV(params);
     },
     exportFilename: "mice_requests.csv",
   });
 
-  const [isFilterBarOpen, setIsFilterBarOpen] = useState(true);
+  
 
   const filterFields = useMemo(
     () => [
@@ -104,8 +104,8 @@ export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPane
       showFilters
       showExport
       onExportClick={handleExport}
-      onFilterClick={() => setIsFilterBarOpen((prev) => !prev)}
-      toolbar={isFilterBarOpen ? <TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} /> : undefined}
+      
+      toolbar={<TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} />}
     >
       <DataTable
         data={data}

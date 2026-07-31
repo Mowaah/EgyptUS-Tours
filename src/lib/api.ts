@@ -2,7 +2,13 @@ import axios from 'axios';
 
 // The base URL defaults to the NEXT_PUBLIC_API_URL environment variable
 // Example: http://127.0.0.1:8000
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+export const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+
+export const getFullImageUrl = (path: string | undefined | null) => {
+  if (!path) return "";
+  if (path.startsWith("http") || path.startsWith("data:")) return path;
+  return `${BASE_URL.replace(/\/$/, '')}${path.startsWith('/') ? '' : '/'}${path}`;
+};
 
 // ----------------------------------------------------------------------
 // 1. Client-side Axios Instance

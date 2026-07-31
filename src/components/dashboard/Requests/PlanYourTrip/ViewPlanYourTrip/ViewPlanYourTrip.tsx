@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { CustomerInformation, ProposalFile, PaymentOverview, ActivityTimeline } from "../../shared/Sections";
-import { getPlanYourTripDetails } from "@/lib/adminApi";
+import { getPlanYourTripDetails } from "@/services/admin/adminRequestsService";
 import TripPreferences from "./TripPreferences";
 import TripDetails from "./TripDetails";
 import RequestDetailsLayout from "../../shared/RequestDetailsLayout/RequestDetailsLayout";
@@ -30,7 +30,7 @@ export default function ViewPlanYourTrip({ requestId }: { requestId: string }) {
 
   const handleActionSubmit = async (action: string, payload?: any) => {
     try {
-      const { planYourTripActions } = await import("@/lib/adminApi");
+      const { planYourTripActions } = await import("@/services/admin/adminRequestsService");
       
       switch (action) {
         case "add_note":

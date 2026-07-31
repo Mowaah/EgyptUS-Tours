@@ -30,7 +30,7 @@ import {
   createAdminBlog,
   updateAdminArticle,
   updateAdminBlog
-} from "@/lib/adminApi";
+} from "@/services/admin/adminMarketingService";
 
 interface MarketingCreatePostProps {
   contentType: ContentType;

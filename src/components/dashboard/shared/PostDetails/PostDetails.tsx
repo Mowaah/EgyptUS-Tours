@@ -7,7 +7,7 @@ import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
 import MetricCard from "@/components/dashboard/DashboardHome/MetricCard/MetricCard";
-import { deleteAdminBlog, deleteAdminArticle } from "@/lib/adminApi";
+import { deleteAdminBlog, deleteAdminArticle } from "@/services/admin/adminMarketingService";
 import styles from "./PostDetails.module.scss";
 
 export interface PostData {

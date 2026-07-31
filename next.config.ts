@@ -18,6 +18,7 @@ try {
 
 const nextConfig: NextConfig = {
   images: {
+    unoptimized: process.env.NODE_ENV === "development",
     qualities: [75, 100],
     remotePatterns: [
       {
@@ -29,6 +30,11 @@ const nextConfig: NextConfig = {
       {
         protocol: "http",
         hostname: "127.0.0.1",
+        port: "8000",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
         port: "8000",
       },
       {

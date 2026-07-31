@@ -8,7 +8,7 @@ import {
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { planYourTripColumns, PlanYourTripApiItem } from "./planYourTripColumns";
-import { getAllPlanYourTripRequests } from "@/lib/adminApi";
+import { getAllPlanYourTripRequests } from "@/services/admin/adminRequestsService";
 import { useRequestPanel } from "@/hooks/useRequestPanel";
 
 interface CustomTripRequestsPanelProps {
@@ -32,12 +32,12 @@ export default function CustomTripRequestsPanel({ searchQuery }: CustomTripReque
     searchQuery,
     fetchRequestsApi: getAllPlanYourTripRequests,
     exportCsvApi: async (params: any) => {
-      const { exportPlanYourTripCSV } = await import("@/lib/adminApi");
+      const { exportPlanYourTripCSV } = await import("@/services/admin/adminRequestsService");
       return exportPlanYourTripCSV(params);
     },
     exportFilename: "plan_your_trip.csv",
   });
-  const [isFilterBarOpen, setIsFilterBarOpen] = useState(true);
+  
 
   const filterFields = useMemo(
     () => [
@@ -92,8 +92,8 @@ export default function CustomTripRequestsPanel({ searchQuery }: CustomTripReque
       showFilters
       showExport
       onExportClick={handleExport}
-      onFilterClick={() => setIsFilterBarOpen((prev) => !prev)}
-      toolbar={isFilterBarOpen ? <TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} /> : undefined}
+      
+      toolbar={<TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} />}
     >
       {loading ? (
         <div style={{ padding: "40px", textAlign: "center", color: "#666" }}>Loading requests...</div>

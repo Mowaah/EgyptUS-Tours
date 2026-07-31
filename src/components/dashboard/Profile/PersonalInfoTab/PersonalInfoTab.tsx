@@ -6,7 +6,7 @@ import DeleteIcon from "@public/images/dashboard/delete.svg";
 import { DashboardField, DashboardFooter, DashboardStatusBanner } from "@/components/dashboard/shared";
 import styles from "./PersonalInfoTab.module.scss";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
-import { updateAdminProfile } from "@/lib/adminApi";
+import { updateAdminProfile } from "@/lib/adminCoreApi";
 
 export function PersonalInfoTab() {
   const { adminUser, updateAdminUser } = useAdminAuth();

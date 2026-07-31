@@ -77,7 +77,7 @@ export default function RequestDetailsLayout({
     if (activeModalKey === "assign") {
       const fetchAgents = async () => {
         try {
-          const { getAdminUsers } = await import("@/lib/adminApi");
+          const { getAdminUsers } = await import("@/services/admin/adminUsersService");
           const res = await getAdminUsers({ is_active: true });
           const users = res.results || res;
           const formattedAgents = users.map((u: any) => ({

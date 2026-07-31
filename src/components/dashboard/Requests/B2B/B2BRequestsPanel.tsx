@@ -8,7 +8,7 @@ import {
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { b2bColumns, B2BApiItem } from "./b2bColumns";
-import { getAllB2BRequests } from "@/lib/adminApi";
+import { getAllB2BRequests } from "@/services/admin/adminRequestsService";
 import { useRequestPanel } from "@/hooks/useRequestPanel";
 
 interface B2BRequestsPanelProps {
@@ -32,13 +32,13 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
     searchQuery,
     fetchRequestsApi: getAllB2BRequests,
     exportCsvApi: async (params: any) => {
-      const { exportB2BCSV } = await import("@/lib/adminApi");
+      const { exportB2BCSV } = await import("@/services/admin/adminRequestsService");
       return exportB2BCSV(params);
     },
     exportFilename: "b2b_proposals.csv",
   });
 
-  const [isFilterBarOpen, setIsFilterBarOpen] = useState(true);
+  
 
   const filterFields = useMemo(
     () => [
@@ -93,8 +93,8 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
       showFilters
       showExport
       onExportClick={handleExport}
-      onFilterClick={() => setIsFilterBarOpen((prev) => !prev)}
-      toolbar={isFilterBarOpen ? <TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} /> : undefined}
+      
+      toolbar={<TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} />}
     >
       {loading ? (
         <div style={{ padding: "40px", textAlign: "center", color: "#666" }}>Loading requests...</div>

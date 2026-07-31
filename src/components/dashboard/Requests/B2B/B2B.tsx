@@ -5,7 +5,7 @@ import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import RequestsSummaryGrid from "../shared/Layouts/RequestsSummaryGrid";
 import B2BRequestsPanel from "./B2BRequestsPanel";
 import styles from "./B2B.module.scss";
-import { getB2BStats } from "@/lib/adminApi";
+import { getB2BStats } from "@/services/admin/adminRequestsService";
 import { useRequestStats } from "@/hooks/useRequestStats";
 
 export default function B2B() {

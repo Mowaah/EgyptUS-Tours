@@ -95,12 +95,12 @@ export const usePromotionRowActions = (
     actions.push({ 
       label: "View", 
       iconSrc: "/images/dashboard/view.svg",
-      onClick: () => router.push(`/dashboard/marketing/promotions/${row.offerId}`)
+      onClick: () => router.push(`/dashboard/marketing/promotions/${row.id}`)
     });
     actions.push({ 
       label: "Edit", 
       iconSrc: "/images/dashboard/edit.svg",
-      onClick: () => router.push(`/dashboard/marketing/promotions/${row.offerId}/edit?from=list`)
+      onClick: () => router.push(`/dashboard/marketing/promotions/${row.id}/edit?from=list`)
     });
     actions.push({ 
       label: "Delete Offer", 

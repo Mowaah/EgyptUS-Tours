@@ -16,7 +16,7 @@ import DashboardAuthLayout from "../DashboardAuthLayout/DashboardAuthLayout";
 import styles from "./OtpConfirmationPage.module.scss";
 
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
-import { verifyAdminTotp, enrollAdminTotp, confirmAdminTotp } from "@/lib/adminApi";
+import { verifyAdminTotp, enrollAdminTotp, confirmAdminTotp } from "@/lib/adminCoreApi";
 
 const OTP_LENGTH = 6;
 
@@ -71,22 +71,24 @@ export default function OtpConfirmationPage() {
 
     if (nextValue && index < OTP_LENGTH - 1) {
       inputRefs.current[index + 1]?.focus();
+    } else if (nextCode.every(Boolean)) {
+      submitOtp(nextCode.join(""));
     }
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!isFormValid) {
-      setHasError(true);
-      setErrorMsg("Please enter the complete 6-digit code.");
-      return;
+  const handleKeyDown = (
+    index: number,
+    event: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (event.key === "Backspace" && !code[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
     }
+  };
 
+  const submitOtp = async (totpCode: string) => {
     setIsSubmitting(true);
     setHasError(false);
     setErrorMsg("");
-
-    const totpCode = code.join("");
 
     try {
       if (action === "setup") {
@@ -108,6 +110,17 @@ export default function OtpConfirmationPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!isFormValid) {
+      setHasError(true);
+      setErrorMsg("Please enter the complete 6-digit code.");
+      return;
+    }
+    
+    await submitOtp(code.join(""));
   };
 
   return (
@@ -163,6 +176,7 @@ export default function OtpConfirmationPage() {
                   maxLength={1}
                   value={digit}
                   onChange={(event) => handleDigitChange(index, event)}
+                  onKeyDown={(event) => handleKeyDown(index, event)}
                   aria-label={`OTP digit ${index + 1}`}
                 />
               ))}

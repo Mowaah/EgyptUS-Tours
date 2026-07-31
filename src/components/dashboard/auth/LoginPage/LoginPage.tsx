@@ -11,7 +11,7 @@ import DashboardAuthLayout from "../DashboardAuthLayout/DashboardAuthLayout";
 import styles from "./LoginPage.module.scss";
 
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
-import { loginAdmin } from "@/lib/adminApi";
+import { loginAdmin } from "@/lib/adminCoreApi";
 
 export default function LoginPage() {
   const router = useRouter();

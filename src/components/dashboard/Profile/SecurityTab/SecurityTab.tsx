@@ -4,7 +4,7 @@ import { useState } from "react";
 import { PasswordToggleButton } from "@/components/shared";
 import { DashboardField, DashboardFooter, DashboardStatusBanner } from "@/components/dashboard/shared";
 import styles from "./SecurityTab.module.scss";
-import { changeAdminPassword } from "@/lib/adminApi";
+import { changeAdminPassword } from "@/lib/adminCoreApi";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 export function SecurityTab() {

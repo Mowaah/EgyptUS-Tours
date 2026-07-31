@@ -31,7 +31,7 @@ export default function ForgotPasswordPage() {
     setSuccessMessage("");
     
     try {
-      const { forgotAdminPassword } = await import("@/lib/adminApi");
+      const { forgotAdminPassword } = await import("@/lib/adminCoreApi");
       const res = await forgotAdminPassword({ email });
       setSuccessMessage(res.detail || "A reset link has been sent to your email.");
     } catch (err: any) {

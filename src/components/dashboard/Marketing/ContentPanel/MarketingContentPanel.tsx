@@ -10,7 +10,7 @@ import { DashboardConfirmationModal } from "@/components/dashboard/shared";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import { useRouter, usePathname } from "next/navigation";
-import { exportAdminBlogsCSV, exportAdminArticlesCSV } from "@/lib/adminApi";
+import { exportAdminBlogsCSV, exportAdminArticlesCSV } from "@/services/admin/adminMarketingService";
 import { getMarketingColumns, useMarketingRowActions } from "./MarketingColumns";
 import type { MarketingPostRow, ContentType } from "../types";
 import { useMarketingPanel } from "@/hooks/useMarketingPanel";
@@ -59,7 +59,6 @@ export function MarketingContentPanel({
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState<MarketingPostRow | null>(null);
-  const [isFilterBarOpen, setIsFilterBarOpen] = useState(true);
 
   const handleDeleteRow = (row: MarketingPostRow) => {
     setPostToDelete(row);
@@ -133,17 +132,16 @@ export function MarketingContentPanel({
         title={pluralName}
         iconSrc={`/images/dashboard/sidebar/${contentType === "articles" ? "articles" : "blog"}.svg`}
         showFilters
-        onFilterClick={() => setIsFilterBarOpen((prev) => !prev)}
         showExport
         onExportClick={handleExport}
-      >
-        {isFilterBarOpen && (
+        toolbar={
           <TablePanelFilterBar
             fields={filterFields}
             onApply={handleApply}
             onClean={resetFilters}
           />
-        )}
+        }
+      >
         <DataTable<MarketingPostRow>
           columns={getMarketingColumns()}
           data={data}

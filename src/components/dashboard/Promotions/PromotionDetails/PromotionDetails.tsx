@@ -7,6 +7,8 @@ import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import { DashboardConfirmationModal } from "@/components/dashboard/shared";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
+import { getAdminPromotionById, deleteAdminPromotion, AdminPromotion } from "@/services/admin/adminMarketingService";
+import { apiClient } from "@/lib/api";
 import styles from "./PromotionDetails.module.scss";
 
 interface PromotionDetailsProps {
@@ -42,9 +44,50 @@ export default function PromotionDetails({ promotionId }: PromotionDetailsProps)
   const router = useRouter();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const handleConfirmDelete = () => {
+  const [promotion, setPromotion] = useState<AdminPromotion | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [itemsMap, setItemsMap] = useState<Record<string, Record<number, string>>>({});
+
+  useEffect(() => {
+    const fetchPromotion = async () => {
+      try {
+        const data = await getAdminPromotionById(promotionId);
+        setPromotion(data);
+
+        // Fetch options data to map IDs to titles
+        const [tripsRes, hotelsRes, transportRes] = await Promise.all([
+          apiClient.get('/trips/?page_size=100'),
+          apiClient.get('/hotels/?page_size=100'),
+          apiClient.get('/vehicles/?page_size=100')
+        ]);
+        
+        const tripsDataList = (tripsRes as any).results || (tripsRes as any).data?.results || [];
+        const hotelsDataList = (hotelsRes as any).results || (hotelsRes as any).data?.results || [];
+        const transportDataList = (transportRes as any).results || (transportRes as any).data?.results || [];
+        
+        setItemsMap({
+          trip: tripsDataList.reduce((acc: any, t: any) => ({ ...acc, [t.id]: t.title }), {}),
+          hotel: hotelsDataList.reduce((acc: any, h: any) => ({ ...acc, [h.id]: h.name }), {}),
+          transport: transportDataList.reduce((acc: any, v: any) => ({ ...acc, [v.id]: v.name || v.title }), {})
+        });
+
+      } catch (error) {
+        console.error("Failed to fetch promotion", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPromotion();
+  }, [promotionId]);
+
+  const handleConfirmDelete = async () => {
     setIsDeleteModalOpen(false);
-    router.push("/dashboard/marketing/promotions?deleted=true");
+    try {
+      await deleteAdminPromotion(promotionId);
+      router.push("/dashboard/marketing/promotions?deleted=true");
+    } catch (error) {
+      console.error("Failed to delete promotion", error);
+    }
   };
 
   const getAppliesIcon = (type: string) => {
@@ -62,25 +105,18 @@ export default function PromotionDetails({ promotionId }: PromotionDetailsProps)
     }
   };
 
-  // Mocking the promotion details
-  const promotion = {
-    id: promotionId,
-    offerId: "PRO-001",
-    title: "Summer Special 20% Off",
-    status: "Active",
-    appliesToType: "Trips",
-    date: "Mar 22, 2026",
-    discountValue: "20 %",
-    description: "A three-day business and networking event focused on innovation, technology, and strategic partnerships across the Middle East.",
-    startDate: "Mar 15, 2024",
-    endDate: "Mar 28, 2024",
-    appliesToCategory: "Honey moon",
-    appliesToItems: [
-      "Luxury 5 days Luxor and Aswan Nile Cruise",
-      "Luxury 5 days Luxor and Aswan Nile Cruise",
-      "Best Tour of Egypt and Turkey"
-    ]
-  };
+  if (loading) {
+    return <div style={{ padding: "2rem", textAlign: "center" }}>Loading promotion details...</div>;
+  }
+
+  if (!promotion) {
+    return <div style={{ padding: "2rem", textAlign: "center" }}>Promotion not found.</div>;
+  }
+
+  const appliesToTypeDisplay = promotion.applies_to === "trip" ? "Trips" : promotion.applies_to === "hotel" ? "Hotels" : "Transportation";
+  const validFromDisplay = promotion.valid_from ? new Date(promotion.valid_from).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "-";
+  const validToDisplay = promotion.valid_to ? new Date(promotion.valid_to).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "-";
+  const appliesToRules = Array.isArray(promotion.applies_to_rules) ? promotion.applies_to_rules : [];
 
   return (
     <div className={styles.page}>
@@ -95,15 +131,15 @@ export default function PromotionDetails({ promotionId }: PromotionDetailsProps)
         hideFilterButton
       >
         <ProfileHeader
-          title={promotion.title}
-          pillLabel={promotion.status}
-          pillVariant={promotion.status.toLowerCase() === "active" ? "green" : "gray"}
+          title={promotion.title || "Untitled"}
+          pillLabel={promotion.status === "active" ? "Active" : promotion.status === "draft" ? "Draft" : "Inactive"}
+          pillVariant={promotion.status === "active" ? "green" : "gray"}
           customPills={
             <span className={styles.typePill}>
-              {promotion.appliesToType}
+              {appliesToTypeDisplay}
             </span>
           }
-          subtitleElements={[`Promotion ID: ${promotion.offerId}`, promotion.date]}
+          subtitleElements={[`Promotion ID: ${promotion.offer_number || `PRO-${promotion.id}`}`, validFromDisplay]}
           secondaryAction={{
             label: "Edit",
             icon: "/images/dashboard/edit.svg",
@@ -136,11 +172,11 @@ export default function PromotionDetails({ promotionId }: PromotionDetailsProps)
             <div className={styles.detailsList}>
               <div className={styles.detailItemRow}>
                 <span className={styles.detailLabel}>Discount Value</span>
-                <span className={styles.detailValue}>{promotion.discountValue}</span>
+                <span className={styles.detailValue}>{promotion.discount_value}%</span>
               </div>
               <div className={styles.detailItemCol}>
                 <span className={styles.detailLabel}>Description</span>
-                <span className={styles.detailDescValue}>{promotion.description}</span>
+                <span className={styles.detailDescValue}>{promotion.description || promotion.translations?.en?.description || "No description provided."}</span>
               </div>
             </div>
           </div>
@@ -154,36 +190,27 @@ export default function PromotionDetails({ promotionId }: PromotionDetailsProps)
               <h2 className={styles.cardTitle}>Applies To</h2>
             </div>
             <div className={styles.detailsList}>
-              <div className={styles.detailItemCol}>
-                <div className={styles.detailItemRowNoBorder} style={{ paddingBottom: 0 }}>
-                  <span className={styles.detailLabel}>Category</span>
-                  <span className={styles.detailValue}>{promotion.appliesToCategory}</span>
+              {appliesToRules.length === 0 && (
+                <div className={styles.detailItemCol}>
+                  <span className={styles.detailValue} style={{ color: "var(--color-gray-500)" }}>Applied to entire category or no specific items listed.</span>
                 </div>
-                <div className={styles.pillGrid}>
-                  {promotion.appliesToItems.map((item, i) => (
-                    <div key={i} className={styles.appliesPill}>
-                      <Image src={getAppliesIcon(promotion.appliesToType)} alt="" width={18} height={18} />
-                      <span>{item}</span>
-                    </div>
-                  ))}
+              )}
+              {appliesToRules.map((rule, idx) => (
+                <div key={idx} className={styles.detailItemCol} style={{ marginTop: idx > 0 ? '12px' : 0 }}>
+                  <div className={styles.detailItemRowNoBorder} style={{ paddingBottom: 0 }}>
+                    <span className={styles.detailLabel}>Category</span>
+                    <span className={styles.detailValue}>{rule.group_label || rule.category || "All"}</span>
+                  </div>
+                  <div className={styles.pillGrid}>
+                    {(rule.item_ids || rule.specificTrip || []).map((item: any, i: number) => (
+                      <div key={i} className={styles.appliesPill}>
+                        <Image src={getAppliesIcon(promotion.applies_to)} alt="" width={18} height={18} />
+                        <span>{typeof item === 'string' ? item : (itemsMap[promotion.applies_to as keyof typeof itemsMap]?.[item] || `Item ID: ${item}`)}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-
-              {/* Second category block to match screenshot */}
-              <div className={styles.detailItemCol} style={{ marginTop: '12px' }}>
-                <div className={styles.detailItemRowNoBorder} style={{ paddingBottom: 0 }}>
-                  <span className={styles.detailLabel}>Category</span>
-                  <span className={styles.detailValue}>{promotion.appliesToCategory}</span>
-                </div>
-                <div className={styles.pillGrid}>
-                  {promotion.appliesToItems.map((item, i) => (
-                    <div key={`second-${i}`} className={styles.appliesPill}>
-                      <Image src={getAppliesIcon(promotion.appliesToType)} alt="" width={18} height={18} />
-                      <span>{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
@@ -200,11 +227,11 @@ export default function PromotionDetails({ promotionId }: PromotionDetailsProps)
             <div className={styles.detailsList}>
               <div className={styles.detailItemRow}>
                 <span className={styles.detailLabel}>Start Date</span>
-                <span className={styles.detailValue}>{promotion.startDate}</span>
+                <span className={styles.detailValue}>{validFromDisplay}</span>
               </div>
               <div className={styles.detailItemRowNoBorder}>
                 <span className={styles.detailLabel}>End Date</span>
-                <span className={styles.detailValue}>{promotion.endDate}</span>
+                <span className={styles.detailValue}>{validToDisplay}</span>
               </div>
             </div>
           </div>

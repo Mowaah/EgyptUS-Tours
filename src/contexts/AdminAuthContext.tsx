@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import { getAdminProfile, logoutAdmin } from "@/lib/adminApi";
+import { getAdminProfile, logoutAdmin } from "@/lib/adminCoreApi";
 
 interface AdminUser {
   id: number;

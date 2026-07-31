@@ -9,7 +9,7 @@ import AuthBackLink from "../AuthBackLink/AuthBackLink";
 import AuthSubmitButton from "../AuthSubmitButton/AuthSubmitButton";
 import DashboardAuthLayout from "../DashboardAuthLayout/DashboardAuthLayout";
 import styles from "./CreateNewPasswordPage.module.scss";
-import { resetAdminPassword } from "@/lib/adminApi";
+import { resetAdminPassword } from "@/lib/adminCoreApi";
 
 export default function CreateNewPasswordPage() {
   const router = useRouter();

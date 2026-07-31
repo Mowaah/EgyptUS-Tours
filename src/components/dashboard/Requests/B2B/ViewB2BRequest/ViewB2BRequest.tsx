@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import CompanyInformation from "./CompanyInformation";
 import RequestDetailsLayout from "../../shared/RequestDetailsLayout/RequestDetailsLayout";
 import { ProposalFile, PaymentOverview, ActivityTimeline } from "../../shared/Sections";
+import { getB2BDetails, getB2BTimeline, b2bActions } from "@/services/admin/adminRequestsService";
 
 export default function ViewB2BRequest({ requestId }: { requestId: string }) {
   const [requestData, setRequestData] = useState<any>(null);
@@ -11,7 +12,6 @@ export default function ViewB2BRequest({ requestId }: { requestId: string }) {
 
   const fetchDetails = async () => {
     try {
-      const { getB2BDetails } = await import("@/lib/adminApi");
       const data = await getB2BDetails(requestId);
       setRequestData(data);
     } catch (err) {
@@ -27,7 +27,7 @@ export default function ViewB2BRequest({ requestId }: { requestId: string }) {
 
   const handleActionSubmit = async (action: string, payload?: any) => {
     try {
-      const { b2bActions } = await import("@/lib/adminApi");
+      const { b2bActions } = await import("@/services/admin/adminRequestsService");
       
       switch (action) {
         case "add_note":

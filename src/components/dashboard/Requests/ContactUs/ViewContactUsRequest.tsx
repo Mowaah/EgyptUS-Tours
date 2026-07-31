@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { getContactUsDetails, getContactUsTimeline, contactUsActions } from "@/lib/adminApi";
+import { getContactUsDetails, getContactUsTimeline, contactUsActions } from "@/services/admin/adminRequestsService";
 import { getContactUsStatusVariant } from "./contactUsColumns";
 import RequestDetailsLayout from "../shared/RequestDetailsLayout/RequestDetailsLayout";
 import { ActivityTimeline } from "../shared/Sections";

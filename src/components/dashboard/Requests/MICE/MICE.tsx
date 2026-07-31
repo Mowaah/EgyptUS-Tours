@@ -4,7 +4,7 @@ import { useState } from "react";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import RequestsSummaryGrid from "../shared/Layouts/RequestsSummaryGrid";
 import MiceRequestsPanel from "./MiceRequestsPanel";
-import { getMiceStats } from "@/lib/adminApi";
+import { getMiceStats } from "@/services/admin/adminRequestsService";
 import { useRequestStats } from "@/hooks/useRequestStats";
 import styles from "./MICE.module.scss";
 

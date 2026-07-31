@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import PostDetails, { PostData } from "@/components/dashboard/shared/PostDetails/PostDetails";
-import { getAdminArticleById, getAdminBlogById } from "@/lib/adminApi";
+import { getAdminArticleById, getAdminBlogById } from "@/services/admin/adminMarketingService";
 import type { ContentType } from "../types";
 
 interface MarketingContentDetailsProps {

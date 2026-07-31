@@ -16,6 +16,8 @@ import CustomDatePicker from "@/components/shared/CustomDatePicker/CustomDatePic
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { createPromotionSchema, type CreatePromotionValues } from "./CreatePromotionSchema";
+import { getAdminPromotionById, createAdminPromotion, updateAdminPromotion } from "@/services/admin/adminMarketingService";
+import { apiClient } from "@/lib/api";
 import styles from "./CreatePromotion.module.scss";
 
 export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: string, onDirtyChange?: (isDirty: boolean) => void }) {
@@ -24,6 +26,15 @@ export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: 
   const fromList = searchParams?.get("from") === "list";
   const [detailsLang, setDetailsLang] = useState<Language>("English");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [itemsCache, setItemsCache] = useState<{ [key: string]: any[] }>({
+    trips: [{ id: Date.now().toString(), category: "", specificTrip: [] }],
+    hotels: [{ id: Date.now().toString(), category: "", specificTrip: [] }],
+    transportation: [{ id: Date.now().toString(), category: "", specificTrip: [] }],
+  });
+
+  const [tripsData, setTripsData] = useState<any[]>([]);
+  const [hotelsData, setHotelsData] = useState<any[]>([]);
+  const [transportData, setTransportData] = useState<any[]>([]);
   
   const {
     register,
@@ -55,23 +66,79 @@ export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: 
   }, [isDirty, dirtyFields, onDirtyChange]);
 
   useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const [tripsRes, hotelsRes, transportRes] = await Promise.all([
+          apiClient.get('/trips/?page_size=100'),
+          apiClient.get('/hotels/?page_size=100'),
+          apiClient.get('/vehicles/?page_size=100')
+        ]);
+        const tripsDataList = (tripsRes as any).results || (tripsRes as any).data?.results;
+        const hotelsDataList = (hotelsRes as any).results || (hotelsRes as any).data?.results;
+        const transportDataList = (transportRes as any).results || (transportRes as any).data?.results;
+
+        if (tripsDataList) setTripsData(tripsDataList);
+        if (hotelsDataList) setHotelsData(hotelsDataList);
+        if (transportDataList) setTransportData(transportDataList);
+      } catch (err) {
+        console.error("Failed to fetch options data", err);
+      }
+    };
+    fetchOptions();
+  }, []);
+
+  useEffect(() => {
     if (promotionId) {
-      // Simulate API fetch for edit mode
-      const timer = setTimeout(() => {
-        reset({
-          title: "Summer Special 20% Off",
-          shortDescription: "A great deal for the summer season, available for a limited time.",
-          discountValue: 20,
-          appliesToType: "trips",
-          appliesToItems: [
-            { id: Date.now().toString(), category: "adventure", specificTrip: ["luxar_aswan", "cairo"] }
-          ],
-          isActive: true,
-          startDate: "06/01/2026",
-          endDate: "08/31/2026",
-        });
-      }, 300);
-      return () => clearTimeout(timer);
+      const fetchPromotion = async () => {
+        try {
+          const data = await getAdminPromotionById(promotionId);
+          
+          let formattedStartDate = "";
+          let formattedEndDate = "";
+          if (data.valid_from) {
+            const dateObj = new Date(data.valid_from);
+            // Needs MM/DD/YYYY
+            formattedStartDate = `${String(dateObj.getMonth() + 1).padStart(2, '0')}/${String(dateObj.getDate()).padStart(2, '0')}/${dateObj.getFullYear()}`;
+          }
+          if (data.valid_to) {
+            const dateObj = new Date(data.valid_to);
+            formattedEndDate = `${String(dateObj.getMonth() + 1).padStart(2, '0')}/${String(dateObj.getDate()).padStart(2, '0')}/${dateObj.getFullYear()}`;
+          }
+
+          reset({
+            title: data.title || "",
+            shortDescription: data.translations?.en?.description || data.description || "",
+            discountValue: Number(data.discount_value),
+            appliesToType: data.applies_to === "trip" ? "trips" : data.applies_to === "hotel" ? "hotels" : "transportation",
+            appliesToItems: Array.isArray(data.applies_to_rules) && data.applies_to_rules.length > 0
+              ? data.applies_to_rules.map((rule: any, i: number) => ({
+                  id: String(i),
+                  category: rule.group_label || "",
+                  specificTrip: (rule.item_ids || []).map((id: number) => String(id)),
+                }))
+              : [{ id: Date.now().toString(), category: "", specificTrip: [] }],
+            isActive: data.status === "active",
+            startDate: formattedStartDate,
+            endDate: formattedEndDate,
+          });
+
+          // Pre-populate cache with initial loaded data
+          const mappedType = data.applies_to === "trip" ? "trips" : data.applies_to === "hotel" ? "hotels" : "transportation";
+          if (Array.isArray(data.applies_to_rules) && data.applies_to_rules.length > 0) {
+            setItemsCache(prev => ({
+              ...prev,
+              [mappedType]: data.applies_to_rules.map((rule: any, i: number) => ({
+                id: String(i),
+                category: rule.group_label || "",
+                specificTrip: (rule.item_ids || []).map((id: number) => String(id)),
+              }))
+            }));
+          }
+        } catch (error) {
+          console.error("Failed to fetch promotion", error);
+        }
+      };
+      fetchPromotion();
     }
   }, [promotionId, reset]);
 
@@ -87,62 +154,84 @@ export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: 
   let categoryPlaceholder = "Select Trip Category";
   let specificLabel = "Specific Trip";
   let specificPlaceholder = "Select Trip Category first...";
-  let categoryOptions = [
-    { label: "Honey Moon", value: "honeymoon" },
-    { label: "Adventure", value: "adventure" },
-  ];
-  let specificOptions = [
-    { label: "Luxar & Aswan 5 days", value: "luxar_aswan" },
-    { label: "Cairo Pyramids", value: "cairo" },
-    { label: "Sharm El Sheikh", value: "sharm" },
-    { label: "Hurghada Resort", value: "hurghada" },
-    { label: "Alexandria Library", value: "alexandria" },
-  ];
+  let categoryOptions: { label: string, value: string }[] = [];
 
-  if (appliesToType === "hotels") {
+  const getSpecificOptions = (category: string) => {
+    if (!category) return [];
+    if (appliesToType === "trips") {
+      return tripsData.filter(t => {
+        const tags = t.tags?.map((tag: any) => tag.name) || [];
+        return category === "Uncategorized" ? tags.length === 0 : tags.includes(category);
+      }).map(t => ({ label: t.title, value: String(t.id) }));
+    }
+    if (appliesToType === "hotels") {
+      return hotelsData.filter(h => (h.location_text || "Uncategorized") === category).map(h => ({ label: h.name, value: String(h.id) }));
+    }
+    if (appliesToType === "transportation") {
+      return transportData.filter(t => (t.vehicle_type || t.category || "Uncategorized") === category).map(t => ({ label: t.name || t.title, value: String(t.id) }));
+    }
+    return [];
+  };
+
+  if (appliesToType === "trips") {
+    const categories = new Set<string>();
+    tripsData.forEach(t => {
+      if (!t.tags || t.tags.length === 0) categories.add("Uncategorized");
+      else t.tags.forEach((tag: any) => categories.add(tag.name));
+    });
+    categoryOptions = Array.from(categories).map(c => ({ label: String(c), value: String(c) }));
+  } else if (appliesToType === "hotels") {
     categoryLabel = "Hotel Destination";
     categoryPlaceholder = "Select Hotel Destination";
     specificLabel = "Specific Hotel";
     specificPlaceholder = "Select hotel Category first...";
-    categoryOptions = [
-      { label: "Cairo", value: "cairo" },
-      { label: "Luxor", value: "luxor" },
-    ];
-    specificOptions = [
-      { label: "Marriott Mena House", value: "marriott" },
-      { label: "Steigenberger Nile Palace", value: "steigenberger" },
-      { label: "Sofitel Winter Palace", value: "sofitel" },
-      { label: "Four Seasons", value: "fourseasons" },
-      { label: "Hilton Ramses", value: "hilton" },
-    ];
+    const categories = Array.from(new Set(hotelsData.map(h => h.location_text || "Uncategorized"))).filter(Boolean);
+    categoryOptions = categories.map(c => ({ label: String(c), value: String(c) }));
   } else if (appliesToType === "transportation") {
     categoryLabel = "Vehicle Type";
     categoryPlaceholder = "Select Vehicle Type";
     specificLabel = "Specific Vehicle";
     specificPlaceholder = "Select Vehicle Type first...";
-    categoryOptions = [
-      { label: "Bus", value: "bus" },
-      { label: "Minivan", value: "minivan" },
-    ];
-    specificOptions = [
-      { label: "Toyota Hiace", value: "hiace" },
-      { label: "Mercedes Sprinter", value: "sprinter" },
-      { label: "Hyundai H1", value: "h1" },
-      { label: "Coaster Bus", value: "coaster" },
-      { label: "Luxury Sedan", value: "sedan" },
-    ];
+    const categories = Array.from(new Set(transportData.map(t => t.vehicle_type || t.category || "Uncategorized"))).filter(Boolean);
+    categoryOptions = categories.map(c => ({ label: String(c), value: String(c) }));
   }
 
-  const onSubmit = (data: CreatePromotionValues) => {
-    console.log("Form Payload:", data);
-    if (promotionId) {
-      if (fromList) {
-        router.push(`/dashboard/marketing/promotions?editSaved=true`);
+  const onSubmit = async (data: CreatePromotionValues) => {
+    try {
+      const formattedStartDate = new Date(data.startDate).toISOString().split('T')[0];
+      const formattedEndDate = new Date(data.endDate).toISOString().split('T')[0];
+
+      const payload = {
+        status: data.isActive ? "active" : "inactive",
+        discount_value: data.discountValue,
+        applies_to: data.appliesToType === "trips" ? "trip" : data.appliesToType === "hotels" ? "hotel" : "transport",
+        valid_from: formattedStartDate,
+        valid_to: formattedEndDate,
+        translations: {
+          en: {
+            title: data.title,
+            description: data.shortDescription,
+          }
+        },
+        applies_to_rules: data.appliesToItems.map(item => ({
+          group_label: item.category,
+          item_ids: (item.specificTrip || []).map(id => Number(id))
+        })),
+      };
+
+      if (promotionId) {
+        await updateAdminPromotion(promotionId, payload);
+        if (fromList) {
+          router.push(`/dashboard/marketing/promotions?editSaved=true`);
+        } else {
+          router.push(`/dashboard/marketing/promotions/${promotionId}?editSaved=true`);
+        }
       } else {
-        router.push(`/dashboard/marketing/promotions/${promotionId}?editSaved=true`);
+        await createAdminPromotion(payload);
+        setShowSuccessModal(true);
       }
-    } else {
-      setShowSuccessModal(true);
+    } catch (error) {
+      console.error("Failed to save promotion", error);
     }
   };
 
@@ -205,8 +294,9 @@ export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: 
                 className={`${styles.pill} ${appliesToType === type.id ? styles.active : ""}`}
                 onClick={() => {
                   if (appliesToType !== type.id) {
+                    setItemsCache(prev => ({ ...prev, [appliesToType]: watchedItems }));
                     setValue("appliesToType", type.id as any);
-                    setValue("appliesToItems", [{ id: Date.now().toString(), category: "", specificTrip: [] }]);
+                    setValue("appliesToItems", itemsCache[type.id] || [{ id: Date.now().toString(), category: "", specificTrip: [] }]);
                   }
                 }}
               >
@@ -224,7 +314,16 @@ export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: 
 
           {appliesToFields.length > 0 && (
             <div className={styles.dynamicList}>
-              {appliesToFields.map((field, index) => (
+              {appliesToFields.map((field, index) => {
+              const currentCategory = watchedItems[index]?.category;
+              const selectedCategories = watchedItems.map((item, i) => i !== index ? item.category : null).filter(Boolean);
+              const availableCategories = categoryOptions.filter(opt => !selectedCategories.includes(opt.value));
+              
+              const currentTrips = watchedItems[index]?.specificTrip || [];
+              const selectedTrips = watchedItems.flatMap((item, i) => i !== index ? (item.specificTrip || []) : []);
+              const availableTrips = getSpecificOptions(currentCategory).filter(opt => !selectedTrips.includes(opt.value));
+
+              return (
                 <div key={field.id} className={styles.dynamicRow}>
                   <div className={styles.dynamicFields}>
                     <Controller
@@ -234,13 +333,16 @@ export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: 
                         <DashboardField
                           control="select"
                           label={categoryLabel}
+                          placeholder={categoryPlaceholder}
+                          value={value}
+                          onChange={(e: any) => {
+                            onChange(e.target.value);
+                            setValue(`appliesToItems.${index}.specificTrip`, []);
+                          }}
                           options={[
                             { label: categoryPlaceholder, value: "", disabled: true },
-                            ...categoryOptions,
+                            ...availableCategories,
                           ]}
-                          value={value}
-                          onChange={onChange}
-                          error={errors.appliesToItems?.[index]?.category?.message}
                         />
                       )}
                     />
@@ -250,28 +352,28 @@ export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: 
                       render={({ field: { value, onChange } }) => (
                         <DashboardField
                           control="select"
-                          label={specificLabel}
                           multiple={true}
-                          disabled={!watchedItems?.[index]?.category}
+                          label={specificLabel}
+                          onChange={(e: any) => {
+                            const newArr = e.target.value;
+                            onChange(newArr);
+                            setValue(`appliesToItems.${index}.specificTrip`, newArr, { shouldDirty: true, shouldValidate: true });
+                          }}
                           options={[
                             { label: specificPlaceholder, value: "", disabled: true },
-                            ...specificOptions,
+                            ...availableTrips,
                           ]}
-                          value={value}
-                          onChange={onChange}
                           error={errors.appliesToItems?.[index]?.specificTrip?.message}
                         />
                       )}
                     />
                   </div>
                   <button type="button" className={styles.removeBtn} onClick={() => remove(index)}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M3 6h18" />
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                    </svg>
+                    <Image src="/images/dashboard/delete.svg" alt="Remove" width={24} height={24} />
                   </button>
                 </div>
-              ))}
+              );
+            })}
             </div>
           )}
         </div>

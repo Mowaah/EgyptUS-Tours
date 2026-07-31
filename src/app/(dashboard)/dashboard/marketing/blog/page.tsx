@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { MarketingContentPanel } from "@/components/dashboard/Marketing";
-import { getAdminBlogs, deleteAdminBlog } from "@/lib/adminApi";
+import { getAdminBlogs, deleteAdminBlog } from "@/services/admin/adminMarketingService";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import styles from "../../page.module.scss";

@@ -8,7 +8,7 @@ import {
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { contactUsColumns } from "./contactUsColumns";
-import { getAllContactUsRequests, exportContactUsCSV } from "@/lib/adminApi";
+import { getAllContactUsRequests, exportContactUsCSV } from "@/services/admin/adminRequestsService";
 import { useRequestPanel } from "@/hooks/useRequestPanel";
 
 interface ContactUsPanelProps {
@@ -31,7 +31,7 @@ export default function ContactUsPanel({ searchQuery = "" }: ContactUsPanelProps
     exportCsvApi: exportContactUsCSV,
     exportFilename: "contact_us.csv",
   });
-  const [isFilterBarOpen, setIsFilterBarOpen] = useState(true);
+  
 
   const filterFields = useMemo(
     () => [
@@ -82,8 +82,8 @@ export default function ContactUsPanel({ searchQuery = "" }: ContactUsPanelProps
       showFilters
       showExport
       onExportClick={handleExport}
-      onFilterClick={() => setIsFilterBarOpen((prev) => !prev)}
-      toolbar={isFilterBarOpen ? <TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} /> : undefined}
+      
+      toolbar={<TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} />}
     >
       {data.length > 0 ? (
         <DataTable

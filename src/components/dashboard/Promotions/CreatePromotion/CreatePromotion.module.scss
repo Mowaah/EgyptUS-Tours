@@ -185,7 +185,7 @@
 .dynamicRow {
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 24px;
   width: 100%;
 }
@@ -212,7 +212,7 @@
   border: none;
   cursor: pointer;
   color: $danger;
-  margin-bottom: 24px; /* align with inputs visually */
+  margin-top: 32px; /* align with inputs visually */
 
   &:hover {
     opacity: 0.8;

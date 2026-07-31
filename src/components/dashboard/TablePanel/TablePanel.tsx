@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import TablePanelHeaderButton from "./TablePanelHeaderButton";
 import styles from "./TablePanel.module.scss";
 
@@ -34,6 +34,12 @@ export default function TablePanel({
   onExportClick,
 }: TablePanelProps) {
   const panelClassName = className ? `${styles.panel} ${className}` : styles.panel;
+  const [isToolbarOpen, setIsToolbarOpen] = useState(true);
+
+  const handleFilterClick = () => {
+    setIsToolbarOpen((prev) => !prev);
+    onFilterClick?.();
+  };
 
   return (
     <section className={panelClassName} aria-label={ariaLabel}>
@@ -52,7 +58,7 @@ export default function TablePanel({
           ) : showFilters || showExport ? (
             <div className={styles.panelActions}>
               {showFilters && (
-                <TablePanelHeaderButton iconSrc="/images/dashboard/navbar/filter.svg" onClick={onFilterClick}>
+                <TablePanelHeaderButton iconSrc="/images/dashboard/filter.svg" onClick={handleFilterClick}>
                   Filters
                 </TablePanelHeaderButton>
               )}
@@ -66,7 +72,7 @@ export default function TablePanel({
         </div>
       )}
 
-      {toolbar}
+      {isToolbarOpen && toolbar ? <div style={{ marginBottom: "24px" }}>{toolbar}</div> : null}
 
       {children}
     </section>

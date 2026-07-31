@@ -8,6 +8,7 @@ import EventDetails from "./EventDetails";
 import EventRequirements from "./EventRequirements";
 import BudgetInformation from "./BudgetInformation";
 import RequestDetailsLayout from "../../shared/RequestDetailsLayout/RequestDetailsLayout";
+import { getEventsDetails, getMiceTimeline, eventsActions } from "@/services/admin/adminRequestsService";
 
 export default function ViewMiceRequest({ requestId }: { requestId: string }) {
   const [requestData, setRequestData] = useState<any>(null);
@@ -15,7 +16,6 @@ export default function ViewMiceRequest({ requestId }: { requestId: string }) {
 
   const fetchDetails = async () => {
     try {
-      const { getEventsDetails } = await import("@/lib/adminApi");
       const data = await getEventsDetails(requestId);
       setRequestData(data);
     } catch (err) {
@@ -31,7 +31,7 @@ export default function ViewMiceRequest({ requestId }: { requestId: string }) {
 
   const handleActionSubmit = async (action: string, payload?: any) => {
     try {
-      const { eventsActions } = await import("@/lib/adminApi");
+      const { eventsActions } = await import("@/services/admin/adminRequestsService");
       
       switch (action) {
         case "add_note":

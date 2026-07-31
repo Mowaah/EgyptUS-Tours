@@ -4,7 +4,7 @@ import { useState } from "react";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import RequestsSummaryGrid from "../shared/Layouts/RequestsSummaryGrid";
 import CustomTripRequestsPanel from "./CustomTripRequestsPanel";
-import { getPlanYourTripStats } from "@/lib/adminApi";
+import { getPlanYourTripStats } from "@/services/admin/adminRequestsService";
 import { useRequestStats } from "@/hooks/useRequestStats";
 import styles from "./PlanYourTrip.module.scss";
 

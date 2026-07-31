@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/dashboard/DataTable";
 import {
@@ -12,7 +12,7 @@ import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import { promotionsColumns, usePromotionRowActions } from "./promotionsColumns";
-import { mockPromotions } from "./promotionsData";
+import { getAdminPromotions, AdminPromotionList, updateAdminPromotion, deleteAdminPromotion } from "@/services/admin/adminMarketingService";
 import type { PromotionRow } from "../types";
 
 interface PromotionsPanelProps {
@@ -31,47 +31,119 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [promotionToDelete, setPromotionToDelete] = useState<PromotionRow | null>(null);
   const [bannerState, setBannerState] = useState<{ message: string; variant: "success" | "warning" } | null>(null);
+
+  const [promotions, setPromotions] = useState<PromotionRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchPromotions = async () => {
+    setLoading(true);
+    try {
+      const res = await getAdminPromotions();
+      const data = res.results || (res as any);
+      if (Array.isArray(data)) {
+        setPromotions(data.map((p: AdminPromotionList) => ({
+          id: String(p.id),
+          offerId: p.offer_number || `PRO-${p.id}`,
+          title: p.title || "Untitled",
+          value: `${p.discount_value}%`,
+          appliesTo: p.applies_to === "trip" ? "Trips" : p.applies_to === "hotel" ? "Hotels" : "Transportation",
+          validFrom: p.valid_from ? new Date(p.valid_from).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "-",
+          validTo: p.valid_to ? new Date(p.valid_to).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "-",
+          status: p.status === "active" ? "Active" : p.status === "draft" ? "Draft" : "Inactive",
+          usage: p.usage_count,
+        })));
+      }
+    } catch (error) {
+      console.error("Failed to fetch promotions", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPromotions();
+  }, []);
 
   const filterOptions = useMemo(() => {
     return {
-      appliesTo: ["All", ...Array.from(new Set(mockPromotions.map((p) => p.appliesTo)))],
-      validFrom: ["All", ...Array.from(new Set(mockPromotions.map((p) => p.validFrom)))],
-      status: ["All", ...Array.from(new Set(mockPromotions.map((p) => p.status)))],
+      appliesTo: ["All", "Trips", "Hotels", "Transportation"],
+      validFrom: ["All"],
+      status: ["All", "Active", "Inactive", "Draft"],
     };
   }, []);
 
   const handleDeleteRow = (row: PromotionRow) => {
+    setPromotionToDelete(row);
     setIsDeleteModalOpen(true);
   };
 
-  const handleToggleStatus = (row: PromotionRow) => {
-    if (row.status === "Active") {
-      setBannerState({
-        message: `Promotion ${row.offerId} has been deactivated and is no longer available for use on the platform.`,
-        variant: "warning",
-      });
-    } else {
-      setBannerState({
-        message: `Promotion ${row.offerId} is now active and available for use across the platform.`,
-        variant: "success",
-      });
+  const handleToggleStatus = async (row: PromotionRow) => {
+    try {
+      const newStatus = row.status === "Active" ? "inactive" : "active";
+      await updateAdminPromotion(row.id, { status: newStatus });
+      await fetchPromotions();
+      if (row.status === "Active") {
+        setBannerState({
+          message: `Promotion ${row.offerId} has been deactivated and is no longer available for use on the platform.`,
+          variant: "warning",
+        });
+      } else {
+        setBannerState({
+          message: `Promotion ${row.offerId} is now active and available for use across the platform.`,
+          variant: "success",
+        });
+      }
+    } catch (error) {
+      setBannerState({ message: "Failed to update promotion status.", variant: "warning" });
     }
   };
 
   const rowActions = usePromotionRowActions(handleDeleteRow, handleToggleStatus);
 
   const filteredPromotions = useMemo(() => {
-    return mockPromotions.filter((promotion) => {
+    return promotions.filter((promotion) => {
       if (searchQuery && !promotion.title.toLowerCase().includes(searchQuery.toLowerCase()) && !promotion.offerId.toLowerCase().includes(searchQuery.toLowerCase())) {
         return false;
       }
       if (appliedFilters.appliesTo !== "All" && promotion.appliesTo !== appliedFilters.appliesTo) return false;
-      if (appliedFilters.validFrom !== "All" && promotion.validFrom !== appliedFilters.validFrom) return false;
       if (appliedFilters.status !== "All" && promotion.status !== appliedFilters.status) return false;
       return true;
     });
-  }, [appliedFilters, searchQuery]);
+  }, [appliedFilters, searchQuery, promotions]);
+
+  const handleExport = () => {
+    if (!filteredPromotions.length) return;
+    
+    const headers = ["Offer ID", "Title", "Value", "Applies To", "Valid From", "Valid To", "Status"];
+    const csvRows = [headers.join(",")];
+    
+    filteredPromotions.forEach(row => {
+      const rowData = [
+        `"${row.offerId}"`,
+        `"${row.title.replace(/"/g, '""')}"`,
+        `"${row.value}"`,
+        `"${row.appliesTo}"`,
+        `"${row.validFrom}"`,
+        `"${row.validTo}"`,
+        `"${row.status}"`
+      ];
+      csvRows.push(rowData.join(","));
+    });
+    
+    const csvString = csvRows.join("\n");
+    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `promotions_export_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   const resetFilters = () => {
     setFilters(defaultFilters);
@@ -99,13 +171,17 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
 
-  if (mockPromotions.length > 0 && filteredPromotions.length === 0) {
+  if (loading) {
+    return <div style={{ padding: "2rem", textAlign: "center" }}>Loading promotions...</div>;
+  }
+
+  if (promotions.length > 0 && filteredPromotions.length === 0) {
     return (
       <DashboardSearchEmptyState onClearSearch={resetFilters} />
     );
   }
 
-  if (mockPromotions.length === 0) {
+  if (promotions.length === 0) {
     return (
       <DashboardEmptyState
         title="No Promotions Yet"
@@ -122,16 +198,9 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
       ariaLabel="Promotions table"
       title="Promotions"
       iconSrc="/images/dashboard/sidebar/promotions.svg"
-      headerActions={
-        <>
-          <TablePanelHeaderButton iconSrc="/images/dashboard/filter.svg">
-            Filters
-          </TablePanelHeaderButton>
-          <TablePanelHeaderButton iconSrc="/images/dashboard/export.svg">
-            Export Data
-          </TablePanelHeaderButton>
-        </>
-      }
+      showFilters
+      showExport
+      onExportClick={handleExport}
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
     >
       <DataTable
@@ -147,16 +216,23 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
         open={isDeleteModalOpen}
         variant="delete"
         title="Delete Promotion"
-        message="Are you sure you want to delete this promotion? This action cannot be undone and the promotion will be permanently removed from the system."
+        message={`Are you sure you want to delete ${promotionToDelete?.offerId}? This action cannot be undone.`}
         cancelLabel="Back"
         confirmLabel="Delete Promotion"
         onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={() => {
+        onConfirm={async () => {
+          if (!promotionToDelete) return;
           setIsDeleteModalOpen(false);
-          setBannerState({
-            message: "The promotion has been deleted successfully",
-            variant: "success",
-          });
+          try {
+            await deleteAdminPromotion(promotionToDelete.id);
+            setBannerState({
+              message: "The promotion has been deleted successfully",
+              variant: "success",
+            });
+            fetchPromotions();
+          } catch (error) {
+            setBannerState({ message: "Failed to delete promotion.", variant: "warning" });
+          }
         }}
       />
 
