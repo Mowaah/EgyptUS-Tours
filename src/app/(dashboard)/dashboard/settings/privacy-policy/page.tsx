@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ContentGrid, { type ContentItem } from "@/components/dashboard/ContentGrid/ContentGrid";
 import DocumentViewModal from "@/components/dashboard/DocumentViewModal/DocumentViewModal";
@@ -8,18 +8,24 @@ import DocumentFormModal from "@/components/dashboard/DocumentFormModal/Document
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import { useContentManager } from "@/hooks/useContentManager";
+import { getAdminPrivacySections, createAdminPrivacySection, updateAdminPrivacySection, deleteAdminPrivacySection, type AdminLegalSection } from "@/services/admin/adminLegalService";
 import styles from "../../page.module.scss";
 
-// Dummy data for visual — swap with real API data later
-const INITIAL_DATA: ContentItem[] = [
-  { id: "1", title: "Data Collection", content: "We collect personal information such as your name, email address, phone number, and payment details when you create an account, make a booking, or interact with our website. Non-personal information, like IP addresses and browser types, is also collected to improve site performance and user experience.\n\nYour data is used strictly for processing bookings, communicating updates, and offering personalized recommendations. We use industry-standard encryption to protect your information and ensure secure transactions.", status: "Unpublished", lastUpdated: "May 13, 2026" },
-  { id: "2", title: "Children Policy", content: "Children are warmly welcomed at our hotels and trips. Policies regarding age limits, extra beds, and meal options may vary depending on the hotel or tour selected.\n\n<span style=\"color: #FF6600\">Infants (0-2 years):</span>\nGenerally stay free of charge; cribs may be available upon request.\n\n<span style=\"color: #FF6600\">Children (3-11 years):</span>\nMay incur a reduced rate for accommodation and meals.", status: "Published", lastUpdated: "May 13, 2026" },
-];
+const mapSectionToContentItem = (section: AdminLegalSection): ContentItem => ({
+  id: section.id.toString(),
+  title: section.translations?.en?.title || "",
+  content: section.translations?.en?.content || "",
+  status: section.is_active ? "Published" : "Unpublished",
+  lastUpdated: new Date(section.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+});
 
 export default function PrivacyPolicyPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+
   const {
     contentGridRef,
     data,
+    loading,
     viewState,
     setViewState,
     editState,
@@ -40,17 +46,49 @@ export default function PrivacyPolicyPage() {
     confirmDelete,
     handleSave,
   } = useContentManager({
-    initialData: INITIAL_DATA,
     itemName: "Privacy Policy",
+    fetchData: async () => {
+      const res = await getAdminPrivacySections({ limit: 100, search: searchQuery });
+      return res.results.map(mapSectionToContentItem);
+    },
+    createItem: async (title, content, published) => {
+      const res = await createAdminPrivacySection({
+        translations: { en: { title, content } },
+        is_active: published,
+        order: 0,
+      });
+      return mapSectionToContentItem(res);
+    },
+    updateItem: async (id, title, content, published) => {
+      const res = await updateAdminPrivacySection(id, {
+        translations: { en: { title, content } },
+        is_active: published,
+      });
+      return mapSectionToContentItem(res);
+    },
+    deleteItemApi: async (id) => {
+      await deleteAdminPrivacySection(id);
+    },
+    updateStatus: async (id, published) => {
+      await updateAdminPrivacySection(id, { is_active: published });
+    },
+    dependencies: [searchQuery],
   });
 
   return (
     <>
       
       
-        <DashboardNavbar onPrimaryAction={handleAdd} />
+        <DashboardNavbar 
+          onPrimaryAction={handleAdd} 
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
         <ContentGrid
           ref={contentGridRef}
+          searchQuery={searchQuery}
+          onClearSearch={() => setSearchQuery("")}
+          loading={loading}
           title="Privacy Policy"
           ariaLabel="Privacy Policy Content"
           iconSrc="/images/dashboard/sidebar/privacy.svg"

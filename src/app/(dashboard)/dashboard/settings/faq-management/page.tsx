@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ContentGrid, { type ContentItem } from "@/components/dashboard/ContentGrid/ContentGrid";
 import FaqViewModal from "@/components/dashboard/FaqViewModal/FaqViewModal";
@@ -7,21 +9,23 @@ import FaqFormModal from "@/components/dashboard/FaqFormModal/FaqFormModal";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import { useContentManager } from "@/hooks/useContentManager";
+import { getAdminFaqs, createAdminFaq, updateAdminFaq, deleteAdminFaq, type AdminSiteFaq } from "@/services/admin/adminLegalService";
 
-// Dummy data for visual â€” swap with real API data later
-const INITIAL_DATA: ContentItem[] = [
-  { id: "1", title: "What's included in the trip price?", content: "Each trip includes clearly listed services such as accommodation, transportation tours, and selected meals. Full details are available on the trip details page.", status: "Unpublished", lastUpdated: "May 13, 2026" },
-  { id: "2", title: "Do I need a visa to travel?", content: "Visa requirements depend on your nationality and destination. Please consult the relevant embassy or our dedicated visa support page for accurate information.", status: "Published", lastUpdated: "May 13, 2026" },
-  { id: "3", title: "Are there discounts or special offers?", content: "Yes, we offer seasonal discounts and exclusive deals on selected trips and hotels. Check the homepage or subscribe to our newsletter for updates.", status: "Unpublished", lastUpdated: "May 13, 2026" },
-  { id: "4", title: "How do I cancel or modify my booking?", content: "You can modify or cancel your booking through the \"My Bookings\" section in your account. Cancellation policies vary by service provider.", status: "Published", lastUpdated: "May 13, 2026" },
-  { id: "5", title: "Can I book for a group or multiple people?", content: "Yes, you can book trips or accommodations for groups. Just select the number of travelers during the booking process.", status: "Unpublished", lastUpdated: "May 13, 2026" },
-  { id: "6", title: "How do I know my booking is confirmed?", content: "You will receive an email confirmation immediately after completing your reservation, including all booking details.", status: "Published", lastUpdated: "May 13, 2026" },
-];
+const mapFaqToContentItem = (faq: AdminSiteFaq): ContentItem => ({
+  id: faq.id.toString(),
+  title: faq.translations?.en?.question || "",
+  content: faq.translations?.en?.answer || "",
+  status: faq.is_active ? "Published" : "Unpublished",
+  lastUpdated: new Date(faq.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+});
 
 export default function FaqManagementPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+
   const {
     contentGridRef,
     data,
+    loading,
     viewState,
     setViewState,
     editState,
@@ -42,17 +46,49 @@ export default function FaqManagementPage() {
     confirmDelete,
     handleSave,
   } = useContentManager({
-    initialData: INITIAL_DATA,
     itemName: "FAQ",
+    fetchData: async () => {
+      const res = await getAdminFaqs({ limit: 100, search: searchQuery });
+      return res.results.map(mapFaqToContentItem);
+    },
+    createItem: async (title, content, published) => {
+      const res = await createAdminFaq({
+        translations: { en: { question: title, answer: content } },
+        is_active: published,
+        order: 0, // Backend logic can handle default ordering
+      });
+      return mapFaqToContentItem(res);
+    },
+    updateItem: async (id, title, content, published) => {
+      const res = await updateAdminFaq(id, {
+        translations: { en: { question: title, answer: content } },
+        is_active: published,
+      });
+      return mapFaqToContentItem(res);
+    },
+    deleteItemApi: async (id) => {
+      await deleteAdminFaq(id);
+    },
+    updateStatus: async (id, published) => {
+      await updateAdminFaq(id, { is_active: published });
+    },
+    dependencies: [searchQuery],
   });
 
   return (
     <>
       
       
-        <DashboardNavbar onPrimaryAction={() => setAddOpen(true)} />
+        <DashboardNavbar 
+          onPrimaryAction={() => setAddOpen(true)} 
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
         <ContentGrid 
           ref={contentGridRef}
+          searchQuery={searchQuery}
+          onClearSearch={() => setSearchQuery("")}
+          loading={loading}
           title="Published Questions on the Website"
           ariaLabel="FAQ Management Content"
           iconSrc="/images/dashboard/sidebar/faq.svg"

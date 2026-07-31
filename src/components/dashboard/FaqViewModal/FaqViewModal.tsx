@@ -86,7 +86,14 @@ export default function FaqViewModal({
 
             {/* Answer */}
             <div className={styles.answerBox}>
-              <p className={styles.answerText}>{content}</p>
+              <div 
+                className={styles.answerText}
+                dangerouslySetInnerHTML={{ 
+                  __html: /<[a-z][\s\S]*>/i.test(content) 
+                    ? content 
+                    : content.split("\n\n").map((p) => `<p>${p.replace(/\n/g, "<br>")}</p>`).join("") 
+                }} 
+              />
             </div>
           </div>
         </div>

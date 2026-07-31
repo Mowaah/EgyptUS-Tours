@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ContentGrid, { type ContentItem } from "@/components/dashboard/ContentGrid/ContentGrid";
 import DocumentViewModal from "@/components/dashboard/DocumentViewModal/DocumentViewModal";
@@ -7,18 +9,23 @@ import DocumentFormModal from "@/components/dashboard/DocumentFormModal/Document
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import { useContentManager } from "@/hooks/useContentManager";
-import styles from "../../page.module.scss";
+import { getAdminTermsSections, createAdminTermsSection, updateAdminTermsSection, deleteAdminTermsSection, type AdminLegalSection } from "@/services/admin/adminLegalService";
 
-// Dummy data for visual â€” swap with real API data later
-const INITIAL_DATA: ContentItem[] = [
-  { id: "1", title: "General Terms", content: "All users of this website agree to comply with the following general terms and conditions. By accessing or using the site, you accept full responsibility for your actions. Bookings made through the website are subject to availability, and the information provided on the site is for informational purposes only. Prices, services, and schedules may change without prior notice due to seasonal demand, special offers, or unforeseen circumstances. Users are responsible for ensuring the accuracy of the information they provide and for following all instructions during the booking and payment process.\n\nThe website owner reserves the right to suspend, modify, or terminate access to the platform at any time, with or without notice. Any unauthorized use of the website, including attempts to copy, reproduce, or exploit content, is strictly prohibited.", status: "Unpublished", lastUpdated: "May 13, 2026" },
-  { id: "2", title: "User Responsibilities", content: "The website and its owners are not liable for personal belongings, accidents, injuries, or events outside our control during your travel, stay, or interactions with services booked through the site. Users are encouraged to obtain appropriate travel insurance to cover unforeseen events.\n\nAny changes, modifications, or cancellations must be communicated promptly. Additional charges may apply depending on the type of modification or service. By using this website, you agree to comply with all applicable local laws and accept that the governing law for any disputes will be [insert country/jurisdiction].", status: "Published", lastUpdated: "May 13, 2026" },
-];
+const mapSectionToContentItem = (section: AdminLegalSection): ContentItem => ({
+  id: section.id.toString(),
+  title: section.translations?.en?.title || "",
+  content: section.translations?.en?.content || "",
+  status: section.is_active ? "Published" : "Unpublished",
+  lastUpdated: new Date(section.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+});
 
 export default function TermsConditionsPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+
   const {
     contentGridRef,
     data,
+    loading,
     viewState,
     setViewState,
     editState,
@@ -39,17 +46,49 @@ export default function TermsConditionsPage() {
     confirmDelete,
     handleSave,
   } = useContentManager({
-    initialData: INITIAL_DATA,
     itemName: "Terms & Conditions",
+    fetchData: async () => {
+      const res = await getAdminTermsSections({ limit: 100, search: searchQuery });
+      return res.results.map(mapSectionToContentItem);
+    },
+    createItem: async (title, content, published) => {
+      const res = await createAdminTermsSection({
+        translations: { en: { title, content } },
+        is_active: published,
+        order: 0,
+      });
+      return mapSectionToContentItem(res);
+    },
+    updateItem: async (id, title, content, published) => {
+      const res = await updateAdminTermsSection(id, {
+        translations: { en: { title, content } },
+        is_active: published,
+      });
+      return mapSectionToContentItem(res);
+    },
+    deleteItemApi: async (id) => {
+      await deleteAdminTermsSection(id);
+    },
+    updateStatus: async (id, published) => {
+      await updateAdminTermsSection(id, { is_active: published });
+    },
+    dependencies: [searchQuery],
   });
 
   return (
     <>
       
       
-        <DashboardNavbar onPrimaryAction={handleAdd} />
+        <DashboardNavbar 
+          onPrimaryAction={handleAdd} 
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
         <ContentGrid
           ref={contentGridRef}
+          searchQuery={searchQuery}
+          onClearSearch={() => setSearchQuery("")}
+          loading={loading}
           title="Terms & Conditions"
           ariaLabel="Terms & Conditions Content"
           iconSrc="/images/dashboard/sidebar/terms-conditions.svg"
@@ -87,6 +126,7 @@ export default function TermsConditionsPage() {
         titleLabel="Terms & Conditions Title"
         titlePlaceholder="Enter title here"
         editorPlaceholder="Write your Terms & Conditions content here...."
+        showColorPicker={true}
         onClose={() => setAddOpen(false)}
         onSave={(title, content, published) => {
           setAddOpen(false);
@@ -106,6 +146,7 @@ export default function TermsConditionsPage() {
         titleLabel="Terms & Conditions Title"
         titlePlaceholder="Enter title here"
         editorPlaceholder="Write your Terms & Conditions content here...."
+        showColorPicker={true}
         onClose={() => setEditState(null)}
         onSave={(title, content, published) => {
           setEditState(null);

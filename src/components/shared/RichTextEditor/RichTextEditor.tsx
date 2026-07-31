@@ -9,7 +9,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import CharacterCount from "@tiptap/extension-character-count";
-import Color from "@tiptap/extension-color";
+import { Color } from "@tiptap/extension-color";
 import { TextStyle } from "@tiptap/extension-text-style";
 import styles from "./RichTextEditor.module.scss";
 
@@ -184,14 +184,17 @@ function Toolbar({ editor, showColorPicker }: { editor: Editor; showColorPicker:
               {showColorMenu && (
                 <div className={styles.colorMenu}>
                   {COLORS.map((color) => (
-                    <button
-                      key={color}
-                      type="button"
-                      className={styles.colorSwatch}
-                      style={{ backgroundColor: color }}
-                      onClick={() => applyColor(color)}
-                      title={color}
-                    />
+                      <button
+                        key={color}
+                        type="button"
+                        className={styles.colorSwatch}
+                        style={{ backgroundColor: color }}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          applyColor(color);
+                        }}
+                        title={color}
+                      />
                   ))}
                 </div>
               )}

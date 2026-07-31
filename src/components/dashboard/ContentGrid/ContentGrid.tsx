@@ -4,6 +4,7 @@ import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import TablePanel from "@/components/dashboard/TablePanel/TablePanel";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import styles from "./ContentGrid.module.scss";
 
 export interface ContentItem {
@@ -23,6 +24,9 @@ export interface ContentGridProps {
   emptyStateTitle?: string;
   emptyStateSubtitle?: string;
   emptyStateActionLabel?: string;
+  searchQuery?: string;
+  onClearSearch?: () => void;
+  loading?: boolean;
   onViewItem: (item: ContentItem, index: number) => void;
   onEditItem: (item: ContentItem) => void;
   onPublishItem: (item: ContentItem) => void;
@@ -43,6 +47,9 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
   emptyStateTitle = "No items yet",
   emptyStateSubtitle = "Get started by creating your first item.",
   emptyStateActionLabel = "Add New",
+  searchQuery,
+  onClearSearch,
+  loading = false,
   onViewItem,
   onEditItem,
   onPublishItem,
@@ -82,7 +89,18 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
     showBanner,
   }));
 
+  if (loading) {
+    return (
+      <div style={{ padding: "40px", textAlign: "center", color: "#666" }}>
+        Loading content...
+      </div>
+    );
+  }
+
   if (items.length === 0) {
+    if (searchQuery) {
+      return <DashboardSearchEmptyState onClearSearch={onClearSearch} />;
+    }
     return (
       <DashboardEmptyState
         title={emptyStateTitle}

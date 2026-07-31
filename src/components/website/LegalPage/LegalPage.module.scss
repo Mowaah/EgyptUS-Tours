@@ -226,20 +226,35 @@
     font-weight: 500;
   }
 
-  ul, ol {
+  ul {
+    list-style-type: disc !important;
+    list-style-position: outside !important;
     margin: 0 0 16px;
-    padding-left: 20px;
-    
-    li {
-      font-size: $font-size-sm;
-      line-height: 1.6;
-      margin-bottom: 8px;
+    padding-left: 1.5rem !important;
+  }
 
-      @media (min-width: 640px) {
-        font-size: $font-size-base;
-        line-height: 24px;
-      }
+  ol {
+    list-style-type: decimal !important;
+    list-style-position: outside !important;
+    margin: 0 0 16px;
+    padding-left: 1.5rem !important;
+  }
+
+  ul li, ol li {
+    display: list-item !important;
+    font-size: $font-size-sm;
+    line-height: 1.6;
+    margin-bottom: 8px;
+
+    @media (min-width: 640px) {
+      font-size: $font-size-base;
+      line-height: 24px;
     }
+  }
+
+  li > p {
+    margin: 0;
+    display: inline;
   }
 
   a {
