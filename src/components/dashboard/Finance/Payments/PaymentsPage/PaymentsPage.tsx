@@ -154,7 +154,7 @@ export default function PaymentsPage() {
             change=""
             trend={parseFloat(data?.revenue_growth_pct || "0") >= 0 ? "up" : "down"}
             tone="pink"
-            iconSrc="/images/dashboard/finance/payment/chart.svg"
+            iconSrc="/images/dashboard/finance/payment/money.svg"
           />
         </div>
 

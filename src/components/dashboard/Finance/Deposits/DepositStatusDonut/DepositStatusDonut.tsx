@@ -2,11 +2,12 @@ import RoundedDonutChart from "@/components/dashboard/shared/RoundedDonutChart/R
 import styles from "../DepositsPage/DepositsPage.module.scss";
 import Image from "next/image";
 
-export default function DepositStatusDonut() {
-  const chartData = [
-    { label: "Paid", value: 50, color: "#A1CCFF" },
-    { label: "Unpaid", value: 20, color: "#E9BDFF" },
-    { label: "Overdue", value: 30, color: "#FFC6A0" },
+export default function DepositStatusDonut({ chartData }: { chartData?: Record<string, number> }) {
+  const totalCount = Object.values(chartData || {}).reduce((a, b) => a + b, 0) || 1;
+  const mappedData = [
+    { label: "Paid", value: Math.round(((chartData?.collected || 0) / totalCount) * 100), color: "#A1CCFF" },
+    { label: "Pending", value: Math.round(((chartData?.pending || 0) / totalCount) * 100), color: "#E9BDFF" },
+    { label: "Overdue", value: Math.round(((chartData?.overdue || 0) / totalCount) * 100), color: "#FFC6A0" },
   ];
 
   return (
@@ -23,13 +24,13 @@ export default function DepositStatusDonut() {
       
       <div className={styles.donutWrapper}>
         <RoundedDonutChart 
-          data={chartData} 
-          centerValue="147K" 
+          data={mappedData} 
+          centerValue={`${totalCount === 1 && !chartData ? 0 : totalCount}`} 
           centerLabel="Total Deposits" 
         />
         
         <div className={styles.legend}>
-          {chartData.map((item) => (
+          {mappedData.map((item) => (
             <div key={item.label} className={styles.legendItem}>
               <span 
                 className={styles.legendColor} 

@@ -5,6 +5,7 @@ export interface HatchedBarChartProps {
     label: string;
     value: number; // percentage (0-100)
     color: string;
+    displayValue?: string; // Optional formatted string to show in the bar
   }[];
   yAxisLabels: string[];
   barWidth?: number;
@@ -45,7 +46,7 @@ export default function HatchedBarChart({ data, yAxisLabels, barWidth }: Hatched
                 className={styles.barFill}
                 style={{ height: `${item.value}%`, background: item.color }}
               >
-                <span className={styles.barPct}>{item.value}%</span>
+                <span className={styles.barPct}>{item.displayValue !== undefined ? item.displayValue : `${item.value}%`}</span>
               </div>
               <span className={styles.barLabel}>{item.label}</span>
             </div>

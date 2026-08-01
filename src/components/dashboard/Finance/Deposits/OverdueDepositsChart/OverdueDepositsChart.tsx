@@ -2,16 +2,54 @@ import Image from "next/image";
 import parentStyles from "../DepositsPage/DepositsPage.module.scss";
 import HatchedBarChart from "@/components/dashboard/shared/HatchedBarChart/HatchedBarChart";
 
-export default function OverdueDepositsChart() {
-  const distribution = [
-    { label: "Trips", value: 32, color: "#A1CCFF" },
-    { label: "Hotels", value: 22, color: "#FFC6A0" },
-    { label: "Transport", value: 36, color: "#FFD1DE" },
-    { label: "MICE", value: 74, color: "#E9BDFF" },
-    { label: "B2B", value: 58, color: "#A1F6CC" },
-  ];
+export default function OverdueDepositsChart({ chartData }: { chartData?: Record<string, string> }) {
+  const COLOR_MAP: Record<string, string> = {
+    trip: "#A1CCFF",
+    hotel: "#FFC6A0",
+    transport: "#FFD1DE",
+    custom_trip: "#E9BDFF",
+  };
+  const LABEL_MAP: Record<string, string> = {
+    trip: "Trips",
+    hotel: "Hotels",
+    transport: "Transport",
+    custom_trip: "Custom",
+  };
 
-  const yAxisLabels = ["$2000", "$1500", "$1000", "$500", "$0"];
+  const formatCurrencyK = (value: string | number) => {
+    const num = typeof value === 'string' ? parseFloat(value.replace(/[^0-9.-]+/g, "")) : value;
+    if (isNaN(num)) return "$0";
+    if (num >= 1000) {
+      return `$${(num / 1000).toFixed(1).replace(/\.0$/, '')}k`;
+    }
+    return `$${num}`;
+  };
+
+  const distribution = Object.entries(chartData || {}).map(([key, val]) => {
+    return {
+      label: LABEL_MAP[key] || key,
+      value: parseFloat(val || "0"),
+      color: COLOR_MAP[key] || "#ccc",
+    };
+  });
+
+  const maxVal = Math.max(0, ...distribution.map((d) => d.value));
+  
+  // Calculate dynamic heights
+  const chartHeightData = distribution.map(d => ({
+    ...d,
+    value: maxVal > 0 ? (d.value / maxVal) * 100 : 0, // Using value for height
+    originalValue: d.value,
+    displayValue: formatCurrencyK(d.value),
+  }));
+
+  const yAxisLabels = [
+    formatCurrencyK(maxVal),
+    formatCurrencyK(maxVal * 0.75),
+    formatCurrencyK(maxVal * 0.5),
+    formatCurrencyK(maxVal * 0.25),
+    "$0",
+  ];
 
   return (
     <div className={parentStyles.chartCard}>
@@ -25,7 +63,7 @@ export default function OverdueDepositsChart() {
         </div>
       </div>
       
-      <HatchedBarChart data={distribution} yAxisLabels={yAxisLabels} />
+      <HatchedBarChart data={chartHeightData} yAxisLabels={yAxisLabels} />
     </div>
   );
 }

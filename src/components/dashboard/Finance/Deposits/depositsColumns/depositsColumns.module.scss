@@ -58,6 +58,12 @@
   i { background-color: #EA580C; }
 }
 
+.statusCollected {
+  background-color: $status-success-bg;
+  color: $status-success-text;
+  i { background-color: $status-success-text; }
+}
+
 .statusOverdue {
   background-color: $background-danger-light;
   color: $danger;

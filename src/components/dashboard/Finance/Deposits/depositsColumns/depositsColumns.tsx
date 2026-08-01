@@ -1,69 +1,77 @@
 import type { DataTableColumn, DataTableRowAction } from "@/components/dashboard/DataTable";
-import type { DepositRow } from "../mockDeposits";
 import styles from "./depositsColumns.module.scss";
 
-const serviceClass: Record<DepositRow["service"], string> = {
-  Trips: styles.serviceTrips,
-  Transportation: styles.serviceTransport,
-  Hotels: styles.serviceHotels,
-  B2B: styles.serviceB2B,
-  MICE: styles.serviceMice,
+export type DepositRow = any; // Just use any or a proper type if desired
+
+const serviceClass: Record<string, string> = {
+  trip: styles.serviceTrips,
+  transport: styles.serviceTransport,
+  hotel: styles.serviceHotels,
+  custom_trip: styles.serviceB2B,
+};
+
+const serviceNames: Record<string, string> = {
+  trip: "Trips",
+  transport: "Transportation",
+  hotel: "Hotels",
+  custom_trip: "Custom Trip",
 };
 
 export const depositsColumns: DataTableColumn<DepositRow>[] = [
   {
     id: "bookingId",
     header: "Booking ID",
-    render: (row) => row.bookingId,
+    render: (row) => `${row.booking_title || ''} #${row.booking_id}`,
   },
   {
     id: "customer",
     header: "Customer",
-    render: (row) => row.customer,
+    render: (row) => row.customer_name,
   },
   {
     id: "service",
     header: "Service",
     render: (row) => (
-      <span className={`${styles.pill} ${serviceClass[row.service]}`}>
-        {row.service}
+      <span className={`${styles.pill} ${serviceClass[row.booking_type] || styles.serviceTrips}`}>
+        {serviceNames[row.booking_type] || row.booking_type}
       </span>
     ),
   },
   {
-    id: "dates",
-    header: "Dates",
-    render: (row) => row.dates,
-  },
-  {
     id: "totalAmount",
     header: "Total Amount",
-    render: (row) => row.totalAmount,
+    render: (row) => `$${row.total_price}`,
   },
   {
     id: "deposit",
     header: "Deposit (30%)",
-    render: (row) => row.deposit,
+    render: (row) => `$${row.deposit_amount}`,
   },
   {
     id: "remainingBalance",
     header: "Remaining Balance (70%)",
-    render: (row) => row.remainingBalance,
+    render: (row) => `$${row.remaining_balance}`,
   },
   {
     id: "dueDate",
     header: "Final Due Date",
-    render: (row) => row.dueDate,
+    render: (row) => row.deposit_due_date || "---",
   },
   {
     id: "status",
     header: "Status",
     render: (row) => {
-      const isPending = row.status === "Pending";
+      const isPending = row.deposit_status === "pending";
+      const isCollected = row.deposit_status === "collected";
+      
+      let statusStyle = styles.statusOverdue;
+      if (isPending) statusStyle = styles.statusPending;
+      else if (isCollected) statusStyle = styles.statusCollected || styles.statusPending;
+
       return (
-        <span className={`${styles.statusPill} ${isPending ? styles.statusPending : styles.statusOverdue}`}>
+        <span className={`${styles.statusPill} ${statusStyle}`}>
           <i aria-hidden />
-          {row.status}
+          {row.deposit_status ? row.deposit_status.charAt(0).toUpperCase() + row.deposit_status.slice(1).toLowerCase() : "Unknown"}
         </span>
       );
     },
@@ -72,8 +80,8 @@ export const depositsColumns: DataTableColumn<DepositRow>[] = [
     id: "daysOverdue",
     header: "Days Overdue",
     render: (row) => (
-      <span className={row.status === "Overdue" ? styles.overdueText : ""}>
-        {row.daysOverdue || "---"}
+      <span className={row.deposit_status === "overdue" ? styles.overdueText : ""}>
+        {row.days_overdue > 0 ? `${row.days_overdue} ${row.days_overdue === 1 ? "Day" : "Days"}` : "---"}
       </span>
     ),
   },
