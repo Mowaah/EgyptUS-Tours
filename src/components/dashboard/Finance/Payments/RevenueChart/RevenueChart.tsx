@@ -1,30 +1,31 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import styles from "../PaymentsPage/PaymentsPage.module.scss";
 
 import { AnimatedNumber } from "@/components/shared/AnimatedNumber/AnimatedNumber";
 
-export default function RevenueByDestination() {
-  const chartData = [
-    { month: "JAN", value: 350, heightPct: 77 },
-    { month: "FEB", value: 320, heightPct: 71 },
-    { month: "MAR", value: 260, heightPct: 57 },
-    { month: "ABR", value: 240, heightPct: 53 },
-    { month: "MAY", value: 330, heightPct: 73 },
-    { month: "JUN", value: 160, heightPct: 35 },
-    { month: "JUL", value: 400, heightPct: 88 },
-    { month: "AUG", value: 260, heightPct: 57 },
-    { month: "SEP", value: 290, heightPct: 64 },
-    { month: "OCT", value: 230, heightPct: 51 },
-    { month: "NOV", value: 270, heightPct: 60 },
-    { month: "DEC", value: 360, heightPct: 80 },
+interface RevenueChartProps {
+  chartData: { label: string; value: number; heightPct: number }[];
+}
+
+export default function RevenueChart({ chartData }: RevenueChartProps) {
+  if (!chartData || chartData.length === 0) {
+    chartData = [{ label: "No Data", value: 0, heightPct: 0 }];
+  }
+
+  const [hoveredLabel, setHoveredLabel] = useState<string | null>(null);
+
+  const maxVal = chartData.length > 0 ? Math.max(...chartData.map(d => d.value)) : 0;
+  
+  const yAxisLabels = [
+    `$${maxVal >= 1000 ? (maxVal / 1000).toFixed(0) + 'k' : maxVal}`,
+    `$${maxVal >= 1000 ? (maxVal * 0.75 / 1000).toFixed(0) + 'k' : Math.round(maxVal * 0.75)}`,
+    `$${maxVal >= 1000 ? (maxVal * 0.5 / 1000).toFixed(0) + 'k' : Math.round(maxVal * 0.5)}`,
+    `$${maxVal >= 1000 ? (maxVal * 0.25 / 1000).toFixed(0) + 'k' : Math.round(maxVal * 0.25)}`,
+    "$0"
   ];
-
-  const [hoveredMonth, setHoveredMonth] = useState<string | null>(null);
-
-  const yAxisLabels = ["$450k", "$350k", "$250k", "$150k", "$0k"];
 
   return (
     <div className={styles.chartCard} style={{ padding: 32, gap: 32 }}>
@@ -33,9 +34,9 @@ export default function RevenueByDestination() {
           <Image src="/images/dashboard/finance/payment/chart.svg" alt="" width={24} height={24} />
         </div>
         <div>
-          <h2 className={styles.cardTitle}>Revenue by Destination</h2>
+          <h2 className={styles.cardTitle}>Revenue</h2>
           <p className={styles.cardSubtitle}>
-            Cairo dominates (26%), but Siwa shows highest per-booking value ($734)
+            Monthly revenue breakdown
           </p>
         </div>
       </div>
@@ -46,7 +47,7 @@ export default function RevenueByDestination() {
         {/* Y Axis Labels */}
         <div className={styles.yAxis}>
           {yAxisLabels.map((label, i) => (
-            <div key={label} className={styles.yAxisLine}>
+            <div key={i} className={styles.yAxisLine}>
               {label}
             </div>
           ))}
@@ -56,7 +57,7 @@ export default function RevenueByDestination() {
         <div className={styles.gridLines}>
           {yAxisLabels.map((label, i) => (
             <div 
-              key={label} 
+              key={i} 
               className={i === yAxisLabels.length - 1 ? styles.gridLineSolid : styles.gridLine} 
             />
           ))}
@@ -66,24 +67,24 @@ export default function RevenueByDestination() {
         <div className={styles.chartArea}>
           <div className={styles.chartBars}>
             {chartData.map((col) => {
-              const isActive = hoveredMonth === col.month;
+              const isActive = hoveredLabel === col.label;
               return (
                 <div 
-                  key={col.month} 
+                  key={col.label} 
                   className={styles.barColumn}
-                  onMouseEnter={() => setHoveredMonth(col.month)}
-                  onMouseLeave={() => setHoveredMonth(null)}
+                  onMouseEnter={() => setHoveredLabel(col.label)}
+                  onMouseLeave={() => setHoveredLabel(null)}
                 >
                   <div className={styles.barWrapper}>
                     <div className={styles.tooltip}>
-                      $ <AnimatedNumber value={col.value} isActive={isActive} />k
+                      $ <AnimatedNumber value={col.value} isActive={isActive} />
                     </div>
                     <div 
                       className={`${styles.barFill} ${isActive ? styles.barFillActive : ""}`} 
                       style={{ height: `${col.heightPct}%` }}
                     />
                   </div>
-                  <div className={styles.xAxisLabel}>{col.month}</div>
+                  <div className={styles.xAxisLabel} style={{ fontSize: "10px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", width: "100%", textAlign: "center" }}>{col.label}</div>
                 </div>
               );
             })}

@@ -2,12 +2,15 @@ import RoundedDonutChart from "@/components/dashboard/shared/RoundedDonutChart/R
 import styles from "../PaymentsPage/PaymentsPage.module.scss";
 import Image from "next/image";
 
-export default function RevenueByCategory() {
-  const chartData = [
-    { label: "Trips", value: 40, color: "#A1CCFF" },
-    { label: "Hotels", value: 20, color: "#FFC6A0" },
-    { label: "Transportation", value: 30, color: "#E9BDFF" },
-  ];
+interface RevenueByCategoryProps {
+  chartData: { label: string; value: number; color: string }[];
+  totalValue: string;
+}
+
+export default function RevenueByCategory({ chartData, totalValue }: RevenueByCategoryProps) {
+  if (!chartData || chartData.length === 0) {
+    chartData = [{ label: "No Data", value: 100, color: "#ccc" }];
+  }
 
   return (
     <div className={styles.chartCard}>
@@ -24,8 +27,8 @@ export default function RevenueByCategory() {
       <div className={styles.donutWrapper}>
         <RoundedDonutChart 
           data={chartData} 
-          centerValue="147K" 
-          centerLabel="Total Payments" 
+          centerValue={`$${totalValue}`} 
+          centerLabel="Total Revenue" 
         />
         
         <div className={styles.legend}>

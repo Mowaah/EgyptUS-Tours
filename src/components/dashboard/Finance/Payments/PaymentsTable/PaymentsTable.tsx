@@ -8,14 +8,25 @@ import {
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { paymentsColumns, paymentRowActions } from "../paymentsColumns/paymentsColumns";
-import { mockPayments } from "../mockPayments";
 
-export default function PaymentsTable() {
-  const [filters, setFilters] = useState({
-    service: "All",
-    date: "All",
-    status: "All",
-  });
+import { usePaymentsPanel } from "@/hooks/usePaymentsPanel";
+import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
+
+interface PaymentsTableProps {
+  searchQuery?: string;
+  onClearSearch?: () => void;
+}
+
+export default function PaymentsTable({ searchQuery = "", onClearSearch }: PaymentsTableProps) {
+  const {
+    data,
+    loading,
+    filters,
+    setFilters,
+    handleApply,
+    handleClean,
+    handleExport,
+  } = usePaymentsPanel({ searchQuery });
 
   const filterFields = [
     {
@@ -41,23 +52,22 @@ export default function PaymentsTable() {
     },
   ];
 
-  const resetFilters = () => {
-    setFilters({
-      service: "All",
-      date: "All",
-      status: "All",
-    });
-  };
-
-  const applyFilters = () => {
-    // Apply filters logic
-  };
-
   const handleAction = (action: { label: string }, row: any) => {
     console.log("Action:", action.label, "Row:", row);
   };
 
-  if (mockPayments.length === 0) {
+  if (loading && data.length === 0) {
+    return <div style={{ padding: "40px", textAlign: "center", color: "#666" }}>Loading data...</div>;
+  }
+
+  if (data.length === 0 && searchQuery) {
+    return <DashboardSearchEmptyState onClearSearch={() => {
+      handleClean();
+      onClearSearch?.();
+    }} />;
+  }
+
+  if (data.length === 0) {
     return (
       <DashboardEmptyState
         title="No Payments Yet"
@@ -73,20 +83,24 @@ export default function PaymentsTable() {
       iconSrc="/images/dashboard/sidebar/finance.svg"
       showFilters
       showExport
+      onExportClick={handleExport}
       toolbar={
         <TablePanelFilterBar
           fields={filterFields}
-          onClean={resetFilters}
-          onApply={applyFilters}
+          onClean={() => {
+            handleClean();
+            onClearSearch?.();
+          }}
+          onApply={handleApply}
         />
       }
     >
       <DataTable
-        data={mockPayments}
-        columns={paymentsColumns}
+        data={data}
+        columns={paymentsColumns as any}
         getRowId={(row) => row.id}
         selectable
-        rowActions={paymentRowActions(handleAction)}
+        rowActions={paymentRowActions(handleAction) as any}
       />
     </TablePanel>
   );

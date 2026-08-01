@@ -82,3 +82,12 @@
     background: #DC2626;
   }
 }
+
+.statusInProgress {
+  color: #D97706;
+  background: $status-warning-bg;
+
+  i {
+    background: #D97706;
+  }
+}

@@ -1,6 +1,15 @@
 import type { DataTableColumn, DataTableRowAction } from "@/components/dashboard/DataTable";
-import type { PaymentRow } from "../mockPayments";
 import styles from "../PaymentsTable/PaymentsTable.module.scss";
+
+export interface PaymentRow {
+  id: string;
+  bookingId: string;
+  customer: string;
+  service: string;
+  dates: string;
+  method: string;
+  status: string;
+}
 
 const serviceClass: Record<PaymentRow["service"], string> = {
   Trips: styles.serviceTrips,
@@ -50,9 +59,16 @@ export const paymentsColumns: DataTableColumn<PaymentRow>[] = [
     id: "status",
     header: "Status",
     render: (row) => {
-      const isPaid = row.status === "Fully Paid";
+      const statusLower = row.status.toLowerCase();
+      const isPaid = statusLower === "fully paid";
+      const isInProgress = statusLower === "in progress";
+      
+      let statusClass = styles.statusRefunded;
+      if (isPaid) statusClass = styles.statusPaid;
+      else if (isInProgress) statusClass = styles.statusInProgress;
+
       return (
-        <span className={`${styles.statusPill} ${isPaid ? styles.statusPaid : styles.statusRefunded}`}>
+        <span className={`${styles.statusPill} ${statusClass}`}>
           <i aria-hidden />
           {row.status}
         </span>
