@@ -12,6 +12,7 @@ export default function ReviewsPage() {
       
       
         <DashboardNavbar 
+          searchQuery={searchQuery}
           onSearchChange={setSearchQuery} 
           onPrimaryAction={() => setIsAddModalOpen(true)} 
         />
@@ -19,6 +20,7 @@ export default function ReviewsPage() {
           searchQuery={searchQuery} 
           isAddModalOpen={isAddModalOpen} 
           onAddModalClose={() => setIsAddModalOpen(false)} 
+          onClearSearch={() => setSearchQuery("")}
         />
       
     </>

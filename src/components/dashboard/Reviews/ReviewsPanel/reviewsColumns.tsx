@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import type { DataTableColumn, DataTableRowAction } from "@/components/dashboard/DataTable";
 import StarRating from "@/components/shared/StarRating/StarRating";
@@ -29,16 +30,29 @@ function PendingSpinner() {
   );
 }
 
-function FeaturedToggle({ value }: { value: boolean }) {
+function PublishedToggle({ value, onChange }: { value: boolean; onChange?: (val: boolean) => void }) {
+  const [checked, setChecked] = useState(value);
+
+  useEffect(() => {
+    setChecked(value);
+  }, [value]);
+
   return (
-    <label className={formStyles.switch} aria-label={value ? "Featured" : "Not featured"}>
-      <input type="checkbox" defaultChecked={value} readOnly />
+    <label className={formStyles.switch} aria-label={checked ? "Published" : "Unpublished"}>
+      <input 
+        type="checkbox" 
+        checked={checked} 
+        onChange={(e) => {
+          setChecked(e.target.checked);
+          onChange?.(e.target.checked);
+        }} 
+      />
       <span className={formStyles.slider} />
     </label>
   );
 }
 
-export const reviewsColumns: DataTableColumn<ReviewRow>[] = [
+export const getReviewsColumns = (onTogglePublished: (row: ReviewRow, val: boolean) => void): DataTableColumn<ReviewRow>[] => [
   {
     id: "id",
     header: "Review ID",
@@ -98,9 +112,9 @@ export const reviewsColumns: DataTableColumn<ReviewRow>[] = [
     ),
   },
   {
-    id: "featured",
-    header: "Featured",
-    render: (row) => <FeaturedToggle value={row.featured} />,
+    id: "published",
+    header: "Published",
+    render: (row) => <PublishedToggle value={row.published} onChange={(val) => onTogglePublished(row, val)} />,
   },
 ];
 
@@ -123,7 +137,7 @@ export const reviewRowActions = (onAction?: (action: { label: string }, row: any
   return baseActions;
 };
 
-export const adminTestimonialsColumns: DataTableColumn<AdminTestimonialRow>[] = [
+export const getAdminTestimonialsColumns = (onTogglePublished: (row: AdminTestimonialRow, val: boolean) => void): DataTableColumn<AdminTestimonialRow>[] => [
   {
     id: "id",
     header: "Testimonial ID",
@@ -184,9 +198,9 @@ export const adminTestimonialsColumns: DataTableColumn<AdminTestimonialRow>[] = 
     render: (row) => row.date,
   },
   {
-    id: "featured",
-    header: "Featured",
-    render: (row) => <FeaturedToggle value={row.featured} />,
+    id: "published",
+    header: "Published",
+    render: (row) => <PublishedToggle value={row.published} onChange={(val) => onTogglePublished(row, val)} />,
   },
 ];
 

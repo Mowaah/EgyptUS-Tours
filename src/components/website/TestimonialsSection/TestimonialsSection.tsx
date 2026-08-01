@@ -4,6 +4,7 @@ import { useState } from "react";
 import { SectionHeader, Pagination, TestimonialCard } from "@/components/shared";
 import type { Testimonial } from "@/components/shared/TestimonialCard/TestimonialCard";
 import type { TestimonialData } from "@/services/testimonialsService";
+import { COUNTRIES } from "@/data/countries";
 import styles from "./TestimonialsSection.module.scss";
 
 
@@ -16,13 +17,17 @@ export default function TestimonialsSection({
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.max(1, Math.ceil(initialTestimonials.length / 4) || 15);
 
-  const testimonialsData: Testimonial[] = initialTestimonials.map(t => ({
-    videoUrl: t.video_url || undefined,
-    quote: `"${t.description}"`,
-    name: t.customer_name,
-    location: t.country,
-    rating: t.rating,
-  }));
+  const testimonialsData: Testimonial[] = initialTestimonials.map(t => {
+    const countryEntry = COUNTRIES.find(c => c.code.toUpperCase() === (t.country || '').toUpperCase());
+    return {
+      videoUrl: t.video_url || undefined,
+      quote: `"${t.description}"`,
+      name: t.customer_name,
+      location: countryEntry?.name || t.country,
+      countryCode: (t.country || '').toLowerCase(),
+      rating: t.rating,
+    };
+  });
 
   return (
     <section className={styles.section}>

@@ -11,6 +11,7 @@ export interface Testimonial {
   quote: string;
   name: string;
   location: string;
+  countryCode?: string;
   rating: number;
 }
 
@@ -120,7 +121,16 @@ export default function TestimonialCard({ testimonial }: Props) {
           <span className={styles.reviewerName}>{testimonial.name}</span>
           <div className={styles.reviewerMeta}>
             <div className={styles.locationWrap}>
-              <Image src="/images/en.svg" alt="flag" width={18} height={12} />
+              {(testimonial.countryCode || testimonial.location) && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={`https://hatscripts.github.io/circle-flags/flags/${(testimonial.countryCode || testimonial.location).toLowerCase()}.svg`}
+                  alt={testimonial.location}
+                  width={18}
+                  height={18}
+                  className={styles.flagImg}
+                />
+              )}
               <span className={styles.reviewerLocation}>{testimonial.location}</span>
             </div>
             <StarRating value={testimonial.rating} />

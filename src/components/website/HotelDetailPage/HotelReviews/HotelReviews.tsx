@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Hotel, HotelReview } from "@/types";
-import { Button } from "@/components/shared";
+import { ReviewGrid } from "@/components/shared";
 import styles from "./HotelReviews.module.scss";
 
 interface HotelReviewsProps {
@@ -8,7 +8,7 @@ interface HotelReviewsProps {
 }
 
 export default function HotelReviews({ hotel }: HotelReviewsProps) {
-  const reviews = (hotel.hotelReviews || []).slice(0, 6);
+  const reviews = hotel.hotelReviews || [];
   
   if (reviews.length === 0) return null;
 
@@ -16,28 +16,14 @@ export default function HotelReviews({ hotel }: HotelReviewsProps) {
     <section id="reviews" className={styles.section}>
       <h2 className={styles.heading}>Traveler Reviews</h2>
 
-      <div className={styles.grid}>
-        {reviews.map((review, i) => (
+      <ReviewGrid
+        items={reviews}
+        pageSize={6}
+        gridClassName={styles.grid}
+        renderItem={(review, i) => (
           <ReviewCard key={i} review={review} />
-        ))}
-      </div>
-
-      <div className={styles.loadMoreWrap}>
-        <Button
-          variant="outline"
-          icon={
-            <Image
-              src="/images/arrows/arrow-right-blue.svg"
-              alt=""
-              width={20}
-              height={20}
-              style={{ transform: "rotate(90deg)" }}
-            />
-          }
-        >
-          Load More
-        </Button>
-      </div>
+        )}
+      />
     </section>
   );
 }

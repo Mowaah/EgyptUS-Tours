@@ -2,6 +2,7 @@
 
 import { TestimonialCard, ReviewGrid } from '@/components/shared';
 import type { Testimonial } from '@/components/shared/TestimonialCard/TestimonialCard';
+import { COUNTRIES } from '@/data/countries';
 import styles from './B2BTestimonials.module.scss';
 
 import type { TestimonialData } from "@/services/testimonialsService";
@@ -17,14 +18,18 @@ export default function B2BTestimonials({ testimonials = [] }: B2BTestimonialsPr
     return null; // Or return an empty state if preferred
   }
 
-  const mappedTestimonials: Testimonial[] = testimonials.map(t => ({
-    name: t.customer_name,
-    location: t.country || "Guest",
-    rating: t.rating || 5,
-    quote: `"${t.title}"\n\n${t.description}`,
-    videoUrl: t.video_url || "",
-    image: "", // We rely on the video thumbnail internally
-  }));
+  const mappedTestimonials: Testimonial[] = testimonials.map(t => {
+    const countryEntry = COUNTRIES.find(c => c.code.toUpperCase() === (t.country || '').toUpperCase());
+    return {
+      name: t.customer_name,
+      location: countryEntry?.name || t.country || 'Guest',
+      countryCode: (t.country || '').toLowerCase(),
+      rating: t.rating || 5,
+      quote: `"${t.description}"`,
+      videoUrl: t.video_url || '',
+      image: '',
+    };
+  });
 
   return (
     <section className={styles.section}>

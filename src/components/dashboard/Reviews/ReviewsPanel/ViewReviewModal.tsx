@@ -7,6 +7,7 @@ import panelStyles from "./ReviewsPanel.module.scss";
 interface ViewReviewModalProps {
   open: boolean;
   onClose: () => void;
+  onReply?: () => void;
   data: ReviewRow | AdminTestimonialRow | null;
   type: "user" | "admin";
 }
@@ -24,22 +25,17 @@ const statusClass: Record<string, string> = {
   Replied: panelStyles.statusReplied,
 };
 
-export default function ViewReviewModal({ open, onClose, data, type }: ViewReviewModalProps) {
+export default function ViewReviewModal({ open, onClose, onReply, data, type }: ViewReviewModalProps) {
   if (!open || !data) return null;
 
   const isUser = type === "user";
   const userRow = data as ReviewRow;
   const adminRow = data as AdminTestimonialRow;
 
-  const email = data.email || `${data.customer.toLowerCase().replace(/\s+/g, '')}@example.com`;
-  const body = data.body || "Perfect in every way. The Eiffel Tower dinner was magical. Perfect in every way. The Eiffel Tower dinner was magical. Perfect in every way. The Eiffel Tower dinner was magical.";
-  const title = isUser ? ((data as ReviewRow).title || "Perfect in every way") : data.customer;
-  const photos = data.photos || [
-    "/images/pyramids.jpg",
-    "/images/pyramids2.jpg",
-    "/images/pyramids3.jpg",
-    "/images/pyramids4.jpg"
-  ];
+  const email = data.email || "No email provided";
+  const body = data.body || "No description provided.";
+  const title = isUser ? ((data as ReviewRow).title || "No Title") : data.customer;
+  const photos = data.photos || [];
   const videoUrl = (data as any).videoUrl || null;
 
   return (
@@ -87,8 +83,8 @@ export default function ViewReviewModal({ open, onClose, data, type }: ViewRevie
               <div className={styles.infoBlock}>
                 <Image src="/images/dashboard/reviews/modal/name.svg" alt="" width={24} height={24} className={styles.infoIcon} />
                 <div className={styles.infoContent}>
-                  <p className={styles.infoLabel}>Name</p>
-                  <p className={styles.infoValue}>Paris Romantic Getaway</p>
+                  <p className={styles.infoLabel}>Title</p>
+                  <p className={styles.infoValue}>{title}</p>
                 </div>
               </div>
 
@@ -149,8 +145,8 @@ export default function ViewReviewModal({ open, onClose, data, type }: ViewRevie
               <div className={styles.infoBlock}>
                 <Image src="/images/dashboard/reviews/modal/name.svg" alt="" width={24} height={24} className={styles.infoIcon} />
                 <div className={styles.infoContent}>
-                  <p className={styles.infoLabel}>Name</p>
-                  <p className={styles.infoValue}>Paris Romantic Getaway</p>
+                  <p className={styles.infoLabel}>Title</p>
+                  <p className={styles.infoValue}>{title}</p>
                 </div>
               </div>
 
@@ -222,7 +218,10 @@ export default function ViewReviewModal({ open, onClose, data, type }: ViewRevie
             <button className={styles.btnCancel} onClick={onClose}>
               Cancel
             </button>
-            <button className={styles.btnReply} onClick={onClose}>
+            <button className={styles.btnReply} onClick={() => {
+              onClose();
+              if (onReply) onReply();
+            }}>
               Reply
             </button>
           </div>

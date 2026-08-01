@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Trip } from "@/types";
+import { COUNTRIES } from "@/data/countries";
 import { PageHeader, DetailGallery, DetailHeroBar, DetailTabNav } from "@/components/shared";
 import Image from "next/image";
 import Link from "next/link";
@@ -188,14 +189,18 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
 
       {/* ── Traveler Reviews ── */}
       <div className={styles.container}>
-        <TripReviews reviews={testimonials.map(t => ({
-          name: t.customer_name,
-          location: t.country || "Unknown",
-          rating: t.rating || 5,
-          quote: `"${t.title}"\n\n${t.description}`,
-          videoUrl: t.video_url || "",
-          image: "", 
-        }))} />
+        <TripReviews reviews={testimonials.map(t => {
+          const countryEntry = COUNTRIES.find(c => c.code.toUpperCase() === (t.country || '').toUpperCase());
+          return {
+            name: t.customer_name,
+            location: countryEntry?.name || t.country || 'Unknown',
+            countryCode: (t.country || '').toLowerCase(),
+            rating: t.rating || 5,
+            quote: `"${t.description}"`,
+            videoUrl: t.video_url || '',
+            image: '',
+          };
+        })} />
       </div>
 
       {/* ── More Inspiring Trips ── */}

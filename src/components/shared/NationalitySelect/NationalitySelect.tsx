@@ -28,7 +28,11 @@ export default function NationalitySelect({ value, onChange, error, useCountryNa
     return labelA.localeCompare(labelB);
   });
   
-  const selected = sortedCountries.find(c => c.nationality === value || c.name === value || c.code === value);
+  const selected = sortedCountries.find(c => 
+    c.nationality?.toLowerCase() === value?.toLowerCase() || 
+    c.name?.toLowerCase() === value?.toLowerCase() || 
+    c.code?.toLowerCase() === value?.toLowerCase()
+  );
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -66,7 +70,7 @@ export default function NationalitySelect({ value, onChange, error, useCountryNa
         if (!isOpen) {
           // If closed, just update the selection
           const matched = sortedCountries[matchedIndex];
-          onChange(useCountryName ? matched.name : (matched.nationality || matched.name));
+          onChange(useCountryName ? matched.name : matched.code);
         } else {
           // If open, scroll to the button
           const matchedBtn = scrollAreaRef.current?.children[matchedIndex] as HTMLButtonElement;
@@ -108,15 +112,16 @@ export default function NationalitySelect({ value, onChange, error, useCountryNa
           <div className={styles.scrollArea} ref={scrollAreaRef} role="listbox">
             {sortedCountries.map(c => {
               const label = useCountryName ? c.name : (c.nationality || c.name);
+              const emitValue = useCountryName ? c.name : c.code;
               return (
                 <button 
                   key={c.code} 
                   type="button" 
                   className={styles.option} 
                   role="option"
-                  aria-selected={value === label}
+                  aria-selected={value === emitValue}
                   onClick={() => { 
-                    onChange(label); 
+                    onChange(emitValue); 
                     setIsOpen(false); 
                   }}
                 >

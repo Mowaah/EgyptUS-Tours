@@ -10,6 +10,7 @@ import HotelLocation from "./HotelLocation/HotelLocation";
 import HotelRoomTypes from "./HotelRoomTypes/HotelRoomTypes";
 import SimilarHotels from "./SimilarHotels/SimilarHotels";
 import HotelBookingWidget from "./HotelBookingWidget/HotelBookingWidget";
+import HotelReviews from "./HotelReviews/HotelReviews";
 import { useFavorite } from "@/hooks/useFavorite";
 import styles from "./HotelDetailPage.module.scss";
 
@@ -23,6 +24,7 @@ const HOTEL_TABS = [
   { id: "hotel-facilities", label: "Hotel Facilities" },
   { id: "location", label: "Location" },
   { id: "room-types", label: "Room Types" },
+  { id: "reviews", label: "Traveler Reviews" },
   { id: "similar-hotels", label: "Similar Hotels" },
 ];
 
@@ -117,6 +119,10 @@ export default function HotelDetailPage({ hotel, similarHotels }: HotelDetailPag
 
       <div className={styles.container}>
         <HotelRoomTypes hotel={hotel} />
+      </div>
+
+      <div className={styles.container}>
+        <HotelReviews hotel={hotel} />
       </div>
 
       {similarHotels && similarHotels.length > 0 && (

@@ -123,3 +123,11 @@
   align-items: center;
   gap: 6px;
 }
+
+.flagImg {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}

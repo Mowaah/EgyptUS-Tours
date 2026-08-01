@@ -98,36 +98,6 @@
   gap: 24px;
   width: 100%;
 }
-
-/* Override NationalitySelect inside this modal */
-.countrySelectWrap :global([class*="NationalitySelect_wrapper"]) {
-  width: 100%;
-}
-
-.countrySelectWrap button {
-  width: 100%;
-  height: 3rem !important;
-  min-height: 3rem !important;
-  padding: 0 1rem !important;
-  background: $background;
-  border: 1px solid $border !important;
-  border-radius: 24px !important;
-  font-family: inherit;
-  font-size: $font-size-sm;
-  line-height: 1.35;
-  color: #444A51;
-  box-shadow: none !important;
-}
-
-.countrySelectWrap button:focus-within {
-  border-color: $info-light !important;
-  box-shadow: 0 0 0 3px rgba(27, 143, 254, 0.1) !important;
-}
-
-.countrySelectWrap :global([class*="NationalitySelect_placeholder"]) {
-  color: $gray-400 !important;
-}
-
 /* Override SelectDropdown inside the Rating field */
 .ratingSelectWrap > div > div:first-child {
   width: 100%;

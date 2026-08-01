@@ -18,6 +18,7 @@ export default function TransportationReviews({ reviews }: TransportationReviews
       <ReviewGrid 
         items={reviews} 
         pageSize={6} 
+        gridClassName={styles.grid}
         renderItem={(review) => (
           <div key={review.id} className={styles.reviewCard}>
             <div className={styles.cardHeader}>

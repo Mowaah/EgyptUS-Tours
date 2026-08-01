@@ -4,13 +4,15 @@ export type ReviewRating = 1 | 2 | 3 | 4 | 5;
 
 export interface ReviewRow {
   id: string;
+  originalId: number;
   customer: string;
   category: ReviewCategory;
   title: string;
   rating: ReviewRating;
   date: string;
   status: ReviewStatus;
-  featured: boolean;
+  moderation_status: string;
+  published: boolean;
   email?: string;
   body?: string;
   photos?: string[];
@@ -18,6 +20,7 @@ export interface ReviewRow {
 
 export interface AdminTestimonialRow {
   id: string;
+  originalId: number;
   addedBy: string;
   customer: string;
   country: string;
@@ -27,7 +30,7 @@ export interface AdminTestimonialRow {
   category: ReviewCategory | "B2B" | "Mice";
   rating: ReviewRating;
   date: string;
-  featured: boolean;
+  published: boolean;
   email?: string;
   body?: string;
   photos?: string[];

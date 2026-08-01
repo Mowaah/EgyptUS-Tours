@@ -16,7 +16,7 @@ export const COUNTRIES: CountryInfo[] = [
   { code: "af", name: "Afghanistan", nationality: "Afghan", dial: "+93" },
   { code: "al", name: "Albania", nationality: "Albanian", dial: "+355" },
   { code: "dz", name: "Algeria", nationality: "Algerian", dial: "+213" },
-  { code: "as", name: "American Samoa", nationality: "American", dial: "+1" },
+  { code: "as", name: "American Samoa", nationality: "American Samoan", dial: "+1" },
   { code: "ad", name: "Andorra", nationality: "Andorran", dial: "+376" },
   { code: "ao", name: "Angola", nationality: "Angolan", dial: "+244" },
   { code: "ai", name: "Anguilla", nationality: "Anguillian", dial: "+1" },

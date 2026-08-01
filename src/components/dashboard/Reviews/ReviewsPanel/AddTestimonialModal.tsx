@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { COUNTRIES } from "@/data/countries";
 import NationalitySelect from "@/components/shared/NationalitySelect/NationalitySelect";
 import { ModalHeader, ModalFooter, DashboardField } from "@/components/dashboard/shared";;
 import SelectDropdown from "@/components/shared/SelectDropdown/SelectDropdown";
@@ -16,6 +17,7 @@ interface InitialData {
   title?: string;
   description?: string;
   videoUrl?: string;
+  published?: boolean;
 }
 
 export interface TestimonialFormData {
@@ -26,7 +28,7 @@ export interface TestimonialFormData {
   title: string;
   description: string;
   videoUrl: string;
-  featured?: boolean;
+  published?: boolean;
 }
 
 interface AddTestimonialModalProps {
@@ -46,7 +48,7 @@ export default function AddTestimonialModal({ isOpen, onClose, isEdit = false, o
   const [testimonialTitle, setTestimonialTitle] = useState("");
   const [description, setDescription] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
-  const [featured, setFeatured] = useState(false);
+  const [published, setPublished] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isClient, setIsClient] = useState(false);
 
@@ -61,6 +63,7 @@ export default function AddTestimonialModal({ isOpen, onClose, isEdit = false, o
         setTestimonialTitle(initialData.title || "");
         setDescription(initialData.description || "");
         setVideoUrl(initialData.videoUrl ? String(initialData.videoUrl) : "");
+        setPublished(initialData.published || false);
       } else if (!isEdit) {
         setCustomerName("");
         setCategory("");
@@ -69,6 +72,7 @@ export default function AddTestimonialModal({ isOpen, onClose, isEdit = false, o
         setVideoUrl("");
         setCountry("");
         setRating("5");
+        setPublished(false);
       }
       setErrors({});
       setActiveTab("basic");
@@ -126,7 +130,7 @@ export default function AddTestimonialModal({ isOpen, onClose, isEdit = false, o
                   Country
                 </label>
                 <div className={styles.countrySelectWrap} style={{ width: "100%" }}>
-                  {isClient && <NationalitySelect value={country} onChange={setCountry} useCountryName={true} error={!!errors.country} />}
+                  {isClient && <NationalitySelect variant="modal" value={country} onChange={setCountry} useCountryName={false} error={!!errors.country} />}
                 </div>
                 {errors.country && (
                   <div className={dashboardStyles.errorText} role="alert" style={{ marginTop: "0.25rem" }}>
@@ -147,9 +151,11 @@ export default function AddTestimonialModal({ isOpen, onClose, isEdit = false, o
                 error={errors.category}
                 options={[
                   { label: "Select category", value: "", disabled: true },
-                  { label: "Destination", value: "Destination" },
-                  { label: "Adventures", value: "Adventures" },
-                  { label: "Travel Tips", value: "Travel Tips" },
+                  { label: "B2B", value: "b2b" },
+                  { label: "Mice", value: "mice" },
+                  { label: "Trips", value: "trip" },
+                  { label: "Hotels", value: "hotel" },
+                  { label: "Transportation", value: "transport" },
                 ]}
               />
 
@@ -250,16 +256,26 @@ export default function AddTestimonialModal({ isOpen, onClose, isEdit = false, o
               />
               
               <ToggleField
-                label="Featured Testimonial"
-                description="Highlight this testimonial in featured sections across the website."
-                checked={featured}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFeatured(e.target.checked)}
+                label="Published Testimonial"
+                description="Highlight this testimonial in public sections across the website."
+                checked={published}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPublished(e.target.checked)}
               />
             </div>
           )}
         </div>
 
         <ModalFooter
+          primaryDisabled={activeTab === "media" && isEdit && !(
+            customerName !== (initialData?.customer || "") ||
+            country !== (initialData?.country || "") ||
+            category !== (initialData?.category || "") ||
+            rating !== (initialData?.rating ? String(initialData.rating) : "5") ||
+            testimonialTitle !== (initialData?.title || "") ||
+            description !== (initialData?.description || "") ||
+            videoUrl !== (initialData?.videoUrl ? String(initialData.videoUrl) : "") ||
+            published !== (initialData?.published || false)
+          )}
           secondaryLabel="Discard"
           secondaryOnClick={onClose}
           primaryLabel={
@@ -288,22 +304,27 @@ export default function AddTestimonialModal({ isOpen, onClose, isEdit = false, o
               const newErrors: Record<string, string> = {};
               if (!String(testimonialTitle).trim()) newErrors.testimonialTitle = "This field is required";
               if (!String(description).trim()) newErrors.description = "This field is required";
-              if (!String(videoUrl).trim()) newErrors.videoUrl = "This field is required";
+              
+              const vidUrl = String(videoUrl).trim();
+              if (vidUrl && !vidUrl.startsWith("http://") && !vidUrl.startsWith("https://")) {
+                newErrors.videoUrl = "Please enter a valid URL starting with http:// or https://";
+              }
               
               if (Object.keys(newErrors).length > 0) {
                 setErrors(newErrors);
                 return;
               }
               setErrors({});
+              const matchedCountry = COUNTRIES.find(c => c.name === country || c.code === country);
               onSubmit?.({
                 customer: customerName,
-                country,
+                country: matchedCountry ? matchedCountry.code.toUpperCase() : "US", // ISO-3166-1 alpha-2
                 category,
                 rating,
                 title: testimonialTitle,
                 description: String(description),
                 videoUrl: String(videoUrl),
-                featured,
+                published,
               });
             }
           }}

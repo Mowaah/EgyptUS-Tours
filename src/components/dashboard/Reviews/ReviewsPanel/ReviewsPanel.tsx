@@ -6,8 +6,7 @@ import {
   TablePanel,
   TablePanelFilterBar,
 } from "@/components/dashboard/TablePanel";
-import { mockReviews, mockAdminTestimonials } from "../reviewsData";
-import { reviewsColumns, reviewRowActions, adminTestimonialsColumns, adminTestimonialRowActions } from "./reviewsColumns";
+import { getReviewsColumns, reviewRowActions, getAdminTestimonialsColumns, adminTestimonialRowActions } from "./reviewsColumns";
 import ViewReviewModal from "./ViewReviewModal";
 import ChangeStatusModal from "./ChangeStatusModal";
 import AddTestimonialModal from "./AddTestimonialModal";
@@ -15,13 +14,15 @@ import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatus
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
+import { useReviewsPanel } from "@/hooks/useReviewsPanel";
+import { replyToAdminUserReview, updateAdminTestimonial, updateAdminUserReview, deleteAdminTestimonial, deleteAdminUserReview } from "@/services/admin/adminReviewsService";
+import { downloadBlobAsCSV } from "@/lib/utils";
 import styles from "./ReviewsPanel.module.scss";
 
 const filterOptions = {
-  category: ["All", "Trips", "Transportation", "Hotels"],
+  category: ["All", "Trips", "Transportation", "Hotels", "B2B", "Mice"],
   rating: ["All", "5 stars", "4 stars", "3 stars", "2 stars", "1 star"],
   state: ["All", "Pending", "Replied"],
-  date: ["All", "Mar 15, 2024", "Mar 14, 2024"],
 };
 
 interface ReviewsPanelProps {
@@ -33,6 +34,7 @@ interface ReviewsPanelProps {
   hideCustomerColumn?: boolean;
   emptyStateTitle?: string;
   emptyStateSubtitle?: string;
+  refreshTrigger?: number;
 }
 
 export function ReviewsPanel({
@@ -44,7 +46,9 @@ export function ReviewsPanel({
   hideCustomerColumn,
   emptyStateTitle,
   emptyStateSubtitle,
-}: ReviewsPanelProps) {
+  refreshTrigger = 0,
+  onDataChange,
+}: ReviewsPanelProps & { onDataChange?: () => void }) {
   const defaultFilters = {
     category: "All",
     rating: "All",
@@ -63,36 +67,14 @@ export function ReviewsPanel({
   const [isDeleteBannerOpen, setIsDeleteBannerOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isEditBannerOpen, setIsEditBannerOpen] = useState(false);
+  const [isReplyBannerOpen, setIsReplyBannerOpen] = useState(false);
 
-  const filteredReviews = useMemo(
-    () => {
-      const data = type === "admin" ? mockAdminTestimonials : mockReviews;
-      return data.filter((row) => {
-        if (
-          searchQuery &&
-          !row.customer.toLowerCase().includes(searchQuery.toLowerCase()) &&
-          !row.id.toLowerCase().includes(searchQuery.toLowerCase())
-        ) {
-          return false;
-        }
-        if (appliedFilters.category !== "All" && row.category !== appliedFilters.category) return false;
-        if (appliedFilters.rating !== "All") {
-          const ratingNum = parseInt(appliedFilters.rating);
-          if (row.rating !== ratingNum) return false;
-        }
-        
-        // Status filtering only applies to user reviews
-        if (type === "user") {
-          const review = row as typeof mockReviews[0];
-          if (appliedFilters.state !== "All" && review.status !== appliedFilters.state) return false;
-        }
-
-        if (appliedFilters.date !== "All" && row.date !== appliedFilters.date) return false;
-        return true;
-      });
-    },
-    [appliedFilters, searchQuery, type]
-  );
+  const { data, loading, refresh } = useReviewsPanel({
+    type,
+    searchQuery,
+    appliedFilters,
+    refreshTrigger,
+  });
 
   const resetFilters = () => {
     setFilters(defaultFilters);
@@ -106,19 +88,20 @@ export function ReviewsPanel({
     setAppliedFilters(filters);
   };
 
-  const filterFields = (
-    [
-      ["category", "Category", filterOptions.category],
-      ["rating", "Rating", filterOptions.rating],
-      ["state", "State", filterOptions.state],
-      ["date", "Date", filterOptions.date],
-    ] as const
-  ).map(([id, label, options]) => ({
-    id,
-    label,
-    value: filters[id as keyof typeof filters],
-    options,
-    onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
+  const categoryOptions = type === "user" 
+    ? ["All", "Trips", "Transportation", "Hotels"]
+    : ["All", "Trips", "Hotels", "Transportation", "B2B", "Mice"];
+
+  const dateOptions = ["All", "Today", "Last 7 Days", "Last 30 Days", "This Month"];
+
+  const filterFields = [
+    { id: "category", label: "Category", options: categoryOptions, value: filters.category },
+    { id: "rating", label: "Rating", options: filterOptions.rating, value: filters.rating },
+    ...(type === "user" ? [{ id: "state", label: "State", options: filterOptions.state, value: filters.state }] : []),
+    { id: "date", label: "Date", options: dateOptions, value: filters.date },
+  ].map((field) => ({
+    ...field,
+    onChange: (value: string) => setFilters((current) => ({ ...current, [field.id]: value })),
   }));
 
   const handleAction = (action: { label: string }, row: any) => {
@@ -134,19 +117,61 @@ export function ReviewsPanel({
     } else if (action.label === "Edit") {
       setSelectedRow(row);
       setIsEditModalOpen(true);
+    } else if (action.label === "Reply") {
+      window.location.href = `mailto:${row.email || ""}`;
+      replyToAdminUserReview(row.originalId, "Replied via email")
+        .then(() => {
+          return updateAdminUserReview(row.originalId, { moderation_status: "approved" });
+        })
+        .then(() => {
+          setIsReplyBannerOpen(true);
+          refresh();
+          onDataChange?.();
+        })
+        .catch(e => {
+          console.error("Failed to mark as replied", e);
+        });
     }
   };
 
   const title = customTitle || (type === "admin" ? "Testimonials" : "Reviews");
   const iconSrc = customIconSrc || "/images/dashboard/sidebar/reviews.svg";
-  const data = type === "admin" ? mockAdminTestimonials : mockReviews;
   
-  let baseColumns = type === "admin" ? adminTestimonialsColumns as any : reviewsColumns as any;
-  if (hideCustomerColumn) {
-    baseColumns = baseColumns.filter((col: any) => col.id !== "customer");
+  const baseColumns = useMemo(() => {
+    const handleTogglePublished = async (row: any, newFeaturedOrPublished: boolean) => {
+      try {
+        if (type === "user") {
+          await updateAdminUserReview(row.originalId, { is_featured: newFeaturedOrPublished });
+        } else {
+          await updateAdminTestimonial(row.originalId, { status: newFeaturedOrPublished ? "published" : "draft" });
+        }
+        refresh();
+        onDataChange?.();
+      } catch (e) {
+        console.error("Failed to update status", e);
+      }
+    };
+
+    let cols = type === "admin" 
+      ? getAdminTestimonialsColumns(handleTogglePublished) as any 
+      : getReviewsColumns(handleTogglePublished) as any;
+
+    if (hideCustomerColumn) {
+      cols = cols.filter((col: any) => col.id !== "customer");
+    }
+    return cols;
+  }, [type, hideCustomerColumn, refresh, onDataChange]);
+
+  if (loading && data.length === 0) {
+    return (
+      <div style={{ padding: "40px", textAlign: "center", color: "#666" }}>
+        Loading data...
+      </div>
+    );
   }
 
-  if (data.length > 0 && filteredReviews.length === 0) {
+  // We rely on the backend to filter. If data is empty and we have a search query, show search empty state.
+  if (data.length === 0 && searchQuery) {
     return (
       <DashboardSearchEmptyState onClearSearch={resetFilters} />
     );
@@ -162,18 +187,71 @@ export function ReviewsPanel({
     );
   }
 
+  const handleExportClick = () => {
+    if (!data || data.length === 0) return;
+
+    let exportRows: Record<string, any>[] = [];
+    let filename = "";
+
+    if (type === "user") {
+      filename = "user_reviews.csv";
+      exportRows = data.map((item: any) => ({
+        "Review ID": item.id || "",
+        "Customer": item.customer || item.author_name || "",
+        "Category": item.category || "",
+        "Rating": item.rating || 5,
+        "Title": item.title || "",
+        "Review Text": item.body || "",
+        "Date": item.date || "",
+        "Status": item.status || "",
+        "Featured": item.featured ? "Yes" : "No",
+      }));
+    } else {
+      filename = "admin_testimonials.csv";
+      exportRows = data.map((item: any) => ({
+        "Testimonial ID": item.id || "",
+        "Customer Name": item.customer || "",
+        "Country": item.country || "",
+        "Category": item.category || "",
+        "Rating": item.rating || 5,
+        "Title": item.title || "",
+        "Description": item.description || item.body || "",
+        "Status": item.published ? "Published" : "Draft",
+      }));
+    }
+
+    if (exportRows.length === 0) return;
+
+    const headers = Object.keys(exportRows[0]);
+    const csvLines = [
+      headers.join(","),
+      ...exportRows.map((row) =>
+        headers
+          .map((header) => {
+            const val = row[header] ?? "";
+            const escaped = String(val).replace(/"/g, '""');
+            return `"${escaped}"`;
+          })
+          .join(",")
+      ),
+    ];
+    const blob = new Blob([csvLines.join("\n")], { type: "text/csv;charset=utf-8;" });
+    downloadBlobAsCSV(blob, filename);
+  };
+
   return (
     <>
       <TablePanel
-      ariaLabel={`${title} table`}
-      title={title}
-      iconSrc={iconSrc}
-      showFilters
-      showExport
-      toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
-    >
+        ariaLabel={`${title} table`}
+        title={title}
+        iconSrc={iconSrc}
+        showFilters
+        showExport
+        onExportClick={handleExportClick}
+        toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
+      >
       <DataTable
-        data={filteredReviews}
+        data={data}
         columns={baseColumns}
         getRowId={(row) => row.id}
         selectable
@@ -193,10 +271,21 @@ export function ReviewsPanel({
       isOpen={isStatusModalOpen}
       onClose={() => setIsStatusModalOpen(false)}
       currentStatus={selectedRow?.status || "Pending"}
-      onConfirm={(newStatus) => {
-        // Here you would typically make an API call to update the status
-        console.log(`Status for ${selectedRow?.id} changed to ${newStatus}`);
-        setIsStatusBannerOpen(true);
+      onConfirm={async (newStatus) => {
+        try {
+          if (type === "user") {
+             const modStatus = newStatus === "Replied" ? "approved" : "pending";
+             await updateAdminUserReview(selectedRow?.originalId, { moderation_status: modStatus as any });
+          } else {
+             const adminStatus = newStatus === "Replied" ? "published" : "draft";
+             await updateAdminTestimonial(selectedRow?.originalId, { status: adminStatus as any });
+          }
+          setIsStatusBannerOpen(true);
+          refresh();
+          onDataChange?.();
+        } catch (e) {
+          console.error("Failed to update status", e);
+        }
       }}
     />
 
@@ -216,11 +305,20 @@ export function ReviewsPanel({
       cancelLabel="Back"
       confirmLabel="Delete"
       onClose={() => setIsDeleteModalOpen(false)}
-      onConfirm={() => {
-        // Mock API call to delete
-        console.log(`Deleted ${type === "admin" ? "testimonial" : "review"} ${selectedRow?.id}`);
-        setIsDeleteModalOpen(false);
-        setIsDeleteBannerOpen(true);
+      onConfirm={async () => {
+        try {
+          if (type === "admin") {
+            await deleteAdminTestimonial(selectedRow?.originalId);
+          } else {
+            await deleteAdminUserReview(selectedRow?.originalId);
+          }
+          setIsDeleteModalOpen(false);
+          setIsDeleteBannerOpen(true);
+          refresh();
+          onDataChange?.();
+        } catch (e) {
+          console.error("Failed to delete", e);
+        }
       }}
     />
 
@@ -239,17 +337,44 @@ export function ReviewsPanel({
       initialData={selectedRow ? {
         customer: selectedRow.customer,
         country: selectedRow.country,
-        category: selectedRow.category,
+        category: (() => {
+          const cat = (selectedRow.category || "").toLowerCase();
+          if (cat === "trips") return "trip";
+          if (cat === "hotels") return "hotel";
+          if (cat === "transportation") return "transport";
+          return cat;
+        })(),
         rating: selectedRow.rating,
         title: selectedRow.title,
-        description: selectedRow.description,
-        videoUrl: selectedRow.video,
+        description: selectedRow.description || selectedRow.body,
+        videoUrl: selectedRow.videoUrl,
+        published: selectedRow.published,
       } : undefined}
-      onSubmit={(data) => {
-        // TODO: call your API here, e.g. await api.updateTestimonial(selectedRow.id, data)
-        console.log("[Edit Testimonial] Submitting:", data);
-        setIsEditModalOpen(false);
-        setIsEditBannerOpen(true);
+      onSubmit={async (data) => {
+        try {
+          await updateAdminTestimonial(selectedRow?.originalId, {
+            customer_name: data.customer,
+            country: data.country,
+            category: (() => {
+              const cat = (data.category || "").toLowerCase();
+              if (cat === "trips") return "trip";
+              if (cat === "hotels") return "hotel";
+              if (cat === "transportation") return "transport";
+              return cat;
+            })() as any,
+            rating: Number(data.rating),
+            title: data.title,
+            description: data.description,
+            video_url: data.videoUrl || "",
+            status: data.published ? "published" : "draft",
+          });
+          setIsEditModalOpen(false);
+          setIsEditBannerOpen(true);
+          refresh();
+          onDataChange?.();
+        } catch (e) {
+          console.error("Failed to edit testimonial", e);
+        }
       }}
     />
 
@@ -257,6 +382,14 @@ export function ReviewsPanel({
       show={isEditBannerOpen}
       onClose={() => setIsEditBannerOpen(false)}
       message="The testimonial has been updated successfully"
+      variant="success"
+      className={styles.toastBanner}
+    />
+
+    <DashboardStatusBanner
+      show={isReplyBannerOpen}
+      onClose={() => setIsReplyBannerOpen(false)}
+      message="The review has been marked as replied"
       variant="success"
       className={styles.toastBanner}
     />

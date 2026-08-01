@@ -6,6 +6,7 @@ import { ReviewsPanel } from "./ReviewsPanel";
 import AddTestimonialModal from "./ReviewsPanel/AddTestimonialModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/DashboardTabs";
+import { createAdminTestimonial } from "@/services/admin/adminReviewsService";
 import reviewsPanelStyles from "./ReviewsPanel/ReviewsPanel.module.scss";
 import styles from "./Reviews.module.scss";
 
@@ -21,6 +22,7 @@ interface ReviewsProps {
 export default function Reviews({ searchQuery = "", isAddModalOpen = false, onAddModalClose, onClearSearch }: ReviewsProps) {
   const [activeTab, setActiveTab] = useState<ReviewTab>("user-reviews");
   const [isAddBannerOpen, setIsAddBannerOpen] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   return (
     <div className={styles.page}>
@@ -41,8 +43,14 @@ export default function Reviews({ searchQuery = "", isAddModalOpen = false, onAd
           aria-labelledby="tab-user-reviews"
           className={styles.tabPanel}
         >
-          <ReviewSummaryGrid />
-          <ReviewsPanel searchQuery={searchQuery} onClearSearch={onClearSearch} />
+          <ReviewSummaryGrid type="user" refreshTrigger={refreshTrigger} />
+          <ReviewsPanel 
+            searchQuery={searchQuery} 
+            onClearSearch={onClearSearch} 
+            type="user" 
+            refreshTrigger={refreshTrigger}
+            onDataChange={() => setRefreshTrigger(prev => prev + 1)}
+          />
         </div>
       )}
 
@@ -53,19 +61,38 @@ export default function Reviews({ searchQuery = "", isAddModalOpen = false, onAd
           aria-labelledby="tab-admin-testimonials"
           className={styles.tabPanel}
         >
-          <ReviewSummaryGrid type="admin" />
-          <ReviewsPanel searchQuery={searchQuery} type="admin" onClearSearch={onClearSearch} />
+          <ReviewSummaryGrid type="admin" refreshTrigger={refreshTrigger} />
+          <ReviewsPanel 
+            searchQuery={searchQuery} 
+            type="admin" 
+            onClearSearch={onClearSearch} 
+            refreshTrigger={refreshTrigger}
+            onDataChange={() => setRefreshTrigger(prev => prev + 1)}
+          />
         </div>
       )}
 
       <AddTestimonialModal 
         isOpen={isAddModalOpen} 
         onClose={() => onAddModalClose?.()} 
-        onSubmit={(data) => {
-          // TODO: call your API here, e.g. await api.createTestimonial(data)
-          console.log("[Add Testimonial] Submitting:", data);
-          onAddModalClose?.();
-          setIsAddBannerOpen(true);
+        onSubmit={async (data) => {
+          try {
+            await createAdminTestimonial({
+              customer_name: data.customer,
+              country: data.country,
+              category: data.category.toLowerCase() as any,
+              rating: Number(data.rating),
+              title: data.title,
+              description: data.description,
+              video_url: data.videoUrl || "",
+              status: data.published ? "published" : "draft",
+            });
+            onAddModalClose?.();
+            setIsAddBannerOpen(true);
+            setRefreshTrigger(prev => prev + 1);
+          } catch (error) {
+            console.error("Failed to create testimonial:", error);
+          }
         }}
       />
       <DashboardStatusBanner

@@ -9,6 +9,6 @@ export const metadata = {
 import { getTestimonials } from '@/services/testimonialsService';
 
 export default async function Page() {
-  const testimonials = await getTestimonials({ category: 'mice' });
+  const testimonials = await getTestimonials({ category: 'b2b' });
   return <B2BProgramsPage testimonials={testimonials} />;
 }
