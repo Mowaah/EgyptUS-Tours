@@ -13,51 +13,43 @@ interface FleetData {
   color: string;
 }
 
-const fleetData: FleetData[] = [
-  {
-    id: 1,
-    title: "Sedans",
-    subtitle: "20/24 active",
-    utilization: 82,
-    color: "#2A74E5", // Blue
-  },
-  {
-    id: 2,
-    title: "SUVs & Luxury",
-    subtitle: "11/12 active",
-    utilization: 91,
-    color: "#FF6600", // Orange
-  },
-  {
-    id: 3,
-    title: "Vans & Hiace",
-    subtitle: "12/18 active",
-    utilization: 68,
-    color: "#2BAB6F", // Green
-  },
-  {
-    id: 4,
-    title: "Buses",
-    subtitle: "20/24 active",
-    utilization: 55,
-    color: "#A347D1", // Purple
-  },
-];
+
 
 export interface FleetUtilizationChartProps {
   title?: string;
   subtitle?: string;
   showBanner?: boolean;
   actions?: React.ReactNode;
+  fleetData?: any[];
 }
 
+const COLOR_PALETTE = ["#2A74E5", "#FF6600", "#2BAB6F", "#A347D1", "#E53E3E"];
+
 export default function FleetUtilizationChart({
-  title = "Fleet Utilization & Revenue",
-  subtitle = "SUVs at 91% utilization — consider expanding luxury fleet",
+  title = "Fleet Revenue & Bookings",
+  subtitle = "Revenue and booking breakdown by vehicle type",
   showBanner = true,
   actions,
+  fleetData: rawFleetData,
 }: FleetUtilizationChartProps = {}) {
   const [mounted, setMounted] = useState(false);
+
+  let activeFleetData: FleetData[] = [];
+
+  if (Array.isArray(rawFleetData) && rawFleetData.length > 0) {
+    const maxRev = Math.max(1, ...rawFleetData.map(f => parseFloat(f.total_revenue || "0")));
+    activeFleetData = rawFleetData.map((item, idx) => {
+      const rev = parseFloat(item.total_revenue || "0");
+      const pct = maxRev > 0 ? Math.round((rev / maxRev) * 100) : 0;
+      return {
+        id: idx + 1,
+        title: item.vehicle_type || "Unspecified",
+        subtitle: `${item.booking_count || 0} Bookings ($${item.total_revenue || "0.00"})`,
+        utilization: pct,
+        color: COLOR_PALETTE[idx % COLOR_PALETTE.length],
+      };
+    });
+  }
 
   useEffect(() => {
     // Trigger animations after mount
@@ -76,48 +68,48 @@ export default function FleetUtilizationChart({
       />
 
       <div className={styles.rowList}>
-        {fleetData.map((item) => (
-          <div key={item.id} className={styles.rowCard}>
-            <div className={styles.leftSection}>
-              <div className={styles.badge}>{item.id}</div>
-              
-              <div className={styles.info}>
-                <div className={styles.titleRow}>
+        {activeFleetData.length === 0 ? (
+          <div style={{ padding: "40px 0", textAlign: "center", color: "#6B7280", fontSize: "0.9rem" }}>
+            No transport revenue recorded for this period.
+          </div>
+        ) : (
+          activeFleetData.map((item) => (
+            <div key={item.id} className={styles.rowCard}>
+              <div className={styles.leftSection}>
+                <div className={styles.badge}>{item.id}</div>
+                
+                <div className={styles.info}>
+                  <div className={styles.titleRow}>
                     <span className={styles.title}>{item.title}</span>
                     <span className={styles.subtitle}>{item.subtitle}</span>
                   </div>
                   
-                <div className={styles.progressTrack}>
-                  <div 
-                    className={styles.progressFill}
-                    style={{ 
-                      width: mounted ? `${item.utilization}%` : "0%",
-                      backgroundColor: item.color 
-                    }}
-                  />
+                  <div className={styles.progressTrack}>
+                    <div 
+                      className={styles.progressFill}
+                      style={{ 
+                        width: mounted ? `${item.utilization}%` : "0%",
+                        backgroundColor: item.color 
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.rightSection}>
+                <div className={styles.pill}>
+                  {mounted ? (
+                    <AnimatedNumber value={item.utilization} isActive={true} />
+                  ) : (
+                    0
+                  )}
+                  % utilization
                 </div>
               </div>
             </div>
-
-            <div className={styles.rightSection}>
-              <div className={styles.pill}>
-                {mounted ? (
-                  <AnimatedNumber value={item.utilization} isActive={true} />
-                ) : (
-                  0
-                )}
-                % utilization
-              </div>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
-
-      {showBanner && (
-        <div className={styles.alertBanner}>
-          Buses have lowest utilization (55%). Consider partnering with MICE clients for group transport bundles.
-        </div>
-      )}
     </article>
   );
 }

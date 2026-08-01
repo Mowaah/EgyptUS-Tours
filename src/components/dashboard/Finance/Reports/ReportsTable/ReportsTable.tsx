@@ -8,14 +8,18 @@ import { reportsColumns } from "../reportsColumns/reportsColumns";
 
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
 
-export default function ReportsTable() {
-  const [data] = useState(mockReports);
+export interface ReportsTableProps {
+  data?: any[];
+}
+
+export default function ReportsTable({ data: customData }: ReportsTableProps = {}) {
+  const tableData = customData && customData.length > 0 ? customData : mockReports;
 
   const customHeader = (
     <PanelHeader
       icon="revenue"
-      title="Top Products by Revenue"
-      subtitle="Best sellers with margin & growth — prioritize marketing budget here"
+      title="Top Products & Destinations by Revenue"
+      subtitle="Best sellers with growth & margin — prioritize marketing budget here"
     />
   );
 
@@ -23,8 +27,8 @@ export default function ReportsTable() {
     <TablePanel ariaLabel="Top Products by Revenue" header={customHeader}>
       <DataTable
         columns={reportsColumns}
-        data={data}
-        getRowId={(row) => row.id}
+        data={tableData}
+        getRowId={(row: any) => row.destination_id ? `dest-${row.destination_id}` : String(row.id || row.destination || row.destination_name || "row")}
         selectable={true}
       />
     </TablePanel>

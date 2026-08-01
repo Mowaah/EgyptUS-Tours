@@ -10,7 +10,7 @@ interface HeatmapRow {
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-const heatmapData: HeatmapRow[] = [
+const defaultHeatmapData: HeatmapRow[] = [
   {
     label: "Trips",
     data: [2, 3, 1, 2, 1, 2, 2, 3, 1, 3, 1, 2],
@@ -29,7 +29,11 @@ const heatmapData: HeatmapRow[] = [
   },
 ];
 
-export default function SeasonalRevenueHeatmap() {
+export interface SeasonalRevenueHeatmapProps {
+  heatmapData?: any[];
+}
+
+export default function SeasonalRevenueHeatmap({ heatmapData: rawData }: SeasonalRevenueHeatmapProps = {}) {
   const getLevelClass = (level: HeatLevel) => {
     switch (level) {
       case 1: return styles.level1;
@@ -39,18 +43,49 @@ export default function SeasonalRevenueHeatmap() {
     }
   };
 
+  const getHeatLevel = (val: number): HeatLevel => {
+    if (val > 2000) return 3;
+    if (val > 500) return 2;
+    return 1;
+  };
+
+  let rows: HeatmapRow[] = defaultHeatmapData;
+  let dynamicMonths = months;
+
+  if (rawData && rawData.length > 0) {
+    dynamicMonths = rawData.map((item) => {
+      const d = new Date(item.month);
+      return isNaN(d.getTime()) ? item.month : d.toLocaleString("default", { month: "short" });
+    });
+
+    const categories = [
+      { key: "trip", label: "Trips" },
+      { key: "hotel", label: "Hotels" },
+      { key: "transport", label: "Transport" },
+      { key: "custom_trip", label: "MICE" },
+    ];
+
+    rows = categories.map((cat) => ({
+      label: cat.label,
+      data: rawData.map((item) => {
+        const num = parseFloat(item[cat.key] || "0");
+        return getHeatLevel(num);
+      }),
+    }));
+  }
+
   return (
     <article className={styles.card}>
       <PanelHeader
         icon="finance/payment/seasonal"
         title="Seasonal Revenue Heatmap"
-        subtitle="Peak season: Oct-Dec & Mar â€” MICE dead zone in Jul-Aug (Ramadan/Summer)"
+        subtitle="Revenue distribution across services and months"
       />
 
       <div className={styles.heatmapContainer}>
         <div className={styles.grid}>
-          {heatmapData.map((row, rowIndex) => (
-            <div key={row.label} style={{ display: 'contents' }}>
+          {rows.map((row, rowIndex) => (
+            <div key={row.label} className={styles.row}>
               <div className={styles.rowLabel}>{row.label}</div>
               {row.data.map((level, colIndex) => (
                 <div 
@@ -63,10 +98,9 @@ export default function SeasonalRevenueHeatmap() {
 
           {/* X Axis Labels */}
           <div className={styles.monthLabelRow}>
-            {/* Empty cell for row labels column */}
-            <div />
-            {months.map((month) => (
-              <div key={month} className={styles.monthLabel}>
+            <div className={styles.rowLabel} />
+            {dynamicMonths.map((month, idx) => (
+              <div key={`${month}-${idx}`} className={styles.monthLabel}>
                 {month}
               </div>
             ))}
@@ -77,15 +111,15 @@ export default function SeasonalRevenueHeatmap() {
         <div className={styles.legendArea}>
           <div className={styles.legend}>
             <div className={styles.legendItem}>
-              <span className={styles.legendLabel}>&lt; 50</span>
+              <span className={styles.legendLabel}>&lt; $500</span>
               <div className={`${styles.legendColor} ${styles.level1}`} />
             </div>
             <div className={styles.legendItem}>
-              <span className={styles.legendLabel}>50-200</span>
+              <span className={styles.legendLabel}>$500 - $2K</span>
               <div className={`${styles.legendColor} ${styles.level2}`} />
             </div>
             <div className={styles.legendItem}>
-              <span className={styles.legendLabel}>&gt;200</span>
+              <span className={styles.legendLabel}>&gt; $2K</span>
               <div className={`${styles.legendColor} ${styles.level3}`} />
             </div>
           </div>

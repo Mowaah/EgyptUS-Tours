@@ -34,15 +34,25 @@ export interface RevenueByDestinationChartProps {
 
 export default function RevenueByDestinationChart({
   title = "Revenue by Destination in Egypt",
-  subtitle = "Cairo dominates (26%), but Siwa shows highest per-booking value ($734)",
+  subtitle = "Revenue distribution across destinations",
   icon = "booking-distribution",
   data = defaultData,
-  gridLabels = defaultGridLabels,
+  gridLabels,
   tooltipFormat = "revenue",
-  maxValue = 450000,
+  maxValue,
   actions,
 }: RevenueByDestinationChartProps) {
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(2); // Default Hurghada to be hovered as in mockup?
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(0);
+
+  const activeMaxVal = maxValue || Math.max(100, ...data.map(d => d.value));
+  
+  const activeGridLabels = gridLabels || [
+    "$0K",
+    `$${Math.round((activeMaxVal * 0.25) / 1000)}K`,
+    `$${Math.round((activeMaxVal * 0.5) / 1000)}K`,
+    `$${Math.round((activeMaxVal * 0.75) / 1000)}K`,
+    `$${Math.round(activeMaxVal / 1000)}K`,
+  ];
 
   return (
     <article className={styles.card}>
@@ -54,60 +64,66 @@ export default function RevenueByDestinationChart({
       />
 
       <div className={styles.chartBody}>
-        <div className={styles.chartGrid}>
-          {/* Grid lines spanning the entire 2nd column */}
-          <div className={styles.gridLines}>
-            {gridLabels.map((label) => (
-              <div key={label} className={styles.gridLine}>
-                <span className={styles.xLabel}>{label}</span>
-              </div>
-            ))}
+        {data.length === 0 ? (
+          <div style={{ padding: "40px 0", textAlign: "center", color: "#6B7280", fontSize: "0.9rem" }}>
+            No destination revenue recorded for this period.
           </div>
-
-          {/* Data Rows */}
-          {data.map((item, index) => {
-            const isHovered = hoveredIdx === index;
-            const widthPct = (item.value / maxValue) * 100;
-            
-            return (
-              <div 
-                key={item.label} 
-                className={`${styles.row} ${isHovered ? styles.active : ""}`}
-                onMouseEnter={() => setHoveredIdx(index)}
-                onMouseLeave={() => setHoveredIdx(null)}
-              >
-                <div className={`${styles.yLabel} ${isHovered ? styles.yLabelActive : ""}`}>
-                  {item.label}
+        ) : (
+          <div className={styles.chartGrid}>
+            {/* Grid lines spanning the entire 2nd column */}
+            <div className={styles.gridLines}>
+              {activeGridLabels.map((label, idx) => (
+                <div key={`${label}-${idx}`} className={styles.gridLine}>
+                  <span className={styles.xLabel}>{label}</span>
                 </div>
-                <div className={styles.barTrack}>
-                  <div 
-                    className={styles.barFill}
-                    style={{ width: `${widthPct}%` }}
-                  >
-                    <div className={`${styles.tooltip} ${isHovered ? styles.tooltipVisible : ""}`}>
-                      <span className={styles.tooltipText}>
-                        {tooltipFormat === "revenue" ? (
-                          <>
-                            $
-                            {item.value >= 1000 ? (
-                              <><AnimatedNumber value={Math.round(item.value / 1000)} isActive={isHovered} />K</>
-                            ) : (
-                              <AnimatedNumber value={item.value} isActive={isHovered} />
-                            )}
-                          </>
-                        ) : (
-                          <>
-                            <AnimatedNumber value={item.value} isActive={isHovered} /> Booking
-                          </>
-                        )}
-                      </span>
+              ))}
+            </div>
+
+            {/* Data Rows */}
+            {data.map((item, index) => {
+              const isHovered = hoveredIdx === index;
+              const widthPct = (item.value / activeMaxVal) * 100;
+              
+              return (
+                <div 
+                  key={item.label} 
+                  className={`${styles.row} ${isHovered ? styles.active : ""}`}
+                  onMouseEnter={() => setHoveredIdx(index)}
+                  onMouseLeave={() => setHoveredIdx(null)}
+                >
+                  <div className={`${styles.yLabel} ${isHovered ? styles.yLabelActive : ""}`}>
+                    {item.label}
+                  </div>
+                  <div className={styles.barTrack}>
+                    <div 
+                      className={styles.barFill}
+                      style={{ width: `${widthPct}%` }}
+                    >
+                      <div className={`${styles.tooltip} ${isHovered ? styles.tooltipVisible : ""}`}>
+                        <span className={styles.tooltipText}>
+                          {tooltipFormat === "revenue" ? (
+                            <>
+                              $
+                              {item.value >= 1000 ? (
+                                <><AnimatedNumber value={Math.round(item.value / 1000)} isActive={isHovered} />K</>
+                              ) : (
+                                <AnimatedNumber value={item.value} isActive={isHovered} />
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              <AnimatedNumber value={item.value} isActive={isHovered} /> Booking
+                            </>
+                          )}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </article>
   );
