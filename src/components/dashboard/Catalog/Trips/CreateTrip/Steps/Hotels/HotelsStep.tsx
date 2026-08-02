@@ -1,53 +1,99 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { CreateTripValues } from "../../CreateTripSchema";
 import Image from "next/image";
 import { IncludedHotelCard } from "@/components/shared";
 import { FilterSelect } from "@/components/dashboard/TablePanel/FilterSelect";
+import { getCatalogHotels } from "@/services/admin/adminCatalogTripsService";
 import styles from "./HotelsStep.module.scss";
 
-const HOTELS_DATA = [
-  {
-    name: "Steigenberger Nile Palace Luxor",
-    location: "Luxor, Egypt",
-    description: "Elegant 5-star hotel on the Nile with stunning temple views, outdoor pool, and rooftop terrace.",
-    image: "/images/hotels/hotel1.jpg", 
-    rating: 4.8,
-    reviewCount: 2847,
-    amenities: ["Free WIFI", "Pool", "Restaurant", "Spa"],
-  },
-  {
-    name: "Steigenberger Nile Palace Luxor",
-    location: "Luxor, Egypt",
-    description: "Elegant 5-star hotel on the Nile with stunning temple views, outdoor pool, and rooftop terrace.",
-    image: "/images/hotels/hotel3.jpg",
-    rating: 4.8,
-    reviewCount: 2847,
-    amenities: ["Free WIFI", "Pool", "Restaurant", "Spa"],
-  },
-  {
-    name: "Steigenberger Nile Palace Luxor",
-    location: "Luxor, Egypt",
-    description: "Elegant 5-star hotel on the Nile with stunning temple views, outdoor pool, and rooftop terrace.",
-    image: "/images/hotels/hotel5.jpg",
-    rating: 4.8,
-    reviewCount: 2847,
-    amenities: ["Free WIFI", "Pool", "Restaurant", "Spa"],
-  },
-  {
-    name: "Steigenberger Nile Palace Luxor",
-    location: "Luxor, Egypt",
-    description: "Elegant 5-star hotel on the Nile with stunning temple views, outdoor pool, and rooftop terrace.",
-    image: "/images/hotels/hotel2.jpg",
-    rating: 4.8,
-    reviewCount: 2847,
-    amenities: ["Free WIFI", "Pool", "Restaurant", "Spa"],
-  }
-];
+type HotelOption = {
+  id: string;
+  name: string;
+  location: string;
+  description: string;
+  image: string;
+  rating: number;
+  reviewCount: number;
+  amenities: string[];
+};
+
+type HotelRecord = {
+  id?: string | number;
+  name?: string;
+  title?: string;
+  description?: string;
+  hero_image_url?: string;
+  hero_image?: string;
+  image?: string;
+  location?: { name?: string };
+  location_name?: string;
+  city?: string;
+  rating?: string | number;
+  average_rating?: string | number;
+  review_count?: string | number;
+  reviews_count?: string | number;
+  amenities?: string[];
+  facilities?: string[];
+  translations?: {
+    en?: {
+      name?: string;
+      title?: string;
+      description?: string;
+    };
+  };
+  translation?: {
+    name?: string;
+    title?: string;
+    description?: string;
+  };
+};
+
+function unpackList(payload: unknown): HotelRecord[] {
+  const value = payload as { results?: unknown; data?: unknown };
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(value.results)) return value.results as HotelRecord[];
+  if (Array.isArray(value.data)) return value.data as HotelRecord[];
+  const nested = value.data as { results?: unknown } | undefined;
+  if (Array.isArray(nested?.results)) return nested.results as HotelRecord[];
+  return [];
+}
+
+function mapHotelOption(hotel: HotelRecord): HotelOption {
+  const translation = hotel.translations?.en || hotel.translation || {};
+
+  return {
+    id: String(hotel.id),
+    name: hotel.name || translation.name || translation.title || "Untitled hotel",
+    location: hotel.location?.name || hotel.location_name || hotel.city || "Egypt",
+    description: hotel.description || translation.description || "",
+    image: hotel.hero_image_url || hotel.hero_image || hotel.image || "/images/hotels/hotel1.jpg",
+    rating: Number(hotel.rating || hotel.average_rating || 0),
+    reviewCount: Number(hotel.review_count || hotel.reviews_count || 0),
+    amenities: hotel.amenities || hotel.facilities || [],
+  };
+}
 
 export function HotelsStep() {
   const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("All");
+  const [hotels, setHotels] = useState<HotelOption[]>([]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    getCatalogHotels({ page_size: 100 })
+      .then((payload) => {
+        if (!ignore) setHotels(unpackList(payload).map(mapHotelOption));
+      })
+      .catch(() => {
+        if (!ignore) setHotels([]);
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const searchBar = (
     <label className={styles.searchBox}>
@@ -114,8 +160,14 @@ export function HotelsStep() {
           render={({ field }) => {
             const selectedHotels = field.value || [];
             
-            const toggleHotel = (index: number) => {
-              const idStr = index.toString();
+            const filteredHotels = hotels.filter((hotel) => {
+              const matchesSearch = !searchQuery.trim() || `${hotel.name} ${hotel.location}`.toLowerCase().includes(searchQuery.toLowerCase());
+              const matchesLocation = location === "All" || hotel.location === location;
+              return matchesSearch && matchesLocation;
+            });
+
+            const toggleHotel = (id: string) => {
+              const idStr = id.toString();
               if (selectedHotels.includes(idStr)) {
                 field.onChange(selectedHotels.filter((i) => i !== idStr));
               } else {
@@ -126,12 +178,12 @@ export function HotelsStep() {
             return (
               <div className={styles.tableSection}>
                 <div className={styles.grid}>
-                  {HOTELS_DATA.map((hotel, index) => (
+                  {filteredHotels.map((hotel) => (
                     <IncludedHotelCard 
-                      key={index}
-                      hotel={hotel as any} 
-                      selected={selectedHotels.includes(index.toString())}
-                      onClick={() => toggleHotel(index)}
+                      key={hotel.id}
+                      hotel={hotel} 
+                      selected={selectedHotels.includes(hotel.id)}
+                      onClick={() => toggleHotel(hotel.id)}
                     />
                   ))}
                 </div>

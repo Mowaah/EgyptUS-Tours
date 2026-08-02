@@ -36,7 +36,7 @@ const TrendIcon = ({ direction }: { direction: "up" | "down" }) => (
 export const reportsColumns: DataTableColumn<ReportRow>[] = [
   {
     id: "product",
-    header: "Destination / Product",
+    header: "Product",
     render: (row) => <strong style={{ color: "#374151" }}>{row.destination || row.destination_name || row.product || "Unassigned"}</strong>,
   },
   {

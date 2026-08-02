@@ -1,48 +1,20 @@
+"use client";
+
 import Image from "next/image";
 import { IncludedHotelCard } from "@/components/shared";
 import styles from "./page.module.scss";
-
-// TODO: Replace with real API data
-const HOTELS_DATA = [
-  {
-    name: "Steigenberger Nile Palace Luxor",
-    location: "Luxor, Egypt",
-    description: "Elegant 5-star hotel on the Nile with stunning temple views, outdoor pool, and rooftop terrace.",
-    image: "/images/hotels/hotel1.jpg", // placeholder
-    rating: 4.8,
-    reviewCount: 2847,
-    amenities: ["Free WIFI", "Pool", "Restaurant", "Spa"],
-  },
-  {
-    name: "Steigenberger Nile Palace Luxor",
-    location: "Luxor, Egypt",
-    description: "Elegant 5-star hotel on the Nile with stunning temple views, outdoor pool, and rooftop terrace.",
-    image: "/images/hotels/hotel3.jpg",
-    rating: 4.8,
-    reviewCount: 2847,
-    amenities: ["Free WIFI", "Pool", "Restaurant", "Spa"],
-  },
-  {
-    name: "Steigenberger Nile Palace Luxor",
-    location: "Luxor, Egypt",
-    description: "Elegant 5-star hotel on the Nile with stunning temple views, outdoor pool, and rooftop terrace.",
-    image: "/images/hotels/hotel5.jpg",
-    rating: 4.8,
-    reviewCount: 2847,
-    amenities: ["Free WIFI", "Pool", "Restaurant", "Spa"],
-  },
-  {
-    name: "Steigenberger Nile Palace Luxor",
-    location: "Luxor, Egypt",
-    description: "Elegant 5-star hotel on the Nile with stunning temple views, outdoor pool, and rooftop terrace.",
-    image: "/images/hotels/hotel2.jpg",
-    rating: 4.8,
-    reviewCount: 2847,
-    amenities: ["Free WIFI", "Pool", "Restaurant", "Spa"],
-  }
-];
+import { useTripDetailContext } from "../layout";
 
 export default function TripHotelsPage() {
+  const { trip, loading } = useTripDetailContext();
+
+  if (loading || !trip) {
+    return <div style={{ padding: "24px" }}>Loading...</div>;
+  }
+
+  const hotelLinks: any[] = trip.hotel_links || [];
+  const hotels = hotelLinks.map((link: any) => link.hotel).filter(Boolean);
+
   return (
     <div className={styles.container}>
       <div className={styles.titleRow}>
@@ -52,11 +24,23 @@ export default function TripHotelsPage() {
         <h2>Hotels Available for the Trip</h2>
       </div>
 
-      <div className={styles.grid}>
-        {HOTELS_DATA.map((hotel, i) => (
-          <IncludedHotelCard key={i} hotel={hotel as any} />
-        ))}
-      </div>
+      {hotels.length === 0 ? (
+        <p style={{ color: "#9ca3af", fontSize: "14px", padding: "24px 0" }}>No hotels have been added to this trip.</p>
+      ) : (
+        <div className={styles.grid}>
+          {hotels.map((hotel: any, i: number) => (
+            <IncludedHotelCard key={hotel.hotel_id || i} hotel={{
+              name: hotel.name,
+              location: hotel.location_text,
+              description: "",
+              image: hotel.image_url,
+              rating: parseFloat(hotel.rating_avg) || 0,
+              reviewCount: hotel.review_count || 0,
+              amenities: [],
+            }} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

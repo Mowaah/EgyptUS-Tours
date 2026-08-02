@@ -2,16 +2,32 @@
 
 import Image from "next/image";
 import styles from "./page.module.scss";
+import { LoadingSpinner } from "@/components/shared";
+import { useTripDetailContext } from "../layout";
 
-// TODO: Replace with real API data
-const SEO_DATA = {
-  metaTitle: "Top 10 Things to Do in Cairo | Egypt Tourism Blog",
-  metaDescription: "Discover the best experiences Cairo has to offer, from ancient pyramids to vibrant bazaars.",
-  metaKeywords: "Cairo Pyramids Tour, Nile Cruise 5 Days, Nile Cruise 5 Days, Nile Cruise 5 Days, Nile Cruise 5 Days, Nile Cruise 5 Days, Nile Cruise 5 Days, Nile Cruise 5 Days, Cairo Pyramids Tour",
-  slug: "top-10-things-to-do-in-cairo"
-};
+function normalizeKeywords(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.map(String).map((keyword) => keyword.trim()).filter(Boolean);
+  }
+  if (typeof value === "string") {
+    return value.split(",").map((keyword) => keyword.trim()).filter(Boolean);
+  }
+  return [];
+}
 
 export default function TripSeoPage() {
+  const { trip, loading } = useTripDetailContext();
+
+  if (loading || !trip) {
+    return <LoadingSpinner label="Loading SEO settings..." />;
+  }
+
+  const seo = trip.seo || trip.translations?.en || {};
+  const metaTitle = seo.meta_title || "-";
+  const metaDescription = seo.meta_description || "-";
+  const keywords = normalizeKeywords(seo.meta_keywords);
+  const slug = seo.slug || trip.slug || "-";
+
   return (
     <div>
       <div className={styles.cardSection}>
@@ -21,24 +37,24 @@ export default function TripSeoPage() {
           </div>
           <h2 className={styles.cardTitle}>General SEO</h2>
         </div>
-        
+
         <div className={styles.imageInfoList}>
           <div className={styles.imageInfoItem}>
             <span className={styles.imageInfoLabel}>Meta Title</span>
-            <span className={styles.imageInfoValue}>{SEO_DATA.metaTitle}</span>
+            <span className={styles.imageInfoValue}>{metaTitle}</span>
           </div>
-          
+
           <div className={styles.imageInfoItem}>
             <span className={styles.imageInfoLabel}>Meta Description</span>
-            <span className={styles.imageInfoValue}>{SEO_DATA.metaDescription}</span>
+            <span className={styles.imageInfoValue}>{metaDescription}</span>
           </div>
-          
-          <div className={styles.imageInfoItem} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '1rem' }}>
+
+          <div className={styles.imageInfoItem} style={{ flexDirection: "column", alignItems: "flex-start", gap: "1rem" }}>
             <span className={styles.imageInfoLabel}>Meta Keywords</span>
-            {SEO_DATA.metaKeywords ? (
+            {keywords.length > 0 ? (
               <div className={styles.metaKeywordsContainer}>
-                {SEO_DATA.metaKeywords.split(',').map(tag => tag.trim()).filter(Boolean).map((tag, idx) => (
-                  <div key={idx} className={styles.metaKeywordTag}>
+                {keywords.map((tag, idx) => (
+                  <div key={`${tag}-${idx}`} className={styles.metaKeywordTag}>
                     <Image src="/images/dashboard/tag.svg" alt="tag" width={18} height={18} />
                     {tag}
                   </div>
@@ -48,10 +64,10 @@ export default function TripSeoPage() {
               <span className={styles.imageInfoValue}>-</span>
             )}
           </div>
-          
+
           <div className={styles.imageInfoItem}>
             <span className={styles.imageInfoLabel}>Slug</span>
-            <span className={styles.imageInfoValue}>{SEO_DATA.slug}</span>
+            <span className={styles.imageInfoValue}>{slug}</span>
           </div>
         </div>
       </div>

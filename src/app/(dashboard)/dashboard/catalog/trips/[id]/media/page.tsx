@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import styles from "./page.module.scss";
+import { useTripDetailContext } from "../layout";
 
 interface MediaItemProps {
   title: string;
@@ -12,6 +13,20 @@ interface MediaItemProps {
   imgTitleValue: string;
   imgAltLabel: string;
   imgAltValue: string;
+}
+
+interface TripMediaItem {
+  id?: number | string;
+  kind?: string;
+  image_url?: string;
+  caption?: string;
+  translations?: {
+    en?: {
+      alt?: string;
+      title?: string;
+      caption?: string;
+    };
+  };
 }
 
 function MediaCard({
@@ -35,14 +50,21 @@ function MediaCard({
       <div className={styles.attachmentSection}>
         <span className={styles.attachmentLabel}>{attachmentInfo}</span>
         <div className={styles.imageWrapper}>
-          <Image 
-            src={imageSrc} 
-            alt={imgTitleValue} 
-            width={698} 
-            height={352} 
-            className={styles.tripImage}
-            priority
-          />
+          {imageSrc ? (
+            <Image 
+              src={imageSrc} 
+              alt={imgTitleValue || "Trip Image"} 
+              width={698} 
+              height={352} 
+              className={styles.tripImage}
+              priority
+              unoptimized
+            />
+          ) : (
+            <div style={{ width: 698, height: 352, display: "flex", alignItems: "center", justifyContent: "center", background: "#f3f4f6", borderRadius: "8px", color: "#9ca3af" }}>
+              No Image Uploaded
+            </div>
+          )}
         </div>
       </div>
 
@@ -51,14 +73,14 @@ function MediaCard({
           <div className={styles.fieldGroup}>
             <span className={styles.fieldLabel}>{imgTitleLabel}</span>
             <div className={styles.fieldValue}>
-              {imgTitleValue}
+              {imgTitleValue || "N/A"}
             </div>
           </div>
 
           <div className={styles.fieldGroup}>
             <span className={styles.fieldLabel}>{imgAltLabel}</span>
             <div className={styles.fieldValue}>
-              {imgAltValue}
+              {imgAltValue || "N/A"}
             </div>
           </div>
         </div>
@@ -68,76 +90,57 @@ function MediaCard({
 }
 
 export default function TripMediaPage() {
-  const mediaItems = [
-    {
-      title: "Upload Thumbnail",
-      imageSrc: "/images/b2b/b2b.jpg",
-      attachmentInfo: "Attachment (303 x 202)",
-      imgTitleLabel: "Thumbnail Title",
-      imgTitleValue: "Thumbnail Title...",
-      imgAltLabel: "Thumbnail Alt",
-      imgAltValue: "Comma-separated tags (e.g. egypt, travel, cairo)",
-    },
-    {
-      title: "Upload Thumbnail",
-      imageSrc: "/images/b2b/b2b2.jpg",
-      attachmentInfo: "Attachment (303 x 202)",
-      imgTitleLabel: "Image Title",
-      imgTitleValue: "Thumbnail Title...",
-      imgAltLabel: "Thumbnail Alt",
-      imgAltValue: "Comma-separated tags (e.g. egypt, travel, cairo)",
-    },
-    {
-      title: "Photo Gallery 2",
-      imageSrc: "/images/b2b/b2b3.jpg",
-      attachmentInfo: "Attachment (303 x 202)",
-      imgTitleLabel: "Image Title",
-      imgTitleValue: "Thumbnail Title...",
-      imgAltLabel: "Thumbnail Alt",
-      imgAltValue: "Comma-separated tags (e.g. egypt, travel, cairo)",
-    },
-    {
-      title: "Photo Gallery 3",
-      imageSrc: "/images/corporate/corporate1.jpg",
-      attachmentInfo: "Attachment (303 x 202)",
-      imgTitleLabel: "Image Title",
-      imgTitleValue: "Thumbnail Title...",
-      imgAltLabel: "Thumbnail Alt",
-      imgAltValue: "Comma-separated tags (e.g. egypt, travel, cairo)",
-    },
-    {
-      title: "Photo Gallery 4",
-      imageSrc: "/images/corporate/corporate2.jpg",
-      attachmentInfo: "Attachment (303 x 202)",
-      imgTitleLabel: "Image Title",
-      imgTitleValue: "Thumbnail Title...",
-      imgAltLabel: "Thumbnail Alt",
-      imgAltValue: "Comma-separated tags (e.g. egypt, travel, cairo)",
-    },
-    {
-      title: "Photo Gallery 5",
-      imageSrc: "/images/corporate/corporate3.jpg",
-      attachmentInfo: "Attachment (303 x 202)",
-      imgTitleLabel: "Image Title",
-      imgTitleValue: "Thumbnail Title...",
-      imgAltLabel: "Thumbnail Alt",
-      imgAltValue: "Comma-separated tags (e.g. egypt, travel, cairo)",
-    },
-  ];
+  const { trip, loading } = useTripDetailContext();
+
+  if (loading || !trip) {
+    return <div style={{ padding: "24px" }}>Loading...</div>;
+  }
+
+  const mediaItems: TripMediaItem[] = trip.media_items || [];
+  const heroImageUrl = trip.hero_image_url;
 
   return (
     <div className={styles.container}>
       <div className={styles.pageHeader}>
         <div className={styles.headerIcon}>
-          <Image src="/images/dashboard/catalog/trips/media.svg" alt="" width={24} height={24} />
+          <Image src="/images/dashboard/fields/document-upload.svg" alt="" width={24} height={24} />
         </div>
-        <h2>Trip Media</h2>
+        <h2>Media & Gallery</h2>
       </div>
 
       <div className={styles.mediaGrid}>
-        {mediaItems.map((item, index) => (
-          <MediaCard key={index} {...item} />
-        ))}
+        {heroImageUrl && (
+          <MediaCard
+            title="Hero / Banner Image"
+            imageSrc={heroImageUrl}
+            attachmentInfo="Main Banner Image"
+            imgTitleLabel="Caption / Title"
+            imgTitleValue={trip.title}
+            imgAltLabel="Image Type"
+            imgAltValue="Hero Banner"
+          />
+        )}
+
+        {mediaItems.map((item, idx: number) => {
+          const kindLabel = item.kind === "hero" ? "Hero Image" : item.kind === "traveler_photo" ? "Traveler Photo" : `Gallery Photo ${idx + 1}`;
+          const translated = item.translations?.en || {};
+          return (
+            <MediaCard
+              key={item.id || idx}
+              title={kindLabel}
+              imageSrc={item.image_url || ""}
+              attachmentInfo={`Media Item #${item.id}`}
+              imgTitleLabel="Image Title"
+              imgTitleValue={translated.title || item.caption || "No title"}
+              imgAltLabel="Image Alt"
+              imgAltValue={translated.alt || item.caption || item.kind || "gallery"}
+            />
+          );
+        })}
+
+        {!heroImageUrl && mediaItems.length === 0 && (
+          <p style={{ color: "#9ca3af", fontSize: "14px", padding: "24px 0" }}>No media items or hero images have been uploaded for this trip yet.</p>
+        )}
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
 import Image from "next/image";
 import styles from "./page.module.scss";
+import { useTripDetailContext } from "../layout";
 
 interface ItineraryDay {
   dayNumber: number;
@@ -12,6 +12,16 @@ interface ItineraryDay {
   highlights: string[];
   imageName: string;
   imageSize: string;
+}
+
+interface ApiItineraryDay {
+  id?: number | string;
+  day_number: number;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  highlights?: string[];
+  image_url?: string | null;
 }
 
 function DayCard({ day }: { day: ItineraryDay }) {
@@ -27,23 +37,17 @@ function DayCard({ day }: { day: ItineraryDay }) {
       <div className={styles.formContainer}>
         <div className={styles.fieldGroup}>
           <label className={styles.label}>Day Title</label>
-          <div className={styles.input}>
-            {day.title}
-          </div>
+          <div className={styles.input}>{day.title}</div>
         </div>
 
         <div className={styles.fieldGroup}>
           <label className={styles.label}>Short Subtitle</label>
-          <div className={styles.input}>
-            {day.subtitle}
-          </div>
+          <div className={styles.input}>{day.subtitle}</div>
         </div>
 
         <div className={styles.fieldGroup}>
           <label className={styles.label}>Day Description</label>
-          <div className={styles.textarea}>
-            {day.description}
-          </div>
+          <div className={styles.textarea}>{day.description}</div>
         </div>
 
         <div className={styles.fieldGroup}>
@@ -63,7 +67,7 @@ function DayCard({ day }: { day: ItineraryDay }) {
             <Image src="/images/dashboard/file/png.svg" alt="" width={40} height={40} className={styles.fileIcon} />
             <div className={styles.fileInfo}>
               <p className={styles.fileName}>{day.imageName}</p>
-              <p className={styles.fileSize}>{day.imageSize} of {day.imageSize}</p>
+              <p className={styles.fileSize}>{day.imageSize}</p>
             </div>
           </div>
         </div>
@@ -73,27 +77,13 @@ function DayCard({ day }: { day: ItineraryDay }) {
 }
 
 export default function TripItineraryPage() {
-  // Mock data representing what the backend API will return
-  const itineraryDays: ItineraryDay[] = [
-    {
-      dayNumber: 1,
-      title: "Valley of the Kings & Hatshepsut",
-      subtitle: "Pharaohs & Royal Tombs",
-      description: "Morning tour of the Valley of the Kings, explore the tombs...",
-      highlights: ["Arrival in Luxor", "Arrival in Luxor"],
-      imageName: "Description of the problem.png",
-      imageSize: "200 KB",
-    },
-    {
-      dayNumber: 2,
-      title: "Valley of the Kings & Hatshepsut",
-      subtitle: "Pharaohs & Royal Tombs",
-      description: "Morning tour of the Valley of the Kings, explore the tombs...",
-      highlights: ["Arrival in Luxor", "Arrival in Luxor"],
-      imageName: "Description of the problem.png",
-      imageSize: "200 KB",
-    },
-  ];
+  const { trip, loading } = useTripDetailContext();
+
+  if (loading || !trip) {
+    return <div style={{ padding: "24px" }}>Loading...</div>;
+  }
+
+  const itineraryDays: ApiItineraryDay[] = trip.itinerary_days || [];
 
   return (
     <div className={styles.container}>
@@ -104,11 +94,26 @@ export default function TripItineraryPage() {
         <h2>Day-by-Day Itinerary</h2>
       </div>
 
-      <div className={styles.daysGrid}>
-        {itineraryDays.map((day) => (
-          <DayCard key={day.dayNumber} day={day} />
-        ))}
-      </div>
+      {itineraryDays.length === 0 ? (
+        <p style={{ color: "#9ca3af", fontSize: "14px", padding: "24px 0" }}>No itinerary days have been added yet.</p>
+      ) : (
+        <div className={styles.daysGrid}>
+          {itineraryDays.map((day) => (
+            <DayCard
+              key={day.id || day.day_number}
+              day={{
+                dayNumber: day.day_number,
+                title: day.title || "",
+                subtitle: day.subtitle || "",
+                description: day.description || "",
+                highlights: day.highlights || [],
+                imageName: day.image_url ? day.image_url.split("/").pop() || "image.jpg" : "No image",
+                imageSize: day.image_url ? "Uploaded image" : "No image uploaded",
+              }}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

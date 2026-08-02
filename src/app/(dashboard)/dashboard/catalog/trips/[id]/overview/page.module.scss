@@ -89,10 +89,20 @@
     display: flex;
     gap: 8px;
     align-items: center;
+    min-width: 0;
+    text-align: right;
+    overflow-wrap: anywhere;
   }
 }
 
 /* Tags */
+
+.destinationsList {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
 
 .destinationTag {
   display: inline-flex;
@@ -116,6 +126,8 @@
   display: flex;
   gap: 8px;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .tagPrivate {
@@ -245,6 +257,7 @@
   border: 1px solid $border-strong;
   border-radius: 24px;
   background: $background;
+  text-decoration: none;
 
   .fileContent {
     display: flex;

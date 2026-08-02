@@ -1,26 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import { FormSection, FormSpec, UploadDropzone } from "@/components/dashboard/FormFields";
+import { getCategories } from "@/services/admin/adminCatalogCategoriesService";
+import { getDestinations } from "@/services/admin/adminCatalogDestinationsService";
 import styles from "../../CreateTrip.module.scss";
 import { CreateTripValues } from "../../CreateTripSchema";
-
-const categoryOptions = [
-  { label: "Select Category", value: "", disabled: true },
-  { label: "Multi Country Trips", value: "multi-country-trips" },
-  { label: "Adventure Tours", value: "adventure-tours" },
-  { label: "Family Tours", value: "family-tours" },
-];
-
-const destinationOptions = [
-  { label: "Select Destinations", value: "", disabled: true },
-  { label: "Cairo", value: "cairo" },
-  { label: "Luxor & Aswan", value: "luxor-aswan" },
-  { label: "Alexandria", value: "alexandria" },
-];
 
 const durationOptions = [
   { label: "Select Duration", value: "", disabled: true },
@@ -35,15 +23,79 @@ const tourTypeOptions = [
   { label: "Group Tour", value: "group-tour" },
 ];
 
+type CatalogOptionRecord = {
+  id?: string | number;
+  slug?: string;
+  name?: string;
+  title?: string;
+  translations?: {
+    en?: {
+      name?: string;
+      title?: string;
+    };
+  };
+};
+
+function asList(payload: unknown): CatalogOptionRecord[] {
+  const value = payload as { results?: unknown; data?: unknown };
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(value.results)) return value.results as CatalogOptionRecord[];
+  if (Array.isArray(value.data)) return value.data as CatalogOptionRecord[];
+  const nested = value.data as { results?: unknown } | undefined;
+  if (Array.isArray(nested?.results)) return nested.results as CatalogOptionRecord[];
+  return [];
+}
+
+function optionLabel(item: CatalogOptionRecord): string {
+  return item?.name || item?.title || item?.translations?.en?.name || item?.translations?.en?.title || "Untitled";
+}
+
 export function OverviewStep() {
   const [basicInfoLang, setBasicInfoLang] = useState<Language>("English");
   const [tripContentLang, setTripContentLang] = useState<Language>("English");
+  const [categoryOptions, setCategoryOptions] = useState([{ label: "Select Category", value: "", disabled: true }]);
+  const [destinationOptions, setDestinationOptions] = useState([{ label: "Select Destinations", value: "", disabled: true }]);
 
   const {
     register,
     control,
     formState: { errors },
   } = useFormContext<CreateTripValues>();
+
+  useEffect(() => {
+    let ignore = false;
+
+    Promise.all([getCategories({ page_size: 100 }), getDestinations({ page_size: 100 })])
+      .then(([categoriesPayload, destinationsPayload]) => {
+        if (ignore) return;
+        setCategoryOptions([
+          { label: "Select Category", value: "", disabled: true },
+          ...asList(categoriesPayload).map((category) => ({
+            label: optionLabel(category),
+            value: String(category.slug || category.id),
+            disabled: false,
+          })),
+        ]);
+        setDestinationOptions([
+          { label: "Select Destinations", value: "", disabled: true },
+          ...asList(destinationsPayload).map((destination) => ({
+            label: optionLabel(destination),
+            value: String(destination.slug || destination.id),
+            disabled: false,
+          })),
+        ]);
+      })
+      .catch(() => {
+        if (!ignore) {
+          setCategoryOptions([{ label: "Select Category", value: "", disabled: true }]);
+          setDestinationOptions([{ label: "Select Destinations", value: "", disabled: true }]);
+        }
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   return (
     <div className={styles.columnsContainer}>

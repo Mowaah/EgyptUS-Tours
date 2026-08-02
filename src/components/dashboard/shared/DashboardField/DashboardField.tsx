@@ -154,6 +154,7 @@ function ModalSelect({
       const rect = ref.current.getBoundingClientRect();
       const spaceBelow = window.innerHeight - rect.bottom;
       const spaceAbove = rect.top;
+      const maxDropdownHeight = Math.min(320, Math.max(160, Math.max(spaceBelow, spaceAbove) - 24));
       
       // If less than 200px below, and more space above, open upwards
       if (spaceBelow < 200 && spaceAbove > spaceBelow) {
@@ -162,6 +163,7 @@ function ModalSelect({
           bottom: window.innerHeight - rect.top + 8,
           top: "auto",
           width: rect.width,
+          maxHeight: maxDropdownHeight,
         });
       } else {
         setDropdownStyle({
@@ -169,6 +171,7 @@ function ModalSelect({
           top: rect.bottom + 8,
           bottom: "auto",
           width: rect.width,
+          maxHeight: maxDropdownHeight,
         });
       }
     };

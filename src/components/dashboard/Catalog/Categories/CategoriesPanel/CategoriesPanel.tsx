@@ -1,54 +1,77 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import CategoryCard, { Category } from "../CategoryCard/CategoryCard";
 import TablePagination from "@/components/dashboard/shared/TablePagination/TablePagination";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import styles from "./CategoriesPanel.module.scss";
-
-const MOCK_CATEGORIES: Category[] = [
-  { id: "1", name: "Western Desert" },
-  { id: "2", name: "Sinai Desert" },
-  { id: "3", name: "Oasis Desert" },
-  { id: "4", name: "Safari Trips" },
-  { id: "5", name: "Multi Country Tours" },
-  { id: "6", name: "Multi Country Tours" },
-  { id: "7", name: "Multi Country Tours" },
-  { id: "8", name: "Multi Country Tours" },
-  { id: "9", name: "Multi Country Tours" },
-  { id: "10", name: "Multi Country Tours" },
-  { id: "11", name: "Multi Country Tours" },
-  { id: "12", name: "Multi Country Tours" },
-  { id: "13", name: "Multi Country Tours" },
-  { id: "14", name: "Multi Country Tours" },
-  { id: "15", name: "Multi Country Tours" },
-  { id: "16", name: "Multi Country Tours" },
-];
+import { getCategories } from "@/services/admin/adminCatalogCategoriesService";
 
 interface CategoriesPanelProps {
   onEditCategory?: (category: Category) => void;
   onDeleteCategory?: (category: Category) => void;
+  refreshTrigger?: number;
 }
 
-export default function CategoriesPanel({ onEditCategory, onDeleteCategory }: CategoriesPanelProps = {}) {
+interface CategoryApiItem {
+  id?: string | number;
+  slug?: string;
+  name?: string;
+  title?: string;
+}
+
+interface CategoryApiResponse {
+  data?: { results?: CategoryApiItem[] } | CategoryApiItem[];
+  results?: CategoryApiItem[];
+}
+
+export default function CategoriesPanel({ onEditCategory, onDeleteCategory, refreshTrigger = 0 }: CategoriesPanelProps) {
   const [lang, setLang] = useState<Language>("English");
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(12);
+  
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const pageCount = Math.max(1, Math.ceil(MOCK_CATEGORIES.length / rowsPerPage));
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        // The public endpoint supports pagination. We fetch all for simplicity for now.
+        const res = await getCategories({ limit: 1000 }) as CategoryApiResponse;
+        const rawData: CategoryApiItem[] = Array.isArray(res?.data)
+          ? res.data
+          : res?.data?.results ?? res?.results ?? [];
+        
+        const mapped = rawData.map((c) => ({
+          id: String(c.id || c.slug || ""),
+          name: c.name || c.title || "",
+        }));
+        
+        setCategories(mapped);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, [refreshTrigger]);
+
+  const pageCount = Math.max(1, Math.ceil(categories.length / rowsPerPage));
   const safePage = Math.min(page, pageCount);
-  const visibleCategories = MOCK_CATEGORIES.slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage);
+  const visibleCategories = categories.slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage);
 
   const handleEdit = (id: string) => {
-    const category = MOCK_CATEGORIES.find((c) => c.id === id);
+    const category = categories.find((c) => c.id === id);
     if (category && onEditCategory) {
       onEditCategory(category);
     }
   };
 
   const handleDelete = (id: string) => {
-    const category = MOCK_CATEGORIES.find((c) => c.id === id);
+    const category = categories.find((c) => c.id === id);
     if (category && onDeleteCategory) {
       onDeleteCategory(category);
     }
@@ -82,28 +105,41 @@ export default function CategoriesPanel({ onEditCategory, onDeleteCategory }: Ca
 
       <LanguageTabs active={lang} onChange={setLang} />
 
-      <div className={styles.grid}>
-        {visibleCategories.map((category) => (
-          <CategoryCard 
-            key={category.id} 
-            category={category} 
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        ))}
-      </div>
+      {loading ? (
+        <div style={{ padding: '2rem', textAlign: 'center', color: '#6b7280' }}>Loading categories...</div>
+      ) : (
+        <div className={styles.grid}>
+          {visibleCategories.length === 0 ? (
+            <div style={{ gridColumn: "1 / -1", textAlign: "center", color: "#6b7280", padding: "2rem" }}>
+              No categories found.
+            </div>
+          ) : (
+            visibleCategories.map((category) => (
+              <CategoryCard 
+                key={category.id} 
+                category={category} 
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            ))
+          )}
+        </div>
+      )}
 
-      <TablePagination
-        className={styles.pagination}
-        page={safePage}
-        pageCount={pageCount}
-        rowsPerPage={rowsPerPage}
-        onChangePage={setPage}
-        onChangeRowsPerPage={(newRows) => {
-          setRowsPerPage(newRows);
-          setPage(1);
-        }}
-      />
+      {!loading && categories.length > 0 && (
+        <TablePagination
+          className={styles.pagination}
+          page={safePage}
+          pageCount={pageCount}
+          rowsPerPage={rowsPerPage}
+          pageSizeOptions={[8, 12, 16, 24]}
+          onChangePage={setPage}
+          onChangeRowsPerPage={(newRows) => {
+            setRowsPerPage(newRows);
+            setPage(1);
+          }}
+        />
+      )}
     </div>
   );
 }

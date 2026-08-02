@@ -10,6 +10,24 @@ import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatus
 import type { Category } from "@/components/dashboard/Catalog/Categories/CategoryCard/CategoryCard";
 import dashboardStyles from "../../page.module.scss";
 import styles from "./page.module.scss";
+import { createCategory, updateCategory, deleteCategory } from "@/services/admin/adminCatalogCategoriesService";
+
+function getMutationErrorMessage(error: unknown, fallback: string) {
+  const data = (error as { response?: { data?: unknown } })?.response?.data;
+  if (typeof data === "string") return data;
+  if (data && typeof data === "object") {
+    const record = data as Record<string, unknown>;
+    if (typeof record.message === "string") return record.message;
+    if (typeof record.detail === "string") return record.detail;
+    const firstFieldError = Object.entries(record).find(([, value]) => Array.isArray(value) || typeof value === "string");
+    if (firstFieldError) {
+      const [field, value] = firstFieldError;
+      const text = Array.isArray(value) ? value.join(", ") : String(value);
+      return `${field}: ${text}`;
+    }
+  }
+  return fallback;
+}
 
 export default function CatalogCategoriesPage() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -17,6 +35,9 @@ export default function CatalogCategoriesPage() {
   
   const [deletingCategory, setDeletingCategory] = useState<Category | undefined>(undefined);
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const handleOpenAdd = () => {
     setEditingCategory(undefined);
@@ -33,20 +54,45 @@ export default function CatalogCategoriesPage() {
     setEditingCategory(undefined);
   };
 
-  const handleSaveModal = (data: { name: string }) => {
-    console.log("Save category", data);
-    handleCloseModal();
-    setSuccessMessage(
-      editingCategory
-        ? "The Trip Category has been updated successfully"
-        : "The New Trip Category has been added successfully"
-    );
+  const handleSaveModal = async (data: { name: string }) => {
+    try {
+      if (editingCategory) {
+        await updateCategory(editingCategory.id, data);
+        setSuccessMessage("The Trip Category has been updated successfully");
+      } else {
+        await createCategory(data);
+        setSuccessMessage("The New Trip Category has been added successfully");
+      }
+      
+      setRefreshTrigger(prev => prev + 1);
+      handleCloseModal();
+    } catch (error: unknown) {
+      console.error("Mutation failed:", error);
+      if ((error as { response?: { status?: number } })?.response?.status === 404) {
+        setErrorMessage("Action failed: The backend admin endpoint for categories is not implemented yet. Tell your backend team!");
+      } else {
+        setErrorMessage(getMutationErrorMessage(error, "An error occurred while saving the category."));
+      }
+      handleCloseModal();
+    }
   };
 
-  const handleDeleteConfirm = () => {
-    console.log("Deleted category", deletingCategory?.id);
-    setDeletingCategory(undefined);
-    setSuccessMessage("The Trip Category has been deleted successfully");
+  const handleDeleteConfirm = async () => {
+    if (!deletingCategory) return;
+    try {
+      await deleteCategory(deletingCategory.id);
+      setSuccessMessage("The Trip Category has been deleted successfully");
+      setRefreshTrigger(prev => prev + 1);
+      setDeletingCategory(undefined);
+    } catch (error: unknown) {
+      console.error("Delete failed:", error);
+      if ((error as { response?: { status?: number } })?.response?.status === 404) {
+        setErrorMessage("Action failed: The backend admin endpoint for categories is not implemented yet. Tell your backend team!");
+      } else {
+        setErrorMessage(getMutationErrorMessage(error, "An error occurred while deleting the category."));
+      }
+      setDeletingCategory(undefined);
+    }
   };
 
   return (
@@ -63,6 +109,7 @@ export default function CatalogCategoriesPage() {
         <CategoriesPanel 
           onEditCategory={handleOpenEdit} 
           onDeleteCategory={setDeletingCategory}
+          refreshTrigger={refreshTrigger}
         />
       </div>
 
@@ -81,7 +128,7 @@ export default function CatalogCategoriesPage() {
         title="Delete Trip Category"
         message={
           <>
-            <strong>{`"${deletingCategory?.name}"`}</strong> is linked to 12 trips.<br />
+            <strong>{`"${deletingCategory?.name}"`}</strong> is linked to trips.<br />
             Deleting it will remove this category from those trips
           </>
         }
@@ -96,6 +143,14 @@ export default function CatalogCategoriesPage() {
         message={successMessage}
         variant="success"
         onClose={() => setSuccessMessage("")}
+        className={dashboardStyles.draftBanner}
+      />
+      
+      <DashboardStatusBanner
+        show={!!errorMessage}
+        message={errorMessage}
+        variant="warning"
+        onClose={() => setErrorMessage("")}
         className={dashboardStyles.draftBanner}
       />
     </div>

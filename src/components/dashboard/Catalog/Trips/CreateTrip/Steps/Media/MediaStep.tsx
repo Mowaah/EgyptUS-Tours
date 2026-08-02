@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import Image from "next/image";
+import { Controller, useFormContext } from "react-hook-form";
 import { FormSection, FormSpec, UploadDropzone } from "@/components/dashboard/FormFields";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
+import { CreateTripValues } from "../../CreateTripSchema";
 import styles from "./MediaStep.module.scss";
 
 interface MediaUploadBlockProps {
+  index: number;
   title: string;
   attachmentLabel?: string;
   onDelete?: () => void;
@@ -14,14 +16,15 @@ interface MediaUploadBlockProps {
 }
 
 function MediaUploadBlock({ 
+  index,
   title, 
   attachmentLabel = "Attachment [800 x 552]",
   onDelete,
   onAdd,
   defaultFileMock = false
 }: MediaUploadBlockProps) {
-  const [file, setFile] = useState<File | string | undefined>(defaultFileMock ? { name: 'Description of the problem.png', size: 200000 } as any : undefined);
   const [lang, setLang] = useState<Language>("English");
+  const { control, register, setValue } = useFormContext<CreateTripValues>();
   
   let headerAction = null;
   if (onDelete) {
@@ -53,14 +56,30 @@ function MediaUploadBlock({
         <div className={styles.attachmentLabelWrap}>
           <p className={styles.attachmentLabel}>{attachmentLabel}</p>
         </div>
-        <UploadDropzone value={file as any} onFileSelect={(f) => setFile(f)} />
+        <Controller
+          name={`photos.${index}.file` as never}
+          control={control}
+          render={({ field }) => (
+            <UploadDropzone
+              value={field.value || (defaultFileMock ? ({ name: "Description of the problem.png", size: 200000 } as File) : undefined)}
+              onFileSelect={(file) => {
+                if (!file) {
+                  setValue(`photos.${index}.id` as never, undefined as never, { shouldDirty: true });
+                }
+                field.onChange(file);
+              }}
+              accept="image/png, image/jpeg, image/webp"
+              subtitle="PNG, JPG, WEBP up to 5MB"
+            />
+          )}
+        />
       </div>
       
       <FormSpec>
         <LanguageTabs active={lang} onChange={setLang} className={styles.whiteTabs} />
         <div className={styles.fieldRow}>
-          <DashboardField label="Image Title" placeholder="Image Title..." />
-          <DashboardField label="Image Alt" placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" />
+          <DashboardField label="Image Title" placeholder="Image Title..." {...register(`photos.${index}.title` as never)} />
+          <DashboardField label="Image Alt" placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" {...register(`photos.${index}.alt` as never)} />
         </div>
       </FormSpec>
     </FormSection>
@@ -71,14 +90,14 @@ export function MediaStep() {
   return (
     <div className={styles.container}>
       <div className={styles.grid}>
-        <MediaUploadBlock title="Upload Thumbnail" />
-        <MediaUploadBlock title="Upload Image" />
-        <MediaUploadBlock title="Photo Gallery 2" />
-        <MediaUploadBlock title="Photo Gallery 3" />
-        <MediaUploadBlock title="Photo Gallery 4" />
-        <MediaUploadBlock title="Photo Gallery 5" />
-        <MediaUploadBlock title="Photo Gallery 6" onDelete={() => {}} />
-        <MediaUploadBlock title="Photo Gallery 7" onAdd={() => {}} />
+        <MediaUploadBlock index={0} title="Upload Thumbnail" />
+        <MediaUploadBlock index={1} title="Upload Image" />
+        <MediaUploadBlock index={2} title="Photo Gallery 2" />
+        <MediaUploadBlock index={3} title="Photo Gallery 3" />
+        <MediaUploadBlock index={4} title="Photo Gallery 4" />
+        <MediaUploadBlock index={5} title="Photo Gallery 5" />
+        <MediaUploadBlock index={6} title="Photo Gallery 6" onDelete={() => {}} />
+        <MediaUploadBlock index={7} title="Photo Gallery 7" onAdd={() => {}} />
       </div>
     </div>
   );

@@ -1,11 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, FormProvider } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createTripSchema, type CreateTripValues } from "./CreateTripSchema";
-import { IconStepper } from "@/components/shared";
 import { OverviewStep } from "./Steps/Overview/OverviewStep";
 import { InclusionsStep } from "./Steps/Inclusions/InclusionsStep";
 import { PricingStep } from "./Steps/Pricing/PricingStep";
@@ -16,8 +16,16 @@ import { MediaStep } from "./Steps/Media/MediaStep";
 import { SEOStep } from "./Steps/SEO/SEOStep";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { WizardLayout } from "@/components/dashboard/shared";
-import { useWizard, WizardStepConfig } from "@/hooks/useWizard";
-import Image from "next/image";
+import { useWizard, WizardStepConfig, WizardSubmitIntent } from "@/hooks/useWizard";
+import {
+  createCatalogTrip,
+  getCatalogTripDetail,
+  publishCatalogTrip,
+  updateTripBrochure,
+  updateCatalogTrip,
+} from "@/services/admin/adminCatalogTripsService";
+import { getCategories } from "@/services/admin/adminCatalogCategoriesService";
+import { getDestinations } from "@/services/admin/adminCatalogDestinationsService";
 import styles from "./CreateTrip.module.scss";
 
 const STEPS: WizardStepConfig[] = [
@@ -31,91 +39,463 @@ const STEPS: WizardStepConfig[] = [
   { label: "SEO", iconSrc: "/images/dashboard/catalog/trips/seo.svg", fieldsToValidate: ["metaTitle", "metaDescription", "metaKeywords", "slug"] },
 ];
 
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const REQUIRED_GALLERY_IMAGES = 5;
+const SUPPORTED_IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp"]);
+
+const EMPTY_VALUES: CreateTripValues = {
+  tripName: "",
+  category: "",
+  destinations: [],
+  duration: "",
+  tourTypes: [],
+  brochureFile: undefined,
+  description: "",
+  culturalValue: "",
+  whoIsTripFor: "",
+  inclusions: [],
+  exclusions: [],
+  pricing: {
+    privateTour: { basePrice: "", seasons: [{ dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" }] },
+    groupTour: { basePrice: "", seasons: [{ dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" }] },
+  },
+  itinerary: [{ title: "", subtitle: "", description: "", highlights: [], image: undefined }],
+  hotels: [],
+  photos: [],
+  datesAvailability: { enabled: false, dates: [] },
+  metaTitle: "",
+  metaDescription: "",
+  metaKeywords: "",
+  slug: "",
+};
+
+function asList(payload: any): any[] {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.results)) return payload.results;
+  if (Array.isArray(payload?.data)) return payload.data;
+  if (Array.isArray(payload?.data?.results)) return payload.data.results;
+  return [];
+}
+
+function asText(value: any): string {
+  return value === null || value === undefined ? "" : String(value);
+}
+
+function money(value: any): string | undefined {
+  const cleaned = asText(value).replace(/[^0-9.]/g, "");
+  return cleaned || undefined;
+}
+
+function intValue(value: any): number | undefined {
+  const number = parseInt(asText(value).replace(/[^0-9]/g, ""), 10);
+  return Number.isFinite(number) ? number : undefined;
+}
+
+function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
+function isFile(value: any): value is File {
+  return typeof File !== "undefined" && value instanceof File;
+}
+
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function itemName(item: any): string {
+  return asText(item?.name || item?.title || item?.translations?.en?.name || item?.translations?.en?.title);
+}
+
+function resolveId(value: string, records: any[]): number | undefined {
+  const normalized = value.toLowerCase();
+  const found = records.find((record) => {
+    const candidates = [
+      asText(record?.id),
+      asText(record?.slug),
+      slugify(itemName(record)),
+      itemName(record).toLowerCase(),
+    ].filter(Boolean);
+
+    return candidates.includes(normalized);
+  });
+
+  return found?.id ? Number(found.id) : undefined;
+}
+
+function parseDuration(value: string): { days: number; nights: number } {
+  const byCompact = value.match(/(\d+)\s*d.*?(\d+)\s*n/i);
+  const byWords = value.match(/(\d+).*?days?.*?(\d+).*?nights?/i);
+  const match = byCompact || byWords;
+  return {
+    days: match ? Number(match[1]) : 1,
+    nights: match ? Number(match[2]) : 0,
+  };
+}
+
+function normalizeDate(value: string): string | undefined {
+  const text = value.trim();
+  if (!text) return undefined;
+  const date = new Date(text);
+  if (Number.isNaN(date.getTime())) return undefined;
+  return date.toISOString().slice(0, 10);
+}
+
+function parseDateRange(value: string): { start_date?: string; end_date?: string; label: string } {
+  const label = value.trim();
+  const parts = label.split(/\s+(?:-|to|–|—)\s+/i).map((part) => part.trim()).filter(Boolean);
+  return {
+    start_date: normalizeDate(parts[0] || ""),
+    end_date: normalizeDate(parts[1] || parts[0] || ""),
+    label,
+  };
+}
+
+function keywords(value: string | undefined): string[] {
+  return asText(value)
+    .split(",")
+    .map((keyword) => keyword.trim())
+    .filter(Boolean);
+}
+
+function fileLabel(file: File, fallback: string): string {
+  return file.name || fallback;
+}
+
+function validateImageFile(file: File, label: string): string[] {
+  const errors: string[] = [];
+
+  if (!SUPPORTED_IMAGE_TYPES.has(file.type)) {
+    errors.push(`${label}: unsupported image type. Use PNG, JPEG, or WEBP.`);
+  }
+  if (file.size > MAX_IMAGE_BYTES) {
+    errors.push(`${label}: image is too large. Maximum size is 5 MB.`);
+  }
+
+  return errors;
+}
+
+function validateMediaBeforeSave(data: CreateTripValues, intent: WizardSubmitIntent): string[] {
+  const errors: string[] = [];
+  const photos = data.photos || [];
+
+  photos.forEach((photo: any, index) => {
+    if (isFile(photo?.file)) {
+      errors.push(...validateImageFile(photo.file, fileLabel(photo.file, index === 0 ? "Hero image" : `Gallery image ${index}`)));
+    }
+  });
+
+  (data.itinerary || []).forEach((day, index) => {
+    if (isFile(day?.image)) {
+      errors.push(...validateImageFile(day.image, fileLabel(day.image, `Day ${index + 1} image`)));
+    }
+  });
+
+  if (intent === "publish") {
+    const hasHero = !!(photos[0] as any)?.file;
+    const galleryCount = photos.slice(1).filter((photo: any) => !!photo?.file).length;
+
+    if (!hasHero) {
+      errors.push("Media: upload 1 thumbnail/hero image before publishing.");
+    }
+    if (galleryCount < REQUIRED_GALLERY_IMAGES) {
+      errors.push(`Media: upload at least ${REQUIRED_GALLERY_IMAGES} gallery images before publishing.`);
+    }
+  }
+
+  return errors;
+}
+
+function rowText(row: any): string {
+  return asText(row?.text || row?.translations?.en?.text || row);
+}
+
+function mapTripToFormValues(trip: any): CreateTripValues {
+  const translations = trip?.translations?.en || {};
+  const overview = translations.overview || trip?.overview || {};
+  const duration = trip?.duration_days ? `${trip.duration_days}d-${trip.duration_nights || 0}n` : "";
+  const seasonRows = asList(trip?.season_pricings);
+  const mediaRows = asList(trip?.media_items).sort((a, b) => Number(a?.order || 0) - Number(b?.order || 0));
+  const heroMedia = mediaRows.find((media) => media?.kind === "hero");
+  const galleryMedia = mediaRows.filter((media) => media?.kind === "gallery");
+  const photoRows = [heroMedia, ...galleryMedia]
+    .filter(Boolean)
+    .map((media) => {
+      const mediaTranslations = media?.translations?.en || {};
+      return {
+        id: media?.id,
+        kind: media?.kind,
+        file: media?.image_url,
+        title: asText(mediaTranslations.title || media?.caption),
+        alt: asText(mediaTranslations.alt),
+      };
+    });
+
+  const seasonValues = (tourType: string) => {
+    const rows = seasonRows.filter((season) => asText(season?.tour_type).toLowerCase() === tourType);
+    return rows.length
+      ? rows.map((season) => {
+          const tiers = asList(season?.tiers);
+          const byLabel = (label: string) => money(tiers.find((tier) => asText(tier?.label).toLowerCase().includes(label))?.price) || "";
+          return {
+            dateRange: asText(season?.season_label || [season?.start_date, season?.end_date].filter(Boolean).join(" - ")),
+            singleRoom: byLabel("single"),
+            doubleRoom: byLabel("double"),
+            tripleRoom: byLabel("triple"),
+          };
+        })
+      : [{ dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" }];
+  };
+
+  return {
+    ...EMPTY_VALUES,
+    tripName: asText(translations.title || trip?.title),
+    category: asText(trip?.tags?.[0]?.slug || trip?.tags?.[0]?.id || ""),
+    destinations: asList(trip?.destinations).map((destination) => asText(destination?.slug || destination?.id)).filter(Boolean),
+    duration,
+    tourTypes: [
+      trip?.offers_private_tour ? "private-tour" : "",
+      trip?.offers_group_tour ? "group-tour" : "",
+    ].filter(Boolean),
+    description: asText(overview.description || trip?.description),
+    culturalValue: asText(overview.cultural_value),
+    whoIsTripFor: asText(overview.who_is_it_for),
+    inclusions: asList(trip?.inclusions).map(rowText).filter(Boolean),
+    exclusions: asList(trip?.exclusions).map(rowText).filter(Boolean),
+    pricing: {
+      privateTour: { basePrice: money(trip?.private_price) || "", seasons: seasonValues("private") },
+      groupTour: { basePrice: money(trip?.group_price) || "", seasons: seasonValues("group") },
+    },
+    itinerary: asList(trip?.itinerary_days).map((day) => ({
+      id: day?.id,
+      title: asText(day?.title || day?.translations?.en?.title),
+      subtitle: asText(day?.subtitle || day?.translations?.en?.subtitle),
+      description: asText(day?.description || day?.translations?.en?.description),
+      highlights: asList(day?.highlights || day?.translations?.en?.highlights),
+      image: day?.image_url,
+    })),
+    datesAvailability: {
+      enabled: !!trip?.availability_enabled,
+      dates: asList(trip?.availability_slots).map((slot) => ({
+        dateRange: [slot?.start_date, slot?.end_date].filter(Boolean).join(" - "),
+        spots: asText(slot?.capacity_total || slot?.spots || ""),
+      })),
+    },
+    hotels: asList(trip?.hotel_links).map((link) => asText(link?.hotel?.id || link?.hotel_id)).filter(Boolean),
+    photos: photoRows,
+    metaTitle: asText(translations.meta_title),
+    metaDescription: asText(translations.meta_description),
+    metaKeywords: asList(translations.meta_keywords).join(", "),
+    slug: asText(translations.slug || trip?.slug),
+  };
+}
+
+async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent) {
+  const [categoriesPayload, destinationsPayload] = await Promise.all([
+    getCategories({ page_size: 100 }),
+    getDestinations({ page_size: 100 }),
+  ]);
+  const categoryRecords = asList(categoriesPayload);
+  const destinationRecords = asList(destinationsPayload);
+  const tagId = resolveId(data.category, categoryRecords);
+  const destinationIds = (data.destinations || [])
+    .map((destination) => resolveId(destination, destinationRecords))
+    .filter((id): id is number => !!id);
+  const unresolvedDestinations = (data.destinations || []).filter((destination) => !resolveId(destination, destinationRecords));
+
+  if (!tagId) {
+    throw new Error("The selected category does not exist in the backend yet.");
+  }
+  if (unresolvedDestinations.length) {
+    throw new Error(`These destinations do not exist in the backend yet: ${unresolvedDestinations.join(", ")}`);
+  }
+
+  const duration = parseDuration(data.duration);
+  const tourTypes = data.tourTypes || [];
+  const photos = await Promise.all(
+    (data.photos || [])
+      .map(async (photo: any, index: number) => {
+        if (!photo?.file && !photo?.id) return null;
+        return {
+          id: photo.id,
+          kind: index === 0 ? "hero" : "gallery",
+          image: isFile(photo.file) ? await fileToDataUrl(photo.file) : undefined,
+          translations: {
+            en: {
+              title: asText(photo.title),
+              alt: asText(photo.alt),
+            },
+          },
+          order: index,
+        };
+      })
+  );
+  const itinerary = await Promise.all(
+    (data.itinerary || [])
+      .filter((day) => day?.title || day?.description)
+      .map(async (day, index) => ({
+        id: (day as any).id,
+        day_number: index + 1,
+        title: asText(day.title),
+        subtitle: asText(day.subtitle),
+        description: asText(day.description),
+        highlights: (day.highlights || []).filter(Boolean),
+        image: isFile(day.image) ? await fileToDataUrl(day.image) : undefined,
+        order: index,
+      }))
+  );
+
+  const seasonRows = [
+    ...(data.pricing?.privateTour?.seasons || []).map((season) => ({ ...season, tourType: "private" })),
+    ...(data.pricing?.groupTour?.seasons || []).map((season) => ({ ...season, tourType: "group" })),
+  ].filter((season) => season.dateRange || season.singleRoom || season.doubleRoom || season.tripleRoom);
+
+  return {
+    translations: {
+      en: {
+        title: data.tripName,
+        slug: data.slug || slugify(data.tripName),
+        description: data.description || "",
+        short_description: data.culturalValue || "",
+        overview: {
+          description: data.description || "",
+          cultural_value: data.culturalValue || "",
+          who_is_it_for: data.whoIsTripFor || "",
+        },
+        meta_title: data.metaTitle || "",
+        meta_description: data.metaDescription || "",
+        meta_keywords: keywords(data.metaKeywords),
+      },
+    },
+    tag_ids: [tagId],
+    destination_ids: destinationIds,
+    duration_days: duration.days,
+    duration_nights: duration.nights,
+    offers_private_tour: tourTypes.includes("private-tour"),
+    offers_group_tour: tourTypes.includes("group-tour"),
+    private_price: money(data.pricing?.privateTour?.basePrice) || null,
+    group_price: money(data.pricing?.groupTour?.basePrice) || null,
+    currency_code: "USD",
+    availability_enabled: !!data.datesAvailability?.enabled,
+    force_draft: intent !== "publish",
+    inclusions: (data.inclusions || []).filter(Boolean),
+    exclusions: (data.exclusions || []).filter(Boolean),
+    season_pricings: seasonRows.map((season, index) => {
+      const range = parseDateRange(season.dateRange || "");
+      return {
+        tour_type: season.tourType,
+        season_label: range.label || `Season ${index + 1}`,
+        start_date: range.start_date,
+        end_date: range.end_date,
+        order: index,
+        tiers: [
+          { label: "Single Room", price: money(season.singleRoom), order: 0 },
+          { label: "Double Room", price: money(season.doubleRoom), order: 1 },
+          { label: "Triple Room", price: money(season.tripleRoom), order: 2 },
+        ].filter((tier) => tier.price),
+      };
+    }),
+    itinerary_days: itinerary,
+    availability_slots: (data.datesAvailability?.dates || [])
+      .map((slot, index) => {
+        const range = parseDateRange(slot.dateRange || "");
+        const capacity = intValue(slot.spots);
+        if (!range.start_date || !range.end_date || capacity === undefined) return null;
+        return {
+          start_date: range.start_date,
+          end_date: range.end_date,
+          capacity_total: capacity,
+          capacity_remaining: capacity,
+          order: index,
+        };
+      })
+      .filter(Boolean),
+    hotel_ids: (data.hotels || []).map((id) => Number(id)).filter((id) => Number.isInteger(id) && id > 0),
+    media_items: photos.filter(Boolean),
+    replace_bullets: true,
+    replace_season_pricings: true,
+    replace_itinerary_days: true,
+    replace_availability_slots: true,
+    replace_hotel_links: true,
+    replace_media_items: true,
+  };
+}
+
+function humanFieldName(path: string): string {
+  return path
+    .replace(/^translations\.en\./, "")
+    .replace(/_/g, " ")
+    .replace(/\.\d+\./g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function humanBackendMessage(message: string): string {
+  const blockerLabels: Record<string, string> = {
+    "catalog.trip.missing_title": "Trip title is required.",
+    "catalog.trip.missing_tour_type": "Select at least one tour type.",
+    "catalog.trip.missing_private_price": "Private tour base price is required.",
+    "catalog.trip.missing_group_price": "Group tour base price is required.",
+    "catalog.trip.missing_private_season_pricing": "Private tour season pricing is required.",
+    "catalog.trip.missing_group_season_pricing": "Group tour season pricing is required.",
+    "catalog.trip.incomplete_private_room_tiers": "Private tour seasons need single, double, and triple room prices.",
+    "catalog.trip.incomplete_group_room_tiers": "Group tour seasons need single, double, and triple room prices.",
+    "catalog.trip.missing_hotels": "Select at least one hotel.",
+    "catalog.trip.missing_hero_image": "Upload 1 thumbnail/hero image.",
+    "catalog.trip.insufficient_gallery_images": `Upload at least ${REQUIRED_GALLERY_IMAGES} gallery images.`,
+    "catalog.trip.missing_slug": "SEO slug is required.",
+    "catalog.trip.archived": "Archived trips cannot be published.",
+  };
+
+  return Object.entries(blockerLabels).reduce(
+    (text, [code, label]) => text.replaceAll(code, label),
+    message
+  );
+}
+
+function flattenApiErrors(value: any, path = ""): string[] {
+  if (!value) return [];
+  if (typeof value === "string") {
+    return [`${path ? `${humanFieldName(path)}: ` : ""}${humanBackendMessage(value)}`];
+  }
+  if (Array.isArray(value)) {
+    return value.flatMap((item) => flattenApiErrors(item, path));
+  }
+  if (typeof value === "object") {
+    return Object.entries(value).flatMap(([key, nested]) => {
+      const nextPath = path ? `${path}.${key}` : key;
+      return flattenApiErrors(nested, nextPath);
+    });
+  }
+  return [`${path ? `${humanFieldName(path)}: ` : ""}${String(value)}`];
+}
+
+function errorMessage(error: any): string {
+  const data = error?.response?.data;
+  const messages = flattenApiErrors(data);
+
+  if (messages.length) return messages.join("\n");
+  return error?.message || "Could not save trip.";
+}
+
 export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirtyChange?: (isDirty: boolean) => void }) {
   const router = useRouter();
   const [isPublishedModalOpen, setIsPublishedModalOpen] = useState(false);
+  const [savedTripId, setSavedTripId] = useState<string | number | undefined>(tripId);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
   const methods = useForm<CreateTripValues>({
     resolver: zodResolver(createTripSchema),
-    defaultValues: tripId ? {
-      tripName: "Santorini Island Explorer",
-      category: "multi-country-trips",
-      destinations: ["luxor-aswan"],
-      duration: "4d-3n",
-      tourTypes: ["private-tour", "group-tour"],
-      brochureFile: undefined,
-      description: "Embark on an unforgettable journey through ancient Egypt along the legendary Nile River. Experience the magic of Luxor and Aswan with visits to magnificent temples, royal tombs, and timeless monuments. Sail aboard a luxury Nile cruise while exploring Karnak Temple, Valley of the Kings, Philae Temple, and the colossal Abu Simbel. Connect with 5,000 years of pharaonic history and ancient Egyptian civilization. Experience authentic Nubian culture, learn about hieroglyphics and ancient construction techniques, and participate in traditional felucca sailing. This journey offers insight into one of the world's oldest and most influential civilizations",
-      culturalValue: "Connect with 5,000 years of pharaonic history and ancient Egyptian civilization. Experience authentic Nubian culture, learn about hieroglyphics and ancient construction techniques, and participate in traditional felucca sailing. This journey offers insight into one of the world's oldest and most influential civilizations",
-      whoIsTripFor: "History enthusiasts, couples seeking romantic getaways, and culture lovers looking for an authentic Egyptian experience. Ideal for those who want to explore ancient wonders, learn about pharaonic dynasties, and experience the timeless beauty of the Nile River in comfort and luxury.",
-      inclusions: [],
-      exclusions: [],
-      pricing: {
-        privateTour: {
-          basePrice: "",
-          seasons: [
-            { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
-            { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
-          ],
-        },
-        groupTour: {
-          basePrice: "",
-          seasons: [
-            { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
-            { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
-          ],
-        },
-      },
-      itinerary: [
-        { title: "", subtitle: "", description: "", highlights: [], image: undefined },
-        { title: "", subtitle: "", description: "", highlights: [], image: undefined },
-      ],
-      hotels: [],
-      photos: [],
-      datesAvailability: { enabled: false, dates: [] },
-      metaTitle: "",
-      metaDescription: "",
-      metaKeywords: "",
-      slug: ""
-    } : {
-      tripName: "",
-      category: "",
-      destinations: [],
-      duration: "",
-      tourTypes: [],
-      brochureFile: undefined,
-      description: "",
-      culturalValue: "",
-      whoIsTripFor: "",
-      inclusions: [],
-      exclusions: [],
-      pricing: {
-        privateTour: {
-          basePrice: "",
-          seasons: [
-            { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
-            { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
-          ],
-        },
-        groupTour: {
-          basePrice: "",
-          seasons: [
-            { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
-            { dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" },
-          ],
-        },
-      },
-      itinerary: [
-        { title: "", subtitle: "", description: "", highlights: [], image: undefined },
-        { title: "", subtitle: "", description: "", highlights: [], image: undefined },
-      ],
-      hotels: [],
-      photos: [],
-      datesAvailability: { enabled: false, dates: [] },
-      metaTitle: "",
-      metaDescription: "",
-      metaKeywords: "",
-      slug: ""
-    },
+    defaultValues: EMPTY_VALUES,
   });
 
   const { handleSubmit, formState: { isDirty } } = methods;
@@ -124,8 +504,53 @@ export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirty
     onDirtyChange?.(isDirty);
   }, [isDirty, onDirtyChange]);
 
-  const onSubmit = (data: CreateTripValues) => {
-    console.log("Submit Form Data:", data);
+  useEffect(() => {
+    if (!tripId) return;
+
+    let ignore = false;
+    getCatalogTripDetail(tripId)
+      .then((trip) => {
+        if (!ignore) methods.reset(mapTripToFormValues(trip));
+      })
+      .catch((error) => {
+        if (!ignore) setSaveError(errorMessage(error));
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, [methods, tripId]);
+
+  const onSubmit = async (data: CreateTripValues, meta: { intent: WizardSubmitIntent }) => {
+    setIsSaving(true);
+    setSaveError("");
+
+    try {
+      const clientValidationErrors = validateMediaBeforeSave(data, meta.intent);
+      if (clientValidationErrors.length) {
+        throw new Error(clientValidationErrors.join("\n"));
+      }
+
+      const payload = await buildPayload(data, meta.intent);
+      const response = tripId
+        ? await updateCatalogTrip(tripId, payload)
+        : await createCatalogTrip(payload);
+      const nextTripId = tripId || response?.id || response?.data?.id;
+      setSavedTripId(nextTripId);
+
+      if (nextTripId && isFile(data.brochureFile)) {
+        await updateTripBrochure(nextTripId, data.brochureFile);
+      }
+
+      if (!tripId && meta.intent === "publish" && nextTripId) {
+        await publishCatalogTrip(nextTripId);
+      }
+    } catch (error) {
+      setSaveError(errorMessage(error));
+      throw error;
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const {
@@ -140,6 +565,20 @@ export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirty
     onFinished: () => setIsPublishedModalOpen(true),
     isEdit: !!tripId,
   });
+
+  const successCopy = useMemo(() => {
+    if (tripId) {
+      return {
+        title: "Trip Updated Successfully",
+        message: "All changes have been saved and are now reflected across the system.",
+      };
+    }
+
+    return {
+      title: "Trip Published Successfully",
+      message: "Your trip package has been published and is now available for bookings and customer inquiries.",
+    };
+  }, [tripId]);
 
   const renderStep = () => {
     switch (currentStep) {
@@ -160,17 +599,20 @@ export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirty
       case 7:
         return <SEOStep />;
       default:
-        return (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px', background: '#fff', borderRadius: '24px', color: '#9CA3AF', fontWeight: 500, fontSize: '16px' }}>
-            Step {currentStep + 1} ({STEPS[currentStep].label}) — Coming Soon
-          </div>
-        );
+        return null;
     }
   };
 
   return (
     <FormProvider {...methods}>
-      <div className={styles.page}>
+      <form
+        id="create-trip-form"
+        className={styles.page}
+        onSubmit={handleSubmit((data) => onSubmit(data, { intent: "save" }).then(() => setIsPublishedModalOpen(true)))}
+      >
+        {saveError && <div className={styles.saveError}>{saveError}</div>}
+        {isSaving && <div className={styles.saveNotice}>Saving trip...</div>}
+
         <WizardLayout
           steps={STEPS}
           currentStep={currentStep}
@@ -180,21 +622,20 @@ export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirty
           onStepClick={handleStepClick}
           publishLabel="Publish Trip"
         >
-          {/* Main wizard forms */}
           {renderStep()}
         </WizardLayout>
-      </div>
+      </form>
 
       {isPublishedModalOpen && (
         <SuccessModal
-          title={tripId ? "Trip Updated Successfully" : "Trip Published Successfully"}
-          message={tripId ? "All changes have been saved and are now reflected across the system." : "Your trip package has been published and is now available for bookings and customer inquiries."}
+          title={successCopy.title}
+          message={successCopy.message}
           primaryButtonText="View Trip"
           buttonText="Back to Catalog"
           hideSecondaryButton={!tripId}
           onPrimaryClick={() => {
             setIsPublishedModalOpen(false);
-            router.push(tripId ? `/dashboard/catalog/trips/${tripId}` : "/dashboard/catalog/trips?created=true");
+            router.push(savedTripId ? `/dashboard/catalog/trips/${savedTripId}` : "/dashboard/catalog/trips?created=true");
           }}
           onClose={() => {
             setIsPublishedModalOpen(false);

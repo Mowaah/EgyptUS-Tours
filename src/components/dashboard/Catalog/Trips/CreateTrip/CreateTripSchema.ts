@@ -46,6 +46,7 @@ export const createTripSchema = z.object({
   // Itinerary Step
   itinerary: z.array(
     z.object({
+      id: z.union([z.string(), z.number()]).optional(),
       title: z.string().optional(),
       subtitle: z.string().optional(),
       description: z.string().optional(),

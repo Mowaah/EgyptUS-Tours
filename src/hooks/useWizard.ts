@@ -7,11 +7,13 @@ export interface WizardStepConfig {
   fieldsToValidate?: string[]; // Array of dot-notation field paths, or empty array if none
 }
 
+export type WizardSubmitIntent = "save" | "publish";
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface UseWizardOptions<TFormValues extends Record<string, any>> {
   steps: WizardStepConfig[];
   methods: UseFormReturn<TFormValues>;
-  onSubmit: (data: TFormValues) => void;
+  onSubmit: (data: TFormValues, meta: { intent: WizardSubmitIntent }) => void | Promise<void>;
   onFinished?: () => void; // Triggered when last step submits
   isEdit?: boolean;
 }
@@ -43,8 +45,8 @@ export function useWizard<TFormValues extends Record<string, any>>({
     if (isValid) {
       if (isLastStep) {
         // Run the main onSubmit wrapper which handles getting all form data
-        methods.handleSubmit((data) => {
-          onSubmit(data);
+        methods.handleSubmit(async (data) => {
+          await onSubmit(data, { intent: "publish" });
           onFinished?.();
         })();
       } else {

@@ -1,50 +1,60 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { TablePagination } from "@/components/dashboard/shared";
 import DestinationCard, { Destination } from "../DestinationCard/DestinationCard";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
+import { LoadingSpinner } from "@/components/shared";
 import styles from "./DestinationsPanel.module.scss";
-
-const MOCK_DESTINATIONS: Destination[] = [
-  { id: "1", name: "Egypt", imageSrc: "/images/dashboard/catalog/destinations/egypt.jpg" },
-  { id: "2", name: "Spain", imageSrc: "/images/dashboard/catalog/destinations/spain.jpg" },
-  { id: "3", name: "Dubai", imageSrc: "/images/dashboard/catalog/destinations/dubai.jpg" },
-  { id: "4", name: "Italy", imageSrc: "/images/dashboard/catalog/destinations/italy.jpg" },
-  { id: "5", name: "Dubai", imageSrc: "/images/dashboard/catalog/destinations/dubai.jpg" },
-  { id: "6", name: "Italy", imageSrc: "/images/dashboard/catalog/destinations/italy.jpg" },
-  { id: "7", name: "Brazil", imageSrc: "/images/dashboard/catalog/destinations/brazil.jpg" },
-  { id: "8", name: "Greece", imageSrc: "/images/dashboard/catalog/destinations/greece.jpg" },
-  { id: "9", name: "Brazil", imageSrc: "/images/dashboard/catalog/destinations/brazil.jpg" },
-  { id: "10", name: "Greece", imageSrc: "/images/dashboard/catalog/destinations/greece.jpg" },
-  { id: "11", name: "Dubai", imageSrc: "/images/dashboard/catalog/destinations/dubai.jpg" },
-  { id: "12", name: "Italy", imageSrc: "/images/dashboard/catalog/destinations/italy.jpg" },
-];
+import { getDestinations } from "@/services/admin/adminCatalogDestinationsService";
 
 interface DestinationsPanelProps {
   onEditDestination?: (dest: Destination) => void;
   onDeleteDestination?: (dest: Destination) => void;
+  refreshTrigger?: number;
 }
 
-export default function DestinationsPanel({ onEditDestination, onDeleteDestination }: DestinationsPanelProps = {}) {
+export default function DestinationsPanel({ onEditDestination, onDeleteDestination, refreshTrigger = 0 }: DestinationsPanelProps = {}) {
   const [lang, setLang] = useState<Language>("English");
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(12);
+  const [destinations, setDestinations] = useState<Destination[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const pageCount = Math.max(1, Math.ceil(MOCK_DESTINATIONS.length / rowsPerPage));
+  useEffect(() => {
+    setLoading(true);
+    getDestinations({ limit: 100 })
+      .then((res) => {
+        const results: any[] = res?.results ?? res?.data?.results ?? (Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : []);
+        const mapped: Destination[] = results.map((d: any) => ({
+          id: String(d.id),
+          name: d.name ?? d.title ?? "",
+          imageSrc: d.image || d.image_url || d.photo ? (d.image || d.image_url || d.photo).startsWith("http") ? (d.image || d.image_url || d.photo) : `http://127.0.0.1:8000${(d.image || d.image_url || d.photo).startsWith('/') ? '' : '/'}${d.image || d.image_url || d.photo}` : "/images/dashboard/catalog/destinations/egypt.jpg",
+        }));
+        setDestinations(mapped);
+        setPage(1);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch destinations:", err);
+        setDestinations([]);
+      })
+      .finally(() => setLoading(false));
+  }, [refreshTrigger]);
+
+  const pageCount = Math.max(1, Math.ceil(destinations.length / rowsPerPage));
   const safePage = Math.min(page, pageCount);
-  const visibleDestinations = MOCK_DESTINATIONS.slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage);
+  const visibleDestinations = destinations.slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage);
 
   const handleEdit = (id: string) => {
-    const dest = MOCK_DESTINATIONS.find((d) => d.id === id);
+    const dest = destinations.find((d) => d.id === id);
     if (dest && onEditDestination) {
       onEditDestination(dest);
     }
   };
 
   const handleDelete = (id: string) => {
-    const dest = MOCK_DESTINATIONS.find((d) => d.id === id);
+    const dest = destinations.find((d) => d.id === id);
     if (dest && onDeleteDestination) {
       onDeleteDestination(dest);
     }
@@ -67,26 +77,41 @@ export default function DestinationsPanel({ onEditDestination, onDeleteDestinati
 
       <LanguageTabs active={lang} onChange={setLang} />
 
-      <div className={styles.grid}>
-        {visibleDestinations.map((dest) => (
-          <DestinationCard 
-            key={dest.id} 
-            destination={dest} 
-            onEdit={handleEdit} 
-            onDelete={handleDelete} 
-          />
-        ))}
-      </div>
+      {loading ? (
+        <LoadingSpinner label="Loading destinations..." />
+      ) : (
+        <div className={styles.grid}>
+          {visibleDestinations.length === 0 ? (
+            <div style={{ gridColumn: "1 / -1", textAlign: "center", color: "#6b7280", padding: "2rem" }}>
+              No destinations found.
+            </div>
+          ) : (
+            visibleDestinations.map((dest) => (
+              <DestinationCard
+                key={dest.id}
+                destination={dest}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            ))
+          )}
+        </div>
+      )}
 
-      <TablePagination
-        className={styles.pagination}
-        page={page}
-        pageCount={pageCount}
-        rowsPerPage={rowsPerPage}
-        pageSizeOptions={[8, 12, 16, 24]}
-        onChangePage={setPage}
-        onChangeRowsPerPage={setRowsPerPage}
-      />
+      {!loading && destinations.length > 0 && (
+        <TablePagination
+          className={styles.pagination}
+          page={safePage}
+          pageCount={pageCount}
+          rowsPerPage={rowsPerPage}
+          pageSizeOptions={[8, 12, 16, 24]}
+          onChangePage={setPage}
+          onChangeRowsPerPage={(newRows) => {
+            setRowsPerPage(newRows);
+            setPage(1);
+          }}
+        />
+      )}
     </div>
   );
 }

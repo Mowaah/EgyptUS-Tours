@@ -18,7 +18,7 @@ export default function ReportsTable({ data: customData }: ReportsTableProps = {
   const customHeader = (
     <PanelHeader
       icon="revenue"
-      title="Top Products & Destinations by Revenue"
+      title="Top Products by Revenue"
       subtitle="Best sellers with growth & margin — prioritize marketing budget here"
     />
   );

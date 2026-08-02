@@ -81,3 +81,6 @@ export { default as LanguageTabs, type Language } from "./LanguageTabs/LanguageT
 export { default as RichTextEditor } from "./RichTextEditor/RichTextEditor";
 export { IconStepper } from "./IconStepper/IconStepper";
 export { default as IncludedHotelCard } from "./IncludedHotelCard/IncludedHotelCard";
+export { default as LoadingSpinner } from "./LoadingSpinner/LoadingSpinner";
+export type { LoadingSpinnerProps } from "./LoadingSpinner/LoadingSpinner";
+
