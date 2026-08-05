@@ -13,6 +13,7 @@ export interface SuccessModalProps {
   onPrimaryClick?: () => void;
   metadata?: { label: string; value: React.ReactNode; valueColor?: string }[];
   children?: React.ReactNode;
+  variant?: "success" | "error";
 }
 
 export default function SuccessModal({
@@ -25,6 +26,7 @@ export default function SuccessModal({
   onPrimaryClick,
   metadata,
   children,
+  variant = "success",
 }: SuccessModalProps) {
   useEffect(() => {
     // Lock scroll
@@ -39,14 +41,24 @@ export default function SuccessModal({
   return (
     <div className={styles.modalOverlay} role="dialog" aria-modal="true">
       <div className={styles.modal}>
-        <div className={styles.modalIcon} aria-hidden="true">
-          <Image
-            src="/images/checkmark2.svg"
-            alt="Success Checkmark"
-            width={48}
-            height={48}
-            className={styles.modalCheckIcon}
-          />
+        <div
+          className={styles.modalIcon}
+          style={variant === "error" ? { background: "#F97066", boxShadow: "0 0 6.3px 0 rgba(249, 112, 102, 0.76)" } : undefined}
+          aria-hidden="true"
+        >
+          {variant === "error" ? (
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M28 12L12 28M12 12L28 28" stroke="white" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          ) : (
+            <Image
+              src="/images/checkmark2.svg"
+              alt="Success Checkmark"
+              width={48}
+              height={48}
+              className={styles.modalCheckIcon}
+            />
+          )}
         </div>
 
         <h2 className={styles.modalTitle}>{title}</h2>

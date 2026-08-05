@@ -24,22 +24,41 @@ export default function DestinationsPanel({ onEditDestination, onDeleteDestinati
 
   useEffect(() => {
     setLoading(true);
-    getDestinations({ limit: 100 })
-      .then((res) => {
-        const results: any[] = res?.results ?? res?.data?.results ?? (Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : []);
-        const mapped: Destination[] = results.map((d: any) => ({
-          id: String(d.id),
-          name: d.name ?? d.title ?? "",
-          imageSrc: d.image || d.image_url || d.photo ? (d.image || d.image_url || d.photo).startsWith("http") ? (d.image || d.image_url || d.photo) : `http://127.0.0.1:8000${(d.image || d.image_url || d.photo).startsWith('/') ? '' : '/'}${d.image || d.image_url || d.photo}` : "/images/dashboard/catalog/destinations/egypt.jpg",
-        }));
-        setDestinations(mapped);
-        setPage(1);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch destinations:", err);
-        setDestinations([]);
-      })
-      .finally(() => setLoading(false));
+    const fetchAllDestinations = async () => {
+      let allResults: any[] = [];
+      let currentPage = 1;
+      let hasMore = true;
+
+      while (hasMore) {
+        try {
+          const res: any = await getDestinations({ page_size: 100, page: currentPage });
+          const results: any[] = res?.results ?? res?.data?.results ?? (Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : []);
+          
+          const mapped: Destination[] = results.map((d: any) => ({
+            id: String(d.id),
+            name: d.name ?? d.title ?? "",
+            imageSrc: d.image || d.image_url || d.photo ? (d.image || d.image_url || d.photo).startsWith("http") ? (d.image || d.image_url || d.photo) : `http://127.0.0.1:8000${(d.image || d.image_url || d.photo).startsWith('/') ? '' : '/'}${d.image || d.image_url || d.photo}` : "/images/dashboard/catalog/destinations/egypt.jpg",
+          }));
+          
+          allResults = [...allResults, ...mapped];
+
+          if (!res?.next || results.length < 10) {
+            hasMore = false;
+          } else {
+            currentPage++;
+          }
+        } catch (err) {
+          console.error("Failed to fetch destinations:", err);
+          hasMore = false;
+        }
+      }
+      
+      setDestinations(allResults);
+      setPage(1);
+      setLoading(false);
+    };
+
+    fetchAllDestinations();
   }, [refreshTrigger]);
 
   const pageCount = Math.max(1, Math.ceil(destinations.length / rowsPerPage));

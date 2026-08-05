@@ -134,10 +134,19 @@ export function HotelsStep() {
     </div>
   );
 
-  const { control } = useFormContext<CreateTripValues>();
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const { control, formState: { errors } } = useFormContext<CreateTripValues>();
+  const rawHotelError = errors.hotels as { root?: { message?: string }; message?: string } | undefined;
+  const hotelErrorMessage = rawHotelError?.root?.message || rawHotelError?.message;
+
+  React.useEffect(() => {
+    if (hotelErrorMessage && containerRef.current) {
+      containerRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [hotelErrorMessage]);
 
   return (
-    <div className={styles.hotelsPanel}>
+    <div className={styles.hotelsPanel} ref={containerRef}>
       <div className={styles.header}>
         <div className={styles.headerLeft}>
           <div className={styles.headerIcon}>
@@ -156,9 +165,8 @@ export function HotelsStep() {
         <Controller
           name="hotels"
           control={control}
-          defaultValue={[]}
           render={({ field }) => {
-            const selectedHotels = field.value || [];
+            const selectedHotels: string[] = (field.value || []).map((id: unknown) => String(id));
             
             const filteredHotels = hotels.filter((hotel) => {
               const matchesSearch = !searchQuery.trim() || `${hotel.name} ${hotel.location}`.toLowerCase().includes(searchQuery.toLowerCase());
@@ -167,7 +175,7 @@ export function HotelsStep() {
             });
 
             const toggleHotel = (id: string) => {
-              const idStr = id.toString();
+              const idStr = String(id);
               if (selectedHotels.includes(idStr)) {
                 field.onChange(selectedHotels.filter((i) => i !== idStr));
               } else {
@@ -187,6 +195,12 @@ export function HotelsStep() {
                     />
                   ))}
                 </div>
+                {hotelErrorMessage && (
+                  <div className={styles.errorText} role="alert">
+                    <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+                    <span>{hotelErrorMessage}</span>
+                  </div>
+                )}
               </div>
             );
           }}

@@ -10,6 +10,74 @@
   padding: 24px;
 }
 
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.headerIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: $dashboard-expandable-hover;
+  border-radius: 20px;
+}
+
+.title {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: $font-size-28;
+  line-height: 33px;
+  color: $dark;
+  margin: 0;
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: $primary;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  padding: 0;
+
+  &:hover {
+    background: color.adjust($primary, $lightness: -5%);
+  }
+}
+
+.errorText {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
+  gap: 4px;
+  margin-bottom: 16px;
+  
+  font-style: normal;
+  font-weight: 400;
+  font-size: $font-size-xs;
+  line-height: 16px;
+  color: #C11515;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

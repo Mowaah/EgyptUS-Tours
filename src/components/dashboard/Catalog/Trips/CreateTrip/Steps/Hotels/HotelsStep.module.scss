@@ -218,3 +218,20 @@
     grid-template-columns: 1fr;
   }
 }
+
+.errorText {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
+  gap: 4px;
+  margin-top: 12px;
+  
+  font-style: normal;
+  font-weight: 400;
+  font-size: $font-size-xs;
+  line-height: 16px;
+  color: #C11515;
+}
+
+

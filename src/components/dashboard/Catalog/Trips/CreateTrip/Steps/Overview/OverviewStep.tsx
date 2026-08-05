@@ -97,8 +97,17 @@ export function OverviewStep() {
     };
   }, []);
 
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const hasError = Boolean(errors.tripName || errors.category || errors.destinations || errors.duration || errors.tourTypes);
+
+  React.useEffect(() => {
+    if (hasError && containerRef.current) {
+      containerRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [hasError]);
+
   return (
-    <div className={styles.columnsContainer}>
+    <div className={styles.columnsContainer} ref={containerRef}>
       {/* Left Column: Basic Information */}
       <div className={styles.leftColumn}>
         <FormSection title="Basic Information" iconSrc="/images/dashboard/catalog/trips/overview.svg">

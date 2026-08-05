@@ -32,7 +32,7 @@ export function useMarketingPanel<T>({
   const fetchPosts = useCallback(async () => {
     setLoading(true);
     try {
-      const params: any = { page_size: 100 };
+      const params: any = { limit: 1000, page_size: 1000 };
       if (searchQuery) params.search = searchQuery;
       if (appliedCategoryFilter && appliedCategoryFilter !== "All") params.category = appliedCategoryFilter.toLowerCase().replace(/\s+/g, '-');
       if (appliedStatusFilter && appliedStatusFilter !== "All") params.status = appliedStatusFilter.toLowerCase();

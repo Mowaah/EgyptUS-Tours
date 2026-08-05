@@ -127,7 +127,7 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
         data={filteredLeads}
         columns={inquiriesColumns}
         getRowId={(row) => row.id}
-        selectable
+        
         rowActions={(row) => leadRowActions((action, r) => {
           if (action === "Edit" && onEditLead) {
             onEditLead(r);

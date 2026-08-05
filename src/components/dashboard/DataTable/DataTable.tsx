@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import TablePagination from "../shared/TablePagination/TablePagination";
@@ -15,7 +15,6 @@ interface ActionsCellProps<T> {
   openRowId: string | null;
   setOpenRowId: (id: string | null) => void;
   actions: DataTableRowAction<T>[];
-  isLastRow: boolean;
 }
 
 function ActionsCell<T>({
@@ -24,7 +23,6 @@ function ActionsCell<T>({
   openRowId,
   setOpenRowId,
   actions,
-  isLastRow,
 }: ActionsCellProps<T>) {
   const [openUpward, setOpenUpward] = useState(false);
   const [coords, setCoords] = useState({ top: 0, right: 0 });
@@ -127,6 +125,8 @@ export default function DataTable<T>({
   getRowId,
   selectable = false,
   selectionType = "checkbox",
+  selectedRowIds,
+  onSelectionChange,
   rowActions,
   pageSizeOptions = DEFAULT_PAGE_SIZES,
   defaultPageSize = pageSizeOptions[0] ?? 5,
@@ -134,8 +134,11 @@ export default function DataTable<T>({
 }: DataTableProps<T>) {
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(defaultPageSize);
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [internalSelectedRows, setInternalSelectedRows] = useState<string[]>([]);
   const [openRowId, setOpenRowId] = useState<string | null>(null);
+
+  const isControlled = selectedRowIds !== undefined;
+  const selectedRows = isControlled ? selectedRowIds : internalSelectedRows;
 
   useEffect(() => {
     if (openRowId === null) return;
@@ -169,9 +172,17 @@ export default function DataTable<T>({
   const hasActions = Boolean(rowActions);
 
   const toggleRow = (id: string) => {
-    setSelectedRows((current) =>
-      current.includes(id) ? current.filter((rowId) => rowId !== id) : [...current, id]
-    );
+    const isCurrentlySelected = selectedRows.includes(id);
+    
+    if (onSelectionChange) {
+      onSelectionChange(id, !isCurrentlySelected);
+    }
+    
+    if (!isControlled) {
+      setInternalSelectedRows((current) =>
+        current.includes(id) ? current.filter((rowId) => rowId !== id) : [...current, id]
+      );
+    }
   };
 
   const changeRowsPerPage = (value: number) => {
@@ -201,12 +212,11 @@ export default function DataTable<T>({
             const rowId = getRowId(row);
             const isSelected = selectedRows.includes(rowId);
             const actions = rowActions?.(row);
-            const isLastRow = index === visibleRows.length - 1;
 
             return (
               <tr
                 key={rowId}
-                className={isSelected ? styles.selectedRow : undefined}
+                className={isSelected && selectionType === "checkbox" ? styles.selectedRow : undefined}
               >
                 {selectable ? (
                   <td>
@@ -231,7 +241,6 @@ export default function DataTable<T>({
                     openRowId={openRowId}
                     setOpenRowId={setOpenRowId}
                     actions={actions}
-                    isLastRow={isLastRow}
                   />
                 ) : null}
               </tr>
@@ -244,7 +253,6 @@ export default function DataTable<T>({
         page={page}
         pageCount={pageCount}
         rowsPerPage={rowsPerPage}
-        selectedCount={selectedRows.length}
         pageSizeOptions={pageSizeOptions}
         onChangePage={setPage}
         onChangeRowsPerPage={changeRowsPerPage}

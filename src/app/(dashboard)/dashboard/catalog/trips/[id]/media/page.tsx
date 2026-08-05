@@ -8,7 +8,6 @@ import { useTripDetailContext } from "../layout";
 interface MediaItemProps {
   title: string;
   imageSrc: string;
-  attachmentInfo: string;
   imgTitleLabel: string;
   imgTitleValue: string;
   imgAltLabel: string;
@@ -32,7 +31,6 @@ interface TripMediaItem {
 function MediaCard({
   title,
   imageSrc,
-  attachmentInfo,
   imgTitleLabel,
   imgTitleValue,
   imgAltLabel,
@@ -48,7 +46,6 @@ function MediaCard({
       </div>
 
       <div className={styles.attachmentSection}>
-        <span className={styles.attachmentLabel}>{attachmentInfo}</span>
         <div className={styles.imageWrapper}>
           {imageSrc ? (
             <Image 
@@ -110,10 +107,9 @@ export default function TripMediaPage() {
 
       <div className={styles.mediaGrid}>
         {heroImageUrl && (
-          <MediaCard
+        <MediaCard
             title="Hero / Banner Image"
             imageSrc={heroImageUrl}
-            attachmentInfo="Main Banner Image"
             imgTitleLabel="Caption / Title"
             imgTitleValue={trip.title}
             imgAltLabel="Image Type"
@@ -129,7 +125,6 @@ export default function TripMediaPage() {
               key={item.id || idx}
               title={kindLabel}
               imageSrc={item.image_url || ""}
-              attachmentInfo={`Media Item #${item.id}`}
               imgTitleLabel="Image Title"
               imgTitleValue={translated.title || item.caption || "No title"}
               imgAltLabel="Image Alt"

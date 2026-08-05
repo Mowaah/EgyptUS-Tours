@@ -14,7 +14,7 @@ import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyStat
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import { useCatalogTrips, useCatalogFilters } from "@/hooks/useCatalogTrips";
-import { archiveCatalogTrip, deleteCatalogTrip } from "@/services/admin/adminCatalogTripsService";
+import { archiveCatalogTrip, deleteCatalogTrip, updateCatalogTrip } from "@/services/admin/adminCatalogTripsService";
 
 const staticFilterOptions = {
   duration: ["All", "1-3 Days", "4-7 Days", "8-14 Days", "15+ Days"],
@@ -50,7 +50,7 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
   const [banner, setBanner] = useState<{ show: boolean; message: string; variant: "success" | "warning" }>({ show: false, message: "", variant: "success" });
 
   const queryParams = useMemo(() => {
-    const params: any = {};
+    const params: any = { limit: 1000, page_size: 1000 };
     if (searchQuery) params.search = searchQuery;
     if (appliedFilters.status !== "All") params.status = appliedFilters.status.toLowerCase();
     
@@ -126,6 +126,16 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
     }
   };
 
+  const handleSelectionChange = async (rowId: string, isSelected: boolean) => {
+    try {
+      await updateCatalogTrip(rowId, { is_featured: isSelected });
+      refetch();
+    } catch (err) {
+      console.error("Failed to update featured status:", err);
+      setBanner({ show: true, message: "Failed to update featured status.", variant: "warning" });
+    }
+  };
+
   if (!tripsLoading && Object.keys(queryParams).length > 0 && tripsData.length === 0) {
     return <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />;
   }
@@ -165,6 +175,8 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
         getRowId={(row) => String(row.id)}
         selectable
         selectionType="star"
+        selectedRowIds={tripsData.filter((t: any) => t.is_featured).map((t: any) => String(t.id))}
+        onSelectionChange={handleSelectionChange}
         rowActions={(row) =>
           catalogTripsRowActions((action, r) => {
             if (action === "View") {

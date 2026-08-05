@@ -57,7 +57,7 @@ export default function BookingHistoryPanel() {
         data={data}
         columns={bookingHistoryColumns}
         getRowId={(row) => row.id}
-        selectable
+        
       />
     </TablePanel>
   );

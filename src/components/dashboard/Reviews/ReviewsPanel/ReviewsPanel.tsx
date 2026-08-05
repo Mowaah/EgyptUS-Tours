@@ -254,7 +254,7 @@ export function ReviewsPanel({
         data={data}
         columns={baseColumns}
         getRowId={(row) => row.id}
-        selectable
+        
         rowActions={type === "admin" ? adminTestimonialRowActions(handleAction) as any : reviewRowActions(handleAction) as any}
         defaultPageSize={5}
       />

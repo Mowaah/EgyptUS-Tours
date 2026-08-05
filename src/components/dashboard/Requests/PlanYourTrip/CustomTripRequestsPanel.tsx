@@ -104,7 +104,7 @@ export default function CustomTripRequestsPanel({ searchQuery }: CustomTripReque
           data={data}
           columns={planYourTripColumns}
           getRowId={(row) => row.id.toString()}
-          selectable
+          
         />
       )}
     </TablePanel>

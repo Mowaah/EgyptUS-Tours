@@ -105,7 +105,7 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
           data={data}
           columns={b2bColumns}
           getRowId={(row) => row.id.toString()}
-          selectable
+          
         />
       )}
     </TablePanel>

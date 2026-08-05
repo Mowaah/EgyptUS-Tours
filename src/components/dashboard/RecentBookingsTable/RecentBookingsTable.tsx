@@ -26,7 +26,7 @@ export default function RecentBookingsTable() {
       data={rows}
       columns={bookingColumns}
       getRowId={(row) => row.id}
-      selectable
+      
       rowActions={bookingRowActions}
     />
   );

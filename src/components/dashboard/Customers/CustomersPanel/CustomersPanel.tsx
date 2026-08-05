@@ -132,7 +132,7 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
         data={filteredCustomers}
         columns={customersColumns}
         getRowId={(row) => row.id}
-        selectable
+        
         rowActions={customerRowActions(handleAction)}
         defaultPageSize={16}
       />

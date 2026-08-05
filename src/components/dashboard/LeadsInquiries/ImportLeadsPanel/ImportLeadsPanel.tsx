@@ -118,7 +118,7 @@ export function ImportLeadsPanel({
         data={filteredLeads}
         columns={importLeadsColumns}
         getRowId={(row) => row.batchId}
-        selectable
+        
         rowActions={(row) => importRowActions({
           onView: () => setViewMembersModalOpen(true),
           onReassign: () => setReassignModalOpen(true),

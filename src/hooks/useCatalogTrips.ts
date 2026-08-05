@@ -11,9 +11,28 @@ export function useCatalogTrips(filters: any) {
   const fetchTrips = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getCatalogTrips(filters);
-      setData(res.results || []);
-      setTotalCount(res.count || 0);
+      let page = 1;
+      const pageSize = 10;
+      let allResults: any[] = [];
+      let total = 0;
+      let hasMore = true;
+
+      while (hasMore) {
+        const res = await getCatalogTrips({ ...filters, page_size: pageSize, page });
+        if (page === 1) total = res.count || 0;
+        
+        const results = res.results || [];
+        allResults = [...allResults, ...results];
+        
+        if (results.length < pageSize || !res.next) {
+          hasMore = false;
+        } else {
+          page++;
+        }
+      }
+      
+      setData(allResults);
+      setTotalCount(total);
     } catch (err) {
       console.error("Failed to fetch catalog trips:", err);
       setData([]);
@@ -72,12 +91,32 @@ export function useCatalogFilters() {
   const fetchFilters = useCallback(async () => {
     setLoading(true);
     try {
-      const [catRes, destRes] = await Promise.all([
-        getCategories(),
-        getDestinations()
-      ]);
-      setCategories(catRes.results || catRes || []);
-      setDestinations(destRes.results || destRes || []);
+      let catResults: any[] = [];
+      let destResults: any[] = [];
+      let page = 1;
+      let hasMoreCat = true;
+      let hasMoreDest = true;
+
+      while (hasMoreCat || hasMoreDest) {
+        const [catRes, destRes] = await Promise.all([
+          hasMoreCat ? getCategories({ page_size: 100, page }) : Promise.resolve({ results: [], next: null }),
+          hasMoreDest ? getDestinations({ page_size: 100, page }) : Promise.resolve({ results: [], next: null })
+        ]);
+
+        const cats = catRes.results || catRes || [];
+        const dests = destRes.results || destRes || [];
+        
+        catResults = [...catResults, ...(Array.isArray(cats) ? cats : [])];
+        destResults = [...destResults, ...(Array.isArray(dests) ? dests : [])];
+
+        if (!catRes.next || (Array.isArray(cats) && cats.length < 10)) hasMoreCat = false;
+        if (!destRes.next || (Array.isArray(dests) && dests.length < 10)) hasMoreDest = false;
+        
+        page++;
+      }
+
+      setCategories(catResults);
+      setDestinations(destResults);
     } catch (err) {
       console.error("Failed to fetch filters:", err);
     } finally {

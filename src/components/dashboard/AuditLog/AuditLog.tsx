@@ -231,7 +231,7 @@ export default function AuditLog() {
           data={filteredLogs}
           columns={auditLogColumns}
           getRowId={(row) => row.uid}
-          selectable
+          
           rowActions={rowActions}
           defaultPageSize={5}
         />

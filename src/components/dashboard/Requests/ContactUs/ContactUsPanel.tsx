@@ -90,7 +90,7 @@ export default function ContactUsPanel({ searchQuery = "" }: ContactUsPanelProps
           data={data}
           columns={contactUsColumns}
           getRowId={(row) => row.id}
-          selectable
+          
         />
       ) : (
         <div style={{ padding: "2rem", textAlign: "center", color: "#666" }}>

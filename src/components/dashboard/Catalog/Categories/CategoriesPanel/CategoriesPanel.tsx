@@ -38,13 +38,26 @@ export default function CategoriesPanel({ onEditCategory, onDeleteCategory, refr
     async function fetchData() {
       try {
         setLoading(true);
-        // The public endpoint supports pagination. We fetch all for simplicity for now.
-        const res = await getCategories({ limit: 1000 }) as CategoryApiResponse;
-        const rawData: CategoryApiItem[] = Array.isArray(res?.data)
-          ? res.data
-          : res?.data?.results ?? res?.results ?? [];
+        let allRawData: CategoryApiItem[] = [];
+        let page = 1;
+        let hasMore = true;
+
+        while (hasMore) {
+          const res = await getCategories({ page_size: 100, page }) as CategoryApiResponse;
+          const rawData: CategoryApiItem[] = Array.isArray(res?.data)
+            ? res.data
+            : res?.data?.results ?? res?.results ?? [];
+          
+          allRawData = [...allRawData, ...rawData];
+
+          if (!res?.next || (Array.isArray(rawData) && rawData.length < 10)) {
+            hasMore = false;
+          } else {
+            page++;
+          }
+        }
         
-        const mapped = rawData.map((c) => ({
+        const mapped = allRawData.map((c) => ({
           id: String(c.id || c.slug || ""),
           name: c.name || c.title || "",
         }));

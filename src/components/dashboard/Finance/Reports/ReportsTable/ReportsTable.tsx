@@ -29,7 +29,7 @@ export default function ReportsTable({ data: customData }: ReportsTableProps = {
         columns={reportsColumns}
         data={tableData}
         getRowId={(row: any) => row.destination_id ? `dest-${row.destination_id}` : String(row.id || row.destination || row.destination_name || "row")}
-        selectable={true}
+        
       />
     </TablePanel>
   );

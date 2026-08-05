@@ -87,7 +87,7 @@ export default function AdminUsersPanel({
         data={filteredUsers}
         columns={adminUsersColumns}
         getRowId={(row) => row.id}
-        selectable
+        
         rowActions={rowActions}
         defaultPageSize={5}
       />

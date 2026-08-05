@@ -25,7 +25,7 @@ export function usePaymentsPanel({ searchQuery }: UsePaymentsPanelOptions) {
   const fetchPayments = useCallback(async () => {
     setLoading(true);
     try {
-      const params: any = { page_size: 100 };
+      const params: any = { limit: 1000, page_size: 1000 };
       
       if (searchQuery) params.search = searchQuery;
       

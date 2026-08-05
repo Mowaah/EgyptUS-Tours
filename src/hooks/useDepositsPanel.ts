@@ -16,7 +16,7 @@ export function useDepositsPanel({ searchQuery }: { searchQuery?: string } = {})
   const fetchDeposits = useCallback(async () => {
     setLoading(true);
     try {
-      const apiFilters: any = {};
+      const apiFilters: any = { limit: 1000, page_size: 1000 };
       if (appliedFilters.service && appliedFilters.service !== "All") {
         const s = appliedFilters.service.toLowerCase();
         if (s === "trips") apiFilters.service = "trip";

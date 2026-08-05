@@ -87,7 +87,7 @@ export default function MiceBookingsDetail() {
           data={tableData}
           columns={columns}
           getRowId={(row) => row.id}
-          selectable={true}
+          
           defaultPageSize={4}
           pageSizeOptions={[4, 10, 15]}
         />

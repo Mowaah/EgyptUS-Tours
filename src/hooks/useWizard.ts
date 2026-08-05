@@ -62,11 +62,21 @@ export function useWizard<TFormValues extends Record<string, any>>({
   };
 
   const handleStepClick = async (targetStep: number) => {
-    // Usually, we only allow jumping back.
-    // If they click a future step, we validate the current step first, but it can get complex.
-    // For now, only allow jumping to previous steps to prevent skipping validation, unless we are in edit mode.
-    if (isEdit || targetStep < currentStep) {
+    if (targetStep < currentStep) {
       setCurrentStep(targetStep);
+      return;
+    }
+
+    if (targetStep > currentStep) {
+      const currentFields = steps[currentStep].fieldsToValidate;
+      let isValid = true;
+      if (currentFields && currentFields.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        isValid = await methods.trigger(currentFields as any);
+      }
+      if (isValid) {
+        setCurrentStep(targetStep);
+      }
     }
   };
 

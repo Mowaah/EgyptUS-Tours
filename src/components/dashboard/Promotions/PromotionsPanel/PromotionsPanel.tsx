@@ -207,7 +207,7 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
         data={filteredPromotions}
         columns={promotionsColumns}
         getRowId={(row) => row.id}
-        selectable
+        
         rowActions={rowActions}
         defaultPageSize={17}
       />

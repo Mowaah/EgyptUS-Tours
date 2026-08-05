@@ -111,7 +111,7 @@ export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPane
         data={data}
         columns={miceColumns}
         getRowId={(row) => row.id}
-        selectable
+        
       />
     </TablePanel>
   );

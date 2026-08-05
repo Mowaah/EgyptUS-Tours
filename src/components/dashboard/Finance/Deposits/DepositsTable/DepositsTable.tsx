@@ -86,7 +86,7 @@ export default function DepositsTable({ searchQuery = "", onClearSearch }: Depos
           data={data}
           columns={depositsColumns}
           rowActions={depositRowActions(handleAction)}
-          selectable={true}
+          
           getRowId={(row) => `${row.booking_type}-${row.booking_id}`}
         />
       )}

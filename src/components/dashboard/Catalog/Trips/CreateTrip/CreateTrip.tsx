@@ -35,13 +35,11 @@ const STEPS: WizardStepConfig[] = [
   { label: "Itinerary", iconSrc: "/images/dashboard/catalog/trips/itinerary.svg", fieldsToValidate: ["itinerary"] },
   { label: "Dates Availability", iconSrc: "/images/dashboard/catalog/trips/dates.svg", fieldsToValidate: ["datesAvailability"] },
   { label: "Hotels", iconSrc: "/images/dashboard/catalog/trips/hotels.svg", fieldsToValidate: ["hotels"] },
-  { label: "Media", iconSrc: "/images/dashboard/catalog/trips/media.svg", fieldsToValidate: ["photos", "brochureFile"] },
+  { label: "Media", iconSrc: "/images/dashboard/catalog/trips/media.svg", fieldsToValidate: ["photos"] },
   { label: "SEO", iconSrc: "/images/dashboard/catalog/trips/seo.svg", fieldsToValidate: ["metaTitle", "metaDescription", "metaKeywords", "slug"] },
 ];
 
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const REQUIRED_GALLERY_IMAGES = 5;
-const SUPPORTED_IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp"]);
 
 const EMPTY_VALUES: CreateTripValues = {
   tripName: "",
@@ -61,7 +59,14 @@ const EMPTY_VALUES: CreateTripValues = {
   },
   itinerary: [{ title: "", subtitle: "", description: "", highlights: [], image: undefined }],
   hotels: [],
-  photos: [],
+  photos: [
+    { file: undefined, title: "", alt: "" }, // index 0 = hero
+    { file: undefined, title: "", alt: "" }, // index 1 = gallery 1
+    { file: undefined, title: "", alt: "" }, // index 2 = gallery 2
+    { file: undefined, title: "", alt: "" }, // index 3 = gallery 3
+    { file: undefined, title: "", alt: "" }, // index 4 = gallery 4
+    { file: undefined, title: "", alt: "" }, // index 5 = gallery 5
+  ],
   datesAvailability: { enabled: false, dates: [] },
   metaTitle: "",
   metaDescription: "",
@@ -166,39 +171,19 @@ function keywords(value: string | undefined): string[] {
     .map((keyword) => keyword.trim())
     .filter(Boolean);
 }
-
-function fileLabel(file: File, fallback: string): string {
-  return file.name || fallback;
+const MIN_PHOTOS = 6; // 1 hero + 5 gallery
+function padPhotos(rows: any[]): any[] {
+  const result = [...rows];
+  while (result.length < MIN_PHOTOS) {
+    result.push({ file: undefined, title: "", alt: "" });
+  }
+  return result;
 }
 
-function validateImageFile(file: File, label: string): string[] {
-  const errors: string[] = [];
-
-  if (!SUPPORTED_IMAGE_TYPES.has(file.type)) {
-    errors.push(`${label}: unsupported image type. Use PNG, JPEG, or WEBP.`);
-  }
-  if (file.size > MAX_IMAGE_BYTES) {
-    errors.push(`${label}: image is too large. Maximum size is 5 MB.`);
-  }
-
-  return errors;
-}
 
 function validateMediaBeforeSave(data: CreateTripValues, intent: WizardSubmitIntent): string[] {
   const errors: string[] = [];
   const photos = data.photos || [];
-
-  photos.forEach((photo: any, index) => {
-    if (isFile(photo?.file)) {
-      errors.push(...validateImageFile(photo.file, fileLabel(photo.file, index === 0 ? "Hero image" : `Gallery image ${index}`)));
-    }
-  });
-
-  (data.itinerary || []).forEach((day, index) => {
-    if (isFile(day?.image)) {
-      errors.push(...validateImageFile(day.image, fileLabel(day.image, `Day ${index + 1} image`)));
-    }
-  });
 
   if (intent === "publish") {
     const hasHero = !!(photos[0] as any)?.file;
@@ -290,8 +275,8 @@ function mapTripToFormValues(trip: any): CreateTripValues {
         spots: asText(slot?.capacity_total || slot?.spots || ""),
       })),
     },
-    hotels: asList(trip?.hotel_links).map((link) => asText(link?.hotel?.id || link?.hotel_id)).filter(Boolean),
-    photos: photoRows,
+    hotels: asList(trip?.hotel_links).map((link: any) => asText(link?.hotel?.hotel_id || link?.hotel?.id || link?.hotel_id)).filter(Boolean),
+    photos: padPhotos(photoRows),
     metaTitle: asText(translations.meta_title),
     metaDescription: asText(translations.meta_description),
     metaKeywords: asList(translations.meta_keywords).join(", "),
@@ -299,7 +284,7 @@ function mapTripToFormValues(trip: any): CreateTripValues {
   };
 }
 
-async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent) {
+async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, isEdit: boolean = false) {
   const [categoriesPayload, destinationsPayload] = await Promise.all([
     getCategories({ page_size: 100 }),
     getDestinations({ page_size: 100 }),
@@ -359,11 +344,15 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent) 
     ...(data.pricing?.groupTour?.seasons || []).map((season) => ({ ...season, tourType: "group" })),
   ].filter((season) => season.dateRange || season.singleRoom || season.doubleRoom || season.tripleRoom);
 
+  const userSlug = data.slug ? slugify(data.slug) : "";
+  const baseSlug = slugify(data.tripName) || "trip";
+  const slug = userSlug || (isEdit ? baseSlug : `${baseSlug}-${Math.random().toString(36).substring(2, 6)}`);
+
   return {
     translations: {
       en: {
         title: data.tripName,
-        slug: data.slug || slugify(data.tripName),
+        slug,
         description: data.description || "",
         short_description: data.culturalValue || "",
         overview: {
@@ -386,7 +375,7 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent) 
     group_price: money(data.pricing?.groupTour?.basePrice) || null,
     currency_code: "USD",
     availability_enabled: !!data.datesAvailability?.enabled,
-    force_draft: intent !== "publish",
+    force_draft: intent !== "publish" && !isEdit,
     inclusions: (data.inclusions || []).filter(Boolean),
     exclusions: (data.exclusions || []).filter(Boolean),
     season_pricings: seasonRows.map((season, index) => {
@@ -531,7 +520,7 @@ export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirty
         throw new Error(clientValidationErrors.join("\n"));
       }
 
-      const payload = await buildPayload(data, meta.intent);
+      const payload = await buildPayload(data, meta.intent, !!(tripId || savedTripId));
       const response = tripId
         ? await updateCatalogTrip(tripId, payload)
         : await createCatalogTrip(payload);
@@ -635,7 +624,11 @@ export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirty
           hideSecondaryButton={!tripId}
           onPrimaryClick={() => {
             setIsPublishedModalOpen(false);
-            router.push(savedTripId ? `/dashboard/catalog/trips/${savedTripId}` : "/dashboard/catalog/trips?created=true");
+            if (savedTripId) {
+              window.location.href = `/dashboard/catalog/trips/${savedTripId}`;
+            } else {
+              router.push("/dashboard/catalog/trips?created=true");
+            }
           }}
           onClose={() => {
             setIsPublishedModalOpen(false);

@@ -13,8 +13,35 @@ import { useCatalogTripDetail } from "@/hooks/useCatalogTrips";
 import {
   archiveCatalogTrip,
   deleteCatalogTrip,
+  publishCatalogTrip,
   unpublishCatalogTrip,
 } from "@/services/admin/adminCatalogTripsService";
+
+const BLOCKER_MESSAGES: Record<string, string> = {
+  "catalog.trip.missing_title": "A title is required",
+  "catalog.trip.missing_slug": "A URL slug (SEO) is required",
+  "catalog.trip.missing_tour_type": "At least one tour type (private or group) must be selected",
+  "catalog.trip.missing_private_price": "A private tour base price is required",
+  "catalog.trip.missing_group_price": "A group tour base price is required",
+  "catalog.trip.missing_private_season_pricing": "At least one private season pricing entry is required",
+  "catalog.trip.missing_group_season_pricing": "At least one group season pricing entry is required",
+  "catalog.trip.incomplete_private_room_tiers": "Private pricing must include single, double, and triple room tiers",
+  "catalog.trip.incomplete_group_room_tiers": "Group pricing must include single, double, and triple room tiers",
+  "catalog.trip.missing_hotels": "At least one hotel must be linked",
+  "catalog.trip.missing_hero_image": "A hero image is required",
+  "catalog.trip.insufficient_gallery_images": "At least 5 gallery images are required",
+  "catalog.trip.archived": "Archived trips cannot be published directly — restore to draft first",
+};
+
+function formatBlockers(err: unknown): string {
+  const data = (err as { response?: { data?: { message?: string; detail?: string } } })?.response?.data;
+  const message = data?.message || data?.detail || "";
+  const hasBlockers = Object.keys(BLOCKER_MESSAGES).some((code) => message.includes(code));
+  if (hasBlockers) {
+    return "Some required fields are missing. Please fill in all required information before publishing.";
+  }
+  return message || "Failed to publish the trip. Please try again.";
+}
 
 // The dashboard trip detail payload is still backend-owned and wider than the shared public trip type.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,6 +95,7 @@ export default function TripLayout({
   }
   
   const isArchived = trip?.status === "archived";
+  const isDraft = trip?.status === "draft";
 
   const showBanner = (message: string, variant: "success" | "warning" = "success") => {
     setBannerVariant(variant);
@@ -94,7 +122,7 @@ export default function TripLayout({
             title={trip ? `${trip.trip_code || trip.id} - ${trip.title}` : "Loading..."}
             subtitleElements={trip?.short_description ? [trip.short_description] : []}
             pillLabel={isArchived ? "Archived" : (trip?.status ? trip.status.charAt(0).toUpperCase() + trip.status.slice(1) : "")}
-            pillVariant={isArchived ? "orange" : "green"}
+            pillVariant={isArchived ? "orange" : isDraft ? "gray" : "green"}
             customPills={
               trip?.is_featured ? (
                 <span className={styles.badgeFeatured}>
@@ -113,28 +141,46 @@ export default function TripLayout({
               onClick: () => router.push(`/dashboard/catalog/trips/${id}/edit`),
             }}
             primaryAction={
-              isArchived
+              isDraft
                 ? {
-                    label: "Publish",
+                    label: isActionPending ? "Publishing..." : "Publish",
                     icon: "/images/send.svg",
                     onClick: async () => {
                       if (!trip || isActionPending) return;
                       setIsActionPending(true);
                       try {
-                        await unpublishCatalogTrip(trip.id);
-                        showBanner("The trip has been restored to draft successfully");
+                        await publishCatalogTrip(trip.id);
+                        showBanner("Trip published successfully!");
                         refetch();
                       } catch (err) {
-                        showBanner(getErrorMessage(err, "Failed to restore the trip. Please try again."), "warning");
+                        showBanner(formatBlockers(err), "warning");
                       } finally {
                         setIsActionPending(false);
                       }
                     },
                   }
-                : undefined
+                : isArchived
+                  ? {
+                      label: isActionPending ? "Restoring..." : "Restore to Draft",
+                      icon: "/images/send.svg",
+                      onClick: async () => {
+                        if (!trip || isActionPending) return;
+                        setIsActionPending(true);
+                        try {
+                          await unpublishCatalogTrip(trip.id);
+                          showBanner("The trip has been restored to draft successfully");
+                          refetch();
+                        } catch (err) {
+                          showBanner(getErrorMessage(err, "Failed to restore the trip. Please try again."), "warning");
+                        } finally {
+                          setIsActionPending(false);
+                        }
+                      },
+                    }
+                  : undefined
             }
             archiveAction={
-              !isArchived
+              !isArchived && !isDraft
                 ? {
                   label: "Archive",
                   icon: (
@@ -149,7 +195,7 @@ export default function TripLayout({
               : undefined
           }
           dangerAction={
-            !isArchived
+            !isArchived && !isDraft
               ? {
                   label: "Delete",
                   icon: "/images/dashboard/delete.svg",

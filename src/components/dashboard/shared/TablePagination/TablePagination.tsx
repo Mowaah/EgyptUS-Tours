@@ -6,7 +6,6 @@ interface TablePaginationProps {
   page: number;
   pageCount: number;
   rowsPerPage: number;
-  selectedCount?: number;
   pageSizeOptions?: number[];
   className?: string;
   onChangePage: (page: number) => void;
@@ -19,7 +18,6 @@ export default function TablePagination({
   page,
   pageCount,
   rowsPerPage,
-  selectedCount = 0,
   pageSizeOptions = DEFAULT_PAGE_SIZES,
   className,
   onChangePage,
@@ -54,9 +52,6 @@ export default function TablePagination({
           />
         </div>
         <span className={styles.showLabel}>Show</span>
-        {selectedCount > 0 ? (
-          <span className={styles.selectionCount}>{selectedCount} selected</span>
-        ) : null}
       </div>
 
       <div className={styles.pagination}>

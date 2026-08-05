@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
+import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import styles from "./FormFields.module.scss";
 
 interface UploadDropzoneProps {
@@ -11,6 +12,7 @@ interface UploadDropzoneProps {
   className?: string;
   title?: string;
   subtitle?: string;
+  maxSizeBytes?: number;
 }
 
 function formatBytes(bytes: number, decimals = 2) {
@@ -28,10 +30,12 @@ export function UploadDropzone({
   accept = "image/png, image/jpeg, image/gif", 
   className = "",
   title = "Click to upload an image or drag & drop",
-  subtitle = "PNG, JPG, GIF up to 10MB"
+  subtitle = "PNG, JPG, GIF up to 10MB",
+  maxSizeBytes,
 }: UploadDropzoneProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [progress, setProgress] = React.useState(100);
+  const [sizeError, setSizeError] = useState<string | null>(null);
 
   // Fake upload progress simulation
   React.useEffect(() => {
@@ -55,9 +59,17 @@ export function UploadDropzone({
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0] && onFileSelect) {
-      onFileSelect(e.target.files[0]);
+    const file = e.target.files?.[0];
+    // Reset the input so the same file can be re-selected after removal
+    e.target.value = "";
+    if (!file || !onFileSelect) return;
+    if (maxSizeBytes !== undefined && file.size > maxSizeBytes) {
+      const limitMB = Math.round(maxSizeBytes / (1024 * 1024));
+      setSizeError(`"${file.name}" is too large. Maximum size is ${limitMB} MB.`);
+      return;
     }
+    setSizeError(null);
+    onFileSelect(file);
   };
 
   return (
@@ -83,9 +95,15 @@ export function UploadDropzone({
         <div className={styles.fileItem}>
           <div className={styles.fileIconWrapper}>
             {typeof value === 'string' ? (
-              <Image src={value} alt="Preview" width={40} height={40} style={{ objectFit: 'cover', borderRadius: '4px' }} unoptimized />
-            ) : (
+              value.endsWith('.pdf') ? (
+                <Image src="/images/dashboard/file/pdf.svg" alt="PDF" width={40} height={40} />
+              ) : (
+                <Image src="/images/dashboard/file/png.svg" alt="PNG" width={40} height={40} />
+              )
+            ) : value.type === "application/pdf" || value.name.endsWith('.pdf') ? (
               <Image src="/images/dashboard/file/pdf.svg" alt="PDF" width={40} height={40} />
+            ) : (
+              <Image src="/images/dashboard/file/png.svg" alt="PNG" width={40} height={40} />
             )}
           </div>
           
@@ -137,6 +155,20 @@ export function UploadDropzone({
             <Image src="/images/dashboard/delete.svg" alt="Delete" width={20} height={20} />
           </button>
         </div>
+      )}
+      {sizeError && (
+        <SuccessModal
+          variant="error"
+          title="Image Too Large"
+          message={sizeError}
+          hideSecondaryButton
+          primaryButtonText="Try again"
+          onClose={() => setSizeError(null)}
+          onPrimaryClick={() => {
+            setSizeError(null);
+            inputRef.current?.click();
+          }}
+        />
       )}
     </div>
   );

@@ -51,7 +51,7 @@ export default function CustomTripRequestsPanel() {
         data={mockCustomTrips}
         columns={customTripsColumns}
         getRowId={(row) => row.id}
-        selectable
+        
       />
     </TablePanel>
   );

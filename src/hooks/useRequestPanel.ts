@@ -25,7 +25,8 @@ export function useRequestPanel<T>({
     setLoading(true);
     try {
       const params = buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter);
-      params.page_size = 100;
+      params.page_size = 1000;
+      params.limit = 1000;
       
       const results = await fetchRequestsApi(params);
       setData(results);

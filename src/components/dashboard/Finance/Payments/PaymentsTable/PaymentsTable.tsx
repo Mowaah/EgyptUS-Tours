@@ -99,7 +99,7 @@ export default function PaymentsTable({ searchQuery = "", onClearSearch }: Payme
         data={data}
         columns={paymentsColumns as any}
         getRowId={(row) => row.id}
-        selectable
+        
         rowActions={paymentRowActions(handleAction) as any}
       />
     </TablePanel>
