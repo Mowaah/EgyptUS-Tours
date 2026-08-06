@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import Image from "next/image";
+import useSWR from "swr";
 import { TablePagination } from "@/components/dashboard/shared";
 import DestinationCard, { Destination } from "../DestinationCard/DestinationCard";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
@@ -19,51 +20,30 @@ export default function DestinationsPanel({ onEditDestination, onDeleteDestinati
   const [lang, setLang] = useState<Language>("English");
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(12);
-  const [destinations, setDestinations] = useState<Destination[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    setLoading(true);
-    const fetchAllDestinations = async () => {
-      let allResults: any[] = [];
-      let currentPage = 1;
-      let hasMore = true;
+  const langCode = lang === "English" ? "en" : "ar";
 
-      while (hasMore) {
-        try {
-          const res: any = await getDestinations({ page_size: 100, page: currentPage });
-          const results: any[] = res?.results ?? res?.data?.results ?? (Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : []);
-          
-          const mapped: Destination[] = results.map((d: any) => ({
-            id: String(d.id),
-            name: d.name ?? d.title ?? "",
-            imageSrc: d.image || d.image_url || d.photo ? (d.image || d.image_url || d.photo).startsWith("http") ? (d.image || d.image_url || d.photo) : `http://127.0.0.1:8000${(d.image || d.image_url || d.photo).startsWith('/') ? '' : '/'}${d.image || d.image_url || d.photo}` : "/images/dashboard/catalog/destinations/egypt.jpg",
-          }));
-          
-          allResults = [...allResults, ...mapped];
+  const { data, isLoading: loading } = useSWR(
+    ["adminCatalogDestinations", page, rowsPerPage, langCode, refreshTrigger],
+    () => getDestinations({ page, page_size: rowsPerPage, lang: langCode }),
+    { keepPreviousData: true }
+  );
 
-          if (!res?.next || results.length < 10) {
-            hasMore = false;
-          } else {
-            currentPage++;
-          }
-        } catch (err) {
-          console.error("Failed to fetch destinations:", err);
-          hasMore = false;
-        }
-      }
-      
-      setDestinations(allResults);
-      setPage(1);
-      setLoading(false);
-    };
+  const destinations: Destination[] = useMemo(() => {
+    const results: any[] = data?.results ?? data?.data?.results ?? (Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []);
+    
+    return results.map((d: any) => ({
+      id: String(d.id),
+      name: d.name ?? d.title ?? "",
+      imageSrc: d.image || d.image_url || d.photo ? (d.image || d.image_url || d.photo).startsWith("http") ? (d.image || d.image_url || d.photo) : `http://127.0.0.1:8000${(d.image || d.image_url || d.photo).startsWith('/') ? '' : '/'}${d.image || d.image_url || d.photo}` : "/images/dashboard/catalog/destinations/egypt.jpg",
+    }));
+  }, [data]);
 
-    fetchAllDestinations();
-  }, [refreshTrigger]);
+  const totalCount = data?.count || 0;
 
-  const pageCount = Math.max(1, Math.ceil(destinations.length / rowsPerPage));
+  const pageCount = Math.max(1, Math.ceil(totalCount / rowsPerPage));
   const safePage = Math.min(page, pageCount);
-  const visibleDestinations = destinations.slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage);
+  const visibleDestinations = destinations;
 
   const handleEdit = (id: string) => {
     const dest = destinations.find((d) => d.id === id);

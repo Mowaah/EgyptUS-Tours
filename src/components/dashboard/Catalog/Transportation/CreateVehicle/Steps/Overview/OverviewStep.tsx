@@ -3,6 +3,7 @@ import { useFormContext, Controller } from "react-hook-form";
 import { FormSection, FormSpec } from "@/components/dashboard/FormFields";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
+import { useVehicleCategories } from "@/hooks/useCatalogVehicles";
 import { CreateVehicleValues } from "../../CreateVehicleSchema";
 import dashboardStyles from "../../CreateVehicle.module.scss";
 import styles from "./OverviewStep.module.scss";
@@ -12,6 +13,8 @@ export function OverviewStep() {
   const [contentLang, setContentLang] = useState<Language>("English");
   const [featuresLang, setFeaturesLang] = useState<Language>("English");
   const [featureInput, setFeatureInput] = useState("");
+
+  const { categories } = useVehicleCategories();
 
   const { register, watch, setValue, control, formState: { errors } } = useFormContext<CreateVehicleValues>();
   const features = watch("features") || [];
@@ -38,12 +41,12 @@ export function OverviewStep() {
           className={styles.card}
         >
           <FormSpec>
-            <LanguageTabs active={basicLang} onChange={setBasicLang} className={styles.whiteTabs} />
+            <LanguageTabs active={basicLang} onChange={setBasicLang} variant="white" />
 
             <div className={styles.inputRow}>
               <DashboardField
                 label="Vehicle Name"
-                placeholder="Nile Palace Hotel & Spa"
+                placeholder="Mercedes S-Class"
                 error={errors.vehicleName?.message}
                 {...register("vehicleName")}
               />
@@ -78,12 +81,16 @@ export function OverviewStep() {
                     label="Category"
                     placeholder="Select category"
                     control="select"
-                    options={[
-                      { label: "Sedan", value: "Sedan" },
-                      { label: "Van", value: "Van" },
-                      { label: "Bus", value: "Bus" },
-                      { label: "SUV", value: "SUV" },
-                    ]}
+                    options={
+                      categories.length > 0 
+                        ? categories.map((c: any) => ({ label: c.name, value: c.name }))
+                        : [
+                            { label: "Sedan", value: "Sedan" },
+                            { label: "Van", value: "Van" },
+                            { label: "Bus", value: "Bus" },
+                            { label: "SUV", value: "SUV" },
+                          ]
+                    }
                     error={fieldState.error?.message}
                   />
                 )}
@@ -181,7 +188,7 @@ export function OverviewStep() {
           className={styles.card}
         >
           <FormSpec>
-            <LanguageTabs active={featuresLang} onChange={setFeaturesLang} className={styles.whiteTabs} />
+            <LanguageTabs active={featuresLang} onChange={setFeaturesLang} variant="white" />
 
             <div className={styles.inputGroup}>
               <div className={styles.facilityInputWrapper}>
@@ -240,7 +247,7 @@ export function OverviewStep() {
           className={styles.card}
         >
           <FormSpec>
-            <LanguageTabs active={contentLang} onChange={setContentLang} className={styles.whiteTabs} />
+            <LanguageTabs active={contentLang} onChange={setContentLang} variant="white" />
             <DashboardField
               label="Overview"
               control="textarea"

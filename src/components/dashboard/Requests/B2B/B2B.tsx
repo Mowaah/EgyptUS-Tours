@@ -10,7 +10,7 @@ import { useRequestStats } from "@/hooks/useRequestStats";
 
 export default function B2B() {
   const [searchQuery, setSearchQuery] = useState("");
-  const stats = useRequestStats(getB2BStats);
+  const { stats } = useRequestStats(getB2BStats, "adminB2BStats");
 
   return (
     <div className={styles.page}>

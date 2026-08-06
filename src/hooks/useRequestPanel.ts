@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import useSWR from "swr";
 import { buildRequestFilterParams, downloadBlobAsCSV } from "@/lib/utils";
 
 interface UseRequestPanelOptions<T> {
@@ -6,6 +7,7 @@ interface UseRequestPanelOptions<T> {
   fetchRequestsApi: (params: any) => Promise<any>;
   exportCsvApi: (params: any) => Promise<Blob>;
   exportFilename: string;
+  swrKey: string;
 }
 
 export function useRequestPanel<T>({
@@ -13,33 +15,27 @@ export function useRequestPanel<T>({
   fetchRequestsApi,
   exportCsvApi,
   exportFilename,
+  swrKey,
 }: UseRequestPanelOptions<T>) {
-  const [data, setData] = useState<T[]>([]);
-  const [loading, setLoading] = useState(true);
   const [sourceFilter, setSourceFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [appliedSourceFilter, setAppliedSourceFilter] = useState("");
   const [appliedStatusFilter, setAppliedStatusFilter] = useState("");
 
-  const fetchRequests = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter);
-      params.page_size = 1000;
-      params.limit = 1000;
-      
-      const results = await fetchRequestsApi(params);
-      setData(results);
-    } catch (err) {
-      console.error(`Failed to fetch requests for ${exportFilename}:`, err);
-    } finally {
-      setLoading(false);
-    }
-  }, [searchQuery, appliedSourceFilter, appliedStatusFilter, fetchRequestsApi, exportFilename]);
+  const apiParams = useMemo(() => {
+    const params = buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter);
+    params.page_size = 1000;
+    params.limit = 1000;
+    return params;
+  }, [searchQuery, appliedSourceFilter, appliedStatusFilter]);
 
-  useEffect(() => {
-    fetchRequests();
-  }, [fetchRequests]);
+  const { data: res, isLoading: loading, mutate: refetch } = useSWR(
+    [swrKey, apiParams],
+    () => fetchRequestsApi(apiParams),
+    { keepPreviousData: true }
+  );
+
+  const data = Array.isArray(res) ? res : res?.results || res?.data?.results || [];
 
   const handleApply = () => {
     setAppliedSourceFilter(sourceFilter);
@@ -66,6 +62,7 @@ export function useRequestPanel<T>({
   return {
     data,
     loading,
+    refetch,
     sourceFilter,
     setSourceFilter,
     statusFilter,

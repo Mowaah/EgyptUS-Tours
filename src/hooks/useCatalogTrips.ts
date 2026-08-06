@@ -1,136 +1,61 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import useSWR from "swr";
 import { getCatalogTrips, getCatalogTripDetail, getCategories, getDestinations } from "@/services/admin/adminCatalogTripsService";
 
 export function useCatalogTrips(filters: any) {
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [totalCount, setTotalCount] = useState(0);
+  const { data: res, isLoading: loading, mutate: refetch } = useSWR(
+    ["adminCatalogTrips", filters],
+    () => getCatalogTrips({ ...filters, limit: 1000, page_size: 1000 }),
+    { keepPreviousData: true }
+  );
 
-  const fetchTrips = useCallback(async () => {
-    setLoading(true);
-    try {
-      let page = 1;
-      const pageSize = 10;
-      let allResults: any[] = [];
-      let total = 0;
-      let hasMore = true;
-
-      while (hasMore) {
-        const res = await getCatalogTrips({ ...filters, page_size: pageSize, page });
-        if (page === 1) total = res.count || 0;
-        
-        const results = res.results || [];
-        allResults = [...allResults, ...results];
-        
-        if (results.length < pageSize || !res.next) {
-          hasMore = false;
-        } else {
-          page++;
-        }
-      }
-      
-      setData(allResults);
-      setTotalCount(total);
-    } catch (err) {
-      console.error("Failed to fetch catalog trips:", err);
-      setData([]);
-      setTotalCount(0);
-    } finally {
-      setLoading(false);
-    }
-  }, [JSON.stringify(filters)]); // serialize filters for deep comparison
-
-  useEffect(() => {
-    fetchTrips();
-  }, [fetchTrips]);
+  const data = Array.isArray(res?.data) 
+    ? res.data 
+    : res?.data?.results ?? res?.results ?? (Array.isArray(res) ? res : []) ?? [];
+  const totalCount = res?.count || data.length || 0;
 
   return {
     data,
     loading,
     totalCount,
-    refetch: fetchTrips,
+    refetch,
   };
 }
 
-export function useCatalogTripDetail(id: string | number) {
-  const [trip, setTrip] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+export function useCatalogTripDetail(id: string | number | undefined) {
+  const { data: res, isLoading: loading, mutate: refetch } = useSWR(
+    id ? ["adminCatalogTripDetail", id] : null,
+    () => getCatalogTripDetail(id as string | number)
+  );
 
-  const fetchTrip = useCallback(async () => {
-    if (!id) return;
-    setLoading(true);
-    try {
-      const res = await getCatalogTripDetail(id);
-      setTrip(res);
-    } catch (err) {
-      console.error("Failed to fetch trip detail:", err);
-      setTrip(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [id]);
-
-  useEffect(() => {
-    fetchTrip();
-  }, [fetchTrip]);
+  const trip = res?.data || res || null;
 
   return {
     trip,
     loading,
-    refetch: fetchTrip,
+    refetch,
   };
 }
 
 export function useCatalogFilters() {
-  const [categories, setCategories] = useState<any[]>([]);
-  const [destinations, setDestinations] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: res, isLoading: loading } = useSWR(
+    "adminCatalogTripsFilters",
+    () => Promise.all([
+      getCategories({ limit: 1000, page_size: 1000 }),
+      getDestinations({ limit: 1000, page_size: 1000 })
+    ])
+  );
 
-  const fetchFilters = useCallback(async () => {
-    setLoading(true);
-    try {
-      let catResults: any[] = [];
-      let destResults: any[] = [];
-      let page = 1;
-      let hasMoreCat = true;
-      let hasMoreDest = true;
+  const catRes = res?.[0];
+  const destRes = res?.[1];
 
-      while (hasMoreCat || hasMoreDest) {
-        const [catRes, destRes] = await Promise.all([
-          hasMoreCat ? getCategories({ page_size: 100, page }) : Promise.resolve({ results: [], next: null }),
-          hasMoreDest ? getDestinations({ page_size: 100, page }) : Promise.resolve({ results: [], next: null })
-        ]);
-
-        const cats = catRes.results || catRes || [];
-        const dests = destRes.results || destRes || [];
-        
-        catResults = [...catResults, ...(Array.isArray(cats) ? cats : [])];
-        destResults = [...destResults, ...(Array.isArray(dests) ? dests : [])];
-
-        if (!catRes.next || (Array.isArray(cats) && cats.length < 10)) hasMoreCat = false;
-        if (!destRes.next || (Array.isArray(dests) && dests.length < 10)) hasMoreDest = false;
-        
-        page++;
-      }
-
-      setCategories(catResults);
-      setDestinations(destResults);
-    } catch (err) {
-      console.error("Failed to fetch filters:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchFilters();
-  }, [fetchFilters]);
+  const cats = catRes?.results || catRes?.data?.results || (Array.isArray(catRes?.data) ? catRes.data : []) || (Array.isArray(catRes) ? catRes : []);
+  const dests = destRes?.results || destRes?.data?.results || (Array.isArray(destRes?.data) ? destRes.data : []) || (Array.isArray(destRes) ? destRes : []);
 
   return {
-    categories,
-    destinations,
+    categories: cats,
+    destinations: dests,
     loading,
   };
 }

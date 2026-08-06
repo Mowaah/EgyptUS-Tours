@@ -1,4 +1,5 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useMemo } from "react";
+import useSWR from "swr";
 import { ContentType } from "@/components/dashboard/Marketing/types";
 import { downloadBlobAsCSV } from "@/lib/utils";
 
@@ -8,6 +9,7 @@ export interface UseMarketingPanelParams<T> {
   fetchApi: (params: any) => Promise<any>;
   exportCsvApi?: (params: any) => Promise<Blob>;
   exportFilename?: string;
+  swrKey: string;
 }
 
 export function useMarketingPanel<T>({
@@ -16,11 +18,8 @@ export function useMarketingPanel<T>({
   fetchApi,
   exportCsvApi,
   exportFilename = "marketing_export.csv",
+  swrKey,
 }: UseMarketingPanelParams<T>) {
-  const [data, setData] = useState<T[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // Filters
   const [categoryFilter, setCategoryFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [publishDateFilter, setPublishDateFilter] = useState("");
@@ -29,30 +28,22 @@ export function useMarketingPanel<T>({
   const [appliedStatusFilter, setAppliedStatusFilter] = useState("");
   const [appliedPublishDateFilter, setAppliedPublishDateFilter] = useState("");
 
-  const fetchPosts = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params: any = { limit: 1000, page_size: 1000 };
-      if (searchQuery) params.search = searchQuery;
-      if (appliedCategoryFilter && appliedCategoryFilter !== "All") params.category = appliedCategoryFilter.toLowerCase().replace(/\s+/g, '-');
-      if (appliedStatusFilter && appliedStatusFilter !== "All") params.status = appliedStatusFilter.toLowerCase();
-      if (appliedPublishDateFilter && appliedPublishDateFilter !== "All") params.date = appliedPublishDateFilter;
+  const apiParams = useMemo(() => {
+    const params: any = { limit: 1000, page_size: 1000 };
+    if (searchQuery) params.search = searchQuery;
+    if (appliedCategoryFilter && appliedCategoryFilter !== "All") params.category = appliedCategoryFilter.toLowerCase().replace(/\s+/g, '-');
+    if (appliedStatusFilter && appliedStatusFilter !== "All") params.status = appliedStatusFilter.toLowerCase();
+    if (appliedPublishDateFilter && appliedPublishDateFilter !== "All") params.date = appliedPublishDateFilter;
+    return params;
+  }, [searchQuery, appliedCategoryFilter, appliedStatusFilter, appliedPublishDateFilter]);
 
-      const response = await fetchApi(params);
-      
-      // Handle both paginated and direct array responses
-      const results = response?.results || response || [];
-      setData(results);
-    } catch (error) {
-      console.error(`Failed to fetch ${contentType}:`, error);
-    } finally {
-      setLoading(false);
-    }
-  }, [contentType, searchQuery, appliedCategoryFilter, appliedStatusFilter, appliedPublishDateFilter, fetchApi]);
+  const { data: res, isLoading: loading, mutate: refetch } = useSWR(
+    [swrKey, apiParams],
+    () => fetchApi(apiParams),
+    { keepPreviousData: true }
+  );
 
-  useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
+  const data = Array.isArray(res) ? res : res?.results || res?.data?.results || [];
 
   const handleApply = () => {
     setAppliedCategoryFilter(categoryFilter);
@@ -88,6 +79,7 @@ export function useMarketingPanel<T>({
   return {
     data,
     loading,
+    refetch,
     categoryFilter,
     setCategoryFilter,
     statusFilter,

@@ -1,27 +1,15 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+import useSWR from "swr";
 import { getFinanceReport } from "@/services/admin/adminFinanceService";
 import { downloadBlobAsCSV } from "@/lib/utils";
 
 export function useFinanceReport(rangeKey: string = "last_12m") {
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  const fetchReport = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await getFinanceReport({ range: rangeKey });
-      setData(res);
-    } catch (err) {
-      console.error("Failed to fetch finance report:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [rangeKey]);
-
-  useEffect(() => {
-    fetchReport();
-  }, [fetchReport]);
+  const { data, isLoading: loading } = useSWR(
+    ["adminFinanceReport", rangeKey],
+    () => getFinanceReport({ range: rangeKey }),
+    { keepPreviousData: true }
+  );
 
   const handleExportCSV = useCallback(() => {
     if (!data) return;

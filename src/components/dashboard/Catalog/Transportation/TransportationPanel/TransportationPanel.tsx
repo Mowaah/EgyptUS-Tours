@@ -8,15 +8,15 @@ import {
   TablePanelFilterBar,
   TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
-import { mockCatalogTransportation } from "../mockCatalogTransportation";
+import { useCatalogVehicles, useVehicleCategories } from "@/hooks/useCatalogVehicles";
+import { archiveCatalogVehicle, deleteCatalogVehicle, updateCatalogVehicle } from "@/services/admin/adminCatalogVehiclesService";
 import { transportationColumns, transportationRowActions } from "./transportationColumns";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 
-const filterOptions = {
-  category: ["All", "Sedan", "Van", "Bus"],
+const staticFilterOptions = {
   price: ["All", "Under $1000", "$1000 - $2000", "Over $2000"],
   status: ["All", "Published", "Archived", "Draft"],
 };
@@ -37,30 +37,30 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
 
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
-  const [vehiclesData, setVehiclesData] = useState(mockCatalogTransportation);
-
   const [confirmModal, setConfirmModal] = useState<{ open: boolean; action: "Archive" | "Delete" | null; row: any }>({ open: false, action: null, row: null });
-  const [banner, setBanner] = useState<{ show: boolean; message: string }>({ show: false, message: "" });
+  const [banner, setBanner] = useState<{ show: boolean; message: string; variant: "success" | "warning" }>({ show: false, message: "", variant: "success" });
+  const { categories, loading: catLoading } = useVehicleCategories();
+  const categoryOptions = ["All", ...Array.from(new Set(categories.map((c: any) => c.name).filter(Boolean)))];
 
-  const filteredVehicles = useMemo(
-    () =>
-      vehiclesData.filter((vehicle) => {
-        if (searchQuery) {
-          const lowerQuery = searchQuery.toLowerCase();
-          if (
-            !vehicle.id.toLowerCase().includes(lowerQuery) &&
-            !vehicle.name.toLowerCase().includes(lowerQuery)
-          ) {
-            return false;
-          }
-        }
-        if (appliedFilters.category !== "All" && vehicle.category !== appliedFilters.category) return false;
-        // Basic price filtering implementation (could be enhanced based on string parsing)
-        if (appliedFilters.status !== "All" && vehicle.status !== appliedFilters.status) return false;
-        return true;
-      }),
-    [appliedFilters, searchQuery, vehiclesData]
-  );
+  const queryParams = useMemo(() => {
+    const params: any = { limit: 1000, page_size: 1000 };
+    if (searchQuery) params.search = searchQuery;
+    if (appliedFilters.status !== "All") params.status = appliedFilters.status.toLowerCase();
+    
+    if (appliedFilters.category !== "All") {
+      params.category = appliedFilters.category; // Adjust this if the backend filters by category_id or name
+    }
+    
+    if (appliedFilters.price !== "All") {
+      if (appliedFilters.price === "Under $1000") { params.max_price = 1000; }
+      else if (appliedFilters.price === "$1000 - $2000") { params.min_price = 1000; params.max_price = 2000; }
+      else if (appliedFilters.price === "Over $2000") { params.min_price = 2000; }
+    }
+    
+    return params;
+  }, [appliedFilters, searchQuery]);
+
+  const { data: vehiclesData, loading: vehiclesLoading, refetch } = useCatalogVehicles(queryParams);
 
   const resetFilters = () => {
     setFilters(defaultFilters);
@@ -73,9 +73,9 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
 
   const filterFields = (
     [
-      ["category", "Category", filterOptions.category],
-      ["price", "Price", filterOptions.price],
-      ["status", "Status", filterOptions.status],
+      ["category", "Category", categoryOptions],
+      ["price", "Price", staticFilterOptions.price],
+      ["status", "Status", staticFilterOptions.status],
     ] as const
   ).map(([id, label, options]) => ({
     id,
@@ -85,11 +85,29 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
 
-  if (mockCatalogTransportation.length > 0 && filteredVehicles.length === 0) {
+  const handleConfirmAction = async () => {
+    if (!confirmModal.row || !confirmModal.action) return;
+    try {
+      if (confirmModal.action === "Archive") {
+        await archiveCatalogVehicle(confirmModal.row.id);
+        setBanner({ show: true, variant: "success", message: "The vehicle has been archived successfully and is no longer visible in the active list." });
+      } else if (confirmModal.action === "Delete") {
+        await deleteCatalogVehicle(confirmModal.row.id);
+        setBanner({ show: true, variant: "success", message: "The vehicle has been deleted successfully." });
+      }
+      refetch();
+    } catch (error: any) {
+      setBanner({ show: true, variant: "warning", message: error.response?.data?.detail || "An error occurred." });
+    } finally {
+      setConfirmModal({ open: false, action: null, row: null });
+    }
+  };
+
+  if (!vehiclesLoading && (!vehiclesData || vehiclesData.length === 0) && (searchQuery || Object.values(appliedFilters).some(v => v !== "All"))) {
     return <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />;
   }
 
-  if (mockCatalogTransportation.length === 0) {
+  if (!vehiclesLoading && (!vehiclesData || vehiclesData.length === 0)) {
     return (
       <DashboardEmptyState
         title="No Vehicles Found"
@@ -119,7 +137,7 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
     >
       <DataTable
-        data={filteredVehicles}
+        data={vehiclesData || []}
         columns={transportationColumns}
         getRowId={(row) => row.id}
         selectable
@@ -127,15 +145,13 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
         rowActions={(row) =>
           transportationRowActions((action, r) => {
             if (action === "View") {
-              router.push(`/dashboard/catalog/transportation/${r.id}`);
+              router.push(`/dashboard/catalog/transportation/${r.id}/overview`);
             } else if (action === "Edit") {
               router.push(`/dashboard/catalog/transportation/${r.id}/edit`);
             } else if (action === "Archive") {
               setConfirmModal({ open: true, action: "Archive", row: r });
             } else if (action === "Delete") {
               setConfirmModal({ open: true, action: "Delete", row: r });
-            } else {
-              console.log(`Action ${action} triggered for row`, r);
             }
           })
         }
@@ -153,22 +169,13 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
         confirmLabel={confirmModal.action === "Delete" ? "Delete Vehicle" : "Archive Vehicle"}
         cancelLabel="Cancel"
         onClose={() => setConfirmModal({ open: false, action: null, row: null })}
-        onConfirm={() => {
-          if (confirmModal.action === "Archive") {
-            setVehiclesData(prev => prev.map(h => h.id === confirmModal.row?.id ? { ...h, status: "Archived" } : h));
-            setBanner({ show: true, message: "The vehicle has been archived successfully and is no longer visible in the active list" });
-          } else if (confirmModal.action === "Delete") {
-            setVehiclesData(prev => prev.filter(h => h.id !== confirmModal.row?.id));
-            setBanner({ show: true, message: "The vehicle has been deleted successfully" });
-          }
-          setConfirmModal({ open: false, action: null, row: null });
-        }}
+        onConfirm={handleConfirmAction}
       />
       <DashboardStatusBanner
         show={banner.show}
-        variant="success"
+        variant={banner.variant}
         message={banner.message}
-        onClose={() => setBanner({ show: false, message: "" })}
+        onClose={() => setBanner({ show: false, message: "", variant: "success" })}
       />
     </TablePanel>
   );

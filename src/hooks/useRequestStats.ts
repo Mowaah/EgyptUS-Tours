@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import useSWR from "swr";
 
 export interface RequestStats {
   total: number;
@@ -7,30 +7,19 @@ export interface RequestStats {
   rejected: number;
 }
 
-export function useRequestStats(fetcher: (params: any) => Promise<any>) {
-  const [stats, setStats] = useState<RequestStats>({
-    total: 0,
-    completed: 0,
-    in_progress: 0,
-    rejected: 0,
-  });
+export function useRequestStats(fetcher: (params: any) => Promise<any>, swrKey: string) {
+  const { data: res, isLoading: loading } = useSWR(
+    swrKey,
+    () => fetcher({ range: "30d" }),
+    { keepPreviousData: true }
+  );
 
-  useEffect(() => {
-    async function fetchStats() {
-      try {
-        const data = await fetcher({ range: "30d" });
-        setStats({
-          total: data.total || 0,
-          completed: data.completed || 0,
-          in_progress: data.in_progress || 0,
-          rejected: data.rejected || 0,
-        });
-      } catch (err) {
-        console.error("Failed to fetch stats:", err);
-      }
-    }
-    fetchStats();
-  }, [fetcher]);
+  const stats = {
+    total: res?.total || 0,
+    completed: res?.completed || 0,
+    in_progress: res?.in_progress || 0,
+    rejected: res?.rejected || 0,
+  };
 
-  return stats;
+  return { stats, loading };
 }

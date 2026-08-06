@@ -10,7 +10,7 @@ import styles from "./MICE.module.scss";
 
 export default function MICE() {
   const [searchQuery, setSearchQuery] = useState("");
-  const stats = useRequestStats(getMiceStats);
+  const { stats } = useRequestStats(getMiceStats, "adminMiceStats");
 
   return (
     <div className={styles.page}>

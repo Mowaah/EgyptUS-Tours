@@ -7,7 +7,7 @@ import dashboardStyles from "../../CreateVehicle.module.scss";
 import styles from "./PricingStep.module.scss";
 
 export function PricingStep() {
-  const { watch, control, setValue } = useFormContext<CreateVehicleValues>();
+  const { watch, control, setValue, formState: { errors } } = useFormContext<CreateVehicleValues>();
 
   const basePrice = watch("basePrice");
   const vat = watch("vat");
@@ -53,6 +53,7 @@ export function PricingStep() {
               name="basePrice"
               label="Base Price Per Person ($)"
               control={control}
+              error={errors.basePrice?.message}
             />
 
             <div className={styles.inputRow}>
@@ -60,11 +61,13 @@ export function PricingStep() {
                 name="vat"
                 label="Vat (14%)"
                 control={control}
+                error={errors.vat?.message}
               />
               <CurrencyField
                 name="insurance"
                 label="Insurance Fee ($)"
                 control={control}
+                error={errors.insurance?.message}
               />
             </div>
 
@@ -72,6 +75,7 @@ export function PricingStep() {
               name="pricePerKm"
               label="Price per Km ($)"
               control={control}
+              error={errors.pricePerKm?.message}
             />
           </div>
         </FormSection>

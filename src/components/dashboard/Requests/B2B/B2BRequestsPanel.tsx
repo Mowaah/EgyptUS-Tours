@@ -36,6 +36,7 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
       return exportB2BCSV(params);
     },
     exportFilename: "b2b_proposals.csv",
+    swrKey: "adminB2BRequests",
   });
 
   

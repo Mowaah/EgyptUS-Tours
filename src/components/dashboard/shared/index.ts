@@ -32,3 +32,4 @@ export { default as PaymentStep } from './PaymentStep/PaymentStep';
 export { default as TablePagination } from './TablePagination/TablePagination';
 export { default as WizardLayout } from './WizardLayout/WizardLayout';
 export { default as WizardMediaStep } from './WizardMediaStep/WizardMediaStep';
+export * from './CatalogMediaView/CatalogMediaView';

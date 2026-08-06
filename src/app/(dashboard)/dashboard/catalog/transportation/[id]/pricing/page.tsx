@@ -1,22 +1,27 @@
 "use client";
 
 import Image from "next/image";
+import { useVehicleDetailContext } from "../layout";
 import styles from "./page.module.scss";
 
-const MOCK_PRICING = {
-  basePricePerPerson: "$350",
-  vat: "$50",
-  insurance: "$50",
-  pricePerKm: "$50",
-  totalPricePerPerson: "400$",
-  additionalServices: [
-    { label: "Child Seat", value: "+ $50" },
-    { label: "Meet & Greet", value: "+ $50" },
-    { label: "Extra Luggage", value: "+ $50" },
-  ],
-};
-
 export default function TransportationPricingPage() {
+  const { vehicle, loading } = useVehicleDetailContext();
+
+  if (loading) return <div>Loading pricing...</div>;
+  if (!vehicle) return <div>Vehicle not found.</div>;
+
+  const basePrice = vehicle.price_amount !== null ? `$${vehicle.price_amount}` : "-";
+  const vat = vehicle.vat_amount !== null ? `$${vehicle.vat_amount}` : "-";
+  const insurance = vehicle.insurance_fee !== null ? `$${vehicle.insurance_fee}` : "-";
+  const pricePerKm = vehicle.price_per_km !== null ? `$${vehicle.price_per_km}` : "-";
+  
+  let totalPrice = 0;
+  if (vehicle.price_amount) totalPrice += Number(vehicle.price_amount);
+  if (vehicle.vat_amount) totalPrice += Number(vehicle.vat_amount);
+  if (vehicle.insurance_fee) totalPrice += Number(vehicle.insurance_fee);
+  
+  const additionalServices = vehicle.additional_services || [];
+
   return (
     <div className={styles.wrapper}>
       {/* General Pricing */}
@@ -30,10 +35,10 @@ export default function TransportationPricingPage() {
 
         <div className={styles.priceGrid}>
           {[
-            { label: "Base Price / Person", value: "$350" },
-            { label: "VAT (14%)", value: "$50" },
-            { label: "Insurance", value: "$50" },
-            { label: "Price Per KM", value: "$50" },
+            { label: "Base Price", value: basePrice },
+            { label: "VAT", value: vat },
+            { label: "Insurance", value: insurance },
+            { label: "Price Per KM", value: pricePerKm },
           ].map((item) => (
             <div key={item.label} className={styles.priceCell}>
               <span className={styles.cellLabel}>{item.label}</span>
@@ -43,8 +48,8 @@ export default function TransportationPricingPage() {
         </div>
 
         <div className={styles.totalRow}>
-          <span className={styles.totalLabel}>Total Price Person</span>
-          <span className={styles.totalValue}>{MOCK_PRICING.totalPricePerPerson}</span>
+          <span className={styles.totalLabel}>Total Price</span>
+          <span className={styles.totalValue}>${totalPrice}</span>
         </div>
       </div>
 
@@ -57,14 +62,20 @@ export default function TransportationPricingPage() {
           <h2>Additional Services</h2>
         </div>
 
-        <div className={styles.priceGrid}>
-          {MOCK_PRICING.additionalServices.map((service) => (
-            <div key={service.label} className={styles.priceCell}>
-              <span className={styles.cellLabel}>{service.label}</span>
-              <span className={styles.cellValue}>{service.value}</span>
-            </div>
-          ))}
-        </div>
+        {additionalServices.length > 0 ? (
+          <div className={styles.priceGrid}>
+            {additionalServices.map((service: any) => (
+              <div key={service.name || service} className={styles.priceCell}>
+                <span className={styles.cellLabel}>{service.name || service}</span>
+                <span className={styles.cellValue}>{service.price ? `$${service.price}` : "-"}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className={styles.priceCell}>
+            <span className={styles.cellLabel}>No additional services added.</span>
+          </div>
+        )}
       </div>
     </div>
   );

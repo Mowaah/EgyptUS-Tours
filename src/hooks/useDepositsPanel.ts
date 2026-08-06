@@ -1,11 +1,10 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import useSWR from "swr";
 import { getAllDeposits } from "@/services/admin/adminFinanceService";
 import { downloadBlobAsCSV } from "@/lib/utils";
 
 export function useDepositsPanel({ searchQuery }: { searchQuery?: string } = {}) {
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     service: "All",
     date: "All",
@@ -13,33 +12,28 @@ export function useDepositsPanel({ searchQuery }: { searchQuery?: string } = {})
   });
   const [appliedFilters, setAppliedFilters] = useState(filters);
 
-  const fetchDeposits = useCallback(async () => {
-    setLoading(true);
-    try {
-      const apiFilters: any = { limit: 1000, page_size: 1000 };
-      if (appliedFilters.service && appliedFilters.service !== "All") {
-        const s = appliedFilters.service.toLowerCase();
-        if (s === "trips") apiFilters.service = "trip";
-        else if (s === "hotels") apiFilters.service = "hotel";
-        else if (s === "transportation") apiFilters.service = "transport";
-        else if (s === "b2b" || s === "mice" || s === "custom trip") apiFilters.service = "custom_trip";
-        else apiFilters.service = s;
-      }
-      if (appliedFilters.status && appliedFilters.status !== "All") apiFilters.deposit_status = appliedFilters.status.toLowerCase();
-      if (searchQuery) apiFilters.search = searchQuery;
-      
-      const results = await getAllDeposits(apiFilters);
-      setData(results);
-    } catch (err) {
-      console.error("Failed to fetch deposits:", err);
-    } finally {
-      setLoading(false);
+  const apiFilters = useMemo(() => {
+    const params: any = { limit: 1000, page_size: 1000 };
+    if (appliedFilters.service && appliedFilters.service !== "All") {
+      const s = appliedFilters.service.toLowerCase();
+      if (s === "trips") params.service = "trip";
+      else if (s === "hotels") params.service = "hotel";
+      else if (s === "transportation") params.service = "transport";
+      else if (s === "b2b" || s === "mice" || s === "custom trip") params.service = "custom_trip";
+      else params.service = s;
     }
+    if (appliedFilters.status && appliedFilters.status !== "All") params.deposit_status = appliedFilters.status.toLowerCase();
+    if (searchQuery) params.search = searchQuery;
+    return params;
   }, [appliedFilters, searchQuery]);
 
-  useEffect(() => {
-    fetchDeposits();
-  }, [fetchDeposits]);
+  const { data: res, isLoading: loading } = useSWR(
+    ["adminFinanceDeposits", apiFilters],
+    () => getAllDeposits(apiFilters),
+    { keepPreviousData: true }
+  );
+
+  const data = Array.isArray(res) ? res : res?.results || res?.data?.results || [];
 
   const handleApply = () => {
     setAppliedFilters(filters);

@@ -10,7 +10,7 @@ import styles from "./PlanYourTrip.module.scss";
 
 export default function PlanYourTrip() {
   const [searchQuery, setSearchQuery] = useState("");
-  const stats = useRequestStats(getPlanYourTripStats);
+  const { stats } = useRequestStats(getPlanYourTripStats, "adminPlanYourTripStats");
 
   return (
     <div className={styles.page}>

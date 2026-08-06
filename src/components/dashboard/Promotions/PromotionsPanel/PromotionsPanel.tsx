@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
+import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/dashboard/DataTable";
 import {
@@ -34,37 +35,28 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
   const [promotionToDelete, setPromotionToDelete] = useState<PromotionRow | null>(null);
   const [bannerState, setBannerState] = useState<{ message: string; variant: "success" | "warning" } | null>(null);
 
-  const [promotions, setPromotions] = useState<PromotionRow[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: res, isLoading: loading, mutate } = useSWR(
+    "adminMarketingPromotions",
+    () => getAdminPromotions(),
+    { keepPreviousData: true }
+  );
 
-  const fetchPromotions = async () => {
-    setLoading(true);
-    try {
-      const res = await getAdminPromotions();
-      const data = res.results || (res as any);
-      if (Array.isArray(data)) {
-        setPromotions(data.map((p: AdminPromotionList) => ({
-          id: String(p.id),
-          offerId: p.offer_number || `PRO-${p.id}`,
-          title: p.title || "Untitled",
-          value: `${p.discount_value}%`,
-          appliesTo: p.applies_to === "trip" ? "Trips" : p.applies_to === "hotel" ? "Hotels" : "Transportation",
-          validFrom: p.valid_from ? new Date(p.valid_from).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "-",
-          validTo: p.valid_to ? new Date(p.valid_to).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "-",
-          status: p.status === "active" ? "Active" : p.status === "draft" ? "Draft" : "Inactive",
-          usage: p.usage_count,
-        })));
-      }
-    } catch (error) {
-      console.error("Failed to fetch promotions", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPromotions();
-  }, []);
+  const promotions: PromotionRow[] = useMemo(() => {
+    const data = res?.results || (res as any) || [];
+    if (!Array.isArray(data)) return [];
+    
+    return data.map((p: AdminPromotionList) => ({
+      id: String(p.id),
+      offerId: p.offer_number || `PRO-${p.id}`,
+      title: p.title || "Untitled",
+      value: `${p.discount_value}%`,
+      appliesTo: p.applies_to === "trip" ? "Trips" : p.applies_to === "hotel" ? "Hotels" : "Transportation",
+      validFrom: p.valid_from ? new Date(p.valid_from).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "-",
+      validTo: p.valid_to ? new Date(p.valid_to).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "-",
+      status: p.status === "active" ? "Active" : p.status === "draft" ? "Draft" : "Inactive",
+      usage: p.usage_count,
+    }));
+  }, [res]);
 
   const filterOptions = useMemo(() => {
     return {
@@ -83,7 +75,7 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
     try {
       const newStatus = row.status === "Active" ? "inactive" : "active";
       await updateAdminPromotion(row.id, { status: newStatus });
-      await fetchPromotions();
+      await mutate();
       if (row.status === "Active") {
         setBannerState({
           message: `Promotion ${row.offerId} has been deactivated and is no longer available for use on the platform.`,
@@ -221,18 +213,19 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
         confirmLabel="Delete Promotion"
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={async () => {
-          if (!promotionToDelete) return;
-          setIsDeleteModalOpen(false);
-          try {
-            await deleteAdminPromotion(promotionToDelete.id);
-            setBannerState({
-              message: "The promotion has been deleted successfully",
-              variant: "success",
-            });
-            fetchPromotions();
-          } catch (error) {
-            setBannerState({ message: "Failed to delete promotion.", variant: "warning" });
+          if (promotionToDelete) {
+            try {
+              await deleteAdminPromotion(promotionToDelete.id);
+              await mutate();
+              setBannerState({
+                message: `Promotion ${promotionToDelete.offerId} has been successfully deleted.`,
+                variant: "success",
+              });
+            } catch (error) {
+              setBannerState({ message: "Failed to delete promotion.", variant: "warning" });
+            }
           }
+          setIsDeleteModalOpen(false);
         }}
       />
 

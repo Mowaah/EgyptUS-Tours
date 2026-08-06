@@ -1,146 +1,49 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
-import styles from "./page.module.scss";
-
-interface MediaItemProps {
-  title: string;
-  imageSrc: string;
-  attachmentInfo: string;
-  imgTitleLabel: string;
-  imgTitleValue: string;
-  imgAltLabel: string;
-  imgAltValue: string;
-}
-
-function MediaCard({
-  title,
-  imageSrc,
-  attachmentInfo,
-  imgTitleLabel,
-  imgTitleValue,
-  imgAltLabel,
-  imgAltValue,
-}: MediaItemProps) {
-  return (
-    <div className={styles.mediaCard}>
-      <div className={styles.cardHeader}>
-        <div className={styles.headerIcon}>
-          <Image src="/images/dashboard/fields/document-upload.svg" alt="" width={20} height={20} />
-        </div>
-        <h3>{title}</h3>
-      </div>
-
-      <div className={styles.attachmentSection}>
-        <span className={styles.attachmentLabel}>{attachmentInfo}</span>
-        <div className={styles.imageWrapper}>
-          <Image 
-            src={imageSrc} 
-            alt={imgTitleValue} 
-            width={698} 
-            height={352} 
-            className={styles.tripImage}
-            priority
-          />
-        </div>
-      </div>
-
-      <div className={styles.infoArea}>
-        <div className={styles.fieldsRow}>
-          <div className={styles.fieldGroup}>
-            <span className={styles.fieldLabel}>{imgTitleLabel}</span>
-            <div className={styles.fieldValue}>
-              {imgTitleValue}
-            </div>
-          </div>
-
-          <div className={styles.fieldGroup}>
-            <span className={styles.fieldLabel}>{imgAltLabel}</span>
-            <div className={styles.fieldValue}>
-              {imgAltValue}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+import { useVehicleDetailContext } from "../layout";
+import { CatalogMediaView, MediaCardItem } from "@/components/dashboard/shared";
 
 export default function TransportationMediaPage() {
-  const mediaItems = [
-    {
+  const { vehicle, loading } = useVehicleDetailContext();
+
+  if (loading) return <div style={{ padding: "24px" }}>Loading media...</div>;
+  if (!vehicle) return <div style={{ padding: "24px" }}>Vehicle not found.</div>;
+
+  const mediaItems = vehicle.media_items || [];
+  const heroItem = mediaItems.find((m: any) => m.kind === "hero");
+  const galleryItems = mediaItems.filter((m: any) => m.kind !== "hero");
+
+  const cards: MediaCardItem[] = [];
+
+  if (heroItem) {
+    cards.push({
+      id: heroItem.id || "hero",
       title: "Upload Thumbnail",
-      imageSrc: "/images/b2b/b2b.jpg",
+      imageSrc: heroItem.image_url || "/images/placeholder.jpg",
       attachmentInfo: "Attachment (303 x 202)",
-      imgTitleLabel: "Thumbnail Title",
-      imgTitleValue: "Thumbnail Title...",
-      imgAltLabel: "Thumbnail Alt",
-      imgAltValue: "Comma-separated tags (e.g. egypt, travel, cairo)",
-    },
-    {
-      title: "Upload Thumbnail", // The screenshot actually says 'Upload Thumbnail' for the second one too
-      imageSrc: "/images/b2b/b2b2.jpg",
-      attachmentInfo: "Attachment (1103 x 552)",
-      imgTitleLabel: "Image Title",
-      imgTitleValue: "Thumbnail Title...",
-      imgAltLabel: "Thumbnail Alt",
-      imgAltValue: "Comma-separated tags (e.g. egypt, travel, cairo)",
-    },
-    {
-      title: "Photo Gallery 2",
-      imageSrc: "/images/b2b/b2b3.jpg",
-      attachmentInfo: "Attachment (1103 x 552)",
-      imgTitleLabel: "Image Title",
-      imgTitleValue: "Thumbnail Title...",
-      imgAltLabel: "Thumbnail Alt",
-      imgAltValue: "Comma-separated tags (e.g. egypt, travel, cairo)",
-    },
-    {
-      title: "Photo Gallery 3",
-      imageSrc: "/images/corporate/corporate1.jpg",
-      attachmentInfo: "Attachment (1103 x 552)",
-      imgTitleLabel: "Image Title",
-      imgTitleValue: "Thumbnail Title...",
-      imgAltLabel: "Thumbnail Alt",
-      imgAltValue: "Comma-separated tags (e.g. egypt, travel, cairo)",
-    },
-    {
-      title: "Photo Gallery 4",
-      imageSrc: "/images/corporate/corporate2.jpg",
-      attachmentInfo: "Attachment (1103 x 552)",
-      imgTitleLabel: "Image Title",
-      imgTitleValue: "Thumbnail Title...",
-      imgAltLabel: "Thumbnail Alt",
-      imgAltValue: "Comma-separated tags (e.g. egypt, travel, cairo)",
-    },
-    {
-      title: "Photo Gallery 5",
-      imageSrc: "/images/corporate/corporate3.jpg",
-      attachmentInfo: "Attachment (1103 x 552)",
-      imgTitleLabel: "Image Title",
-      imgTitleValue: "Thumbnail Title...",
-      imgAltLabel: "Thumbnail Alt",
-      imgAltValue: "Comma-separated tags (e.g. egypt, travel, cairo)",
-    },
-  ];
+      imgTitleValue: heroItem.translations?.en?.title || "-",
+      imgAltValue: heroItem.translations?.en?.alt || "-",
+    });
+  }
+
+  galleryItems.forEach((item: any, index: number) => {
+    cards.push({
+      id: item.id || `gallery-${index}`,
+      title: `Photo Gallery ${index + 2}`,
+      imageSrc: item.image_url || "/images/placeholder.jpg",
+      attachmentInfo: "Attachment (1100 x 552)",
+      imgTitleValue: item.translations?.en?.title || "-",
+      imgAltValue: item.translations?.en?.alt || "-",
+    });
+  });
 
   return (
-    <div className={styles.container}>
-      {/* Hidden header to match structure, though screenshot doesn't explicitly show "Vehicle Media" heading, 
-          it just shows the cards right under the tabs. Let's keep it consistent. */}
-      {/* <div className={styles.pageHeader}>
-        <div className={styles.headerIcon}>
-          <Image src="/images/dashboard/catalog/trips/media.svg" alt="" width={24} height={24} />
-        </div>
-        <h2>Vehicle Media</h2>
-      </div> */}
-
-      <div className={styles.mediaGrid}>
-        {mediaItems.map((item, index) => (
-          <MediaCard key={index} {...item} />
-        ))}
-      </div>
-    </div>
+    <CatalogMediaView
+      pageTitle="Vehicle Media"
+      headerIconSrc="/images/dashboard/catalog/trips/media.svg"
+      mediaItems={cards}
+      emptyMessage="No media uploaded for this vehicle."
+    />
   );
 }

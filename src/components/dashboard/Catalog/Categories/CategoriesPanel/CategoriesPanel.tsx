@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
+import useSWR from "swr";
 import CategoryCard, { Category } from "../CategoryCard/CategoryCard";
 import TablePagination from "@/components/dashboard/shared/TablePagination/TablePagination";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
@@ -24,6 +25,7 @@ interface CategoryApiItem {
 interface CategoryApiResponse {
   data?: { results?: CategoryApiItem[] } | CategoryApiItem[];
   results?: CategoryApiItem[];
+  count?: number;
 }
 
 export default function CategoriesPanel({ onEditCategory, onDeleteCategory, refreshTrigger = 0 }: CategoriesPanelProps) {
@@ -31,50 +33,30 @@ export default function CategoriesPanel({ onEditCategory, onDeleteCategory, refr
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(12);
   
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const langCode = lang === "English" ? "en" : "ar";
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        setLoading(true);
-        let allRawData: CategoryApiItem[] = [];
-        let page = 1;
-        let hasMore = true;
+  const { data, isLoading: loading } = useSWR<CategoryApiResponse>(
+    ["adminCatalogCategories", page, rowsPerPage, langCode, refreshTrigger],
+    () => getCategories({ page, page_size: rowsPerPage, lang: langCode }),
+    { keepPreviousData: true }
+  );
 
-        while (hasMore) {
-          const res = await getCategories({ page_size: 100, page }) as CategoryApiResponse;
-          const rawData: CategoryApiItem[] = Array.isArray(res?.data)
-            ? res.data
-            : res?.data?.results ?? res?.results ?? [];
-          
-          allRawData = [...allRawData, ...rawData];
+  const categories: Category[] = useMemo(() => {
+    const rawData: CategoryApiItem[] = Array.isArray(data?.data)
+      ? data.data
+      : data?.data?.results ?? data?.results ?? [];
+    
+    return rawData.map((c) => ({
+      id: String(c.id || c.slug || ""),
+      name: c.name || c.title || "",
+    }));
+  }, [data]);
 
-          if (!res?.next || (Array.isArray(rawData) && rawData.length < 10)) {
-            hasMore = false;
-          } else {
-            page++;
-          }
-        }
-        
-        const mapped = allRawData.map((c) => ({
-          id: String(c.id || c.slug || ""),
-          name: c.name || c.title || "",
-        }));
-        
-        setCategories(mapped);
-      } catch (error) {
-        console.error("Failed to fetch categories:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, [refreshTrigger]);
+  const totalCount = data?.count || 0;
 
-  const pageCount = Math.max(1, Math.ceil(categories.length / rowsPerPage));
+  const pageCount = Math.max(1, Math.ceil(totalCount / rowsPerPage));
   const safePage = Math.min(page, pageCount);
-  const visibleCategories = categories.slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage);
+  const visibleCategories = categories;
 
   const handleEdit = (id: string) => {
     const category = categories.find((c) => c.id === id);

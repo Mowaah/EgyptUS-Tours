@@ -36,6 +36,7 @@ export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPane
       return exportMiceCSV(params);
     },
     exportFilename: "mice_requests.csv",
+    swrKey: "adminMiceRequests",
   });
 
   

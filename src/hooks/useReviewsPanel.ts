@@ -1,4 +1,5 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useMemo } from "react";
+import useSWR from "swr";
 import { getAdminUserReviews, getAdminTestimonials } from "@/services/admin/adminReviewsService";
 import type { ReviewRow, AdminTestimonialRow, ReviewCategory, ReviewStatus } from "@/components/dashboard/Reviews/types";
 
@@ -67,99 +68,98 @@ function isDateMatching(dateStr: string, filterValue: string): boolean {
 }
 
 export function useReviewsPanel({ type, searchQuery, appliedFilters, refreshTrigger }: UseReviewsPanelParams) {
-  const [data, setData] = useState<Array<ReviewRow | AdminTestimonialRow>>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchReviews = useCallback(async (showLoader = true) => {
-    if (showLoader) setLoading(true);
-    try {
-      const params: any = { limit: 1000, page_size: 1000 };
-      
-      if (searchQuery) params.search = searchQuery;
-      
-      if (appliedFilters.category && appliedFilters.category !== "All") {
-        let cat = appliedFilters.category.toLowerCase();
-        if (cat === "trips") cat = "trip";
-        if (cat === "hotels") cat = "hotel";
-        if (cat === "transportation") cat = type === "admin" ? "transport" : "vehicle";
-        params.category = cat;
-      }
-      
-      if (appliedFilters.rating && appliedFilters.rating !== "All") {
-        params.rating = parseInt(appliedFilters.rating);
-      }
-      
-      if (appliedFilters.state && appliedFilters.state !== "All") {
-        if (type === "user") {
-           params.moderation_status = appliedFilters.state === "Replied" ? "approved" : "pending";
-        } else {
-           params.status = appliedFilters.state === "Replied" ? "published" : "draft";
-        }
-      }
-
-      if (type === "user") {
-        const response = await getAdminUserReviews(params);
-        let mapped: ReviewRow[] = response.results.map((rev) => ({
-          id: rev.review_number || `REV-${rev.id}`,
-          originalId: rev.id,
-          customer: rev.author_name,
-          email: rev.author_email,
-          category: mapCategory(rev.target_type) as ReviewCategory,
-          title: rev.title || "No Title",
-          body: rev.body,
-          rating: Number(rev.rating) as any,
-          date: formatDate(rev.review_date || rev.created_at),
-          published: rev.is_featured,
-          moderation_status: rev.moderation_status,
-          status: (rev.moderation_status === "approved" ? "Replied" : "Pending") as ReviewStatus,
-        }));
-
-        if (appliedFilters.date && appliedFilters.date !== "All") {
-          mapped = mapped.filter((item) => isDateMatching(item.date, appliedFilters.date));
-        }
-
-        setData(mapped);
-      } else {
-        const response = await getAdminTestimonials(params);
-        let mapped: AdminTestimonialRow[] = response.results.map((rev) => ({
-          id: rev.testimonial_number || `TST-${rev.id}`,
-          originalId: rev.id,
-          addedBy: rev.added_by?.user?.name || "Admin",
-          customer: rev.customer_name,
-          email: rev.added_by_email || "",
-          country: rev.country || "EG",
-          countryCode: (rev.country || "eg").toLowerCase(),
-          video: !!rev.video_url,
-          videoUrl: rev.video_url,
-          category: mapCategory(rev.category),
-          title: rev.title,
-          body: rev.description,
-          rating: Number(rev.rating) as any,
-          date: formatDate(rev.created_at),
-          published: rev.status === "published",
-          status: (rev.status === "published" ? "Replied" : "Pending") as ReviewStatus,
-        }));
-
-        if (appliedFilters.date && appliedFilters.date !== "All") {
-          mapped = mapped.filter((item) => isDateMatching(item.date, appliedFilters.date));
-        }
-
-        setData(mapped);
-      }
-    } catch (error) {
-      console.error("Failed to fetch reviews:", error);
-    } finally {
-      setLoading(false);
+  const apiParams = useMemo(() => {
+    const params: any = { limit: 1000, page_size: 1000 };
+    
+    if (searchQuery) params.search = searchQuery;
+    
+    if (appliedFilters.category && appliedFilters.category !== "All") {
+      let cat = appliedFilters.category.toLowerCase();
+      if (cat === "trips") cat = "trip";
+      if (cat === "hotels") cat = "hotel";
+      if (cat === "transportation") cat = type === "admin" ? "transport" : "vehicle";
+      params.category = cat;
     }
+    
+    if (appliedFilters.rating && appliedFilters.rating !== "All") {
+      params.rating = parseInt(appliedFilters.rating);
+    }
+    
+    if (appliedFilters.state && appliedFilters.state !== "All") {
+      if (type === "user") {
+         params.moderation_status = appliedFilters.state === "Replied" ? "approved" : "pending";
+      } else {
+         params.status = appliedFilters.state === "Replied" ? "published" : "draft";
+      }
+    }
+    return params;
   }, [type, searchQuery, appliedFilters]);
 
-  useEffect(() => {
-    fetchReviews(true);
-  }, [fetchReviews, refreshTrigger]);
+  const { data: res, isLoading: loading, mutate: refetch } = useSWR(
+    [`adminReviews_${type}`, apiParams, refreshTrigger],
+    async () => {
+      if (type === "user") {
+        return getAdminUserReviews(apiParams);
+      } else {
+        return getAdminTestimonials(apiParams);
+      }
+    },
+    { keepPreviousData: true }
+  );
+
+  const data = useMemo(() => {
+    if (!res?.results) return [];
+    
+    if (type === "user") {
+      let mapped: ReviewRow[] = res.results.map((rev: any) => ({
+        id: rev.review_number || `REV-${rev.id}`,
+        originalId: rev.id,
+        customer: rev.author_name,
+        email: rev.author_email,
+        category: mapCategory(rev.target_type) as ReviewCategory,
+        title: rev.title || "No Title",
+        body: rev.body,
+        rating: Number(rev.rating) as any,
+        date: formatDate(rev.review_date || rev.created_at),
+        published: rev.is_featured,
+        moderation_status: rev.moderation_status,
+        status: (rev.moderation_status === "approved" ? "Replied" : "Pending") as ReviewStatus,
+      }));
+
+      if (appliedFilters.date && appliedFilters.date !== "All") {
+        mapped = mapped.filter((item) => isDateMatching(item.date, appliedFilters.date));
+      }
+      return mapped;
+    } else {
+      let mapped: AdminTestimonialRow[] = res.results.map((rev: any) => ({
+        id: rev.testimonial_number || `TST-${rev.id}`,
+        originalId: rev.id,
+        addedBy: rev.added_by?.user?.name || "Admin",
+        customer: rev.customer_name,
+        email: rev.added_by_email || "",
+        country: rev.country || "EG",
+        countryCode: (rev.country || "eg").toLowerCase(),
+        video: !!rev.video_url,
+        videoUrl: rev.video_url,
+        category: mapCategory(rev.category),
+        title: rev.title,
+        body: rev.description,
+        rating: Number(rev.rating) as any,
+        date: formatDate(rev.created_at),
+        published: rev.status === "published",
+        status: (rev.status === "published" ? "Replied" : "Pending") as ReviewStatus,
+      }));
+
+      if (appliedFilters.date && appliedFilters.date !== "All") {
+        mapped = mapped.filter((item) => isDateMatching(item.date, appliedFilters.date));
+      }
+      return mapped;
+    }
+  }, [res, type, appliedFilters.date]);
 
   return {
     data,
     loading,
-    refresh: () => fetchReviews(false)
+    refresh: () => refetch()
   };
 }

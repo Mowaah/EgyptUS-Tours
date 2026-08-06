@@ -30,6 +30,7 @@ export default function ContactUsPanel({ searchQuery = "" }: ContactUsPanelProps
     fetchRequestsApi: getAllContactUsRequests,
     exportCsvApi: exportContactUsCSV,
     exportFilename: "contact_us.csv",
+    swrKey: "adminContactUsRequests",
   });
   
 

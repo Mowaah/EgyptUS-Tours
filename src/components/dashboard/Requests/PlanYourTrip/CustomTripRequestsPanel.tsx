@@ -36,6 +36,7 @@ export default function CustomTripRequestsPanel({ searchQuery }: CustomTripReque
       return exportPlanYourTripCSV(params);
     },
     exportFilename: "plan_your_trip.csv",
+    swrKey: "adminPlanYourTripRequests",
   });
   
 

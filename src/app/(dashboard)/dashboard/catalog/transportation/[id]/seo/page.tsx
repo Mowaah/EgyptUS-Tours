@@ -1,16 +1,21 @@
 "use client";
 
 import Image from "next/image";
+import { useVehicleDetailContext } from "../layout";
 import styles from "./page.module.scss";
 
-const SEO_DATA = {
-  metaTitle: "Top 10 Things to Do in Cairo | Egypt Tourism Blog",
-  metaDescription: "Discover the best experiences Cairo has to offer, from ancient pyramids to vibrant bazaars.",
-  metaKeywords: "Cairo Pyramids Tour, Nile Cruise 5 Days, Nile Cruise 5 Days, Nile Cruise 5 Days, Nile Cruise 5 Days, Nile Cruise 5 Days, Nile Cruise 5 Days, Nile Cruise 5 Days, Cairo Pyramids Tour",
-  slug: "top-10-things-to-do-in-cairo"
-};
-
 export default function TransportationSeoPage() {
+  const { vehicle, loading } = useVehicleDetailContext();
+
+  if (loading) return <div>Loading SEO...</div>;
+  if (!vehicle) return <div>Vehicle not found.</div>;
+
+  const english = vehicle.translations?.en || {};
+  const metaTitle = english.meta_title || "-";
+  const metaDescription = english.meta_description || "-";
+  const metaKeywords = Array.isArray(english.meta_keywords) ? english.meta_keywords : [];
+  const slug = english.slug || "-";
+
   return (
     <div>
       <div className={styles.cardSection}>
@@ -24,19 +29,19 @@ export default function TransportationSeoPage() {
         <div className={styles.imageInfoList}>
           <div className={styles.imageInfoItem}>
             <span className={styles.imageInfoLabel}>Meta Title</span>
-            <span className={styles.imageInfoValue}>{SEO_DATA.metaTitle}</span>
+            <span className={styles.imageInfoValue}>{metaTitle}</span>
           </div>
           
           <div className={styles.imageInfoItem}>
             <span className={styles.imageInfoLabel}>Meta Description</span>
-            <span className={styles.imageInfoValue}>{SEO_DATA.metaDescription}</span>
+            <span className={styles.imageInfoValue}>{metaDescription}</span>
           </div>
           
           <div className={styles.imageInfoItem} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '1rem' }}>
             <span className={styles.imageInfoLabel}>Meta Keywords</span>
-            {SEO_DATA.metaKeywords ? (
+            {metaKeywords.length > 0 ? (
               <div className={styles.metaKeywordsContainer}>
-                {SEO_DATA.metaKeywords.split(',').map(tag => tag.trim()).filter(Boolean).map((tag, idx) => (
+                {metaKeywords.map((tag: string, idx: number) => (
                   <div key={idx} className={styles.metaKeywordTag}>
                     <Image src="/images/dashboard/tag.svg" alt="tag" width={18} height={18} />
                     {tag}
@@ -50,7 +55,7 @@ export default function TransportationSeoPage() {
           
           <div className={styles.imageInfoItem}>
             <span className={styles.imageInfoLabel}>Slug</span>
-            <span className={styles.imageInfoValue}>{SEO_DATA.slug}</span>
+            <span className={styles.imageInfoValue}>{slug}</span>
           </div>
         </div>
       </div>

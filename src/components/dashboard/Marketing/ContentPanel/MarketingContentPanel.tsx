@@ -55,6 +55,7 @@ export function MarketingContentPanel({
     fetchApi,
     exportCsvApi: contentType === "articles" ? exportAdminArticlesCSV : exportAdminBlogsCSV,
     exportFilename: `${contentType}_export.csv`,
+    swrKey: `adminMarketingPosts_${contentType}`,
   });
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);

@@ -10,6 +10,24 @@ import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatus
 import type { AdditionalService } from "@/components/dashboard/Catalog/Transportation/AdditionalServices/AdditionalServiceCard/AdditionalServiceCard";
 import dashboardStyles from "../../../page.module.scss";
 import styles from "./page.module.scss";
+import { createVehicleAdditionalService, updateVehicleAdditionalService, deleteVehicleAdditionalService } from "@/services/admin/adminCatalogVehicleAdditionalServicesService";
+
+function getMutationErrorMessage(error: unknown, fallback: string) {
+  const data = (error as { response?: { data?: unknown } })?.response?.data;
+  if (typeof data === "string") return data;
+  if (data && typeof data === "object") {
+    const record = data as Record<string, unknown>;
+    if (typeof record.message === "string") return record.message;
+    if (typeof record.detail === "string") return record.detail;
+    const firstFieldError = Object.entries(record).find(([, value]) => Array.isArray(value) || typeof value === "string");
+    if (firstFieldError) {
+      const [field, value] = firstFieldError;
+      const text = Array.isArray(value) ? value.join(", ") : String(value);
+      return `${field}: ${text}`;
+    }
+  }
+  return fallback;
+}
 
 export default function TransportationAdditionalServicesPage() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -17,6 +35,9 @@ export default function TransportationAdditionalServicesPage() {
   
   const [deletingService, setDeletingService] = useState<AdditionalService | undefined>(undefined);
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const handleOpenAdd = () => {
     setEditingService(undefined);
@@ -33,20 +54,45 @@ export default function TransportationAdditionalServicesPage() {
     setEditingService(undefined);
   };
 
-  const handleSaveModal = (data: { name: string; price: string }) => {
-    console.log("Save additional service", data);
-    handleCloseModal();
-    setSuccessMessage(
-      editingService
-        ? "The Additional Service has been updated successfully"
-        : "The New Additional Service has been added successfully"
-    );
+  const handleSaveModal = async (data: { name: string; price: string }) => {
+    try {
+      if (editingService) {
+        await updateVehicleAdditionalService(editingService.id, data);
+        setSuccessMessage("The Additional Service has been updated successfully");
+      } else {
+        await createVehicleAdditionalService(data);
+        setSuccessMessage("The New Additional Service has been added successfully");
+      }
+      
+      setRefreshTrigger(prev => prev + 1);
+      handleCloseModal();
+    } catch (error: unknown) {
+      console.error("Mutation failed:", error);
+      if ((error as { response?: { status?: number } })?.response?.status === 404) {
+        setErrorMessage("Action failed: The backend admin endpoint for vehicle additional services is not implemented yet. Tell your backend team!");
+      } else {
+        setErrorMessage(getMutationErrorMessage(error, "An error occurred while saving the additional service."));
+      }
+      handleCloseModal();
+    }
   };
 
-  const handleDeleteConfirm = () => {
-    console.log("Deleted service", deletingService?.id);
-    setDeletingService(undefined);
-    setSuccessMessage("The Additional Service has been deleted successfully");
+  const handleDeleteConfirm = async () => {
+    if (!deletingService) return;
+    try {
+      await deleteVehicleAdditionalService(deletingService.id);
+      setSuccessMessage("The Additional Service has been deleted successfully");
+      setRefreshTrigger(prev => prev + 1);
+      setDeletingService(undefined);
+    } catch (error: unknown) {
+      console.error("Delete failed:", error);
+      if ((error as { response?: { status?: number } })?.response?.status === 404) {
+        setErrorMessage("Action failed: The backend admin endpoint for vehicle additional services is not implemented yet. Tell your backend team!");
+      } else {
+        setErrorMessage(getMutationErrorMessage(error, "An error occurred while deleting the additional service."));
+      }
+      setDeletingService(undefined);
+    }
   };
 
   return (
@@ -65,10 +111,12 @@ export default function TransportationAdditionalServicesPage() {
         <AdditionalServicesPanel 
           onEditService={handleOpenEdit} 
           onDeleteService={setDeletingService}
+          refreshTrigger={refreshTrigger}
         />
       </div>
 
       <AdditionalServiceModal
+        key={`${modalOpen ? "open" : "closed"}-${editingService?.id || "new"}`}
         open={modalOpen}
         onClose={handleCloseModal}
         onSave={handleSaveModal}
@@ -83,8 +131,8 @@ export default function TransportationAdditionalServicesPage() {
         title="Delete Vehicle Additional Service"
         message={
           <>
-            <strong>"{deletingService?.name}"</strong> is linked to 12 Vehicles.<br />
-            Deleting it will remove this category from those Vehicle
+            <strong>{`"${deletingService?.name}"`}</strong> is linked to Vehicles.<br />
+            Deleting it will remove this additional service from those Vehicles
           </>
         }
         cancelLabel="Cancel"
@@ -98,6 +146,14 @@ export default function TransportationAdditionalServicesPage() {
         message={successMessage}
         variant="success"
         onClose={() => setSuccessMessage("")}
+        className={dashboardStyles.draftBanner}
+      />
+
+      <DashboardStatusBanner
+        show={!!errorMessage}
+        message={errorMessage}
+        variant="warning"
+        onClose={() => setErrorMessage("")}
         className={dashboardStyles.draftBanner}
       />
     </div>
