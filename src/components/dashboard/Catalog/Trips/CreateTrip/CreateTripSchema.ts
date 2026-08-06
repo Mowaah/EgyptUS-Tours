@@ -8,6 +8,11 @@ export const createTripSchema = z
     destinations: z.array(z.string()).min(1, "At least one destination is required"),
     duration: z.string({ message: "Duration is required" }).min(1, "Duration is required"),
     tourTypes: z.array(z.string()).min(1, "At least one tour type is required"),
+    starRating: z.string().optional().refine((val) => {
+      if (!val) return true;
+      const num = parseFloat(val);
+      return !isNaN(num) && num >= 0 && num <= 5;
+    }, "Star Rating must be a number between 0 and 5"),
     brochureFile: z.any().optional(),
 
     // Trip Content

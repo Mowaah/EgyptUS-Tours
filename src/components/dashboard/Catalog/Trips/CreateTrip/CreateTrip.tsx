@@ -12,7 +12,7 @@ import { PricingStep } from "./Steps/Pricing/PricingStep";
 import { ItineraryStep } from "./Steps/Itinerary/ItineraryStep";
 import { DatesAvailabilityStep } from "./Steps/DatesAvailability/DatesAvailabilityStep";
 import { HotelsStep } from "./Steps/Hotels/HotelsStep";
-import { MediaStep } from "./Steps/Media/MediaStep";
+import { WizardMediaStep } from "@/components/dashboard/shared";
 import { SEOStep } from "./Steps/SEO/SEOStep";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { WizardLayout } from "@/components/dashboard/shared";
@@ -47,6 +47,7 @@ const EMPTY_VALUES: CreateTripValues = {
   destinations: [],
   duration: "",
   tourTypes: [],
+  starRating: "",
   brochureFile: undefined,
   description: "",
   culturalValue: "",
@@ -251,6 +252,7 @@ function mapTripToFormValues(trip: any): CreateTripValues {
       trip?.offers_private_tour ? "private-tour" : "",
       trip?.offers_group_tour ? "group-tour" : "",
     ].filter(Boolean),
+    starRating: trip?.rating_avg ? String(trip.rating_avg) : "",
     description: asText(overview.description || trip?.description),
     culturalValue: asText(overview.cultural_value),
     whoIsTripFor: asText(overview.who_is_it_for),
@@ -373,6 +375,7 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
     offers_group_tour: tourTypes.includes("group-tour"),
     private_price: money(data.pricing?.privateTour?.basePrice) || null,
     group_price: money(data.pricing?.groupTour?.basePrice) || null,
+    rating_avg: data.starRating ? parseFloat(data.starRating) : null,
     currency_code: "USD",
     availability_enabled: !!data.datesAvailability?.enabled,
     force_draft: intent !== "publish" && !isEdit,
@@ -584,7 +587,7 @@ export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirty
       case 5:
         return <HotelsStep />;
       case 6:
-        return <MediaStep />;
+        return <WizardMediaStep />;
       case 7:
         return <SEOStep />;
       default:

@@ -190,6 +190,28 @@ export function OverviewStep() {
                   />
                 )}
               />
+              <Controller
+                name="starRating"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <DashboardField 
+                    {...field}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      if (val > 5) e.target.value = "5";
+                      if (val < 0) e.target.value = "0";
+                      field.onChange(e);
+                    }}
+                    label="Star Rating" 
+                    placeholder="Enter rating (0 - 5)" 
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="5"
+                    error={fieldState.error?.message}
+                  />
+                )}
+              />
             </div>
 
             <div className={styles.uploadSection}>

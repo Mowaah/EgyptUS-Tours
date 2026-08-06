@@ -3,66 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import { TablePanelFilterBar } from "@/components/dashboard/TablePanel";
+import { useHotelDetailContext } from "../layout";
 import styles from "./page.module.scss";
-
-const MOCK_ROOMS = [
-  {
-    id: 1,
-    name: "Deluxe Double Room - Sea View",
-    subtitle: "Elegant twin room offering modern amenities and relaxing vibes.",
-    facilities: [
-      "Daily VIP Treatment",
-      '49" Smart TV',
-      "Daily Access to the Spa",
-      "Evening Turndown Service",
-      "Coffee and Tea Service"
-    ],
-    price: 180,
-    image: "/images/dashboard/catalog/hotels/room-1.jpg"
-  },
-  {
-    id: 2,
-    name: "Deluxe Double Room - Sea View",
-    subtitle: "Elegant twin room offering modern amenities and relaxing vibes.",
-    facilities: [
-      "Daily VIP Treatment",
-      '49" Smart TV',
-      "Daily Access to the Spa",
-      "Evening Turndown Service",
-      "Coffee and Tea Service"
-    ],
-    price: 180,
-    image: "/images/dashboard/catalog/hotels/room-2.jpg"
-  },
-  {
-    id: 3,
-    name: "Deluxe Double Room - Sea View",
-    subtitle: "Elegant twin room offering modern amenities and relaxing vibes.",
-    facilities: [
-      "Daily VIP Treatment",
-      '49" Smart TV',
-      "Daily Access to the Spa",
-      "Evening Turndown Service",
-      "Coffee and Tea Service"
-    ],
-    price: 180,
-    image: "/images/dashboard/catalog/hotels/room-3.jpg"
-  },
-  {
-    id: 4,
-    name: "Deluxe Double Room - Sea View",
-    subtitle: "Elegant twin room offering modern amenities and relaxing vibes.",
-    facilities: [
-      "Daily VIP Treatment",
-      '49" Smart TV',
-      "Daily Access to the Spa",
-      "Evening Turndown Service",
-      "Coffee and Tea Service"
-    ],
-    price: 180,
-    image: "/images/dashboard/catalog/hotels/room-4.jpg"
-  }
-];
 
 const filterOptions = {
   type: ["All", "Single", "Double Room", "Superior Room", "Deluxe Room"],
@@ -72,6 +14,8 @@ const filterOptions = {
 };
 
 export default function HotelRoomsPage() {
+  const { hotel, loading } = useHotelDetailContext();
+
   const defaultFilters = {
     type: "All",
     category: "All",
@@ -81,6 +25,57 @@ export default function HotelRoomsPage() {
 
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
+
+  if (loading) {
+    return <div className={styles.roomsLayout}>Loading rooms...</div>;
+  }
+
+  const rawRooms: any[] = Array.isArray(hotel?.rooms) ? hotel.rooms : [];
+
+  const rooms = rawRooms.map((room) => {
+    const category = room.category_label || room.category || "";
+    const type = room.type_label || room.type || "";
+    const view = room.view_label || room.view || "";
+    const title = [category, type, view].filter(Boolean).join(" - ") || "Hotel Room";
+    const description = room.description || "Comfortable guest room with modern amenities.";
+    const facilities: string[] = Array.isArray(room.features) ? room.features : Array.isArray(room.facilities) ? room.facilities : [];
+    const price = room.price_per_night ? String(room.price_per_night) : room.pricePerNight ? String(room.pricePerNight) : "0";
+    const images: string[] = Array.isArray(room.images)
+      ? room.images.map((img: any) => img.image_url || img.image || img.file || img).filter(Boolean)
+      : Array.isArray(room.photos)
+      ? room.photos.map((img: any) => img.image_url || img.image || img.file || img).filter(Boolean)
+      : [];
+
+    return {
+      id: room.id || Math.random(),
+      title,
+      description,
+      facilities,
+      price,
+      images: images.length > 0 ? images : ["/images/dashboard/catalog/hotels/roomtype.jpg"],
+      rawCategory: category,
+      rawType: type,
+      rawView: view,
+    };
+  });
+
+  const filteredRooms = rooms.filter((room) => {
+    if (appliedFilters.type !== "All" && !room.rawType.toLowerCase().includes(appliedFilters.type.toLowerCase())) {
+      return false;
+    }
+    if (appliedFilters.category !== "All" && !room.rawCategory.toLowerCase().includes(appliedFilters.category.toLowerCase())) {
+      return false;
+    }
+    if (appliedFilters.view !== "All" && !room.rawView.toLowerCase().includes(appliedFilters.view.toLowerCase())) {
+      return false;
+    }
+    const numPrice = parseFloat(room.price);
+    if (appliedFilters.price === "Under $100" && numPrice >= 100) return false;
+    if (appliedFilters.price === "$100 - $200" && (numPrice < 100 || numPrice > 200)) return false;
+    if (appliedFilters.price === "Over $200" && numPrice <= 200) return false;
+
+    return true;
+  });
 
   const resetFilters = () => {
     setFilters(defaultFilters);
@@ -115,52 +110,83 @@ export default function HotelRoomsPage() {
         <h2>Room & Pricing</h2>
       </div>
 
-      {/* TablePanel Filter Bar matching the exact design used in the table panel */}
       <TablePanelFilterBar 
         fields={filterFields} 
         onClean={resetFilters} 
         onApply={applyFilters} 
       />
 
-      <div className={styles.roomsGrid}>
-        {MOCK_ROOMS.map((room) => (
-          <div key={room.id} className={styles.roomCard}>
-            <div className={styles.roomImageWrap}>
-              {/* Fallback to a placeholder image since we don't have the specific room images */}
-              <Image src="/images/dashboard/catalog/hotels/roomtype.jpg" alt={room.name} fill className={styles.roomImg} />
-              
-              <div className={styles.navArrows}>
-                <button className={styles.arrowBtn}>
-                  <Image src="/images/arrows/arrow-right-white.svg" alt="Previous" width={24} height={24} style={{ transform: "rotate(180deg)" }} />
-                </button>
-                <button className={styles.arrowBtn}>
-                  <Image src="/images/arrows/arrow-right-white.svg" alt="Next" width={24} height={24} />
-                </button>
-              </div>
-            </div>
+      {filteredRooms.length === 0 ? (
+        <div style={{ padding: "40px 0", textAlign: "center", color: "#6b7280" }}>
+          No rooms available matching the selected filters.
+        </div>
+      ) : (
+        <div className={styles.roomsGrid}>
+          {filteredRooms.map((room) => (
+            <RoomCard key={room.id} room={room} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
-            <div className={styles.roomInfo}>
-              <div className={styles.header}>
-                <h3>{room.name}</h3>
-                <p>{room.subtitle}</p>
-              </div>
+function RoomCard({ room }: { room: any }) {
+  const [currentImgIndex, setCurrentImgIndex] = useState(0);
+  const images: string[] = room.images;
 
-              <div className={styles.facilities}>
-                <h4>Room Facilities</h4>
-                <div className={styles.tags}>
-                  {room.facilities.map((fac, idx) => (
-                    <span key={idx} className={styles.tag}>{fac}</span>
-                  ))}
-                </div>
-              </div>
+  const handleNext = () => {
+    setCurrentImgIndex((prev) => (prev + 1) % images.length);
+  };
 
-              <div className={styles.price}>
-                <span className={styles.amount}>${room.price}</span>
-                <span className={styles.perNight}>/per night</span>
-              </div>
+  const handlePrev = () => {
+    setCurrentImgIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  return (
+    <div className={styles.roomCard}>
+      <div className={styles.roomImageWrap}>
+        <Image
+          src={images[currentImgIndex]}
+          alt={room.title}
+          fill
+          className={styles.roomImg}
+          unoptimized={images[currentImgIndex]?.startsWith("http") || images[currentImgIndex]?.startsWith("data:")}
+        />
+        
+        {images.length > 1 && (
+          <div className={styles.navArrows}>
+            <button className={styles.arrowBtn} onClick={handlePrev} title="Previous image">
+              <Image src="/images/arrows/arrow-right-white.svg" alt="Previous" width={24} height={24} style={{ transform: "rotate(180deg)" }} />
+            </button>
+            <button className={styles.arrowBtn} onClick={handleNext} title="Next image">
+              <Image src="/images/arrows/arrow-right-white.svg" alt="Next" width={24} height={24} />
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className={styles.roomInfo}>
+        <div className={styles.header}>
+          <h3>{room.title}</h3>
+          <p>{room.description}</p>
+        </div>
+
+        {room.facilities.length > 0 && (
+          <div className={styles.facilities}>
+            <h4>Room Facilities</h4>
+            <div className={styles.tags}>
+              {room.facilities.map((fac: string, idx: number) => (
+                <span key={idx} className={styles.tag}>{fac}</span>
+              ))}
             </div>
           </div>
-        ))}
+        )}
+
+        <div className={styles.price}>
+          <span className={styles.amount}>${room.price}</span>
+          <span className={styles.perNight}>/per night</span>
+        </div>
       </div>
     </div>
   );

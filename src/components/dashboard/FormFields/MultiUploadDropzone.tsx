@@ -5,8 +5,8 @@ import Image from "next/image";
 import styles from "./FormFields.module.scss";
 
 interface MultiUploadDropzoneProps {
-  values?: (File | string)[];
-  onFilesChange?: (files: (File | string)[]) => void;
+  values?: any[];
+  onFilesChange?: (files: any[]) => void;
   accept?: string;
   className?: string;
   title?: string;
@@ -69,8 +69,9 @@ export function MultiUploadDropzone({
       {values.length > 0 && (
         <div className={styles.multiThumbnailList}>
           {values.map((file, index) => {
-            const isFileObject = file instanceof File;
-            const objectUrl = isFileObject ? URL.createObjectURL(file as File) : (file as string);
+            const fileObj = typeof file === "object" && file !== null && !(file instanceof File) && "file" in file ? file.file : file;
+            const isFileObject = fileObj instanceof File;
+            const objectUrl = isFileObject ? URL.createObjectURL(fileObj as File) : (fileObj as string);
             
             return (
               <div key={index} className={styles.multiThumbnailWrapper}>

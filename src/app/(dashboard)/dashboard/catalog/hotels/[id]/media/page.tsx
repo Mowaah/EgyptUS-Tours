@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import { useHotelDetailContext } from "../layout";
 import styles from "./page.module.scss";
 
 interface MediaItemProps {
@@ -37,10 +38,11 @@ function MediaCard({
         <div className={styles.imageWrapper}>
           <Image 
             src={imageSrc} 
-            alt={imgTitleValue} 
+            alt={imgTitleValue || title} 
             width={698} 
             height={352} 
             className={styles.tripImage}
+            unoptimized={imageSrc.startsWith("http") || imageSrc.startsWith("data:")}
             priority
           />
         </div>
@@ -51,14 +53,14 @@ function MediaCard({
           <div className={styles.fieldGroup}>
             <span className={styles.fieldLabel}>{imgTitleLabel}</span>
             <div className={styles.fieldValue}>
-              {imgTitleValue}
+              {imgTitleValue || "-"}
             </div>
           </div>
 
           <div className={styles.fieldGroup}>
             <span className={styles.fieldLabel}>{imgAltLabel}</span>
             <div className={styles.fieldValue}>
-              {imgAltValue}
+              {imgAltValue || "-"}
             </div>
           </div>
         </div>
@@ -68,62 +70,38 @@ function MediaCard({
 }
 
 export default function HotelMediaPage() {
-  const mediaItems = [
-    {
-      title: "Upload Thumbnail",
-      imageSrc: "/images/b2b/b2b.jpg",
-      attachmentInfo: "Attachment (303 x 202)",
-      imgTitleLabel: "Thumbnail Title",
-      imgTitleValue: "Thumbnail Title...",
-      imgAltLabel: "Thumbnail Alt",
-      imgAltValue: "Comma-separated tags (e.g. egypt, travel, cairo)",
-    },
-    {
-      title: "Upload Thumbnail",
-      imageSrc: "/images/b2b/b2b2.jpg",
-      attachmentInfo: "Attachment (303 x 202)",
+  const { hotel, loading } = useHotelDetailContext();
+
+  if (loading) {
+    return <div className={styles.container}>Loading media...</div>;
+  }
+
+  const rawMediaItems: any[] = Array.isArray(hotel?.media_items) ? hotel.media_items : [];
+
+  const heroMedia = rawMediaItems.find((m) => m?.kind === "hero") || (hotel?.hero_image_url ? { image_url: hotel?.hero_image_url, kind: "hero" } : null);
+  const galleryMedia = rawMediaItems.filter((m) => m?.kind === "gallery");
+
+  const mediaList = [heroMedia, ...galleryMedia].filter(Boolean);
+
+  const mediaCards = mediaList.map((item, index) => {
+    const isHero = index === 0;
+    const mediaTranslations = item?.translations?.en || {};
+    const title = isHero ? "Upload Thumbnail" : index === 1 ? "Upload Image" : `Photo Gallery ${index}`;
+    const attachmentInfo = isHero ? "Attachment (303 x 202)" : "Attachment (1100 x 552)";
+    const imageSrc = item?.image_url || item?.image || item?.file || "/images/dashboard/catalog/hotels/roomtype.jpg";
+    const imgTitleValue = mediaTranslations.title || item?.caption || "";
+    const imgAltValue = mediaTranslations.alt || "";
+
+    return {
+      title,
+      imageSrc,
+      attachmentInfo,
       imgTitleLabel: "Image Title",
-      imgTitleValue: "Thumbnail Title...",
-      imgAltLabel: "Thumbnail Alt",
-      imgAltValue: "Comma-separated tags (e.g. egypt, travel, cairo)",
-    },
-    {
-      title: "Photo Gallery 2",
-      imageSrc: "/images/b2b/b2b3.jpg",
-      attachmentInfo: "Attachment (303 x 202)",
-      imgTitleLabel: "Image Title",
-      imgTitleValue: "Thumbnail Title...",
-      imgAltLabel: "Thumbnail Alt",
-      imgAltValue: "Comma-separated tags (e.g. egypt, travel, cairo)",
-    },
-    {
-      title: "Photo Gallery 3",
-      imageSrc: "/images/corporate/corporate1.jpg",
-      attachmentInfo: "Attachment (303 x 202)",
-      imgTitleLabel: "Image Title",
-      imgTitleValue: "Thumbnail Title...",
-      imgAltLabel: "Thumbnail Alt",
-      imgAltValue: "Comma-separated tags (e.g. egypt, travel, cairo)",
-    },
-    {
-      title: "Photo Gallery 4",
-      imageSrc: "/images/corporate/corporate2.jpg",
-      attachmentInfo: "Attachment (303 x 202)",
-      imgTitleLabel: "Image Title",
-      imgTitleValue: "Thumbnail Title...",
-      imgAltLabel: "Thumbnail Alt",
-      imgAltValue: "Comma-separated tags (e.g. egypt, travel, cairo)",
-    },
-    {
-      title: "Photo Gallery 5",
-      imageSrc: "/images/corporate/corporate3.jpg",
-      attachmentInfo: "Attachment (303 x 202)",
-      imgTitleLabel: "Image Title",
-      imgTitleValue: "Thumbnail Title...",
-      imgAltLabel: "Thumbnail Alt",
-      imgAltValue: "Comma-separated tags (e.g. egypt, travel, cairo)",
-    },
-  ];
+      imgTitleValue,
+      imgAltLabel: "Image Alt",
+      imgAltValue,
+    };
+  });
 
   return (
     <div className={styles.container}>
@@ -134,11 +112,17 @@ export default function HotelMediaPage() {
         <h2>Hotel Media</h2>
       </div>
 
-      <div className={styles.mediaGrid}>
-        {mediaItems.map((item, index) => (
-          <MediaCard key={index} {...item} />
-        ))}
-      </div>
+      {mediaCards.length === 0 ? (
+        <div style={{ padding: "40px 0", textAlign: "center", color: "#6b7280" }}>
+          No media items uploaded for this hotel yet.
+        </div>
+      ) : (
+        <div className={styles.mediaGrid}>
+          {mediaCards.map((item, index) => (
+            <MediaCard key={index} {...item} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

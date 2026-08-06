@@ -4,8 +4,7 @@ import Image from "next/image";
 import { FormSection, FormSpec, UploadDropzone } from "@/components/dashboard/FormFields";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
-import { CreateTripValues } from "../../CreateTripSchema";
-import styles from "./MediaStep.module.scss";
+import styles from "./WizardMediaStep.module.scss";
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
@@ -25,7 +24,7 @@ function MediaUploadBlock({
   defaultFileMock = false
 }: MediaUploadBlockProps) {
   const [lang, setLang] = useState<Language>("English");
-  const { control, register, setValue } = useFormContext<CreateTripValues>();
+  const { control, register, setValue } = useFormContext();
 
   let headerAction = null;
   if (onDelete) {
@@ -78,9 +77,9 @@ function MediaUploadBlock({
   );
 }
 
-export function MediaStep() {
+export default function WizardMediaStep() {
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const { control, formState: { errors } } = useFormContext<CreateTripValues>();
+  const { control, formState: { errors } } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
     name: "photos",

@@ -7,6 +7,7 @@ import { CreateHotelValues } from "../../CreateHotelSchema";
 import dashboardStyles from "../../CreateHotel.module.scss";
 import styles from "./OverviewStep.module.scss";
 import Image from "next/image";
+import { useCatalogHotelLocations } from "@/hooks/useCatalogHotels";
 
 export function OverviewStep() {
   const [basicLang, setBasicLang] = useState<Language>("English");
@@ -16,6 +17,8 @@ export function OverviewStep() {
   
   const { register, watch, setValue, control, formState: { errors } } = useFormContext<CreateHotelValues>();
   const facilities = watch("facilities") || [];
+  const { locations, loading: locLoading } = useCatalogHotelLocations();
+  const locationOptions = locations.map(l => ({ label: l.name, value: String(l.id) }));
 
   const handleAddFacility = () => {
     const trimmed = facilityInput.trim();
@@ -50,20 +53,15 @@ export function OverviewStep() {
                 name="totalRooms"
                 control={control}
                 render={({ field, fieldState }) => (
-                  <DashboardField 
-                    {...field}
-                    label="Total Rooms" 
-                    placeholder="Select total rooms" 
-                    control="select"
-                    options={[
-                      { label: "100", value: "100" },
-                      { label: "200", value: "200" },
-                      { label: "300", value: "300" },
-                      { label: "400", value: "400" },
-                    ]}
-                    error={fieldState.error?.message}
-                  />
-                )}
+                <DashboardField 
+                  {...field}
+                  label="Total Rooms" 
+                  placeholder="Enter total rooms (e.g. 250)" 
+                  control="input"
+                  type="number"
+                  error={fieldState.error?.message}
+                />
+              )}
               />
             </div>
             
@@ -74,14 +72,30 @@ export function OverviewStep() {
               {...register("subtitle")} 
             />
 
-            <DashboardField 
-              label="City / Location" 
-              placeholder="Enter location" 
-              endAdornment={
-                <Image src="/images/dashboard/catalog/hotels/location-add.svg" alt="Location" width={20} height={20} />
-              }
-              error={errors.cityLocation?.message}
-              {...register("cityLocation")} 
+            <Controller
+              name="cityLocation"
+              control={control}
+              render={({ field, fieldState }) => (
+                <DashboardField 
+                  {...field}
+                  label="City / Location" 
+                  placeholder="Enter city or location" 
+                  error={fieldState.error?.message}
+                />
+              )}
+            />
+
+            <Controller
+              name="address"
+              control={control}
+              render={({ field, fieldState }) => (
+                <DashboardField 
+                  {...field}
+                  label="Address" 
+                  placeholder="Enter address (e.g. 123 Main St, Luxor)" 
+                  error={fieldState.error?.message}
+                />
+              )}
             />
 
             <Controller
@@ -90,16 +104,18 @@ export function OverviewStep() {
               render={({ field, fieldState }) => (
                 <DashboardField 
                   {...field}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    if (val > 5) e.target.value = "5";
+                    if (val < 0) e.target.value = "0";
+                    field.onChange(e);
+                  }}
                   label="Star Rating" 
-                  placeholder="Select rating" 
-                  control="select"
-                  options={[
-                    { label: "1 Star", value: "1" },
-                    { label: "2 Stars", value: "2" },
-                    { label: "3 Stars", value: "3" },
-                    { label: "4 Stars", value: "4" },
-                    { label: "5 Stars", value: "5" },
-                  ]}
+                  placeholder="Enter rating (0 - 5)" 
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="5"
                   error={fieldState.error?.message}
                 />
               )}

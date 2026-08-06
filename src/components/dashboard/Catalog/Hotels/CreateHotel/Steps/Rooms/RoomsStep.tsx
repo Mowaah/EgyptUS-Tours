@@ -93,7 +93,10 @@ function FacilitiesSelector({ value = [], onChange }: { value: string[]; onChang
 }
 
 export function RoomsStep() {
-  const { control, register } = useFormContext<CreateHotelValues>();
+  const { control, register, formState: { errors } } = useFormContext<CreateHotelValues>();
+  
+  const rawRoomsError = errors.rooms as { root?: { message?: string }; message?: string } | undefined;
+  const roomsErrorMessage = rawRoomsError?.root?.message || rawRoomsError?.message;
   const { fields, append, remove } = useFieldArray({
     control,
     name: "rooms",
@@ -127,6 +130,13 @@ export function RoomsStep() {
           </svg>
         </button>
       </div>
+
+      {roomsErrorMessage && (
+        <div className={styles.errorText} role="alert">
+          <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+          <span>{roomsErrorMessage}</span>
+        </div>
+      )}
 
       <div className={styles.roomsList}>
         {fields.map((field, index) => (
@@ -164,7 +174,7 @@ export function RoomsStep() {
                           ]}
                           label="Room Category"
                           placeholder="e.g. Standard Room"
-                          error={fieldState.error?.message}
+                          error={(errors?.rooms?.[index] as any)?.category?.message || fieldState.error?.message}
                         />
                       )}
                     />
@@ -187,7 +197,7 @@ export function RoomsStep() {
                           ]}
                           label="Room Type"
                           placeholder="e.g. Deluxe Room"
-                          error={fieldState.error?.message}
+                          error={(errors?.rooms?.[index] as any)?.type?.message || fieldState.error?.message}
                         />
                       )}
                     />
@@ -212,7 +222,7 @@ export function RoomsStep() {
                           ]}
                           label="Room View"
                           placeholder="e.g. City View"
-                          error={fieldState.error?.message}
+                          error={(errors?.rooms?.[index] as any)?.view?.message || fieldState.error?.message}
                         />
                       )}
                     />
@@ -226,7 +236,7 @@ export function RoomsStep() {
                           name={`rooms.${index}.pricePerNight`}
                           label="Price per Night ($)"
                           control={control}
-                          error={fieldState.error?.message}
+                          error={(errors?.rooms?.[index] as any)?.pricePerNight?.message || fieldState.error?.message}
                         />
                       )}
                     />

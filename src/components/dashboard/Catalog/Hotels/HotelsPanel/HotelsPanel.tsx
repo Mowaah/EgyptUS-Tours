@@ -8,16 +8,16 @@ import {
   TablePanelFilterBar,
   TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
-import { mockCatalogHotels } from "../mockCatalogHotels";
+import { useCatalogHotels, useCatalogHotelLocations } from "@/hooks/useCatalogHotels";
+import { archiveCatalogHotel, deleteCatalogHotel, updateCatalogHotel } from "@/services/admin/adminCatalogHotelsService";
 import { catalogHotelsColumns, catalogHotelsRowActions } from "./catalogHotelsColumns";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 
-const filterOptions = {
-  destination: ["All", "Cairo", "Luxor", "Aswan", "Alexandria"],
-  rating: ["All", "5 Stars", "4 Stars", "3 Stars", "2 Stars", "1 Star", "Unrated"],
+const staticFilterOptions = {
+  rating: ["All", "5", "4", "3", "2", "1", "Unrated"],
   startingFrom: ["All", "Under $1000", "$1000 - $2000", "Over $2000"],
   status: ["All", "Published", "Archived", "Draft"],
 };
@@ -39,30 +39,37 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
 
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
-  const [hotelsData, setHotelsData] = useState(mockCatalogHotels);
-
   const [confirmModal, setConfirmModal] = useState<{ open: boolean; action: "Archive" | "Delete" | null; row: any }>({ open: false, action: null, row: null });
-  const [banner, setBanner] = useState<{ show: boolean; message: string }>({ show: false, message: "" });
+  const [banner, setBanner] = useState<{ show: boolean; message: string; variant: "success" | "warning" }>({ show: false, message: "", variant: "success" });
+  const { locations, loading: locLoading } = useCatalogHotelLocations();
+  const locationOptions = ["All", ...Array.from(new Set(locations.map((l: any) => l.name).filter(Boolean)))];
 
-  const filteredHotels = useMemo(
-    () =>
-      hotelsData.filter((hotel) => {
-        if (searchQuery) {
-          const lowerQuery = searchQuery.toLowerCase();
-          if (
-            !hotel.id.toLowerCase().includes(lowerQuery) &&
-            !hotel.hotelName.toLowerCase().includes(lowerQuery)
-          ) {
-            return false;
-          }
-        }
-        if (appliedFilters.destination !== "All" && hotel.destination !== appliedFilters.destination) return false;
-        if (appliedFilters.rating !== "All" && hotel.rating !== appliedFilters.rating) return false;
-        if (appliedFilters.status !== "All" && hotel.status !== appliedFilters.status) return false;
-        return true;
-      }),
-    [appliedFilters, searchQuery]
-  );
+  const queryParams = useMemo(() => {
+    const params: any = { limit: 1000, page_size: 1000 };
+    if (searchQuery) params.search = searchQuery;
+    if (appliedFilters.status !== "All") params.status = appliedFilters.status.toLowerCase();
+    
+    if (appliedFilters.destination !== "All") {
+      const dest = locations.find((l: any) => l.name === appliedFilters.destination);
+      if (dest) params.location_id = dest.id;
+    }
+    
+    if (appliedFilters.rating !== "All") {
+      if (appliedFilters.rating !== "Unrated") {
+        params.stars = parseInt(appliedFilters.rating);
+      }
+    }
+    
+    if (appliedFilters.startingFrom !== "All") {
+      if (appliedFilters.startingFrom === "Under $1000") { params.max_price = 1000; }
+      else if (appliedFilters.startingFrom === "$1000 - $2000") { params.min_price = 1000; params.max_price = 2000; }
+      else if (appliedFilters.startingFrom === "Over $2000") { params.min_price = 2000; }
+    }
+    
+    return params;
+  }, [appliedFilters, searchQuery, locations]);
+
+  const { data: hotelsData, loading: hotelsLoading, refetch } = useCatalogHotels(queryParams);
 
   const resetFilters = () => {
     setFilters(defaultFilters);
@@ -75,10 +82,10 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
 
   const filterFields = (
     [
-      ["destination", "Destination", filterOptions.destination],
-      ["rating", "Rating", filterOptions.rating],
-      ["startingFrom", "Starting From", filterOptions.startingFrom],
-      ["status", "Status", filterOptions.status],
+      ["destination", "Destination", locationOptions],
+      ["rating", "Rating", staticFilterOptions.rating],
+      ["startingFrom", "Starting From", staticFilterOptions.startingFrom],
+      ["status", "Status", staticFilterOptions.status],
     ] as const
   ).map(([id, label, options]) => ({
     id,
@@ -88,11 +95,40 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
 
-  if (mockCatalogHotels.length > 0 && filteredHotels.length === 0) {
+  const handleConfirmAction = async () => {
+    if (!confirmModal.row || !confirmModal.action) return;
+    try {
+      if (confirmModal.action === "Archive") {
+        await archiveCatalogHotel(confirmModal.row.id);
+        setBanner({ show: true, message: "The hotel has been archived successfully and is no longer visible in the active list", variant: "success" });
+      } else if (confirmModal.action === "Delete") {
+        await deleteCatalogHotel(confirmModal.row.id);
+        setBanner({ show: true, message: "The hotel has been deleted successfully", variant: "success" });
+      }
+      refetch();
+    } catch (err) {
+      console.error(`Failed to ${confirmModal.action} hotel:`, err);
+      setBanner({ show: true, message: `Failed to ${confirmModal.action.toLowerCase()} hotel.`, variant: "warning" });
+    } finally {
+      setConfirmModal({ open: false, action: null, row: null });
+    }
+  };
+
+  const handleSelectionChange = async (rowId: string, isSelected: boolean) => {
+    try {
+      await updateCatalogHotel(rowId, { is_featured: isSelected });
+      refetch();
+    } catch (err) {
+      console.error("Failed to update featured status:", err);
+      setBanner({ show: true, message: "Failed to update featured status.", variant: "warning" });
+    }
+  };
+
+  if (!hotelsLoading && Object.keys(queryParams).length > 0 && hotelsData.length === 0) {
     return <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />;
   }
 
-  if (mockCatalogHotels.length === 0) {
+  if (!hotelsLoading && Object.keys(queryParams).length === 0 && hotelsData.length === 0) {
     return (
       <DashboardEmptyState
         title="No Hotels Found"
@@ -107,7 +143,7 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
   return (
     <TablePanel
       ariaLabel="Catalog hotels table"
-      title="Trips Packages"
+      title="Hotels"
       iconSrc="/images/dashboard/catalog/trips.svg"
       headerActions={
         <>
@@ -122,11 +158,13 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
     >
       <DataTable
-        data={filteredHotels}
+        data={hotelsData}
         columns={catalogHotelsColumns}
-        getRowId={(row) => row.id}
+        getRowId={(row) => String(row.id)}
         selectable
         selectionType="star"
+        selectedRowIds={hotelsData.filter((t: any) => t.is_featured).map((t: any) => String(t.id))}
+        onSelectionChange={handleSelectionChange}
         rowActions={(row) =>
           catalogHotelsRowActions((action, r) => {
             if (action === "View") {
@@ -156,22 +194,13 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
         confirmLabel={confirmModal.action === "Delete" ? "Yes, delete it" : "Archive Hotel"}
         cancelLabel={confirmModal.action === "Delete" ? "Keep it" : "Cancel"}
         onClose={() => setConfirmModal({ open: false, action: null, row: null })}
-        onConfirm={() => {
-          if (confirmModal.action === "Archive") {
-            setHotelsData(prev => prev.map(h => h.id === confirmModal.row?.id ? { ...h, status: "Archived" } : h));
-            setBanner({ show: true, message: "The hotel has been archived successfully and is no longer visible in the active hotels list" });
-          } else if (confirmModal.action === "Delete") {
-            setHotelsData(prev => prev.filter(h => h.id !== confirmModal.row?.id));
-            setBanner({ show: true, message: "The hotel has been deleted successfully" });
-          }
-          setConfirmModal({ open: false, action: null, row: null });
-        }}
+        onConfirm={handleConfirmAction}
       />
       <DashboardStatusBanner
         show={banner.show}
-        variant="success"
+        variant={banner.variant}
         message={banner.message}
-        onClose={() => setBanner({ show: false, message: "" })}
+        onClose={() => setBanner({ show: false, message: "", variant: "success" })}
       />
     </TablePanel>
   );

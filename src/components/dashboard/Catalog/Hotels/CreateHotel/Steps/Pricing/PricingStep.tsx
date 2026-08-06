@@ -8,18 +8,28 @@ import { CurrencyField } from "@/components/dashboard/shared";
 import styles from "./PricingStep.module.scss";
 
 
-
 export function PricingStep() {
-  const { watch, control } = useFormContext<CreateHotelValues>();
+  const { watch, control, setValue } = useFormContext<CreateHotelValues>();
 
-  const basePrice = watch("basePrice");
+  const rooms = watch("rooms") || [];
   const vat = watch("vat");
   const insurance = watch("insurance");
 
-  const numBase = parseFloat(basePrice as string) || 0;
+  // Calculate base price dynamically from the lowest room price
+  const basePrice = rooms.length > 0
+    ? Math.min(...rooms.map((r: any) => parseFloat(r.pricePerNight || "0")).filter((p: number) => p > 0))
+    : 0;
+
+  const numBase = basePrice === Infinity ? 0 : basePrice;
   const numVat = parseFloat(vat as string) || 0;
   const numInsurance = parseFloat(insurance as string) || 0;
   const total = numBase + numVat + numInsurance;
+
+  React.useEffect(() => {
+    if (numBase.toString() !== watch("basePrice")) {
+      setValue("basePrice", numBase.toString());
+    }
+  }, [numBase, setValue, watch]);
 
   return (
     <div className={dashboardStyles.columnsContainer}>
@@ -30,11 +40,13 @@ export function PricingStep() {
           className={styles.card}
         >
           <div className={styles.inputContainer}>
-            <CurrencyField 
-              name="basePrice"
-              label="Base Price Per Person ($)"
-              control={control}
-            />
+            <div style={{ pointerEvents: 'none', opacity: 0.7 }}>
+              <CurrencyField 
+                name="basePrice"
+                label="Base Price Per Person (Auto-calculated from rooms)"
+                control={control}
+              />
+            </div>
             
             <div className={styles.inputRow}>
               <CurrencyField 

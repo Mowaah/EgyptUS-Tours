@@ -1,70 +1,76 @@
 import { DataTableColumn, DataTableRowAction } from "@/components/dashboard/DataTable/types";
-import { CatalogHotel } from "../mockCatalogHotels";
 
-export const catalogHotelsColumns: DataTableColumn<CatalogHotel>[] = [
+// Using any to match the dynamic backend payload
+export const catalogHotelsColumns: DataTableColumn<any>[] = [
   {
-    id: "id",
-    header: "Hotel ID",
-    render: (row) => <span style={{ fontWeight: 600, color: "#1f2937" }}>{row.id}</span>,
+    id: "hotel_code",
+    header: "Hotel Code",
+    render: (row) => <span style={{ fontWeight: 600, color: "#1f2937" }}>{row.hotel_code || row.id}</span>,
   },
   {
-    id: "hotelName",
+    id: "name",
     header: "Hotel Name",
-    render: (row) => row.hotelName,
+    render: (row) => row.name,
   },
   {
-    id: "destination",
-    header: "Destination",
-    render: (row) => row.destination,
+    id: "location",
+    header: "Location",
+    render: (row) => row.location?.name || row.location_text || "-",
   },
   {
-    id: "rating",
+    id: "stars",
     header: "Rating",
-    render: (row) => row.rating,
+    render: (row) => (row.stars ? `${row.stars} Stars` : "Unrated"),
   },
   {
     id: "startingFrom",
     header: "Starting From",
-    render: (row) => row.startingFrom,
+    render: (row) => row.starting_from ? `$${row.starting_from}` : "-",
   },
   {
     id: "status",
     header: "Status",
-    render: (row) => (
-      <span
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "6px",
-          padding: "4px 8px",
-          borderRadius: "100px",
-          fontSize: "12px",
-          fontWeight: 500,
-          backgroundColor:
-            row.status === "Published" ? "#dcfce7" :
-            row.status === "Archived" ? "#ffedd5" : "#f3f4f6",
-          color:
-            row.status === "Published" ? "#16a34a" :
-            row.status === "Archived" ? "#ea580c" : "#4b5563",
-        }}
-      >
+    render: (row) => {
+      // Map backend status to Title Case (backend returns lowercase 'published', 'draft', 'archived')
+      const s = String(row.status || "").toLowerCase();
+      const statusLabel = s === "published" ? "Published" :
+                          s === "archived" ? "Archived" : "Draft";
+      return (
         <span
           style={{
-            width: "6px",
-            height: "6px",
-            borderRadius: "50%",
-            backgroundColor: "currentColor",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "6px",
+            padding: "4px 8px",
+            borderRadius: "100px",
+            fontSize: "12px",
+            fontWeight: 500,
+            backgroundColor:
+              statusLabel === "Published" ? "#dcfce7" :
+              statusLabel === "Archived" ? "#ffedd5" : "#f3f4f6",
+            color:
+              statusLabel === "Published" ? "#16a34a" :
+              statusLabel === "Archived" ? "#ea580c" : "#4b5563",
           }}
-        />
-        {row.status}
-      </span>
-    ),
+        >
+          <span
+            style={{
+              width: "6px",
+              height: "6px",
+              borderRadius: "50%",
+              backgroundColor: "currentColor",
+            }}
+          />
+          {statusLabel}
+        </span>
+      );
+    },
   },
 ];
 
 export const catalogHotelsRowActions = (
-  onAction: (action: string, row: CatalogHotel) => void
-): DataTableRowAction<CatalogHotel>[] => [
+  onAction: (action: string, row: any) => void
+): DataTableRowAction<any>[] => [
   {
     label: "View",
     iconSrc: "/images/dashboard/view.svg",

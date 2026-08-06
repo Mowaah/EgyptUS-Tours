@@ -79,6 +79,14 @@ export default function TripOverviewPage() {
             </div>
           </div>
 
+          <div className={styles.horizontalBorder}>
+            <span className={styles.label}>Star Rating</span>
+            <div className={styles.ratingStarsWrap} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Image src="/images/dashboard/catalog/hotels/star-fill.svg" alt="" width={16} height={16} />
+              <span className={styles.value} style={{ fontWeight: 600 }}>{trip.rating_avg ? Number(trip.rating_avg).toFixed(1) : "N/A"}</span>
+            </div>
+          </div>
+
           <div className={styles.durationBlock}>
             <span className={styles.label}>Duration</span>
             <div className={styles.durationWrap}>

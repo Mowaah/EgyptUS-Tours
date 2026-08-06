@@ -5,89 +5,382 @@ import { useRouter } from "next/navigation";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createHotelSchema, type CreateHotelValues } from "./CreateHotelSchema";
-import { IconStepper } from "@/components/shared";
 import { OverviewStep } from "./Steps/Overview/OverviewStep";
 import { RoomsStep } from "./Steps/Rooms/RoomsStep";
-import { MediaStep } from "./Steps/Media/MediaStep";
+import { WizardMediaStep } from "@/components/dashboard/shared";
 import { SEOStep } from "./Steps/SEO/SEOStep";
 import { PricingStep } from "./Steps/Pricing/PricingStep";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { WizardLayout } from "@/components/dashboard/shared";
-import { useWizard, WizardStepConfig } from "@/hooks/useWizard";
-import Image from "next/image";
+import { useWizard, WizardStepConfig, WizardSubmitIntent } from "@/hooks/useWizard";
+import { createCatalogHotel, updateCatalogHotel, publishCatalogHotel, archiveCatalogHotel, unpublishCatalogHotel } from "@/services/admin/adminCatalogHotelsService";
+import { useCatalogHotelDetail } from "@/hooks/useCatalogHotels";
 import styles from "./CreateHotel.module.scss";
 
 const STEPS: WizardStepConfig[] = [
-  { label: "Overview", iconSrc: "/images/dashboard/catalog/trips/overview.svg", fieldsToValidate: ["hotelName", "totalRooms", "subtitle", "cityLocation", "starRating", "facilities", "description", "secondDescription"] },
+  { label: "Overview", iconSrc: "/images/dashboard/catalog/trips/overview.svg", fieldsToValidate: ["hotelName", "totalRooms", "subtitle", "location_id", "starRating", "facilities", "description", "secondDescription"] },
   { label: "Rooms", iconSrc: "/images/dashboard/catalog/hotels/basic.svg", fieldsToValidate: ["rooms"] },
-  { label: "Pricing", iconSrc: "/images/dashboard/catalog/trips/pricing.svg", fieldsToValidate: ["basePrice", "vat", "insurance"] },
+  { label: "Pricing", iconSrc: "/images/dashboard/catalog/trips/pricing.svg", fieldsToValidate: ["vat", "insurance"] },
   { label: "Media", iconSrc: "/images/dashboard/catalog/trips/media.svg", fieldsToValidate: ["photos"] },
-  { label: "SEO", iconSrc: "/images/dashboard/catalog/trips/seo.svg", fieldsToValidate: ["seoTitle", "seoDescription", "seoKeywords", "seoSlug"] },
+  { label: "SEO", iconSrc: "/images/dashboard/catalog/trips/seo.svg", fieldsToValidate: ["metaTitle", "metaDescription", "metaKeywords", "slug"] },
 ];
+
+function isFile(value: any): value is File {
+  return typeof File !== "undefined" && value instanceof File;
+}
+
+function fileToDataUrl(file: File, maxWidth = 1920, quality = 0.85): Promise<string> {
+  return new Promise((resolve, reject) => {
+    if (!file.type || !file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+      return;
+    }
+
+    const img = new window.Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+      if (width > maxWidth) {
+        height = Math.round((height * maxWidth) / width);
+        width = maxWidth;
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+        return;
+      }
+      ctx.drawImage(img, 0, 0, width, height);
+      const mimeType = file.type === "image/png" ? "image/png" : "image/jpeg";
+      resolve(canvas.toDataURL(mimeType, quality));
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    };
+    img.src = url;
+  });
+}
+
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+const MIN_PHOTOS = 6; // 1 hero banner + 5 gallery images
+function padPhotos(rows: any[]): any[] {
+  const result = [...rows];
+  while (result.length < MIN_PHOTOS) {
+    result.push({ file: undefined, title: "", alt: "" });
+  }
+  return result;
+}
+
+function cleanNumber(value: any): string | undefined {
+  if (value === null || value === undefined) return undefined;
+  const cleaned = String(value).replace(/[^0-9.]/g, "");
+  return cleaned || undefined;
+}
+
+const EMPTY_VALUES: CreateHotelValues = {
+  hotelName: "",
+  totalRooms: "",
+  subtitle: "",
+  cityLocation: "",
+  address: "",
+  starRating: "",
+  description: "",
+  secondDescription: "",
+  facilities: [],
+  rooms: [{
+    category: "",
+    type: "",
+    view: "",
+    pricePerNight: "",
+    pricePerNightEgp: "",
+    description: "",
+    facilities: [],
+    photos: []
+  }],
+  basePrice: "",
+  vat: "",
+  insurance: "",
+  photos: [
+    { file: undefined, title: "", alt: "" }, // index 0 = hero/banner
+    { file: undefined, title: "", alt: "" }, // index 1 = gallery 1
+    { file: undefined, title: "", alt: "" }, // index 2 = gallery 2
+    { file: undefined, title: "", alt: "" }, // index 3 = gallery 3
+    { file: undefined, title: "", alt: "" }, // index 4 = gallery 4
+    { file: undefined, title: "", alt: "" }, // index 5 = gallery 5
+  ],
+  metaTitle: "",
+  metaDescription: "",
+  metaKeywords: "",
+  slug: ""
+};
+
+function mapHotelToFormValues(hotel: any): CreateHotelValues {
+  const translations = hotel?.translations?.en || {};
+  
+  const heroMedia = hotel?.media_items?.find((media: any) => media?.kind === "hero") || { image_url: hotel?.hero_image_url };
+  const galleryMedia = hotel?.media_items?.filter((media: any) => media?.kind === "gallery") || [];
+  const photoRows = [heroMedia, ...galleryMedia]
+    .filter((m: any) => m && (m.image_url || m.file))
+    .map((media: any) => {
+      const mediaTranslations = media?.translations?.en || {};
+      return {
+        id: media?.id,
+        kind: media?.kind || "gallery",
+        file: media?.image_url,
+        title: mediaTranslations.title || media?.caption || "",
+        alt: mediaTranslations.alt || "",
+      };
+    });
+
+  const rooms = (hotel?.rooms || []).map((room: any) => {
+    return {
+      id: room.id,
+      category: room.category_label || "",
+      type: room.type_label || "",
+      view: room.view_label || "",
+      pricePerNight: room.price_per_night || "",
+      pricePerNightEgp: room.price_per_night_egp || "",
+      description: room.description || "",
+      facilities: room.features || [],
+      photos: (room.images || room.photos || []).map((img: any) => ({
+        id: img.id,
+        file: img.image_url || img.image || img.file || img,
+      }))
+    };
+  });
+
+  return {
+    hotelName: translations.name || hotel?.name || "",
+    totalRooms: hotel?.total_rooms ? String(hotel.total_rooms) : "",
+    subtitle: translations.subtitle || hotel?.subtitle || "",
+    cityLocation: hotel?.location_text || "",
+    address: hotel?.address || "",
+    starRating: hotel?.stars ? String(hotel.stars) : "",
+    description: translations.description || hotel?.description || "",
+    secondDescription: translations.second_description || hotel?.second_description || "",
+    facilities: hotel?.facilities || [],
+    rooms,
+    basePrice: hotel?.pricing_summary?.base_price || "",
+    vat: hotel?.vat_amount || "",
+    insurance: hotel?.insurance_fee || "",
+    photos: padPhotos(photoRows),
+    metaTitle: translations.meta_title || "",
+    metaDescription: translations.meta_description || "",
+    metaKeywords: (translations.meta_keywords || []).join(", "),
+    slug: translations.slug || hotel?.slug || ""
+  };
+}
+
+function validateBeforePublish(data: CreateHotelValues, intent: WizardSubmitIntent): string[] {
+  const errors: string[] = [];
+  
+  if (intent === "publish") {
+    const photos = data.photos || [];
+    const hasHero = !!((photos[0] as any)?.file || (photos[0] as any)?.id);
+    const galleryCount = photos.slice(1).filter((photo: any) => !!(photo?.file || photo?.id)).length;
+
+    if (!hasHero) {
+      errors.push("Media: upload 1 thumbnail/hero image before publishing.");
+    }
+    if (galleryCount < 5) {
+      errors.push("Media: upload at least 5 gallery images before publishing.");
+    }
+    
+    if (!data.rooms || data.rooms.length === 0) {
+      errors.push("Rooms: add at least one room before publishing.");
+    } else {
+      const hasPricedRoom = data.rooms.some(r => parseFloat(String(r.pricePerNight || 0)) > 0);
+      if (!hasPricedRoom) {
+        errors.push("Rooms: at least one room must have a price before publishing.");
+      }
+    }
+  }
+
+  return errors;
+}
 
 export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDirtyChange?: (isDirty: boolean) => void }) {
   const router = useRouter();
   const [isPublishedModalOpen, setIsPublishedModalOpen] = useState(false);
+  const [savedHotelId, setSavedHotelId] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  
+  const { hotel, loading: hotelLoading } = useCatalogHotelDetail(hotelId || "");
 
   const methods = useForm<CreateHotelValues>({
     resolver: zodResolver(createHotelSchema) as any,
-    defaultValues: hotelId ? {
-      hotelName: "Nile Palace Hotel & Spa",
-      totalRooms: "250",
-      subtitle: "Your gateway to Cairo's iconic landmarks.",
-      cityLocation: "123 Corniche El Nile, Cairo, Egypt",
-      starRating: "5",
-      facilities: ["Henna Painting", "Restaurant", "Luxury Transport"],
-      description: "Nestled in the heart of Cairo along the iconic Nile Corniche, the Nile Palace Hotel & Spa offers panoramic Nile views and direct access to the city’s vibrant center. Ideally located near the Egyptian Museum, Khan El Khalili, and the Great Pyramids of Giza, guests can easily explore Egypt’s most iconic landmarks.",
-      secondDescription: "Blending timeless Egyptian heritage with contemporary five-star comfort, the hotel offers elegant interiors, premium amenities, and exceptional hospitality. Whether traveling for leisure, romance, family vacations, or business, guests enjoy a refined atmosphere designed for relaxation, cultural discovery, and unforgettable Nile-side moments.",
-      rooms: [
-        {
-          category: "Standard Room",
-          type: "Deluxe Room",
-          view: "City View",
-          pricePerNight: "180",
-          description: "Spacious deluxe room featuring panoramic sea views and modern amenities.",
-          facilities: ["Daily VIP Treatment", "Bathroom with Shower", "49\" Smart TV", "Daily Access to the Spa", "Evening Turndown Service", "Coffee and Tea Service", "Air Conditioning", "Safety Deposit Box", "Minibar Drinks", "24-Hour Room Service", "Laundry Service", "Free WiFi"],
-          photos: ["/images/dashboard/catalog/hotels/hotel-mock.png"]
-        }
-      ],
-      basePrice: "",
-      vat: "",
-      insurance: "",
-      photos: [],
-      seoTitle: "",
-      seoDescription: "",
-      seoKeywords: "",
-      seoSlug: ""
-    } : {
-      hotelName: "",
-      totalRooms: "",
-      subtitle: "",
-      cityLocation: "",
-      starRating: "",
-      description: "",
-      secondDescription: "",
-      facilities: [],
-      rooms: [],
-      basePrice: "",
-      vat: "",
-      insurance: "",
-      photos: [],
-      seoTitle: "",
-      seoDescription: "",
-      seoKeywords: "",
-      seoSlug: ""
-    },
+    defaultValues: EMPTY_VALUES,
   });
 
-  const { handleSubmit, formState: { isDirty } } = methods;
+  const { handleSubmit, formState: { isDirty }, reset } = methods;
+
+  useEffect(() => {
+    if (hotelId && hotel) {
+      reset(mapHotelToFormValues(hotel));
+    }
+  }, [hotelId, hotel, reset]);
 
   useEffect(() => {
     onDirtyChange?.(isDirty);
   }, [isDirty, onDirtyChange]);
 
-  const onSubmit = (data: any) => {
-    console.log("Submit Form Data:", data);
+  const onSubmit = async (data: CreateHotelValues, options?: { intent?: WizardSubmitIntent }) => {
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      const isCreate = !hotelId && !savedHotelId;
+      const targetId = hotelId || savedHotelId;
+      const intent = options?.intent || "save";
+
+      const validationErrors = validateBeforePublish(data, intent);
+      if (validationErrors.length > 0) {
+        setSaveError(validationErrors.join(" "));
+        throw new Error("Validation failed before publish");
+      }
+
+      const userSlug = data.slug ? slugify(data.slug) : "";
+      const baseSlug = slugify(data.hotelName) || "hotel";
+      const generatedSlug = userSlug || (isCreate ? `${baseSlug}-${Math.random().toString(36).substring(2, 6)}` : baseSlug);
+
+      // Convert photos array to backend media_items format
+      const photos = await Promise.all(
+        (data.photos || []).map(async (photo: any, index: number) => {
+          if (!photo?.file && !photo?.id) return null;
+          let imageBase64: string | undefined = undefined;
+          if (isFile(photo.file)) {
+            imageBase64 = await fileToDataUrl(photo.file);
+          } else if (typeof photo.file === "string" && photo.file.startsWith("data:")) {
+            imageBase64 = photo.file;
+          }
+          return {
+            id: photo.id ? parseInt(String(photo.id), 10) : undefined,
+            kind: index === 0 ? "hero" : "gallery",
+            image: imageBase64,
+            translations: {
+              en: {
+                title: photo.title || "",
+                alt: photo.alt || "",
+              },
+            },
+            order: index,
+          };
+        })
+      );
+      const mediaItems = photos.filter((item): item is NonNullable<typeof item> => Boolean(item && (item.image || item.id)));
+
+      const roomsPayload = await Promise.all(
+        (data.rooms || []).map(async (r: any) => {
+          const roomPhotos = await Promise.all(
+            (r.photos || []).map(async (photo: any, idx: number) => {
+              const isFileObj = isFile(photo);
+              if (!isFileObj && !photo?.file && !photo?.id) return null;
+              
+              let imageBase64: string | undefined = undefined;
+              const actualFile = isFileObj ? photo : photo.file;
+              
+              if (isFile(actualFile)) {
+                imageBase64 = await fileToDataUrl(actualFile);
+              } else if (typeof actualFile === "string" && actualFile.startsWith("data:")) {
+                imageBase64 = actualFile;
+              }
+              
+              return {
+                id: isFileObj ? undefined : (photo.id ? parseInt(String(photo.id), 10) : undefined),
+                image: imageBase64,
+                order: idx,
+              };
+            })
+          );
+          const validImages = roomPhotos.filter((item): item is NonNullable<typeof item> => Boolean(item && (item.image || item.id)));
+
+          return {
+            id: r.id,
+            category_label: r.category,
+            type_label: r.type,
+            view_label: r.view,
+            price_per_night: cleanNumber(r.pricePerNight) ? parseFloat(cleanNumber(r.pricePerNight)!) : undefined,
+            price_per_night_egp: cleanNumber(r.pricePerNightEgp) ? parseFloat(cleanNumber(r.pricePerNightEgp)!) : undefined,
+            description: r.description,
+            features: r.facilities,
+            images: validImages,
+          };
+        })
+      );
+
+      // Map payload
+      const payload: any = {
+        translations: {
+          en: {
+            name: data.hotelName,
+            subtitle: data.subtitle,
+            description: data.description,
+            second_description: data.secondDescription,
+            meta_title: data.metaTitle,
+            meta_description: data.metaDescription,
+            meta_keywords: data.metaKeywords ? data.metaKeywords.split(",").map(k => k.trim()).filter(Boolean) : [],
+            slug: generatedSlug,
+          }
+        },
+        location_text: data.cityLocation,
+        address: data.address,
+        stars: data.starRating ? parseFloat(cleanNumber(data.starRating) || "0") : undefined,
+        total_rooms: data.totalRooms ? parseInt(cleanNumber(data.totalRooms) || "0") : undefined,
+        facilities: data.facilities,
+        vat_amount: cleanNumber(data.vat),
+        insurance_fee: cleanNumber(data.insurance),
+        replace_rooms: true,
+        replace_media_items: true,
+        media_items: mediaItems,
+        rooms: roomsPayload,
+      };
+
+      let currentHotelId = targetId;
+      if (isCreate) {
+        const res = await createCatalogHotel(payload);
+        currentHotelId = res.id;
+        setSavedHotelId(currentHotelId as string);
+      } else {
+        await updateCatalogHotel(currentHotelId as string, payload);
+      }
+
+      if (intent === "publish") {
+        await publishCatalogHotel(currentHotelId as string);
+        setIsPublishedModalOpen(true);
+      } else if (isCreate && intent === "save") {
+        router.push(`/dashboard/catalog/hotels/${currentHotelId}/edit`);
+      } else if (intent === "save") {
+        setIsPublishedModalOpen(true);
+      }
+
+    } catch (err: any) {
+      console.error("Save hotel failed:", err);
+      const msg = err.response?.data?.message || err.message || "Failed to save hotel.";
+      setSaveError(msg);
+      throw err; // Re-throw for useWizard to catch if needed
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const {
@@ -99,34 +392,35 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
     steps: STEPS,
     methods,
     onSubmit,
-    onFinished: () => setIsPublishedModalOpen(true),
+    onFinished: () => setIsPublishedModalOpen(true), // Only fallback if submit doesn't trigger it
     isEdit: !!hotelId,
   });
 
   const renderStep = () => {
     switch (currentStep) {
-      case 0:
-        return <OverviewStep />;
-      case 1:
-        return <RoomsStep />;
-      case 2:
-        return <PricingStep />;
-      case 3:
-        return <MediaStep />;
-      case 4:
-        return <SEOStep />;
-      default:
-        return (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px', background: '#fff', borderRadius: '24px', color: '#9CA3AF', fontWeight: 500, fontSize: '16px' }}>
-            Step {currentStep + 1} ({STEPS[currentStep].label}) — Coming Soon
-          </div>
-        );
+      case 0: return <OverviewStep />;
+      case 1: return <RoomsStep />;
+      case 2: return <PricingStep />;
+      case 3: return <WizardMediaStep />;
+      case 4: return <SEOStep />;
+      default: return null;
     }
   };
 
+  if (hotelId && hotelLoading) {
+    return <div className={styles.saveNotice}>Loading hotel data...</div>;
+  }
+
   return (
     <FormProvider {...methods}>
-      <div className={styles.page}>
+      <form
+        id="create-hotel-form"
+        className={styles.page}
+        onSubmit={handleSubmit((data) => onSubmit(data, { intent: "save" }).then(() => setIsPublishedModalOpen(true)))}
+      >
+        {saveError && <div className={styles.saveError}>{saveError}</div>}
+        {isSaving && <div className={styles.saveNotice}>Saving hotel...</div>}
+
         <WizardLayout
           steps={STEPS}
           currentStep={currentStep}
@@ -136,10 +430,9 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
           onStepClick={handleStepClick}
           publishLabel="Publish Hotel"
         >
-          {/* Main wizard forms */}
           {renderStep()}
         </WizardLayout>
-      </div>
+      </form>
 
       {isPublishedModalOpen && (
         <SuccessModal
@@ -150,11 +443,15 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
           hideSecondaryButton={!hotelId}
           onPrimaryClick={() => {
             setIsPublishedModalOpen(false);
-            router.push(hotelId ? `/dashboard/catalog/hotels/${hotelId}` : "/dashboard/catalog/hotels?created=true");
+            if (savedHotelId || hotelId) {
+              window.location.href = `/dashboard/catalog/hotels/${savedHotelId || hotelId}`;
+            } else {
+              router.push("/dashboard/catalog/hotels?created=true");
+            }
           }}
           onClose={() => {
             setIsPublishedModalOpen(false);
-            if (hotelId) {
+            if (hotelId || savedHotelId) {
               router.push("/dashboard/catalog/hotels");
             }
           }}

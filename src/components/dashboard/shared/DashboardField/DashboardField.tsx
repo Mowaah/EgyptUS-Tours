@@ -71,6 +71,7 @@ function ModalSelect({
   variant = "default",
   multiple,
   placeholder,
+  hasError,
 }: {
   id?: string;
   label: ReactNode;
@@ -85,6 +86,7 @@ function ModalSelect({
   multiple?: boolean;
   placeholder?: string;
   name?: string;
+  hasError?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const initialValue = value ?? defaultValue ?? (multiple ? [] : "");
@@ -272,7 +274,7 @@ function ModalSelect({
           id={id}
           className={`${styles.input} ${variant === "modal" ? styles.modalInput : ""} ${styles.modalSelectTrigger} ${
             open ? styles.modalSelectTriggerOpen : ""
-          } ${errorId ? styles.inputError : ""}`}
+          } ${hasError || errorId ? styles.inputError : ""}`}
           aria-haspopup="listbox"
           aria-expanded={open}
           aria-describedby={errorId}
@@ -347,6 +349,7 @@ export default function DashboardField({
           label={label}
           options={options}
           errorId={errorId}
+          hasError={!!error}
           endAdornment={endAdornment}
           variant={variant}
           value={(mergedProps as Omit<DashboardFieldSelectProps, "options">).value}
