@@ -10,8 +10,8 @@ import styles from "./VehicleCategoryModal.module.scss";
 interface VehicleCategoryModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (data: { name: string }) => void;
-  initialName?: string;
+  onSave: (data: { translations: Record<string, { name: string }> }) => void;
+  initialName?: Record<string, string>;
   isEdit?: boolean;
 }
 
@@ -19,20 +19,24 @@ export default function VehicleCategoryModal({
   open,
   onClose,
   onSave,
-  initialName = "",
+  initialName = {},
   isEdit = false,
 }: VehicleCategoryModalProps) {
   const [lang, setLang] = useState<Language>("English");
   const [names, setNames] = useState<Record<Language, string>>({
-    English: initialName,
-    Italian: "",
-    Spanish: "",
+    English: initialName.en || initialName.English || "",
+    Italian: initialName.it || initialName.Italian || "",
+    Spanish: initialName.es || initialName.Spanish || "",
   });
 
   useEffect(() => {
     if (open) {
       setLang("English");
-      setNames({ English: initialName, Italian: "", Spanish: "" });
+      setNames({
+        English: initialName.en || initialName.English || "",
+        Italian: initialName.it || initialName.Italian || "",
+        Spanish: initialName.es || initialName.Spanish || "",
+      });
     }
   }, [open, initialName]);
 
@@ -57,8 +61,20 @@ export default function VehicleCategoryModal({
   if (!open) return null;
 
   const handleSave = () => {
-    onSave({ name: names.English });
+    onSave({
+      translations: {
+        en: { name: names.English },
+        it: { name: names.Italian },
+        es: { name: names.Spanish },
+      },
+    });
   };
+
+  const hasChanges = isEdit ? (
+    names.English !== (initialName?.en || initialName?.English || "") ||
+    names.Italian !== (initialName?.it || initialName?.Italian || "") ||
+    names.Spanish !== (initialName?.es || initialName?.Spanish || "")
+  ) : true;
 
   return (
     <div className={styles.overlay} role="presentation" onMouseDown={onClose}>
@@ -93,7 +109,7 @@ export default function VehicleCategoryModal({
           secondaryLabel="Cancel"
           secondaryOnClick={onClose}
           primaryOnClick={handleSave}
-          primaryDisabled={!names.English.trim() || (isEdit && names.English === initialName)}
+          primaryDisabled={!names.English.trim() || (isEdit && !hasChanges)}
         />
       </section>
     </div>

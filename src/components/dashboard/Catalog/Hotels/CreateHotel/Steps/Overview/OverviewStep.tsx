@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { FormSection, FormSpec } from "@/components/dashboard/FormFields";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
@@ -6,8 +6,6 @@ import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/Languag
 import { CreateHotelValues } from "../../CreateHotelSchema";
 import dashboardStyles from "../../CreateHotel.module.scss";
 import styles from "./OverviewStep.module.scss";
-import Image from "next/image";
-import { useCatalogHotelLocations } from "@/hooks/useCatalogHotels";
 
 export function OverviewStep() {
   const [basicLang, setBasicLang] = useState<Language>("English");
@@ -17,8 +15,6 @@ export function OverviewStep() {
   
   const { register, watch, setValue, control, formState: { errors } } = useFormContext<CreateHotelValues>();
   const facilities = watch("facilities") || [];
-  const { locations, loading: locLoading } = useCatalogHotelLocations();
-  const locationOptions = locations.map(l => ({ label: l.name, value: String(l.id) }));
 
   const handleAddFacility = () => {
     const trimmed = facilityInput.trim();

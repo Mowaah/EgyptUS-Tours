@@ -251,9 +251,9 @@ export function ReviewsPanel({
         toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
       >
       <DataTable
-        data={data}
+        data={data as any}
         columns={baseColumns}
-        getRowId={(row) => row.id}
+        getRowId={(row: any) => row.id}
         
         rowActions={type === "admin" ? adminTestimonialRowActions(handleAction) as any : reviewRowActions(handleAction) as any}
         defaultPageSize={5}

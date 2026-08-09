@@ -63,7 +63,7 @@ export function usePaymentsPanel({ searchQuery }: UsePaymentsPanelOptions) {
     return params;
   }, [appliedFilters, searchQuery]);
 
-  const { data: res, isLoading: loading } = useSWR(
+  const { data: res, isLoading: loading } = useSWR<any>(
     ["adminFinancePayments", apiFilters],
     () => getAllPayments(apiFilters),
     { keepPreviousData: true }
@@ -116,7 +116,7 @@ export function usePaymentsPanel({ searchQuery }: UsePaymentsPanelOptions) {
     const headers = Object.keys(exportRows[0]);
     const csvLines = [
       headers.join(","),
-      ...exportRows.map((row) =>
+      ...exportRows.map((row: any) =>
         headers
           .map((header) => {
             const val = row[header as keyof typeof row] ?? "";

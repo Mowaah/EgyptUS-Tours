@@ -10,8 +10,8 @@ import styles from "./AdditionalServiceModal.module.scss";
 interface AdditionalServiceModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (data: { name: string; price: string }) => void;
-  initialName?: string;
+  onSave: (data: { translations: Record<string, { name: string }>; price: string }) => void;
+  initialName?: Record<string, string>;
   initialPrice?: string;
   isEdit?: boolean;
 }
@@ -20,22 +20,26 @@ export default function AdditionalServiceModal({
   open,
   onClose,
   onSave,
-  initialName = "",
+  initialName = {},
   initialPrice = "",
   isEdit = false,
 }: AdditionalServiceModalProps) {
   const [lang, setLang] = useState<Language>("English");
   const [names, setNames] = useState<Record<Language, string>>({
-    English: initialName,
-    Italian: "",
-    Spanish: "",
+    English: initialName.en || initialName.English || "",
+    Italian: initialName.it || initialName.Italian || "",
+    Spanish: initialName.es || initialName.Spanish || "",
   });
   const [price, setPrice] = useState(initialPrice);
 
   useEffect(() => {
     if (open) {
       setLang("English");
-      setNames({ English: initialName, Italian: "", Spanish: "" });
+      setNames({
+        English: initialName.en || initialName.English || "",
+        Italian: initialName.it || initialName.Italian || "",
+        Spanish: initialName.es || initialName.Spanish || "",
+      });
       setPrice(initialPrice);
     }
   }, [open, initialName, initialPrice]);
@@ -61,7 +65,14 @@ export default function AdditionalServiceModal({
   if (!open) return null;
 
   const handleSave = () => {
-    onSave({ name: names.English, price });
+    onSave({
+      translations: {
+        en: { name: names.English },
+        it: { name: names.Italian },
+        es: { name: names.Spanish },
+      },
+      price,
+    });
   };
 
   const handleIncrement = () => {
@@ -77,6 +88,13 @@ export default function AdditionalServiceModal({
       setPrice((current - 1).toString() + "$");
     }
   };
+
+  const hasChanges = isEdit ? (
+    names.English !== (initialName.en || initialName.English || "") ||
+    names.Italian !== (initialName.it || initialName.Italian || "") ||
+    names.Spanish !== (initialName.es || initialName.Spanish || "") ||
+    price !== initialPrice
+  ) : true;
 
   return (
     <div className={styles.overlay} role="presentation" onMouseDown={onClose}>
@@ -136,7 +154,7 @@ export default function AdditionalServiceModal({
           secondaryLabel="Cancel"
           secondaryOnClick={onClose}
           primaryOnClick={handleSave}
-          primaryDisabled={!names.English.trim()}
+          primaryDisabled={!names.English.trim() || (isEdit && !hasChanges)}
         />
       </section>
     </div>

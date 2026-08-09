@@ -5,6 +5,7 @@ import { useFormContext, useFieldArray, Controller } from "react-hook-form";
 import Image from "next/image";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
+import { getLangKey } from "@/components/dashboard/shared/i18n";
 import { UploadDropzone } from "@/components/dashboard/FormFields";
 import { CreateTripValues } from "../../CreateTripSchema";
 import styles from "./ItineraryStep.module.scss";
@@ -61,28 +62,31 @@ function DayCard({ index, onRemove }: DayCardProps) {
       <div className={styles.dayInnerCard}>
         {/* Day Title */}
         <DashboardField
+          key={`dayTitle-${lang}`}
           variant="modal"
           label="Day Title"
           placeholder="Enter day title"
-          {...register(`itinerary.${index}.title` as never)}
+          {...register(`itinerary.${index}.title.${getLangKey(lang)}` as never)}
         />
 
         {/* Short Subtitle */}
         <DashboardField
+          key={`daySubtitle-${lang}`}
           variant="modal"
           label="Short Subtitle"
           placeholder="Enter short subtitle"
-          {...register(`itinerary.${index}.subtitle` as never)}
+          {...register(`itinerary.${index}.subtitle.${getLangKey(lang)}` as never)}
         />
 
         {/* Day Description */}
         <DashboardField
+          key={`dayDescription-${lang}`}
           variant="modal"
           control="textarea"
           label="Day Description"
           placeholder="Describe the day's activities..."
           rows={4}
-          {...register(`itinerary.${index}.description` as never)}
+          {...register(`itinerary.${index}.description.${getLangKey(lang)}` as never)}
         />
 
         {/* Highlights */}
@@ -93,10 +97,11 @@ function DayCard({ index, onRemove }: DayCardProps) {
             {highlights.map((field, hIdx) => (
               <div key={field.id} className={styles.highlightRow}>
                 <DashboardField
+                  key={`highlight-${field.id}-${lang}`}
                   variant="modal"
                   label={null}
                   placeholder="Enter highlight"
-                  {...register(`itinerary.${index}.highlights.${hIdx}` as never)}
+                  {...register(`itinerary.${index}.highlights.${hIdx}.${getLangKey(lang)}` as never)}
                   endAdornment={
                     <button
                       type="button"
@@ -115,7 +120,7 @@ function DayCard({ index, onRemove }: DayCardProps) {
           <button
             type="button"
             className={styles.addHighlightButton}
-            onClick={() => appendHighlight("")}
+            onClick={() => appendHighlight({ en: "", it: "", es: "" } as any)}
           >
             + Add Highlight
           </button>
@@ -155,9 +160,9 @@ export function ItineraryStep() {
 
   const handleAddDay = () => {
     appendDay({
-      title: "",
-      subtitle: "",
-      description: "",
+      title: { en: "", it: "", es: "" },
+      subtitle: { en: "", it: "", es: "" },
+      description: { en: "", it: "", es: "" },
       highlights: [],
       image: undefined,
     } as never);

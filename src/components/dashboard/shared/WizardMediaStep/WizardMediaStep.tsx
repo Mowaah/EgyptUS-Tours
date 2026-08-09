@@ -4,6 +4,7 @@ import Image from "next/image";
 import { FormSection, FormSpec, UploadDropzone } from "@/components/dashboard/FormFields";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
+import { getLangKey } from "@/components/dashboard/shared/i18n";
 import styles from "./WizardMediaStep.module.scss";
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
@@ -69,8 +70,8 @@ function MediaUploadBlock({
       <FormSpec>
         <LanguageTabs active={lang} onChange={setLang} className={styles.whiteTabs} />
         <div className={styles.fieldRow}>
-          <DashboardField label="Image Title" placeholder="Image Title..." {...register(`photos.${index}.title` as never)} />
-          <DashboardField label="Image Alt" placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" {...register(`photos.${index}.alt` as never)} />
+          <DashboardField label="Image Title" placeholder="Image Title..." {...register(`photos.${index}.title.${getLangKey(lang)}` as never)} />
+          <DashboardField label="Image Alt" placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" {...register(`photos.${index}.alt.${getLangKey(lang)}` as never)} />
         </div>
       </FormSpec>
     </FormSection>
@@ -95,7 +96,7 @@ export default function WizardMediaStep() {
   }, [photosErrorMessage]);
 
   const handleAddPhoto = () => {
-    append({ file: undefined, title: "", alt: "" });
+    append({ file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } });
   };
 
   return (

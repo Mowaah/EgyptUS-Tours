@@ -8,6 +8,7 @@ import TablePagination from "@/components/dashboard/shared/TablePagination/Table
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import styles from "./CategoriesPanel.module.scss";
 import { getCategories } from "@/services/admin/adminCatalogCategoriesService";
+import { getLangKey, getLocalizedName } from "@/components/dashboard/shared/i18n";
 
 interface CategoriesPanelProps {
   onEditCategory?: (category: Category) => void;
@@ -20,6 +21,11 @@ interface CategoryApiItem {
   slug?: string;
   name?: string;
   title?: string;
+  translations?: {
+    en?: { name?: string; title?: string; };
+    it?: { name?: string; title?: string; };
+    es?: { name?: string; title?: string; };
+  };
 }
 
 interface CategoryApiResponse {
@@ -33,7 +39,7 @@ export default function CategoriesPanel({ onEditCategory, onDeleteCategory, refr
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(12);
   
-  const langCode = lang === "English" ? "en" : "ar";
+  const langCode = getLangKey(lang);
 
   const { data, isLoading: loading } = useSWR<CategoryApiResponse>(
     ["adminCatalogCategories", page, rowsPerPage, langCode, refreshTrigger],
@@ -46,11 +52,21 @@ export default function CategoriesPanel({ onEditCategory, onDeleteCategory, refr
       ? data.data
       : data?.data?.results ?? data?.results ?? [];
     
-    return rawData.map((c) => ({
-      id: String(c.id || c.slug || ""),
-      name: c.name || c.title || "",
-    }));
-  }, [data]);
+    return rawData.map((c) => {
+      const en = c.translations?.en;
+      const it = c.translations?.it;
+      const es = c.translations?.es;
+      return {
+        id: String(c.id || c.slug || ""),
+        name: getLocalizedName(c, lang),
+        translations: {
+          en: en?.name || en?.title || c.name || c.title || "",
+          it: it?.name || it?.title || "",
+          es: es?.name || es?.title || "",
+        },
+      };
+    });
+  }, [data, lang]);
 
   const totalCount = data?.count || 0;
 

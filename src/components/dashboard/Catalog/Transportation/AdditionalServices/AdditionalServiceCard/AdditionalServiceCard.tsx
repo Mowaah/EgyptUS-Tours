@@ -6,6 +6,7 @@ import styles from "./AdditionalServiceCard.module.scss";
 export interface AdditionalService {
   id: string;
   name: string;
+  translations?: Record<string, string>;
   price: string;
 }
 

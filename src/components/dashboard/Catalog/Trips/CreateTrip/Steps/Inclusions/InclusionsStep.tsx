@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useState } from "react";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
+import { getLangKey } from "@/components/dashboard/shared/i18n";
 import { CreateTripValues } from "../../CreateTripSchema";
 import styles from "./InclusionsStep.module.scss";
 
@@ -61,7 +62,7 @@ export function InclusionsStep() {
                   variant="modal"
                   label={null}
                   placeholder="Enter inclusion..."
-                  {...control.register(`inclusions.${index}` as const)}
+                  {...control.register(`inclusions.${index}.${getLangKey(includedLang)}` as const)}
                   endAdornment={
                     <button type="button" onClick={() => removeInclusion(index)} className={styles.deleteButton}>
                       <Image src="/images/dashboard/delete.svg" alt="Delete" width={18} height={18} />
@@ -72,7 +73,7 @@ export function InclusionsStep() {
             ))}
           </div>
 
-          <button type="button" onClick={() => appendInclusion("")} className={styles.addButton}>
+          <button type="button" onClick={() => appendInclusion({ en: "", it: "", es: "" } as any)} className={styles.addButton}>
             Add <Image src="/images/dashboard/add-circle-blue.svg" alt="Add" width={24} height={24} />
           </button>
         </div>
@@ -98,7 +99,7 @@ export function InclusionsStep() {
                   variant="modal"
                   label={null}
                   placeholder="Enter exclusion..."
-                  {...control.register(`exclusions.${index}` as const)}
+                  {...control.register(`exclusions.${index}.${getLangKey(excludedLang)}` as const)}
                   endAdornment={
                     <button type="button" onClick={() => removeExclusion(index)} className={styles.deleteButton}>
                       <Image src="/images/dashboard/delete.svg" alt="Delete" width={18} height={18} />
@@ -109,7 +110,7 @@ export function InclusionsStep() {
             ))}
           </div>
 
-          <button type="button" onClick={() => appendExclusion("")} className={styles.addButton}>
+          <button type="button" onClick={() => appendExclusion({ en: "", it: "", es: "" } as any)} className={styles.addButton}>
             Add <Image src="/images/dashboard/add-circle-blue.svg" alt="Add" width={24} height={24} />
           </button>
         </div>

@@ -3,6 +3,8 @@ import { useFormContext, useFieldArray, Controller, useWatch } from "react-hook-
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import { CurrencyField } from "@/components/dashboard/shared";
 import { MultiUploadDropzone } from "@/components/dashboard/FormFields";
+import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
+import { getLangKey } from "@/components/dashboard/shared/i18n";
 import { CreateHotelValues } from "../../CreateHotelSchema";
 import styles from "./RoomsStep.module.scss";
 import Image from "next/image";
@@ -93,6 +95,7 @@ function FacilitiesSelector({ value = [], onChange }: { value: string[]; onChang
 }
 
 export function RoomsStep() {
+  const [roomsLang, setRoomsLang] = useState<Language>("English");
   const { control, register, formState: { errors } } = useFormContext<CreateHotelValues>();
   
   const rawRoomsError = errors.rooms as { root?: { message?: string }; message?: string } | undefined;
@@ -108,7 +111,7 @@ export function RoomsStep() {
       type: "",
       view: "",
       pricePerNight: "",
-      description: "",
+      description: { en: "", it: "", es: "" },
       facilities: [],
       photos: [],
     });
@@ -137,6 +140,10 @@ export function RoomsStep() {
           <span>{roomsErrorMessage}</span>
         </div>
       )}
+
+      <div style={{ padding: "0 24px", marginBottom: "16px" }}>
+        <LanguageTabs active={roomsLang} onChange={setRoomsLang} />
+      </div>
 
       <div className={styles.roomsList}>
         {fields.map((field, index) => (
@@ -246,12 +253,12 @@ export function RoomsStep() {
                 <div className={styles.row}>
                   <div className={styles.fieldItem} style={{ width: '100%' }}>
                     <Controller
-                      name={`rooms.${index}.description`}
+                      name={`rooms.${index}.description.${getLangKey(roomsLang)}` as const}
                       control={control}
                       render={({ field, fieldState }) => (
                         <DashboardField 
                           {...field}
-                          label="Room Description" 
+                          label={`Room Description (${roomsLang})`}
                           placeholder="Spacious deluxe room featuring panoramic views..."
                           error={fieldState.error?.message}
                         />

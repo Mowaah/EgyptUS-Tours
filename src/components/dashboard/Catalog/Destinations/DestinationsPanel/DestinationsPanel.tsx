@@ -9,6 +9,7 @@ import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/Languag
 import { LoadingSpinner } from "@/components/shared";
 import styles from "./DestinationsPanel.module.scss";
 import { getDestinations } from "@/services/admin/adminCatalogDestinationsService";
+import { getLangKey, getLocalizedName } from "@/components/dashboard/shared/i18n";
 
 interface DestinationsPanelProps {
   onEditDestination?: (dest: Destination) => void;
@@ -21,7 +22,7 @@ export default function DestinationsPanel({ onEditDestination, onDeleteDestinati
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(12);
 
-  const langCode = lang === "English" ? "en" : "ar";
+  const langCode = getLangKey(lang);
 
   const { data, isLoading: loading } = useSWR(
     ["adminCatalogDestinations", page, rowsPerPage, langCode, refreshTrigger],
@@ -32,12 +33,22 @@ export default function DestinationsPanel({ onEditDestination, onDeleteDestinati
   const destinations: Destination[] = useMemo(() => {
     const results: any[] = data?.results ?? data?.data?.results ?? (Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []);
     
-    return results.map((d: any) => ({
-      id: String(d.id),
-      name: d.name ?? d.title ?? "",
-      imageSrc: d.image || d.image_url || d.photo ? (d.image || d.image_url || d.photo).startsWith("http") ? (d.image || d.image_url || d.photo) : `http://127.0.0.1:8000${(d.image || d.image_url || d.photo).startsWith('/') ? '' : '/'}${d.image || d.image_url || d.photo}` : "/images/dashboard/catalog/destinations/egypt.jpg",
-    }));
-  }, [data]);
+    return results.map((d: any) => {
+      const en = d.translations?.en;
+      const it = d.translations?.it;
+      const es = d.translations?.es;
+      return {
+        id: String(d.id),
+        name: getLocalizedName(d, lang),
+        translations: {
+          en: en?.name || en?.title || d.name || d.title || "",
+          it: it?.name || it?.title || "",
+          es: es?.name || es?.title || "",
+        },
+        imageSrc: d.image || d.image_url || d.photo ? (d.image || d.image_url || d.photo).startsWith("http") ? (d.image || d.image_url || d.photo) : `http://127.0.0.1:8000${(d.image || d.image_url || d.photo).startsWith('/') ? '' : '/'}${d.image || d.image_url || d.photo}` : "/images/dashboard/catalog/destinations/egypt.jpg",
+      };
+    });
+  }, [data, lang]);
 
   const totalCount = data?.count || 0;
 

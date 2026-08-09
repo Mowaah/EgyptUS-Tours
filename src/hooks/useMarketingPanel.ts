@@ -92,6 +92,5 @@ export function useMarketingPanel<T>({
     appliedCategoryFilter,
     appliedStatusFilter,
     appliedPublishDateFilter,
-    refetch: fetchPosts,
   };
 }

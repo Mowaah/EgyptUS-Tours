@@ -11,12 +11,12 @@ export async function getCategories(params?: QueryParams): Promise<ApiResponse> 
   return await adminDataClient.get(TRIP_CATEGORIES_ENDPOINT, { params });
 }
 
-export async function createCategory(data: { name: string }): Promise<ApiResponse> {
-  return await adminDataClient.post(TRIP_CATEGORIES_ENDPOINT, data);
+export async function createCategory(data: { translations: Record<string, { name: string }> }): Promise<ApiResponse> {
+  return await adminDataClient.post(TRIP_CATEGORIES_ENDPOINT, { ...data, name: data.translations.en?.name });
 }
 
-export async function updateCategory(id: string | number, data: { name?: string }): Promise<ApiResponse> {
-  return await adminDataClient.patch(`${TRIP_CATEGORIES_ENDPOINT}${id}/`, data);
+export async function updateCategory(id: string | number, data: { translations?: Record<string, { name: string }> }): Promise<ApiResponse> {
+  return await adminDataClient.patch(`${TRIP_CATEGORIES_ENDPOINT}${id}/`, { ...data, name: data.translations?.en?.name });
 }
 
 export async function deleteCategory(id: string | number): Promise<ApiResponse> {

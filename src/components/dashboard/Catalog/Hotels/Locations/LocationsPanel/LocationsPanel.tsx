@@ -6,25 +6,8 @@ import LocationCard, { Location } from "../LocationCard/LocationCard";
 import TablePagination from "@/components/dashboard/shared/TablePagination/TablePagination";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import styles from "./LocationsPanel.module.scss";
-
-const MOCK_LOCATIONS: Location[] = [
-  { id: "1", name: "Cairo" },
-  { id: "2", name: "Alexandria" },
-  { id: "3", name: "Giza" },
-  { id: "4", name: "Luxor" },
-  { id: "5", name: "Cairo" },
-  { id: "6", name: "Alexandria" },
-  { id: "7", name: "Giza" },
-  { id: "8", name: "Luxor" },
-  { id: "9", name: "Cairo" },
-  { id: "10", name: "Alexandria" },
-  { id: "11", name: "Giza" },
-  { id: "12", name: "Luxor" },
-  { id: "13", name: "Cairo" },
-  { id: "14", name: "Alexandria" },
-  { id: "15", name: "Giza" },
-  { id: "16", name: "Luxor" },
-];
+import { useCatalogHotelLocations } from "@/hooks/useCatalogHotels";
+import { getLocalizedName } from "@/components/dashboard/shared/i18n";
 
 interface LocationsPanelProps {
   onEditLocation?: (location: Location) => void;
@@ -36,19 +19,26 @@ export default function LocationsPanel({ onEditLocation, onDeleteLocation }: Loc
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(12);
 
-  const pageCount = Math.max(1, Math.ceil(MOCK_LOCATIONS.length / rowsPerPage));
+  const { locations, loading } = useCatalogHotelLocations();
+
+  const pageCount = Math.max(1, Math.ceil(locations.length / rowsPerPage));
   const safePage = Math.min(page, pageCount);
-  const visibleLocations = MOCK_LOCATIONS.slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage);
+  const visibleLocations = locations
+    .slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage)
+    .map((loc: any) => ({
+      ...loc,
+      name: getLocalizedName(loc, lang),
+    }));
 
   const handleEdit = (id: string) => {
-    const location = MOCK_LOCATIONS.find((c) => c.id === id);
+    const location = locations.find((c: any) => String(c.id) === String(id));
     if (location && onEditLocation) {
       onEditLocation(location);
     }
   };
 
   const handleDelete = (id: string) => {
-    const location = MOCK_LOCATIONS.find((c) => c.id === id);
+    const location = locations.find((c: any) => String(c.id) === String(id));
     if (location && onDeleteLocation) {
       onDeleteLocation(location);
     }
@@ -82,16 +72,20 @@ export default function LocationsPanel({ onEditLocation, onDeleteLocation }: Loc
 
       <LanguageTabs active={lang} onChange={setLang} />
 
-      <div className={styles.grid}>
-        {visibleLocations.map((Location) => (
-          <LocationCard 
-            key={Location.id} 
-            Location={Location} 
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        ))}
-      </div>
+      {loading ? (
+        <div style={{ padding: '2rem', textAlign: 'center', color: '#6b7280' }}>Loading locations...</div>
+      ) : (
+        <div className={styles.grid}>
+          {visibleLocations.map((loc: any) => (
+            <LocationCard
+              key={loc.id}
+              Location={loc}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
+      )}
 
       <TablePagination
         className={styles.pagination}

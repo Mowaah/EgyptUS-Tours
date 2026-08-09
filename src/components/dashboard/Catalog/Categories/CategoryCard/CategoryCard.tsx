@@ -6,6 +6,7 @@ import styles from "./CategoryCard.module.scss";
 export interface Category {
   id: string;
   name: string;
+  translations?: Record<string, string>;
 }
 
 interface CategoryCardProps {

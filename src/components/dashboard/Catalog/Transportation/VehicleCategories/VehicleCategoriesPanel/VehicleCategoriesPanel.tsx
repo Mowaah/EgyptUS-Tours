@@ -8,6 +8,7 @@ import TablePagination from "@/components/dashboard/shared/TablePagination/Table
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import styles from "./VehicleCategoriesPanel.module.scss";
 import { getVehicleCategories } from "@/services/admin/adminCatalogVehicleCategoriesService";
+import { getLangKey, getLocalizedName } from "@/components/dashboard/shared/i18n";
 
 interface VehicleCategoriesPanelProps {
   onEditCategory?: (category: Category) => void;
@@ -24,7 +25,7 @@ export default function VehicleCategoriesPanel({
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(12);
 
-  const langCode = lang === "English" ? "en" : "ar";
+  const langCode = getLangKey(lang);
 
   const { data, isLoading } = useSWR(
     ["adminCatalogVehicleCategories", page, rowsPerPage, langCode, refreshTrigger],
@@ -33,8 +34,22 @@ export default function VehicleCategoriesPanel({
   );
 
   const categories: Category[] = useMemo(() => {
-    return data?.results || [];
-  }, [data]);
+    const results = data?.results || [];
+    return results.map((c: any) => {
+      const en = c.translations?.en;
+      const it = c.translations?.it;
+      const es = c.translations?.es;
+      return {
+        id: c.id,
+        name: getLocalizedName(c, lang),
+        translations: {
+          en: en?.name || en?.title || c.name || "",
+          it: it?.name || it?.title || "",
+          es: es?.name || es?.title || "",
+        }
+      };
+    });
+  }, [data, lang]);
 
   const totalCount = data?.count || 0;
   const pageCount = Math.max(1, Math.ceil(totalCount / rowsPerPage));

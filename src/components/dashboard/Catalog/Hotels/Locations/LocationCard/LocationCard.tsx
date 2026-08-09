@@ -6,6 +6,7 @@ import styles from "./LocationCard.module.scss";
 export interface Location {
   id: string;
   name: string;
+  translations?: Record<string, string>;
 }
 
 interface LocationCardProps {

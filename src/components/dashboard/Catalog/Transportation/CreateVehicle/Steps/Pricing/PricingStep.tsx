@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { FormSection } from "@/components/dashboard/FormFields";
 import { CurrencyField } from "@/components/dashboard/shared";
+import { useVehicleAdditionalServices } from "@/hooks/useCatalogVehicles";
+import { getLocalizedName } from "@/components/dashboard/shared/i18n";
 import { CreateVehicleValues } from "../../CreateVehicleSchema";
 import dashboardStyles from "../../CreateVehicle.module.scss";
 import styles from "./PricingStep.module.scss";
@@ -17,19 +19,11 @@ export function PricingStep() {
   const numBase = parseFloat(basePrice as string) || 0;
   const numVat = parseFloat(vat as string) || 0;
   const numInsurance = parseFloat(insurance as string) || 0;
-  // Mock values from Figma design
-  const mockMeetAndGreet = 10;
-  const mockExtraLuggage = 15;
-  const total = numBase + numVat + numInsurance + mockMeetAndGreet + mockExtraLuggage;
+  const { services } = useVehicleAdditionalServices();
 
-  const ALL_SERVICES = [
-    "Meet & Greet",
-    "Extra Luggage",
-    "Child Seat",
-    "Waiting Time (Per Hour)",
-    "Airport Parking Fee",
-    "Night Service"
-  ];
+  const selectedServices = services.filter((s: any) => additionalServices.includes(String(s.id)));
+  const additionalServicesTotal = selectedServices.reduce((acc: number, s: any) => acc + (parseFloat(s.price) || 0), 0);
+  const total = numBase + numVat + numInsurance + additionalServicesTotal;
 
   const handleToggleService = (tag: string) => {
     if (additionalServices.includes(tag)) {
@@ -86,15 +80,17 @@ export function PricingStep() {
           className={styles.card}
         >
           <div className={styles.facilitiesTags}>
-            {ALL_SERVICES.map((service) => {
-              const isActive = additionalServices.includes(service);
+            {services.map((service: any) => {
+              const serviceId = String(service.id);
+              const isActive = additionalServices.includes(serviceId);
+              const serviceName = getLocalizedName(service, "English");
               return (
                 <div 
-                  key={service} 
+                  key={serviceId} 
                   className={`${styles.facilityTag} ${isActive ? '' : styles.inactiveTag}`}
-                  onClick={() => handleToggleService(service)}
+                  onClick={() => handleToggleService(serviceId)}
                 >
-                  <span>{service}</span>
+                  <span>{serviceName}</span>
                   <button type="button">
                     {isActive ? (
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -137,16 +133,12 @@ export function PricingStep() {
               <span className={styles.summaryLabel}>Insurance</span>
               <span className={styles.summaryValue}>{numInsurance}$</span>
             </div>
-            
-            {/* Mock fields directly in the summary as requested */}
-            <div className={styles.summaryRow}>
-              <span className={styles.summaryLabel}>Meet & Greet</span>
-              <span className={styles.summaryValue}>{mockMeetAndGreet}$</span>
-            </div>
-            <div className={styles.summaryRow}>
-              <span className={styles.summaryLabel}>Extra Luggage</span>
-              <span className={styles.summaryValue}>{mockExtraLuggage}$</span>
-            </div>
+            {selectedServices.map((service: any) => (
+              <div key={service.id} className={styles.summaryRow}>
+                <span className={styles.summaryLabel}>{getLocalizedName(service, "English")}</span>
+                <span className={styles.summaryValue}>{service.price || 0}$</span>
+              </div>
+            ))}
 
             <div className={styles.totalRow}>
               <span className={styles.totalLabel}>Total Price Person</span>

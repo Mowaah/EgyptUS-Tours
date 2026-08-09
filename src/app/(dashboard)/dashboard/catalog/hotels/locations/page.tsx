@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { mutate } from "swr";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import HotelsTabs from "@/components/dashboard/Catalog/Hotels/HotelsTabs/HotelsTabs";
 import LocationsPanel from "@/components/dashboard/Catalog/Hotels/Locations/LocationsPanel/LocationsPanel";
@@ -10,6 +11,7 @@ import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatus
 import type { Location } from "@/components/dashboard/Catalog/Hotels/Locations/LocationCard/LocationCard";
 import dashboardStyles from "../../../page.module.scss";
 import styles from "./page.module.scss";
+import { createCatalogHotelLocation, updateCatalogHotelLocation, deleteCatalogHotelLocation } from "@/services/admin/adminCatalogHotelsService";
 
 export default function CatalogLocationsPage() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -17,6 +19,7 @@ export default function CatalogLocationsPage() {
   
   const [deletingLocation, setDeletingLocation] = useState<Location | undefined>(undefined);
   const [successMessage, setSuccessMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleOpenAdd = () => {
     setEditingLocation(undefined);
@@ -33,20 +36,38 @@ export default function CatalogLocationsPage() {
     setEditingLocation(undefined);
   };
 
-  const handleSaveModal = (data: { name: string }) => {
-    console.log("Save Location", data);
-    handleCloseModal();
-    setSuccessMessage(
-      editingLocation
-        ? "The Location has been updated successfully"
-        : "The New Location has been added successfully"
-    );
+  const handleSaveModal = async (data: { translations: Record<string, { name: string }> }) => {
+    try {
+      setIsSubmitting(true);
+      if (editingLocation) {
+        await updateCatalogHotelLocation(editingLocation.id, { translations: data.translations });
+        setSuccessMessage("The Location has been updated successfully");
+      } else {
+        await createCatalogHotelLocation({ translations: data.translations });
+        setSuccessMessage("The New Location has been added successfully");
+      }
+      await mutate("adminCatalogHotelLocations");
+      handleCloseModal();
+    } catch (error) {
+      console.error("Failed to save location", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleDeleteConfirm = () => {
-    console.log("Deleted Location", deletingLocation?.id);
-    setDeletingLocation(undefined);
-    setSuccessMessage("The Location has been deleted successfully");
+  const handleDeleteConfirm = async () => {
+    if (!deletingLocation) return;
+    try {
+      setIsSubmitting(true);
+      await deleteCatalogHotelLocation(deletingLocation.id);
+      await mutate("adminCatalogHotelLocations");
+      setSuccessMessage("The Location has been deleted successfully");
+      setDeletingLocation(undefined);
+    } catch (error) {
+      console.error("Failed to delete location", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -54,7 +75,7 @@ export default function CatalogLocationsPage() {
       <DashboardNavbar 
         title="Hotels"
         subtitle="Centralize hotel management, pricing references, and accommodation details."
-        primaryAction={{ label: "Add New Location" }}
+        primaryAction={{ label: "Add New Location", disabled: isSubmitting }}
         onPrimaryAction={handleOpenAdd}
         hideSearch={false}
       />
@@ -72,7 +93,7 @@ export default function CatalogLocationsPage() {
         onClose={handleCloseModal}
         onSave={handleSaveModal}
         isEdit={!!editingLocation}
-        initialName={editingLocation?.name || ""}
+        initialName={editingLocation?.translations || {}}
       />
 
       <DashboardConfirmationModal
@@ -81,12 +102,12 @@ export default function CatalogLocationsPage() {
         title="Delete Location?"
         message={
           <>
-            <strong>{`"${deletingLocation?.name}"`}</strong> is linked to 12 hotels.<br />
+            <strong>{`"${deletingLocation?.name}"`}</strong> is linked to some hotels.<br />
             Deleting it will remove this location from those hotels
           </>
         }
         cancelLabel="Cancel"
-        confirmLabel="Delete"
+        confirmLabel={isSubmitting ? "Deleting..." : "Delete"}
         onClose={() => setDeletingLocation(undefined)}
         onConfirm={handleDeleteConfirm}
       />

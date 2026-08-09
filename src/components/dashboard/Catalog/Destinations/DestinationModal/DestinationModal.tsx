@@ -12,8 +12,9 @@ import styles from "./DestinationModal.module.scss";
 interface DestinationModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (data: { name: string; file?: File }) => void;
-  initialName?: string;
+  onSave: (data: { translations: Record<string, { name: string }>; file?: File }) => void;
+  initialName?: Record<string, string>;
+  initialImage?: string;
   isEdit?: boolean;
 }
 
@@ -21,16 +22,17 @@ export default function DestinationModal({
   open,
   onClose,
   onSave,
-  initialName = "",
+  initialName = {},
+  initialImage,
   isEdit = false,
 }: DestinationModalProps) {
   const [lang, setLang] = useState<Language>("English");
   const [names, setNames] = useState<Record<Language, string>>({
-    English: initialName,
-    Italian: "",
-    Spanish: "",
+    English: initialName.en || initialName.English || "",
+    Italian: initialName.it || initialName.Italian || "",
+    Spanish: initialName.es || initialName.Spanish || "",
   });
-  const [file, setFile] = useState<File | undefined>(undefined);
+  const [file, setFile] = useState<File | string | undefined>(initialImage);
 
   useEffect(() => {
     if (!open) return;
@@ -53,7 +55,14 @@ export default function DestinationModal({
   if (!open) return null;
 
   const handleSave = () => {
-    onSave({ name: names.English, file });
+    onSave({ 
+      translations: {
+        en: { name: names.English },
+        it: { name: names.Italian },
+        es: { name: names.Spanish },
+      }, 
+      file: typeof file === 'string' ? undefined : file 
+    });
   };
 
   return (
@@ -89,7 +98,7 @@ export default function DestinationModal({
             </label>
             <UploadDropzone
               value={file}
-              onFileSelect={setFile}
+              onFileSelect={(newFile) => setFile(newFile)}
               title="Click to upload an image or drag & drop"
               subtitle="PNG, JPG up to 10MB"
             />

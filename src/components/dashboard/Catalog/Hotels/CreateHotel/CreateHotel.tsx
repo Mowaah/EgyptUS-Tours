@@ -18,7 +18,7 @@ import { useCatalogHotelDetail } from "@/hooks/useCatalogHotels";
 import styles from "./CreateHotel.module.scss";
 
 const STEPS: WizardStepConfig[] = [
-  { label: "Overview", iconSrc: "/images/dashboard/catalog/trips/overview.svg", fieldsToValidate: ["hotelName", "totalRooms", "subtitle", "location_id", "starRating", "facilities", "description", "secondDescription"] },
+  { label: "Overview", iconSrc: "/images/dashboard/catalog/trips/overview.svg", fieldsToValidate: ["hotelName", "totalRooms", "subtitle", "cityLocation", "starRating", "facilities", "description", "secondDescription"] },
   { label: "Rooms", iconSrc: "/images/dashboard/catalog/hotels/basic.svg", fieldsToValidate: ["rooms"] },
   { label: "Pricing", iconSrc: "/images/dashboard/catalog/trips/pricing.svg", fieldsToValidate: ["vat", "insurance"] },
   { label: "Media", iconSrc: "/images/dashboard/catalog/trips/media.svg", fieldsToValidate: ["photos"] },
@@ -82,11 +82,11 @@ function slugify(value: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-const MIN_PHOTOS = 6; // 1 hero banner + 5 gallery images
 function padPhotos(rows: any[]): any[] {
   const result = [...rows];
+  const MIN_PHOTOS = 6;
   while (result.length < MIN_PHOTOS) {
-    result.push({ file: undefined, title: "", alt: "" });
+    result.push({ file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } });
   }
   return result;
 }
@@ -98,14 +98,14 @@ function cleanNumber(value: any): string | undefined {
 }
 
 const EMPTY_VALUES: CreateHotelValues = {
-  hotelName: "",
+  hotelName: { en: "", it: "", es: "" },
   totalRooms: "",
-  subtitle: "",
+  subtitle: { en: "", it: "", es: "" },
   cityLocation: "",
   address: "",
   starRating: "",
-  description: "",
-  secondDescription: "",
+  description: { en: "", it: "", es: "" },
+  secondDescription: { en: "", it: "", es: "" },
   facilities: [],
   rooms: [{
     category: "",
@@ -113,7 +113,7 @@ const EMPTY_VALUES: CreateHotelValues = {
     view: "",
     pricePerNight: "",
     pricePerNightEgp: "",
-    description: "",
+    description: { en: "", it: "", es: "" },
     facilities: [],
     photos: []
   }],
@@ -121,21 +121,23 @@ const EMPTY_VALUES: CreateHotelValues = {
   vat: "",
   insurance: "",
   photos: [
-    { file: undefined, title: "", alt: "" }, // index 0 = hero/banner
-    { file: undefined, title: "", alt: "" }, // index 1 = gallery 1
-    { file: undefined, title: "", alt: "" }, // index 2 = gallery 2
-    { file: undefined, title: "", alt: "" }, // index 3 = gallery 3
-    { file: undefined, title: "", alt: "" }, // index 4 = gallery 4
-    { file: undefined, title: "", alt: "" }, // index 5 = gallery 5
+    { file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } }, // index 0 = hero/banner
+    { file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } }, // index 1 = gallery 1
+    { file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } }, // index 2 = gallery 2
+    { file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } }, // index 3 = gallery 3
+    { file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } }, // index 4 = gallery 4
+    { file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } }, // index 5 = gallery 5
   ],
-  metaTitle: "",
-  metaDescription: "",
-  metaKeywords: "",
-  slug: ""
+  metaTitle: { en: "", it: "", es: "" },
+  metaDescription: { en: "", it: "", es: "" },
+  metaKeywords: { en: "", it: "", es: "" },
+  slug: { en: "", it: "", es: "" }
 };
 
 function mapHotelToFormValues(hotel: any): CreateHotelValues {
-  const translations = hotel?.translations?.en || {};
+  const tEn = hotel?.translations?.en || {};
+  const tIt = hotel?.translations?.it || {};
+  const tEs = hotel?.translations?.es || {};
   
   const heroMedia = hotel?.media_items?.find((media: any) => media?.kind === "hero") || { image_url: hotel?.hero_image_url };
   const galleryMedia = hotel?.media_items?.filter((media: any) => media?.kind === "gallery") || [];
@@ -147,8 +149,8 @@ function mapHotelToFormValues(hotel: any): CreateHotelValues {
         id: media?.id,
         kind: media?.kind || "gallery",
         file: media?.image_url,
-        title: mediaTranslations.title || media?.caption || "",
-        alt: mediaTranslations.alt || "",
+        title: { en: tEn.title || media?.caption || "", it: media?.translations?.it?.title || "", es: media?.translations?.es?.title || "" },
+        alt: { en: tEn.alt || "", it: media?.translations?.it?.alt || "", es: media?.translations?.es?.alt || "" },
       };
     });
 
@@ -160,7 +162,11 @@ function mapHotelToFormValues(hotel: any): CreateHotelValues {
       view: room.view_label || "",
       pricePerNight: room.price_per_night || "",
       pricePerNightEgp: room.price_per_night_egp || "",
-      description: room.description || "",
+      description: {
+        en: room.translations?.en?.description || room.description || "",
+        it: room.translations?.it?.description || "",
+        es: room.translations?.es?.description || "",
+      },
       facilities: room.features || [],
       photos: (room.images || room.photos || []).map((img: any) => ({
         id: img.id,
@@ -170,24 +176,28 @@ function mapHotelToFormValues(hotel: any): CreateHotelValues {
   });
 
   return {
-    hotelName: translations.name || hotel?.name || "",
+    hotelName: { en: tEn.name || hotel?.name || "", it: tIt.name || "", es: tEs.name || "" },
     totalRooms: hotel?.total_rooms ? String(hotel.total_rooms) : "",
-    subtitle: translations.subtitle || hotel?.subtitle || "",
-    cityLocation: hotel?.location_text || "",
+    subtitle: { en: tEn.subtitle || hotel?.subtitle || "", it: tIt.subtitle || "", es: tEs.subtitle || "" },
+    cityLocation: hotel?.location_id ? String(hotel.location_id) : (hotel?.location_text || ""),
     address: hotel?.address || "",
     starRating: hotel?.stars ? String(hotel.stars) : "",
-    description: translations.description || hotel?.description || "",
-    secondDescription: translations.second_description || hotel?.second_description || "",
+    description: { en: tEn.description || hotel?.description || "", it: tIt.description || "", es: tEs.description || "" },
+    secondDescription: { en: tEn.second_description || hotel?.second_description || "", it: tIt.second_description || "", es: tEs.second_description || "" },
     facilities: hotel?.facilities || [],
     rooms,
     basePrice: hotel?.pricing_summary?.base_price || "",
     vat: hotel?.vat_amount || "",
     insurance: hotel?.insurance_fee || "",
     photos: padPhotos(photoRows),
-    metaTitle: translations.meta_title || "",
-    metaDescription: translations.meta_description || "",
-    metaKeywords: (translations.meta_keywords || []).join(", "),
-    slug: translations.slug || hotel?.slug || ""
+    metaTitle: { en: tEn.meta_title || "", it: tIt.meta_title || "", es: tEs.meta_title || "" },
+    metaDescription: { en: tEn.meta_description || "", it: tIt.meta_description || "", es: tEs.meta_description || "" },
+    metaKeywords: { 
+      en: (tEn.meta_keywords || []).join(", "),
+      it: (tIt.meta_keywords || []).join(", "),
+      es: (tEs.meta_keywords || []).join(", ")
+    },
+    slug: { en: tEn.slug || hotel?.slug || "", it: tIt.slug || "", es: tEs.slug || "" }
   };
 }
 
@@ -259,8 +269,8 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
         throw new Error("Validation failed before publish");
       }
 
-      const userSlug = data.slug ? slugify(data.slug) : "";
-      const baseSlug = slugify(data.hotelName) || "hotel";
+      const userSlug = data.slug?.en ? slugify(data.slug.en) : "";
+      const baseSlug = slugify(data.hotelName?.en || "") || "hotel";
       const generatedSlug = userSlug || (isCreate ? `${baseSlug}-${Math.random().toString(36).substring(2, 6)}` : baseSlug);
 
       // Convert photos array to backend media_items format
@@ -278,10 +288,9 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
             kind: index === 0 ? "hero" : "gallery",
             image: imageBase64,
             translations: {
-              en: {
-                title: photo.title || "",
-                alt: photo.alt || "",
-              },
+              en: { title: photo.title?.en || "", alt: photo.alt?.en || "" },
+              it: { title: photo.title?.it || "", alt: photo.alt?.it || "" },
+              es: { title: photo.title?.es || "", alt: photo.alt?.es || "" },
             },
             order: index,
           };
@@ -321,9 +330,14 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
             view_label: r.view,
             price_per_night: cleanNumber(r.pricePerNight) ? parseFloat(cleanNumber(r.pricePerNight)!) : undefined,
             price_per_night_egp: cleanNumber(r.pricePerNightEgp) ? parseFloat(cleanNumber(r.pricePerNightEgp)!) : undefined,
-            description: r.description,
+            description: r.description?.en || "", // Fallback
             features: r.facilities,
             images: validImages,
+            translations: {
+              en: { description: r.description?.en || "" },
+              it: { description: r.description?.it || "" },
+              es: { description: r.description?.es || "" },
+            },
           };
         })
       );
@@ -332,17 +346,38 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
       const payload: any = {
         translations: {
           en: {
-            name: data.hotelName,
-            subtitle: data.subtitle,
-            description: data.description,
-            second_description: data.secondDescription,
-            meta_title: data.metaTitle,
-            meta_description: data.metaDescription,
-            meta_keywords: data.metaKeywords ? data.metaKeywords.split(",").map(k => k.trim()).filter(Boolean) : [],
+            name: data.hotelName?.en || "",
+            subtitle: data.subtitle?.en || "",
+            description: data.description?.en || "",
+            second_description: data.secondDescription?.en || "",
+            meta_title: data.metaTitle?.en || "",
+            meta_description: data.metaDescription?.en || "",
+            meta_keywords: data.metaKeywords?.en ? data.metaKeywords.en.split(",").map(k => k.trim()).filter(Boolean) : [],
             slug: generatedSlug,
+          },
+          it: {
+            name: data.hotelName?.it || "",
+            subtitle: data.subtitle?.it || "",
+            description: data.description?.it || "",
+            second_description: data.secondDescription?.it || "",
+            meta_title: data.metaTitle?.it || "",
+            meta_description: data.metaDescription?.it || "",
+            meta_keywords: data.metaKeywords?.it ? data.metaKeywords.it.split(",").map(k => k.trim()).filter(Boolean) : [],
+            slug: data.slug?.it || "",
+          },
+          es: {
+            name: data.hotelName?.es || "",
+            subtitle: data.subtitle?.es || "",
+            description: data.description?.es || "",
+            second_description: data.secondDescription?.es || "",
+            meta_title: data.metaTitle?.es || "",
+            meta_description: data.metaDescription?.es || "",
+            meta_keywords: data.metaKeywords?.es ? data.metaKeywords.es.split(",").map(k => k.trim()).filter(Boolean) : [],
+            slug: data.slug?.es || "",
           }
         },
-        location_text: data.cityLocation,
+        location_id: data.cityLocation ? parseInt(data.cityLocation, 10) : undefined,
+        location_text: undefined, // Clear location_text to prefer location_id
         address: data.address,
         stars: data.starRating ? parseFloat(cleanNumber(data.starRating) || "0") : undefined,
         total_rooms: data.totalRooms ? parseInt(cleanNumber(data.totalRooms) || "0") : undefined,

@@ -3,10 +3,11 @@
 import Image from "next/image";
 import StarRating from "@/components/shared/StarRating/StarRating";
 import { useVehicleDetailContext } from "../layout";
+import { getLangKey } from "@/components/dashboard/shared/i18n";
 import styles from "./page.module.scss";
 
 export default function TransportationOverviewPage() {
-  const { vehicle, loading } = useVehicleDetailContext();
+  const { vehicle, loading, activeLang } = useVehicleDetailContext();
 
   if (loading) {
     return <div className={styles.viewLayout}>Loading overview...</div>;
@@ -16,9 +17,11 @@ export default function TransportationOverviewPage() {
     return <div className={styles.viewLayout}>Vehicle not found.</div>;
   }
 
-  const english = vehicle.translations?.en || {};
+  const langKey = getLangKey(activeLang);
+  const t = vehicle.translations?.[langKey] || {};
+  const tEn = vehicle.translations?.en || {};
   const rate = vehicle.rating_avg || 0;
-  const features = vehicle.features || [];
+  const features: string[] = t.features || tEn.features || vehicle.features || [];
 
   return (
     <div className={styles.viewLayout}>
@@ -34,7 +37,7 @@ export default function TransportationOverviewPage() {
         <div className={styles.infoContainer}>
           <div className={styles.horizontalBorder}>
             <span className={styles.label}>Name</span>
-            <span className={styles.value}>{english.name || vehicle.name || "-"}</span>
+            <span className={styles.value}>{t.name || tEn.name || vehicle.name || "-"}</span>
           </div>
 
           <div className={styles.horizontalBorder}>
@@ -83,7 +86,7 @@ export default function TransportationOverviewPage() {
             <div className={styles.specItem}>
               <p className={styles.specLabel}>Overview</p>
               <div className={styles.specBox}>
-                <p className={styles.specText}>{english.description || vehicle.description || "-"}</p>
+                <p className={styles.specText}>{t.description || tEn.description || vehicle.description || "-"}</p>
               </div>
             </div>
           </div>

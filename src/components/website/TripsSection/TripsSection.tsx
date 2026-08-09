@@ -73,7 +73,7 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
     duration: true,
     offers: true,
     price: true,
-    priceRange: { min: 1, max: 12000 },
+    priceRange: { min: 0, max: 12000 },
   });
 
   const [durationFilter, setDurationFilter] = useState(DURATION_OPTIONS[0]);
@@ -456,7 +456,7 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
               onToggle={() => toggleFilter("price")}
             >
               <PriceRangeFilter
-                min={1}
+                min={0}
                 max={12000}
                 valueMin={expanded.priceRange.min}
                 valueMax={expanded.priceRange.max}

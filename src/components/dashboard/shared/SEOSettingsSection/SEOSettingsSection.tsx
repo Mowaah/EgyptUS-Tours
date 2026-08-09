@@ -4,6 +4,7 @@ import { Controller } from "react-hook-form";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import { FormSection, FormSpec, KeywordsField } from "@/components/dashboard/FormFields";
+import { getLangKey } from "@/components/dashboard/shared/i18n";
 import styles from "./SEOSettingsSection.module.scss";
 
 interface SEOSettingsSectionProps<T extends FieldValues> {
@@ -23,41 +24,47 @@ export default function SEOSettingsSection<T extends FieldValues>({
   errors,
   title = "SEO Settings",
 }: SEOSettingsSectionProps<T>) {
+  const langKey = getLangKey(seoLang);
+
   return (
     <FormSection title={title} iconSrc="/images/dashboard/fields/seo-settings.svg">
       <FormSpec>
         <LanguageTabs active={seoLang} onChange={setSeoLang} className={styles.whiteTabs} />
         <DashboardField
+          key={`metaTitle-${langKey}`}
           label="Meta Title"
           placeholder="Meta Title..."
-          {...register("metaTitle" as Path<T>)}
-          error={errors.metaTitle?.message as string}
+          {...register(`metaTitle.${langKey}` as Path<T>)}
+          error={(errors.metaTitle as any)?.[langKey]?.message}
         />
         <DashboardField
+          key={`metaDescription-${langKey}`}
           control="textarea"
           label="Meta Description"
           placeholder="SEO description (max 300 char..."
           maxLength={300}
-          {...register("metaDescription" as Path<T>)}
-          error={errors.metaDescription?.message as string}
+          {...register(`metaDescription.${langKey}` as Path<T>)}
+          error={(errors.metaDescription as any)?.[langKey]?.message}
         />
         <Controller
-          name={"metaKeywords" as Path<T>}
+          key={`metaKeywords-${langKey}`}
+          name={`metaKeywords.${langKey}` as Path<T>}
           control={control}
           render={({ field }) => (
             <KeywordsField
               label="Meta keywords"
               value={field.value as string}
               onChange={field.onChange}
-              error={errors.metaKeywords?.message as string}
+              error={(errors.metaKeywords as any)?.[langKey]?.message}
             />
           )}
         />
         <DashboardField
+          key={`slug-${langKey}`}
           label="Slug"
           placeholder="e.g. your-page-url-slug"
-          {...register("slug" as Path<T>)}
-          error={errors.slug?.message as string}
+          {...register(`slug.${langKey}` as Path<T>)}
+          error={(errors.slug as any)?.[langKey]?.message}
         />
       </FormSpec>
     </FormSection>

@@ -2,11 +2,13 @@
 
 import { use, useState, createContext, useContext } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
 import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/DashboardTabs";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import { DashboardFooter, DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";
+import dashboardStyles from "../../../page.module.scss";
 import styles from "./layout.module.scss";
 import { useCatalogVehicleDetail } from "@/hooks/useCatalogVehicles";
 import {
@@ -16,10 +18,11 @@ import {
   unpublishCatalogVehicle,
 } from "@/services/admin/adminCatalogVehiclesService";
 
-export const VehicleDetailContext = createContext<{ vehicle: any; refetch: () => void; loading: boolean }>({
+export const VehicleDetailContext = createContext<{ vehicle: any; refetch: () => void; loading: boolean; activeLang: Language }>({
   vehicle: null,
   refetch: () => {},
   loading: true,
+  activeLang: "English",
 });
 
 export function useVehicleDetailContext() {
@@ -75,7 +78,7 @@ export default function TransportationLayout({
   };
 
   return (
-    <VehicleDetailContext.Provider value={{ vehicle, refetch, loading }}>
+    <VehicleDetailContext.Provider value={{ vehicle, refetch, loading, activeLang }}>
       <div className={styles.page}>
         <DashboardNavbar
           breadcrumbTrail={[
@@ -125,13 +128,12 @@ export default function TransportationLayout({
                   }
                 : isArchived
                 ? {
-                    label: isActionPending ? "Restoring..." : "Restore",
-                    icon: "/images/dashboard/catalog/trips/archive.svg",
+                    label: isActionPending ? "Restoring..." : "Restore to Draft",
+                    icon: "/images/send.svg",
                     onClick: async () => {
                       if (!vehicle || isActionPending) return;
                       setIsActionPending(true);
                       try {
-                        // There's no unarchive endpoint, unpublish puts it back to draft
                         await unpublishCatalogVehicle(id);
                         await refetch();
                         showBanner("Vehicle restored to draft.");
@@ -142,50 +144,45 @@ export default function TransportationLayout({
                       }
                     },
                   }
-                : {
-                    label: isActionPending ? "Unpublishing..." : "Unpublish",
-                    icon: "/images/dashboard/catalog/trips/archive.svg",
-                    onClick: async () => {
-                      if (!vehicle || isActionPending) return;
-                      setIsActionPending(true);
-                      try {
-                        await unpublishCatalogVehicle(id);
-                        await refetch();
-                        showBanner("Vehicle unpublished and moved to draft.");
-                      } catch (err: any) {
-                        showBanner(getErrorMessage(err, "Failed to unpublish vehicle"), "warning");
-                      } finally {
-                        setIsActionPending(false);
-                      }
-                    },
-                  }
+                : undefined
             }
-            moreActions={[
-              {
-                label: "Archive",
-                icon: "/images/dashboard/catalog/trips/archive.svg",
-                onClick: () => setIsArchiveModalOpen(true),
-              },
-              {
-                label: "Delete",
-                icon: "/images/dashboard/delete.svg",
-                onClick: () => setIsDeleteModalOpen(true),
-                variant: "danger",
-              },
-            ]}
+            archiveAction={
+              !isArchived && !isDraft
+                ? {
+                    label: "Archive",
+                    icon: (
+                      <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13 6.8125V12.6658C13 13.9992 12.6667 14.6658 11 14.6658H5C3.33333 14.6658 3 13.9992 3 12.6658V6.8125" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M3.33331 1.33203H12.6666C14 1.33203 14.6666 1.9987 14.6666 3.33203V4.66536C14.6666 5.9987 14 6.66536 12.6666 6.66536H3.33331C1.99998 6.66536 1.33331 5.9987 1.33331 4.66536V3.33203C1.33331 1.9987 1.99998 1.33203 3.33331 1.33203Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path opacity="0.34" d="M6.78668 9.33203H9.21335" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    ),
+                    onClick: () => setIsArchiveModalOpen(true),
+                  }
+                : undefined
+            }
+            dangerAction={
+              !isArchived && !isDraft
+                ? {
+                    label: "Delete",
+                    icon: <Image src="/images/dashboard/delete.svg" alt="" width={16} height={16} style={{ filter: 'brightness(0) saturate(100%) invert(29%) sepia(93%) saturate(3507%) hue-rotate(345deg) brightness(98%) contrast(98%)' }} />,
+                    onClick: () => setIsDeleteModalOpen(true),
+                  }
+                : undefined
+            }
           />
         </DashboardNavbar>
         
-        {bannerMessage && (
-          <DashboardStatusBanner
-            show={true}
-            message={bannerMessage}
-            variant={bannerVariant}
-            onClose={() => setBannerMessage(null)}
-          />
-        )}
-        
         <div className={styles.content}>
+          {bannerMessage && (
+            <DashboardStatusBanner
+              show={true}
+              message={bannerMessage}
+              variant={bannerVariant}
+              onClose={() => setBannerMessage(null)}
+              className={dashboardStyles.draftBanner}
+            />
+          )}
           <DashboardTabs tabs={tabs} ariaLabel="Transportation Tabs" />
           <LanguageTabs active={activeLang} onChange={setActiveLang} variant="white" />
           {children}

@@ -4,12 +4,21 @@ import Image from "next/image";
 import styles from "./page.module.scss";
 import { useTripDetailContext } from "../layout";
 
+import { getLangKey } from "@/components/dashboard/shared/i18n";
+
 export default function TripInclusionsPage() {
-  const { trip, loading } = useTripDetailContext();
+  const { trip, loading, activeLang } = useTripDetailContext();
 
   if (loading || !trip) {
     return <div style={{ padding: "24px" }}>Loading...</div>;
   }
+
+  const langKey = getLangKey(activeLang);
+
+  // Helper to extract translated text
+  const getText = (item: any) => {
+    return item?.translations?.[langKey]?.text || item?.translations?.en?.text || item?.text;
+  };
 
   const inclusions: any[] = trip.inclusions || [];
   const exclusions: any[] = trip.exclusions || [];
@@ -34,7 +43,7 @@ export default function TripInclusionsPage() {
                 <div className={styles.checkIcon}>
                   <Image src="/images/check-blue.svg" alt="Included" width={12} height={12} />
                 </div>
-                <span className={styles.itemText}>{item.text}</span>
+                <span className={styles.itemText}>{getText(item)}</span>
               </div>
             )) : <p style={{ color: "#9ca3af", fontSize: "14px" }}>No inclusions added.</p>}
           </div>
@@ -49,7 +58,7 @@ export default function TripInclusionsPage() {
                 <div className={styles.closeIcon}>
                   <Image src="/images/close-red.svg" alt="Not Included" width={10} height={10} />
                 </div>
-                <span className={styles.itemText}>{item.text}</span>
+                <span className={styles.itemText}>{getText(item)}</span>
               </div>
             )) : <p style={{ color: "#9ca3af", fontSize: "14px" }}>No exclusions added.</p>}
           </div>

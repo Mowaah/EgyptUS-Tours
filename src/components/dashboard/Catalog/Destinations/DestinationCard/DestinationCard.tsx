@@ -7,6 +7,7 @@ import styles from "./DestinationCard.module.scss";
 export interface Destination {
   id: string;
   name: string;
+  translations?: Record<string, string>;
   imageSrc: string;
 }
 

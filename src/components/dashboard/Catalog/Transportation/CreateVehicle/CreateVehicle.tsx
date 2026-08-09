@@ -13,7 +13,7 @@ import { SEOStep } from "./Steps/SEO/SEOStep";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { WizardLayout } from "@/components/dashboard/shared";
 import { useWizard, WizardStepConfig, WizardSubmitIntent } from "@/hooks/useWizard";
-import { createCatalogVehicle, updateCatalogVehicle } from "@/services/admin/adminCatalogVehiclesService";
+import { createCatalogVehicle, updateCatalogVehicle, publishCatalogVehicle } from "@/services/admin/adminCatalogVehiclesService";
 import { useVehicleCategories, useCatalogVehicleDetail } from "@/hooks/useCatalogVehicles";
 import styles from "./CreateVehicle.module.scss";
 
@@ -25,32 +25,32 @@ const STEPS: WizardStepConfig[] = [
 ];
 
 const EMPTY_VALUES: CreateVehicleValues = {
-  vehicleName: "",
+  vehicleName: { en: "", it: "", es: "" },
   model: "",
   category: "",
   duration: "",
   passengerCapacity: "",
   luggageCapacity: "",
   starRating: "",
-  features: [],
-  description: "",
+  features: { en: [], it: [], es: [] },
+  description: { en: "", it: "", es: "" },
   basePrice: "",
   vat: "",
   insurance: "",
   pricePerKm: "",
   additionalServices: [],
   photos: [
-    { file: undefined, title: "", alt: "" }, // hero
-    { file: undefined, title: "", alt: "" }, // gallery
-    { file: undefined, title: "", alt: "" },
-    { file: undefined, title: "", alt: "" },
-    { file: undefined, title: "", alt: "" },
-    { file: undefined, title: "", alt: "" },
+    { file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } }, // hero
+    { file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } }, // gallery
+    { file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } },
+    { file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } },
+    { file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } },
+    { file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } },
   ],
-  seoTitle: "",
-  seoDescription: "",
-  seoKeywords: "",
-  seoSlug: "",
+  seoTitle: { en: "", it: "", es: "" },
+  seoDescription: { en: "", it: "", es: "" },
+  seoKeywords: { en: "", it: "", es: "" },
+  seoSlug: { en: "", it: "", es: "" },
 };
 
 function asText(value: any): string {
@@ -91,34 +91,75 @@ function slugify(value: string): string {
 async function buildPayload(data: CreateVehicleValues, intent: WizardSubmitIntent, isEdit: boolean = false, categories: any[]) {
   const categoryId = categories.find(c => c.name === data.category || String(c.id) === data.category)?.id;
   
-  const photos = await Promise.all(
-    (data.photos || []).map(async (photo: any, index: number) => {
-      if (!photo?.file && !photo?.id) return null;
-      return {
+  const photos: any[] = [];
+  for (let index = 0; index < (data.photos || []).length; index++) {
+    const photo = data.photos[index];
+    if (!photo?.file && !photo?.id) continue;
+    
+    const translations = {
+      en: { title: photo.title?.en || "", alt: photo.alt?.en || "" },
+      it: { title: photo.title?.it || "", alt: photo.alt?.it || "" },
+      es: { title: photo.title?.es || "", alt: photo.alt?.es || "" },
+    };
+
+    if (index === 0) {
+      photos.push({
         id: photo.id,
-        kind: index === 0 ? "hero" : "gallery",
+        kind: "hero",
         image: isFile(photo.file) ? await fileToDataUrl(photo.file) : undefined,
-        translations: {
-          en: {
-            title: asText(photo.title),
-            alt: asText(photo.alt),
-          },
-        },
+        translations,
+        order: 0,
+      });
+      photos.push({
+        id: photo.thumbnailId,
+        kind: "thumbnail",
+        image: isFile(photo.file) ? await fileToDataUrl(photo.file) : undefined,
+        translations,
+        order: 0,
+      });
+    } else {
+      photos.push({
+        id: photo.id,
+        kind: "gallery",
+        image: isFile(photo.file) ? await fileToDataUrl(photo.file) : undefined,
+        translations,
         order: index,
-      };
-    })
-  );
+      });
+    }
+  }
+
+  const userSlugEn = data.seoSlug?.en ? slugify(data.seoSlug.en) : "";
+  const baseSlugEn = slugify(data.vehicleName?.en || "vehicle");
+  const slugEn = userSlugEn || (isEdit ? baseSlugEn : `${baseSlugEn}-${Math.random().toString(36).substring(2, 6)}`);
 
   return {
     translations: {
       en: {
-        name: asText(data.vehicleName),
-        description: asText(data.description),
-        features: (data.features || []).filter(Boolean),
-        meta_title: asText(data.seoTitle),
-        meta_description: asText(data.seoDescription),
-        meta_keywords: asText(data.seoKeywords).split(",").map(k => k.trim()).filter(Boolean),
-        slug: asText(data.seoSlug) || slugify(asText(data.vehicleName)),
+        name: asText(data.vehicleName?.en),
+        description: asText(data.description?.en),
+        features: (data.features?.en || []).filter(Boolean),
+        meta_title: asText(data.seoTitle?.en),
+        meta_description: asText(data.seoDescription?.en),
+        meta_keywords: asText(data.seoKeywords?.en).split(",").map(k => k.trim()).filter(Boolean),
+        slug: slugEn,
+      },
+      it: {
+        name: asText(data.vehicleName?.it),
+        description: asText(data.description?.it),
+        features: (data.features?.it || []).filter(Boolean),
+        meta_title: asText(data.seoTitle?.it),
+        meta_description: asText(data.seoDescription?.it),
+        meta_keywords: asText(data.seoKeywords?.it).split(",").map(k => k.trim()).filter(Boolean),
+        slug: asText(data.seoSlug?.it),
+      },
+      es: {
+        name: asText(data.vehicleName?.es),
+        description: asText(data.description?.es),
+        features: (data.features?.es || []).filter(Boolean),
+        meta_title: asText(data.seoTitle?.es),
+        meta_description: asText(data.seoDescription?.es),
+        meta_keywords: asText(data.seoKeywords?.es).split(",").map(k => k.trim()).filter(Boolean),
+        slug: asText(data.seoSlug?.es),
       },
     },
     category_id: categoryId,
@@ -126,7 +167,7 @@ async function buildPayload(data: CreateVehicleValues, intent: WizardSubmitInten
     passengers: intValue(data.passengerCapacity) || 1,
     luggage_capacity: intValue(data.luggageCapacity) || 0,
     rating_avg: data.starRating ? parseFloat(data.starRating) : null,
-    features: (data.features || []).filter(Boolean),
+    additional_service_ids: data.additionalServices?.map(id => parseInt(id, 10)) || [],
     currency_code: "USD",
     price_amount: money(data.basePrice) || null,
     vat_amount: money(data.vat) || null,
@@ -139,41 +180,66 @@ async function buildPayload(data: CreateVehicleValues, intent: WizardSubmitInten
 }
 
 function mapVehicleToFormValues(vehicle: any): CreateVehicleValues {
-  const english = vehicle?.translations?.en || {};
+  const tEn = vehicle?.translations?.en || {};
+  const tIt = vehicle?.translations?.it || {};
+  const tEs = vehicle?.translations?.es || {};
   const media = vehicle?.media_items || [];
   
-  const photos = Array(6).fill({ file: undefined, title: "", alt: "" });
+  const photos: any[] = Array(6).fill(null).map(() => ({ file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } }));
   media.forEach((item: any) => {
-    if (item.kind === "hero" && !photos[0].id) {
-      photos[0] = { id: item.id, file: item.image_url, title: item.translations?.en?.title || "", alt: item.translations?.en?.alt || "" };
+    const pEn = item.translations?.en || {};
+    const pIt = item.translations?.it || {};
+    const pEs = item.translations?.es || {};
+
+    if (item.kind === "thumbnail") {
+      photos[0].thumbnailId = item.id;
+      if (!photos[0].file) photos[0].file = item.image_url;
+    } else if (item.kind === "hero") {
+      photos[0].id = item.id;
+      if (!photos[0].file) photos[0].file = item.image_url;
+      photos[0].title = { en: pEn.title || "", it: pIt.title || "", es: pEs.title || "" };
+      photos[0].alt = { en: pEn.alt || "", it: pIt.alt || "", es: pEs.alt || "" };
     } else {
       const emptyIdx = photos.findIndex((p, i) => i > 0 && !p.id && !p.file);
       if (emptyIdx !== -1) {
-        photos[emptyIdx] = { id: item.id, file: item.image_url, title: item.translations?.en?.title || "", alt: item.translations?.en?.alt || "" };
+        photos[emptyIdx] = { 
+          id: item.id, 
+          file: item.image_url, 
+          title: { en: pEn.title || "", it: pIt.title || "", es: pEs.title || "" },
+          alt: { en: pEn.alt || "", it: pIt.alt || "", es: pEs.alt || "" },
+        };
       }
     }
   });
 
   return {
-    vehicleName: asText(english.name || vehicle.name),
+    vehicleName: { en: asText(tEn.name || vehicle.name), it: asText(tIt.name), es: asText(tEs.name) },
     model: asText(vehicle.model_year),
     category: asText(vehicle.category?.name),
     duration: "", // Ignored for now based on user feedback
     passengerCapacity: asText(vehicle.passengers),
     luggageCapacity: asText(vehicle.luggage_capacity),
     starRating: vehicle.rating_avg ? String(vehicle.rating_avg) : "",
-    features: vehicle.features || [],
-    description: asText(english.description || vehicle.description),
+    features: {
+      en: tEn.features || [],
+      it: tIt.features || [],
+      es: tEs.features || [],
+    },
+    description: { en: asText(tEn.description || vehicle.description), it: asText(tIt.description), es: asText(tEs.description) },
     basePrice: asText(vehicle.price_amount),
     vat: asText(vehicle.vat_amount),
     insurance: asText(vehicle.insurance_fee),
     pricePerKm: asText(vehicle.price_per_km),
-    additionalServices: [], // Not implemented properly yet, ignoring for now
+    additionalServices: (vehicle.additional_services || []).map((s: any) => String(s.id || s)),
     photos,
-    seoTitle: asText(english.meta_title),
-    seoDescription: asText(english.meta_description),
-    seoKeywords: (english.meta_keywords || []).join(", "),
-    seoSlug: asText(english.slug || vehicle.slug),
+    seoTitle: { en: asText(tEn.meta_title), it: asText(tIt.meta_title), es: asText(tEs.meta_title) },
+    seoDescription: { en: asText(tEn.meta_description), it: asText(tIt.meta_description), es: asText(tEs.meta_description) },
+    seoKeywords: { 
+      en: (tEn.meta_keywords || []).join(", "),
+      it: (tIt.meta_keywords || []).join(", "),
+      es: (tEs.meta_keywords || []).join(", ")
+    },
+    seoSlug: { en: asText(tEn.slug || vehicle.slug), it: asText(tIt.slug), es: asText(tEs.slug) },
   };
 }
 
@@ -217,6 +283,14 @@ export function CreateVehicle({ vehicleId, onDirtyChange }: { vehicleId?: string
         res = await createCatalogVehicle(payload);
         setSavedVehicleId(res?.data?.id || res?.id);
       }
+
+      const nextVehicleId = vehicleId || savedVehicleId || res?.data?.id || res?.id;
+      if (meta.intent === "publish" && nextVehicleId) {
+        await publishCatalogVehicle(nextVehicleId);
+        setIsPublishedModalOpen(true);
+      } else if (meta.intent === "save" && (vehicleId || savedVehicleId)) {
+        setIsPublishedModalOpen(true);
+      }
     } catch (err: any) {
       console.error(err);
       setSaveError(err.message || "Failed to save vehicle");
@@ -250,7 +324,14 @@ export function CreateVehicle({ vehicleId, onDirtyChange }: { vehicleId?: string
 
   return (
     <FormProvider {...methods}>
-      <div className={styles.page}>
+      <form
+        id="create-vehicle-form"
+        className={styles.page}
+        onSubmit={handleSubmit((data) => onSubmit(data, { intent: "save" }).then(() => setIsPublishedModalOpen(true)))}
+      >
+        {saveError && <div className={styles.saveError}>{saveError}</div>}
+        {isSaving && <div className={styles.saveNotice}>Saving vehicle...</div>}
+
         <WizardLayout
           steps={STEPS}
           currentStep={currentStep}
@@ -259,12 +340,10 @@ export function CreateVehicle({ vehicleId, onDirtyChange }: { vehicleId?: string
           onPrevious={handlePrevious}
           onStepClick={handleStepClick}
           publishLabel="Publish Vehicle"
-          error={saveError}
-          isSaving={isSaving}
         >
           {renderStep()}
         </WizardLayout>
-      </div>
+      </form>
 
       {isPublishedModalOpen && (
         <SuccessModal
@@ -275,7 +354,10 @@ export function CreateVehicle({ vehicleId, onDirtyChange }: { vehicleId?: string
           hideSecondaryButton={!vehicleId}
           onPrimaryClick={() => {
             setIsPublishedModalOpen(false);
-            router.push(vehicleId || savedVehicleId ? `/dashboard/catalog/transportation/${vehicleId || savedVehicleId}/overview` : "/dashboard/catalog/transportation?created=true");
+            const target = vehicleId || savedVehicleId
+              ? `/dashboard/catalog/transportation/${vehicleId || savedVehicleId}/overview`
+              : "/dashboard/catalog/transportation?created=true";
+            window.location.href = target;
           }}
           onClose={() => {
             setIsPublishedModalOpen(false);

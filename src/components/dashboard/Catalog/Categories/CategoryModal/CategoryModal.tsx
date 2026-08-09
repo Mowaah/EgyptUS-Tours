@@ -10,8 +10,8 @@ import styles from "./CategoryModal.module.scss";
 interface CategoryModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (data: { name: string }) => void;
-  initialName?: string;
+  onSave: (data: { translations: Record<string, { name: string }> }) => void;
+  initialName?: Record<string, string>;
   isEdit?: boolean;
 }
 
@@ -19,14 +19,14 @@ export default function CategoryModal({
   open,
   onClose,
   onSave,
-  initialName = "",
+  initialName = {},
   isEdit = false,
 }: CategoryModalProps) {
   const [lang, setLang] = useState<Language>("English");
   const [names, setNames] = useState<Record<Language, string>>({
-    English: initialName,
-    Italian: "",
-    Spanish: "",
+    English: initialName.en || initialName.English || "",
+    Italian: initialName.it || initialName.Italian || "",
+    Spanish: initialName.es || initialName.Spanish || "",
   });
 
   useEffect(() => {
@@ -50,11 +50,23 @@ export default function CategoryModal({
   if (!open) return null;
 
   const handleSave = () => {
-    onSave({ name: names.English });
+    onSave({
+      translations: {
+        en: { name: names.English },
+        it: { name: names.Italian },
+        es: { name: names.Spanish },
+      },
+    });
   };
 
+  const hasChanges = isEdit ? (
+    names.English !== (initialName?.en || initialName?.English || "") ||
+    names.Italian !== (initialName?.it || initialName?.Italian || "") ||
+    names.Spanish !== (initialName?.es || initialName?.Spanish || "")
+  ) : true;
+
   return (
-    <div className={styles.overlay} role="presentation" onMouseDown={onClose}>
+    <div className={`${styles.overlay} ${open ? styles.open : ""}`} role="presentation" onMouseDown={onClose}>
       <section
         className={styles.modal}
         role="dialog"
@@ -86,7 +98,7 @@ export default function CategoryModal({
           secondaryLabel="Cancel"
           secondaryOnClick={onClose}
           primaryOnClick={handleSave}
-          primaryDisabled={!names.English.trim() || (isEdit && names.English === initialName)}
+          primaryDisabled={!names.English.trim() || (isEdit && !hasChanges)}
         />
       </section>
     </div>

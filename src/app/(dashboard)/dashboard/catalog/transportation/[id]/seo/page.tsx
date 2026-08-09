@@ -2,19 +2,21 @@
 
 import Image from "next/image";
 import { useVehicleDetailContext } from "../layout";
+import { getLangKey } from "@/components/dashboard/shared/i18n";
 import styles from "./page.module.scss";
 
 export default function TransportationSeoPage() {
-  const { vehicle, loading } = useVehicleDetailContext();
+  const { vehicle, loading, activeLang } = useVehicleDetailContext();
 
   if (loading) return <div>Loading SEO...</div>;
   if (!vehicle) return <div>Vehicle not found.</div>;
 
-  const english = vehicle.translations?.en || {};
-  const metaTitle = english.meta_title || "-";
-  const metaDescription = english.meta_description || "-";
-  const metaKeywords = Array.isArray(english.meta_keywords) ? english.meta_keywords : [];
-  const slug = english.slug || "-";
+  const langKey = getLangKey(activeLang);
+  const t = vehicle.translations?.[langKey] || vehicle.translations?.en || {};
+  const metaTitle = t.meta_title || "-";
+  const metaDescription = t.meta_description || "-";
+  const metaKeywords = Array.isArray(t.meta_keywords) ? t.meta_keywords : [];
+  const slug = t.slug || "-";
 
   return (
     <div>

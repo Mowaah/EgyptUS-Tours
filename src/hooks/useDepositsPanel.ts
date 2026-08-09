@@ -27,7 +27,7 @@ export function useDepositsPanel({ searchQuery }: { searchQuery?: string } = {})
     return params;
   }, [appliedFilters, searchQuery]);
 
-  const { data: res, isLoading: loading } = useSWR(
+  const { data: res, isLoading: loading } = useSWR<any>(
     ["adminFinanceDeposits", apiFilters],
     () => getAllDeposits(apiFilters),
     { keepPreviousData: true }
@@ -61,7 +61,7 @@ export function useDepositsPanel({ searchQuery }: { searchQuery?: string } = {})
     const headers = Object.keys(exportRows[0]);
     const csvLines = [
       headers.join(","),
-      ...exportRows.map((row) =>
+      ...exportRows.map((row: any) =>
         headers
           .map((header) => {
             const val = row[header as keyof typeof row] ?? "";

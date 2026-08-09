@@ -7,6 +7,7 @@ import DashboardField from "@/components/dashboard/shared/DashboardField/Dashboa
 import { FormSection, FormSpec, UploadDropzone } from "@/components/dashboard/FormFields";
 import { getCategories } from "@/services/admin/adminCatalogCategoriesService";
 import { getDestinations } from "@/services/admin/adminCatalogDestinationsService";
+import { getLangKey } from "@/components/dashboard/shared/i18n";
 import styles from "../../CreateTrip.module.scss";
 import { CreateTripValues } from "../../CreateTripSchema";
 
@@ -119,8 +120,8 @@ export function OverviewStep() {
                 label="Trip Name" 
                 placeholder="Enter trip name" 
                 variant="modal"
-                {...register("tripName")} 
-                error={errors.tripName?.message} 
+                {...register(`tripName.${getLangKey(basicInfoLang)}` as const)} 
+                error={errors.tripName?.[getLangKey(basicInfoLang)]?.message} 
               />
               <Controller
                 name="category"
@@ -246,8 +247,8 @@ export function OverviewStep() {
               variant="modal"
               label="Description (Long description)" 
               placeholder="Enter long description" 
-              {...register("description")} 
-              error={errors.description?.message} 
+              {...register(`description.${getLangKey(tripContentLang)}` as const)} 
+              error={errors.description?.[getLangKey(tripContentLang)]?.message} 
             />
 
             <DashboardField 
@@ -255,8 +256,8 @@ export function OverviewStep() {
               variant="modal"
               label="Cultural Value (Short description)" 
               placeholder="Enter short description" 
-              {...register("culturalValue")} 
-              error={errors.culturalValue?.message} 
+              {...register(`culturalValue.${getLangKey(tripContentLang)}` as const)} 
+              error={errors.culturalValue?.[getLangKey(tripContentLang)]?.message} 
             />
 
             <DashboardField 
@@ -264,8 +265,8 @@ export function OverviewStep() {
               variant="modal"
               label="Who is this trip for?" 
               placeholder="Enter target audience details" 
-              {...register("whoIsTripFor")} 
-              error={errors.whoIsTripFor?.message} 
+              {...register(`whoIsTripFor.${getLangKey(tripContentLang)}` as const)} 
+              error={errors.whoIsTripFor?.[getLangKey(tripContentLang)]?.message} 
             />
           </FormSpec>
         </FormSection>

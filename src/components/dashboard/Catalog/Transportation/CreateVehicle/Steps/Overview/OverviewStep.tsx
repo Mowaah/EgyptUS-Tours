@@ -3,6 +3,7 @@ import { useFormContext, Controller } from "react-hook-form";
 import { FormSection, FormSpec } from "@/components/dashboard/FormFields";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
+import { getLangKey } from "@/components/dashboard/shared/i18n";
 import { useVehicleCategories } from "@/hooks/useCatalogVehicles";
 import { CreateVehicleValues } from "../../CreateVehicleSchema";
 import dashboardStyles from "../../CreateVehicle.module.scss";
@@ -17,18 +18,20 @@ export function OverviewStep() {
   const { categories } = useVehicleCategories();
 
   const { register, watch, setValue, control, formState: { errors } } = useFormContext<CreateVehicleValues>();
-  const features = watch("features") || [];
+  const allFeatures = watch("features") || { en: [], it: [], es: [] };
+  const currentLangKey = getLangKey(featuresLang) as "en" | "it" | "es";
+  const features = allFeatures[currentLangKey] || [];
 
   const handleAddFeature = () => {
     const trimmed = featureInput.trim();
     if (trimmed && !features.includes(trimmed)) {
-      setValue("features", [...features, trimmed]);
+      setValue(`features.${currentLangKey}`, [...features, trimmed]);
       setFeatureInput("");
     }
   };
 
   const handleRemoveFeature = (tag: string) => {
-    setValue("features", features.filter((t) => t !== tag));
+    setValue(`features.${currentLangKey}`, features.filter((t) => t !== tag));
   };
 
   return (
@@ -45,10 +48,11 @@ export function OverviewStep() {
 
             <div className={styles.inputRow}>
               <DashboardField
+                key={`vehicleName-${basicLang}`}
                 label="Vehicle Name"
                 placeholder="Mercedes S-Class"
-                error={errors.vehicleName?.message}
-                {...register("vehicleName")}
+                error={errors.vehicleName?.[getLangKey(basicLang)]?.message}
+                {...register(`vehicleName.${getLangKey(basicLang)}` as const)}
               />
               <Controller
                 name="model"
@@ -162,19 +166,22 @@ export function OverviewStep() {
             <Controller
               name="starRating"
               control={control}
-              render={({ field }) => (
+              render={({ field, fieldState }) => (
                 <DashboardField
                   {...field}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    if (val > 5) e.target.value = "5";
+                    if (val < 0) e.target.value = "0";
+                    field.onChange(e);
+                  }}
                   label="Star Rating"
-                  placeholder="Select rating"
-                  control="select"
-                  options={[
-                    { label: "1 star", value: "1" },
-                    { label: "2 stars", value: "2" },
-                    { label: "3 stars", value: "3" },
-                    { label: "4 stars", value: "4" },
-                    { label: "5 stars", value: "5" },
-                  ]}
+                  placeholder="Enter rating (0 - 5)"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="5"
+                  error={fieldState.error?.message}
                 />
               )}
             />
@@ -249,11 +256,12 @@ export function OverviewStep() {
           <FormSpec>
             <LanguageTabs active={contentLang} onChange={setContentLang} variant="white" />
             <DashboardField
+              key={`description-${contentLang}`}
               label="Overview"
               control="textarea"
               placeholder="Enter vehicle overview..."
-              error={errors.description?.message}
-              {...register("description")}
+              error={errors.description?.[getLangKey(contentLang)]?.message}
+              {...register(`description.${getLangKey(contentLang)}` as const)}
             />
           </FormSpec>
         </FormSection>

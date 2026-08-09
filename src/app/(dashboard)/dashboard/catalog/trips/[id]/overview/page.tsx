@@ -9,14 +9,21 @@ interface NamedItem {
   title?: string;
 }
 
+import { getLangKey } from "@/components/dashboard/shared/i18n";
+
 export default function TripOverviewPage() {
-  const { trip, loading } = useTripDetailContext();
+  const { trip, loading, activeLang } = useTripDetailContext();
 
   if (loading || !trip) {
     return <div style={{ padding: "24px" }}>Loading...</div>;
   }
 
   const category = trip.tags && trip.tags.length > 0 ? trip.tags[0].name || trip.tags[0].title : "Unassigned";
+
+  const langKey = getLangKey(activeLang);
+  const t = trip?.translations?.[langKey] || {};
+  const tEn = trip?.translations?.en || {};
+  const title = t.title || tEn.title || trip?.title;
 
   return (
     <div className={styles.viewLayout}>
@@ -36,7 +43,7 @@ export default function TripOverviewPage() {
 
           <div className={styles.horizontalBorder}>
             <span className={styles.label}>Trip Name</span>
-            <span className={styles.value}>{trip.title}</span>
+            <span className={styles.value}>{title}</span>
           </div>
 
           <div className={styles.horizontalBorder}>
@@ -132,21 +139,21 @@ export default function TripOverviewPage() {
           <div className={styles.specItem}>
             <p className={styles.specLabel}>Description</p>
             <div className={styles.specBox}>
-              <p className={styles.specText}>{trip.overview?.description || trip.description || "No description provided."}</p>
+              <p className={styles.specText}>{t.overview?.description || tEn.overview?.description || trip.overview?.description || trip.description || "No description provided."}</p>
             </div>
           </div>
 
           <div className={styles.specItem}>
             <p className={styles.specLabel}>Cultural Value</p>
             <div className={styles.specBox}>
-              <p className={`${styles.specText} ${styles.boldText}`}>{trip.overview?.cultural_value || "No cultural value provided."}</p>
+              <p className={`${styles.specText} ${styles.boldText}`}>{t.overview?.cultural_value || tEn.overview?.cultural_value || trip.overview?.cultural_value || "No cultural value provided."}</p>
             </div>
           </div>
 
           <div className={styles.specItem}>
             <p className={styles.specLabel}>Who is this trip for?</p>
             <div className={styles.specBox}>
-              <p className={`${styles.specText} ${styles.boldText}`}>{trip.overview?.who_is_it_for || "Not specified."}</p>
+              <p className={`${styles.specText} ${styles.boldText}`}>{t.overview?.who_is_it_for || tEn.overview?.who_is_it_for || trip.overview?.who_is_it_for || "Not specified."}</p>
             </div>
           </div>
         </div>

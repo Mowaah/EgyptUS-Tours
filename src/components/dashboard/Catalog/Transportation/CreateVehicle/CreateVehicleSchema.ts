@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { localizedStringSchema, requiredLocalizedStringSchema } from "@/components/dashboard/shared/i18n";
 
 export const createVehicleSchema = z.object({
-  vehicleName: z.string().min(1, "Vehicle Name is required"),
+  vehicleName: requiredLocalizedStringSchema("Vehicle Name is required"),
   model: z.string().min(1, "Model Year is required"),
   category: z.string().min(1, "Category is required"),
   duration: z.string().optional(),
@@ -12,8 +13,12 @@ export const createVehicleSchema = z.object({
     const num = parseFloat(val);
     return !isNaN(num) && num >= 0 && num <= 5;
   }, "Star Rating must be a number between 0 and 5"),
-  features: z.array(z.string()).default([]),
-  description: z.string().optional(),
+  features: z.object({
+    en: z.array(z.string()).default([]),
+    it: z.array(z.string()).default([]),
+    es: z.array(z.string()).default([]),
+  }),
+  description: localizedStringSchema,
 
   // Pricing
   basePrice: z.string().min(1, "Base Price is required"),
@@ -45,10 +50,10 @@ export const createVehicleSchema = z.object({
     ),
 
   // SEO
-  seoTitle: z.string().optional(),
-  seoDescription: z.string().optional(),
-  seoKeywords: z.string().optional(),
-  seoSlug: z.string().optional(),
+  seoTitle: localizedStringSchema,
+  seoDescription: localizedStringSchema,
+  seoKeywords: localizedStringSchema,
+  seoSlug: localizedStringSchema,
 });
 
 export type CreateVehicleValues = z.infer<typeof createVehicleSchema>;

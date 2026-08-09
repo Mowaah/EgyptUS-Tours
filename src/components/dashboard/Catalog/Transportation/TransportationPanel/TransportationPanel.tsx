@@ -124,16 +124,9 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
       ariaLabel="Catalog vehicles table"
       title="Vehicles"
       iconSrc="/images/dashboard/sidebar/transportation.svg"
-      headerActions={
-        <>
-          <TablePanelHeaderButton iconSrc="/images/dashboard/filter.svg">
-            Filters
-          </TablePanelHeaderButton>
-          <TablePanelHeaderButton iconSrc="/images/dashboard/export.svg">
-            Export Data
-          </TablePanelHeaderButton>
-        </>
-      }
+      showFilters
+      showExport
+      onExportClick={() => {}}
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
     >
       <DataTable

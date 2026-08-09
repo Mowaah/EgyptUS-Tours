@@ -15,8 +15,8 @@ export function SEOStep() {
         title="General SEO"
         seoLang={seoLang}
         setSeoLang={setSeoLang}
-        register={register}
-        control={control}
+        register={register as any}
+        control={control as any}
         errors={errors}
       />
     </div>

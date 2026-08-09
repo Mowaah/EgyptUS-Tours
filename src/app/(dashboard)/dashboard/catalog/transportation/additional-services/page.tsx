@@ -14,16 +14,11 @@ import { createVehicleAdditionalService, updateVehicleAdditionalService, deleteV
 
 function getMutationErrorMessage(error: unknown, fallback: string) {
   const data = (error as { response?: { data?: unknown } })?.response?.data;
-  if (typeof data === "string") return data;
-  if (data && typeof data === "object") {
-    const record = data as Record<string, unknown>;
-    if (typeof record.message === "string") return record.message;
-    if (typeof record.detail === "string") return record.detail;
-    const firstFieldError = Object.entries(record).find(([, value]) => Array.isArray(value) || typeof value === "string");
-    if (firstFieldError) {
-      const [field, value] = firstFieldError;
-      const text = Array.isArray(value) ? value.join(", ") : String(value);
-      return `${field}: ${text}`;
+  if (data) {
+    try {
+      return `Backend Error: ${JSON.stringify(data)}`;
+    } catch {
+      return fallback;
     }
   }
   return fallback;
@@ -54,13 +49,15 @@ export default function TransportationAdditionalServicesPage() {
     setEditingService(undefined);
   };
 
-  const handleSaveModal = async (data: { name: string; price: string }) => {
+  const handleSaveModal = async (data: { translations: Record<string, { name: string }>; price: string }) => {
     try {
+      const cleanPrice = data.price.replace(/[^0-9.]/g, "");
+      const payload = { ...data, price: cleanPrice };
       if (editingService) {
-        await updateVehicleAdditionalService(editingService.id, data);
+        await updateVehicleAdditionalService(editingService.id, payload);
         setSuccessMessage("The Additional Service has been updated successfully");
       } else {
-        await createVehicleAdditionalService(data);
+        await createVehicleAdditionalService(payload);
         setSuccessMessage("The New Additional Service has been added successfully");
       }
       
@@ -121,7 +118,7 @@ export default function TransportationAdditionalServicesPage() {
         onClose={handleCloseModal}
         onSave={handleSaveModal}
         isEdit={!!editingService}
-        initialName={editingService?.name || ""}
+        initialName={editingService?.translations || {}}
         initialPrice={editingService?.price || ""}
       />
 

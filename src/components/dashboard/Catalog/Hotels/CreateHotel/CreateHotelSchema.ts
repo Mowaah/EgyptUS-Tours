@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { localizedStringSchema, requiredLocalizedStringSchema } from "@/components/dashboard/shared/i18n";
 
 export const roomSchema = z.object({
   id: z.union([z.string(), z.number()]).optional(),
@@ -7,15 +8,15 @@ export const roomSchema = z.object({
   view: z.string().optional(),
   pricePerNight: z.string().min(1, "Price is required"), // We'll convert to number on submit
   pricePerNightEgp: z.string().optional(),
-  description: z.string().optional(),
+  description: localizedStringSchema,
   facilities: z.array(z.string()).default([]),
   photos: z.array(z.any()).default([]),
 });
 
 export const createHotelSchema = z.object({
-  hotelName: z.string().min(1, "Hotel Name is required"),
+  hotelName: requiredLocalizedStringSchema("Hotel Name is required"),
   totalRooms: z.string().min(1, "Total Rooms is required"),
-  subtitle: z.string().optional(),
+  subtitle: localizedStringSchema,
   cityLocation: z.string().min(1, "Location is required"),
   address: z.string().optional(),
   starRating: z.string().refine((val) => {
@@ -23,14 +24,14 @@ export const createHotelSchema = z.object({
     return !isNaN(num) && num >= 0 && num <= 5;
   }, "Star Rating must be a number between 0 and 5"),
   facilities: z.array(z.string()).default([]),
-  description: z.string().optional(),
-  secondDescription: z.string().optional(),
+  description: localizedStringSchema,
+  secondDescription: localizedStringSchema,
   
   // SEO
-  metaTitle: z.string().optional(),
-  metaDescription: z.string().optional(),
-  metaKeywords: z.string().optional(),
-  slug: z.string().optional(),
+  metaTitle: localizedStringSchema,
+  metaDescription: localizedStringSchema,
+  metaKeywords: localizedStringSchema,
+  slug: localizedStringSchema,
   
   // Pricing
   basePrice: z.string().optional(), // Now read-only derived from rooms

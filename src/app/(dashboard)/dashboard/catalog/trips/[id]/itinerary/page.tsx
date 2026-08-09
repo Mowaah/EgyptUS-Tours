@@ -3,6 +3,7 @@
 import Image from "next/image";
 import styles from "./page.module.scss";
 import { useTripDetailContext } from "../layout";
+import { getLangKey } from "@/components/dashboard/shared/i18n";
 
 interface ItineraryDay {
   dayNumber: number;
@@ -77,13 +78,23 @@ function DayCard({ day }: { day: ItineraryDay }) {
 }
 
 export default function TripItineraryPage() {
-  const { trip, loading } = useTripDetailContext();
+  const { trip, loading, activeLang } = useTripDetailContext();
 
   if (loading || !trip) {
     return <div style={{ padding: "24px" }}>Loading...</div>;
   }
 
   const itineraryDays: ApiItineraryDay[] = trip.itinerary_days || [];
+
+  const langKey = getLangKey(activeLang);
+
+  const getDayVal = (day: any, field: string) => {
+    return day?.translations?.[langKey]?.[field] || day?.translations?.en?.[field] || day?.[field] || "";
+  };
+
+  const getHighlights = (day: any) => {
+    return day?.translations?.[langKey]?.highlights || day?.translations?.en?.highlights || day?.highlights || [];
+  };
 
   return (
     <div className={styles.container}>
@@ -103,10 +114,10 @@ export default function TripItineraryPage() {
               key={day.id || day.day_number}
               day={{
                 dayNumber: day.day_number,
-                title: day.title || "",
-                subtitle: day.subtitle || "",
-                description: day.description || "",
-                highlights: day.highlights || [],
+                title: getDayVal(day, "title"),
+                subtitle: getDayVal(day, "subtitle"),
+                description: getDayVal(day, "description"),
+                highlights: getHighlights(day),
                 imageName: day.image_url ? day.image_url.split("/").pop() || "image.jpg" : "No image",
                 imageSize: day.image_url ? "Uploaded image" : "No image uploaded",
               }}

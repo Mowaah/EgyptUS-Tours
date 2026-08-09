@@ -4,6 +4,7 @@ import Image from "next/image";
 import styles from "./page.module.scss";
 import { LoadingSpinner } from "@/components/shared";
 import { useTripDetailContext } from "../layout";
+import { getLangKey } from "@/components/dashboard/shared/i18n";
 
 function normalizeKeywords(value: unknown): string[] {
   if (Array.isArray(value)) {
@@ -16,17 +17,20 @@ function normalizeKeywords(value: unknown): string[] {
 }
 
 export default function TripSeoPage() {
-  const { trip, loading } = useTripDetailContext();
+  const { trip, loading, activeLang } = useTripDetailContext();
 
   if (loading || !trip) {
     return <LoadingSpinner label="Loading SEO settings..." />;
   }
 
-  const seo = trip.seo || trip.translations?.en || {};
-  const metaTitle = seo.meta_title || "-";
-  const metaDescription = seo.meta_description || "-";
-  const keywords = normalizeKeywords(seo.meta_keywords);
-  const slug = seo.slug || trip.slug || "-";
+  const langKey = getLangKey(activeLang);
+  const t = trip.translations?.[langKey] || {};
+  const tEn = trip.translations?.en || {};
+
+  const metaTitle = t.meta_title || tEn.meta_title || trip.meta_title || "-";
+  const metaDescription = t.meta_description || tEn.meta_description || trip.meta_description || "-";
+  const keywords = normalizeKeywords(t.meta_keywords || tEn.meta_keywords || trip.meta_keywords);
+  const slug = t.slug || tEn.slug || trip.slug || "-";
 
   return (
     <div>

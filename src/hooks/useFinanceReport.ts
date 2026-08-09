@@ -5,7 +5,7 @@ import { getFinanceReport } from "@/services/admin/adminFinanceService";
 import { downloadBlobAsCSV } from "@/lib/utils";
 
 export function useFinanceReport(rangeKey: string = "last_12m") {
-  const { data, isLoading: loading } = useSWR(
+  const { data, isLoading: loading, mutate } = useSWR(
     ["adminFinanceReport", rangeKey],
     () => getFinanceReport({ range: rangeKey }),
     { keepPreviousData: true }
@@ -47,7 +47,7 @@ export function useFinanceReport(rangeKey: string = "last_12m") {
   return {
     data,
     loading,
-    refetch: fetchReport,
+    refetch: mutate,
     handleExportCSV,
   };
 }

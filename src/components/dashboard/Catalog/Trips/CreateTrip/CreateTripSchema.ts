@@ -1,9 +1,10 @@
 import { z } from "zod";
+import { localizedStringSchema, requiredLocalizedStringSchema } from "@/components/dashboard/shared/i18n";
 
 export const createTripSchema = z
   .object({
     // Basic Information
-    tripName: z.string({ message: "Trip Name is required" }).min(1, "Trip Name is required"),
+    tripName: requiredLocalizedStringSchema("Trip Name is required"),
     category: z.string({ message: "Category is required" }).min(1, "Category is required"),
     destinations: z.array(z.string()).min(1, "At least one destination is required"),
     duration: z.string({ message: "Duration is required" }).min(1, "Duration is required"),
@@ -16,13 +17,13 @@ export const createTripSchema = z
     brochureFile: z.any().optional(),
 
     // Trip Content
-    description: z.string().optional(),
-    culturalValue: z.string().optional(),
-    whoIsTripFor: z.string().optional(),
+    description: localizedStringSchema,
+    culturalValue: localizedStringSchema,
+    whoIsTripFor: localizedStringSchema,
     
     // Inclusions Step
-    inclusions: z.array(z.string()),
-    exclusions: z.array(z.string()),
+    inclusions: z.array(localizedStringSchema),
+    exclusions: z.array(localizedStringSchema),
     
     // Pricing Step
     pricing: z
@@ -65,10 +66,10 @@ export const createTripSchema = z
       .array(
         z.object({
           id: z.union([z.string(), z.number()]).optional(),
-          title: z.string().optional(),
-          subtitle: z.string().optional(),
-          description: z.string().optional(),
-          highlights: z.array(z.string()).optional(),
+          title: localizedStringSchema,
+          subtitle: localizedStringSchema,
+          description: localizedStringSchema,
+          highlights: z.array(localizedStringSchema).optional(),
           image: z.any().optional(),
         })
       )
@@ -116,10 +117,10 @@ export const createTripSchema = z
       ),
 
     // SEO Step
-    metaTitle: z.string().optional(),
-    metaDescription: z.string().optional(),
-    metaKeywords: z.string().optional(),
-    slug: z.string().optional(),
+    metaTitle: localizedStringSchema,
+    metaDescription: localizedStringSchema,
+    metaKeywords: localizedStringSchema,
+    slug: localizedStringSchema,
   })
   .superRefine((data, ctx) => {
     // Validate Pricing based on selected tourTypes

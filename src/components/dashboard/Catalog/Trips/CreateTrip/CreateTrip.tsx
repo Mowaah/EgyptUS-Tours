@@ -42,23 +42,23 @@ const STEPS: WizardStepConfig[] = [
 const REQUIRED_GALLERY_IMAGES = 5;
 
 const EMPTY_VALUES: CreateTripValues = {
-  tripName: "",
+  tripName: { en: "", it: "", es: "" },
   category: "",
   destinations: [],
   duration: "",
   tourTypes: [],
   starRating: "",
   brochureFile: undefined,
-  description: "",
-  culturalValue: "",
-  whoIsTripFor: "",
+  description: { en: "", it: "", es: "" },
+  culturalValue: { en: "", it: "", es: "" },
+  whoIsTripFor: { en: "", it: "", es: "" },
   inclusions: [],
   exclusions: [],
   pricing: {
     privateTour: { basePrice: "", seasons: [{ dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" }] },
     groupTour: { basePrice: "", seasons: [{ dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" }] },
   },
-  itinerary: [{ title: "", subtitle: "", description: "", highlights: [], image: undefined }],
+  itinerary: [{ title: { en: "", it: "", es: "" }, subtitle: { en: "", it: "", es: "" }, description: { en: "", it: "", es: "" }, highlights: [], image: undefined }],
   hotels: [],
   photos: [
     { file: undefined, title: "", alt: "" }, // index 0 = hero
@@ -69,10 +69,10 @@ const EMPTY_VALUES: CreateTripValues = {
     { file: undefined, title: "", alt: "" }, // index 5 = gallery 5
   ],
   datesAvailability: { enabled: false, dates: [] },
-  metaTitle: "",
-  metaDescription: "",
-  metaKeywords: "",
-  slug: "",
+  metaTitle: { en: "", it: "", es: "" },
+  metaDescription: { en: "", it: "", es: "" },
+  metaKeywords: { en: "", it: "", es: "" },
+  slug: { en: "", it: "", es: "" },
 };
 
 function asList(payload: any): any[] {
@@ -176,7 +176,7 @@ const MIN_PHOTOS = 6; // 1 hero + 5 gallery
 function padPhotos(rows: any[]): any[] {
   const result = [...rows];
   while (result.length < MIN_PHOTOS) {
-    result.push({ file: undefined, title: "", alt: "" });
+    result.push({ file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } });
   }
   return result;
 }
@@ -206,8 +206,13 @@ function rowText(row: any): string {
 }
 
 function mapTripToFormValues(trip: any): CreateTripValues {
-  const translations = trip?.translations?.en || {};
-  const overview = translations.overview || trip?.overview || {};
+  const tEn = trip?.translations?.en || {};
+  const tIt = trip?.translations?.it || {};
+  const tEs = trip?.translations?.es || {};
+  
+  const overviewEn = tEn.overview || trip?.overview || {};
+  const overviewIt = tIt.overview || {};
+  const overviewEs = tEs.overview || {};
   const duration = trip?.duration_days ? `${trip.duration_days}d-${trip.duration_nights || 0}n` : "";
   const seasonRows = asList(trip?.season_pricings);
   const mediaRows = asList(trip?.media_items).sort((a, b) => Number(a?.order || 0) - Number(b?.order || 0));
@@ -216,13 +221,15 @@ function mapTripToFormValues(trip: any): CreateTripValues {
   const photoRows = [heroMedia, ...galleryMedia]
     .filter(Boolean)
     .map((media) => {
-      const mediaTranslations = media?.translations?.en || {};
+      const tEn = media?.translations?.en || {};
+      const tIt = media?.translations?.it || {};
+      const tEs = media?.translations?.es || {};
       return {
         id: media?.id,
         kind: media?.kind,
         file: media?.image_url,
-        title: asText(mediaTranslations.title || media?.caption),
-        alt: asText(mediaTranslations.alt),
+        title: { en: asText(tEn.title || media?.caption), it: asText(tIt.title), es: asText(tEs.title) },
+        alt: { en: asText(tEn.alt), it: asText(tIt.alt), es: asText(tEs.alt) },
       };
     });
 
@@ -244,7 +251,7 @@ function mapTripToFormValues(trip: any): CreateTripValues {
 
   return {
     ...EMPTY_VALUES,
-    tripName: asText(translations.title || trip?.title),
+    tripName: { en: asText(tEn.title || trip?.title), it: asText(tIt.title), es: asText(tEs.title) },
     category: asText(trip?.tags?.[0]?.slug || trip?.tags?.[0]?.id || ""),
     destinations: asList(trip?.destinations).map((destination) => asText(destination?.slug || destination?.id)).filter(Boolean),
     duration,
@@ -253,21 +260,41 @@ function mapTripToFormValues(trip: any): CreateTripValues {
       trip?.offers_group_tour ? "group-tour" : "",
     ].filter(Boolean),
     starRating: trip?.rating_avg ? String(trip.rating_avg) : "",
-    description: asText(overview.description || trip?.description),
-    culturalValue: asText(overview.cultural_value),
-    whoIsTripFor: asText(overview.who_is_it_for),
-    inclusions: asList(trip?.inclusions).map(rowText).filter(Boolean),
-    exclusions: asList(trip?.exclusions).map(rowText).filter(Boolean),
+    description: { en: asText(overviewEn.description || trip?.description), it: asText(overviewIt.description), es: asText(overviewEs.description) },
+    culturalValue: { en: asText(overviewEn.cultural_value), it: asText(overviewIt.cultural_value), es: asText(overviewEs.cultural_value) },
+    whoIsTripFor: { en: asText(overviewEn.who_is_it_for), it: asText(overviewIt.who_is_it_for), es: asText(overviewEs.who_is_it_for) },
+    inclusions: asList(trip?.inclusions).map(row => ({
+      en: asText(row?.translations?.en?.text || row?.text || ""),
+      it: asText(row?.translations?.it?.text || ""),
+      es: asText(row?.translations?.es?.text || ""),
+    })),
+    exclusions: asList(trip?.exclusions).map(row => ({
+      en: asText(row?.translations?.en?.text || row?.text || ""),
+      it: asText(row?.translations?.it?.text || ""),
+      es: asText(row?.translations?.es?.text || ""),
+    })),
     pricing: {
       privateTour: { basePrice: money(trip?.private_price) || "", seasons: seasonValues("private") },
       groupTour: { basePrice: money(trip?.group_price) || "", seasons: seasonValues("group") },
     },
     itinerary: asList(trip?.itinerary_days).map((day) => ({
       id: day?.id,
-      title: asText(day?.title || day?.translations?.en?.title),
-      subtitle: asText(day?.subtitle || day?.translations?.en?.subtitle),
-      description: asText(day?.description || day?.translations?.en?.description),
-      highlights: asList(day?.highlights || day?.translations?.en?.highlights),
+      title: {
+        en: asText(day?.translations?.en?.title || day?.title),
+        it: asText(day?.translations?.it?.title),
+        es: asText(day?.translations?.es?.title),
+      },
+      subtitle: {
+        en: asText(day?.translations?.en?.subtitle || day?.subtitle),
+        it: asText(day?.translations?.it?.subtitle),
+        es: asText(day?.translations?.es?.subtitle),
+      },
+      description: {
+        en: asText(day?.translations?.en?.description || day?.description),
+        it: asText(day?.translations?.it?.description),
+        es: asText(day?.translations?.es?.description),
+      },
+      highlights: asList(day?.translations?.en?.highlights || day?.highlights).map(h => ({ en: asText(h), it: "", es: "" })), // Complex nested mapping
       image: day?.image_url,
     })),
     datesAvailability: {
@@ -279,10 +306,14 @@ function mapTripToFormValues(trip: any): CreateTripValues {
     },
     hotels: asList(trip?.hotel_links).map((link: any) => asText(link?.hotel?.hotel_id || link?.hotel?.id || link?.hotel_id)).filter(Boolean),
     photos: padPhotos(photoRows),
-    metaTitle: asText(translations.meta_title),
-    metaDescription: asText(translations.meta_description),
-    metaKeywords: asList(translations.meta_keywords).join(", "),
-    slug: asText(translations.slug || trip?.slug),
+    metaTitle: { en: asText(tEn.meta_title), it: asText(tIt.meta_title), es: asText(tEs.meta_title) },
+    metaDescription: { en: asText(tEn.meta_description), it: asText(tIt.meta_description), es: asText(tEs.meta_description) },
+    metaKeywords: { 
+      en: asList(tEn.meta_keywords).join(", "),
+      it: asList(tIt.meta_keywords).join(", "),
+      es: asList(tEs.meta_keywords).join(", ")
+    },
+    slug: { en: asText(tEn.slug || trip?.slug), it: asText(tIt.slug), es: asText(tEs.slug) },
   };
 }
 
@@ -317,10 +348,9 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
           kind: index === 0 ? "hero" : "gallery",
           image: isFile(photo.file) ? await fileToDataUrl(photo.file) : undefined,
           translations: {
-            en: {
-              title: asText(photo.title),
-              alt: asText(photo.alt),
-            },
+            en: { title: photo.title?.en || "", alt: photo.alt?.en || "" },
+            it: { title: photo.title?.it || "", alt: photo.alt?.it || "" },
+            es: { title: photo.title?.es || "", alt: photo.alt?.es || "" },
           },
           order: index,
         };
@@ -332,12 +362,32 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
       .map(async (day, index) => ({
         id: (day as any).id,
         day_number: index + 1,
-        title: asText(day.title),
-        subtitle: asText(day.subtitle),
-        description: asText(day.description),
-        highlights: (day.highlights || []).filter(Boolean),
+        title: day.title?.en || "",
+        subtitle: day.subtitle?.en || "",
+        description: day.description?.en || "",
+        highlights: (day.highlights || []).map(h => h.en || "").filter(Boolean),
         image: isFile(day.image) ? await fileToDataUrl(day.image) : undefined,
         order: index,
+        translations: {
+          en: {
+            title: day.title?.en || "",
+            subtitle: day.subtitle?.en || "",
+            description: day.description?.en || "",
+            highlights: (day.highlights || []).map(h => h.en || "").filter(Boolean),
+          },
+          it: {
+            title: day.title?.it || "",
+            subtitle: day.subtitle?.it || "",
+            description: day.description?.it || "",
+            highlights: (day.highlights || []).map(h => h.it || "").filter(Boolean),
+          },
+          es: {
+            title: day.title?.es || "",
+            subtitle: day.subtitle?.es || "",
+            description: day.description?.es || "",
+            highlights: (day.highlights || []).map(h => h.es || "").filter(Boolean),
+          },
+        }
       }))
   );
 
@@ -346,25 +396,47 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
     ...(data.pricing?.groupTour?.seasons || []).map((season) => ({ ...season, tourType: "group" })),
   ].filter((season) => season.dateRange || season.singleRoom || season.doubleRoom || season.tripleRoom);
 
-  const userSlug = data.slug ? slugify(data.slug) : "";
-  const baseSlug = slugify(data.tripName) || "trip";
-  const slug = userSlug || (isEdit ? baseSlug : `${baseSlug}-${Math.random().toString(36).substring(2, 6)}`);
+  const userSlugEn = data.slug?.en ? slugify(data.slug.en) : "";
+  const baseSlugEn = slugify(data.tripName?.en || "trip");
+  const slugEn = userSlugEn || (isEdit ? baseSlugEn : `${baseSlugEn}-${Math.random().toString(36).substring(2, 6)}`);
+
+  const buildOverview = (lang: "en" | "it" | "es") => ({
+    description: data.description?.[lang] || "",
+    cultural_value: data.culturalValue?.[lang] || "",
+    who_is_it_for: data.whoIsTripFor?.[lang] || "",
+  });
 
   return {
     translations: {
       en: {
-        title: data.tripName,
-        slug,
-        description: data.description || "",
-        short_description: data.culturalValue || "",
-        overview: {
-          description: data.description || "",
-          cultural_value: data.culturalValue || "",
-          who_is_it_for: data.whoIsTripFor || "",
-        },
-        meta_title: data.metaTitle || "",
-        meta_description: data.metaDescription || "",
-        meta_keywords: keywords(data.metaKeywords),
+        title: data.tripName?.en || "",
+        slug: slugEn,
+        description: data.description?.en || "",
+        short_description: data.culturalValue?.en || "",
+        overview: buildOverview("en"),
+        meta_title: data.metaTitle?.en || "",
+        meta_description: data.metaDescription?.en || "",
+        meta_keywords: keywords(data.metaKeywords?.en),
+      },
+      it: {
+        title: data.tripName?.it || "",
+        slug: data.slug?.it || "",
+        description: data.description?.it || "",
+        short_description: data.culturalValue?.it || "",
+        overview: buildOverview("it"),
+        meta_title: data.metaTitle?.it || "",
+        meta_description: data.metaDescription?.it || "",
+        meta_keywords: keywords(data.metaKeywords?.it),
+      },
+      es: {
+        title: data.tripName?.es || "",
+        slug: data.slug?.es || "",
+        description: data.description?.es || "",
+        short_description: data.culturalValue?.es || "",
+        overview: buildOverview("es"),
+        meta_title: data.metaTitle?.es || "",
+        meta_description: data.metaDescription?.es || "",
+        meta_keywords: keywords(data.metaKeywords?.es),
       },
     },
     tag_ids: [tagId],
@@ -375,12 +447,33 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
     offers_group_tour: tourTypes.includes("group-tour"),
     private_price: money(data.pricing?.privateTour?.basePrice) || null,
     group_price: money(data.pricing?.groupTour?.basePrice) || null,
+    base_price: Math.min(
+      Number(money(data.pricing?.groupTour?.basePrice) || Infinity),
+      Number(money(data.pricing?.privateTour?.basePrice) || Infinity)
+    ) === Infinity ? null : Math.min(
+      Number(money(data.pricing?.groupTour?.basePrice) || Infinity),
+      Number(money(data.pricing?.privateTour?.basePrice) || Infinity)
+    ).toString(),
     rating_avg: data.starRating ? parseFloat(data.starRating) : null,
     currency_code: "USD",
     availability_enabled: !!data.datesAvailability?.enabled,
     force_draft: intent !== "publish" && !isEdit,
-    inclusions: (data.inclusions || []).filter(Boolean),
-    exclusions: (data.exclusions || []).filter(Boolean),
+    inclusions: (data.inclusions || []).map(inc => ({
+      text: inc.en || "", // Fallback
+      translations: {
+        en: { text: inc.en || "" },
+        it: { text: inc.it || "" },
+        es: { text: inc.es || "" },
+      }
+    })).filter(inc => inc.text),
+    exclusions: (data.exclusions || []).map(exc => ({
+      text: exc.en || "", // Fallback
+      translations: {
+        en: { text: exc.en || "" },
+        it: { text: exc.it || "" },
+        es: { text: exc.es || "" },
+      }
+    })).filter(exc => exc.text),
     season_pricings: seasonRows.map((season, index) => {
       const range = parseDateRange(season.dateRange || "");
       return {

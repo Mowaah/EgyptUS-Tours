@@ -8,6 +8,7 @@ import TablePagination from "@/components/dashboard/shared/TablePagination/Table
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import styles from "./AdditionalServicesPanel.module.scss";
 import { getVehicleAdditionalServices } from "@/services/admin/adminCatalogVehicleAdditionalServicesService";
+import { getLangKey, getLocalizedName } from "@/components/dashboard/shared/i18n";
 
 interface AdditionalServicesPanelProps {
   onEditService?: (service: AdditionalService) => void;
@@ -24,7 +25,7 @@ export default function AdditionalServicesPanel({
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(12);
 
-  const langCode = lang === "English" ? "en" : "ar";
+  const langCode = getLangKey(lang);
 
   const { data, isLoading } = useSWR(
     ["adminCatalogVehicleAdditionalServices", page, rowsPerPage, langCode, refreshTrigger],
@@ -34,12 +35,22 @@ export default function AdditionalServicesPanel({
 
   const services: AdditionalService[] = useMemo(() => {
     const results = data?.results || [];
-    return results.map((r: any) => ({
-      id: r.id,
-      name: r.name,
-      price: typeof r.price === 'number' ? `$${r.price}` : String(r.price_amount || r.price || "0$"),
-    }));
-  }, [data]);
+    return results.map((r: any) => {
+      const en = r.translations?.en;
+      const it = r.translations?.it;
+      const es = r.translations?.es;
+      return {
+        id: r.id,
+        name: getLocalizedName(r, lang),
+        translations: {
+          en: en?.name || en?.title || r.name || "",
+          it: it?.name || it?.title || "",
+          es: es?.name || es?.title || "",
+        },
+        price: typeof r.price === 'number' ? `$${r.price}` : String(r.price_amount || r.price || "0$"),
+      };
+    });
+  }, [data, lang]);
 
   const totalCount = data?.count || 0;
   const pageCount = Math.max(1, Math.ceil(totalCount / rowsPerPage));

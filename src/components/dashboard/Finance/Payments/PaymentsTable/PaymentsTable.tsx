@@ -98,7 +98,7 @@ export default function PaymentsTable({ searchQuery = "", onClearSearch }: Payme
       <DataTable
         data={data}
         columns={paymentsColumns as any}
-        getRowId={(row) => row.id}
+        getRowId={(row: any) => row.id}
         
         rowActions={paymentRowActions(handleAction) as any}
       />

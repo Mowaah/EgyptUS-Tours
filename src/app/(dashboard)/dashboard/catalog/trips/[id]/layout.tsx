@@ -45,10 +45,11 @@ function formatBlockers(err: unknown): string {
 
 // The dashboard trip detail payload is still backend-owned and wider than the shared public trip type.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const TripDetailContext = createContext<{ trip: any; refetch: () => void; loading: boolean }>({
+export const TripDetailContext = createContext<{ trip: any; refetch: () => void; loading: boolean; activeLang: Language }>({
   trip: null,
   refetch: () => {},
   loading: true,
+  activeLang: "English",
 });
 
 export function useTripDetailContext() {
@@ -108,7 +109,7 @@ export default function TripLayout({
   };
 
   return (
-    <TripDetailContext.Provider value={{ trip, refetch, loading }}>
+    <TripDetailContext.Provider value={{ trip, refetch, loading, activeLang }}>
       <div className={styles.page}>
         <DashboardNavbar
           breadcrumbTrail={[

@@ -1,5 +1,6 @@
 import useSWR from 'swr';
 import { getCatalogVehicles, getVehicleCategories, getCatalogVehicleDetail } from '@/services/admin/adminCatalogVehiclesService';
+import { getVehicleAdditionalServices } from '@/services/admin/adminCatalogVehicleAdditionalServicesService';
 
 export function useCatalogVehicles(params: Record<string, unknown> = {}) {
   const { data: res, isLoading: loading, error, mutate: refetch } = useSWR(
@@ -36,4 +37,17 @@ export function useCatalogVehicleDetail(id: string | number | undefined) {
   const data = res?.data || res || null;
 
   return { data, loading, error, refetch };
+}
+
+export function useVehicleAdditionalServices(params: Record<string, unknown> = {}) {
+  const { data: res, isLoading: loading, error, mutate: refetch } = useSWR(
+    ["adminVehicleAdditionalServices", params],
+    () => getVehicleAdditionalServices({ limit: 1000, page_size: 1000, ...params }),
+    { keepPreviousData: true }
+  );
+
+  const results = res?.data?.results || res?.results || res?.data || res;
+  const services = Array.isArray(results) ? results : [];
+
+  return { services, loading, error, refetch };
 }

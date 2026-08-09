@@ -91,7 +91,7 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
     id,
     label,
     value: filters[id as keyof typeof filters],
-    options,
+    options: options as any[],
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
 
@@ -145,16 +145,9 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
       ariaLabel="Catalog hotels table"
       title="Hotels"
       iconSrc="/images/dashboard/catalog/trips.svg"
-      headerActions={
-        <>
-          <TablePanelHeaderButton iconSrc="/images/dashboard/filter.svg">
-            Filters
-          </TablePanelHeaderButton>
-          <TablePanelHeaderButton iconSrc="/images/dashboard/export.svg">
-            Export Data
-          </TablePanelHeaderButton>
-        </>
-      }
+      showFilters
+      showExport
+      onExportClick={() => {}}
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
     >
       <DataTable

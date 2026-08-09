@@ -57,3 +57,15 @@ export async function updateHotelSeo(id: string | number, payload: HotelSeoPaylo
 export async function getCatalogHotelLocations(params?: QueryParams): Promise<ApiResponse> {
   return await adminDataClient.get('/catalog/hotel-locations/', { params });
 }
+
+export async function createCatalogHotelLocation(payload: Record<string, unknown>): Promise<ApiResponse> {
+  return await adminDataClient.post('/catalog/hotel-locations/', payload);
+}
+
+export async function updateCatalogHotelLocation(id: string | number, payload: Record<string, unknown>): Promise<ApiResponse> {
+  return await adminDataClient.patch(`/catalog/hotel-locations/${id}/`, payload);
+}
+
+export async function deleteCatalogHotelLocation(id: string | number): Promise<ApiResponse> {
+  return await adminDataClient.delete(`/catalog/hotel-locations/${id}/`);
+}
