@@ -109,7 +109,9 @@ export function UploadDropzone({
           
           <div className={styles.fileInfo}>
             <p className={styles.fileName}>
-              {typeof value === 'string' ? value.split('/').pop() : value.name}
+              {typeof value === 'string' 
+                ? (value.startsWith('data:') ? 'Uploaded Image' : value.split('/').pop()) 
+                : value.name}
             </p>
             <div className={styles.fileMeta}>
               {typeof value === 'string' ? (

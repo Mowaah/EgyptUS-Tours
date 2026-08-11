@@ -16,14 +16,26 @@ const fileSchema = z.any()
     return null;
   });
 
+const localizedString = z.object({
+  en: z.string().optional(),
+  es: z.string().optional(),
+  it: z.string().optional(),
+}).optional();
+
+const localizedStringMax = (max: number) => z.object({
+  en: z.string().max(max, `Cannot exceed ${max} characters.`).optional(),
+  es: z.string().max(max, `Cannot exceed ${max} characters.`).optional(),
+  it: z.string().max(max, `Cannot exceed ${max} characters.`).optional(),
+}).optional();
+
 export const seoConfigurationSchema = z.object({
   imageFile: fileSchema,
-  imageTitle: z.string().optional(),
-  imageAlt: z.string().optional(),
-  metaTitle: z.string().optional(),
-  metaDescription: z.string().max(300, "Description cannot exceed 300 characters.").optional(),
-  metaKeywords: z.string().optional(),
-  slug: z.string().optional(),
+  imageTitle: localizedString,
+  imageAlt: localizedString,
+  metaTitle: localizedStringMax(70),
+  metaDescription: localizedStringMax(300),
+  metaKeywords: localizedString, // Keywords field uses a comma-separated string in the UI
+  slug: localizedString,
 });
 
 export type SEOConfigurationValues = z.infer<typeof seoConfigurationSchema>;
