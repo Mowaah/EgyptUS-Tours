@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/DashboardTabs";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import SEOConfigurationForm from "./SEOConfigurationForm";

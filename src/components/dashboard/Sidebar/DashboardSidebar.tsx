@@ -214,6 +214,7 @@ export default function DashboardSidebar() {
                 height={44}
                 priority
                 className={styles.logo}
+                style={{ width: "auto", height: "auto" }}
               />
             </a>
 

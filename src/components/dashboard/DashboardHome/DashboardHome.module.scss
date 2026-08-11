@@ -51,11 +51,12 @@
 
 .distributionPanel,
 .actionsPanel {
-  min-height: 32.5rem;
+  height: 520px;
 }
 
 .actionsPanel {
   gap: 24px;
+  padding-right: 0.75rem;
 }
 
 @media (max-width: 1600px) {

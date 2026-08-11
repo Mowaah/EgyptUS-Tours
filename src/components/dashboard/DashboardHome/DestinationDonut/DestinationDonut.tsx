@@ -1,8 +1,13 @@
-import { destinations } from "../dashboardHomeData";
+import type { DestinationItem } from "../types";
 import RoundedDonutChart from "@/components/dashboard/shared/RoundedDonutChart/RoundedDonutChart";
 import styles from "./DestinationDonut.module.scss";
 
-export default function DestinationDonut() {
+interface DestinationDonutProps {
+  destinations: DestinationItem[];
+  centerValue?: string | number;
+}
+
+export default function DestinationDonut({ destinations = [], centerValue = "0" }: DestinationDonutProps) {
   const chartData = destinations.map((d) => ({
     label: d.label,
     value: d.value,
@@ -13,8 +18,8 @@ export default function DestinationDonut() {
     <div className={styles.block}>
       <RoundedDonutChart 
         data={chartData} 
-        centerValue="147K" 
-        centerLabel="Booking" 
+        centerValue={String(centerValue)} 
+        centerLabel="Bookings" 
       />
 
       <div className={styles.stats}>
@@ -23,7 +28,7 @@ export default function DestinationDonut() {
             <div key={seg.label} className={styles.statCard}>
               <i style={{ backgroundColor: seg.color }} />
               <div>
-                <strong>{seg.value}%</strong>
+                <strong>{seg.value}</strong>
                 <span>{seg.label}</span>
               </div>
             </div>
@@ -34,7 +39,7 @@ export default function DestinationDonut() {
             <div key={seg.label} className={styles.statCard}>
               <i style={{ backgroundColor: seg.color }} />
               <div>
-                <strong>{seg.value}%</strong>
+                <strong>{seg.value}</strong>
                 <span>{seg.label}</span>
               </div>
             </div>

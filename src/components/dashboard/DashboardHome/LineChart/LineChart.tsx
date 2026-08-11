@@ -9,16 +9,44 @@ import styles from "./LineChart.module.scss";
 interface LineChartProps {
   lines: ChartLine[];
   area?: boolean;
-  maxValue?: number;
-  yAxisLabels?: string[];
+  xAxisLabels?: string[];
 }
 
 export default function LineChart({ 
   lines, 
   area = false,
-  maxValue = 12000,
-  yAxisLabels = ["12K", "9K", "6K", "3K", "1K", "0"]
+  xAxisLabels,
 }: LineChartProps) {
+  const labels = xAxisLabels || months;
+  const numPoints = lines[0]?.points.length || 0;
+  const maxIndex = Math.max(0, numPoints - 1);
+  let computedMax = 0;
+  lines.forEach(line => line.points.forEach(p => {
+    if (p > computedMax) computedMax = p;
+  }));
+
+  let maxValue = Math.ceil(computedMax * 1.15);
+  if (maxValue <= 0) maxValue = 10;
+
+  let tickSize = maxValue / 5;
+  const order = Math.pow(10, Math.floor(Math.log10(tickSize || 1)));
+  const normalizedTick = tickSize / order;
+
+  let niceTick;
+  if (normalizedTick <= 1) niceTick = 1;
+  else if (normalizedTick <= 2) niceTick = 2;
+  else if (normalizedTick <= 2.5) niceTick = 2.5;
+  else if (normalizedTick <= 5) niceTick = 5;
+  else niceTick = 10;
+
+  let step = niceTick * order;
+  if (step === 0) step = 1;
+  maxValue = step * 5;
+
+  const yAxisLabels = Array.from({ length: 6 }, (_, i) => {
+    const val = maxValue - step * i;
+    return val >= 1000 ? `${(val / 1000).toFixed(val % 1000 === 0 ? 0 : 1)}K` : Math.round(val).toString();
+  });
   const width = 980;
   const height = 250;
 
@@ -30,7 +58,7 @@ export default function LineChart({
     const rect = svg.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const fraction = x / rect.width;
-    const index = Math.max(0, Math.min(11, Math.round(fraction * 11)));
+    const index = Math.max(0, Math.min(maxIndex, Math.round(fraction * maxIndex)));
 
     if (wrapRef.current) {
       const wrapRect = wrapRef.current.getBoundingClientRect();
@@ -69,13 +97,13 @@ export default function LineChart({
               className={styles.gridLine}
             />
           ))}
-          {months.map((_, index) => (
+          {labels.map((_, index) => (
             <line
               key={`v-${index}`}
               y1="0"
               y2={height}
-              x1={(index * width) / 11}
-              x2={(index * width) / 11}
+              x1={(index * width) / (maxIndex || 1)}
+              x2={(index * width) / (maxIndex || 1)}
               className={styles.gridLine}
             />
           ))}
@@ -122,8 +150,8 @@ export default function LineChart({
           })}
           {hoverData !== null ? (
             <line
-              x1={(hoverData.index * width) / 11}
-              x2={(hoverData.index * width) / 11}
+              x1={(hoverData.index * width) / (maxIndex || 1)}
+              x2={(hoverData.index * width) / (maxIndex || 1)}
               y1="0"
               y2={height}
               className={styles.markerLine}
@@ -133,8 +161,8 @@ export default function LineChart({
 
         {hoverData !== null
           ? lines.map((line, i) => {
-              const leftPercent = (hoverData.index / 11) * 100;
-              const topPercent = (1 - line.points[hoverData.index] / maxValue) * 100;
+              const leftPercent = (hoverData.index / (maxIndex || 1)) * 100;
+              const topPercent = (1 - (line.points[hoverData.index] ?? 0) / maxValue) * 100;
               return (
                 <div
                   key={`marker-${i}`}
@@ -187,10 +215,10 @@ export default function LineChart({
           }}
         >
           <div style={{ fontSize: "11px", color: "#9ca3af", fontWeight: 600, marginBottom: "2px" }}>
-            {months[hoverData.index]}
+            {labels[hoverData.index]}
           </div>
           {lines.map((line) => {
-            const val = line.points[hoverData.index];
+            const val = line.points[hoverData.index] ?? 0;
             const displayVal = val >= 1000 ? `${(val / 1000).toFixed(1)}K` : val.toString();
             return (
               <div
@@ -213,9 +241,14 @@ export default function LineChart({
         </div>
       ) : null}
       <div className={styles.months}>
-        {months.map((month) => (
-          <span key={month}>{month}</span>
-        ))}
+        {labels.map((label, i) => {
+          const showLabel = labels.length <= 12 || i % Math.ceil(labels.length / 8) === 0 || i === labels.length - 1;
+          return (
+            <span key={i} style={{ opacity: showLabel ? 1 : 0, pointerEvents: "none" }}>
+              {label}
+            </span>
+          );
+        })}
       </div>
     </div>
   );

@@ -2,18 +2,22 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { pendingActions } from "../dashboardHomeData";
+import type { PendingAction } from "../types";
 import styles from "./PendingActions.module.scss";
 
-export default function PendingActions() {
-  const [activeAction, setActiveAction] = useState(pendingActions[0]?.title ?? "");
+interface PendingActionsProps {
+  pendingActions: PendingAction[];
+}
+
+export default function PendingActions({ pendingActions }: PendingActionsProps) {
+  const [activeAction, setActiveAction] = useState(pendingActions?.[0]?.path ?? "");
   const [completedActions, setCompletedActions] = useState<string[]>([]);
 
-  const toggleCompleted = (title: string) => {
+  const toggleCompleted = (path: string) => {
     setCompletedActions((current) =>
-      current.includes(title) ? current.filter((item) => item !== title) : [...current, title]
+      current.includes(path) ? current.filter((item) => item !== path) : [...current, path]
     );
-    setActiveAction(title);
+    setActiveAction(path);
   };
 
   return (
@@ -21,12 +25,12 @@ export default function PendingActions() {
       {pendingActions.map((action) => (
         <button
           type="button"
-          className={`${styles.item} ${activeAction === action.title ? styles.active : ""} ${
-            completedActions.includes(action.title) ? styles.done : ""
+          className={`${styles.item} ${activeAction === action.path ? styles.active : ""} ${
+            completedActions.includes(action.path) ? styles.done : ""
           }`}
-          aria-pressed={completedActions.includes(action.title)}
-          onClick={() => toggleCompleted(action.title)}
-          key={action.title}
+          aria-pressed={completedActions.includes(action.path)}
+          onClick={() => toggleCompleted(action.path)}
+          key={action.path}
         >
           <div className={`${styles.icon} ${styles[action.tone]}`} aria-hidden>
             <Image src={`/images/dashboard/${action.icon}.svg`} alt="" width={18} height={18} />
@@ -34,7 +38,7 @@ export default function PendingActions() {
           <div className={styles.text}>
             <strong>{action.title}</strong>
             <span>
-              {completedActions.includes(action.title) ? "Marked as reviewed" : action.time}
+              {completedActions.includes(action.path) ? "Marked as reviewed" : action.time}
             </span>
           </div>
         </button>
