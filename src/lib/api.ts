@@ -157,32 +157,51 @@ function formatDateForBackend(dateStr: string) {
 }
 
 export async function createCustomTripRequest(tripData: any): Promise<any> {
-  // We format the tripData into the structure expected by the backend
+  // Parse budget string e.g. "$1,000 - $3,000" or "$3,000+"
+  let budget_min = null;
+  let budget_max = null;
+  const currency = "usd";
+  
+  if (tripData.preferences.budget) {
+    const budgetStr = tripData.preferences.budget.replace(/[^0-9\-+]/g, '');
+    const parts = budgetStr.split('-');
+    if (parts.length === 2) {
+      budget_min = parseInt(parts[0], 10);
+      budget_max = parseInt(parts[1], 10);
+    } else if (budgetStr.includes('+')) {
+      budget_min = parseInt(budgetStr.replace('+', ''), 10);
+    } else {
+      budget_min = parseInt(budgetStr, 10);
+      budget_max = parseInt(budgetStr, 10);
+    }
+  }
+
   const payload = {
     destination_ids: tripData.destinations,
-    traveler_info: {
-      name: tripData.travelerInfo.name,
-      email: tripData.travelerInfo.email,
-      phone: tripData.travelerInfo.phone,
-      nationality: tripData.travelerInfo.nationality,
-      start_date: formatDateForBackend(tripData.travelerInfo.startDate),
-      end_date: formatDateForBackend(tripData.travelerInfo.endDate),
-      adults: tripData.travelerInfo.adults,
-      children: tripData.travelerInfo.children,
-      infants: tripData.travelerInfo.infants,
-      trip_details: tripData.travelerInfo.tripDetails,
-    },
-    preferences: {
-      trip_category: tripData.preferences.tripCategory,
-      duration: tripData.preferences.duration,
-      budget: tripData.preferences.budget,
-      hotel_category: tripData.preferences.hotelCategory,
-      room_type: tripData.preferences.roomType,
-      transportation: tripData.preferences.transportation,
-      experiences: tripData.preferences.experiences,
-      activities: tripData.preferences.activities,
-      contact_method: tripData.preferences.contactMethod,
-    }
+    full_name: tripData.travelerInfo.name,
+    email: tripData.travelerInfo.email,
+    phone: tripData.travelerInfo.phone,
+    nationality: tripData.travelerInfo.nationality,
+    start_date: formatDateForBackend(tripData.travelerInfo.startDate),
+    end_date: formatDateForBackend(tripData.travelerInfo.endDate),
+    adults: tripData.travelerInfo.adults,
+    children: tripData.travelerInfo.children,
+    infants: tripData.travelerInfo.infants,
+    trip_details_text: tripData.travelerInfo.tripDetails,
+    
+    trip_categories: tripData.preferences.tripCategory,
+    duration: tripData.preferences.duration,
+    budget_min,
+    budget_max,
+    currency,
+    hotel_category: tripData.preferences.hotelCategory,
+    room_types: tripData.preferences.roomType,
+    transportation_type: tripData.preferences.transportation,
+    experiences: tripData.preferences.experiences,
+    activities: tripData.preferences.activities,
+    preferred_contact_method: tripData.preferences.contactMethod === "Phone Call" 
+      ? "phone" 
+      : tripData.preferences.contactMethod?.toLowerCase(),
   };
 
   const response = await apiClient.post('/custom-trip-requests/', payload);

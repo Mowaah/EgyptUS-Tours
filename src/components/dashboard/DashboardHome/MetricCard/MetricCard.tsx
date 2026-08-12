@@ -6,13 +6,14 @@ interface MetricCardProps {
   card: MetricCardData;
 }
 
-const toneColors = {
+const toneColors: Record<string, string> = {
   blue: "#2E93FA",
   green: "#3DB37C",
   orange: "#FF6600",
   purple: "#A855F7",
   pink: "#BE185D",
   amber: "#B45309",
+  red: "#EF4444",
 };
 
 const TrendIcon = ({ trend }: { trend: "up" | "down" }) => (

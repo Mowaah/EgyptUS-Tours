@@ -35,6 +35,7 @@ interface ReviewsPanelProps {
   emptyStateTitle?: string;
   emptyStateSubtitle?: string;
   refreshTrigger?: number;
+  customerId?: string;
 }
 
 export function ReviewsPanel({
@@ -47,6 +48,7 @@ export function ReviewsPanel({
   emptyStateTitle,
   emptyStateSubtitle,
   refreshTrigger = 0,
+  customerId,
   onDataChange,
 }: ReviewsPanelProps & { onDataChange?: () => void }) {
   const defaultFilters = {
@@ -74,6 +76,7 @@ export function ReviewsPanel({
     searchQuery,
     appliedFilters,
     refreshTrigger,
+    customerId,
   });
 
   const resetFilters = () => {

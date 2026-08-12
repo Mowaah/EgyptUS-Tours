@@ -30,11 +30,11 @@ export const domesticLines: ChartLine[] = [
 ];
 
 export const distribution: DistributionItem[] = [
-  { label: "Trips", value: 32, color: "#9CC7F7" },
-  { label: "Hotels", value: 22, color: "#FFD7BA" },
-  { label: "Transport", value: 36, color: "#FAD0D5" },
-  { label: "MICE", value: 74, color: "#E5C8F5" },
-  { label: "B2B", value: 58, color: "#B6F3D2" },
+  { label: "Trips", value: 32, color: "#9CC7F7", displayValue: "1,600" },
+  { label: "Hotels", value: 22, color: "#FFD7BA", displayValue: "1,100" },
+  { label: "Transport", value: 36, color: "#FAD0D5", displayValue: "1,800" },
+  { label: "MICE", value: 74, color: "#E5C8F5", displayValue: "3,700" },
+  { label: "B2B", value: 58, color: "#B6F3D2", displayValue: "2,900" },
 ];
 
 export const destinations: DestinationItem[] = [
@@ -45,9 +45,9 @@ export const destinations: DestinationItem[] = [
 ];
 
 export const pendingActions: PendingAction[] = [
-  { title: "New MICE RFP from Global Corp", time: "2 hours ago", tone: "red", icon: "pending-mice" },
-  { title: "Payment verification - BK-1283", time: "3 hours ago", tone: "amber", icon: "pending-payment" },
-  { title: "Booking modification - BK-1275", time: "2 hours ago", tone: "blue", icon: "pending-booking" },
-  { title: "Unread message from Sarah M.", time: "2 hours ago", tone: "amber", icon: "pending-unread" },
-  { title: "B2B partnership application", time: "2 hours ago", tone: "blue", icon: "pending-b2b" },
+  { title: "New MICE RFP from Global Corp", time: "2 hours ago", tone: "red", icon: "pending-mice", path: "/#1" },
+  { title: "Payment verification - BK-1283", time: "3 hours ago", tone: "amber", icon: "pending-payment", path: "/#2" },
+  { title: "Booking modification - BK-1275", time: "2 hours ago", tone: "blue", icon: "pending-booking", path: "/#3" },
+  { title: "Unread message from Sarah M.", time: "2 hours ago", tone: "amber", icon: "pending-unread", path: "/#4" },
+  { title: "B2B partnership application", time: "2 hours ago", tone: "blue", icon: "pending-b2b", path: "/#5" },
 ];

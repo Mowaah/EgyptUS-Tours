@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
 import useSWR from "swr";
 import { getAdminUserReviews, getAdminTestimonials } from "@/services/admin/adminReviewsService";
+import { getCustomerReviews } from "@/services/admin/adminCustomersService";
 import type { ReviewRow, AdminTestimonialRow, ReviewCategory, ReviewStatus } from "@/components/dashboard/Reviews/types";
 
 export interface UseReviewsPanelParams {
@@ -13,6 +14,7 @@ export interface UseReviewsPanelParams {
     date: string;
   };
   refreshTrigger?: number;
+  customerId?: string;
 }
 
 function formatDate(dateString: string) {
@@ -67,8 +69,12 @@ function isDateMatching(dateStr: string, filterValue: string): boolean {
   return dateStr === filterValue;
 }
 
-export function useReviewsPanel({ type, searchQuery, appliedFilters, refreshTrigger }: UseReviewsPanelParams) {
-  const apiParams = useMemo(() => {
+export function useReviewsPanel({ type, searchQuery, appliedFilters, refreshTrigger, customerId }: UseReviewsPanelParams) {
+  const fetcher = async () => {
+    if (customerId) {
+      return getCustomerReviews(customerId);
+    }
+
     const params: any = { limit: 1000, page_size: 1000 };
     
     if (searchQuery) params.search = searchQuery;
@@ -92,18 +98,17 @@ export function useReviewsPanel({ type, searchQuery, appliedFilters, refreshTrig
          params.status = appliedFilters.state === "Replied" ? "published" : "draft";
       }
     }
-    return params;
-  }, [type, searchQuery, appliedFilters]);
+
+    if (type === "user") {
+      return getAdminUserReviews(params);
+    } else {
+      return getAdminTestimonials(params);
+    }
+  };
 
   const { data: res, isLoading: loading, mutate: refetch } = useSWR(
-    [`adminReviews_${type}`, apiParams, refreshTrigger],
-    async () => {
-      if (type === "user") {
-        return getAdminUserReviews(apiParams);
-      } else {
-        return getAdminTestimonials(apiParams);
-      }
-    },
+    [`adminReviews_${type}`, searchQuery, appliedFilters, refreshTrigger, customerId],
+    fetcher,
     { keepPreviousData: true }
   );
 

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useState } from "react";
 import {
   TablePanel,
   TablePanelFilterBar,
@@ -6,10 +6,13 @@ import {
 import { DataTable } from "@/components/dashboard/DataTable";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import { bookingHistoryColumns } from "./bookingHistoryColumns";
-import { mockBookingHistory } from "./mockBookingHistory";
+import { useAdminCustomerBookings } from "@/hooks/useCustomers";
 
-export default function BookingHistoryPanel() {
-  const data = useMemo(() => mockBookingHistory, []);
+export default function BookingHistoryPanel({ customerId }: { customerId: string }) {
+  const [page, setPage] = useState(1);
+  const { data: pageData, isLoading } = useAdminCustomerBookings(customerId, page);
+
+  const data = pageData?.results || [];
 
   const filterFields = [
     {
@@ -35,7 +38,7 @@ export default function BookingHistoryPanel() {
     },
   ];
 
-  if (mockBookingHistory.length === 0) {
+  if (!isLoading && data.length === 0) {
     return (
       <DashboardEmptyState
         title="No Bookings Yet"
@@ -55,9 +58,8 @@ export default function BookingHistoryPanel() {
     >
       <DataTable
         data={data}
-        columns={bookingHistoryColumns}
-        getRowId={(row) => row.id}
-        
+        columns={bookingHistoryColumns as any}
+        getRowId={(row: any) => row.id.toString()}
       />
     </TablePanel>
   );

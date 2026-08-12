@@ -1,47 +1,58 @@
 import type { DataTableColumn } from "@/components/dashboard/DataTable";
 import StatusPill from "@/components/shared/StatusPill/StatusPill";
 import ViewButton from "@/components/shared/ViewButton/ViewButton";
-import type { BookingHistoryItem } from "./mockBookingHistory";
+
 import styles from "./BookingHistoryPanel.module.scss";
 
+const formatLabel = (str: string) => {
+  if (!str) return "";
+  return str.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+};
+
 const getServiceVariant = (service: string) => {
-  if (service === "Transportation") return "pink";
-  if (service === "Trips") return "blue";
-  if (service === "Hotels") return "orange";
+  const s = service?.toLowerCase() || "";
+  if (s === "transportation") return "pink";
+  if (s === "trip") return "blue";
+  if (s === "hotel") return "orange";
   return "gray";
 };
 
 const getStatusVariant = (status: string) => {
-  switch (status) {
-    case "Paid":
-    case "Completed":
+  const s = status?.toLowerCase() || "";
+  switch (s) {
+    case "paid":
+    case "completed":
+    case "confirmed":
       return "green";
-    case "Pending":
-    case "On Trip":
+    case "pending":
+    case "deposit_paid":
+    case "on_trip":
       return "orange";
-    case "Overdue":
-    case "Canceled":
+    case "overdue":
+    case "canceled":
+    case "cancelled":
+    case "refunded":
       return "red";
-    case "Upcoming":
+    case "upcoming":
       return "blue";
     default:
       return "gray";
   }
 };
 
-export const bookingHistoryColumns: DataTableColumn<BookingHistoryItem>[] = [
+export const bookingHistoryColumns: DataTableColumn<any>[] = [
   {
     id: "bookingId",
     header: "Booking ID",
-    render: (row) => <span className={styles.idCell}>{row.bookingId}</span>,
+    render: (row: any) => <span className={styles.idCell}>{row.id}</span>,
   },
   {
     id: "service",
     header: "Service",
-    render: (row) => (
+    render: (row: any) => (
       <StatusPill 
-        label={row.service} 
-        variant={getServiceVariant(row.service)} 
+        label={formatLabel(row.booking_type)} 
+        variant={getServiceVariant(row.booking_type)} 
         hideDot 
       />
     ),
@@ -49,63 +60,49 @@ export const bookingHistoryColumns: DataTableColumn<BookingHistoryItem>[] = [
   {
     id: "name",
     header: "Name",
-    render: (row) => row.name,
+    render: (row: any) => row.title,
   },
   {
     id: "startDate",
     header: "Dates",
-    render: (row) => <span className={styles.dateCell}>{row.startDate} &rarr; {row.endDate}</span>,
+    render: (row: any) => <span className={styles.dateCell}>{row.start_date} &rarr; {row.end_date}</span>,
   },
   {
     id: "totalPrice",
     header: "Total Price",
-    render: (row) => (
+    render: (row: any) => (
       <span className={styles.priceCell}>
-        $ {row.totalPrice.toLocaleString()}
+        {row.currency?.toLowerCase() === 'usd' ? '$' : row.currency?.toUpperCase()} {Number(row.total_price || 0).toLocaleString()}
       </span>
     ),
   },
   {
     id: "depositStatus",
-    header: "Deposit 30%",
-    render: (row) => (
+    header: "Payment",
+    render: (row: any) => (
       <StatusPill 
-        label={row.depositStatus} 
-        variant={getStatusVariant(row.depositStatus)} 
-      />
-    ),
-  },
-  {
-    id: "remainingStatus",
-    header: "Remaining 70%",
-    render: (row) => (
-      <StatusPill 
-        label={row.remainingStatus} 
-        variant={getStatusVariant(row.remainingStatus)} 
+        label={formatLabel(row.payment_status)} 
+        variant={getStatusVariant(row.payment_status)} 
       />
     ),
   },
   {
     id: "status",
     header: "Status",
-    render: (row) => (
+    render: (row: any) => (
       <StatusPill 
-        label={row.status} 
+        label={formatLabel(row.status)} 
         variant={getStatusVariant(row.status)} 
       />
     ),
   },
-  {
-    id: "agent",
-    header: "Agent",
-    render: (row) => <span className={styles.agentCell}>{row.agent}</span>,
-  },
+
   {
     id: "actions",
     header: "",
     cellClassName: styles.actionCell,
-    render: (row) => (
-      <ViewButton onClick={() => console.log("View booking", row.bookingId)} />
+    render: (row: any) => (
+      <ViewButton onClick={() => console.log("View booking", row.id)} />
     ),
   },
 ];

@@ -8,7 +8,8 @@ export const metadata: Metadata = {
 
 import { Suspense } from "react";
 
-export default function CustomerProfilePage({ params }: { params: { id: string } }) {
+export default async function CustomerProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
   // Pass the ID to the client component to fetch/find the customer
-  return <CustomerProfile customerId={params.id} />;
+  return <CustomerProfile customerId={resolvedParams.id} />;
 }

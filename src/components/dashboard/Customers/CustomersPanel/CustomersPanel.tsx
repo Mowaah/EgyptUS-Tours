@@ -9,11 +9,13 @@ import {
   TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
-import { mockCustomers } from "../customersData";
 import { customersColumns, customerRowActions } from "./customersColumns";
-import EditCustomerModal from "./EditCustomerModal";
+import EditCustomerModal from "./EditCustomerModal/EditCustomerModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
+import { useAdminCustomers } from "@/hooks/useCustomers";
+import { updateCustomer, blockCustomer } from "@/services/admin/adminCustomersService";
+import type { AdminCustomerFilters, AdminCustomer } from "@/types/adminCustomerTypes";
 
 const filterOptions = {
   nationality: ["All", "Egyptian", "American", "Spanish", "Japanese"],
@@ -35,35 +37,39 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
 
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
+  const [page, setPage] = useState(1);
   
-  const [selectedRow, setSelectedRow] = useState<any>(null);
+  const [selectedRow, setSelectedRow] = useState<AdminCustomer | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isEditBannerOpen, setIsEditBannerOpen] = useState(false);
   const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
   const [isBlockBannerOpen, setIsBlockBannerOpen] = useState(false);
+  const [isUnblockBannerOpen, setIsUnblockBannerOpen] = useState(false);
 
-  const filteredCustomers = useMemo(() => {
-    let result = mockCustomers.filter((customer) => {
-      if (searchQuery && !customer.name.toLowerCase().includes(searchQuery.toLowerCase()) && !customer.id.toLowerCase().includes(searchQuery.toLowerCase())) {
-        return false;
-      }
-      if (appliedFilters.nationality !== "All" && customer.nationality !== appliedFilters.nationality) return false;
-      if (appliedFilters.status !== "All" && customer.status !== appliedFilters.status) return false;
-      return true;
-    });
+  // Build the API filters based on the active UI state
+  const apiFilters = useMemo<AdminCustomerFilters>(() => {
+    const f: AdminCustomerFilters = { page, page_size: 16 };
+    if (searchQuery) f.search = searchQuery;
+    if (appliedFilters.nationality !== "All") f.nationality = appliedFilters.nationality;
+    if (appliedFilters.status !== "All") f.status = appliedFilters.status.toLowerCase();
+    
+    // Convert UI "High to low", "Low to high" into API ordering
+    if (appliedFilters.bookings === "High to low") f.ordering = "-bookings";
+    else if (appliedFilters.bookings === "Low to high") f.ordering = "bookings";
+    else f.ordering = "-created_at";
 
-    if (appliedFilters.bookings === "High to low") {
-      result = result.sort((a, b) => b.bookings - a.bookings);
-    } else if (appliedFilters.bookings === "Low to high") {
-      result = result.sort((a, b) => a.bookings - b.bookings);
-    }
+    return f;
+  }, [appliedFilters, searchQuery, page]);
 
-    return result;
-  }, [appliedFilters, searchQuery]);
+  const { customers, isLoading, refetch } = useAdminCustomers(apiFilters);
+  
+  // Use results from API, fallback to empty array
+  const filteredCustomers = customers?.results || [];
 
   const resetFilters = () => {
     setFilters(defaultFilters);
     setAppliedFilters(defaultFilters);
+    setPage(1);
     if (onClearSearch) {
       onClearSearch();
     }
@@ -71,6 +77,7 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
 
   const applyFilters = () => {
     setAppliedFilters(filters);
+    setPage(1);
   };
 
   const filterFields = (
@@ -89,25 +96,19 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
 
   const router = useRouter();
 
-  const handleAction = (action: { label: string }, row: any) => {
+  const handleAction = (action: { label: string }, row: AdminCustomer) => {
     if (action.label === "View") {
       router.push(`/dashboard/customers/${row.id}`);
     } else if (action.label === "Edit") {
-      setSelectedRow({
-        fullName: row.name,
-        phone: row.phone,
-        email: row.email,
-        nationality: row.nationality,
-        status: row.status,
-      });
+      setSelectedRow(row);
       setIsEditModalOpen(true);
-    } else if (action.label === "Block User") {
+    } else if (action.label === "Block User" || action.label === "Unblock User") {
       setSelectedRow(row);
       setIsBlockModalOpen(true);
     }
   };
 
-  if (mockCustomers.length > 0 && filteredCustomers.length === 0) {
+  if (!isLoading && customers && customers.count === 0 && (searchQuery || appliedFilters !== defaultFilters)) {
     return <DashboardSearchEmptyState onClearSearch={resetFilters} />;
   }
 
@@ -131,22 +132,42 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
       <DataTable
         data={filteredCustomers}
         columns={customersColumns}
-        getRowId={(row) => row.id}
-        
+        getRowId={(row) => row.id.toString()}
         rowActions={customerRowActions(handleAction)}
         defaultPageSize={16}
       />
       
-      <EditCustomerModal 
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        initialData={selectedRow}
-        onSubmit={(data) => {
-          console.log("Saving customer data:", data);
-          setIsEditModalOpen(false);
-          setIsEditBannerOpen(true);
-        }}
-      />
+      {selectedRow && (
+        <EditCustomerModal 
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          initialData={{
+            fullName: selectedRow.full_name,
+            phone: selectedRow.phone || "",
+            email: selectedRow.email,
+            nationality: selectedRow.nationality ? selectedRow.nationality.charAt(0).toUpperCase() + selectedRow.nationality.slice(1).toLowerCase() : "",
+            status: selectedRow.status ? selectedRow.status.charAt(0).toUpperCase() + selectedRow.status.slice(1).toLowerCase() : "",
+          } as any}
+          onSubmit={async (data) => {
+            try {
+              // Extract fields that might have changed
+              const payload = {
+                full_name: data.fullName,
+                phone: data.phone,
+                nationality: data.nationality,
+                status: data.status.toLowerCase(),
+              };
+              await updateCustomer(selectedRow.id.toString(), payload as any);
+              setIsEditModalOpen(false);
+              setIsEditBannerOpen(true);
+              refetch(); // Refresh list
+            } catch (err) {
+              console.error("Failed to update customer:", err);
+              // Handle error visually if necessary
+            }
+          }}
+        />
+      )}
       
       <DashboardStatusBanner
         show={isEditBannerOpen}
@@ -155,25 +176,45 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
         variant="success"
       />
       
-      <DashboardConfirmationModal
-        open={isBlockModalOpen}
-        variant="delete"
-        title={`Block ${selectedRow?.name || selectedRow?.fullName}`}
-        message="Are you sure you want to block this user? They will lose access to the platform immediately."
-        cancelLabel="Cancel"
-        confirmLabel="Block User"
-        onClose={() => setIsBlockModalOpen(false)}
-        onConfirm={() => {
-          console.log(`Blocked user ${selectedRow?.id}`);
-          setIsBlockModalOpen(false);
-          setIsBlockBannerOpen(true);
-        }}
-      />
+      {selectedRow && (
+        <DashboardConfirmationModal
+          open={isBlockModalOpen}
+          variant={selectedRow.status === "blocked" ? "activate" : "delete"}
+          title={`${selectedRow.status === "blocked" ? "Unblock" : "Block"} ${selectedRow.full_name}`}
+          message={
+            selectedRow.status === "blocked"
+              ? "Are you sure you want to unblock this user? They will regain access to the platform immediately."
+              : "Are you sure you want to block this user? They will lose access to the platform immediately."
+          }
+          cancelLabel="Cancel"
+          confirmLabel={selectedRow.status === "blocked" ? "Unblock User" : "Block User"}
+          onClose={() => setIsBlockModalOpen(false)}
+          onConfirm={async () => {
+            try {
+              const isBlocking = selectedRow.status !== "blocked";
+              await blockCustomer(selectedRow.id.toString(), isBlocking);
+              setIsBlockModalOpen(false);
+              if (isBlocking) setIsBlockBannerOpen(true);
+              else setIsUnblockBannerOpen(true);
+              refetch(); // Refresh list
+            } catch (err) {
+              console.error("Failed to block/unblock customer:", err);
+            }
+          }}
+        />
+      )}
       
       <DashboardStatusBanner
         show={isBlockBannerOpen}
         onClose={() => setIsBlockBannerOpen(false)}
         message="User profile blocked successfully"
+        variant="success"
+      />
+
+      <DashboardStatusBanner
+        show={isUnblockBannerOpen}
+        onClose={() => setIsUnblockBannerOpen(false)}
+        message="User profile unblocked successfully"
         variant="success"
       />
     </TablePanel>

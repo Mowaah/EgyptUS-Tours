@@ -1,5 +1,21 @@
 @use "@/styles/variables" as *;
 
+.page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.contentWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+  width: 100%;
+}
 .searchBox {
   display: flex;
   flex-direction: row;

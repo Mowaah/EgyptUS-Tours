@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
   TablePanel,
   TablePanelFilterBar,
@@ -6,9 +6,13 @@ import {
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { customTripsColumns } from "./customTripsColumns";
-import { mockCustomTrips } from "./mockCustomTrips";
+import { useAdminCustomerRequests } from "@/hooks/useCustomers";
 
-export default function CustomTripRequestsPanel() {
+export default function CustomTripRequestsPanel({ customerId }: { customerId: string }) {
+  const [page, setPage] = useState(1);
+  const { data: pageData, isLoading } = useAdminCustomerRequests(customerId, page);
+  const data = pageData?.results || [];
+
   const filterFields = useMemo(
     () => [
       {
@@ -29,7 +33,7 @@ export default function CustomTripRequestsPanel() {
     []
   );
 
-  if (mockCustomTrips.length === 0) {
+  if (!isLoading && data.length === 0) {
     return (
       <DashboardEmptyState
         title="No Custom Trip Requests Yet"
@@ -42,16 +46,15 @@ export default function CustomTripRequestsPanel() {
     <TablePanel
       ariaLabel="Custom trip requests"
       title="Custom Trip Requests"
-      iconSrc="/images/dashboard/sidebar/booking-management.svg"
+      iconSrc="/images/dashboard/sidebar/plan-your-trip.svg"
       showFilters
       showExport
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={() => {}} onApply={() => {}} />}
     >
       <DataTable
-        data={mockCustomTrips}
-        columns={customTripsColumns}
-        getRowId={(row) => row.id}
-        
+        data={data}
+        columns={customTripsColumns as any}
+        getRowId={(row: any) => row.id.toString()}
       />
     </TablePanel>
   );

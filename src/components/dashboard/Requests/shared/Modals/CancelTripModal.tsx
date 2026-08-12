@@ -45,6 +45,7 @@ export default function CancelTripModal({ open, onClose, onSubmit }: CancelTripM
           primaryLabel="Cancel Trip"
           secondaryOnClick={onClose}
           primaryOnClick={() => onSubmit(reason)}
+          primaryDisabled={!reason.trim()}
           isDanger={true}
         />
       </div>

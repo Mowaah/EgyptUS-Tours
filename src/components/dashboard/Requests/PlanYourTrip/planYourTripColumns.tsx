@@ -26,7 +26,7 @@ export const getStatusVariant = (status: string): StatusPillVariant => {
   if (s.includes("proposal sent")) return "orangeLight";
   if (s.includes("rejected") || s.includes("cancelled")) return "redSoft";
   if (s.includes("negotiation")) return "grayDark";
-  if (s.includes("awaiting")) return "pinkSoft";
+  if (s.includes("awaiting") || s.includes("pending payment")) return "pinkSoft";
   if (s.includes("deposit paid")) return "lightBlue";
   if (s.includes("fully paid")) return "purple";
   if (s.includes("in trip")) return "magenta";
@@ -100,10 +100,12 @@ export const planYourTripColumns: DataTableColumn<PlanYourTripApiItem>[] = [
     id: "status",
     header: "Status",
     render: (row) => {
-      const formattedStatus = row.display_status
-        .split('_')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
+      const formattedStatus = row.display_status === 'awaiting_deposit' 
+        ? '30% Pending Payment' 
+        : row.display_status
+            .split('_')
+            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
 
       return (
         <StatusPill 

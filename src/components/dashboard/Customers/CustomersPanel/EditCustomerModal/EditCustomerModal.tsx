@@ -43,6 +43,15 @@ export default function EditCustomerModal({
     }
   }, [isOpen, initialData]);
 
+  const hasChanged = Boolean(
+    initialData &&
+    (fullName !== (initialData.fullName || "") ||
+      phone !== (initialData.phone || "") ||
+      email !== (initialData.email || "") ||
+      nationality !== (initialData.nationality || "") ||
+      status !== (initialData.status || ""))
+  );
+
   if (!isOpen) return null;
 
   const handleSubmit = () => {
@@ -107,6 +116,7 @@ export default function EditCustomerModal({
               value={email}
               onChange={(e: any) => setEmail(e.target.value)}
               error={errors.email}
+              disabled={true}
             />
 
             <DashboardField
@@ -151,6 +161,7 @@ export default function EditCustomerModal({
           secondaryOnClick={onClose}
           primaryLabel="Save Changes"
           primaryOnClick={handleSubmit}
+          primaryDisabled={!hasChanged}
         />
       </div>
     </div>

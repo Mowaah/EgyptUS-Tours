@@ -105,7 +105,7 @@ export default function ViewMiceRequest({ requestId }: { requestId: string }) {
           {requestData.proposal_files && requestData.proposal_files.length > 0 && (
             <ProposalFile files={requestData.proposal_files} />
           )}
-          {requestData.payment_overview && (
+          {requestData.payment_overview && !["new", "in_progress"].includes(requestData.display_status) && (
             <PaymentOverview request={requestData.payment_overview} />
           )}
           {requestData.refund_summary && (

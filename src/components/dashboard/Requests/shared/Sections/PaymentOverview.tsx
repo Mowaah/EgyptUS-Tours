@@ -20,9 +20,14 @@ export default function PaymentOverview({ request }: PaymentOverviewProps) {
     return num.toLocaleString();
   };
 
+  const formatLabel = (str: string) => {
+    if (!str) return "-";
+    return str.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+  };
+
   const data: InfoCardData[] = [
-    { label: "Payment Plan", value: request.payment_plan },
-    { label: "Payment Method", value: request.payment_method },
+    { label: "Payment Plan", value: formatLabel(request.payment_plan) },
+    { label: "Payment Method", value: formatLabel(request.payment_method) },
     { 
       label: "Total Package", 
       value: (

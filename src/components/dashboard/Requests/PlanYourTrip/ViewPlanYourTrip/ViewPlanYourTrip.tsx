@@ -34,36 +34,45 @@ export default function ViewPlanYourTrip({ requestId }: { requestId: string }) {
       
       switch (action) {
         case "add_note":
-          if (payload?.note) await planYourTripActions.addNote(requestId, payload.note);
+          if (!payload?.note) throw new Error("Note is required");
+          await planYourTripActions.addNote(requestId, payload.note);
           break;
         case "assign":
-          if (payload?.agentId) await planYourTripActions.assign(requestId, payload.agentId, payload.reason);
+          if (!payload?.agentId) throw new Error("Agent ID is required");
+          await planYourTripActions.assign(requestId, payload.agentId, payload.reason);
           break;
         case "create_proposal":
         case "upload_revised_proposal":
-          if (payload?.file) await planYourTripActions.uploadProposal(requestId, payload.file, payload.note);
+          if (!payload?.file) throw new Error("File is required");
+          await planYourTripActions.uploadProposal(requestId, payload.file, payload.note);
           break;
         case "mark_proposal_sent":
           await planYourTripActions.markProposalSent(requestId, payload?.note);
           break;
         case "start_negotiation":
-          if (payload?.reason) await planYourTripActions.startNegotiation(requestId, payload.reason);
+          if (!payload?.reason) throw new Error("Negotiation reason is required");
+          await planYourTripActions.startNegotiation(requestId, payload.reason);
           break;
         case "mark_rejected":
-          if (payload?.reason) await planYourTripActions.reject(requestId, payload.reason);
+          if (!payload?.reason) throw new Error("Rejection reason is required");
+          await planYourTripActions.reject(requestId, payload.reason);
           break;
         case "reopen":
-          if (payload?.reason) await planYourTripActions.reopen(requestId, payload.reason);
+          if (!payload?.reason) throw new Error("Reopen reason is required");
+          await planYourTripActions.reopen(requestId, payload.reason);
           break;
         case "approve":
-          if (payload) await planYourTripActions.approve(requestId, payload);
+          if (!payload) throw new Error("Payload is required");
+          await planYourTripActions.approve(requestId, payload);
           break;
         case "record_deposit":
         case "record_remaining":
-          if (payload) await planYourTripActions.recordPayment(requestId, payload);
+          if (!payload) throw new Error("Payload is required");
+          await planYourTripActions.recordPayment(requestId, payload);
           break;
         case "cancel_trip":
-          if (payload?.reason) await planYourTripActions.cancel(requestId, payload.reason);
+          if (!payload?.reason) throw new Error("Cancellation reason is required");
+          await planYourTripActions.cancel(requestId, payload.reason);
           break;
         case "refund_payment":
           if (payload) await planYourTripActions.refund(requestId, payload);
@@ -94,7 +103,9 @@ export default function ViewPlanYourTrip({ requestId }: { requestId: string }) {
       breadcrumbLabel="Plan Your trip"
       breadcrumbHref="/dashboard/requests/plan-your-trip"
       requestTitle={`${requestData.full_name} - ${requestData.request_code}`}
-      status={requestData.display_status.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')}
+      status={requestData.display_status === 'awaiting_deposit' 
+        ? '30% Pending Payment' 
+        : requestData.display_status.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')}
       date={new Date(requestData.created_at).toLocaleString()}
       lastUpdated={requestData.updated_at}
       leftColumnContent={
@@ -109,22 +120,32 @@ export default function ViewPlanYourTrip({ requestId }: { requestId: string }) {
           />
           <TripDetails 
             request={{
-              category: requestData.trip_details.trip_categories?.join(", ") || "-",
+              category: requestData.trip_details.trip_categories?.join(", ") 
+                || requestData.trip_preferences.trip_category?.join(", ")
+                || "-",
               duration: requestData.trip_details.number_of_days ? `${requestData.trip_details.number_of_days} Days` : "-",
-              budget: requestData.trip_details.budget_min ? `$${requestData.trip_details.budget_min} - $${requestData.trip_details.budget_max}` : "-",
+              budget: requestData.trip_details.budget_min 
+                ? (requestData.trip_details.budget_max ? `$${requestData.trip_details.budget_min} - $${requestData.trip_details.budget_max}` : `$${requestData.trip_details.budget_min}+`) 
+                : (requestData.trip_preferences.budget || "-"),
               hotelCategory: parseInt(requestData.trip_preferences.hotel_category) || 0,
-              roomType: requestData.trip_preferences.room_type || "-",
+              roomType: requestData.trip_preferences.room_types?.length > 0
+                ? requestData.trip_preferences.room_types.join(", ")
+                : requestData.trip_preferences.room_type 
+                  ? requestData.trip_preferences.room_type.replace(/[\[\]']/g, '') 
+                  : "-",
               transportation: requestData.trip_preferences.transportation_type || "-",
               additionalExperience: requestData.trip_preferences.experiences?.join(", ") || "-",
               activities: requestData.trip_preferences.activities?.join(", ") || "-",
-              contactMethod: requestData.customer_information.preferred_contact_method || "-",
+              contactMethod: requestData.customer_information.preferred_contact_method 
+                || requestData.trip_preferences.contact_method 
+                || "-",
               specialRequest: requestData.trip_details.special_request || "None",
             }} 
           />
           {requestData.proposal_files && requestData.proposal_files.length > 0 && (
             <ProposalFile files={requestData.proposal_files} />
           )}
-          {requestData.payment_overview && (
+          {requestData.payment_overview && ["approved", "cancelled"].includes(requestData.workflow_status) && (
             <PaymentOverview request={requestData.payment_overview} />
           )}
           {requestData.refund_summary && (

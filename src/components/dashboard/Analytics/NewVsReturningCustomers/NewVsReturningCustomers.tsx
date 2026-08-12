@@ -35,8 +35,6 @@ export default function NewVsReturningCustomers() {
         <LineChart 
           lines={chartLines} 
           area 
-          maxValue={500}
-          yAxisLabels={["500", "400", "300", "200", "100", "0"]}
         />
       </div>
       

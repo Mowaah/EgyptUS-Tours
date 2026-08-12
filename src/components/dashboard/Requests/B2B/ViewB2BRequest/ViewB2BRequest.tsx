@@ -31,36 +31,45 @@ export default function ViewB2BRequest({ requestId }: { requestId: string }) {
       
       switch (action) {
         case "add_note":
-          if (payload?.note) await b2bActions.addNote(requestId, payload.note);
+          if (!payload?.note) throw new Error("Note is required");
+          await b2bActions.addNote(requestId, payload.note);
           break;
         case "assign":
-          if (payload?.agentId) await b2bActions.assign(requestId, payload.agentId, payload.reason);
+          if (!payload?.agentId) throw new Error("Agent ID is required");
+          await b2bActions.assign(requestId, payload.agentId, payload.reason);
           break;
         case "create_proposal":
         case "upload_revised_proposal":
-          if (payload?.file) await b2bActions.uploadProposal(requestId, payload.file, payload.note);
+          if (!payload?.file) throw new Error("File is required");
+          await b2bActions.uploadProposal(requestId, payload.file, payload.note);
           break;
         case "mark_proposal_sent":
           await b2bActions.markProposalSent(requestId, payload?.note);
           break;
         case "start_negotiation":
-          if (payload?.reason) await b2bActions.startNegotiation(requestId, payload.reason);
+          if (!payload?.reason) throw new Error("Negotiation reason is required");
+          await b2bActions.startNegotiation(requestId, payload.reason);
           break;
         case "mark_rejected":
-          if (payload?.reason) await b2bActions.reject(requestId, payload.reason);
+          if (!payload?.reason) throw new Error("Rejection reason is required");
+          await b2bActions.reject(requestId, payload.reason);
           break;
         case "reopen":
-          if (payload?.reason) await b2bActions.reopen(requestId, payload.reason);
+          if (!payload?.reason) throw new Error("Reopen reason is required");
+          await b2bActions.reopen(requestId, payload.reason);
           break;
         case "approve":
-          if (payload) await b2bActions.approve(requestId, payload);
+          if (!payload) throw new Error("Payload is required");
+          await b2bActions.approve(requestId, payload);
           break;
         case "record_deposit":
         case "record_remaining":
-          if (payload) await b2bActions.recordPayment(requestId, payload);
+          if (!payload) throw new Error("Payload is required");
+          await b2bActions.recordPayment(requestId, payload);
           break;
         case "cancel_trip":
-          if (payload?.reason) await b2bActions.cancel(requestId, payload.reason);
+          if (!payload?.reason) throw new Error("Cancellation reason is required");
+          await b2bActions.cancel(requestId, payload.reason);
           break;
         case "refund_payment":
           if (payload) await b2bActions.refund(requestId, payload);
@@ -99,7 +108,7 @@ export default function ViewB2BRequest({ requestId }: { requestId: string }) {
           {requestData.proposal_files && requestData.proposal_files.length > 0 && (
             <ProposalFile files={requestData.proposal_files} />
           )}
-          {requestData.payment_overview && (
+          {requestData.payment_overview && ["approved", "cancelled"].includes(requestData.workflow_status) && (
             <PaymentOverview request={requestData.payment_overview} />
           )}
         </>
