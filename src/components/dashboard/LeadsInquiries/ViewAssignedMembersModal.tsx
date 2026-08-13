@@ -1,16 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import Image from "next/image";
-import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";;
+import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";
 import formStyles from "@/components/dashboard/FormFields/FormFields.module.scss";
 import styles from "./ViewAssignedMembersModal.module.scss";
+import { useLeadImportBatch } from "@/hooks/useLeadImportBatches";
+import type { AdminLeadImportBatchAssignee } from "@/types/adminLeadTypes";
 
 interface ViewAssignedMembersModalProps {
   open: boolean;
   onClose: () => void;
   onReassign: () => void;
+  batchId?: number;
 }
 
-export function ViewAssignedMembersModal({ open, onClose, onReassign }: ViewAssignedMembersModalProps) {
+export function ViewAssignedMembersModal({ open, onClose, onReassign, batchId }: ViewAssignedMembersModalProps) {
+  const { data: batchData, isLoading } = useLeadImportBatch(open && batchId ? batchId : 0);
+
   useEffect(() => {
     if (!open) return;
     
@@ -27,6 +32,23 @@ export function ViewAssignedMembersModal({ open, onClose, onReassign }: ViewAssi
       document.removeEventListener("keydown", onKey);
     };
   }, [open, onClose]);
+
+  const assigneesByTeam = useMemo(() => {
+    if (!batchData?.assignees) return {} as Record<string, AdminLeadImportBatchAssignee[]>;
+    return batchData.assignees.reduce((acc: Record<string, AdminLeadImportBatchAssignee[]>, assignee: AdminLeadImportBatchAssignee) => {
+      const team = assignee.team || "Unknown";
+      if (!acc[team]) acc[team] = [];
+      acc[team].push(assignee);
+      return acc;
+    }, {});
+  }, [batchData]);
+
+  const getImageUrl = (path?: string) => {
+    if (!path) return "/images/dashboard/sara.jpg";
+    if (path.startsWith("http")) return path;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    return `${apiUrl}${path}`;
+  };
 
   if (!open) return null;
 
@@ -54,48 +76,51 @@ export function ViewAssignedMembersModal({ open, onClose, onReassign }: ViewAssi
               }}
             >
               <div className={formStyles.fileIconWrapper} style={{ height: "40px", display: "flex", alignItems: "center" }}>
-                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7.5 3.33334H24.1667L32.5 11.6667V36.6667C32.5 37.1087 32.3244 37.5326 32.0118 37.8452C31.6993 38.1577 31.2754 38.3333 30.8333 38.3333H7.5C7.05797 38.3333 6.63405 38.1577 6.32149 37.8452C6.00893 37.5326 5.83333 37.1087 5.83333 36.6667V5C5.83333 4.55797 6.00893 4.13405 6.32149 3.82149C6.63405 3.50893 7.05797 3.33334 7.5 3.33334Z" stroke="#D8DDE4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M24.1667 3.33334V11.6667H32.5" stroke="#D8DDE4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <rect x="7" y="17" width="22" height="15" rx="2" fill="#079455"/>
-                  <text x="18" y="27" fill="white" fontSize="10" fontWeight="bold" fontFamily="Inter, sans-serif" textAnchor="middle">
-                    CSV
-                  </text>
-                </svg>
+                <Image
+                  src="/images/dashboard/file/csv.svg"
+                  alt="CSV file"
+                  width={40}
+                  height={40}
+                />
               </div>
               
               <div className={formStyles.fileInfo} style={{ gap: "4px", justifyContent: "center" }}>
-                <p className={formStyles.fileName} style={{ color: "#2B2B38", margin: 0, lineHeight: "1" }}>New Leads - 21/7/2026.Csv</p>
-                <div className={formStyles.fileMeta} style={{ margin: 0 }}>
-                  <span className={formStyles.fileSize} style={{ color: "#606978", lineHeight: "1" }}>200 KB of 200 KB</span>
-                </div>
+                <p className={formStyles.fileName} style={{ color: "#2B2B38", margin: 0, lineHeight: "1" }}>
+                  {batchData?.filename || "Leads Import"}
+                </p>
+                {batchData?.row_count != null && (
+                  <p className={formStyles.fileSize} style={{ margin: 0, lineHeight: "1" }}>
+                    {batchData.row_count} records
+                  </p>
+                )}
               </div>
             </div>
           </div>
 
-          <div className={styles.section}>
-            <span className={styles.sectionTitle}>Team Members ( Sales )</span>
-            <div className={styles.teamMembersGrid}>
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className={styles.teamMemberPill}>
-                  <Image src="/images/dashboard/sara.jpg" alt="" width={32} height={32} className={styles.teamMemberImage} />
-                  <span className={styles.teamMemberName}>Mohamed Ahmed</span>
+          {isLoading ? (
+            <div style={{ padding: "24px", textAlign: "center" }}>Loading...</div>
+          ) : (
+            (Object.entries(assigneesByTeam) as [string, AdminLeadImportBatchAssignee[]][]).map(([team, members]) => (
+              <div key={team} className={styles.section}>
+                <span className={styles.sectionTitle}>Team Members ( {team} )</span>
+                <div className={styles.teamMembersGrid}>
+                  {members.map((member) => (
+                    <div key={member.id} className={styles.teamMemberPill}>
+                      <Image 
+                        src={getImageUrl(member.profile_picture ?? undefined)} 
+                        alt={member.full_name} 
+                        width={32} 
+                        height={32} 
+                        className={styles.teamMemberImage} 
+                        style={{ objectFit: "cover" }}
+                      />
+                      <span className={styles.teamMemberName}>{member.full_name}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-
-          <div className={styles.section}>
-            <span className={styles.sectionTitle}>Team Members ( Operation )</span>
-            <div className={styles.teamMembersGrid}>
-              {[1, 2, 3].map((i) => (
-                <div key={i} className={styles.teamMemberPill}>
-                  <Image src="/images/dashboard/sara.jpg" alt="" width={32} height={32} className={styles.teamMemberImage} />
-                  <span className={styles.teamMemberName}>Mohamed Ahmed</span>
-                </div>
-              ))}
-            </div>
-          </div>
+              </div>
+            ))
+          )}
         </div>
 
         <ModalFooter

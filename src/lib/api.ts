@@ -307,7 +307,7 @@ export async function submitTransportationBooking(data: any): Promise<any> {
   return await apiClient.post('/booking-requests/transportation/', data);
 }
 
-function formatUrlForBackend(url?: string): string {
+export function formatUrlForBackend(url?: string): string {
   if (!url) return "";
   const trimmed = url.trim();
   if (!trimmed) return "";

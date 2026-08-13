@@ -8,10 +8,12 @@ import {
   TablePanelFilterBar,
   TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
-import { mockLeads } from "../leadsInquiriesData";
+import { useLeads, useAssignLead, useExportLeads } from "@/hooks/useLeads";
 import { inquiriesColumns, leadRowActions } from "./inquiriesColumns";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
+import { ReassignModal } from "@/components/dashboard/shared";
+import { useAdminUsers } from "@/hooks/useAdminUsers";
 
 const filterOptions = {
   batchId: ["All", "LD-001", "LD-002", "LD-003"],
@@ -41,31 +43,57 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
 
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
+  const [isExporting, setIsExporting] = useState(false);
+  
+  const [assignModalOpen, setAssignModalOpen] = useState(false);
+  const [selectedLead, setSelectedLead] = useState<any>(null);
+
+  const { data: leadsData, isLoading } = useLeads();
+  const leadsList = leadsData?.results || [];
+  
+  const { data: usersData } = useAdminUsers({ limit: 100 });
+  const users = usersData?.results || [];
+  const getImageUrl = (path?: string) => {
+    if (!path) return "/images/dashboard/sara.jpg";
+    if (path.startsWith("http")) return path;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    return `${apiUrl}${path}`;
+  };
+
+  const agents = users.map((u: any) => ({
+    id: u.id.toString(),
+    name: u.full_name,
+    avatarSrc: getImageUrl(u.profile_picture),
+  }));
+
+  const assignLeadMutation = useAssignLead();
+  const exportLeadsMutation = useExportLeads();
 
   const filteredLeads = useMemo(
     () =>
-      mockLeads.filter((lead) => {
+      leadsList.filter((lead: any) => {
         if (searchQuery) {
           const lowerQuery = searchQuery.toLowerCase();
-          if (!lead.name.toLowerCase().includes(lowerQuery) &&
-              !lead.email.toLowerCase().includes(lowerQuery) &&
-              !lead.id.toLowerCase().includes(lowerQuery)) {
+          if (!lead.full_name?.toLowerCase().includes(lowerQuery) &&
+              !lead.email?.toLowerCase().includes(lowerQuery) &&
+              !lead.display_id?.toLowerCase().includes(lowerQuery)) {
             return false;
           }
         }
-        if (appliedFilters.batchId !== "All" && lead.id !== appliedFilters.batchId) return false;
+        if (appliedFilters.batchId !== "All" && lead.batch_code !== appliedFilters.batchId) return false;
         if (appliedFilters.source !== "All" && lead.source !== appliedFilters.source) return false;
         if (appliedFilters.date !== "All" && lead.date !== appliedFilters.date) return false;
         if (appliedFilters.status !== "All" && lead.status !== appliedFilters.status) return false;
-        if (appliedFilters.assigned !== "All" && lead.agent !== appliedFilters.assigned) return false;
+        if (appliedFilters.assigned !== "All" && lead.assigned_to?.full_name !== appliedFilters.assigned) return false;
         return true;
       }),
-    [appliedFilters, searchQuery]
+    [searchQuery, appliedFilters, leadsList]
   );
 
   const resetFilters = () => {
     setFilters(defaultFilters);
     setAppliedFilters(defaultFilters);
+    onClearSearch?.();
   };
 
   const applyFilters = () => {
@@ -74,35 +102,43 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
 
   const filterFields = (
     [
-      ["batchId", "Batch ID", filterOptions.batchId],
+      ["batchId", "Batch ID", ["All", ...Array.from(new Set(leadsList.map((l: any) => l.batch_code).filter(Boolean)))]],
       ["source", "Source", filterOptions.source],
       ["date", "Date", filterOptions.date],
       ["status", "Status", filterOptions.status],
-      ["assigned", "Assigned", filterOptions.assigned],
+      ["assigned", "Assigned", ["All", ...Array.from(new Set(leadsList.map((l: any) => l.assigned_to?.full_name).filter(Boolean)))]],
     ] as const
   ).map(([id, label, options]) => ({
     id,
     label,
     value: filters[id as keyof typeof filters],
-    options,
+    options: options as string[],
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
 
-  if (mockLeads.length > 0 && filteredLeads.length === 0) {
+  if (isLoading) {
     return (
-      <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
+        <p>Loading...</p>
+      </div>
     );
   }
 
-  if (mockLeads.length === 0) {
+  if (leadsList.length === 0) {
     return (
       <DashboardEmptyState
         title="No Leads Yet"
         subtitle="Leads will appear here once they are added or imported."
         actionLabel="Add New Lead"
         onAction={onAddLead}
-        imageSrc="/images/dashboard/empty-folder.svg"
+        imageSrc="/images/dashboard/empty.png"
       />
+    );
+  }
+
+  if (leadsList.length > 0 && filteredLeads.length === 0) {
+    return (
+      <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
     );
   }
 
@@ -111,31 +147,53 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
       ariaLabel="Leads table"
       title="Leads"
       iconSrc="/images/dashboard/inquiries/inquiries.svg"
-      headerActions={
-        <>
-          <TablePanelHeaderButton iconSrc="/images/dashboard/filter.svg">
-            Filters
-          </TablePanelHeaderButton>
-          <TablePanelHeaderButton iconSrc="/images/dashboard/export.svg">
-            Export Data
-          </TablePanelHeaderButton>
-        </>
-      }
+      showFilters
+      showExport
+      onExportClick={() => {
+        setIsExporting(true);
+        exportLeadsMutation.mutate(
+          {}, 
+          {
+            onSuccess: () => setIsExporting(false),
+            onError: (err) => {
+              console.error("Export failed:", err);
+              setIsExporting(false);
+            },
+          }
+        );
+      }}
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
     >
       <DataTable
         data={filteredLeads}
         columns={inquiriesColumns}
-        getRowId={(row) => row.id}
-        
+        getRowId={(row) => row.id.toString()}
         rowActions={(row) => leadRowActions((action, r) => {
           if (action === "Edit" && onEditLead) {
             onEditLead(r);
           } else if (action === "View") {
             router.push(`/dashboard/leads/${r.id}`);
+          } else if (action === "Assign to Lead") {
+            setSelectedLead(r);
+            setAssignModalOpen(true);
           }
         })}
         defaultPageSize={5}
+      />
+      
+      <ReassignModal
+        open={assignModalOpen}
+        onClose={() => setAssignModalOpen(false)}
+        agents={agents}
+        onConfirm={(agentId) => {
+          if (selectedLead) {
+            assignLeadMutation.mutate({ id: selectedLead.id, userId: parseInt(agentId) }, {
+              onSuccess: () => {
+                setAssignModalOpen(false);
+              }
+            });
+          }
+        }}
       />
     </TablePanel>
   );

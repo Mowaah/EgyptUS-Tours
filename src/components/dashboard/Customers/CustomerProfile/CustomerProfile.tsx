@@ -16,6 +16,13 @@ import { updateCustomer, blockCustomer } from "@/services/admin/adminCustomersSe
 import EditCustomerModal from "@/components/dashboard/Customers/CustomersPanel/EditCustomerModal/EditCustomerModal";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
+import { COUNTRIES } from "@/data/countries";
+
+const getCountryName = (code: string | null) => {
+  if (!code) return "No nationality";
+  const country = COUNTRIES.find(c => c.code.toLowerCase() === code.trim().toLowerCase());
+  return country ? country.nationality : code;
+};
 
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
@@ -81,7 +88,7 @@ function CustomerProfileContent({ customerId }: CustomerProfileProps) {
             subtitleElements={[
               customer.email,
               customer.phone || "No phone",
-              customer.nationality || "No nationality",
+              getCountryName(customer.nationality),
             ]}
             actionButtons={
               <>
@@ -143,7 +150,7 @@ function CustomerProfileContent({ customerId }: CustomerProfileProps) {
           fullName: customer.full_name,
           phone: customer.phone || "",
           email: customer.email,
-          nationality: customer.nationality ? customer.nationality.charAt(0).toUpperCase() + customer.nationality.slice(1).toLowerCase() : "",
+          nationality: customer.nationality || "",
           status: customer.status ? customer.status.charAt(0).toUpperCase() + customer.status.slice(1).toLowerCase() : "",
         } as any}
         onSubmit={async (data) => {

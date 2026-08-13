@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { ModalHeader, ModalFooter, DashboardField } from "@/components/dashboard/shared";;
+import { NationalitySelect } from "@/components/shared";
+import { ModalHeader, ModalFooter, DashboardField } from "@/components/dashboard/shared";
 import dashboardStyles from "@/components/dashboard/shared/DashboardField/DashboardField.module.scss";
 import styles from "./EditCustomerModal.module.scss";
 
@@ -119,23 +120,17 @@ export default function EditCustomerModal({
               disabled={true}
             />
 
-            <DashboardField
-              id="customer-nationality"
-              label="Nationality"
-              control="select"
-              variant="modal"
-              defaultValue=""
-              value={nationality}
-              onChange={(e: any) => setNationality(e.target.value)}
-              error={errors.nationality}
-              options={[
-                { label: "Select nationality", value: "", disabled: true },
-                { label: "American", value: "American" },
-                { label: "Egyptian", value: "Egyptian" },
-                { label: "Japanese", value: "Japanese" },
-                { label: "Spanish", value: "Spanish" },
-              ]}
-            />
+              <div className={styles.nationalityWrapper}>
+                <label className={styles.inputLabel}>Nationality</label>
+                <NationalitySelect
+                  value={nationality}
+                  onChange={(val) => setNationality(val)}
+                  error={!!errors.nationality}
+                  variant="modal"
+                  useCountryName={false} // Use the 2-letter code as requested by the backend
+                />
+                {errors.nationality && <span className={styles.errorText}>{errors.nationality}</span>}
+              </div>
 
             <DashboardField
               id="customer-status"

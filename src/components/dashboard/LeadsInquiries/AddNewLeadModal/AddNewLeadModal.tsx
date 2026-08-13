@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { PhonePrefixSelect } from "@/components/shared";
-import { ModalHeader, ModalFooter, DashboardField } from "@/components/dashboard/shared";;
+import { ModalHeader, ModalFooter, DashboardField } from "@/components/dashboard/shared";
+import { useCreateLead, useUpdateLead } from "@/hooks/useLeads";
+import { formatUrlForBackend } from "@/lib/api";
+import { COUNTRIES } from "@/data/countries";
 import styles from "./AddNewLeadModal.module.scss";
 
 interface AddNewLeadModalProps {
@@ -10,14 +13,15 @@ interface AddNewLeadModalProps {
   onClose: () => void;
   onSuccess?: () => void;
   isEdit?: boolean;
-  initialData?: Partial<LeadFormData>;
+  initialData?: any;
 }
 
 interface LeadFormData {
   name: string;
   email: string;
   phone: string;
-  source: string[];
+  phonePrefix?: string;
+  source: string;
   jobTitle: string;
   companyName: string;
   linkedin: string;
@@ -26,11 +30,15 @@ interface LeadFormData {
 }
 
 export function AddNewLeadModal({ open, onClose, onSuccess, isEdit, initialData }: AddNewLeadModalProps) {
+  const createLead = useCreateLead();
+  const updateLead = useUpdateLead();
+  
   const [formData, setFormData] = useState<LeadFormData>({
     name: "",
     email: "",
     phone: "",
-    source: [],
+    phonePrefix: "",
+    source: "",
     jobTitle: "",
     companyName: "",
     linkedin: "",
@@ -43,11 +51,17 @@ export function AddNewLeadModal({ open, onClose, onSuccess, isEdit, initialData 
   useEffect(() => {
     if (open) {
       // Reset form when modal opens or populate with initial data if editing
+      const initialPhone = initialData?.phone || "";
+      const match = [...COUNTRIES].sort((a, b) => b.dial.length - a.dial.length).find(c => initialPhone.startsWith(c.dial));
+      const phonePrefix = match ? match.dial + " " : "";
+      const phoneDigits = match ? initialPhone.slice(match.dial.length).trim() : initialPhone;
+
       setFormData({
         name: initialData?.name || "",
         email: initialData?.email || "",
-        phone: initialData?.phone || "",
-        source: initialData?.source || [],
+        phone: phoneDigits,
+        phonePrefix: phonePrefix,
+        source: (initialData?.source as unknown as string) || "",
         jobTitle: initialData?.jobTitle || "",
         companyName: initialData?.companyName || "",
         linkedin: initialData?.linkedin || "",
@@ -72,7 +86,7 @@ export function AddNewLeadModal({ open, onClose, onSuccess, isEdit, initialData 
     };
   }, [open, onClose]);
 
-  const handleFieldChange = (field: string, value: string | string[]) => {
+  const handleFieldChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     // Clear error for this field when user starts typing
     if (errors[field]) {
@@ -86,21 +100,89 @@ export function AddNewLeadModal({ open, onClose, onSuccess, isEdit, initialData 
     if (!formData.name.trim()) newErrors.name = "Name is required";
     if (!formData.email.trim()) newErrors.email = "Email is required";
     if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
-    if (formData.source.length === 0) newErrors.source = "Source is required";
+    if (!formData.source) newErrors.source = "Source is required";
     if (!formData.jobTitle.trim()) newErrors.jobTitle = "Job title is required";
     if (!formData.companyName.trim()) newErrors.companyName = "Company name is required";
+
+    const formattedWebsite = formatUrlForBackend(formData.website);
+    if (formattedWebsite) {
+      try {
+        new URL(formattedWebsite);
+      } catch (e) {
+        newErrors.website = "Enter a valid URL.";
+      }
+    }
+
+    const formattedLinkedin = formatUrlForBackend(formData.linkedin);
+    if (formattedLinkedin) {
+      try {
+        new URL(formattedLinkedin);
+      } catch (e) {
+        newErrors.linkedin = "Enter a valid URL.";
+      }
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    // Success - handle save logic here
-    console.log("Saving lead:", formData);
-    if (onSuccess) {
-      onSuccess();
+    const payload = {
+      full_name: formData.name,
+      email: formData.email,
+      phone: `${formData.phonePrefix || "+1 "}${formData.phone}`.trim(),
+      source: formData.source,
+      job_title: formData.jobTitle,
+      company_name: formData.companyName,
+      linkedin_url: formattedLinkedin,
+      website: formattedWebsite,
+      note: formData.notes
+    };
+
+    const handleApiError = (err: any) => {
+      if (err.response?.data) {
+        const data = err.response.data;
+        if (data.error_code && typeof data.error_code === "string") {
+          // Custom exception format (e.g., {"error_code": "leads.phone.invalid", "message": "Phone is invalid."})
+          const field = data.error_code.split(".")[1] || "general";
+          setErrors({ [field]: data.message });
+        } else {
+          // Standard DRF ValidationError format (e.g., {"phone": ["Phone is invalid."]})
+          const formattedErrors: Record<string, string> = {};
+          Object.keys(data).forEach(key => {
+            formattedErrors[key] = Array.isArray(data[key]) ? data[key][0] : data[key];
+          });
+          setErrors(formattedErrors);
+        }
+      }
+    };
+
+    if (isEdit && (initialData as any)?.id) {
+      const { note, ...updatePayload } = payload;
+      updateLead.mutate(
+        { id: (initialData as any).id, payload: updatePayload },
+        {
+          onSuccess: () => {
+            if (onSuccess) onSuccess();
+            onClose();
+          },
+          onError: (err: any) => {
+            console.error("Failed to update lead", err);
+            handleApiError(err);
+          }
+        }
+      );
     } else {
-      onClose();
+      createLead.mutate(payload, {
+        onSuccess: () => {
+          if (onSuccess) onSuccess();
+          onClose();
+        },
+        onError: (err: any) => {
+          console.error("Failed to create lead", err);
+          handleApiError(err);
+        }
+      });
     }
   };
 
@@ -146,7 +228,11 @@ export function AddNewLeadModal({ open, onClose, onSuccess, isEdit, initialData 
             <div className={styles.phoneField}>
               <label className={styles.phoneLabel}>Phone Number *</label>
               <div className={`${styles.phoneInputWrapper} ${errors.phone ? styles.phoneInputWrapperError : ""}`}>
-                <PhonePrefixSelect variant="ghost" />
+                <PhonePrefixSelect 
+                  variant="ghost" 
+                  phoneValue={formData.phonePrefix}
+                  onPhoneChange={(val) => handleFieldChange("phonePrefix", val)}
+                />
                 <input
                   type="text"
                   className={styles.phoneInput}
@@ -168,17 +254,17 @@ export function AddNewLeadModal({ open, onClose, onSuccess, isEdit, initialData 
               label="Source *"
               control="select"
               variant="modal"
-              multiple={true}
+              multiple={false}
               options={[
                 { label: "Choose Source", value: "", disabled: true },
                 { label: "Phone Call", value: "phone_call" },
                 { label: "Walk-in", value: "walk_in" },
                 { label: "Email", value: "email" },
-                { label: "Whatsup", value: "whatsup" },
+                { label: "WhatsApp", value: "whatsapp" },
                 { label: "Facebook", value: "facebook" },
               ]}
               value={formData.source}
-              onChange={(e) => handleFieldChange("source", e.target.value as unknown as string[])}
+              onChange={(e) => handleFieldChange("source", e.target.value)}
               error={errors.source}
             />
 

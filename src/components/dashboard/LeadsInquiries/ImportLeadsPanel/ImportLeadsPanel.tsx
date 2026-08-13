@@ -1,10 +1,12 @@
 import { useState, useMemo } from "react";
-import { TablePanel, TablePanelHeaderButton, TablePanelFilterBar } from "@/components/dashboard/TablePanel";
+import { TablePanel, TablePanelFilterBar } from "@/components/dashboard/TablePanel";
 import { DataTable } from "@/components/dashboard/DataTable";
-import { mockImportLeads } from "../leadsInquiriesData";
 import { importLeadsColumns, importRowActions } from "./importLeadsColumns";
-import { ReassignLeadModal } from "../ReassignLeadModal";
+import { ReassignModal } from "@/components/dashboard/shared";
 import { ViewAssignedMembersModal } from "../ViewAssignedMembersModal";
+import { useLeadImportBatches, useDeleteLeadImportBatch, useReassignLeadImportBatch } from "@/hooks/useLeadImportBatches";
+import { useAdminUsers } from "@/hooks/useAdminUsers";
+import type { AdminLeadImportBatch } from "@/types/adminLeadTypes";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
@@ -36,62 +38,77 @@ export function ImportLeadsPanel({
 
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
+  const [selectedBatch, setSelectedBatch] = useState<AdminLeadImportBatch | null>(null);
   const [reassignModalOpen, setReassignModalOpen] = useState(false);
   const [viewMembersModalOpen, setViewMembersModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
+  const { data: batchesData, isLoading } = useLeadImportBatches();
+  const deleteBatchMutation = useDeleteLeadImportBatch();
+
+  const { data: usersData } = useAdminUsers({ limit: 100 });
+  const users = usersData?.results || [];
+  const getImageUrl = (path?: string) => {
+    if (!path) return "/images/dashboard/sara.jpg";
+    if (path.startsWith("http")) return path;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    return `${apiUrl}${path}`;
+  };
+
+  const agents = users.map((u: any) => ({
+    id: u.id.toString(),
+    name: u.full_name,
+    avatarSrc: getImageUrl(u.profile_picture),
+  }));
+
+  const reassignBatchMutation = useReassignLeadImportBatch();
+
+  const leadsList: AdminLeadImportBatch[] = batchesData?.results || [];
+
   const filteredLeads = useMemo(
     () =>
-      mockImportLeads.filter((row) => {
+      leadsList.filter((row) => {
         if (searchQuery) {
           const lowerQuery = searchQuery.toLowerCase();
-          if (!row.batchId.toLowerCase().includes(lowerQuery)) {
+          if (!row.batch_code.toLowerCase().includes(lowerQuery)) {
             return false;
           }
         }
-        if (appliedFilters.batchId !== "All" && row.batchId !== appliedFilters.batchId) return false;
-        if (appliedFilters.team !== "All" && !row.assignedTeam.includes(appliedFilters.team as "Operations" | "Sales")) return false;
+        if (appliedFilters.batchId !== "All" && row.batch_code !== appliedFilters.batchId) return false;
+        if (appliedFilters.team !== "All" && row.assigned_teams && !row.assigned_teams.includes(appliedFilters.team.toLowerCase())) return false;
         return true;
       }),
-    [appliedFilters, searchQuery]
+    [leadsList, appliedFilters, searchQuery]
   );
 
   const resetFilters = () => {
     setFilters(defaultFilters);
     setAppliedFilters(defaultFilters);
+    onClearSearch?.();
   };
 
   const applyFilters = () => {
     setAppliedFilters(filters);
   };
 
-  const filterFields = (
-    [
-      ["batchId", "Batch ID", filterOptions.batchId],
-      ["team", "Team", filterOptions.team],
-    ] as const
-  ).map(([id, label, options]) => ({
-    id,
-    label,
-    value: filters[id as keyof typeof filters],
-    options,
-    onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
-  }));
+  if (isLoading) {
+    return <div style={{ padding: 24 }}>Loading...</div>;
+  }
 
-  if (mockImportLeads.length > 0 && filteredLeads.length === 0) {
+  if (leadsList.length > 0 && filteredLeads.length === 0) {
     return (
       <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
     );
   }
 
-  if (mockImportLeads.length === 0) {
+  if (leadsList.length === 0) {
     return (
       <DashboardEmptyState
         title="No Leads Imported Yet"
         subtitle="Import a batch of leads to start managing and tracking them"
         actionLabel="Import Leads CSV"
         onAction={onImportLead}
-        imageSrc="/images/dashboard/empty-folder.svg"
+        imageSrc="/images/dashboard/empty.png"
         actionIconSrc="/images/dashboard/export.svg"
       />
     );
@@ -102,36 +119,67 @@ export function ImportLeadsPanel({
       ariaLabel="Import Leads table"
       title="Import Leads"
       iconSrc="/images/dashboard/inquiries/inquiries.svg"
-      headerActions={
-        <>
-          <TablePanelHeaderButton iconSrc="/images/dashboard/filter.svg">
-            Filters
-          </TablePanelHeaderButton>
-          <TablePanelHeaderButton iconSrc="/images/dashboard/export.svg">
-            Import Data
-          </TablePanelHeaderButton>
-        </>
+      showFilters
+      showExport
+      exportLabel="Import Data"
+      onExportClick={onImportLead}
+      toolbar={
+        <TablePanelFilterBar
+          fields={[
+            {
+              id: "batchId",
+              label: "Batch ID",
+              options: ["All", ...Array.from(new Set(leadsList.map(l => l.batch_code)))],
+              value: filters.batchId,
+              onChange: (value: string) => setFilters({ ...filters, batchId: value }),
+            },
+            {
+              id: "team",
+              label: "Team",
+              options: filterOptions.team,
+              value: filters.team,
+              onChange: (value: string) => setFilters({ ...filters, team: value }),
+            },
+          ]}
+          onClean={resetFilters}
+          onApply={applyFilters}
+        />
       }
-      toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
     >
       <DataTable
         data={filteredLeads}
-        columns={importLeadsColumns}
-        getRowId={(row) => row.batchId}
-        
+        columns={importLeadsColumns as any}
+        getRowId={(row) => row.id.toString()}
+        defaultPageSize={5}
         rowActions={(row) => importRowActions({
-          onView: () => setViewMembersModalOpen(true),
-          onReassign: () => setReassignModalOpen(true),
-          onDelete: () => setDeleteModalOpen(true)
+          onView: () => {
+            setSelectedBatch(row as any);
+            setViewMembersModalOpen(true);
+          },
+          onReassign: () => {
+            setSelectedBatch(row as any);
+            setReassignModalOpen(true);
+          },
+          onDelete: () => {
+            setSelectedBatch(row as any);
+            setDeleteModalOpen(true);
+          }
         })}
       />
 
-      <ReassignLeadModal 
+      <ReassignModal 
         open={reassignModalOpen}
         onClose={() => setReassignModalOpen(false)}
-        onSuccess={() => {
-          setReassignModalOpen(false);
-          onReassignSuccess?.();
+        agents={agents}
+        onConfirm={(agentId) => {
+          if (selectedBatch) {
+            reassignBatchMutation.mutate({ id: selectedBatch.id, memberId: parseInt(agentId) }, {
+              onSuccess: () => {
+                setReassignModalOpen(false);
+                onReassignSuccess?.();
+              }
+            });
+          }
         }}
       />
 
@@ -142,6 +190,7 @@ export function ImportLeadsPanel({
           setViewMembersModalOpen(false);
           setReassignModalOpen(true);
         }}
+        batchId={selectedBatch?.id}
       />
 
       <DashboardConfirmationModal
@@ -158,8 +207,14 @@ export function ImportLeadsPanel({
         confirmLabel="Delete"
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={() => {
-          setDeleteModalOpen(false);
-          onDeleteSuccess?.();
+          if (selectedBatch) {
+            deleteBatchMutation.mutate(selectedBatch.id, {
+              onSuccess: () => {
+                setDeleteModalOpen(false);
+                onDeleteSuccess?.();
+              }
+            });
+          }
         }}
       />
     </TablePanel>

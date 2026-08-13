@@ -16,6 +16,7 @@ export interface TablePanelProps {
   showFilters?: boolean;
   onFilterClick?: () => void;
   showExport?: boolean;
+  exportLabel?: string;
   onExportClick?: () => void;
 }
 
@@ -31,6 +32,7 @@ export default function TablePanel({
   showFilters,
   onFilterClick,
   showExport,
+  exportLabel = "Export Data",
   onExportClick,
 }: TablePanelProps) {
   const panelClassName = className ? `${styles.panel} ${className}` : styles.panel;
@@ -64,7 +66,7 @@ export default function TablePanel({
               )}
               {showExport && (
                 <TablePanelHeaderButton iconSrc="/images/dashboard/export.svg" onClick={onExportClick}>
-                  Export Data
+                  {exportLabel}
                 </TablePanelHeaderButton>
               )}
             </div>

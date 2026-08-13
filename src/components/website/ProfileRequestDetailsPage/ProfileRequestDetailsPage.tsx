@@ -9,7 +9,14 @@ import {
   type BookingDetailsSection,
   type TripBookingStatus,
 } from "@/components/shared";
+import { COUNTRIES } from "@/data/countries";
 import styles from "./ProfileRequestDetailsPage.module.scss";
+
+const getCountryName = (code: string) => {
+  if (!code) return "No nationality";
+  const country = COUNTRIES.find((c) => c.code.toLowerCase() === code.trim().toLowerCase());
+  return country ? country.nationality : code;
+};
 
 type RequestStatus = Extract<TripBookingStatus, "proposal_in_progress" | "proposal_sent">;
 
@@ -75,7 +82,7 @@ export default function ProfileRequestDetailsPage() {
           { label: "Full Name", value: data.contact?.full_name || "" },
           { label: "Email", value: data.contact?.email || "" },
           { label: "Phone Number", value: data.contact?.phone || "" },
-          { label: "Nationality", value: data.contact?.nationality || "" },
+          { label: "Nationality", value: getCountryName(data.contact?.nationality || "") },
           { label: "Travel Dates", value: data.details?.travel_dates || "" },
           { label: "Travelers", value: data.details?.travelers_label || "" },
         ],

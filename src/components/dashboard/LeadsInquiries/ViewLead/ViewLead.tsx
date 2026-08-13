@@ -11,8 +11,16 @@ import styles from "./ViewLead.module.scss";
 import CustomerInformation from "./CustomerInformation";
 import ActivityTimeline from "./ActivityTimeline";
 import ActionNoteModal, { ActionNoteModalConfig } from "../ActionNoteModal/ActionNoteModal";
-import { mockLeads } from "../leadsInquiriesData";
-import { LeadRow } from "../types";
+import { 
+  useLead, 
+  useCloseLead, 
+  useAddLeadNote, 
+  useMarkLeadContacted, 
+  useMarkLeadQualified, 
+  useConvertLead, 
+  useReopenLead 
+} from "@/hooks/useLeads";
+import type { AdminLead } from "@/types/adminLeadTypes";
 
 const MODAL_CONFIGS: Record<string, ActionNoteModalConfig> = {
   add_note: {
@@ -66,19 +74,22 @@ interface ViewLeadProps {
 }
 
 export default function ViewLead({ leadId }: ViewLeadProps) {
-  const lead: LeadRow = mockLeads.find((l) => l.id === leadId) || {
-    id: leadId,
-    name: "Ahmed Hassan",
-    email: "ahmed.hassan@nilehorizonevents.com",
-    phone: "+20 109 458 7721",
-    source: "Email",
-    date: "2024-10-26",
-    status: "New",
-    agent: "Sara M.",
-  };
+  const numericId = parseInt(leadId, 10);
+  const { data: lead, isLoading } = useLead(numericId);
   
   const [activeModalKey, setActiveModalKey] = React.useState<string | null>(null);
   const [bannerMessage, setBannerMessage] = React.useState("");
+
+  const addNoteMutation = useAddLeadNote();
+  const closeLeadMutation = useCloseLead();
+  const markContactedMutation = useMarkLeadContacted();
+  const markQualifiedMutation = useMarkLeadQualified();
+  const convertLeadMutation = useConvertLead();
+  const reopenLeadMutation = useReopenLead();
+
+  if (isLoading || !lead) {
+    return <div>Loading lead...</div>;
+  }
 
   const activeModalConfig = activeModalKey ? MODAL_CONFIGS[activeModalKey] : null;
 
@@ -88,22 +99,22 @@ export default function ViewLead({ leadId }: ViewLeadProps) {
         <DashboardNavbar
           breadcrumbTrail={[
             { label: "Leads Management", href: "/dashboard/leads" },
-            { label: lead.id }
+            { label: lead.display_id }
           ]}
         >
           <ProfileHeader
-            title={`${lead.name} - ${lead.id}`}
-            pillLabel={lead.status}
+            title={`${lead.full_name} - ${lead.display_id}`}
+            pillLabel={lead.status.charAt(0).toUpperCase() + lead.status.slice(1)}
             pillVariant={
-              lead.status === "Contacted" ? "orange" :
-              lead.status === "Qualified" ? "purple" :
-              lead.status === "Converted" ? "green" :
-              lead.status === "Closed" ? "red" : "blue"
+              lead.status === "contacted" ? "orange" :
+              lead.status === "qualified" ? "purple" :
+              lead.status === "converted" ? "green" :
+              lead.status === "closed" ? "red" : "blue"
             }
-            subtitleElements={["April 10, 2025 at 1:20 PM"]}
+            subtitleElements={[`Created on ${new Date(lead.created_at).toLocaleDateString()}`]}
             actionButtons={
               <>
-                {(lead.status === "New" || lead.status === "Contacted" || lead.status === "Qualified") && (
+                {(lead.status === "new" || lead.status === "contacted" || lead.status === "qualified") && (
                   <>
                     <button className={phStyles.dangerActionButton} type="button" onClick={() => setActiveModalKey("close_lead")}>
                       <Image src="/images/dashboard/inquiries/close_lead.svg" alt="" width={20} height={20} />
@@ -115,21 +126,21 @@ export default function ViewLead({ leadId }: ViewLeadProps) {
                       Add note
                     </button>
 
-                    {lead.status === "New" && (
+                    {lead.status === "new" && (
                       <button className={phStyles.secondaryActionButton} type="button" onClick={() => setActiveModalKey("mark_contacted")}>
                         <Image src="/images/dashboard/inquiries/mark_complete.svg" alt="" width={20} height={20} />
                         Mark As Contacted
                       </button>
                     )}
 
-                    {lead.status === "Contacted" && (
+                    {lead.status === "contacted" && (
                       <button className={phStyles.secondaryActionButton} type="button" onClick={() => setActiveModalKey("mark_qualified")}>
                         <Image src="/images/dashboard/inquiries/mark_complete.svg" alt="" width={20} height={20} />
                         Mark As Qualified
                       </button>
                     )}
 
-                    {lead.status === "Qualified" && (
+                    {lead.status === "qualified" && (
                       <button className={phStyles.secondaryActionButton} type="button" onClick={() => setActiveModalKey("convert_lead")}>
                         <Image src="/images/dashboard/inquiries/convert_lead.svg" alt="" width={20} height={20} />
                         Convert Lead
@@ -138,14 +149,14 @@ export default function ViewLead({ leadId }: ViewLeadProps) {
                   </>
                 )}
 
-                {lead.status === "Converted" && (
+                {lead.status === "converted" && (
                   <button className={phStyles.primaryActionButton} type="button">
                     View Request
                     <Image src="/images/dashboard/fields/eye.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
                   </button>
                 )}
 
-                {lead.status === "Closed" && (
+                {lead.status === "closed" && (
                   <>
                     <button className={phStyles.secondaryActionButton} type="button" onClick={() => setActiveModalKey("add_note")}>
                       <Image src="/images/dashboard/inquiries/add_note.svg" alt="" width={20} height={20} />
@@ -172,7 +183,7 @@ export default function ViewLead({ leadId }: ViewLeadProps) {
           />
           <div className={styles.gridContainer}>
             <CustomerInformation lead={lead} />
-            <ActivityTimeline />
+            <ActivityTimeline leadId={numericId} />
           </div>
         </div>
       
@@ -182,35 +193,40 @@ export default function ViewLead({ leadId }: ViewLeadProps) {
         config={activeModalConfig}
         onClose={() => setActiveModalKey(null)} 
         onSubmit={(note) => {
-          console.log(`Submitting ${activeModalKey}:`, note);
+          if (!activeModalKey) return;
           
           let successMessage = "";
+          const handleSuccess = () => {
+            setBannerMessage(successMessage);
+            setActiveModalKey(null);
+          };
+
           switch (activeModalKey) {
             case "add_note":
               successMessage = "The note has been added successfully.";
+              addNoteMutation.mutate({ id: numericId, note }, { onSuccess: handleSuccess });
               break;
             case "close_lead":
               successMessage = "The lead has been closed successfully";
+              closeLeadMutation.mutate({ id: numericId, reason: note }, { onSuccess: handleSuccess });
               break;
             case "mark_contacted":
               successMessage = "The lead status has been contacted successfully";
+              markContactedMutation.mutate({ id: numericId, note }, { onSuccess: handleSuccess });
               break;
             case "mark_qualified":
               successMessage = "The lead has been marked as qualified successfully";
+              markQualifiedMutation.mutate({ id: numericId, note }, { onSuccess: handleSuccess });
               break;
             case "convert_lead":
               successMessage = "The lead has been converted to a request successfully";
+              convertLeadMutation.mutate({ id: numericId, note }, { onSuccess: handleSuccess });
               break;
             case "reopen_lead":
               successMessage = "The lead has been re-opened successfully";
+              reopenLeadMutation.mutate({ id: numericId, reason: note }, { onSuccess: handleSuccess });
               break;
           }
-          
-          if (successMessage) {
-            setBannerMessage(successMessage);
-          }
-          
-          setActiveModalKey(null);
         }} 
       />
     </>

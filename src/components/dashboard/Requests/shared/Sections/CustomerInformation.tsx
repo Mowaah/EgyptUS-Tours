@@ -1,5 +1,12 @@
 import React from "react";
 import { InfoCard, InfoCardData } from "@/components/dashboard/shared";
+import { COUNTRIES } from "@/data/countries";
+
+const getCountryName = (code: string) => {
+  if (!code) return "No nationality";
+  const country = COUNTRIES.find((c) => c.code.toLowerCase() === code.trim().toLowerCase());
+  return country ? country.nationality : code;
+};
 
 interface CustomerInformationProps {
   request: {
@@ -15,7 +22,7 @@ export default function CustomerInformation({ request }: CustomerInformationProp
     { label: "Name", value: request.name },
     { label: "Email", value: request.email },
     { label: "Phone", value: request.phone },
-    { label: "Nationality", value: request.nationality },
+    { label: "Nationality", value: getCountryName(request.nationality) },
   ];
 
   return (

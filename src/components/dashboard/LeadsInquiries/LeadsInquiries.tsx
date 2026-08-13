@@ -31,19 +31,17 @@ export default function LeadsInquiries() {
   };
 
   const handleEditLead = (lead: any) => {
-    // Map table row data to form data format
-    const sourceArray = lead.source ? [lead.source.toLowerCase().replace(/[\s-]/g, "_")] : [];
-    
     setEditingLead({
-      name: lead.name,
+      id: lead.id,
+      name: lead.full_name,
       email: lead.email,
       phone: lead.phone,
-      source: sourceArray,
-      jobTitle: "Sample Job Title", // These fields aren't in the table currently, but would be in a real app
-      companyName: "Sample Company",
-      linkedin: "",
-      website: "",
-      notes: ""
+      source: lead.source,
+      jobTitle: lead.job_title || "",
+      companyName: lead.company_name || "",
+      linkedin: lead.linkedin_url || "",
+      website: lead.website || "",
+      notes: "" // Notes are loaded via timeline
     });
     setIsAddLeadModalOpen(true);
   };

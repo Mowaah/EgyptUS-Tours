@@ -145,7 +145,7 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
             fullName: selectedRow.full_name,
             phone: selectedRow.phone || "",
             email: selectedRow.email,
-            nationality: selectedRow.nationality ? selectedRow.nationality.charAt(0).toUpperCase() + selectedRow.nationality.slice(1).toLowerCase() : "",
+            nationality: selectedRow.nationality || "",
             status: selectedRow.status ? selectedRow.status.charAt(0).toUpperCase() + selectedRow.status.slice(1).toLowerCase() : "",
           } as any}
           onSubmit={async (data) => {

@@ -95,13 +95,17 @@ export function UploadDropzone({
         <div className={styles.fileItem}>
           <div className={styles.fileIconWrapper}>
             {typeof value === 'string' ? (
-              value.endsWith('.pdf') ? (
+              value.split('?')[0].toLowerCase().endsWith('.pdf') ? (
                 <Image src="/images/dashboard/file/pdf.svg" alt="PDF" width={40} height={40} />
+              ) : value.split('?')[0].toLowerCase().endsWith('.csv') ? (
+                <Image src="/images/dashboard/file/csv.svg" alt="CSV" width={40} height={40} />
               ) : (
                 <Image src="/images/dashboard/file/png.svg" alt="PNG" width={40} height={40} />
               )
-            ) : value.type === "application/pdf" || value.name.endsWith('.pdf') ? (
+            ) : value.type === "application/pdf" || value.name.toLowerCase().endsWith('.pdf') ? (
               <Image src="/images/dashboard/file/pdf.svg" alt="PDF" width={40} height={40} />
+            ) : value.type === "text/csv" || value.name.toLowerCase().endsWith('.csv') ? (
+              <Image src="/images/dashboard/file/csv.svg" alt="CSV" width={40} height={40} />
             ) : (
               <Image src="/images/dashboard/file/png.svg" alt="PNG" width={40} height={40} />
             )}
@@ -110,7 +114,7 @@ export function UploadDropzone({
           <div className={styles.fileInfo}>
             <p className={styles.fileName}>
               {typeof value === 'string' 
-                ? (value.startsWith('data:') ? 'Uploaded Image' : value.split('/').pop()) 
+                ? (value.startsWith('data:') ? 'Uploaded Image' : decodeURIComponent(value.split('/').pop()?.split('?')[0] || '')) 
                 : value.name}
             </p>
             <div className={styles.fileMeta}>

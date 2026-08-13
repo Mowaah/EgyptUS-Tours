@@ -38,7 +38,7 @@ export default function ReassignModal({
   subtitle = "Choose an agent to handle this request",
   showReasonField = false,
 }: ReassignModalProps) {
-  const [selectedAgentId, setSelectedAgentId] = useState<string>(agents[0]?.id || "");
+  const [selectedAgentId, setSelectedAgentId] = useState<string>("");
   const [reason, setReason] = useState("");
   const [error, setError] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -51,27 +51,27 @@ export default function ReassignModal({
       if (isDropdownOpen && dropdownRef.current) {
         const rect = dropdownRef.current.getBoundingClientRect();
         setDropdownStyle({
-          top: rect.bottom + 8,
-          left: rect.left,
-          width: rect.width,
+          position: 'fixed',
+          top: `${rect.bottom + 4}px`,
+          left: `${rect.left}px`,
+          width: `${rect.width}px`,
+          zIndex: 10000,
         });
       }
     };
     updatePosition();
-    if (isDropdownOpen) {
-      window.addEventListener('resize', updatePosition);
-      window.addEventListener('scroll', updatePosition, true);
-    }
+    window.addEventListener('scroll', updatePosition, true);
+    window.addEventListener('resize', updatePosition);
     return () => {
-      window.removeEventListener('resize', updatePosition);
       window.removeEventListener('scroll', updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
     };
   }, [isDropdownOpen]);
 
   useEffect(() => {
     if (!open) return;
-    // reset selection to first agent when opened
-    setSelectedAgentId(agents[0]?.id || "");
+    // reset selection when opened
+    setSelectedAgentId("");
     setReason("");
     setError("");
     const prev = document.body.style.overflow;
@@ -107,7 +107,7 @@ export default function ReassignModal({
 
   if (!open) return null;
 
-  const selectedAgent = agents.find(a => a.id === selectedAgentId) || agents[0];
+  const selectedAgent = agents.find(a => a.id === selectedAgentId);
 
   return (
     <div className={styles.overlay} role="presentation" onMouseDown={onClose}>
@@ -145,7 +145,7 @@ export default function ReassignModal({
                 }}
               >
                 <div className={styles.selectContent}>
-                  {selectedAgent && (
+                  {selectedAgent ? (
                     <>
                       <img
                         src={selectedAgent.avatarSrc}
@@ -156,6 +156,8 @@ export default function ReassignModal({
                       />
                       <span className={styles.selectValue}>{selectedAgent.name}</span>
                     </>
+                  ) : (
+                    <span className={styles.selectValue} style={{ color: "var(--ds-gray-400, #9ca3af)" }}>Select an agent...</span>
                   )}
                 </div>
                 <div className={`${styles.arrowIcon} ${isDropdownOpen ? styles.arrowUp : ""}`} aria-hidden>

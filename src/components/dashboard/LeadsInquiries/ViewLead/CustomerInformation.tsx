@@ -1,25 +1,13 @@
 import React from "react";
 import Image from "next/image";
 import styles from "./ViewLead.module.scss";
-import { LeadRow } from "../types";
+import type { AdminLead } from "@/types/adminLeadTypes";
 
 interface CustomerInformationProps {
-  lead: LeadRow;
-  jobTitle?: string;
-  companyName?: string;
-  linkedinUrl?: string;
-  website?: string;
-  notes?: string;
+  lead: AdminLead;
 }
 
-export default function CustomerInformation({
-  lead,
-  jobTitle = "Operations Manager",
-  companyName = "Nile Horizon Events",
-  linkedinUrl = "https://www.linkedin.com/feed/",
-  website = "www.nilehorizonevents.com",
-  notes = "We are looking for a complete tourism management solution to manage bookings, customer inquiries, transportation services, and partner coordination more efficiently."
-}: CustomerInformationProps) {
+export default function CustomerInformation({ lead }: CustomerInformationProps) {
   return (
     <div className={styles.card}>
       <div className={styles.cardTitle}>
@@ -38,7 +26,7 @@ export default function CustomerInformation({
       <div className={styles.infoList}>
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Name</span>
-          <span className={styles.infoValue}>{lead.name}</span>
+          <span className={styles.infoValue}>{lead.full_name}</span>
         </div>
         
         <div className={styles.infoRow}>
@@ -53,32 +41,31 @@ export default function CustomerInformation({
 
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Source</span>
-          <span className={styles.infoValue}>{lead.source}</span>
+          <span className={styles.infoValue}>{(() => {
+            let formattedSource = (lead.source || "").replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            if (formattedSource.toLowerCase() === "whatsapp") formattedSource = "WhatsApp";
+            return formattedSource;
+          })()}</span>
         </div>
 
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Job Title</span>
-          <span className={styles.infoValue}>{jobTitle}</span>
+          <span className={styles.infoValue}>{lead.job_title || "-"}</span>
         </div>
 
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Company Name</span>
-          <span className={styles.infoValue}>{companyName}</span>
+          <span className={styles.infoValue}>{lead.company_name || "-"}</span>
         </div>
 
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Person Linkedin Url</span>
-          <span className={styles.infoValue}>{linkedinUrl}</span>
+          <span className={styles.infoValue}>{lead.linkedin_url || "-"}</span>
         </div>
 
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Website</span>
-          <span className={styles.infoValue}>{website}</span>
-        </div>
-
-        <div className={styles.infoRow}>
-          <span className={styles.infoLabel}>Notes</span>
-          <span className={styles.infoValue}>{notes}</span>
+          <span className={styles.infoValue}>{lead.website || "-"}</span>
         </div>
       </div>
     </div>

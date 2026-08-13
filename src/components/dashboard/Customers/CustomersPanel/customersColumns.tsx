@@ -1,5 +1,6 @@
 import type { DataTableColumn } from "@/components/dashboard/DataTable";
 import type { AdminCustomer } from "@/types/adminCustomerTypes";
+import { COUNTRIES } from "@/data/countries";
 import styles from "./CustomersPanel.module.scss";
 
 const statusClass: Record<string, string> = {
@@ -38,7 +39,11 @@ export const customersColumns: DataTableColumn<AdminCustomer>[] = [
   {
     id: "nationality",
     header: "Nationality",
-    render: (row) => row.nationality || "-",
+    render: (row) => {
+      if (!row.nationality) return "-";
+      const country = COUNTRIES.find(c => c.code.toLowerCase() === row.nationality?.trim().toLowerCase());
+      return country ? country.nationality : row.nationality;
+    },
   },
   {
     id: "bookings",
