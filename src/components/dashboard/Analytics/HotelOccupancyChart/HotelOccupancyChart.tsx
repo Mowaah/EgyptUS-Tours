@@ -1,26 +1,57 @@
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
 import parentStyles from "../ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
 import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
-import DoubleBarChart from "@/components/dashboard/shared/DoubleBarChart/DoubleBarChart";
+import DoubleBarChart, { DoubleBarData } from "@/components/dashboard/shared/DoubleBarChart/DoubleBarChart";
+import { HotelOccupancy } from "@/services/admin/adminReportsService";
+import { useMemo } from "react";
 
-const hotelData = [
-  { label: "Grand Hyatt Dubai", value1: 48, value2: 46 },
-  { label: "Four Seasons Istanbul", value1: 49, value2: 42 },
-  { label: "Marriott Mena House", value1: 49, value2: 42 },
-  { label: "Ritz-Carlton Ba", value1: 92, value2: 82 },
-  { label: "Le Méridien Maldives", value1: 65, value2: 61 },
-];
+interface HotelOccupancyChartProps {
+  data?: HotelOccupancy[];
+  actions?: React.ReactNode;
+}
 
-export default function HotelOccupancyChart() {
+export default function HotelOccupancyChart({ data = [], actions }: HotelOccupancyChartProps) {
+  const chartData: DoubleBarData[] = useMemo(() => {
+    if (!data.length) return [];
+    
+    // Find the max available nights to set as 100% baseline for the chart height
+    const maxAvailable = Math.max(...data.map(d => d.available_room_nights));
+    
+    return data.map(item => ({
+      label: item.hotel_name,
+      // Available nights is the faded background bar
+      value2: maxAvailable > 0 ? (item.available_room_nights / maxAvailable) * 100 : 0,
+      // Booked nights is the solid foreground bar
+      value1: maxAvailable > 0 ? (item.booked_room_nights / maxAvailable) * 100 : 0,
+      // Pass the raw numbers so we can show them on hover if DoubleBarChart supported it,
+      // or at least to document why we scale by maxAvailable.
+    }));
+  }, [data]);
+
+  const yAxisLabels = useMemo(() => {
+    if (!data.length) return ["100", "75", "50", "25", "0"];
+    const maxAvailable = Math.max(...data.map(d => d.available_room_nights));
+    
+    // Create 5 steps (e.g., max, 75%, 50%, 25%, 0)
+    return [
+      Math.round(maxAvailable).toString(),
+      Math.round(maxAvailable * 0.75).toString(),
+      Math.round(maxAvailable * 0.5).toString(),
+      Math.round(maxAvailable * 0.25).toString(),
+      "0"
+    ];
+  }, [data]);
+
   return (
     <article className={parentStyles.chartCard}>
       <PanelHeader
         icon="reports/hotel_occupancy"
         title="Hotel Occupancy"
-        subtitle="Approximate occupancy %"
-        actions={<ExportButtons />}
+        subtitle="Booked vs Available Room Nights"
+        actions={actions}
       />
-      <DoubleBarChart data={hotelData} />
+      <DoubleBarChart data={chartData} yAxisLabels={yAxisLabels} />
     </article>
   );
+
 }
