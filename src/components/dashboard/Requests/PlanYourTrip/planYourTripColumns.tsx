@@ -4,6 +4,17 @@ import type { StatusPillVariant } from "@/components/shared/StatusPill/StatusPil
 import ViewButton from "@/components/shared/ViewButton/ViewButton";
 import styles from "./PlanYourTrip.module.scss";
 
+export const formatStatusLabel = (rawStatus: string): string => {
+  if (!rawStatus) return "Unknown";
+  if (rawStatus === "awaiting_deposit") return "30% Pending Payment";
+  if (rawStatus === "refunded") return "Refund Completed";
+  
+  return rawStatus
+    .split('_')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+};
+
 export interface PlanYourTripApiItem {
   id: number;
   request_code: string;
@@ -100,12 +111,7 @@ export const planYourTripColumns: DataTableColumn<PlanYourTripApiItem>[] = [
     id: "status",
     header: "Status",
     render: (row) => {
-      const formattedStatus = row.display_status === 'awaiting_deposit' 
-        ? '30% Pending Payment' 
-        : row.display_status
-            .split('_')
-            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-            .join(' ');
+      const formattedStatus = formatStatusLabel(row.display_status);
 
       return (
         <StatusPill 

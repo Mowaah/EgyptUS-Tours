@@ -25,12 +25,10 @@ export default function LineChart({
     if (p > computedMax) computedMax = p;
   }));
 
-  let maxValue = Math.ceil(computedMax * 1.15);
-  if (maxValue <= 0) maxValue = 10;
-
-  let tickSize = maxValue / 5;
-  const order = Math.pow(10, Math.floor(Math.log10(tickSize || 1)));
-  const normalizedTick = tickSize / order;
+  const paddedMax = computedMax * 1.05;
+  const minStep = Math.max(paddedMax / 5, 0.2); // Ensure we don't get 0
+  const order = Math.pow(10, Math.floor(Math.log10(minStep)));
+  const normalizedTick = minStep / order;
 
   let niceTick;
   if (normalizedTick <= 1) niceTick = 1;
@@ -41,7 +39,7 @@ export default function LineChart({
 
   let step = niceTick * order;
   if (step === 0) step = 1;
-  maxValue = step * 5;
+  let maxValue = step * 5;
 
   const yAxisLabels = Array.from({ length: 6 }, (_, i) => {
     const val = maxValue - step * i;

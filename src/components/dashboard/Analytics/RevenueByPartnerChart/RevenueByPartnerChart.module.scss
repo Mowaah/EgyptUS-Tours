@@ -110,11 +110,32 @@
   background: linear-gradient(180deg, #C3DDFF 0%, #C2DEFF 100%);
   border: 0.6px solid #8DC1FF;
   border-radius: 16px;
-  transition: height 0.3s ease;
+  transition: height 0.3s ease, filter 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
 }
 
 .barFill:hover {
   filter: brightness(0.95);
+}
+
+.barValueHover {
+  font-size: $font-size-xs;
+  font-weight: 700;
+  color: #1E3A8A; /* A darker blue for contrast */
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.barFill:hover .barValueHover {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .xAxisLabel {

@@ -46,7 +46,11 @@ export default function HatchedBarChart({ data, yAxisLabels, barWidth }: Hatched
                 className={styles.barFill}
                 style={{ height: `${item.value}%`, background: item.color }}
               >
-                <span className={styles.barPct}>{item.displayValue !== undefined ? item.displayValue : `${item.value}%`}</span>
+                <span className={styles.barPct}>
+                  {item.displayValue !== undefined 
+                    ? item.displayValue 
+                    : `${Number.isInteger(item.value) ? item.value : item.value.toFixed(1)}%`}
+                </span>
               </div>
               <span className={styles.barLabel}>{item.label}</span>
             </div>

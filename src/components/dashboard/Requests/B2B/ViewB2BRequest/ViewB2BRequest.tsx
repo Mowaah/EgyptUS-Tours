@@ -5,6 +5,7 @@ import CompanyInformation from "./CompanyInformation";
 import RequestDetailsLayout from "../../shared/RequestDetailsLayout/RequestDetailsLayout";
 import { ProposalFile, PaymentOverview, ActivityTimeline } from "../../shared/Sections";
 import { getB2BDetails, getB2BTimeline, b2bActions } from "@/services/admin/adminRequestsService";
+import { formatStatusLabel } from "../b2bColumns";
 
 export default function ViewB2BRequest({ requestId }: { requestId: string }) {
   const [requestData, setRequestData] = useState<any>(null);
@@ -99,7 +100,7 @@ export default function ViewB2BRequest({ requestId }: { requestId: string }) {
       breadcrumbLabel="B2B Programs"
       breadcrumbHref="/dashboard/requests/b2b-programs"
       requestTitle={`${requestData.company_name} - ${requestData.request_code}`}
-      status={requestData.display_status.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')}
+      status={formatStatusLabel(requestData.display_status)}
       date={new Date(requestData.created_at).toLocaleString()}
       lastUpdated={requestData.updated_at}
       leftColumnContent={

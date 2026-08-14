@@ -27,7 +27,7 @@ const areaOrange = `${pathOrange} L 100 10 L 0 10 Z`;
 const yAxisLabels = [10, 8, 6, 4, 2, 0];
 const xAxisLabels = ["WEBSITE", "PHONE", "EMAIL", "WALK-IN", "SOCIAL MEDIA", "OTHERS"];
 
-export default function AvgTimeToConvertChart() {
+export default function AvgTimeToConvertChart({ actions }: { actions?: React.ReactNode }) {
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
   const handleMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
@@ -55,8 +55,9 @@ export default function AvgTimeToConvertChart() {
     <article className={parentStyles.chartCard}>
       <PanelHeader
         icon="reports/avg_time"
-        title="Avg Time to Convert (days)"
-        actions={<ExportButtons />}
+        title="Avg Time to Convert"
+        subtitle="By lead channel (Days)"
+        actions={actions}
       />
 
       <div className={styles.chartContainer}>

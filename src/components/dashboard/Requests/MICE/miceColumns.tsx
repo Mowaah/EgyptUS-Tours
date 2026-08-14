@@ -4,6 +4,17 @@ import type { StatusPillVariant } from "@/components/shared/StatusPill/StatusPil
 import ViewButton from "@/components/shared/ViewButton/ViewButton";
 import styles from "./MICE.module.scss";
 
+export const formatStatusLabel = (rawStatus: string): string => {
+  if (!rawStatus) return "Unknown";
+  if (rawStatus === "awaiting_deposit") return "30% Pending Payment";
+  if (rawStatus === "refunded") return "Refund Completed";
+  
+  return rawStatus
+    .split('_')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+};
+
 // Export this so we can reuse it in the View request page
 export const getStatusVariant = (status: string): StatusPillVariant => {
   switch (status) {
@@ -97,7 +108,7 @@ export const miceColumns: DataTableColumn<any>[] = [
     id: "status",
     header: "Status",
     render: (row) => {
-      const displayStatus = row.display_status.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+      const displayStatus = formatStatusLabel(row.display_status);
       return (
         <StatusPill 
           label={displayStatus} 

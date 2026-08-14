@@ -4,6 +4,17 @@ import { getStatusVariant } from "../PlanYourTrip/planYourTripColumns";
 import ViewButton from "@/components/shared/ViewButton/ViewButton";
 import styles from "./B2B.module.scss";
 
+export const formatStatusLabel = (rawStatus: string): string => {
+  if (!rawStatus) return "Unknown";
+  if (rawStatus === "awaiting_deposit") return "30% Pending Payment";
+  if (rawStatus === "refunded") return "Refund Completed";
+  
+  return rawStatus
+    .split('_')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+};
+
 export interface B2BApiItem {
   id: number;
   request_code: string;
@@ -83,7 +94,7 @@ export const b2bColumns: DataTableColumn<B2BApiItem>[] = [
     id: "status",
     header: "Status",
     render: (row) => {
-      const displayStatus = row.display_status.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+      const displayStatus = formatStatusLabel(row.display_status);
       return (
         <StatusPill 
           label={displayStatus} 

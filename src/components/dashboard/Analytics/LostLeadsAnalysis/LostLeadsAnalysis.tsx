@@ -4,7 +4,7 @@ import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 import parentStyles from "../ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
 import styles from "./LostLeadsAnalysis.module.scss";
 
-export default function LostLeadsAnalysis() {
+export default function LostLeadsAnalysis({ actions }: { actions?: React.ReactNode }) {
   const chartData = [
     { label: "Price too high", value: 40, color: "#A1CCFF" },
     { label: "Booked competitor", value: 30, color: "#FFC6A0" },
@@ -30,7 +30,7 @@ export default function LostLeadsAnalysis() {
         icon="reports/lost_leads"
         title="Lost Leads Analysis"
         subtitle="Reasons for lost leads"
-        actions={<ExportButtons />}
+        actions={actions}
       />
       
       <div className={styles.donutWrapper}>

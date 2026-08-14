@@ -9,6 +9,7 @@ import EventRequirements from "./EventRequirements";
 import BudgetInformation from "./BudgetInformation";
 import RequestDetailsLayout from "../../shared/RequestDetailsLayout/RequestDetailsLayout";
 import { getEventsDetails, getMiceTimeline, eventsActions } from "@/services/admin/adminRequestsService";
+import { formatStatusLabel } from "../miceColumns";
 
 export default function ViewMiceRequest({ requestId }: { requestId: string }) {
   const [requestData, setRequestData] = useState<any>(null);
@@ -94,7 +95,7 @@ export default function ViewMiceRequest({ requestId }: { requestId: string }) {
       breadcrumbLabel="MICE Corporate"
       breadcrumbHref="/dashboard/requests/mice-corporate"
       requestTitle={`${requestData.organization_name || requestData.organization_information?.organization_name || "MICE"} - ${requestData.request_code}`}
-      status={requestData.display_status.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')}
+      status={formatStatusLabel(requestData.display_status)}
       date={new Date(requestData.created_at).toLocaleString()}
       lastUpdated={requestData.updated_at}
       leftColumnContent={

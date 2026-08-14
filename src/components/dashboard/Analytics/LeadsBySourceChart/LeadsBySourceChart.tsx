@@ -3,7 +3,7 @@ import HatchedBarChart from "@/components/dashboard/shared/HatchedBarChart/Hatch
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
 import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 
-export default function LeadsBySourceChart() {
+export default function LeadsBySourceChart({ actions }: { actions?: React.ReactNode }) {
   const distribution = [
     { label: "Website", value: 32, color: "#A1CCFF" },
     { label: "Phone", value: 22, color: "#FFC6A0" },
@@ -21,7 +21,7 @@ export default function LeadsBySourceChart() {
         icon="reports/leads_by_source"
         title="Leads by Source"
         subtitle="Overview of lead acquisition channels"
-        actions={<ExportButtons />}
+        actions={actions}
       />
       
       <HatchedBarChart data={distribution} yAxisLabels={yAxisLabels} />

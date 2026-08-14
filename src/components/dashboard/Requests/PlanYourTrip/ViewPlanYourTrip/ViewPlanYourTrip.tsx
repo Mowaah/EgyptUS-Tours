@@ -7,6 +7,7 @@ import TripPreferences from "./TripPreferences";
 import TripDetails from "./TripDetails";
 import RequestDetailsLayout from "../../shared/RequestDetailsLayout/RequestDetailsLayout";
 import RefundSummary from "@/components/dashboard/shared/RefundSummary/RefundSummary";
+import { formatStatusLabel } from "../planYourTripColumns";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function ViewPlanYourTrip({ requestId }: { requestId: string }) {
@@ -103,9 +104,7 @@ export default function ViewPlanYourTrip({ requestId }: { requestId: string }) {
       breadcrumbLabel="Plan Your trip"
       breadcrumbHref="/dashboard/requests/plan-your-trip"
       requestTitle={`${requestData.full_name} - ${requestData.request_code}`}
-      status={requestData.display_status === 'awaiting_deposit' 
-        ? '30% Pending Payment' 
-        : requestData.display_status.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')}
+      status={formatStatusLabel(requestData.display_status)}
       date={new Date(requestData.created_at).toLocaleString()}
       lastUpdated={requestData.updated_at}
       leftColumnContent={

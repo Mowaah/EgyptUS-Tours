@@ -20,11 +20,15 @@ export function pathFromPoints(points: number[], width = 980, height = 250, max 
     const p2 = pts[i + 1];
     const p3 = i === pts.length - 2 ? pts[pts.length - 1] : pts[i + 2];
 
-    const cp1x = p1.x + (p2.x - p0.x) * tension;
-    const cp1y = p1.y + (p2.y - p0.y) * tension;
+    let cp1x = p1.x + (p2.x - p0.x) * tension;
+    let cp1y = p1.y + (p2.y - p0.y) * tension;
 
-    const cp2x = p2.x - (p3.x - p1.x) * tension;
-    const cp2y = p2.y - (p3.y - p1.y) * tension;
+    let cp2x = p2.x - (p3.x - p1.x) * tension;
+    let cp2y = p2.y - (p3.y - p1.y) * tension;
+
+    // Prevent curve from dipping below 0 (y > height in SVG coordinates)
+    if (cp1y > height) cp1y = height;
+    if (cp2y > height) cp2y = height;
 
     path += ` C ${cp1x.toFixed(1)} ${cp1y.toFixed(1)}, ${cp2x.toFixed(1)} ${cp2y.toFixed(1)}, ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
   }
