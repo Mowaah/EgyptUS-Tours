@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { SidebarProvider } from "@/contexts/SidebarContext";
 import { AdminAuthProvider } from "@/contexts/AdminAuthContext";
+import { AdminSWRProvider } from "@/contexts/AdminSWRProvider";
+import GlobalToastContainer from "@/components/dashboard/shared/GlobalToastContainer/GlobalToastContainer";
 
 export default async function DashboardLayout({
   children,
@@ -27,8 +29,12 @@ export default async function DashboardLayout({
 
   return (
     <AdminAuthProvider>
-      <SidebarProvider initialOpenGroups={initialOpenGroups}>
-        <div data-dashboard-layout>{children}</div>
+      <AdminSWRProvider>
+        <SidebarProvider initialOpenGroups={initialOpenGroups}>
+        <div data-dashboard-layout>
+          {children}
+          <GlobalToastContainer />
+        </div>
         <Script id="restore-sidebar-scroll">
           {`
             try {
@@ -41,6 +47,7 @@ export default async function DashboardLayout({
           `}
         </Script>
       </SidebarProvider>
+      </AdminSWRProvider>
     </AdminAuthProvider>
   );
 }

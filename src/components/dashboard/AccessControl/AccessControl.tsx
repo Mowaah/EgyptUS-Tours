@@ -3,61 +3,28 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { FilterSelect, TablePanel } from "@/components/dashboard/TablePanel";
-import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";;
+import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";
+import type { AdminRole, AdminRoleModule, AdminRolePermissions } from "./types";
 import styles from "./AccessControl.module.scss";
 
-type PermissionKey = "view" | "create" | "edit";
-
-interface PermissionRow {
-  module: string;
-  permissions: Record<PermissionKey, boolean>;
-}
-
-const modules: PermissionRow[] = [
-  { module: "Dashboard", permissions: { view: true, create: true, edit: true } },
-  { module: "Leads", permissions: { view: false, create: false, edit: false } },
-  { module: "Bookings (Trips)", permissions: { view: false, create: false, edit: false } },
-  { module: "Bookings (Hotels)", permissions: { view: false, create: false, edit: false } },
-  { module: "Bookings (Transportation)", permissions: { view: false, create: false, edit: false } },
-  { module: "Requests (Plan Your Trip)", permissions: { view: false, create: false, edit: false } },
-  { module: "Requests (B2B)", permissions: { view: false, create: false, edit: false } },
-  { module: "Requests (Mice)", permissions: { view: false, create: false, edit: false } },
-  { module: "Requests (Contact Us)", permissions: { view: false, create: false, edit: false } },
-  { module: "Customers", permissions: { view: true, create: true, edit: true } },
-  { module: "Catalog (Trips)", permissions: { view: false, create: false, edit: false } },
-  { module: "Catalog (Hotels)", permissions: { view: false, create: false, edit: false } },
-  { module: "Catalog (Vehicles)", permissions: { view: false, create: false, edit: false } },
-  { module: "Finance", permissions: { view: true, create: false, edit: true } },
-  { module: "Marketing", permissions: { view: true, create: false, edit: true } },
-  { module: "Reviews", permissions: { view: true, create: false, edit: true } },
-  { module: "Reports & Analytics", permissions: { view: true, create: false, edit: true } },
-  { module: "Communications", permissions: { view: true, create: false, edit: true } },
-  { module: "Settings", permissions: { view: true, create: false, edit: true } },
-  { module: "Legal & Help Center", permissions: { view: true, create: true, edit: true } },
-  { module: "SEO Settings", permissions: { view: true, create: true, edit: true } },
-];
-
-const roles = ["Super Admin", "Operations", "Sales", "Support"];
-const permissionColumns: { key: PermissionKey; label: string }[] = [
-  { key: "view", label: "View" },
-  { key: "create", label: "Create" },
-  { key: "edit", label: "Edit" },
-];
-const saveSuccessMessage = "The changes made to this role have been saved successfully.";
-
 interface AccessControlProps {
-  customRoles?: string[];
-  selectedRole?: string;
-  onSelectedRoleChange?: (role: string) => void;
+  roles: AdminRole[];
+  modules: AdminRoleModule[];
+  selectedRoleId?: number;
+  onSelectedRoleChange?: (roleId: number) => void;
+  onSavePermissions?: (roleId: number, permissions: AdminRolePermissions) => Promise<void>;
+  onDeleteRole?: (roleId: number) => Promise<void>;
 }
 
 function PermissionToggle({
   checked,
   label,
+  disabled,
   onChange,
 }: {
   checked: boolean;
   label: string;
+  disabled?: boolean;
   onChange: () => void;
 }) {
   return (
@@ -68,6 +35,8 @@ function PermissionToggle({
       aria-checked={checked}
       aria-label={label}
       onClick={onChange}
+      disabled={disabled}
+      style={{ opacity: disabled ? 0.5 : 1, cursor: disabled ? "not-allowed" : "pointer" }}
     >
       <span aria-hidden />
     </button>
@@ -75,44 +44,91 @@ function PermissionToggle({
 }
 
 export default function AccessControl({
-  customRoles = [],
-  selectedRole,
+  roles,
+  modules,
+  selectedRoleId,
   onSelectedRoleChange,
+  onSavePermissions,
+  onDeleteRole,
 }: AccessControlProps) {
-  const [permissions, setPermissions] = useState(modules);
+  const [localPermissions, setLocalPermissions] = useState<AdminRolePermissions>({});
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [showSaveNotice, setShowSaveNotice] = useState(false);
-  const roleOptions = useMemo(
-    () => [...roles, ...customRoles],
-    [customRoles]
-  );
-  const visibleRole = selectedRole ?? customRoles.at(-1) ?? roles[0];
+  const [showDeleteNotice, setShowDeleteNotice] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
+  const visibleRole = useMemo(() => {
+    return roles.find((r) => r.id === selectedRoleId) || roles[0];
+  }, [roles, selectedRoleId]);
 
+  const roleOptions = useMemo(() => {
+    return roles.map((r) => r.name);
+  }, [roles]);
 
-  const togglePermission = (moduleName: string, key: PermissionKey) => {
-    setPermissions((current) =>
-      current.map((row) =>
-        row.module === moduleName
-          ? {
-              ...row,
-              permissions: {
-                ...row.permissions,
-                [key]: !row.permissions[key],
-              },
-            }
-          : row
-      )
-    );
+  useEffect(() => {
+    if (visibleRole) {
+      setLocalPermissions(visibleRole.permissions || {});
+    }
+  }, [visibleRole]);
+
+  const togglePermission = (moduleKey: string, actionKey: string) => {
+    if (visibleRole?.is_super_admin) return; // Super admin has all permissions always
+    setLocalPermissions((current) => ({
+      ...current,
+      [moduleKey]: {
+        ...(current[moduleKey] || {}),
+        [actionKey]: !current[moduleKey]?.[actionKey],
+      },
+    }));
   };
 
-  const handleSavePermissions = () => {
-    setShowSaveNotice(true);
+  const handleSavePermissions = async () => {
+    if (!visibleRole || !onSavePermissions) return;
+    setIsSaving(true);
+    try {
+      await onSavePermissions(visibleRole.id, localPermissions);
+      setShowSaveNotice(true);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const handleConfirmDeleteRole = () => {
-    setDeleteModalOpen(false);
+  const handleConfirmDeleteRole = async () => {
+    if (!visibleRole || !onDeleteRole) return;
+    setIsDeleting(true);
+    try {
+      await onDeleteRole(visibleRole.id);
+      setDeleteModalOpen(false);
+      setShowDeleteNotice(true);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsDeleting(false);
+    }
   };
+
+  const isDeleteDisabled = !visibleRole || visibleRole.is_system || visibleRole.users_count > 0;
+  const isSuperAdmin = visibleRole?.is_super_admin;
+
+  const hasUnsavedChanges = useMemo(() => {
+    if (!visibleRole) return false;
+    const original = visibleRole.permissions || {};
+    const allModules = new Set([...Object.keys(original), ...Object.keys(localPermissions)]);
+    for (const modKey of Array.from(allModules)) {
+      const origMod = (original as any)[modKey] || {};
+      const localMod = (localPermissions as any)[modKey] || {};
+      const allActions = new Set([...Object.keys(origMod), ...Object.keys(localMod)]);
+      for (const actKey of Array.from(allActions)) {
+        const origVal = !!origMod[actKey];
+        const localVal = !!localMod[actKey];
+        if (origVal !== localVal) return true;
+      }
+    }
+    return false;
+  }, [visibleRole, localPermissions]);
 
   return (
     <div className={styles.page}>
@@ -126,16 +142,26 @@ export default function AccessControl({
             <DashboardStatusBanner
               show={showSaveNotice}
               onClose={() => setShowSaveNotice(false)}
-              message={saveSuccessMessage}
+              message="The permissions for this role have been saved successfully."
+            />
+            <DashboardStatusBanner
+              show={showDeleteNotice}
+              onClose={() => setShowDeleteNotice(false)}
+              message="The role has been successfully deleted."
             />
 
             <div className={styles.roleToolbar}>
               <FilterSelect
                 id="role-editor"
                 label="Role"
-                value={visibleRole}
+                value={visibleRole?.name || ""}
                 options={roleOptions}
-                onChange={(role) => onSelectedRoleChange?.(role)}
+                onChange={(roleName) => {
+                  const role = roles.find((r) => r.name === roleName);
+                  if (role && onSelectedRoleChange) {
+                    onSelectedRoleChange(role.id);
+                  }
+                }}
               />
 
               <div className={styles.toolbarActions}>
@@ -143,8 +169,10 @@ export default function AccessControl({
                   type="button"
                   className={styles.deleteButton}
                   onClick={() => setDeleteModalOpen(true)}
+                  disabled={isDeleteDisabled || isDeleting}
+                  style={{ opacity: isDeleteDisabled ? 0.5 : 1, cursor: isDeleteDisabled ? "not-allowed" : "pointer" }}
                 >
-                  Delete Role
+                  {isDeleting ? "Deleting..." : "Delete Role"}
                   <Image
                     src="/images/dashboard/delete.svg"
                     alt=""
@@ -153,8 +181,14 @@ export default function AccessControl({
                     aria-hidden
                   />
                 </button>
-                <button type="button" className={styles.saveButton} onClick={handleSavePermissions}>
-                  Save Permissions
+                <button
+                  type="button"
+                  className={styles.saveButton}
+                  onClick={handleSavePermissions}
+                  disabled={isSaving || isSuperAdmin || !hasUnsavedChanges}
+                  style={{ opacity: (isSuperAdmin || !hasUnsavedChanges) ? 0.5 : 1, cursor: (isSuperAdmin || !hasUnsavedChanges) ? "not-allowed" : "pointer" }}
+                >
+                  {isSaving ? "Saving..." : "Save Permissions"}
                   <Image
                     src="/images/dashboard/save.svg"
                     alt=""
@@ -173,26 +207,33 @@ export default function AccessControl({
             <thead>
               <tr>
                 <th scope="col">Module</th>
-                {permissionColumns.map((column) => (
-                  <th key={column.key} scope="col">
-                    {column.label}
-                  </th>
-                ))}
+                <th scope="col">View</th>
+                <th scope="col">Create</th>
+                <th scope="col">Edit</th>
               </tr>
             </thead>
             <tbody>
-              {permissions.map((row) => (
-                <tr key={row.module}>
-                  <th scope="row">{row.module}</th>
-                  {permissionColumns.map((column) => (
-                    <td key={column.key}>
-                      <PermissionToggle
-                        checked={row.permissions[column.key]}
-                        label={`${column.label} ${row.module}`}
-                        onChange={() => togglePermission(row.module, column.key)}
-                      />
-                    </td>
-                  ))}
+              {modules.map((mod) => (
+                <tr key={mod.key}>
+                  <th scope="row">{mod.label}</th>
+                  {["view", "create", "edit"].map((actionKey) => {
+                    const actionExists = mod.actions.some((a) => a.key === actionKey);
+                    const isChecked = isSuperAdmin ? true : !!localPermissions[mod.key]?.[actionKey];
+                    return (
+                      <td key={actionKey}>
+                        {actionExists ? (
+                          <PermissionToggle
+                            checked={isChecked}
+                            label={`${actionKey} ${mod.label}`}
+                            onChange={() => togglePermission(mod.key, actionKey)}
+                            disabled={isSuperAdmin}
+                          />
+                        ) : (
+                          <span style={{ color: "#999" }}>-</span>
+                        )}
+                      </td>
+                    );
+                  })}
                 </tr>
               ))}
             </tbody>
@@ -206,14 +247,14 @@ export default function AccessControl({
         title="Delete Role"
         message={
           <>
-            Are you sure you want to permanently delete this role from the system? Users assigned
-            to this role may lose their current access permissions.
+            Are you sure you want to permanently delete the <strong>{visibleRole?.name}</strong> role from the system?
           </>
         }
-        cancelLabel="Back"
-        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        confirmLabel="Delete Role"
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleConfirmDeleteRole}
+        confirmDisabled={isDeleting}
       />
     </div>
   );

@@ -23,3 +23,19 @@ export async function deleteAdminUser(id: number): Promise<any> {
 export async function getAdminRoles(): Promise<any> {
   return await adminDataClient.get('/roles/');
 }
+
+export async function createAdminRole(data: any): Promise<any> {
+  return await adminDataClient.post('/roles/', data);
+}
+
+export async function updateAdminRole(id: number, data: any): Promise<any> {
+  return await adminDataClient.patch(`/roles/${id}/`, data);
+}
+
+export async function deleteAdminRole(id: number): Promise<any> {
+  return await adminDataClient.delete(`/roles/${id}/`);
+}
+
+export async function getAdminRoleModules(): Promise<any> {
+  return await adminDataClient.get('/roles/modules/');
+}

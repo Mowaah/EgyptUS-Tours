@@ -9,6 +9,8 @@ export type {
   DashboardStatusBannerVariant,
 } from "./DashboardStatusBanner/DashboardStatusBanner";
 export { default as DashboardField } from "./DashboardField/DashboardField";
+export { default as GlobalToastContainer } from "./GlobalToastContainer/GlobalToastContainer";
+export * from "./GlobalToastContainer/GlobalToastContainer";
 export * from "./CurrencyField/CurrencyField";
 export { default as DashboardTabs } from "./DashboardTabs/DashboardTabs";
 export { DashboardFooter } from "./DashboardFooter/DashboardFooter";

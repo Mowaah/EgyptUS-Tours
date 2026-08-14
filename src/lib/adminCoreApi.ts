@@ -70,6 +70,14 @@ adminApiClient.interceptors.response.use(
         }
       }
     }
+
+    if (error.response?.status === 403 && typeof window !== 'undefined') {
+      const detail = error.response.data?.detail || "You do not have permission to perform this action.";
+      window.dispatchEvent(new CustomEvent("dashboard-toast", {
+        detail: { message: detail, variant: "error" },
+      }));
+    }
+
     return Promise.reject(error);
   }
 );
@@ -123,6 +131,14 @@ adminDataClient.interceptors.response.use(
         window.location.href = '/dashboard/login';
       }
     }
+
+    if (error.response?.status === 403 && typeof window !== 'undefined') {
+      const detail = error.response.data?.detail || "You do not have permission to perform this action.";
+      window.dispatchEvent(new CustomEvent("dashboard-toast", {
+        detail: { message: detail, variant: "error" },
+      }));
+    }
+
     return Promise.reject(error);
   }
 );

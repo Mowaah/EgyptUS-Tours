@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import styles from "./DashboardStatusBanner.module.scss";
 
-export type DashboardStatusBannerVariant = "success" | "warning";
+export type DashboardStatusBannerVariant = "success" | "warning" | "error";
 
 export interface DashboardStatusBannerProps {
   message: string;
@@ -65,8 +65,8 @@ export default function DashboardStatusBanner({
   return (
     <div className={bannerClassName} role="status" aria-live="polite">
       <span className={styles.icon} aria-hidden>
-        {variant === "warning" ? (
-          <span className={styles.warningIcon}>
+        {variant === "warning" || variant === "error" ? (
+          <span className={variant === "error" ? styles.errorIcon : styles.warningIcon}>
             <Image src="/images/dashboard/info.svg" alt="" width={20} height={20} />
           </span>
         ) : (

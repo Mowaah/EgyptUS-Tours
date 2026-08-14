@@ -4,36 +4,21 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { CheckboxIndicator } from "@/components/shared";
 import { DashboardField } from "@/components/dashboard/shared";;
+import type { AdminRoleModule, AdminRolePermissions } from "@/components/dashboard/AccessControl/types";
 import styles from "./DashboardRoleModal.module.scss";
 
 export interface DashboardRoleModalSubmitValues {
   name: string;
-  permissions: string[];
+  permissions: AdminRolePermissions;
 }
 
 export interface DashboardRoleModalProps {
   open: boolean;
+  modules?: AdminRoleModule[];
   onClose: () => void;
   onSubmit: (values: DashboardRoleModalSubmitValues) => void;
 }
 
-const permissionOptions = [
-  "Dashboard",
-  "Leads & Inquiries",
-  "Settings",
-  "Bookings",
-  "Requests",
-  "Legal & Help Center",
-  "Customers",
-  "Catalog",
-  "SEO Settings",
-  "Access Finance",
-  "Marketing",
-  "Reviews",
-  "Reports & Analytics",
-];
-
-const defaultPermissions = new Set(["Leads & Inquiries", "Bookings", "Reports & Analytics"]);
 
 function CloseIcon() {
   return (
@@ -44,17 +29,23 @@ function CloseIcon() {
   );
 }
 
-export default function DashboardRoleModal({ open, onClose, onSubmit }: DashboardRoleModalProps) {
+export default function DashboardRoleModal({ open, onClose, onSubmit, modules = [] }: DashboardRoleModalProps) {
   const [roleName, setRoleName] = useState("");
   const [hasSubmitted, setHasSubmitted] = useState(false);
-  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([
-    ...defaultPermissions,
-  ]);
+  const [selectedModules, setSelectedModules] = useState<string[]>([]);
+
+  // Seed default selections when modal opens
+  useEffect(() => {
+    if (open && modules.length > 0 && selectedModules.length === 0) {
+      const defaults = modules.filter(m => ["leads", "bookings", "reports"].includes(m.key)).map(m => m.key);
+      if (defaults.length > 0) setSelectedModules(defaults);
+    }
+  }, [open, modules]);
 
   const resetForm = useCallback(() => {
     setRoleName("");
     setHasSubmitted(false);
-    setSelectedPermissions([...defaultPermissions]);
+    setSelectedModules([]);
   }, []);
 
   const handleClose = useCallback(() => {
@@ -84,11 +75,11 @@ export default function DashboardRoleModal({ open, onClose, onSubmit }: Dashboar
 
   const trimmedRoleName = roleName.trim();
 
-  const togglePermission = (permission: string) => {
-    setSelectedPermissions((current) =>
-      current.includes(permission)
-        ? current.filter((item) => item !== permission)
-        : [...current, permission]
+  const togglePermission = (moduleKey: string) => {
+    setSelectedModules((current) =>
+      current.includes(moduleKey)
+        ? current.filter((item) => item !== moduleKey)
+        : [...current, moduleKey]
     );
   };
 
@@ -128,9 +119,21 @@ export default function DashboardRoleModal({ open, onClose, onSubmit }: Dashboar
             event.preventDefault();
             setHasSubmitted(true);
             if (!trimmedRoleName) return;
+            
+            const permissions: AdminRolePermissions = {};
+            selectedModules.forEach(modKey => {
+              const mod = modules.find(m => m.key === modKey);
+              if (mod) {
+                permissions[modKey] = {};
+                mod.actions.forEach(a => {
+                  permissions[modKey][a.key] = true;
+                });
+              }
+            });
+
             onSubmit({
               name: trimmedRoleName,
-              permissions: selectedPermissions,
+              permissions,
             });
             resetForm();
           }}
@@ -153,12 +156,12 @@ export default function DashboardRoleModal({ open, onClose, onSubmit }: Dashboar
             <fieldset className={styles.permissions}>
               <legend>Custom Permissions</legend>
               <div className={styles.permissionGrid}>
-                {permissionOptions.map((permission) => {
-                  const selected = selectedPermissions.includes(permission);
+                {modules.map((mod) => {
+                  const selected = selectedModules.includes(mod.key);
 
                   return (
                     <label
-                      key={permission}
+                      key={mod.key}
                       className={`${styles.permissionOption} ${
                         selected ? styles.permissionOptionSelected : ""
                       }`}
@@ -166,7 +169,7 @@ export default function DashboardRoleModal({ open, onClose, onSubmit }: Dashboar
                       <input
                         type="checkbox"
                         checked={selected}
-                        onChange={() => togglePermission(permission)}
+                        onChange={() => togglePermission(mod.key)}
                       />
                       <CheckboxIndicator
                         selected={selected}
@@ -181,7 +184,7 @@ export default function DashboardRoleModal({ open, onClose, onSubmit }: Dashboar
                           backgroundSize: "13.5px 13.5px",
                         }}
                       />
-                      <span>{permission}</span>
+                      <span>{mod.label}</span>
                     </label>
                   );
                 })}
