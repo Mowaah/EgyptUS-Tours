@@ -7,22 +7,22 @@ import {
   TablePanelFilterBar,
   TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
-import { mockAdminUsers } from "../userManagementData";
-import type { AdminUserRow } from "../types";
+import type { AdminUserRow, AdminRoleRow } from "../types";
 import { createAdminUserRowActions, adminUsersColumns } from "./adminUsersColumns";
 
 interface AdminUsersPanelProps {
+  users: AdminUserRow[];
+  roles: AdminRoleRow[];
+  searchQuery?: string;
   onEditUser?: (user: AdminUserRow) => void;
   onToggleUserStatus?: (user: AdminUserRow) => void;
   onDeleteUser?: (user: AdminUserRow) => void;
 }
 
-const filterOptions = {
-  role: ["All", "Super Admin", "Operations", "Sales", "Support"],
-  state: ["All", "Active", "Inactive"],
-};
-
 export default function AdminUsersPanel({
+  users,
+  roles,
+  searchQuery,
   onEditUser,
   onToggleUserStatus,
   onDeleteUser,
@@ -31,14 +31,29 @@ export default function AdminUsersPanel({
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
 
+  const filterOptions = useMemo(() => ({
+    role: ["All", ...roles.map(r => r.name)],
+    state: ["All", "Active", "Inactive"],
+  }), [roles]);
+
+  const normalizedSearchQuery = (searchQuery || "").toLowerCase();
+
   const filteredUsers = useMemo(
     () =>
-      mockAdminUsers.filter((user) => {
-        if (appliedFilters.role !== "All" && user.role !== appliedFilters.role) return false;
-        if (appliedFilters.state !== "All" && user.state !== appliedFilters.state) return false;
+      users.filter((user) => {
+        if (appliedFilters.role !== "All" && user.role_label !== appliedFilters.role) return false;
+        if (appliedFilters.state !== "All") {
+          const isActive = appliedFilters.state === "Active";
+          if (user.is_active !== isActive) return false;
+        }
+        if (normalizedSearchQuery) {
+          const matchesName = user.full_name?.toLowerCase().includes(normalizedSearchQuery);
+          const matchesEmail = user.email?.toLowerCase().includes(normalizedSearchQuery);
+          if (!matchesName && !matchesEmail) return false;
+        }
         return true;
       }),
-    [appliedFilters]
+    [users, appliedFilters, normalizedSearchQuery]
   );
 
   const resetFilters = () => {
@@ -58,7 +73,7 @@ export default function AdminUsersPanel({
   ).map(([id, label, options]) => ({
     id,
     label,
-    value: filters[id],
+    value: filters[id as keyof typeof defaultFilters],
     options,
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
@@ -69,24 +84,16 @@ export default function AdminUsersPanel({
   return (
     <TablePanel
       ariaLabel="Admin users table"
-      title="Admin Users"
+      title="All Admins"
       iconSrc="/images/dashboard/sidebar/user-management.svg"
-      headerActions={
-        <>
-          <TablePanelHeaderButton iconSrc="/images/dashboard/filter.svg">
-            Filters
-          </TablePanelHeaderButton>
-          <TablePanelHeaderButton iconSrc="/images/dashboard/export.svg">
-            Export Data
-          </TablePanelHeaderButton>
-        </>
-      }
+      showFilters={true}
+      showExport={true}
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
     >
       <DataTable
         data={filteredUsers}
         columns={adminUsersColumns}
-        getRowId={(row) => row.id}
+        getRowId={(row) => String(row.id)}
         
         rowActions={rowActions}
         defaultPageSize={5}

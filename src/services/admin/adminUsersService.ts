@@ -7,3 +7,19 @@ import { adminDataClient } from '@/lib/adminCoreApi';
 export async function getAdminUsers(params?: any): Promise<any> {
   return await adminDataClient.get('/users/', { params });
 }
+
+export async function createAdminUser(data: any): Promise<any> {
+  return await adminDataClient.post('/users/', data);
+}
+
+export async function updateAdminUser(id: number, data: any): Promise<any> {
+  return await adminDataClient.patch(`/users/${id}/`, data);
+}
+
+export async function deleteAdminUser(id: number): Promise<any> {
+  return await adminDataClient.delete(`/users/${id}/`);
+}
+
+export async function getAdminRoles(): Promise<any> {
+  return await adminDataClient.get('/roles/');
+}

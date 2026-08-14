@@ -1,35 +1,56 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import useSWR, { mutate } from "swr";
 import type { DashboardFormModalField } from "@/components/dashboard/DashboardFormModal";
 import DashboardFormModal from "@/components/dashboard/DashboardFormModal";
 import { UserManagement } from "@/components/dashboard/UserManagement";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import { DashboardConfirmationModal } from "@/components/dashboard/shared";;
-import type { AdminRole, AdminState, AdminUserRow } from "@/components/dashboard/UserManagement/types";
-import styles from "../../page.module.scss";
+import { DashboardConfirmationModal } from "@/components/dashboard/shared";
+import type { AdminUserRow, AdminRoleRow } from "@/components/dashboard/UserManagement/types";
+import {
+  getAdminUsers,
+  getAdminRoles,
+  createAdminUser,
+  updateAdminUser,
+  deleteAdminUser,
+} from "@/services/admin/adminUsersService";
 
 type ModalMode = "create" | "edit";
 type ConfirmationAction = "activate" | "deactivate" | "delete";
 
 interface AdminFormValues {
-  name: string;
+  id?: number;
+  full_name: string;
   email: string;
-  role: "" | AdminRole;
-  state: "" | AdminState;
+  role_id: string;
+  is_active: "true" | "false" | "";
 }
 
 const emptyAdminForm: AdminFormValues = {
-  name: "",
+  full_name: "",
   email: "",
-  role: "",
-  state: "",
+  role_id: "",
+  is_active: "true",
 };
 
-const roleOptions: AdminRole[] = ["Super Admin", "Operations", "Sales", "Support"];
-const stateOptions: AdminState[] = ["Active", "Inactive"];
-
 export default function UserManagementPage() {
+  const { data: usersResponse, isLoading: usersLoading } = useSWR(
+    "/admin/users/",
+    () => getAdminUsers()
+  );
+  
+  const { data: rolesResponse, isLoading: rolesLoading } = useSWR(
+    "/admin/roles/",
+    () => getAdminRoles()
+  );
+
+  const users: AdminUserRow[] = usersResponse?.results || [];
+  const roles: AdminRoleRow[] = rolesResponse?.results || [];
+
+  const roleOptions = useMemo(() => roles.map(r => r.name), [roles]);
+  const stateOptions = ["Active", "Inactive"];
+
   const [modalMode, setModalMode] = useState<ModalMode>("create");
   const [modalOpen, setModalOpen] = useState(false);
   const [confirmation, setConfirmation] = useState<{
@@ -37,21 +58,27 @@ export default function UserManagementPage() {
     user: AdminUserRow;
   } | null>(null);
   const [formValues, setFormValues] = useState<AdminFormValues>(emptyAdminForm);
+  const [initialFormValues, setInitialFormValues] = useState<AdminFormValues | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const openCreateModal = () => {
     setModalMode("create");
     setFormValues(emptyAdminForm);
+    setInitialFormValues(null);
     setModalOpen(true);
   };
 
   const openEditModal = (user: AdminUserRow) => {
     setModalMode("edit");
-    setFormValues({
-      name: user.name,
+    const values: AdminFormValues = {
+      id: user.id,
+      full_name: user.full_name,
       email: user.email,
-      role: user.role,
-      state: user.state,
-    });
+      role_id: user.role_id?.toString() || "",
+      is_active: user.is_active ? "true" : "false",
+    };
+    setFormValues(values);
+    setInitialFormValues(values);
     setModalOpen(true);
   };
 
@@ -60,7 +87,7 @@ export default function UserManagementPage() {
 
   const openStatusConfirmation = (user: AdminUserRow) => {
     setConfirmation({
-      action: user.state === "Active" ? "deactivate" : "activate",
+      action: user.is_active ? "deactivate" : "activate",
       user,
     });
   };
@@ -72,11 +99,11 @@ export default function UserManagementPage() {
   const fields = useMemo<DashboardFormModalField[]>(
     () => [
       {
-        id: "name",
+        id: "full_name",
         label: "Name",
         type: "text",
         placeholder: modalMode === "edit" ? undefined : "Enter Full name",
-        value: formValues.name,
+        value: formValues.full_name,
         required: true,
       },
       {
@@ -88,37 +115,74 @@ export default function UserManagementPage() {
         required: true,
       },
       {
-        id: "role",
+        id: "role_id",
         label: "Role",
         type: "select",
         placeholder: "Select a role",
-        value: formValues.role,
+        value: formValues.role_id ? roles.find(r => r.id.toString() === formValues.role_id)?.name || "" : "",
         options: roleOptions,
         required: true,
       },
       {
-        id: "state",
+        id: "is_active",
         label: "State",
         type: "select",
         placeholder: "Select state",
-        value: formValues.state,
+        value: formValues.is_active === "true" ? "Active" : (formValues.is_active === "false" ? "Inactive" : ""),
         options: stateOptions,
         required: true,
       },
     ],
-    [formValues, modalMode]
+    [formValues, modalMode, roleOptions, roles]
   );
 
   const handleFieldChange = (fieldId: string, value: string) => {
-    setFormValues((current) => ({ ...current, [fieldId]: value }));
+    if (fieldId === "role_id") {
+      const selectedRole = roles.find(r => r.name === value);
+      setFormValues((current) => ({ ...current, role_id: selectedRole ? selectedRole.id.toString() : "" }));
+    } else if (fieldId === "is_active") {
+      setFormValues((current) => ({ ...current, is_active: value === "Active" ? "true" : "false" }));
+    } else {
+      setFormValues((current) => ({ ...current, [fieldId]: value }));
+    }
   };
 
-  const handleSubmit = () => {
-    closeModal();
+  const handleSubmit = async () => {
+    try {
+      const payload = {
+        full_name: formValues.full_name,
+        email: formValues.email,
+        role_id: parseInt(formValues.role_id, 10),
+        is_active: formValues.is_active === "true",
+      };
+
+      if (modalMode === "create") {
+        await createAdminUser(payload);
+      } else if (modalMode === "edit" && formValues.id) {
+        await updateAdminUser(formValues.id, payload);
+      }
+      await mutate("/admin/users/");
+      closeModal();
+    } catch (error) {
+      console.error("Failed to save user", error);
+    }
   };
 
-  const handleConfirmAction = () => {
-    closeConfirmationModal();
+  const handleConfirmAction = async () => {
+    if (!confirmation) return;
+    
+    try {
+      if (confirmation.action === "delete") {
+        await deleteAdminUser(confirmation.user.id);
+      } else {
+        const isActivating = confirmation.action === "activate";
+        await updateAdminUser(confirmation.user.id, { is_active: isActivating });
+      }
+      await mutate("/admin/users/");
+      closeConfirmationModal();
+    } catch (error) {
+      console.error("Failed to perform action", error);
+    }
   };
 
   const confirmationContent = confirmation
@@ -159,17 +223,34 @@ export default function UserManagementPage() {
       }[confirmation.action]
     : null;
 
+  const hasChanges =
+    modalMode === "create" ||
+    (initialFormValues &&
+      (formValues.full_name !== initialFormValues.full_name ||
+        formValues.email !== initialFormValues.email ||
+        formValues.role_id !== initialFormValues.role_id ||
+        formValues.is_active !== initialFormValues.is_active));
+
   return (
     <>
+      <DashboardNavbar 
+        onPrimaryAction={openCreateModal} 
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+      />
       
-      
-        <DashboardNavbar onPrimaryAction={openCreateModal} />
+      {usersLoading || rolesLoading ? (
+        <div style={{ padding: "2rem", textAlign: "center" }}>Loading users...</div>
+      ) : (
         <UserManagement
+          users={users}
+          roles={roles}
+          searchQuery={searchQuery}
           onEditUser={openEditModal}
           onToggleUserStatus={openStatusConfirmation}
           onDeleteUser={openDeleteConfirmation}
         />
-      
+      )}
 
       <DashboardFormModal
         open={modalOpen}
@@ -182,6 +263,7 @@ export default function UserManagementPage() {
         }
         fields={fields}
         primaryLabel={modalMode === "create" ? "Create Admin" : "Save Admin"}
+        primaryDisabled={modalMode === "edit" && !hasChanges}
         onClose={closeModal}
         onSubmit={handleSubmit}
         onFieldChange={handleFieldChange}

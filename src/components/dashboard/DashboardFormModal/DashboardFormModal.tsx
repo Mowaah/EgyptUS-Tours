@@ -22,6 +22,7 @@ interface DashboardFormModalProps {
   mode?: "create" | "edit";
   fields: DashboardFormModalField[];
   primaryLabel: string;
+  primaryDisabled?: boolean;
   onClose: () => void;
   onSubmit: () => void;
   onFieldChange: (fieldId: string, value: string) => void;
@@ -51,6 +52,7 @@ export default function DashboardFormModal({
   mode = "create",
   fields,
   primaryLabel,
+  primaryDisabled,
   onClose,
   onSubmit,
   onFieldChange,
@@ -174,7 +176,7 @@ export default function DashboardFormModal({
             <button type="button" className={styles.cancelButton} onClick={onClose}>
               Cancel
             </button>
-            <button type="submit" className={styles.primaryButton}>
+            <button type="submit" className={styles.primaryButton} disabled={primaryDisabled}>
               {primaryLabel}
               {mode === "edit" ? (
                 <Image

@@ -14,7 +14,7 @@ import { resetAdminPassword } from "@/lib/adminCoreApi";
 export default function CreateNewPasswordPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const uidb64 = searchParams.get("uidb64");
+  const uidb64 = searchParams.get("uidb64") || searchParams.get("uid");
   const token = searchParams.get("token");
 
   const [password, setPassword] = useState("");
@@ -56,7 +56,7 @@ export default function CreateNewPasswordPage() {
 
     setIsSubmitting(true);
     try {
-      await resetAdminPassword({ uidb64, token, new_password: password });
+      await resetAdminPassword({ uidb64, token, new_password: password, confirm_password: confirmPassword });
       setSuccessMsg("Your password has been reset successfully. You can now login.");
       setTimeout(() => {
         router.push("/dashboard/login");

@@ -1,11 +1,19 @@
-export type AdminRole = "Super Admin" | "Operations" | "Sales" | "Support";
-export type AdminState = "Active" | "Inactive";
+export interface AdminRoleRow {
+  id: number;
+  name: string;
+  slug: string;
+}
 
 export interface AdminUserRow {
-  id: string;
-  name: string;
+  id: number;
+  display_id: string;
+  full_name: string;
   email: string;
-  role: AdminRole;
-  lastLogin: string;
-  state: AdminState;
+  role: string;
+  role_label: string;
+  role_id: number;
+  profile_picture: string | null;
+  last_login: string | null;
+  is_active: boolean;
+  date_joined: string;
 }
