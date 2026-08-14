@@ -2,7 +2,10 @@
 
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent, type SVGProps } from "react";
 import Image from "next/image";
+import { mutate } from "swr";
 import { DashboardField, DashboardStatusBanner, DashboardFooter } from "@/components/dashboard/shared";;
+import { updateSystemConfig } from "@/services/admin/adminSystemConfigService";
+import type { SystemConfigResponse } from "@/services/admin/adminSystemConfigService";
 import styles from "./SystemConfiguration.module.scss";
 
 interface ConfigurationValues {
@@ -10,34 +13,11 @@ interface ConfigurationValues {
   contactEmail: string;
   phone: string;
   address: string;
-  smtpHost: string;
-  port: string;
-  username: string;
-  password: string;
 }
 
-const initialValues: ConfigurationValues = {
-  companyName: "",
-  contactEmail: "",
-  phone: "",
-  address: "",
-  smtpHost: "",
-  port: "",
-  username: "",
-  password: "",
-};
-
-const initialLogo = {
-  name: "",
-  src: "",
-};
-
-const usernameOptions = [
-  { label: "Select username", value: "", disabled: true },
-  { label: "no-reply@travelco.com", value: "no-reply@travelco.com" },
-  { label: "support@travelco.com", value: "support@travelco.com" },
-  { label: "operations@travelco.com", value: "operations@travelco.com" },
-];
+interface SystemConfigurationProps {
+  initialConfig?: SystemConfigResponse;
+}
 
 const saveSuccessMessage =
   "The changes you made in the System Configuration page have been saved successfully.";
@@ -47,14 +27,6 @@ function UploadIcon(props: SVGProps<SVGSVGElement>) {
     <svg viewBox="0 0 20 20" aria-hidden="true" {...props}>
       <path d="M10 16V4" />
       <path d="m5.5 8.5 4.5-4 4.5 4" />
-    </svg>
-  );
-}
-
-function ChevronDownIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 20 20" aria-hidden="true" {...props}>
-      <path d="m5.5 7.5 4.5 4 4.5-4" />
     </svg>
   );
 }
@@ -82,12 +54,44 @@ function SectionHeader({
   );
 }
 
-export default function SystemConfiguration() {
+export default function SystemConfiguration({ initialConfig }: SystemConfigurationProps) {
+  const initialValues: ConfigurationValues = {
+    companyName: initialConfig?.company_name || "",
+    contactEmail: initialConfig?.contact_email || "",
+    phone: initialConfig?.phone || "",
+    address: initialConfig?.address || "",
+  };
+
+  const initialLogo = {
+    name: initialConfig?.logo ? (initialConfig.logo.split('/').pop()?.split('?')[0] || "Current Logo") : "",
+    src: initialConfig?.logo || "",
+    file: null as File | null,
+    removed: false,
+  };
+
   const [values, setValues] = useState<ConfigurationValues>(initialValues);
   const [logo, setLogo] = useState(initialLogo);
   const [showSaveNotice, setShowSaveNotice] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [apiErrors, setApiErrors] = useState<Record<string, string>>({});
   const logoInputRef = useRef<HTMLInputElement>(null);
+
+  const hasUnsavedChanges =
+    values.companyName !== initialValues.companyName ||
+    values.contactEmail !== initialValues.contactEmail ||
+    values.phone !== initialValues.phone ||
+    values.address !== initialValues.address ||
+    logo.file !== null ||
+    logo.removed;
+
+  // Basic email regex
+  const isValidEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  // E.164 phone format or generic 10-15 digit phone
+  const isValidPhone = (phone: string) =>
+    /^\+?[1-9]\d{1,14}$/.test(phone.replace(/[\s-]/g, ''));
 
   useEffect(() => {
     return () => {
@@ -97,11 +101,10 @@ export default function SystemConfiguration() {
     };
   }, [logo.src]);
 
-
-
   const updateValue = (field: keyof ConfigurationValues, value: string) => {
     setValues((current) => ({ ...current, [field]: value }));
     if (hasSubmitted) setHasSubmitted(false);
+    if (apiErrors[field]) setApiErrors((curr) => ({ ...curr, [field]: "" }));
   };
 
   const handleDiscard = () => {
@@ -110,7 +113,6 @@ export default function SystemConfiguration() {
       if (current.src.startsWith("blob:")) {
         URL.revokeObjectURL(current.src);
       }
-
       return initialLogo;
     });
     if (logoInputRef.current) {
@@ -120,7 +122,6 @@ export default function SystemConfiguration() {
 
   const handleLogoUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-
     if (!file) return;
 
     const nextLogoSrc = URL.createObjectURL(file);
@@ -132,29 +133,88 @@ export default function SystemConfiguration() {
       return {
         name: file.name,
         src: nextLogoSrc,
+        file,
+        removed: false,
       };
     });
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const toBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setHasSubmitted(true);
     
     if (
       !values.companyName.trim() ||
       !values.contactEmail.trim() ||
+      !isValidEmail(values.contactEmail) ||
       !values.phone.trim() ||
-      !values.address.trim() ||
-      !values.smtpHost.trim() ||
-      !values.port.trim() ||
-      !values.username.trim() ||
-      !values.password.trim()
+      !isValidPhone(values.phone) ||
+      !values.address.trim()
     ) {
       return;
     }
 
-    setShowSaveNotice(true);
-    setHasSubmitted(false);
+    setIsSaving(true);
+    try {
+      let logoBase64: string | null | undefined = undefined;
+
+      if (logo.removed) {
+        logoBase64 = null;
+      } else if (logo.file) {
+        logoBase64 = await toBase64(logo.file);
+      }
+
+      await updateSystemConfig({
+        company_name: values.companyName,
+        contact_email: values.contactEmail,
+        phone: values.phone,
+        address: values.address,
+        ...(logoBase64 !== undefined && { logo: logoBase64 })
+      });
+      
+      const updatedData = await mutate("/system-config/");
+      
+      if (updatedData) {
+        setLogo({
+          name: updatedData.logo ? (updatedData.logo.split('/').pop()?.split('?')[0] || "Current Logo") : "",
+          src: updatedData.logo || "",
+          file: null,
+          removed: false,
+        });
+      }
+      
+      if (logoInputRef.current) {
+        logoInputRef.current.value = "";
+      }
+
+      setShowSaveNotice(true);
+      setHasSubmitted(false);
+    } catch (error: any) {
+      console.error(error);
+      if (error.response?.data && typeof error.response.data === 'object') {
+        const errors: Record<string, string> = {};
+        for (const [key, val] of Object.entries(error.response.data)) {
+          if (Array.isArray(val) && val.length > 0) {
+            errors[key] = val[0];
+          } else if (typeof val === 'string') {
+            errors[key] = val;
+          }
+        }
+        setApiErrors(errors);
+      } else {
+        alert("Failed to save system configuration.");
+      }
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -203,20 +263,38 @@ export default function SystemConfiguration() {
             aria-label="Upload new company logo"
             onChange={handleLogoUpload}
           />
-          <button
-            type="button"
-            className={styles.uploadButton}
-            onClick={() => logoInputRef.current?.click()}
-          >
-            Upload New
-            <Image
-              src="/images/dashboard/arrow-up.svg"
-              alt=""
-              width={20}
-              height={20}
-              className={styles.buttonIcon}
-            />
-          </button>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button
+              type="button"
+              className={styles.uploadButton}
+              onClick={() => logoInputRef.current?.click()}
+            >
+              Upload New
+              <Image
+                src="/images/dashboard/arrow-up.svg"
+                alt=""
+                width={20}
+                height={20}
+                className={styles.buttonIcon}
+              />
+            </button>
+            {logo.src && (
+              <button
+                type="button"
+                className={styles.removeButton}
+                onClick={() => setLogo({ name: "", src: "", file: null, removed: true })}
+              >
+                Remove
+                <Image
+                  src="/images/dashboard/delete.svg"
+                  alt=""
+                  width={20}
+                  height={20}
+                  className={styles.buttonIcon}
+                />
+              </button>
+            )}
+          </div>
         </div>
 
         <div className={styles.fieldPanel}>
@@ -228,7 +306,11 @@ export default function SystemConfiguration() {
             onChange={(e) => updateValue("companyName", e.target.value)}
             placeholder="Enter Company name"
             className={styles.fieldInput}
-            error={hasSubmitted && !values.companyName.trim() ? "This field is required" : undefined}
+            error={
+              (hasSubmitted && !values.companyName.trim())
+                ? "This field is required"
+                : apiErrors.company_name || undefined
+            }
           />
           <DashboardField
             id="system-contact-email"
@@ -239,17 +321,30 @@ export default function SystemConfiguration() {
             onChange={(e) => updateValue("contactEmail", e.target.value)}
             placeholder="Enter Contact email"
             className={styles.fieldInput}
-            error={hasSubmitted && !values.contactEmail.trim() ? "This field is required" : undefined}
+            error={
+              (hasSubmitted && !values.contactEmail.trim())
+                ? "This field is required"
+                : (hasSubmitted && !isValidEmail(values.contactEmail))
+                ? "Invalid email address"
+                : apiErrors.contact_email || undefined
+            }
           />
           <DashboardField
             id="system-phone"
             variant="modal"
             label="Phone"
+            type="tel"
             value={values.phone}
-            onChange={(e) => updateValue("phone", e.target.value)}
+            onChange={(e) => updateValue("phone", e.target.value.replace(/[^\d\s\-\+]/g, ''))}
             placeholder="+20 123 456 7890"
             className={styles.fieldInput}
-            error={hasSubmitted && !values.phone.trim() ? "This field is required" : undefined}
+            error={
+              (hasSubmitted && !values.phone.trim())
+                ? "This field is required"
+                : (hasSubmitted && !isValidPhone(values.phone))
+                ? "Invalid phone number format"
+                : apiErrors.phone || undefined
+            }
           />
           <DashboardField
             id="system-address"
@@ -259,11 +354,16 @@ export default function SystemConfiguration() {
             onChange={(e) => updateValue("address", e.target.value)}
             placeholder="Type your Location..."
             className={styles.fieldInput}
-            error={hasSubmitted && !values.address.trim() ? "This field is required" : undefined}
+            error={
+              (hasSubmitted && !values.address.trim())
+                ? "This field is required"
+                : apiErrors.address || undefined
+            }
           />
         </div>
       </section>
 
+      {/* 
       <section className={styles.card} aria-labelledby="email-smtp-title">
         <SectionHeader id="email-smtp-title" title="Email SMTP Settings" icon="mail" />
 
@@ -272,53 +372,43 @@ export default function SystemConfiguration() {
             id="system-smtp-host"
             variant="modal"
             label="SMTP host"
-            value={values.smtpHost}
-            onChange={(e) => updateValue("smtpHost", e.target.value)}
             placeholder="smtp.travelco.com"
             className={styles.fieldInput}
-            error={hasSubmitted && !values.smtpHost.trim() ? "This field is required" : undefined}
           />
           <DashboardField
             id="system-port"
             variant="modal"
             label="Port"
             inputMode="numeric"
-            value={values.port}
-            onChange={(e) => updateValue("port", e.target.value)}
             placeholder="465"
             className={styles.fieldInput}
-            error={hasSubmitted && !values.port.trim() ? "This field is required" : undefined}
           />
           <DashboardField
             id="system-username"
             variant="modal"
             control="select"
             label="Username"
-            options={usernameOptions}
-            value={values.username}
-            onChange={(e) => updateValue("username", e.target.value)}
+            options={[]}
             className={styles.fieldInput}
-            endAdornment={<ChevronDownIcon className={styles.selectChevron} />}
-            error={hasSubmitted && !values.username.trim() ? "This field is required" : undefined}
           />
           <DashboardField
             id="system-password"
             variant="modal"
             label="Password"
             type="password"
-            value={values.password}
-            onChange={(e) => updateValue("password", e.target.value)}
             placeholder="****************"
             className={styles.fieldInput}
-            error={hasSubmitted && !values.password.trim() ? "This field is required" : undefined}
           />
         </div>
       </section>
+      */}
 
       <DashboardFooter 
-        lastUpdateDate="42/6/206" 
+        lastUpdateDate={initialConfig?.updated_at ? new Date(initialConfig.updated_at).toLocaleDateString() : ""} 
         isSubmit={true} 
-        onDiscard={handleDiscard} 
+        onDiscard={handleDiscard}
+        isSaveDisabled={isSaving || !hasUnsavedChanges}
+        isDiscardDisabled={isSaving || !hasUnsavedChanges}
       />
     </form>
   );

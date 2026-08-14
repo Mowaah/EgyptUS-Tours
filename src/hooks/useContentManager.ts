@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
+import useSWR from "swr";
 import { type ContentItem, type ContentGridRef } from "@/components/dashboard/ContentGrid/ContentGrid";
 
 export interface UseContentManagerProps {
@@ -22,33 +23,19 @@ export function useContentManager({
 }: UseContentManagerProps) {
   const contentGridRef = useRef<ContentGridRef>(null);
 
-  const [data, setData] = useState<ContentItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: swrData, isLoading: loading, mutate } = useSWR<ContentItem[]>(
+    [`content-manager-${itemName}`, ...dependencies],
+    fetchData
+  );
+
+  const data = swrData || [];
+
   const [viewState, setViewState] = useState<{ item: ContentItem; index: number } | null>(null);
   const [editState, setEditState] = useState<ContentItem | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   const [saveSuccessOpen, setSaveSuccessOpen] = useState(false);
   const [saveMode, setSaveMode] = useState<"add" | "edit">("add");
   const [deleteItem, setDeleteItem] = useState<ContentItem | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        const items = await fetchData();
-        if (isMounted) setData(items);
-      } catch (err) {
-        console.error(`Failed to fetch ${itemName}s:`, err);
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
-    loadData();
-    
-    return () => { isMounted = false; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, dependencies);
 
   const handleView = (item: ContentItem, index: number) => setViewState({ item, index });
   
@@ -61,8 +48,9 @@ export function useContentManager({
 
   const handlePublishItem = async (item: ContentItem) => {
     try {
+      mutate(data.map(i => i.id === item.id ? { ...i, status: "Published" } : i), false);
       await updateStatus(item.id, true);
-      setData(prev => prev.map(i => i.id === item.id ? { ...i, status: "Published" } : i));
+      mutate();
       contentGridRef.current?.showBanner(`The ${itemName} has been successfully republished`, "success");
     } catch (err) {
       console.error(`Failed to publish ${itemName}:`, err);
@@ -71,8 +59,9 @@ export function useContentManager({
 
   const handleUnpublishItem = async (item: ContentItem) => {
     try {
+      mutate(data.map(i => i.id === item.id ? { ...i, status: "Unpublished" } : i), false);
       await updateStatus(item.id, false);
-      setData(prev => prev.map(i => i.id === item.id ? { ...i, status: "Unpublished" } : i));
+      mutate();
       contentGridRef.current?.showBanner(`The ${itemName} has been unpublished successfully`, "warning");
     } catch (err) {
       console.error(`Failed to unpublish ${itemName}:`, err);
@@ -86,8 +75,9 @@ export function useContentManager({
   const confirmDelete = async () => {
     if (deleteItem) {
       try {
+        mutate(data.filter(i => i.id !== deleteItem.id), false);
         await deleteItemApi(deleteItem.id);
-        setData(prev => prev.filter(i => i.id !== deleteItem.id));
+        mutate();
         setDeleteItem(null);
         contentGridRef.current?.showBanner(`The ${itemName} has been deleted successfully`, "success");
       } catch (err) {
@@ -100,12 +90,13 @@ export function useContentManager({
     try {
       if (mode === "add") {
         const newItem = await createItem(title, content, published);
-        setData(prev => [...prev, newItem]);
+        mutate([...data, newItem], false);
       } else if (editState) {
         const updatedItem = await updateItem(editState.id, title, content, published);
-        setData(prev => prev.map(i => i.id === editState.id ? updatedItem : i));
+        mutate(data.map(i => i.id === editState.id ? updatedItem : i), false);
       }
 
+      mutate();
       setSaveMode(mode);
       setSaveSuccessOpen(true);
     } catch (err) {

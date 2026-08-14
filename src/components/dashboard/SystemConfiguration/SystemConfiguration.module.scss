@@ -197,6 +197,7 @@
 }
 
 .uploadButton,
+.removeButton,
 .discardButton,
 .saveButton {
   display: inline-flex;
@@ -226,6 +227,17 @@
   padding: 0 1.5rem;
 }
 
+.removeButton {
+  gap: 0.5rem;
+  padding: 0 1.5rem;
+  color: #e53e3e;
+  background: rgba(229, 62, 62, 0.1);
+
+  &:hover {
+    background: rgba(229, 62, 62, 0.15);
+  }
+}
+
 .buttonIcon {
   width: 1.25rem;
   height: 1.25rem;
@@ -252,7 +264,8 @@
     gap: 1rem;
   }
 
-  .uploadButton {
+  .uploadButton,
+  .removeButton {
     width: 100%;
   }
 }
