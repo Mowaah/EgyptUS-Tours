@@ -1,0 +1,36 @@
+@use "@/styles/variables" as *;
+
+.titleLegend {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 4px;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.colorIndicatorPrimary {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background-color: #2388FF;
+}
+
+.colorIndicatorSecondary {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background-color: #8DC1FF;
+  opacity: 0.6;
+}
+
+.legendLabel {
+  font-size: $font-size-xs;
+  color: $gray-500;
+  font-weight: 500;
+}
+

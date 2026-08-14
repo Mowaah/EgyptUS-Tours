@@ -1,28 +1,51 @@
+import { useMemo } from "react";
 import RoundedDonutChart from "@/components/dashboard/shared/RoundedDonutChart/RoundedDonutChart";
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
-import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 import parentStyles from "../ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
 import styles from "./LostLeadsAnalysis.module.scss";
+import type { LostLeadsAnalysisData } from "@/services/admin/adminReportsService";
 
-export default function LostLeadsAnalysis({ actions }: { actions?: React.ReactNode }) {
-  const chartData = [
-    { label: "Price too high", value: 40, color: "#A1CCFF" },
-    { label: "Booked competitor", value: 30, color: "#FFC6A0" },
-    { label: "No response", value: 20, color: "#FFD6DD" },
-    { label: "Date unavailable", value: 10, color: "#E9BDFF" },
-    { label: "Other", value: 30, color: "#A1FFAF" },
-  ];
+const COLORS = [
+  "#A1CCFF",
+  "#FFC6A0",
+  "#FFD6DD",
+  "#E9BDFF",
+  "#A1FFAF",
+  "#FDE68A",
+  "#C7D2FE",
+  "#FECDD3",
+];
 
-  const leftColumnData = [
-    { label: "Price too high", value: 40, color: "#A1CCFF" },
-    { label: "No response", value: 20, color: "#FFD6DD" },
-    { label: "Other", value: 30, color: "#A1FFAF" },
-  ];
+interface LostLeadsAnalysisProps {
+  data?: LostLeadsAnalysisData;
+  actions?: React.ReactNode;
+}
 
-  const rightColumnData = [
-    { label: "Booked competitor", value: 30, color: "#FFC6A0" },
-    { label: "Date unavailable", value: 10, color: "#E9BDFF" },
-  ];
+export default function LostLeadsAnalysis({ data, actions }: LostLeadsAnalysisProps) {
+  const chartData = useMemo(() => {
+    if (!data?.by_reason_count || data.by_reason_count.length === 0) {
+      return [];
+    }
+    return data.by_reason_count.map((item, index) => ({
+      label: item.reason,
+      value: item.percentage,
+      count: item.count,
+      color: COLORS[index % COLORS.length],
+    }));
+  }, [data]);
+
+  const { leftColumnData, rightColumnData } = useMemo(() => {
+    if (!chartData.length) {
+      return { leftColumnData: [], rightColumnData: [] };
+    }
+    const mid = Math.ceil(chartData.length / 2);
+    return {
+      leftColumnData: chartData.slice(0, mid),
+      rightColumnData: chartData.slice(mid),
+    };
+  }, [chartData]);
+
+  const totalLost = data?.total_lost !== undefined ? data.total_lost.toString() : "0";
 
   return (
     <article className={parentStyles.chartCard}>
@@ -34,11 +57,13 @@ export default function LostLeadsAnalysis({ actions }: { actions?: React.ReactNo
       />
       
       <div className={styles.donutWrapper}>
-        <RoundedDonutChart 
-          data={chartData} 
-          centerValue="500" 
-          centerLabel="Lost" 
-        />
+        <div className={styles.donutChartContainer}>
+          <RoundedDonutChart 
+            data={chartData} 
+            centerValue={totalLost} 
+            centerLabel="Lost" 
+          />
+        </div>
         
         <div className={styles.legendCard}>
           <div className={styles.legendColumn}>
@@ -51,7 +76,7 @@ export default function LostLeadsAnalysis({ actions }: { actions?: React.ReactNo
                 />
                 <div className={styles.legendText}>
                   <span className={styles.legendValue}>{item.value}%</span>
-                  <span className={styles.legendLabel}>{item.label}</span>
+                  <span className={styles.legendLabel} title={item.label}>{item.label}</span>
                 </div>
               </div>
             ))}
@@ -67,7 +92,7 @@ export default function LostLeadsAnalysis({ actions }: { actions?: React.ReactNo
                 />
                 <div className={styles.legendText}>
                   <span className={styles.legendValue}>{item.value}%</span>
-                  <span className={styles.legendLabel}>{item.label}</span>
+                  <span className={styles.legendLabel} title={item.label}>{item.label}</span>
                 </div>
               </div>
             ))}

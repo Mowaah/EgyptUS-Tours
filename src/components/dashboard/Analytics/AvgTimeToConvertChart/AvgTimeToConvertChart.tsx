@@ -1,55 +1,106 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useMemo } from "react";
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
-import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 import parentStyles from "../ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
 import styles from "./AvgTimeToConvertChart.module.scss";
+import type { AvgTimeToConvertItem } from "@/services/admin/adminReportsService";
 
-// 75 data points to map closely to the 5 horizontal segments
-const dataBlue = [6.6, 6.4, 6.3, 6.3, 6.1, 6.1, 6.4, 6.4, 6.3, 6.4, 6.7, 6.7, 6.7, 6.4, 6.1, 6.2, 6.0, 6.0, 5.9, 5.9, 5.6, 5.8, 5.8, 5.9, 5.9, 6.0, 6.0, 5.8, 6.0, 6.1, 6.4, 6.5, 6.5, 6.4, 6.4, 6.5, 6.5, 6.4, 6.4, 6.3, 6.2, 6.2, 6.2, 6.4, 6.2, 6.6, 7.4, 7.1, 7.2, 6.5, 6.6, 6.3, 6.4, 6.4, 6.4, 6.2, 6.3, 6.3, 6.4, 6.2, 6.4, 6.2, 6.0, 6.0, 6.1, 6.0, 5.8, 5.9, 5.3, 5.4, 5.3, 5.4, 5.5, 5.5, 5.5, 5.5, 5.3, 5.7, 5.7, 6.0, 6.0];
-const dataOrange = [3.6, 3.9, 3.7, 3.7, 3.6, 3.6, 3.8, 3.8, 4.2, 4.3, 4.0, 3.6, 3.5, 3.5, 3.5, 3.6, 3.6, 3.8, 3.8, 3.5, 3.3, 3.5, 3.4, 3.3, 3.0, 3.4, 3.5, 3.7, 3.6, 3.4, 3.4, 3.5, 3.4, 3.4, 3.5, 3.6, 3.4, 3.2, 3.0, 3.2, 3.3, 3.3, 3.1, 3.0, 3.0, 3.0, 3.0, 2.6, 2.4, 2.2, 2.2, 2.1, 2.0, 2.2, 2.4, 2.1, 1.8, 2.2, 2.1, 2.2, 2.6, 2.8, 2.9, 2.6, 2.6, 2.5, 2.9, 2.9, 2.6, 2.5, 2.6, 2.6, 2.8, 3.5, 4.6];
+interface AvgTimeToConvertChartProps {
+  data?: AvgTimeToConvertItem[];
+  actions?: React.ReactNode;
+}
 
-const generatePath = (dataArray: number[]) => {
-  const stepX = 100 / (dataArray.length - 1);
-  return dataArray.map((y, i) => {
-    const x = i * stepX;
-    const scaledY = 10 - y; // map 0-10 domain to 10-0 range
-    return `${i === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${scaledY.toFixed(2)}`;
-  }).join(' ');
+const DEFAULT_CHANNELS = ["Website", "Phone", "Email", "Walk-In", "Social Media", "Others"];
+
+const getSmoothPath = (points: { x: number; y: number }[]) => {
+  if (!points.length) return "";
+  if (points.length === 1) return `M ${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}`;
+
+  let path = `M ${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}`;
+  for (let i = 0; i < points.length - 1; i++) {
+    const p0 = points[Math.max(0, i - 1)];
+    const p1 = points[i];
+    const p2 = points[i + 1];
+    const p3 = points[Math.min(points.length - 1, i + 2)];
+
+    const cp1x = p1.x + (p2.x - p0.x) / 6;
+    const cp1y = p1.y + (p2.y - p0.y) / 6;
+    const cp2x = p2.x - (p3.x - p1.x) / 6;
+    const cp2y = p2.y - (p3.y - p1.y) / 6;
+
+    path += ` C ${cp1x.toFixed(2)} ${cp1y.toFixed(2)}, ${cp2x.toFixed(2)} ${cp2y.toFixed(2)}, ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`;
+  }
+  return path;
 };
 
-const pathBlue = generatePath(dataBlue);
-const pathOrange = generatePath(dataOrange);
-const areaBlue = `${pathBlue} L 100 10 L 0 10 Z`;
-const areaOrange = `${pathOrange} L 100 10 L 0 10 Z`;
-
-const yAxisLabels = [10, 8, 6, 4, 2, 0];
-const xAxisLabels = ["WEBSITE", "PHONE", "EMAIL", "WALK-IN", "SOCIAL MEDIA", "OTHERS"];
-
-export default function AvgTimeToConvertChart({ actions }: { actions?: React.ReactNode }) {
+export default function AvgTimeToConvertChart({ data = [], actions }: AvgTimeToConvertChartProps) {
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
+  const displayData = useMemo(() => {
+    if (data && data.length > 0) {
+      return data;
+    }
+    return DEFAULT_CHANNELS.map((ch) => ({
+      channel: ch.toLowerCase().replace(/\s+/g, "_"),
+      label: ch,
+      avg_days: 0,
+      converted_count: 0,
+    }));
+  }, [data]);
+
+  const maxY = useMemo(() => {
+    const maxVal = Math.max(...displayData.map((d) => d.avg_days), 0);
+    if (maxVal === 0) return 10;
+    return Math.max(Math.ceil(maxVal * 1.2), 5);
+  }, [displayData]);
+
+  const yAxisLabels = useMemo(() => {
+    return [
+      maxY.toString(),
+      (Math.round(maxY * 0.8 * 10) / 10).toString(),
+      (Math.round(maxY * 0.6 * 10) / 10).toString(),
+      (Math.round(maxY * 0.4 * 10) / 10).toString(),
+      (Math.round(maxY * 0.2 * 10) / 10).toString(),
+      "0",
+    ];
+  }, [maxY]);
+
+  const xAxisLabels = useMemo(() => {
+    return displayData.map((d) => d.label.toUpperCase());
+  }, [displayData]);
+
+  const points = useMemo(() => {
+    const n = displayData.length;
+    return displayData.map((d, i) => {
+      const x = n > 1 ? (i / (n - 1)) * 100 : 50;
+      const scaledY = maxY > 0 ? 10 - (d.avg_days / maxY) * 10 : 10;
+      return { x, y: Math.max(0, Math.min(10, scaledY)) };
+    });
+  }, [displayData, maxY]);
+
+  const pathBlue = useMemo(() => getSmoothPath(points), [points]);
+  const areaBlue = useMemo(() => {
+    if (!pathBlue) return "";
+    return `${pathBlue} L 100 10 L 0 10 Z`;
+  }, [pathBlue]);
+
   const handleMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
+    if (!points.length) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
-    const percentage = x / rect.width;
-    const index = Math.round(percentage * (dataBlue.length - 1));
-    setHoverIndex(Math.max(0, Math.min(index, dataBlue.length - 1)));
+    const percentage = Math.max(0, Math.min(1, x / rect.width));
+    const index = Math.round(percentage * (points.length - 1));
+    setHoverIndex(index);
   };
 
   const handleMouseLeave = () => {
     setHoverIndex(null);
   };
 
-  let hoverX = 0;
-  let hoverY = 0;
-  let hoverVal = 0;
-  if (hoverIndex !== null) {
-    hoverX = (hoverIndex / (dataBlue.length - 1)) * 100;
-    hoverVal = dataBlue[hoverIndex];
-    hoverY = 10 - hoverVal;
-  }
+  const hoveredItem = hoverIndex !== null ? displayData[hoverIndex] : null;
+  const hoverX = hoverIndex !== null && points[hoverIndex] ? points[hoverIndex].x : 0;
+  const hoverY = hoverIndex !== null && points[hoverIndex] ? points[hoverIndex].y : 0;
 
   return (
     <article className={parentStyles.chartCard}>
@@ -64,28 +115,35 @@ export default function AvgTimeToConvertChart({ actions }: { actions?: React.Rea
         {/* Grid Lines Overlay */}
         <div className={styles.gridLines}>
           {yAxisLabels.map((_, i) => (
-            <div key={i} className={i === yAxisLabels.length - 1 ? styles.gridLineSolid : styles.gridLine} />
+            <div
+              key={i}
+              className={i === yAxisLabels.length - 1 ? styles.gridLineSolid : styles.gridLine}
+            />
           ))}
         </div>
 
         {/* Y-Axis */}
         <div className={styles.yAxis}>
-          {yAxisLabels.map(label => (
-            <span key={label} className={styles.yAxisLabel}>{label}</span>
+          {yAxisLabels.map((label) => (
+            <span key={label} className={styles.yAxisLabel}>
+              {label}
+            </span>
           ))}
         </div>
 
         {/* X-Axis */}
         <div className={styles.xAxis}>
           {xAxisLabels.map((label) => (
-            <span key={label} className={styles.xAxisLabel}>{label}</span>
+            <span key={label} className={styles.xAxisLabel}>
+              {label}
+            </span>
           ))}
         </div>
 
         {/* SVG Chart */}
         <div className={styles.svgWrapper}>
-          <svg 
-            viewBox="0 0 100 10" 
+          <svg
+            viewBox="0 0 100 10"
             preserveAspectRatio="none"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
@@ -97,59 +155,56 @@ export default function AvgTimeToConvertChart({ actions }: { actions?: React.Rea
                 <stop offset="48.25%" stopColor="#8DC1FF" />
                 <stop offset="103.37%" stopColor="rgba(255, 255, 255, 0.16)" />
               </linearGradient>
-              <linearGradient id="orangeGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#FDBA74" />
-                <stop offset="48.25%" stopColor="rgba(253, 186, 116, 0.5)" />
-                <stop offset="103.37%" stopColor="rgba(255, 255, 255, 0.16)" />
-              </linearGradient>
             </defs>
 
             {/* Blue Area */}
-            <path d={areaBlue} fill="url(#blueGradient)" opacity="0.12" />
-            
-            {/* Orange Area */}
-            <path d={areaOrange} fill="url(#orangeGradient)" opacity="0.32" />
+            {areaBlue && <path d={areaBlue} fill="url(#blueGradient)" opacity="0.16" />}
 
             {/* Blue Line */}
-            <path d={pathBlue} fill="none" stroke="#2388FF" strokeWidth="3" vectorEffect="non-scaling-stroke" />
-            
-            {/* Orange Line */}
-            <path d={pathOrange} fill="none" stroke="#FDBA74" strokeWidth="3" vectorEffect="non-scaling-stroke" />
+            {pathBlue && (
+              <path
+                d={pathBlue}
+                fill="none"
+                stroke="#2388FF"
+                strokeWidth="3"
+                vectorEffect="non-scaling-stroke"
+              />
+            )}
           </svg>
         </div>
 
-        {/* Interactive Tooltip Overlay (HTML instead of SVG to avoid distortion) */}
-        {hoverIndex !== null && (
+        {/* Interactive Tooltip Overlay */}
+        {hoverIndex !== null && hoveredItem && (
           <div className={styles.tooltipContainer}>
             {/* Vertical Marker Line */}
-            <div 
-              className={styles.tooltipMarkerLine} 
-              style={{ 
-                left: `${hoverX}%`, 
-                top: `${hoverY * 10}%` 
-              }} 
+            <div
+              className={styles.tooltipMarkerLine}
+              style={{
+                left: `${hoverX}%`,
+                top: `${hoverY * 10}%`,
+              }}
             />
 
             {/* Hover Tooltip Point */}
-            <div 
+            <div
               className={styles.tooltipPointOuter}
               style={{
                 left: `${hoverX}%`,
-                top: `${hoverY * 10}%`
+                top: `${hoverY * 10}%`,
               }}
             >
               <div className={styles.tooltipPointInner} />
             </div>
-            
+
             {/* Tooltip Box */}
-            <div 
+            <div
               className={styles.tooltipBox}
               style={{
                 left: `${hoverX}%`,
-                top: `${hoverY * 10}%`
+                top: `${hoverY * 10}%`,
               }}
             >
-              {hoverVal.toFixed(1)}M
+              {hoveredItem.label}: {hoveredItem.avg_days} Days
             </div>
           </div>
         )}

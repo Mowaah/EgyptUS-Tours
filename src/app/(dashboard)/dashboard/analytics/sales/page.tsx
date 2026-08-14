@@ -2,7 +2,6 @@
 
 import { useMemo } from "react";
 import useSWR from "swr";
-import { useSearchParams } from "next/navigation";
 import SalesRevenueMetrics from "@/components/dashboard/Analytics/SalesRevenueMetrics/SalesRevenueMetrics";
 import RevenueByDestinationChart from "@/components/dashboard/shared/RevenueByDestinationChart/RevenueByDestinationChart";
 import ServiceRevenueChart from "@/components/dashboard/Analytics/ServiceRevenueChart/ServiceRevenueChart";
@@ -11,15 +10,16 @@ import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 import styles from "@/components/dashboard/Analytics/ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
 import { fetchSalesReports, downloadReportExport } from "@/services/admin/adminReportsService";
 
-export default function SalesReportsPage() {
-  const searchParams = useSearchParams();
-  let range = searchParams.get("range") || "this_month";
-  if (range === "30d") range = "last_30";
-  if (range === "7d") range = "this_week";
+const ALL_TIME_PARAMS = {
+  range: "custom",
+  date_from: "2000-01-01",
+  date_to: "2099-12-31",
+};
 
+export default function SalesReportsPage() {
   const { data: reportsData, isLoading } = useSWR(
-    ["/admin/reports/sales", range],
-    () => fetchSalesReports({ range }),
+    ["/admin/reports/sales/all-time"],
+    () => fetchSalesReports(ALL_TIME_PARAMS),
     {
       revalidateOnFocus: false,
     }
@@ -68,16 +68,16 @@ export default function SalesReportsPage() {
             tooltipFormat="revenue"
             maxValue={destinationData.maxValue}
             data={destinationData.chartData}
-            actions={<ExportButtons onCsvClick={() => downloadReportExport("sales", "revenue_by_destination", { range })} />}
+            actions={<ExportButtons onCsvClick={() => downloadReportExport("sales", "revenue_by_destination", ALL_TIME_PARAMS)} />}
           />
         </div>
         
         <div className={styles.rightColumn}>
-          <ServiceRevenueChart data={reportsData?.revenue_by_service} actions={<ExportButtons onCsvClick={() => downloadReportExport("sales", "revenue_by_service", { range })} />} />
+          <ServiceRevenueChart data={reportsData?.revenue_by_service} actions={<ExportButtons onCsvClick={() => downloadReportExport("sales", "revenue_by_service", ALL_TIME_PARAMS)} />} />
         </div>
       </div>
 
-      <RevenueByPartnerChart data={reportsData?.revenue_by_partner} actions={<ExportButtons onCsvClick={() => downloadReportExport("sales", "revenue_by_partner", { range })} />} />
+      <RevenueByPartnerChart data={reportsData?.revenue_by_partner} actions={<ExportButtons onCsvClick={() => downloadReportExport("sales", "revenue_by_partner", ALL_TIME_PARAMS)} />} />
     </div>
   );
 }

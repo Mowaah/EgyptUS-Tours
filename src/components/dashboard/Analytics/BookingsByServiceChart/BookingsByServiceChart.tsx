@@ -13,21 +13,21 @@ interface BookingsByServiceChartProps {
 export default function BookingsByServiceChart({ data, actions }: BookingsByServiceChartProps) {
   const distribution = useMemo(() => {
     if (!data) return [];
-    const values = [
-      data.trip || 0,
-      data.hotel || 0,
-      data.transport || 0,
-      data.mice || 0,
-      data.b2b || 0,
-    ];
+    const trip = Number(data.trip) || 0;
+    const hotel = Number(data.hotel) || 0;
+    const transport = Number(data.transport) || 0;
+    const mice = Number(data.mice) || 0;
+    const b2b = Number(data.b2b) || 0;
+
+    const values = [trip, hotel, transport, mice, b2b];
     const maxVal = Math.max(10, ...values);
 
     return [
-      { label: "Trips", value: ((data.trip || 0) / maxVal) * 100, displayValue: (data.trip || 0).toString(), color: "#A1CCFF", rawValue: data.trip || 0 },
-      { label: "Hotels", value: ((data.hotel || 0) / maxVal) * 100, displayValue: (data.hotel || 0).toString(), color: "#FFC6A0", rawValue: data.hotel || 0 },
-      { label: "Transport", value: ((data.transport || 0) / maxVal) * 100, displayValue: (data.transport || 0).toString(), color: "#FFD1DE", rawValue: data.transport || 0 },
-      { label: "MICE", value: ((data.mice || 0) / maxVal) * 100, displayValue: (data.mice || 0).toString(), color: "#E9BDFF", rawValue: data.mice || 0 },
-      { label: "B2B", value: ((data.b2b || 0) / maxVal) * 100, displayValue: (data.b2b || 0).toString(), color: "#A1F6CC", rawValue: data.b2b || 0 },
+      { label: "Trips", value: (trip / maxVal) * 100, displayValue: trip.toString(), color: "#A1CCFF", rawValue: trip },
+      { label: "Hotels", value: (hotel / maxVal) * 100, displayValue: hotel.toString(), color: "#FFC6A0", rawValue: hotel },
+      { label: "Transport", value: (transport / maxVal) * 100, displayValue: transport.toString(), color: "#FFD1DE", rawValue: transport },
+      { label: "MICE", value: (mice / maxVal) * 100, displayValue: mice.toString(), color: "#E9BDFF", rawValue: mice },
+      { label: "B2B", value: (b2b / maxVal) * 100, displayValue: b2b.toString(), color: "#A1F6CC", rawValue: b2b },
     ];
   }, [data]);
 

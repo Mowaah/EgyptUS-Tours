@@ -1,45 +1,34 @@
+import { useMemo } from "react";
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
 import parentStyles from "../ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
-import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
+import styles from "./HotelOccupancyChart.module.scss";
 import DoubleBarChart, { DoubleBarData } from "@/components/dashboard/shared/DoubleBarChart/DoubleBarChart";
-import { HotelOccupancy } from "@/services/admin/adminReportsService";
-import { useMemo } from "react";
+import type { HotelOccupancy } from "@/services/admin/adminReportsService";
 
 interface HotelOccupancyChartProps {
   data?: HotelOccupancy[];
   actions?: React.ReactNode;
 }
 
+const Y_AXIS_LABELS = ["100%", "75%", "50%", "25%", "0%"];
+
 export default function HotelOccupancyChart({ data = [], actions }: HotelOccupancyChartProps) {
+  const currentYear = data[0]?.current_year || new Date().getFullYear();
+  const previousYear = data[0]?.previous_year || currentYear - 1;
+
   const chartData: DoubleBarData[] = useMemo(() => {
     if (!data.length) return [];
-    
-    // Find the max available nights to set as 100% baseline for the chart height
-    const maxAvailable = Math.max(...data.map(d => d.available_room_nights));
-    
-    return data.map(item => ({
-      label: item.hotel_name,
-      // Available nights is the faded background bar
-      value2: maxAvailable > 0 ? (item.available_room_nights / maxAvailable) * 100 : 0,
-      // Booked nights is the solid foreground bar
-      value1: maxAvailable > 0 ? (item.booked_room_nights / maxAvailable) * 100 : 0,
-      // Pass the raw numbers so we can show them on hover if DoubleBarChart supported it,
-      // or at least to document why we scale by maxAvailable.
-    }));
-  }, [data]);
 
-  const yAxisLabels = useMemo(() => {
-    if (!data.length) return ["100", "75", "50", "25", "0"];
-    const maxAvailable = Math.max(...data.map(d => d.available_room_nights));
-    
-    // Create 5 steps (e.g., max, 75%, 50%, 25%, 0)
-    return [
-      Math.round(maxAvailable).toString(),
-      Math.round(maxAvailable * 0.75).toString(),
-      Math.round(maxAvailable * 0.5).toString(),
-      Math.round(maxAvailable * 0.25).toString(),
-      "0"
-    ];
+    return data.map((item) => {
+      const currentPct = parseFloat(item.current_year_occupancy_pct || item.approximate_occupancy_pct || "0");
+      const prevPct = parseFloat(item.previous_year_occupancy_pct || "0");
+
+      return {
+        label: item.hotel_name,
+        value1: Math.min(100, Math.max(0, currentPct)),
+        value2: Math.min(100, Math.max(0, prevPct)),
+      };
+    });
   }, [data]);
 
   return (
@@ -47,11 +36,23 @@ export default function HotelOccupancyChart({ data = [], actions }: HotelOccupan
       <PanelHeader
         icon="reports/hotel_occupancy"
         title="Hotel Occupancy"
-        subtitle="Booked vs Available Room Nights"
+        titleSuffix={
+          <div className={styles.titleLegend}>
+            <div className={styles.legendItem}>
+              <span className={styles.colorIndicatorPrimary} aria-hidden />
+              <span className={styles.legendLabel}>{currentYear}</span>
+            </div>
+            <div className={styles.legendItem}>
+              <span className={styles.colorIndicatorSecondary} aria-hidden />
+              <span className={styles.legendLabel}>{previousYear}</span>
+            </div>
+          </div>
+        }
+        subtitle="Approximate occupancy %"
         actions={actions}
       />
-      <DoubleBarChart data={chartData} yAxisLabels={yAxisLabels} />
+
+      <DoubleBarChart data={chartData} yAxisLabels={Y_AXIS_LABELS} />
     </article>
   );
-
 }

@@ -3,73 +3,90 @@
 .donutWrapper {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
   width: 100%;
-  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.donutChartContainer {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
   justify-content: center;
 }
 
 .legendCard {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 28px;
-  gap: 40px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  padding: 20px 16px;
+  gap: 16px;
   background: #F8FAFF;
-  border-radius: 24px;
-  width: 100%;
-  max-width: 404px;
+  border-radius: 20px;
+  flex: 1;
+  min-width: 0;
 }
 
 .legendColumn {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  min-width: 0;
 }
 
 .legendItem {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
+  min-width: 0;
 }
 
 .legendColor {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
+  margin-top: 4px;
   box-shadow: 0px 1px 4px rgba(25, 33, 61, 0.08);
 }
 
 .legendText {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
 }
 
 .legendValue {
   font-size: $font-size-sm;
   font-weight: 700;
-  line-height: 24px;
-  color: #1F2937;
+  line-height: 1.2;
+  color: $dark;
 }
 
 .legendLabel {
   font-size: $font-size-xs;
-  font-weight: 700;
-  line-height: 20px;
+  font-weight: 500;
+  line-height: 1.35;
   color: $gray-400;
-  white-space: nowrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
   .donutWrapper {
     flex-direction: column;
     align-items: center;
   }
   
   .legendCard {
-    justify-content: center;
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .legendCard {
+    grid-template-columns: 1fr;
   }
 }

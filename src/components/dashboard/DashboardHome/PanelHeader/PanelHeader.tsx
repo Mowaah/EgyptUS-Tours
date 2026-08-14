@@ -7,6 +7,7 @@ interface PanelHeaderProps {
   title: string;
   subtitle?: string;
   badge?: string;
+  titleSuffix?: React.ReactNode;
   range?: DashboardRange;
   onRangeChange?: (range: DashboardRange) => void;
   actions?: React.ReactNode;
@@ -18,6 +19,7 @@ export default function PanelHeader({
   title,
   subtitle,
   badge,
+  titleSuffix,
   range,
   onRangeChange,
   actions,
@@ -34,6 +36,7 @@ export default function PanelHeader({
         <div className={styles.titleRow}>
           <h2>{title}</h2>
           {badge ? <span className={styles.titleBadge}>{badge}</span> : null}
+          {titleSuffix}
         </div>
         {subtitle ? <p>{subtitle}</p> : null}
       </div>

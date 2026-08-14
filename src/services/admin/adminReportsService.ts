@@ -21,6 +21,10 @@ export interface HotelOccupancy {
   booked_room_nights: number;
   available_room_nights: number;
   approximate_occupancy_pct: string;
+  current_year?: number;
+  current_year_occupancy_pct?: string;
+  previous_year?: number;
+  previous_year_occupancy_pct?: string;
 }
 
 export interface FleetUtilization {
@@ -76,12 +80,52 @@ export interface SalesReportsPayload {
   revenue_by_partner: RevenueByPartner[];
 }
 
+export interface LeadSourceItem {
+  source: string;
+  label: string;
+  count: number;
+  percentage: number;
+}
+
+export interface LeadsBySourceData {
+  data_status: string;
+  total: number;
+  by_source_count: LeadSourceItem[];
+}
+
+export interface AvgTimeToConvertItem {
+  channel: string;
+  label: string;
+  avg_days: number;
+  converted_count: number;
+}
+
+export interface AvgTimeToConvertData {
+  data_status: string;
+  by_channel_days: AvgTimeToConvertItem[];
+}
+
+export interface LostLeadReasonItem {
+  reason: string;
+  count: number;
+  percentage: number;
+}
+
+export interface LostLeadsAnalysisData {
+  data_status: string;
+  total_lost: number;
+  by_reason_count: LostLeadReasonItem[];
+}
+
 export interface LeadsReportsPayload {
   range: string;
   date_from: string;
   date_to: string;
   tab: string;
   kpis: LeadsKpis;
+  leads_by_source: LeadsBySourceData;
+  avg_time_to_convert: AvgTimeToConvertData;
+  lost_leads_analysis: LostLeadsAnalysisData;
 }
 
 export interface NewVsReturningSeries {
