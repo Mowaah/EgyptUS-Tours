@@ -7,7 +7,7 @@ import { getCatalogHotels, getCatalogHotelDetail, getCatalogHotelLocations } fro
 export function useCatalogHotels(filters: any) {
   const { data: res, isLoading: loading, mutate: refetch } = useSWR(
     ["adminCatalogHotels", filters],
-    () => getCatalogHotels({ ...filters, limit: 1000, page_size: 1000 }),
+    () => getCatalogHotels(filters),
     { keepPreviousData: true }
   );
 

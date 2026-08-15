@@ -48,7 +48,7 @@ export default function PrivacyPolicyPage() {
   } = useContentManager({
     itemName: "Privacy Policy",
     fetchData: async () => {
-      const res = await getAdminPrivacySections({ limit: 100, search: searchQuery });
+      const res = await getAdminPrivacySections({ limit: 1000, search: searchQuery });
       return res.results.map(mapSectionToContentItem);
     },
     createItem: async (title, content, published) => {

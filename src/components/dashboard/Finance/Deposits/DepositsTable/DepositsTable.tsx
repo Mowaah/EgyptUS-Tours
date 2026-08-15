@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { TablePanel, TablePanelFilterBar } from "@/components/dashboard/TablePanel";
 import { depositsColumns, depositRowActions } from "../depositsColumns/depositsColumns";
@@ -13,6 +14,9 @@ interface DepositsTableProps {
 }
 
 export default function DepositsTable({ searchQuery = "", onClearSearch }: DepositsTableProps) {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   const {
     data,
     loading,
@@ -21,7 +25,8 @@ export default function DepositsTable({ searchQuery = "", onClearSearch }: Depos
     handleApply,
     handleClean,
     handleExport,
-  } = useDepositsPanel({ searchQuery });
+    totalCount,
+  } = useDepositsPanel({ searchQuery, page, pageSize });
 
   const handleAction = (action: { label: string }, row: any) => {
     console.log(`Action ${action.label} on row`, row);
@@ -86,8 +91,14 @@ export default function DepositsTable({ searchQuery = "", onClearSearch }: Depos
           data={data}
           columns={depositsColumns}
           rowActions={depositRowActions(handleAction)}
-          
           getRowId={(row) => `${row.booking_type}-${row.booking_id}`}
+          serverSidePagination={true}
+          totalCount={totalCount}
+          pageIndex={page - 1}
+          pageSize={pageSize}
+          onPageChange={(p) => setPage(p + 1)}
+          onPageSizeChange={setPageSize}
+          defaultPageSize={10}
         />
       )}
     </TablePanel>

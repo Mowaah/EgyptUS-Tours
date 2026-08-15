@@ -8,7 +8,7 @@ import {
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { planYourTripColumns, PlanYourTripApiItem } from "./planYourTripColumns";
-import { getAllPlanYourTripRequests } from "@/services/admin/adminRequestsService";
+import { getPlanYourTripRequests } from "@/services/admin/adminRequestsService";
 import { useRequestPanel } from "@/hooks/useRequestPanel";
 
 interface CustomTripRequestsPanelProps {
@@ -16,6 +16,9 @@ interface CustomTripRequestsPanelProps {
 }
 
 export default function CustomTripRequestsPanel({ searchQuery }: CustomTripRequestsPanelProps) {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   const {
     data,
     loading,
@@ -28,9 +31,12 @@ export default function CustomTripRequestsPanel({ searchQuery }: CustomTripReque
     handleExport,
     appliedSourceFilter,
     appliedStatusFilter,
+    totalCount,
   } = useRequestPanel<PlanYourTripApiItem>({
     searchQuery,
-    fetchRequestsApi: getAllPlanYourTripRequests,
+    page,
+    pageSize,
+    fetchRequestsApi: getPlanYourTripRequests,
     exportCsvApi: async (params: any) => {
       const { exportPlanYourTripCSV } = await import("@/services/admin/adminRequestsService");
       return exportPlanYourTripCSV(params);
@@ -105,7 +111,13 @@ export default function CustomTripRequestsPanel({ searchQuery }: CustomTripReque
           data={data}
           columns={planYourTripColumns}
           getRowId={(row) => row.id.toString()}
-          
+          serverSidePagination={true}
+          totalCount={totalCount}
+          pageIndex={page - 1}
+          pageSize={pageSize}
+          onPageChange={(p) => setPage(p + 1)}
+          onPageSizeChange={setPageSize}
+          defaultPageSize={10}
         />
       )}
     </TablePanel>

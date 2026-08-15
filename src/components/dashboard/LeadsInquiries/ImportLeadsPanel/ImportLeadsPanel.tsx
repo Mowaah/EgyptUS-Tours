@@ -42,8 +42,10 @@ export function ImportLeadsPanel({
   const [reassignModalOpen, setReassignModalOpen] = useState(false);
   const [viewMembersModalOpen, setViewMembersModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
-  const { data: batchesData, isLoading } = useLeadImportBatches();
+  const { data: batchesData, isLoading } = useLeadImportBatches({ page, page_size: pageSize });
   const deleteBatchMutation = useDeleteLeadImportBatch();
 
   const { data: usersData } = useAdminUsers({ limit: 100 });
@@ -150,7 +152,13 @@ export function ImportLeadsPanel({
         data={filteredLeads}
         columns={importLeadsColumns as any}
         getRowId={(row) => row.id.toString()}
-        defaultPageSize={5}
+        serverSidePagination={true}
+        totalCount={batchesData?.count || 0}
+        pageIndex={page - 1}
+        pageSize={pageSize}
+        onPageChange={(p) => setPage(p + 1)}
+        onPageSizeChange={setPageSize}
+        defaultPageSize={10}
         rowActions={(row) => importRowActions({
           onView: () => {
             setSelectedBatch(row as any);

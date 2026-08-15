@@ -48,7 +48,7 @@ export default function TermsConditionsPage() {
   } = useContentManager({
     itemName: "Terms & Conditions",
     fetchData: async () => {
-      const res = await getAdminTermsSections({ limit: 100, search: searchQuery });
+      const res = await getAdminTermsSections({ limit: 1000, search: searchQuery });
       return res.results.map(mapSectionToContentItem);
     },
     createItem: async (title, content, published) => {

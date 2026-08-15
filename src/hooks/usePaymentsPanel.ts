@@ -1,13 +1,15 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import useSWR from "swr";
 import { downloadBlobAsCSV } from "@/lib/utils";
-import { getPayments, getAllPayments } from "@/services/admin/adminFinanceService";
+import { getPayments } from "@/services/admin/adminFinanceService";
 
 export interface UsePaymentsPanelOptions {
-  searchQuery: string;
+  searchQuery?: string;
+  page?: number;
+  pageSize?: number;
 }
 
-export function usePaymentsPanel({ searchQuery }: UsePaymentsPanelOptions) {
+export function usePaymentsPanel({ searchQuery, page = 1, pageSize = 10 }: UsePaymentsPanelOptions = {}) {
   
   const [filters, setFilters] = useState({
     service: "All",
@@ -22,7 +24,7 @@ export function usePaymentsPanel({ searchQuery }: UsePaymentsPanelOptions) {
   });
 
   const apiFilters = useMemo(() => {
-    const params: any = { limit: 1000, page_size: 1000 };
+    const params: any = { page, page_size: pageSize };
     
     if (searchQuery) params.search = searchQuery;
     
@@ -61,11 +63,11 @@ export function usePaymentsPanel({ searchQuery }: UsePaymentsPanelOptions) {
     }
     
     return params;
-  }, [appliedFilters, searchQuery]);
+  }, [appliedFilters, searchQuery, page, pageSize]);
 
   const { data: res, isLoading: loading } = useSWR<any>(
     ["adminFinancePayments", apiFilters],
-    () => getAllPayments(apiFilters),
+    () => getPayments(apiFilters),
     { keepPreviousData: true }
   );
 
@@ -90,6 +92,8 @@ export function usePaymentsPanel({ searchQuery }: UsePaymentsPanelOptions) {
       };
     });
   }, [res]);
+
+  const totalCount = res?.count || (Array.isArray(res) ? res.length : (res?.results || res?.data?.results || []).length) || 0;
 
   const handleApply = () => {
     setAppliedFilters(filters);
@@ -133,6 +137,7 @@ export function usePaymentsPanel({ searchQuery }: UsePaymentsPanelOptions) {
   return {
     data,
     loading,
+    totalCount,
     filters,
     setFilters,
     handleApply,

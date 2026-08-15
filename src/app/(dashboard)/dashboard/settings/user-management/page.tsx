@@ -9,7 +9,6 @@ import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import { DashboardConfirmationModal } from "@/components/dashboard/shared";
 import type { AdminUserRow, AdminRoleRow } from "@/components/dashboard/UserManagement/types";
 import {
-  getAdminUsers,
   getAdminRoles,
   createAdminUser,
   updateAdminUser,
@@ -35,17 +34,11 @@ const emptyAdminForm: AdminFormValues = {
 };
 
 export default function UserManagementPage() {
-  const { data: usersResponse, isLoading: usersLoading } = useSWR(
-    "/admin/users/",
-    () => getAdminUsers()
-  );
-  
   const { data: rolesResponse, isLoading: rolesLoading } = useSWR(
     "/admin/roles/",
     () => getAdminRoles()
   );
 
-  const users: AdminUserRow[] = usersResponse?.results || [];
   const roles: AdminRoleRow[] = rolesResponse?.results || [];
 
   const roleOptions = useMemo(() => roles.map(r => r.name), [roles]);
@@ -161,7 +154,11 @@ export default function UserManagementPage() {
       } else if (modalMode === "edit" && formValues.id) {
         await updateAdminUser(formValues.id, payload);
       }
-      await mutate("/admin/users/");
+      await mutate(
+        (key: any) => Array.isArray(key) && key[0] === "/admin/users/",
+        undefined,
+        { revalidate: true }
+      );
       closeModal();
     } catch (error) {
       console.error("Failed to save user", error);
@@ -178,7 +175,11 @@ export default function UserManagementPage() {
         const isActivating = confirmation.action === "activate";
         await updateAdminUser(confirmation.user.id, { is_active: isActivating });
       }
-      await mutate("/admin/users/");
+      await mutate(
+        (key: any) => Array.isArray(key) && key[0] === "/admin/users/",
+        undefined,
+        { revalidate: true }
+      );
       closeConfirmationModal();
     } catch (error) {
       console.error("Failed to perform action", error);
@@ -239,11 +240,10 @@ export default function UserManagementPage() {
         onSearchChange={setSearchQuery}
       />
       
-      {usersLoading || rolesLoading ? (
-        <div style={{ padding: "2rem", textAlign: "center" }}>Loading users...</div>
+      {rolesLoading ? (
+        <div style={{ padding: "2rem", textAlign: "center" }}>Loading roles...</div>
       ) : (
         <UserManagement
-          users={users}
           roles={roles}
           searchQuery={searchQuery}
           onEditUser={openEditModal}

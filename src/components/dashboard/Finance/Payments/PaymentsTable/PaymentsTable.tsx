@@ -12,12 +12,16 @@ import { paymentsColumns, paymentRowActions } from "../paymentsColumns/paymentsC
 import { usePaymentsPanel } from "@/hooks/usePaymentsPanel";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 
+
 interface PaymentsTableProps {
   searchQuery?: string;
   onClearSearch?: () => void;
 }
 
 export default function PaymentsTable({ searchQuery = "", onClearSearch }: PaymentsTableProps) {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   const {
     data,
     loading,
@@ -26,7 +30,8 @@ export default function PaymentsTable({ searchQuery = "", onClearSearch }: Payme
     handleApply,
     handleClean,
     handleExport,
-  } = usePaymentsPanel({ searchQuery });
+    totalCount,
+  } = usePaymentsPanel({ searchQuery, page, pageSize });
 
   const filterFields = [
     {
@@ -98,9 +103,15 @@ export default function PaymentsTable({ searchQuery = "", onClearSearch }: Payme
       <DataTable
         data={data}
         columns={paymentsColumns as any}
-        getRowId={(row: any) => row.id}
-        
-        rowActions={paymentRowActions(handleAction) as any}
+        rowActions={paymentRowActions(handleAction)}
+        getRowId={(row) => row.id.toString()}
+        serverSidePagination={true}
+        totalCount={totalCount}
+        pageIndex={page - 1}
+        pageSize={pageSize}
+        onPageChange={(p) => setPage(p + 1)}
+        onPageSizeChange={setPageSize}
+        defaultPageSize={10}
       />
     </TablePanel>
   );

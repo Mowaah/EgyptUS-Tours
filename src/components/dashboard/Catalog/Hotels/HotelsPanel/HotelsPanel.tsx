@@ -44,8 +44,11 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
   const { locations, loading: locLoading } = useCatalogHotelLocations();
   const locationOptions = ["All", ...Array.from(new Set(locations.map((l: any) => l.name).filter(Boolean)))];
 
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   const queryParams = useMemo(() => {
-    const params: any = { limit: 1000, page_size: 1000 };
+    const params: any = { page, page_size: pageSize };
     if (searchQuery) params.search = searchQuery;
     if (appliedFilters.status !== "All") params.status = appliedFilters.status.toLowerCase();
     
@@ -67,9 +70,9 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
     }
     
     return params;
-  }, [appliedFilters, searchQuery, locations]);
+  }, [appliedFilters, searchQuery, locations, page, pageSize]);
 
-  const { data: hotelsData, loading: hotelsLoading, refetch } = useCatalogHotels(queryParams);
+  const { data: hotelsData, loading: hotelsLoading, totalCount, refetch } = useCatalogHotels(queryParams);
 
   const resetFilters = () => {
     setFilters(defaultFilters);
@@ -158,7 +161,14 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
         selectionType="star"
         selectedRowIds={hotelsData.filter((t: any) => t.is_featured).map((t: any) => String(t.id))}
         onSelectionChange={handleSelectionChange}
-        rowActions={(row) =>
+        serverSidePagination={true}
+        totalCount={totalCount}
+        pageIndex={page - 1}
+        pageSize={pageSize}
+        onPageChange={(p) => setPage(p + 1)}
+        onPageSizeChange={setPageSize}
+        defaultPageSize={10}
+        rowActions={() =>
           catalogHotelsRowActions((action, r) => {
             if (action === "View") {
               router.push(`/dashboard/catalog/hotels/${r.id}`);
@@ -173,7 +183,6 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
             }
           })
         }
-        defaultPageSize={10}
       />
       <DashboardConfirmationModal
         open={confirmModal.open}

@@ -15,6 +15,8 @@ export interface UseReviewsPanelParams {
   };
   refreshTrigger?: number;
   customerId?: string;
+  page?: number;
+  pageSize?: number;
 }
 
 function formatDate(dateString: string) {
@@ -69,13 +71,13 @@ function isDateMatching(dateStr: string, filterValue: string): boolean {
   return dateStr === filterValue;
 }
 
-export function useReviewsPanel({ type, searchQuery, appliedFilters, refreshTrigger, customerId }: UseReviewsPanelParams) {
+export function useReviewsPanel({ type, searchQuery, appliedFilters, refreshTrigger, customerId, page = 1, pageSize = 10 }: UseReviewsPanelParams) {
   const fetcher = async () => {
     if (customerId) {
       return getCustomerReviews(customerId);
     }
 
-    const params: any = { limit: 1000, page_size: 1000 };
+    const params: any = { page, page_size: pageSize };
     
     if (searchQuery) params.search = searchQuery;
     
@@ -99,6 +101,25 @@ export function useReviewsPanel({ type, searchQuery, appliedFilters, refreshTrig
       }
     }
 
+    if (appliedFilters.date && appliedFilters.date !== "All") {
+      const now = new Date();
+      if (appliedFilters.date === "Today") {
+        params.date_from = now.toISOString().split("T")[0];
+        params.date_to = params.date_from;
+      } else if (appliedFilters.date === "Last 7 Days") {
+        const past = new Date(now);
+        past.setDate(now.getDate() - 7);
+        params.date_from = past.toISOString().split("T")[0];
+      } else if (appliedFilters.date === "Last 30 Days") {
+        const past = new Date(now);
+        past.setDate(now.getDate() - 30);
+        params.date_from = past.toISOString().split("T")[0];
+      } else if (appliedFilters.date === "This Month") {
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        params.date_from = firstDay.toISOString().split("T")[0];
+      }
+    }
+
     if (type === "user") {
       return getAdminUserReviews(params);
     } else {
@@ -107,7 +128,7 @@ export function useReviewsPanel({ type, searchQuery, appliedFilters, refreshTrig
   };
 
   const { data: res, isLoading: loading, mutate: refetch } = useSWR(
-    [`adminReviews_${type}`, searchQuery, appliedFilters, refreshTrigger, customerId],
+    [`adminReviews_${type}`, searchQuery, appliedFilters, refreshTrigger, customerId, page, pageSize],
     fetcher,
     { keepPreviousData: true }
   );
@@ -131,9 +152,6 @@ export function useReviewsPanel({ type, searchQuery, appliedFilters, refreshTrig
         status: (rev.moderation_status === "approved" ? "Replied" : "Pending") as ReviewStatus,
       }));
 
-      if (appliedFilters.date && appliedFilters.date !== "All") {
-        mapped = mapped.filter((item) => isDateMatching(item.date, appliedFilters.date));
-      }
       return mapped;
     } else {
       let mapped: AdminTestimonialRow[] = res.results.map((rev: any) => ({
@@ -155,16 +173,16 @@ export function useReviewsPanel({ type, searchQuery, appliedFilters, refreshTrig
         status: (rev.status === "published" ? "Replied" : "Pending") as ReviewStatus,
       }));
 
-      if (appliedFilters.date && appliedFilters.date !== "All") {
-        mapped = mapped.filter((item) => isDateMatching(item.date, appliedFilters.date));
-      }
       return mapped;
     }
   }, [res, type, appliedFilters.date]);
 
+  const totalCount = res?.count || data.length || 0;
+
   return {
     data,
     loading,
+    totalCount,
     refresh: () => refetch()
   };
 }

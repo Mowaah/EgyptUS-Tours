@@ -38,6 +38,7 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   
   const [selectedRow, setSelectedRow] = useState<AdminCustomer | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -48,7 +49,7 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
 
   // Build the API filters based on the active UI state
   const apiFilters = useMemo<AdminCustomerFilters>(() => {
-    const f: AdminCustomerFilters = { page, page_size: 16 };
+    const f: AdminCustomerFilters = { page, page_size: pageSize };
     if (searchQuery) f.search = searchQuery;
     if (appliedFilters.nationality !== "All") f.nationality = appliedFilters.nationality;
     if (appliedFilters.status !== "All") f.status = appliedFilters.status.toLowerCase();
@@ -59,7 +60,7 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
     else f.ordering = "-created_at";
 
     return f;
-  }, [appliedFilters, searchQuery, page]);
+  }, [appliedFilters, searchQuery, page, pageSize]);
 
   const { customers, isLoading, refetch } = useAdminCustomers(apiFilters);
   
@@ -134,7 +135,13 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
         columns={customersColumns}
         getRowId={(row) => row.id.toString()}
         rowActions={customerRowActions(handleAction)}
-        defaultPageSize={16}
+        serverSidePagination={true}
+        totalCount={customers?.count || 0}
+        pageIndex={page - 1}
+        pageSize={pageSize}
+        onPageChange={(p) => setPage(p + 1)}
+        onPageSizeChange={setPageSize}
+        defaultPageSize={10}
       />
       
       {selectedRow && (

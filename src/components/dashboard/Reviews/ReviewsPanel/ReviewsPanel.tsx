@@ -61,6 +61,9 @@ export function ReviewsPanel({
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
 
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   const [selectedRow, setSelectedRow] = useState<any>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
@@ -71,12 +74,14 @@ export function ReviewsPanel({
   const [isEditBannerOpen, setIsEditBannerOpen] = useState(false);
   const [isReplyBannerOpen, setIsReplyBannerOpen] = useState(false);
 
-  const { data, loading, refresh } = useReviewsPanel({
+  const { data, loading, totalCount, refresh } = useReviewsPanel({
     type,
     searchQuery,
     appliedFilters,
     refreshTrigger,
     customerId,
+    page,
+    pageSize,
   });
 
   const resetFilters = () => {
@@ -253,14 +258,19 @@ export function ReviewsPanel({
         onExportClick={handleExportClick}
         toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
       >
-      <DataTable
-        data={data as any}
-        columns={baseColumns}
-        getRowId={(row: any) => row.id}
-        
-        rowActions={type === "admin" ? adminTestimonialRowActions(handleAction) as any : reviewRowActions(handleAction) as any}
-        defaultPageSize={5}
-      />
+        <DataTable
+          data={data}
+          columns={baseColumns}
+          rowActions={type === "admin" ? adminTestimonialRowActions(handleAction) as any : reviewRowActions(handleAction) as any}
+          getRowId={(row: any) => String(row.id)}
+          serverSidePagination={true}
+          totalCount={totalCount}
+          pageIndex={page - 1}
+          pageSize={pageSize}
+          onPageChange={(p) => setPage(p + 1)}
+          onPageSizeChange={setPageSize}
+          defaultPageSize={10}
+        />
     </TablePanel>
 
     <ViewReviewModal

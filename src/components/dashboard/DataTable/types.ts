@@ -29,5 +29,11 @@ export interface DataTableProps<T> {
   rowActions?: (row: T) => DataTableRowAction<T>[];
   pageSizeOptions?: number[];
   defaultPageSize?: number;
+  serverSidePagination?: boolean;
+  totalCount?: number;
+  pageIndex?: number;
+  pageSize?: number;
+  onPageChange?: (pageIndex: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
   className?: string;
 }

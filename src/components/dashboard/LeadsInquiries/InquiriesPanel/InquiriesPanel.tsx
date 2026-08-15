@@ -48,11 +48,44 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
   const [assignModalOpen, setAssignModalOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState<any>(null);
 
-  const { data: leadsData, isLoading } = useLeads();
-  const leadsList = leadsData?.results || [];
-  
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+
   const { data: usersData } = useAdminUsers({ limit: 100 });
   const users = usersData?.results || [];
+
+  const queryParams = useMemo(() => {
+    const params: any = {
+      page: pageIndex + 1,
+      page_size: pageSize,
+    };
+    if (searchQuery) params.search = searchQuery;
+    if (appliedFilters.batchId !== "All") params.batch_code = appliedFilters.batchId;
+    if (appliedFilters.source !== "All") {
+      let src = appliedFilters.source.toLowerCase().replace(" ", "_").replace("-", "_");
+      if (src === "whatsup") src = "whatsapp";
+      params.source = src;
+    }
+    if (appliedFilters.status !== "All") params.status = appliedFilters.status.toLowerCase();
+    if (appliedFilters.assigned !== "All") {
+      if (appliedFilters.assigned === "Unassigned") {
+        params.assigned_to = "null";
+      } else {
+        const user = users.find((u: any) => u.full_name === appliedFilters.assigned);
+        if (user) params.assigned_to = user.id;
+      }
+    }
+    if (appliedFilters.date !== "All") {
+      params.date_from = appliedFilters.date;
+      params.date_to = appliedFilters.date;
+    }
+    return params;
+  }, [pageIndex, pageSize, searchQuery, appliedFilters, users]);
+
+  const { data: leadsData, isLoading } = useLeads(queryParams);
+  const leadsList = leadsData?.results || [];
+  const totalCount = leadsData?.count || 0;
+  
   const getImageUrl = (path?: string) => {
     if (!path) return "/images/dashboard/sara.jpg";
     if (path.startsWith("http")) return path;
@@ -68,27 +101,6 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
 
   const assignLeadMutation = useAssignLead();
   const exportLeadsMutation = useExportLeads();
-
-  const filteredLeads = useMemo(
-    () =>
-      leadsList.filter((lead: any) => {
-        if (searchQuery) {
-          const lowerQuery = searchQuery.toLowerCase();
-          if (!lead.full_name?.toLowerCase().includes(lowerQuery) &&
-              !lead.email?.toLowerCase().includes(lowerQuery) &&
-              !lead.display_id?.toLowerCase().includes(lowerQuery)) {
-            return false;
-          }
-        }
-        if (appliedFilters.batchId !== "All" && lead.batch_code !== appliedFilters.batchId) return false;
-        if (appliedFilters.source !== "All" && lead.source !== appliedFilters.source) return false;
-        if (appliedFilters.date !== "All" && lead.date !== appliedFilters.date) return false;
-        if (appliedFilters.status !== "All" && lead.status !== appliedFilters.status) return false;
-        if (appliedFilters.assigned !== "All" && lead.assigned_to?.full_name !== appliedFilters.assigned) return false;
-        return true;
-      }),
-    [searchQuery, appliedFilters, leadsList]
-  );
 
   const resetFilters = () => {
     setFilters(defaultFilters);
@@ -136,7 +148,7 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
     );
   }
 
-  if (leadsList.length > 0 && filteredLeads.length === 0) {
+  if (leadsList.length === 0 && (searchQuery || Object.values(appliedFilters).some(v => v !== "All"))) {
     return (
       <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
     );
@@ -165,10 +177,10 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
     >
       <DataTable
-        data={filteredLeads}
+        data={leadsList}
         columns={inquiriesColumns}
         getRowId={(row) => row.id.toString()}
-        rowActions={(row) => leadRowActions((action, r) => {
+        rowActions={() => leadRowActions((action, r) => {
           if (action === "Edit" && onEditLead) {
             onEditLead(r);
           } else if (action === "View") {
@@ -178,7 +190,13 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
             setAssignModalOpen(true);
           }
         })}
-        defaultPageSize={5}
+        serverSidePagination={true}
+        totalCount={totalCount}
+        pageIndex={pageIndex}
+        pageSize={pageSize}
+        onPageChange={setPageIndex}
+        onPageSizeChange={setPageSize}
+        defaultPageSize={10}
       />
       
       <ReassignModal

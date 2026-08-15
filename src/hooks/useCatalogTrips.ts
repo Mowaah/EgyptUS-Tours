@@ -6,7 +6,7 @@ import { getCatalogTrips, getCatalogTripDetail, getCategories, getDestinations }
 export function useCatalogTrips(filters: any) {
   const { data: res, isLoading: loading, mutate: refetch } = useSWR(
     ["adminCatalogTrips", filters],
-    () => getCatalogTrips({ ...filters, limit: 1000, page_size: 1000 }),
+    () => getCatalogTrips(filters),
     { keepPreviousData: true }
   );
 

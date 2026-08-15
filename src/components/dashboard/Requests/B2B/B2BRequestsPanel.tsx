@@ -8,7 +8,7 @@ import {
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { b2bColumns, B2BApiItem } from "./b2bColumns";
-import { getAllB2BRequests } from "@/services/admin/adminRequestsService";
+import { getB2BRequests } from "@/services/admin/adminRequestsService";
 import { useRequestPanel } from "@/hooks/useRequestPanel";
 
 interface B2BRequestsPanelProps {
@@ -16,6 +16,9 @@ interface B2BRequestsPanelProps {
 }
 
 export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelProps) {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   const {
     data,
     loading,
@@ -28,9 +31,12 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
     handleExport,
     appliedSourceFilter,
     appliedStatusFilter,
+    totalCount,
   } = useRequestPanel<B2BApiItem>({
     searchQuery,
-    fetchRequestsApi: getAllB2BRequests,
+    page,
+    pageSize,
+    fetchRequestsApi: getB2BRequests,
     exportCsvApi: async (params: any) => {
       const { exportB2BCSV } = await import("@/services/admin/adminRequestsService");
       return exportB2BCSV(params);
@@ -106,7 +112,13 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
           data={data}
           columns={b2bColumns}
           getRowId={(row) => row.id.toString()}
-          
+          serverSidePagination={true}
+          totalCount={totalCount}
+          pageIndex={page - 1}
+          pageSize={pageSize}
+          onPageChange={(p) => setPage(p + 1)}
+          onPageSizeChange={setPageSize}
+          defaultPageSize={10}
         />
       )}
     </TablePanel>

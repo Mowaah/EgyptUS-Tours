@@ -8,7 +8,7 @@ import {
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { miceColumns } from "./miceColumns";
-import { getAllMiceRequests } from "@/services/admin/adminRequestsService";
+import { getMiceRequests } from "@/services/admin/adminRequestsService";
 import { useRequestPanel } from "@/hooks/useRequestPanel";
 
 interface MiceRequestsPanelProps {
@@ -16,6 +16,9 @@ interface MiceRequestsPanelProps {
 }
 
 export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPanelProps) {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   const {
     data,
     loading,
@@ -28,9 +31,12 @@ export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPane
     handleExport,
     appliedSourceFilter,
     appliedStatusFilter,
+    totalCount,
   } = useRequestPanel<any>({
     searchQuery,
-    fetchRequestsApi: getAllMiceRequests,
+    page,
+    pageSize,
+    fetchRequestsApi: getMiceRequests,
     exportCsvApi: async (params: any) => {
       const { exportMiceCSV } = await import("@/services/admin/adminRequestsService");
       return exportMiceCSV(params);
@@ -112,7 +118,13 @@ export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPane
         data={data}
         columns={miceColumns}
         getRowId={(row) => row.id}
-        
+        serverSidePagination={true}
+        totalCount={totalCount}
+        pageIndex={page - 1}
+        pageSize={pageSize}
+        onPageChange={(p) => setPage(p + 1)}
+        onPageSizeChange={setPageSize}
+        defaultPageSize={10}
       />
     </TablePanel>
   );

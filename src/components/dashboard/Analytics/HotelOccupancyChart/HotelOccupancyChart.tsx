@@ -36,23 +36,22 @@ export default function HotelOccupancyChart({ data = [], actions }: HotelOccupan
       <PanelHeader
         icon="reports/hotel_occupancy"
         title="Hotel Occupancy"
-        titleSuffix={
-          <div className={styles.titleLegend}>
-            <div className={styles.legendItem}>
-              <span className={styles.colorIndicatorPrimary} aria-hidden />
-              <span className={styles.legendLabel}>{currentYear}</span>
-            </div>
-            <div className={styles.legendItem}>
-              <span className={styles.colorIndicatorSecondary} aria-hidden />
-              <span className={styles.legendLabel}>{previousYear}</span>
-            </div>
-          </div>
-        }
         subtitle="Approximate occupancy %"
         actions={actions}
       />
 
       <DoubleBarChart data={chartData} yAxisLabels={Y_AXIS_LABELS} />
+
+      <div className={styles.legendPill}>
+        <div className={styles.legendItem}>
+          <span className={styles.dotPrimary} aria-hidden />
+          <span className={styles.legendLabel}>{currentYear}</span>
+        </div>
+        <div className={styles.legendItem}>
+          <span className={styles.dotSecondary} aria-hidden />
+          <span className={styles.legendLabel}>{previousYear}</span>
+        </div>
+      </div>
     </article>
   );
 }

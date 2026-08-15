@@ -37,6 +37,8 @@ export function MarketingContentPanel({
 }: MarketingContentPanelProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const {
     data,
@@ -49,9 +51,12 @@ export function MarketingContentPanel({
     handleClean,
     handleExport,
     refetch,
+    totalCount,
   } = useMarketingPanel<MarketingPostRow>({
     contentType,
     searchQuery,
+    page,
+    pageSize,
     fetchApi,
     exportCsvApi: contentType === "articles" ? exportAdminArticlesCSV : exportAdminBlogsCSV,
     exportFilename: `${contentType}_export.csv`,
@@ -148,6 +153,13 @@ export function MarketingContentPanel({
           data={data}
           getRowId={(row) => String(row.id ?? row.postId)}
           rowActions={rowActions}
+          serverSidePagination={true}
+          totalCount={totalCount}
+          pageIndex={page - 1}
+          pageSize={pageSize}
+          onPageChange={(p) => setPage(p + 1)}
+          onPageSizeChange={setPageSize}
+          defaultPageSize={10}
         />
       </TablePanel>
 

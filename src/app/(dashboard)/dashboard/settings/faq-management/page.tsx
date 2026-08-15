@@ -48,7 +48,7 @@ export default function FaqManagementPage() {
   } = useContentManager({
     itemName: "FAQ",
     fetchData: async () => {
-      const res = await getAdminFaqs({ limit: 100, search: searchQuery });
+      const res = await getAdminFaqs({ limit: 1000, search: searchQuery });
       return res.results.map(mapFaqToContentItem);
     },
     createItem: async (title, content, published) => {

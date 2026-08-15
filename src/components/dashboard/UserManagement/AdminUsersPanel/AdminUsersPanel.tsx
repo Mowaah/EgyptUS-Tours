@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import useSWR from "swr";
 import { DataTable } from "@/components/dashboard/DataTable";
 import {
   TablePanel,
@@ -9,9 +10,9 @@ import {
 } from "@/components/dashboard/TablePanel";
 import type { AdminUserRow, AdminRoleRow } from "../types";
 import { createAdminUserRowActions, adminUsersColumns } from "./adminUsersColumns";
+import { exportAdminUsers, getAdminUsers } from "@/services/admin/adminUsersService";
 
 interface AdminUsersPanelProps {
-  users: AdminUserRow[];
   roles: AdminRoleRow[];
   searchQuery?: string;
   onEditUser?: (user: AdminUserRow) => void;
@@ -20,7 +21,6 @@ interface AdminUsersPanelProps {
 }
 
 export default function AdminUsersPanel({
-  users,
   roles,
   searchQuery,
   onEditUser,
@@ -38,23 +38,34 @@ export default function AdminUsersPanel({
 
   const normalizedSearchQuery = (searchQuery || "").toLowerCase();
 
-  const filteredUsers = useMemo(
-    () =>
-      users.filter((user) => {
-        if (appliedFilters.role !== "All" && user.role_label !== appliedFilters.role) return false;
-        if (appliedFilters.state !== "All") {
-          const isActive = appliedFilters.state === "Active";
-          if (user.is_active !== isActive) return false;
-        }
-        if (normalizedSearchQuery) {
-          const matchesName = user.full_name?.toLowerCase().includes(normalizedSearchQuery);
-          const matchesEmail = user.email?.toLowerCase().includes(normalizedSearchQuery);
-          if (!matchesName && !matchesEmail) return false;
-        }
-        return true;
-      }),
-    [users, appliedFilters, normalizedSearchQuery]
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+
+  const queryParams = useMemo(() => {
+    const params: Record<string, any> = {
+      page: pageIndex + 1,
+      page_size: pageSize,
+    };
+    if (appliedFilters.role !== "All") {
+      const roleObj = roles.find(r => r.name === appliedFilters.role);
+      if (roleObj) params.role = roleObj.slug;
+    }
+    if (appliedFilters.state !== "All") {
+      params.is_active = appliedFilters.state === "Active" ? "true" : "false";
+    }
+    if (normalizedSearchQuery) {
+      params.search = normalizedSearchQuery;
+    }
+    return params;
+  }, [appliedFilters, normalizedSearchQuery, pageIndex, pageSize, roles]);
+
+  const { data: usersResponse, isLoading } = useSWR(
+    ["/admin/users/", queryParams],
+    () => getAdminUsers(queryParams)
   );
+
+  const users: AdminUserRow[] = usersResponse?.results || [];
+  const totalCount = usersResponse?.count || 0;
 
   const resetFilters = () => {
     setFilters(defaultFilters);
@@ -81,6 +92,25 @@ export default function AdminUsersPanel({
   const rowActions = (row: AdminUserRow) =>
     createAdminUserRowActions(row, onEditUser, onToggleUserStatus, onDeleteUser);
 
+  const handleExport = async () => {
+    try {
+      const params: Record<string, string> = {};
+      if (appliedFilters.role !== "All") {
+        const roleObj = roles.find(r => r.name === appliedFilters.role);
+        if (roleObj) params.role = roleObj.slug;
+      }
+      if (appliedFilters.state !== "All") {
+        params.is_active = appliedFilters.state === "Active" ? "true" : "false";
+      }
+      if (normalizedSearchQuery) {
+        params.search = normalizedSearchQuery;
+      }
+      await exportAdminUsers(params);
+    } catch (error) {
+      console.error("Failed to export users:", error);
+    }
+  };
+
   return (
     <TablePanel
       ariaLabel="Admin users table"
@@ -88,15 +118,21 @@ export default function AdminUsersPanel({
       iconSrc="/images/dashboard/sidebar/user-management.svg"
       showFilters={true}
       showExport={true}
+      onExportClick={handleExport}
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
     >
       <DataTable
-        data={filteredUsers}
+        data={users}
         columns={adminUsersColumns}
         getRowId={(row) => String(row.id)}
-        
         rowActions={rowActions}
-        defaultPageSize={5}
+        serverSidePagination={true}
+        totalCount={totalCount}
+        pageIndex={pageIndex}
+        pageSize={pageSize}
+        onPageChange={setPageIndex}
+        onPageSizeChange={setPageSize}
+        defaultPageSize={10}
       />
     </TablePanel>
   );

@@ -20,6 +20,22 @@ export async function deleteAdminUser(id: number): Promise<any> {
   return await adminDataClient.delete(`/users/${id}/`);
 }
 
+export async function exportAdminUsers(params?: Record<string, any>) {
+  const response = await adminDataClient.get('/users/export/', {
+    params,
+    responseType: 'blob',
+  });
+  
+  const url = window.URL.createObjectURL(new Blob([response as any]));
+  const link = document.createElement('a');
+  link.href = url;
+  const timestamp = new Date().toISOString().split('T')[0];
+  link.setAttribute('download', `admin_users_${timestamp}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+
 export async function getAdminRoles(): Promise<any> {
   return await adminDataClient.get('/roles/');
 }

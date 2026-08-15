@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import useSWR from "swr";
-import { getAllDeposits } from "@/services/admin/adminFinanceService";
+import { getDeposits } from "@/services/admin/adminFinanceService";
 import { downloadBlobAsCSV } from "@/lib/utils";
 
-export function useDepositsPanel({ searchQuery }: { searchQuery?: string } = {}) {
+export function useDepositsPanel({ searchQuery, page = 1, pageSize = 10 }: { searchQuery?: string; page?: number; pageSize?: number } = {}) {
   const [filters, setFilters] = useState({
     service: "All",
     date: "All",
@@ -13,7 +13,7 @@ export function useDepositsPanel({ searchQuery }: { searchQuery?: string } = {})
   const [appliedFilters, setAppliedFilters] = useState(filters);
 
   const apiFilters = useMemo(() => {
-    const params: any = { limit: 1000, page_size: 1000 };
+    const params: any = { page, page_size: pageSize };
     if (appliedFilters.service && appliedFilters.service !== "All") {
       const s = appliedFilters.service.toLowerCase();
       if (s === "trips") params.service = "trip";
@@ -25,15 +25,16 @@ export function useDepositsPanel({ searchQuery }: { searchQuery?: string } = {})
     if (appliedFilters.status && appliedFilters.status !== "All") params.deposit_status = appliedFilters.status.toLowerCase();
     if (searchQuery) params.search = searchQuery;
     return params;
-  }, [appliedFilters, searchQuery]);
+  }, [appliedFilters, searchQuery, page, pageSize]);
 
   const { data: res, isLoading: loading } = useSWR<any>(
     ["adminFinanceDeposits", apiFilters],
-    () => getAllDeposits(apiFilters),
+    () => getDeposits(apiFilters),
     { keepPreviousData: true }
   );
 
   const data = Array.isArray(res) ? res : res?.results || res?.data?.results || [];
+  const totalCount = res?.count || data.length || 0;
 
   const handleApply = () => {
     setAppliedFilters(filters);
@@ -88,6 +89,7 @@ export function useDepositsPanel({ searchQuery }: { searchQuery?: string } = {})
   return {
     data,
     loading,
+    totalCount,
     filters,
     setFilters,
     handleApply,

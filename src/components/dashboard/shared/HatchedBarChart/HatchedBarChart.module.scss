@@ -111,11 +111,13 @@
   bottom: -2rem;
   left: 50%;
   transform: translateX(-50%);
-  font-size: $font-size-xs;
+  font-size: $font-size-9;
   color: $gray-400-zinc;
   font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  width: 50px;
   white-space: nowrap;
-  max-width: 90px;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: center;

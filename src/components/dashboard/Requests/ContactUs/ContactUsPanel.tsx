@@ -8,7 +8,7 @@ import {
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { contactUsColumns } from "./contactUsColumns";
-import { getAllContactUsRequests, exportContactUsCSV } from "@/services/admin/adminRequestsService";
+import { getContactUsRequests, exportContactUsCSV } from "@/services/admin/adminRequestsService";
 import { useRequestPanel } from "@/hooks/useRequestPanel";
 
 interface ContactUsPanelProps {
@@ -16,6 +16,9 @@ interface ContactUsPanelProps {
 }
 
 export default function ContactUsPanel({ searchQuery = "" }: ContactUsPanelProps) {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   const {
     data,
     loading,
@@ -25,9 +28,12 @@ export default function ContactUsPanel({ searchQuery = "" }: ContactUsPanelProps
     handleClean,
     handleExport,
     appliedStatusFilter,
+    totalCount,
   } = useRequestPanel<any>({
     searchQuery,
-    fetchRequestsApi: getAllContactUsRequests,
+    page,
+    pageSize,
+    fetchRequestsApi: getContactUsRequests,
     exportCsvApi: exportContactUsCSV,
     exportFilename: "contact_us.csv",
     swrKey: "adminContactUsRequests",
@@ -91,7 +97,13 @@ export default function ContactUsPanel({ searchQuery = "" }: ContactUsPanelProps
           data={data}
           columns={contactUsColumns}
           getRowId={(row) => row.id}
-          
+          serverSidePagination={true}
+          totalCount={totalCount}
+          pageIndex={page - 1}
+          pageSize={pageSize}
+          onPageChange={(p) => setPage(p + 1)}
+          onPageSizeChange={setPageSize}
+          defaultPageSize={10}
         />
       ) : (
         <div style={{ padding: "2rem", textAlign: "center", color: "#666" }}>

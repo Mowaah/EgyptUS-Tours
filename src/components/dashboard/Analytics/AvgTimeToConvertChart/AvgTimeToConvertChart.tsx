@@ -46,11 +46,15 @@ export default function AvgTimeToConvertChart({ data = [], actions }: AvgTimeToC
       label: ch,
       avg_days: 0,
       converted_count: 0,
+      lost_count: 0,
     }));
   }, [data]);
 
   const maxY = useMemo(() => {
-    const maxVal = Math.max(...displayData.map((d) => d.avg_days), 0);
+    const maxVal = Math.max(
+      ...displayData.map((d) => Math.max(d.converted_count, d.lost_count)),
+      0
+    );
     if (maxVal === 0) return 10;
     return Math.max(Math.ceil(maxVal * 1.2), 5);
   }, [displayData]);
@@ -70,27 +74,42 @@ export default function AvgTimeToConvertChart({ data = [], actions }: AvgTimeToC
     return displayData.map((d) => d.label.toUpperCase());
   }, [displayData]);
 
-  const points = useMemo(() => {
+  const pointsConverted = useMemo(() => {
     const n = displayData.length;
     return displayData.map((d, i) => {
       const x = n > 1 ? (i / (n - 1)) * 100 : 50;
-      const scaledY = maxY > 0 ? 10 - (d.avg_days / maxY) * 10 : 10;
+      const scaledY = maxY > 0 ? 10 - (d.converted_count / maxY) * 10 : 10;
       return { x, y: Math.max(0, Math.min(10, scaledY)) };
     });
   }, [displayData, maxY]);
 
-  const pathBlue = useMemo(() => getSmoothPath(points), [points]);
-  const areaBlue = useMemo(() => {
-    if (!pathBlue) return "";
-    return `${pathBlue} L 100 10 L 0 10 Z`;
-  }, [pathBlue]);
+  const pointsLost = useMemo(() => {
+    const n = displayData.length;
+    return displayData.map((d, i) => {
+      const x = n > 1 ? (i / (n - 1)) * 100 : 50;
+      const scaledY = maxY > 0 ? 10 - (d.lost_count / maxY) * 10 : 10;
+      return { x, y: Math.max(0, Math.min(10, scaledY)) };
+    });
+  }, [displayData, maxY]);
+
+  const pathConverted = useMemo(() => getSmoothPath(pointsConverted), [pointsConverted]);
+  const areaConverted = useMemo(() => {
+    if (!pathConverted) return "";
+    return `${pathConverted} L 100 10 L 0 10 Z`;
+  }, [pathConverted]);
+
+  const pathLost = useMemo(() => getSmoothPath(pointsLost), [pointsLost]);
+  const areaLost = useMemo(() => {
+    if (!pathLost) return "";
+    return `${pathLost} L 100 10 L 0 10 Z`;
+  }, [pathLost]);
 
   const handleMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
-    if (!points.length) return;
+    if (!pointsConverted.length) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const percentage = Math.max(0, Math.min(1, x / rect.width));
-    const index = Math.round(percentage * (points.length - 1));
+    const index = Math.round(percentage * (pointsConverted.length - 1));
     setHoverIndex(index);
   };
 
@@ -99,15 +118,16 @@ export default function AvgTimeToConvertChart({ data = [], actions }: AvgTimeToC
   };
 
   const hoveredItem = hoverIndex !== null ? displayData[hoverIndex] : null;
-  const hoverX = hoverIndex !== null && points[hoverIndex] ? points[hoverIndex].x : 0;
-  const hoverY = hoverIndex !== null && points[hoverIndex] ? points[hoverIndex].y : 0;
+  const hoverX = hoverIndex !== null && pointsConverted[hoverIndex] ? pointsConverted[hoverIndex].x : 0;
+  const hoverYConverted = hoverIndex !== null && pointsConverted[hoverIndex] ? pointsConverted[hoverIndex].y : 0;
+  const hoverYLost = hoverIndex !== null && pointsLost[hoverIndex] ? pointsLost[hoverIndex].y : 0;
 
   return (
     <article className={parentStyles.chartCard}>
       <PanelHeader
         icon="reports/avg_time"
-        title="Avg Time to Convert"
-        subtitle="By lead channel (Days)"
+        title="Converted vs Lost Leads"
+        subtitle="By lead channel (Count)"
         actions={actions}
       />
 
@@ -133,11 +153,23 @@ export default function AvgTimeToConvertChart({ data = [], actions }: AvgTimeToC
 
         {/* X-Axis */}
         <div className={styles.xAxis}>
-          {xAxisLabels.map((label) => (
-            <span key={label} className={styles.xAxisLabel}>
-              {label}
-            </span>
-          ))}
+          {xAxisLabels.map((label, i) => {
+            const xPos = xAxisLabels.length > 1 ? (i / (xAxisLabels.length - 1)) * 100 : 50;
+            return (
+              <span 
+                key={label} 
+                className={styles.xAxisLabel}
+                style={{ 
+                  left: `${xPos}%`,
+                  transform: 'translateX(-50%)',
+                  textAlign: 'center',
+                }}
+                title={label}
+              >
+                {label}
+              </span>
+            );
+          })}
         </div>
 
         {/* SVG Chart */}
@@ -150,22 +182,33 @@ export default function AvgTimeToConvertChart({ data = [], actions }: AvgTimeToC
             style={{ cursor: "crosshair" }}
           >
             <defs>
-              <linearGradient id="blueGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#2388FF" />
-                <stop offset="48.25%" stopColor="#8DC1FF" />
-                <stop offset="103.37%" stopColor="rgba(255, 255, 255, 0.16)" />
+              <linearGradient id="convertedGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#3DB37C" />
+                <stop offset="100%" stopColor="rgba(61, 179, 124, 0)" />
+              </linearGradient>
+              <linearGradient id="lostGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#FDBA74" />
+                <stop offset="100%" stopColor="rgba(253, 186, 116, 0)" />
               </linearGradient>
             </defs>
 
-            {/* Blue Area */}
-            {areaBlue && <path d={areaBlue} fill="url(#blueGradient)" opacity="0.16" />}
+            {areaConverted && <path d={areaConverted} fill="url(#convertedGradient)" opacity="0.15" />}
+            {areaLost && <path d={areaLost} fill="url(#lostGradient)" opacity="0.15" />}
 
-            {/* Blue Line */}
-            {pathBlue && (
+            {pathConverted && (
               <path
-                d={pathBlue}
+                d={pathConverted}
                 fill="none"
-                stroke="#2388FF"
+                stroke="#3DB37C"
+                strokeWidth="3"
+                vectorEffect="non-scaling-stroke"
+              />
+            )}
+            {pathLost && (
+              <path
+                d={pathLost}
+                fill="none"
+                stroke="#FDBA74"
                 strokeWidth="3"
                 vectorEffect="non-scaling-stroke"
               />
@@ -181,19 +224,31 @@ export default function AvgTimeToConvertChart({ data = [], actions }: AvgTimeToC
               className={styles.tooltipMarkerLine}
               style={{
                 left: `${hoverX}%`,
-                top: `${hoverY * 10}%`,
+                top: `${Math.min(hoverYConverted, hoverYLost) * 10}%`,
+                height: `${(10 - Math.min(hoverYConverted, hoverYLost)) * 10}%`
               }}
             />
 
-            {/* Hover Tooltip Point */}
+            {/* Converted Tooltip Point */}
             <div
-              className={styles.tooltipPointOuter}
+              className={`${styles.tooltipPointOuter} ${styles.tooltipPointOuterConverted}`}
               style={{
                 left: `${hoverX}%`,
-                top: `${hoverY * 10}%`,
+                top: `${hoverYConverted * 10}%`,
               }}
             >
-              <div className={styles.tooltipPointInner} />
+              <div className={`${styles.tooltipPointInner} ${styles.tooltipPointInnerConverted}`} />
+            </div>
+
+            {/* Lost Tooltip Point */}
+            <div
+              className={`${styles.tooltipPointOuter} ${styles.tooltipPointOuterLost}`}
+              style={{
+                left: `${hoverX}%`,
+                top: `${hoverYLost * 10}%`,
+              }}
+            >
+              <div className={`${styles.tooltipPointInner} ${styles.tooltipPointInnerLost}`} />
             </div>
 
             {/* Tooltip Box */}
@@ -201,10 +256,18 @@ export default function AvgTimeToConvertChart({ data = [], actions }: AvgTimeToC
               className={styles.tooltipBox}
               style={{
                 left: `${hoverX}%`,
-                top: `${hoverY * 10}%`,
+                top: `${Math.min(hoverYConverted, hoverYLost) * 10}%`,
               }}
             >
-              {hoveredItem.label}: {hoveredItem.avg_days} Days
+              <div className={styles.tooltipBoxTitle}>{hoveredItem.label}</div>
+              <div className={styles.tooltipBoxRow}>
+                <span className={styles.tooltipDotConverted}></span>
+                <span>Converted: {hoveredItem.converted_count}</span>
+              </div>
+              <div className={styles.tooltipBoxRow}>
+                <span className={styles.tooltipDotLost}></span>
+                <span>Lost: {hoveredItem.lost_count}</span>
+              </div>
             </div>
           </div>
         )}

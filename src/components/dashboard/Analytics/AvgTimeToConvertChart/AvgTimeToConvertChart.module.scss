@@ -1,6 +1,5 @@
 @use "@/styles/variables" as *;
 
-
 .chartContainer {
   position: relative;
   flex: 1;
@@ -58,15 +57,21 @@
   left: 36px;
   right: 0;
   bottom: 0;
-  display: flex;
-  justify-content: space-between;
+  height: 20px;
 }
 
 .xAxisLabel {
-  font-size: $font-size-xs;
+  position: absolute;
+  bottom: 0;
+  font-size: $font-size-9;
   color: $gray-400-zinc;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+  width: 50px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
 }
 
 .svgWrapper {
@@ -107,10 +112,17 @@
   width: 16px;
   height: 16px;
   background-color: $background;
-  border: 1px solid #C3DDFF;
   border-radius: 50%;
   transform: translate(-50%, -50%);
   box-sizing: border-box;
+}
+
+.tooltipPointOuterConverted {
+  border: 1px solid rgba(61, 179, 124, 0.4);
+}
+
+.tooltipPointOuterLost {
+  border: 1px solid rgba(253, 186, 116, 0.4);
 }
 
 .tooltipPointInner {
@@ -120,8 +132,15 @@
   transform: translate(-50%, -50%);
   width: 9px;
   height: 9px;
-  background-color: #2388FF;
   border-radius: 50%;
+}
+
+.tooltipPointInnerConverted {
+  background-color: #3DB37C;
+}
+
+.tooltipPointInnerLost {
+  background-color: #FDBA74;
 }
 
 .tooltipBox {
@@ -130,10 +149,40 @@
   border: 1px solid #E1E4ED;
   box-shadow: 0px 1px 4px rgba(25, 33, 61, 0.08);
   border-radius: 4px;
-  padding: 6px 10px;
+  padding: 8px 12px;
+  transform: translate(-50%, calc(-100% - 14px));
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tooltipBoxTitle {
   font-weight: 700;
   font-size: $font-size-sm;
   color: #353E5C;
-  transform: translate(-50%, calc(-100% - 14px));
-  white-space: nowrap;
+  margin-bottom: 2px;
+}
+
+.tooltipBoxRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: $font-size-xs;
+  color: $gray-500;
+  font-weight: 500;
+}
+
+.tooltipDotConverted {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #3DB37C;
+}
+
+.tooltipDotLost {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #FDBA74;
 }

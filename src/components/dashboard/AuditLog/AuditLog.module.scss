@@ -29,6 +29,7 @@
   font-size: $font-size-xs;
   font-weight: 500;
   white-space: nowrap;
+  text-transform: capitalize;
 
   i {
     width: 0.375rem;
@@ -39,8 +40,7 @@
   }
 }
 
-.actionDeleteLead,
-.actionDeleteReview {
+.actionDelete {
   color: #dc2626;
   background: $background-danger;
   i {
@@ -48,7 +48,7 @@
   }
 }
 
-.actionLogin {
+.actionLogin, .actionLogout {
   color: #cc5200;
   background: #fff5ee;
   i {
@@ -56,7 +56,7 @@
   }
 }
 
-.actionUpdateStatus {
+.actionUpdate {
   color: #16a34a;
   background: $status-success-bg;
   i {
@@ -64,11 +64,27 @@
   }
 }
 
-.actionCreateUser {
+.actionCreate {
   color: $primary;
   background: #f1f8ff;
   i {
     background: $primary;
+  }
+}
+
+.actionExport {
+  color: #7c3aed;
+  background: #f3e8ff;
+  i {
+    background: #7c3aed;
+  }
+}
+
+.pillDefault {
+  color: $gray-600;
+  background: $gray-200;
+  i {
+    background: $gray-600;
   }
 }
 

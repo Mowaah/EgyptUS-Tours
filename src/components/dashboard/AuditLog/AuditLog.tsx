@@ -9,66 +9,182 @@ import {
   TablePanelFilterBar,
   TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
-import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";;
-import { mockAuditLogs } from "./auditLogData";
-import type { AuditLogEntry } from "./auditLogData";
+import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";
+import useSWR from "swr";
+import { fetchAuditLogs, deleteAuditLog, exportAuditLogs } from "@/services/admin/adminAuditLogService";
 import styles from "./AuditLog.module.scss";
 
-const actionClass: Record<AuditLogEntry["action"], string> = {
-  "Delete Lead": styles.actionDeleteLead,
-  Login: styles.actionLogin,
-  "Update Status": styles.actionUpdateStatus,
-  "Create User": styles.actionCreateUser,
-  "Delete Review": styles.actionDeleteReview,
-};
+// Removed actionClass, handled directly in column render
 
 const filterOptions = {
-  adminUser: ["All", "Mona Saleh", "Mohammad Karim", "Ilham Budi Agung", "John Bushmill", "Linda Blair", "Josh Adam"],
-  module: ["All", "Leads & Inquiries", "Finance", "Catalog", "Bookings", "Reviews"],
+  // Hardcoded for now unless we want to fetch dynamic dropdown options
+  module: ["All", "Leads", "Finance", "Catalog", "Bookings", "Reviews", "System Config"],
   dateRange: ["All", "Today", "Yesterday", "Last 7 Days", "Last 30 Days"],
-  action: ["All", "Delete Lead", "Login", "Update Status", "Create User", "Delete Review"],
+  action: ["All", "Create", "Update", "Delete", "Login", "Logout"],
+};
+
+const moduleSlugMap: Record<string, string> = {
+  "Leads": "leads_inquiries",
+  "Finance": "finance",
+  "Catalog": "catalog",
+  "Bookings": "bookings",
+  "Reviews": "reviews",
+  "System Config": "system_config"
+};
+
+const actionSlugMap: Record<string, string> = {
+  "Create": "create",
+  "Update": "update",
+  "Delete": "delete",
+  "Login": "login",
+  "Logout": "logout",
+};
+
+const IDENTIFIER_KEYS = ["name", "title", "full_name", "email", "slug", "question", "filename", "label"];
+
+const extractIdentifier = (obj: Record<string, any>): string | null => {
+  for (const key of IDENTIFIER_KEYS) {
+    if (key in obj && obj[key] !== null && obj[key] !== undefined && obj[key] !== "") {
+      return String(obj[key]);
+    }
+  }
+  for (const [k, v] of Object.entries(obj)) {
+    if (k === "id") continue;
+    if (typeof v === "string" || typeof v === "number") return String(v);
+  }
+  return null;
+};
+
+const AuditValueRender = ({ value, otherValue, isAfter }: { value: any, otherValue: any, isAfter: boolean }) => {
+  if (value === null || value === undefined || value === "") return <span>-</span>;
+  if (typeof value !== "object") return <span>{String(value)}</span>;
+
+  let displayKey = "";
+  let displayVal: any = "";
+
+  if (otherValue && typeof otherValue === "object") {
+    const beforeObj = isAfter ? otherValue : value;
+    const afterObj = isAfter ? value : otherValue;
+    const changedKeys = Object.keys(afterObj).filter(k => 
+      JSON.stringify(beforeObj[k]) !== JSON.stringify(afterObj[k]) && 
+      !["last_activity_at", "updated_at", "created_at"].includes(k)
+    );
+    if (changedKeys.length === 1) {
+      displayKey = changedKeys[0];
+      displayVal = value[displayKey];
+    } else if (changedKeys.length > 1 && changedKeys.includes("status")) {
+      displayKey = "status";
+      displayVal = value["status"];
+    } else if (changedKeys.length > 1 && changedKeys.includes("is_active")) {
+      displayKey = "is_active";
+      displayVal = value["is_active"];
+    } else if (changedKeys.length > 0) {
+      displayKey = changedKeys[0];
+      displayVal = value[displayKey];
+    }
+  }
+
+  if (!displayKey) {
+    if ("status" in value) {
+      displayKey = "status";
+      displayVal = value.status;
+    } else if ("is_active" in value) {
+      displayKey = "is_active";
+      displayVal = value.is_active;
+    } else if ("rating" in value) {
+      displayKey = "rating";
+      displayVal = value.rating;
+    } else {
+      const identifier = extractIdentifier(value);
+      const str = JSON.stringify(value);
+      if (identifier) {
+        return <span title={str} style={{ color: "#64748b" }}>{identifier}</span>;
+      }
+      return <span title={str} style={{ color: "#64748b" }}>{str.length > 30 ? str.slice(0, 30) + "..." : str}</span>;
+    }
+  }
+
+  const label = displayKey.charAt(0).toUpperCase() + displayKey.slice(1).replace(/_/g, " ");
+
+  if (displayKey === "status" || displayKey === "is_active" || displayKey === "user_is_active") {
+    const statusLower = String(displayVal).toLowerCase();
+    const isActive = statusLower === "active" || statusLower === "approved" || statusLower === "true";
+    const isInactive = statusLower === "inactive" || statusLower === "blocked" || statusLower === "rejected" || statusLower === "false";
+    
+    if (isAfter && isActive) {
+      return (
+        <span className={`${styles.pill} ${styles.stateActive}`}>
+          <Image src="/images/dashboard/active.svg" alt="" width={16} height={16} className={styles.stateIcon} aria-hidden />
+          {statusLower === "true" ? "Active" : String(displayVal).charAt(0).toUpperCase() + String(displayVal).slice(1)}
+        </span>
+      );
+    }
+    if (isAfter && isInactive) {
+      return (
+        <span className={`${styles.pill} ${styles.stateInactive}`}>
+          <Image src="/images/dashboard/inactive.svg" alt="" width={16} height={16} className={styles.stateIcon} aria-hidden />
+          {statusLower === "false" ? "Inactive" : String(displayVal).charAt(0).toUpperCase() + String(displayVal).slice(1)}
+        </span>
+      );
+    }
+  }
+
+  return <span style={{ color: "#64748b" }}>{label}: {String(displayVal)}</span>;
 };
 
 export default function AuditLog() {
-  const defaultFilters = { adminUser: "All", module: "All", dateRange: "All", action: "All" };
+  const defaultFilters = { module: "All", dateRange: "All", action: "All" };
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [appliedSearchQuery, setAppliedSearchQuery] = useState("");
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
 
   const [showSaveNotice, setShowSaveNotice] = useState(false);
   const [saveNoticeMessage, setSaveNoticeMessage] = useState("");
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [deleteItem, setDeleteItem] = useState<AuditLogEntry | null>(null);
+  const [deleteItem, setDeleteItem] = useState<any | null>(null);
 
-  const [restoreModalOpen, setRestoreModalOpen] = useState(false);
-  const [restoreItem, setRestoreItem] = useState<AuditLogEntry | null>(null);
+  const queryParams = useMemo(() => {
+    const params: Record<string, any> = {
+      page: pageIndex + 1,
+      page_size: pageSize,
+    };
+    if (appliedFilters.module !== "All") {
+      params.module = moduleSlugMap[appliedFilters.module] || appliedFilters.module.toLowerCase();
+    }
+    if (appliedFilters.action !== "All") {
+      params.action = actionSlugMap[appliedFilters.action] || appliedFilters.action.toLowerCase();
+    }
+    // Date range requires calculating date_from and date_to if we want to support it properly
+    if (appliedSearchQuery) params.search = appliedSearchQuery;
+    return params;
+  }, [appliedFilters, appliedSearchQuery, pageIndex, pageSize]);
+
+  const { data, mutate, isLoading } = useSWR(["/audit-log", queryParams], () => fetchAuditLogs(queryParams));
+  const logs = data?.results || [];
+  const totalCount = data?.count || 0;
 
 
-
-  const filteredLogs = useMemo(
-    () =>
-      mockAuditLogs.filter((log) => {
-        if (appliedFilters.adminUser !== "All" && log.adminUser !== appliedFilters.adminUser) return false;
-        if (appliedFilters.module !== "All" && log.module !== appliedFilters.module) return false;
-        if (appliedFilters.action !== "All" && log.action !== appliedFilters.action) return false;
-        // Date range filtering is mock-only for simplicity
-        return true;
-      }),
-    [appliedFilters]
-  );
 
   const resetFilters = () => {
     setFilters(defaultFilters);
     setAppliedFilters(defaultFilters);
+    setSearchQuery("");
+    setAppliedSearchQuery("");
+    setPageIndex(0);
   };
 
   const applyFilters = () => {
     setAppliedFilters(filters);
+    setAppliedSearchQuery(searchQuery);
+    setPageIndex(0);
   };
 
   const filterFields = (
     [
-      ["adminUser", "Admin user", filterOptions.adminUser],
       ["module", "Module", filterOptions.module],
       ["dateRange", "Date range", filterOptions.dateRange],
       ["action", "Action", filterOptions.action],
@@ -76,122 +192,94 @@ export default function AuditLog() {
   ).map(([id, label, options]) => ({
     id,
     label,
-    value: filters[id],
+    value: filters[id as keyof typeof defaultFilters],
     options: options as unknown as string[],
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
 
-  const auditLogColumns: DataTableColumn<AuditLogEntry>[] = [
+  const auditLogColumns: DataTableColumn<any>[] = [
     {
       id: "id",
       header: "Record ID",
       cellClassName: styles.idCell,
-      render: (row) => row.id,
+      render: (row) => row.display_id,
     },
     {
       id: "timestamp",
       header: "Timestamp",
-      render: (row) => row.timestamp,
+      render: (row) => {
+        if (!row.created_at) return "-";
+        const date = new Date(row.created_at);
+        return date.toLocaleString();
+      },
     },
     {
       id: "adminUser",
       header: "Admin User",
-      render: (row) => row.adminUser,
+      render: (row) => row.actor?.full_name || row.actor?.email || "System",
     },
     {
       id: "action",
       header: "Action",
-      render: (row) => (
-        <span className={`${styles.pill} ${actionClass[row.action]}`}>
-          <i aria-hidden />
-          {row.action}
-        </span>
-      ),
+      render: (row) => {
+        const actionStr = (row.action_label || row.action || "").toLowerCase();
+        let actionStyle = styles.pillDefault;
+        if (actionStr.includes("create")) actionStyle = styles.actionCreate;
+        else if (actionStr.includes("delete")) actionStyle = styles.actionDelete;
+        else if (actionStr.includes("update")) actionStyle = styles.actionUpdate;
+        else if (actionStr.includes("login")) actionStyle = styles.actionLogin;
+        else if (actionStr.includes("logout")) actionStyle = styles.actionLogout;
+        else if (actionStr.includes("export")) actionStyle = styles.actionExport;
+
+        return (
+          <span className={`${styles.pill} ${actionStyle}`}>
+            <i aria-hidden />
+            {row.action_label}
+          </span>
+        );
+      },
     },
     {
       id: "module",
       header: "Module",
-      render: (row) => row.module,
+      render: (row) => row.module_label,
     },
     {
-      id: "beforeValue",
+      id: "before_value",
       header: "Before Value",
-      render: (row) => row.beforeValue,
+      render: (row) => <AuditValueRender value={row.before_value} otherValue={row.after_value} isAfter={false} />,
     },
     {
-      id: "afterValue",
+      id: "after_value",
       header: "After Value",
-      render: (row) => {
-        if (row.afterValue === "Approved") {
-          return (
-            <span className={`${styles.pill} ${styles.stateActive}`}>
-              <Image
-                src="/images/dashboard/active.svg"
-                alt=""
-                width={16}
-                height={16}
-                className={styles.stateIcon}
-                aria-hidden
-              />
-              Approved
-            </span>
-          );
-        }
-        if (row.afterValue === "Inactive") {
-          return (
-            <span className={`${styles.pill} ${styles.stateInactive}`}>
-              <Image
-                src="/images/dashboard/inactive.svg"
-                alt=""
-                width={16}
-                height={16}
-                className={styles.stateIcon}
-                aria-hidden
-              />
-              Inactive
-            </span>
-          );
-        }
-        return row.afterValue;
-      },
+      render: (row) => <AuditValueRender value={row.after_value} otherValue={row.before_value} isAfter={true} />,
     },
   ];
 
-  const rowActions = (_row: AuditLogEntry) => [
-    {
-      label: "Restore Changes",
-      iconSrc: "/images/dashboard/restore.svg",
-      onClick: (item: AuditLogEntry) => {
-        setRestoreItem(item);
-        setRestoreModalOpen(true);
-      },
-    },
+  const rowActions = (_row: any) => [
     {
       label: "Delete Log",
       variant: "danger" as const,
       iconSrc: "/images/dashboard/delete.svg",
-      onClick: (item: AuditLogEntry) => {
+      onClick: (item: any) => {
         setDeleteItem(item);
         setDeleteModalOpen(true);
       },
     },
   ];
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     setDeleteModalOpen(false);
     if (deleteItem) {
-      setSaveNoticeMessage(`The audit log for record ${deleteItem.id} has been deleted successfully.`);
-      setShowSaveNotice(true);
+      try {
+        await deleteAuditLog(deleteItem.id);
+        setSaveNoticeMessage(`The audit log for record ${deleteItem.display_id} has been deleted successfully.`);
+        setShowSaveNotice(true);
+        mutate();
+      } catch (error) {
+        console.error("Failed to delete audit log", error);
+      }
       setDeleteItem(null);
-    }
-  };
-
-  const confirmRestore = () => {
-    setRestoreModalOpen(false);
-    if (restoreItem) {
-      setSaveNoticeMessage(`The changes for record ${restoreItem.id} have been restored successfully.`);
-      setShowSaveNotice(true);
-      setRestoreItem(null);
     }
   };
 
@@ -202,16 +290,17 @@ export default function AuditLog() {
         title="Audit Log"
         iconSrc="/images/dashboard/audit.svg"
         className={styles.panel}
-        headerActions={
-          <>
-            <TablePanelHeaderButton iconSrc="/images/dashboard/filter.svg">
-              Filters
-            </TablePanelHeaderButton>
-            <TablePanelHeaderButton iconSrc="/images/dashboard/export.svg">
-              Export Data
-            </TablePanelHeaderButton>
-          </>
-        }
+        showFilters={true}
+        showExport={true}
+        onExportClick={async () => {
+          try {
+            await exportAuditLogs(queryParams);
+            setSaveNoticeMessage("Audit logs exported successfully.");
+            setShowSaveNotice(true);
+          } catch (error) {
+            console.error("Failed to export audit logs", error);
+          }
+        }}
         toolbar={
           <div className={styles.toolbarStack}>
             <DashboardStatusBanner
@@ -228,12 +317,17 @@ export default function AuditLog() {
         }
       >
         <DataTable
-          data={filteredLogs}
+          data={logs}
           columns={auditLogColumns}
-          getRowId={(row) => row.uid}
-          
+          getRowId={(row) => String(row.id)}
           rowActions={rowActions}
-          defaultPageSize={5}
+          serverSidePagination={true}
+          totalCount={totalCount}
+          pageIndex={pageIndex}
+          pageSize={pageSize}
+          onPageChange={setPageIndex}
+          onPageSizeChange={setPageSize}
+          defaultPageSize={10}
         />
       </TablePanel>
 
@@ -251,22 +345,6 @@ export default function AuditLog() {
         confirmLabel="Delete"
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={confirmDelete}
-      />
-
-      <DashboardConfirmationModal
-        open={restoreModalOpen}
-        variant="activate"
-        title="Restore Changes"
-        message={
-          <>
-            Are you sure you want to restore the changes for record {restoreItem?.id}?
-            <br />
-            This will revert it back to its before state.
-          </>
-        }
-        confirmLabel="Restore"
-        onClose={() => setRestoreModalOpen(false)}
-        onConfirm={confirmRestore}
       />
     </div>
   );

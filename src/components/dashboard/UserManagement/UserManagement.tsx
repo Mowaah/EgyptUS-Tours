@@ -3,7 +3,6 @@ import type { AdminUserRow, AdminRoleRow } from "./types";
 import styles from "./UserManagement.module.scss";
 
 interface UserManagementProps {
-  users: AdminUserRow[];
   roles: AdminRoleRow[];
   searchQuery?: string;
   onEditUser?: (user: AdminUserRow) => void;
@@ -12,7 +11,6 @@ interface UserManagementProps {
 }
 
 export default function UserManagement({
-  users,
   roles,
   searchQuery,
   onEditUser,
@@ -22,7 +20,6 @@ export default function UserManagement({
   return (
     <div className={styles.page}>
       <AdminUsersPanel
-        users={users}
         roles={roles}
         searchQuery={searchQuery}
         onEditUser={onEditUser}

@@ -42,8 +42,11 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
   const { categories, loading: catLoading } = useVehicleCategories();
   const categoryOptions = ["All", ...Array.from(new Set(categories.map((c: any) => c.name).filter(Boolean)))];
 
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   const queryParams = useMemo(() => {
-    const params: any = { limit: 1000, page_size: 1000 };
+    const params: any = { page, page_size: pageSize };
     if (searchQuery) params.search = searchQuery;
     if (appliedFilters.status !== "All") params.status = appliedFilters.status.toLowerCase();
     
@@ -58,9 +61,9 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
     }
     
     return params;
-  }, [appliedFilters, searchQuery]);
+  }, [appliedFilters, searchQuery, page, pageSize]);
 
-  const { data: vehiclesData, loading: vehiclesLoading, refetch } = useCatalogVehicles(queryParams);
+  const { data: vehiclesData, loading: vehiclesLoading, totalCount, refetch } = useCatalogVehicles(queryParams);
 
   const resetFilters = () => {
     setFilters(defaultFilters);
@@ -135,7 +138,14 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
         getRowId={(row) => row.id}
         selectable
         selectionType="star"
-        rowActions={(row) =>
+        serverSidePagination={true}
+        totalCount={totalCount}
+        pageIndex={page - 1}
+        pageSize={pageSize}
+        onPageChange={(p) => setPage(p + 1)}
+        onPageSizeChange={setPageSize}
+        defaultPageSize={10}
+        rowActions={() =>
           transportationRowActions((action, r) => {
             if (action === "View") {
               router.push(`/dashboard/catalog/transportation/${r.id}/overview`);
@@ -148,7 +158,6 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
             }
           })
         }
-        defaultPageSize={10}
       />
       <DashboardConfirmationModal
         open={confirmModal.open}

@@ -130,15 +130,25 @@ export default function DataTable<T>({
   rowActions,
   pageSizeOptions = DEFAULT_PAGE_SIZES,
   defaultPageSize = pageSizeOptions[0] ?? 5,
+  serverSidePagination = false,
+  totalCount,
+  pageIndex,
+  pageSize,
+  onPageChange,
+  onPageSizeChange,
   className,
 }: DataTableProps<T>) {
-  const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(defaultPageSize);
+  const [internalPage, setInternalPage] = useState(1);
+  const [internalRowsPerPage, setInternalRowsPerPage] = useState(defaultPageSize);
   const [internalSelectedRows, setInternalSelectedRows] = useState<string[]>([]);
   const [openRowId, setOpenRowId] = useState<string | null>(null);
 
   const isControlled = selectedRowIds !== undefined;
   const selectedRows = isControlled ? selectedRowIds : internalSelectedRows;
+
+  const isServerSide = serverSidePagination && totalCount !== undefined;
+  const currentPage = isServerSide && pageIndex !== undefined ? pageIndex + 1 : internalPage;
+  const currentRowsPerPage = isServerSide && pageSize !== undefined ? pageSize : internalRowsPerPage;
 
   useEffect(() => {
     if (openRowId === null) return;
@@ -166,9 +176,13 @@ export default function DataTable<T>({
     };
   }, [openRowId]);
 
-  const pageCount = Math.max(1, Math.ceil(data.length / rowsPerPage));
-  const safePage = Math.min(page, pageCount);
-  const visibleRows = data.slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage);
+  const pageCount = isServerSide 
+    ? Math.max(1, Math.ceil((totalCount || 0) / currentRowsPerPage)) 
+    : Math.max(1, Math.ceil(data.length / currentRowsPerPage));
+  const safePage = Math.min(currentPage, pageCount);
+  const visibleRows = isServerSide 
+    ? data 
+    : data.slice((safePage - 1) * currentRowsPerPage, safePage * currentRowsPerPage);
   const hasActions = Boolean(rowActions);
 
   const toggleRow = (id: string) => {
@@ -185,9 +199,22 @@ export default function DataTable<T>({
     }
   };
 
+  const handlePageChange = (p: number) => {
+    if (isServerSide && onPageChange) {
+      onPageChange(p - 1);
+    } else {
+      setInternalPage(p);
+    }
+  };
+
   const changeRowsPerPage = (value: number) => {
-    setRowsPerPage(value);
-    setPage(1);
+    if (isServerSide && onPageSizeChange) {
+      onPageSizeChange(value);
+      if (onPageChange) onPageChange(0);
+    } else {
+      setInternalRowsPerPage(value);
+      setInternalPage(1);
+    }
     setOpenRowId(null);
   };
 
@@ -250,11 +277,11 @@ export default function DataTable<T>({
       </table>
 
       <TablePagination
-        page={page}
+        page={currentPage}
         pageCount={pageCount}
-        rowsPerPage={rowsPerPage}
+        rowsPerPage={currentRowsPerPage}
         pageSizeOptions={pageSizeOptions}
-        onChangePage={setPage}
+        onChangePage={handlePageChange}
         onChangeRowsPerPage={changeRowsPerPage}
       />
     </div>

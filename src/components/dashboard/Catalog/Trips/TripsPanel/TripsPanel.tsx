@@ -49,8 +49,11 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
   const [confirmModal, setConfirmModal] = useState<{ open: boolean; action: "Archive" | "Delete" | null; row: any }>({ open: false, action: null, row: null });
   const [banner, setBanner] = useState<{ show: boolean; message: string; variant: "success" | "warning" }>({ show: false, message: "", variant: "success" });
 
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   const queryParams = useMemo(() => {
-    const params: any = { limit: 1000, page_size: 1000 };
+    const params: any = { page, page_size: pageSize };
     if (searchQuery) params.search = searchQuery;
     if (appliedFilters.status !== "All") params.status = appliedFilters.status.toLowerCase();
     
@@ -78,9 +81,9 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
     }
     
     return params;
-  }, [appliedFilters, searchQuery, categories, destinations]);
+  }, [appliedFilters, searchQuery, categories, destinations, page, pageSize]);
 
-  const { data: tripsData, loading: tripsLoading, refetch } = useCatalogTrips(queryParams);
+  const { data: tripsData, loading: tripsLoading, totalCount, refetch } = useCatalogTrips(queryParams);
 
   const resetFilters = () => {
     setFilters(defaultFilters);
@@ -170,7 +173,14 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
         selectionType="star"
         selectedRowIds={tripsData.filter((t: any) => t.is_featured).map((t: any) => String(t.id))}
         onSelectionChange={handleSelectionChange}
-        rowActions={(row) =>
+        serverSidePagination={true}
+        totalCount={totalCount}
+        pageIndex={page - 1}
+        pageSize={pageSize}
+        onPageChange={(p) => setPage(p + 1)}
+        onPageSizeChange={setPageSize}
+        defaultPageSize={10}
+        rowActions={() =>
           catalogTripsRowActions((action, r) => {
             if (action === "View") {
               router.push(`/dashboard/catalog/trips/${r.id}`);
@@ -183,7 +193,6 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
             }
           })
         }
-        defaultPageSize={10}
       />
       <DashboardConfirmationModal
         open={confirmModal.open}

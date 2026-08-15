@@ -96,8 +96,9 @@ export interface LeadsBySourceData {
 export interface AvgTimeToConvertItem {
   channel: string;
   label: string;
-  avg_days: number;
+  avg_days: number | null;
   converted_count: number;
+  lost_count: number;
 }
 
 export interface AvgTimeToConvertData {

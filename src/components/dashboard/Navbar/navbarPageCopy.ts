@@ -110,7 +110,6 @@ const pageCopyByPath: Record<string, PageCopy> = {
     subtitle: "Track and review all system activities, user actions, and recent administrative changes.",
     breadcrumbTrail: [{ label: "Settings" }, { label: "Audit Log" }],
     searchPlaceholder: "Search bookings, customers...",
-    primaryAction: { label: "New Admin" },
   },
   "/dashboard/settings/faq-management": {
     title: "FAQ Management",
