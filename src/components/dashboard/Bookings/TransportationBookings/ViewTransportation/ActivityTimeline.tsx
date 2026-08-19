@@ -1,50 +1,21 @@
-import { ActivityTimeline, Milestone } from "@/components/dashboard/shared";;
+import { ActivityTimeline, Milestone } from "@/components/dashboard/shared";
 
-export default function TripsActivityTimeline() {
-  const activities: Milestone[] = [
-    {
-      id: "1",
-      title: "Booking Submitted & Deposit Paid (30%)",
-      description: "Guest completed the booking and paid the required deposit.",
-      time: "Oct 26, 09:14 AM",
-      status: "completed",
-    },
-    {
-      id: "2",
-      title: "Payment Reminder Sent",
-      description: "A reminder was sent to the guest for the remaining balance payment.",
-      time: "Oct 26, 09:14 AM",
-      status: "completed",
-    },
-    {
-      id: "3",
-      title: "Final Payment Pending (70%)",
-      description: "-",
-      time: "Oct 26, 09:14 AM",
-      status: "pending",
-    },
-    {
-      id: "4",
-      title: "Trip Reminder Sent",
-      description: "A reminder was sent to the guest for the remaining balance payment.",
-      time: "Oct 26, 09:14 AM",
-      status: "pending",
-    },
-    {
-      id: "5",
-      title: "On Trip",
-      description: "-",
-      time: "Oct 26, 09:14 AM",
-      status: "pending",
-    },
-    {
-      id: "6",
-      title: "Trip Completed",
-      description: "-",
-      time: "Oct 26, 09:14 AM",
-      status: "pending",
-    },
-  ];
+interface ActivityTimelineProps {
+  events: any[];
+}
+
+export default function TransportationActivityTimeline({ events }: ActivityTimelineProps) {
+  let activities: Milestone[] = [];
+
+  if (events && events.length > 0) {
+    activities = events.map((e: any) => ({
+      id: String(e.id),
+      title: e.activity_type.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()),
+      description: e.description || "-",
+      time: new Date(e.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      status: "completed"
+    }));
+  }
 
   return <ActivityTimeline milestones={activities} />;
 }

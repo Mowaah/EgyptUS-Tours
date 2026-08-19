@@ -1,10 +1,20 @@
 import styles from "./ViewTransportation.module.scss";
 
 interface TransferDetailsProps {
-  transportation: any;
+  transfer: any;
 }
 
-export default function TransferDetails({ transportation }: TransferDetailsProps) {
+function formatDateString(dateStr: string) {
+  if (!dateStr) return "-";
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString("en-US", { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+  } catch {
+    return dateStr;
+  }
+}
+
+export default function TransferDetails({ transfer }: TransferDetailsProps) {
   return (
     <div className={styles.card}>
       <div className={styles.cardTitle}>
@@ -19,32 +29,34 @@ export default function TransferDetails({ transportation }: TransferDetailsProps
       <div className={styles.infoList}>
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Pickup Location</span>
-          <span className={styles.infoValue}>{transportation.route?.split(" -> ")[0] || "Luxor International Airport"}</span>
+          <span className={styles.infoValue}>{transfer?.pickup_location || "-"}</span>
         </div>
 
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Drop-off location</span>
-          <span className={styles.infoValue}>{transportation.route?.split(" -> ")[1] || "Hotel Ibis Luxor"}</span>
+          <span className={styles.infoValue}>{transfer?.dropoff_location || "-"}</span>
         </div>
 
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Date & Time</span>
-          <span className={styles.infoValue}>{transportation.dateTime?.replace("-", "·") || "Mar 22, 2026 · 10:30 AM"}</span>
+          <span className={styles.infoValue}>
+            {formatDateString(transfer?.pickup_date)} · {transfer?.pickup_time || "-"}
+          </span>
         </div>
 
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Trip Type</span>
-          <span className={styles.infoValue}>{transportation.tripType || "One Way"}</span>
+          <span className={styles.infoValue}>{transfer?.trip_type ? transfer.trip_type.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) : "One Way"}</span>
         </div>
 
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Passengers / Bags</span>
           <div className={styles.infoValue} style={{ display: 'flex', gap: '12px' }}>
             <span className={styles.nationalityBadge}>
-              2 passengers
+              {transfer?.passengers || 0} passengers
             </span>
             <span className={styles.nationalityBadge}>
-              1 Bags
+              {transfer?.luggage || 0} Bags
             </span>
           </div>
         </div>

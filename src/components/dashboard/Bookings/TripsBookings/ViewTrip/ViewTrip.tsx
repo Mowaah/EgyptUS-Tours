@@ -13,10 +13,12 @@ import RoomSelection from "./RoomSelection";
 import PaymentOverview from "./PaymentOverview";
 import PriceDetails from "./PriceDetails";
 import ActivityTimeline from "./ActivityTimeline";
-import { mockTripsData } from "../tripsData";
+import type { TripBookingRow } from "../types";
 import { getTripsPillStyle } from "../TripsPanel/tripsColumns";
 import ActionNoteModal, { ActionNoteModalConfig } from "@/components/dashboard/LeadsInquiries/ActionNoteModal/ActionNoteModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
+import useSWR from "swr";
+import { getTripBookingById, cancelTripBooking } from "@/services/admin/adminBookingsService";
 import { RefundModal, RefundSummary } from "@/components/dashboard/shared";
 import type { RefundData } from "@/components/dashboard/shared/RefundSummary/RefundSummary";
 
@@ -36,36 +38,41 @@ const cancelBookingConfig: ActionNoteModalConfig = {
 export default function ViewTrip({ tripId }: ViewTripProps) {
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isRefundModalOpen, setIsRefundModalOpen] = useState(false);
-  const [isCancelled, setIsCancelled] = useState(false);
-  const [isRefunded, setIsRefunded] = useState(false);
-  const [refundData, setRefundData] = useState<RefundData | null>(null);
   const [bannerMessage, setBannerMessage] = useState("");
-  
-  const trip = mockTripsData.find((t) => t.id === tripId) || mockTripsData[0];
-  const displayId = trip.id;
+  const [bannerVariant, setBannerVariant] = useState<"success" | "warning" | "error">("success");
 
-  const customPills = (
+  const { data: tripData, isLoading, mutate } = useSWR(
+    tripId ? ["/bookings/trips", tripId] : null,
+    () => getTripBookingById(tripId)
+  );
+
+  const payload = tripData;
+  const isRefunded = payload?.operational_status === "refunded";
+  const isCancelled = payload?.operational_status === "cancelled";
+  const displayId = payload?.booking_code || `BK-${tripId}`;
+
+  const customPills = payload ? (
     <div className={styles.customPills}>
       {!isRefunded && (
-        <span className={getTripsPillStyle(trip.depositStatus)}>
+        <span className={getTripsPillStyle(payload.remaining_payment_status)}>
           <i aria-hidden></i>
-          {["Paid", "Pending", "Overdue"].includes(trip.depositStatus) ? `70% ${trip.depositStatus}` : trip.depositStatus}
+          {payload.remaining_payment_status ? payload.remaining_payment_status.charAt(0).toUpperCase() + payload.remaining_payment_status.slice(1) : "-"}
         </span>
       )}
-      <span className={getTripsPillStyle(isRefunded ? "Refunded" : isCancelled ? "Canceled" : trip.status)}>
+      <span className={getTripsPillStyle(payload.operational_status)}>
         <i aria-hidden></i>
-        {isRefunded ? "Refunded" : isCancelled ? "Canceled" : trip.status}
+        {payload.operational_status ? payload.operational_status.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : "-"}
       </span>
-      <span className={getTripsPillStyle(trip.source)}>
-        {trip.source === "Website" ? (
+      <span className={getTripsPillStyle(payload.booking.source)}>
+        {payload.booking.source === "website" ? (
           <Image src="/images/dashboard/customers/custom/website.svg" alt="website" width={14} height={14} />
-        ) : trip.source === "Agent" ? (
+        ) : payload.booking.source === "agent" ? (
           <Image src="/images/dashboard/customers/custom/agent.svg" alt="agent" width={14} height={14} />
         ) : null}
-        {trip.source}
+        {payload.booking.source ? payload.booking.source.charAt(0).toUpperCase() + payload.booking.source.slice(1) : "-"}
       </span>
     </div>
-  );
+  ) : null;
 
   const actionButtons = isRefunded ? null : isCancelled ? (
     <button 
@@ -104,58 +111,69 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
         ]}
       >
         <ProfileHeader
-          title={trip.customerName}
+          title={payload?.booking?.trip_title || payload?.guest?.full_name || "Trip Booking"}
           customPills={customPills}
-          subtitleElements={[`${displayId}`, trip.dates.split(" → ")[0], "10:30 AM"]}
-          actionButtons={actionButtons}
+          subtitleElements={[`${displayId}`, payload?.booking?.start_date || "-", "10:30 AM"]}
+          actionButtons={payload ? actionButtons : null}
         />
       </DashboardNavbar>
 
       <div className={styles.contentWrapper}>
         <DashboardStatusBanner 
           message={bannerMessage} 
+          variant={bannerVariant}
           show={!!bannerMessage} 
           onClose={() => setBannerMessage("")} 
           className={styles.toastBanner}
         />
-        <div className={styles.gridContainer}>
-          <div className={styles.leftColumn}>
-            <GuestDetails trip={trip} />
-            <BookingInformation />
-            <RoomSelection />
-            <PaymentOverview />
+        {isLoading ? (
+          <div style={{ padding: "40px", textAlign: "center", color: "#6B7280" }}>Loading booking details...</div>
+        ) : (
+          <div className={styles.gridContainer}>
+            <div className={styles.leftColumn}>
+              <GuestDetails guest={payload?.guest} booking={payload?.booking} />
+              <BookingInformation booking={payload?.booking} />
+              <RoomSelection selections={payload?.booking?.room_selections} />
+              <PaymentOverview overview={payload?.payment_overview} />
+            </div>
+            
+            <div className={styles.rightColumn}>
+              <PriceDetails details={payload?.price_details} overview={payload?.payment_overview} />
+              <ActivityTimeline events={payload?.events || []} />
+            </div>
           </div>
-          
-          <div className={styles.rightColumn}>
-            <PriceDetails />
-            <ActivityTimeline />
-            {isRefunded && refundData && <RefundSummary data={refundData} />}
-          </div>
-
-        </div>
+        )}
       </div>
 
       <ActionNoteModal 
         open={isCancelModalOpen}
         config={cancelBookingConfig}
         onClose={() => setIsCancelModalOpen(false)} 
-        onSubmit={(note) => {
-          console.log("Cancelling booking with note:", note);
-          setIsCancelModalOpen(false);
-          setIsCancelled(true);
-          setBannerMessage("The Booking has been Successfully Cancelled");
+        onSubmit={async (note) => {
+          try {
+            await cancelTripBooking(tripId, note);
+            setIsCancelModalOpen(false);
+            setBannerVariant("success");
+            setBannerMessage("The Booking has been Successfully Cancelled");
+            mutate();
+          } catch (err: any) {
+            console.error("Failed to cancel booking:", err);
+            setBannerVariant("error");
+            setBannerMessage(err?.response?.data?.message || "Failed to cancel booking. Please try again.");
+            setIsCancelModalOpen(false);
+          }
         }} 
       />
 
       <RefundModal
         open={isRefundModalOpen}
         onClose={() => setIsRefundModalOpen(false)}
-        onSubmit={(data) => {
+        onSubmit={async (data) => {
+          // Implement real refund API call here later
           console.log("Refunding payment with data:", data);
           setIsRefundModalOpen(false);
-          setIsRefunded(true);
-          setRefundData(data);
           setBannerMessage("The Refunded Payment has been Successfully Done");
+          mutate();
         }}
       />
     </>

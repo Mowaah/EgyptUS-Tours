@@ -8,7 +8,9 @@ import {
   TablePanelFilterBar,
   TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
-import { mockTripsData } from "../tripsData";
+import useSWR from "swr";
+import { getTripBookings, reassignBooking } from "@/services/admin/adminBookingsService";
+import { getAdminUsers } from "@/services/admin/adminUsersService";
 import { tripsColumns, tripsRowActions } from "./tripsColumns";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
@@ -39,25 +41,40 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
   const router = useRouter();
 
-  const filteredTrips = useMemo(
-    () =>
-      mockTripsData.filter((trip) => {
-        if (searchQuery) {
-          const lowerQuery = searchQuery.toLowerCase();
-          if (!trip.customerName.toLowerCase().includes(lowerQuery) &&
-              !trip.id.toLowerCase().includes(lowerQuery) &&
-              !trip.tripName.toLowerCase().includes(lowerQuery)) {
-            return false;
-          }
-        }
-        if (appliedFilters.tourType !== "All" && trip.tourType !== appliedFilters.tourType) return false;
-        if (appliedFilters.deposit !== "All" && trip.depositStatus !== appliedFilters.deposit) return false;
-        if (appliedFilters.status !== "All" && trip.status !== appliedFilters.status) return false;
-        if (appliedFilters.source !== "All" && trip.source !== appliedFilters.source) return false;
-        return true;
-      }),
-    [appliedFilters, searchQuery]
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+
+  const queryParams = useMemo(() => {
+    const params: Record<string, any> = {
+      page: pageIndex + 1,
+      page_size: pageSize,
+    };
+    if (searchQuery) params.search = searchQuery;
+    if (appliedFilters.tourType !== "All") params.tour_type = appliedFilters.tourType.toLowerCase();
+    if (appliedFilters.deposit !== "All") params.payment_status = appliedFilters.deposit.toLowerCase().replace(" ", "_");
+    if (appliedFilters.status !== "All") params.operational_status = appliedFilters.status.toLowerCase().replace(" ", "_");
+    if (appliedFilters.source !== "All") params.source = appliedFilters.source.toLowerCase();
+    return params;
+  }, [appliedFilters, searchQuery, pageIndex, pageSize]);
+
+  const { data, mutate, isLoading } = useSWR(
+    ["/bookings/trips", queryParams],
+    () => getTripBookings(queryParams)
   );
+
+  const { data: usersData } = useSWR(
+    "/admin/users",
+    () => getAdminUsers({ page_size: 100 })
+  );
+
+  const realAgents = usersData?.results?.map((user: any) => ({
+    id: String(user.id),
+    name: user.full_name || `${user.first_name} ${user.last_name}`,
+    avatarSrc: user.profile_picture || "/images/dashboard/default-avatar.png"
+  })) || [];
+
+  const tripsData = data?.results || [];
+  const totalCount = data?.count || 0;
 
   const resetFilters = () => {
     setFilters(defaultFilters);
@@ -86,13 +103,13 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
   const [reassignModalOpen, setReassignModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any>(null);
 
-  if (mockTripsData.length > 0 && filteredTrips.length === 0) {
+  if (totalCount === 0 && (searchQuery || Object.values(appliedFilters).some(v => v !== "All"))) {
     return (
       <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
     );
   }
 
-  if (mockTripsData.length === 0) {
+  if (totalCount === 0 && !isLoading) {
     return (
       <DashboardEmptyState
         title="No Trips Found"
@@ -123,9 +140,9 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
         toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
       >
         <DataTable
-          data={filteredTrips}
+          data={tripsData}
           columns={tripsColumns}
-          getRowId={(row) => row.id}
+          getRowId={(row) => String(row.id)}
           selectable
           rowActions={(row) => tripsRowActions((action, r) => {
             if (action === "View") {
@@ -137,20 +154,32 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
               console.log(`Action ${action} triggered for row`, r);
             }
           })}
+          serverSidePagination={true}
+          totalCount={totalCount}
+          pageIndex={pageIndex}
+          pageSize={pageSize}
+          onPageChange={setPageIndex}
+          onPageSizeChange={setPageSize}
           defaultPageSize={10}
         />
       </TablePanel>
 
       <ReassignModal
         open={reassignModalOpen}
+        agents={realAgents.length > 0 ? realAgents : undefined}
         onClose={() => {
           setReassignModalOpen(false);
           setSelectedRow(null);
         }}
-        onConfirm={(agentId) => {
-          console.log("Reassigning to agent:", agentId, "for row:", selectedRow);
-          setReassignModalOpen(false);
-          setSelectedRow(null);
+        onConfirm={async (agentId) => {
+          try {
+            await reassignBooking("trips", selectedRow.id, agentId);
+            setReassignModalOpen(false);
+            setSelectedRow(null);
+            mutate();
+          } catch (error) {
+            console.error("Failed to reassign booking", error);
+          }
         }}
       />
     </>

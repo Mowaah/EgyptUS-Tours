@@ -2,19 +2,21 @@ import React from "react";
 import Image from "next/image";
 import styles from "./ViewTrip.module.scss";
 
-export default function PriceDetails() {
+interface PriceDetailsProps {
+  details: any;
+  overview: any;
+}
+
+export default function PriceDetails({ details, overview }: PriceDetailsProps) {
+  const items = details?.items || [];
+  const title = details?.title || "Booking Details";
+
   return (
     <div className={`${styles.card} ${styles.firstRowCard}`}>
       <div className={styles.cardTitle}>
         <div className={styles.titleLeft}>
           <div className={styles.titleIcon}>
-            <Image
-              src="/images/dashboard/booking/trips/view/price.svg"
-              alt=""
-              width={20}
-              height={20}
-              aria-hidden
-            />
+            <Image src="/images/dashboard/booking/trips/view/price.svg" alt="" width={20} height={20} aria-hidden />
           </div>
           Price Details
         </div>
@@ -24,7 +26,7 @@ export default function PriceDetails() {
         <div className={styles.priceImageContainer}>
           <Image 
             src="/images/pyramids2.jpg" // placeholder image
-            alt="Luxor & Aswan Nile Cruise Experience"
+            alt="Trip Image"
             fill
             style={{ objectFit: 'cover' }}
           />
@@ -33,7 +35,7 @@ export default function PriceDetails() {
         <div className={styles.priceListContainer}>
           <div className={styles.priceTitleRow}>
             <span className={styles.priceTitle}>
-              Luxor & Aswan Nile Cruise Experience
+              {title}
             </span>
             <button type="button" className={styles.exportButton}>
               <Image src="/images/dashboard/booking/trips/view/export.svg" alt="export" width={20} height={20} />
@@ -41,25 +43,18 @@ export default function PriceDetails() {
           </div>
 
           <div className={styles.priceList}>
-            <div className={styles.priceListItem}>
-              <span className={styles.priceItemName}>1 × Double Room - Sea View</span>
-              <span className={styles.priceItemCost}>$250.00</span>
-            </div>
-            
-            <div className={styles.priceListItem}>
-              <span className={styles.priceItemName}>1 × Double Room - Pool View</span>
-              <span className={styles.priceItemCost}>$250.00</span>
-            </div>
-
-            <div className={styles.priceListItem}>
-              <span className={styles.priceItemName}>1 × Triple Room - Garden View</span>
-              <span className={styles.priceItemCost}>$500.00</span>
-            </div>
-
-            <div className={styles.priceListItem}>
-              <span className={styles.priceItemName}>1 × Triple Room - Garden View</span>
-              <span className={styles.priceItemCost}>$500.00</span>
-            </div>
+            {items.map((item: any, idx: number) => (
+              <div key={idx} className={styles.priceListItem}>
+                <span className={styles.priceItemName}>{item.quantity ? `${item.quantity} × ` : ""}{item.name}</span>
+                <span className={styles.priceItemCost}>${item.price || item.amount}</span>
+              </div>
+            ))}
+            {items.length === 0 && (
+              <div className={styles.priceListItem}>
+                <span className={styles.priceItemName}>Base Price</span>
+                <span className={styles.priceItemCost}>${overview?.total || "0"}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

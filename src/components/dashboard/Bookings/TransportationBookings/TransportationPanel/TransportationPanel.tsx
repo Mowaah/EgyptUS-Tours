@@ -8,7 +8,9 @@ import {
   TablePanelFilterBar,
   TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
-import { mockTransportationData } from "../transportationData";
+import useSWR from "swr";
+import { getTransportationBookings, reassignBooking } from "@/services/admin/adminBookingsService";
+import { getAdminUsers } from "@/services/admin/adminUsersService";
 import { transportationColumns, transportationRowActions } from "./transportationColumns";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
@@ -41,26 +43,41 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
   const router = useRouter();
 
-  const filteredData = useMemo(
-    () =>
-      mockTransportationData.filter((booking) => {
-        if (searchQuery) {
-          const lowerQuery = searchQuery.toLowerCase();
-          if (!booking.customerName.toLowerCase().includes(lowerQuery) &&
-              !booking.id.toLowerCase().includes(lowerQuery) &&
-              !booking.route.toLowerCase().includes(lowerQuery)) {
-            return false;
-          }
-        }
-        if (appliedFilters.vehicleClass !== "All" && booking.vehicleClass !== appliedFilters.vehicleClass) return false;
-        if (appliedFilters.tripType !== "All" && booking.tripType !== appliedFilters.tripType) return false;
-        if (appliedFilters.deposit !== "All" && booking.depositStatus !== appliedFilters.deposit) return false;
-        if (appliedFilters.status !== "All" && booking.status !== appliedFilters.status) return false;
-        if (appliedFilters.source !== "All" && booking.source !== appliedFilters.source) return false;
-        return true;
-      }),
-    [appliedFilters, searchQuery]
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+
+  const queryParams = useMemo(() => {
+    const params: Record<string, any> = {
+      page: pageIndex + 1,
+      page_size: pageSize,
+    };
+    if (searchQuery) params.search = searchQuery;
+    if (appliedFilters.vehicleClass !== "All") params.vehicle_class = appliedFilters.vehicleClass.toLowerCase().replace(" ", "_");
+    if (appliedFilters.tripType !== "All") params.trip_type = appliedFilters.tripType.toLowerCase().replace(" ", "_");
+    if (appliedFilters.deposit !== "All") params.payment_status = appliedFilters.deposit.toLowerCase().replace(" ", "_");
+    if (appliedFilters.status !== "All") params.operational_status = appliedFilters.status.toLowerCase().replace(" ", "_");
+    if (appliedFilters.source !== "All") params.source = appliedFilters.source.toLowerCase();
+    return params;
+  }, [appliedFilters, searchQuery, pageIndex, pageSize]);
+
+  const { data, mutate, isLoading } = useSWR(
+    ["/bookings/transportation", queryParams],
+    () => getTransportationBookings(queryParams)
   );
+
+  const { data: usersData } = useSWR(
+    "/admin/users",
+    () => getAdminUsers({ page_size: 100 })
+  );
+
+  const realAgents = usersData?.results?.map((user: any) => ({
+    id: String(user.id),
+    name: user.full_name || `${user.first_name} ${user.last_name}`,
+    avatarSrc: user.profile_picture || "/images/dashboard/default-avatar.png"
+  })) || [];
+
+  const transportationData = data?.results || [];
+  const totalCount = data?.count || 0;
 
   const applyFilters = () => setAppliedFilters(filters);
   const resetFilters = () => {
@@ -85,13 +102,13 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
   const [reassignModalOpen, setReassignModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any>(null);
 
-  if (mockTransportationData.length > 0 && filteredData.length === 0) {
+  if (totalCount === 0 && (searchQuery || Object.values(appliedFilters).some(v => v !== "All"))) {
     return (
       <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
     );
   }
 
-  if (mockTransportationData.length === 0) {
+  if (totalCount === 0 && !isLoading) {
     return (
       <DashboardEmptyState
         title="No Transportation Bookings Found"
@@ -107,7 +124,7 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
     <>
       <TablePanel
         ariaLabel="Transportation bookings table"
-        title="Transportation Bookings"
+        title="Transportation"
         iconSrc="/images/dashboard/sidebar/transportation.svg"
         headerActions={
           <>
@@ -122,9 +139,9 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
         toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
       >
         <DataTable
-          data={filteredData}
+          data={transportationData}
           columns={transportationColumns}
-          getRowId={(row) => row.id}
+          getRowId={(row) => String(row.id)}
           selectable
           rowActions={(row) => transportationRowActions((action, r) => {
             if (action === "View") {
@@ -136,20 +153,32 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
               console.log(`Action ${action} triggered for row`, r);
             }
           })}
+          serverSidePagination={true}
+          totalCount={totalCount}
+          pageIndex={pageIndex}
+          pageSize={pageSize}
+          onPageChange={setPageIndex}
+          onPageSizeChange={setPageSize}
           defaultPageSize={10}
         />
       </TablePanel>
 
       <ReassignModal
         open={reassignModalOpen}
+        agents={realAgents.length > 0 ? realAgents : undefined}
         onClose={() => {
           setReassignModalOpen(false);
           setSelectedRow(null);
         }}
-        onConfirm={(agentId) => {
-          console.log("Reassigning to agent:", agentId, "for row:", selectedRow);
-          setReassignModalOpen(false);
-          setSelectedRow(null);
+        onConfirm={async (agentId) => {
+          try {
+            await reassignBooking("transportation", selectedRow.id, agentId);
+            setReassignModalOpen(false);
+            setSelectedRow(null);
+            mutate();
+          } catch (error) {
+            console.error("Failed to reassign booking", error);
+          }
         }}
       />
     </>

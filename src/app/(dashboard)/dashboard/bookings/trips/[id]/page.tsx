@@ -1,5 +1,6 @@
 import ViewTrip from "@/components/dashboard/Bookings/TripsBookings/ViewTrip/ViewTrip";
 
-export default function TripDetailsPage({ params }: { params: { id: string } }) {
-  return <ViewTrip tripId={params.id} />;
+export default async function TripDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return <ViewTrip tripId={id} />;
 }

@@ -2,13 +2,20 @@ import Image from "next/image";
 import styles from "./ViewTransportation.module.scss";
 
 interface PassengerInformationProps {
-  transportation?: any;
+  guest?: any;
 }
 
-export default function PassengerInformation({ transportation }: PassengerInformationProps) {
-  const name = transportation?.customerName || "Sara Mohamed";
-  const email = `${name.split(' ')[0].toLowerCase()}@email.com`;
-  const isEgyptian = name.includes("Ahmed") || name.includes("Sara") || name.includes("Hassan");
+import { getNationalityName, resolveCountryCode } from "@/utils/nationality";
+
+export default function PassengerInformation({ guest }: PassengerInformationProps) {
+  const name = guest?.full_name || "Unknown";
+  const email = guest?.email || "-";
+  const phone = guest?.phone || "-";
+  const nationality = guest?.nationality || "";
+  const countryCode = resolveCountryCode(nationality);
+  const countryName = getNationalityName(nationality);
+  const specialRequests = guest?.special_requests || "None";
+
   return (
     <div className={styles.card}>
       <div className={styles.cardTitle}>
@@ -33,23 +40,29 @@ export default function PassengerInformation({ transportation }: PassengerInform
 
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Phone</span>
-          <span className={styles.infoValue}>+20 110 5555001</span>
+          <span className={styles.infoValue}>{phone}</span>
         </div>
 
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Nationality</span>
           <div className={styles.infoValue}>
             <span className={styles.nationalityBadge}>
-              <img src={`https://hatscripts.github.io/circle-flags/flags/${isEgyptian ? 'eg' : 'us'}.svg`} alt={isEgyptian ? "Egyptian" : "American"} className={styles.avatar} style={{ width: 16, height: 16 }} />
-              {isEgyptian ? "Egyptian" : "American"}
+              <img 
+                src={`https://hatscripts.github.io/circle-flags/flags/${countryCode}.svg`} 
+                alt={countryName} 
+                className={styles.avatar} 
+                style={{ width: 16, height: 16 }} 
+                onError={(e) => { e.currentTarget.src = "https://hatscripts.github.io/circle-flags/flags/un.svg"; }}
+              />
+              {countryName}
             </span>
           </div>
         </div>
 
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Special Requests</span>
-          <span className={styles.infoValue} style={{ maxWidth: '400px', lineHeight: '1.4' }}>
-            Please arrange airport pickup if available. I'm traveling with heavy luggage, so assistance would really help.
+          <span className={styles.infoValue} style={{ maxWidth: '400px', lineHeight: '1.4', wordBreak: 'break-word' }}>
+            {specialRequests}
           </span>
         </div>
       </div>

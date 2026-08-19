@@ -2,19 +2,19 @@ import React from "react";
 import Image from "next/image";
 import styles from "./ViewTrip.module.scss";
 
-export default function RoomSelection() {
+interface RoomSelectionProps {
+  selections: any[];
+}
+
+export default function RoomSelection({ selections }: RoomSelectionProps) {
+  if (!selections || selections.length === 0) return null;
+
   return (
     <div className={styles.card}>
       <div className={styles.cardTitle}>
         <div className={styles.titleLeft}>
           <div className={styles.titleIcon}>
-            <Image
-              src="/images/dashboard/booking/trips/view/room.svg"
-              alt=""
-              width={20}
-              height={20}
-              aria-hidden
-            />
+            <Image src="/images/dashboard/booking/trips/view/room.svg" alt="" width={20} height={20} aria-hidden />
           </div>
           Room Selection
         </div>
@@ -23,29 +23,21 @@ export default function RoomSelection() {
       <div className={styles.bookingInfoBox}>
         <div className={styles.boxTitle}>Type of Room</div>
         <div className={styles.roomBadgeList}>
-          <div className={styles.roomBadge}>
-            <Image src="/images/dashboard/booking/trips/view/single_room.svg" alt="" width={20} height={20} />
-            <div className={styles.roomBadgeText}>
-              <span className={styles.roomBadgeTitle}>Single Room - Garden View</span>
-              <span className={styles.roomBadgeSubtitle}>1 person</span>
-            </div>
-          </div>
-          
-          <div className={styles.roomBadge}>
-            <Image src="/images/dashboard/booking/trips/view/double_room.svg" alt="" width={24} height={24} />
-            <div className={styles.roomBadgeText}>
-              <span className={styles.roomBadgeTitle}>Double Room - Garden View</span>
-              <span className={styles.roomBadgeSubtitle}>1 person</span>
-            </div>
-          </div>
-
-          <div className={styles.roomBadge}>
-            <Image src="/images/dashboard/booking/trips/view/triple_room.svg" alt="" width={24} height={24} />
-            <div className={styles.roomBadgeText}>
-              <span className={styles.roomBadgeTitle}>Triple Room - Garden View</span>
-              <span className={styles.roomBadgeSubtitle}>1 person</span>
-            </div>
-          </div>
+          {selections.map((sel, idx) => {
+            const icon = sel.room_type?.toLowerCase().includes("single") ? "single_room.svg" : 
+                         sel.room_type?.toLowerCase().includes("double") ? "double_room.svg" : 
+                         "triple_room.svg";
+            
+            return (
+              <div key={idx} className={styles.roomBadge}>
+                <Image src={`/images/dashboard/booking/trips/view/${icon}`} alt="" width={24} height={24} />
+                <div className={styles.roomBadgeText}>
+                  <span className={styles.roomBadgeTitle}>{sel.room_type || `Room ${idx + 1}`} - {sel.count}x</span>
+                  <span className={styles.roomBadgeSubtitle}>{sel.guests || 1} person</span>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

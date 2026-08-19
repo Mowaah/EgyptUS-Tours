@@ -8,7 +8,9 @@ import {
   TablePanelFilterBar,
   TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
-import { MOCK_HOTEL_BOOKINGS } from "../hotelsData";
+import useSWR from "swr";
+import { getHotelBookings, reassignBooking } from "@/services/admin/adminBookingsService";
+import { getAdminUsers } from "@/services/admin/adminUsersService";
 import { hotelsColumns, hotelsRowActions } from "./hotelsColumns";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
@@ -37,23 +39,39 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
   const router = useRouter();
 
-  const filteredHotels = useMemo(
-    () =>
-      MOCK_HOTEL_BOOKINGS.filter((hotel) => {
-        if (searchQuery) {
-          const lowerQuery = searchQuery.toLowerCase();
-          if (!hotel.customerName.toLowerCase().includes(lowerQuery) &&
-              !hotel.id.toLowerCase().includes(lowerQuery)) {
-            return false;
-          }
-        }
-        if (appliedFilters.deposit !== "All" && hotel.paymentStatus !== appliedFilters.deposit) return false;
-        if (appliedFilters.status !== "All" && hotel.status !== appliedFilters.status) return false;
-        if (appliedFilters.source !== "All" && hotel.source !== appliedFilters.source) return false;
-        return true;
-      }),
-    [appliedFilters, searchQuery]
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+
+  const queryParams = useMemo(() => {
+    const params: Record<string, any> = {
+      page: pageIndex + 1,
+      page_size: pageSize,
+    };
+    if (searchQuery) params.search = searchQuery;
+    if (appliedFilters.deposit !== "All") params.payment_status = appliedFilters.deposit.toLowerCase().replace(" ", "_");
+    if (appliedFilters.status !== "All") params.operational_status = appliedFilters.status.toLowerCase().replace(" ", "_");
+    if (appliedFilters.source !== "All") params.source = appliedFilters.source.toLowerCase();
+    return params;
+  }, [appliedFilters, searchQuery, pageIndex, pageSize]);
+
+  const { data, mutate, isLoading } = useSWR(
+    ["/bookings/hotels", queryParams],
+    () => getHotelBookings(queryParams)
   );
+
+  const { data: usersData } = useSWR(
+    "/admin/users",
+    () => getAdminUsers({ page_size: 100 })
+  );
+
+  const realAgents = usersData?.results?.map((user: any) => ({
+    id: String(user.id),
+    name: user.full_name || `${user.first_name} ${user.last_name}`,
+    avatarSrc: user.profile_picture || "/images/dashboard/default-avatar.png"
+  })) || [];
+
+  const hotelsData = data?.results || [];
+  const totalCount = data?.count || 0;
 
   const resetFilters = () => {
     setFilters(defaultFilters);
@@ -81,13 +99,13 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
   const [reassignModalOpen, setReassignModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any>(null);
 
-  if (MOCK_HOTEL_BOOKINGS.length > 0 && filteredHotels.length === 0) {
+  if (totalCount === 0 && (searchQuery || Object.values(appliedFilters).some(v => v !== "All"))) {
     return (
       <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
     );
   }
 
-  if (MOCK_HOTEL_BOOKINGS.length === 0) {
+  if (totalCount === 0 && !isLoading) {
     return (
       <DashboardEmptyState
         title="No Hotel Bookings Found"
@@ -103,7 +121,7 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
     <>
       <TablePanel
         ariaLabel="Hotels bookings table"
-        title="Hotels Bookings"
+        title="Hotels"
         iconSrc="/images/dashboard/sidebar/hotels.svg"
         headerActions={
           <>
@@ -118,9 +136,9 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
         toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
       >
         <DataTable
-          data={filteredHotels}
+          data={hotelsData}
           columns={hotelsColumns}
-          getRowId={(row) => row.id}
+          getRowId={(row) => String(row.id)}
           selectable
           rowActions={(row) => hotelsRowActions((action, r) => {
             if (action === "View") {
@@ -132,20 +150,32 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
               console.log(`Action ${action} triggered for row`, r);
             }
           })}
+          serverSidePagination={true}
+          totalCount={totalCount}
+          pageIndex={pageIndex}
+          pageSize={pageSize}
+          onPageChange={setPageIndex}
+          onPageSizeChange={setPageSize}
           defaultPageSize={10}
         />
       </TablePanel>
 
       <ReassignModal
         open={reassignModalOpen}
+        agents={realAgents.length > 0 ? realAgents : undefined}
         onClose={() => {
           setReassignModalOpen(false);
           setSelectedRow(null);
         }}
-        onConfirm={(agentId) => {
-          console.log("Reassigning to agent:", agentId, "for row:", selectedRow);
-          setReassignModalOpen(false);
-          setSelectedRow(null);
+        onConfirm={async (agentId) => {
+          try {
+            await reassignBooking("hotels", selectedRow.id, agentId);
+            setReassignModalOpen(false);
+            setSelectedRow(null);
+            mutate();
+          } catch (error) {
+            console.error("Failed to reassign booking", error);
+          }
         }}
       />
     </>

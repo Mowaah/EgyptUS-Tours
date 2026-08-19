@@ -4,43 +4,36 @@ import styles from "./ViewTrip.module.scss";
 import type { TripBookingRow } from "../types";
 
 interface GuestDetailsProps {
-  trip?: TripBookingRow;
+  guest: any;
+  booking: any;
 }
 
-export default function GuestDetails({ trip }: GuestDetailsProps) {
-  // Generate some dynamic dummy data based on the customer name
-  const name = trip?.customerName || "Ahmed Khaled Hassan";
-  const firstName = name.split(" ")[0].toLowerCase();
-  const lastName = name.split(" ")[1]?.toLowerCase() || "guest";
-  const email = `${firstName}.${lastName}89@gmail.com`;
-  
-  // Try to determine nationality from name, otherwise default to US
-  const isEgyptian = name.includes("Ahmed") || name.includes("Karim") || name.includes("Mohammad") || name.includes("Hassan");
-  const countryCode = isEgyptian ? "eg" : "us";
-  const countryName = isEgyptian ? "Egyptian" : "American";
+import { getNationalityName, resolveCountryCode } from "@/utils/nationality";
+
+export default function GuestDetails({ guest, booking }: GuestDetailsProps) {
+  const name = guest?.full_name || "Unknown Guest";
+  const email = guest?.email || "-";
+  const phone = guest?.phone || "-";
+  const nationality = guest?.nationality || "";
+  const countryCode = resolveCountryCode(nationality);
+  const countryName = getNationalityName(nationality);
 
   return (
     <div className={`${styles.card} ${styles.firstRowCard}`}>
       <div className={styles.cardTitle}>
         <div className={styles.titleLeft}>
           <div className={styles.titleIcon}>
-            <Image
-              src="/images/dashboard/booking/trips/view/guest.svg"
-              alt=""
-              width={20}
-              height={20}
-              aria-hidden
-            />
+            <Image src="/images/dashboard/booking/trips/view/guest.svg" alt="" width={20} height={20} aria-hidden />
           </div>
           Guest Details
         </div>
-        <span className={`${styles.pillBadge} ${styles.orange}`}>
-          {trip?.tourType === "Group" ? (
+        <span className={`${styles.pillBadge} ${booking?.tour_type === "group" ? styles.blue : styles.orange}`}>
+          {booking?.tour_type === "group" ? (
             <Image src="/images/dashboard/booking/trips/group.svg" alt="" width={16} height={16} />
           ) : (
             <Image src="/images/dashboard/booking/trips/private.svg" alt="" width={16} height={16} />
           )}
-          {trip?.tourType || "Private"} Tour
+          {booking?.tour_type ? booking.tour_type.charAt(0).toUpperCase() + booking.tour_type.slice(1) : "Private"} Tour
         </span>
       </div>
 
@@ -56,8 +49,8 @@ export default function GuestDetails({ trip }: GuestDetailsProps) {
         </div>
 
         <div className={styles.infoRow}>
-          <span className={styles.infoLabel}>phone Number</span>
-          <span className={styles.infoValue}>{isEgyptian ? "20 10 5678 2341" : "1 555 123 4567"}</span>
+          <span className={styles.infoLabel}>Phone Number</span>
+          <span className={styles.infoValue}>{phone}</span>
         </div>
 
         <div className={styles.infoRow}>
@@ -69,6 +62,7 @@ export default function GuestDetails({ trip }: GuestDetailsProps) {
                 alt={countryName} 
                 className={styles.avatar}
                 style={{ width: 16, height: 16 }}
+                onError={(e) => { e.currentTarget.src = "https://hatscripts.github.io/circle-flags/flags/un.svg"; }}
               />
               {countryName}
             </span>

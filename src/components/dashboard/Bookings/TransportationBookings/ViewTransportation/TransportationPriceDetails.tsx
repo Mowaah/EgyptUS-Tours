@@ -2,10 +2,15 @@ import Image from "next/image";
 import styles from "./ViewTransportation.module.scss";
 
 interface TransportationPriceDetailsProps {
-  transportation: any;
+  details: any;
+  overview: any;
+  vehicleCard: any;
 }
 
-export default function TransportationPriceDetails({ transportation }: TransportationPriceDetailsProps) {
+export default function TransportationPriceDetails({ details, overview, vehicleCard }: TransportationPriceDetailsProps) {
+  const items = details?.items || [];
+  const title = vehicleCard?.name ? `${vehicleCard.vehicle_type} - ${vehicleCard.name}` : "Booking Details";
+
   return (
     <div className={`${styles.card} ${styles.firstRowCard}`}>
       <div className={styles.cardTitle}>
@@ -13,15 +18,15 @@ export default function TransportationPriceDetails({ transportation }: Transport
           <div className={styles.titleIcon}>
             <Image src="/images/dashboard/booking/booking.svg" alt="" width={20} height={20} aria-hidden />
           </div>
-          Booking #{transportation.id}
+          Booking Details
         </div>
       </div>
 
       <div className={styles.priceDetailsWrapper}>
         <div className={styles.priceImageContainer}>
           <Image 
-            src="/images/car1.jpg" 
-            alt={transportation.vehicleClass} 
+            src={vehicleCard?.image_url || "/images/car1.jpg"} 
+            alt={title} 
             fill
             style={{ objectFit: 'cover' }}
           />
@@ -30,7 +35,7 @@ export default function TransportationPriceDetails({ transportation }: Transport
         <div className={styles.priceListContainer}>
           <div className={styles.priceTitleRow}>
             <span className={styles.priceTitle}>
-              Premium Sedan - {transportation.vehicleClass}
+              {title}
             </span>
             <button type="button" className={styles.exportButton}>
               <Image src="/images/dashboard/booking/trips/view/export.svg" alt="export" width={20} height={20} />
@@ -38,20 +43,18 @@ export default function TransportationPriceDetails({ transportation }: Transport
           </div>
 
           <div className={styles.priceList}>
-            <div className={styles.priceListItem}>
-              <span className={styles.priceItemName}>Base Price</span>
-              <span className={styles.priceItemCost}>$85.42</span>
-            </div>
-
-            <div className={styles.priceListItem}>
-              <span className={styles.priceItemName}>Service Fee</span>
-              <span className={styles.priceItemCost}>$5.00</span>
-            </div>
-
-            <div className={styles.priceListItem}>
-              <span className={styles.priceItemName}>Insurance</span>
-              <span className={styles.priceItemCost}>$10.00</span>
-            </div>
+            {items.map((item: any, idx: number) => (
+              <div key={idx} className={styles.priceListItem}>
+                <span className={styles.priceItemName}>{item.quantity ? `${item.quantity} × ` : ""}{item.name}</span>
+                <span className={styles.priceItemCost}>${item.price || item.amount}</span>
+              </div>
+            ))}
+            {items.length === 0 && (
+              <div className={styles.priceListItem}>
+                <span className={styles.priceItemName}>Base Price</span>
+                <span className={styles.priceItemCost}>${overview?.total || "0"}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
