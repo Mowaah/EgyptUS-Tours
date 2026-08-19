@@ -70,7 +70,7 @@ export default function HotelDetailPage({ hotel, similarHotels }: HotelDetailPag
           <DetailGallery
             images={hotel.images ?? [hotel.image]}
             title={hotel.name}
-            rating={hotel.rating ?? 0}
+            rating={hotel.stars ?? hotel.rating ?? 0}
             reviewCount={hotel.reviews ?? 0}
             description={hotel.description}
           />
@@ -78,8 +78,8 @@ export default function HotelDetailPage({ hotel, similarHotels }: HotelDetailPag
           <div className={styles.heroOverlay}>
             <DetailHeroBar
               title={hotel.name}
-              description={hotel.description}
-              rating={hotel.rating ?? 0}
+              description={hotel.subtitle || hotel.description}
+              rating={hotel.stars ?? hotel.rating ?? 0}
               reviewCount={hotel.reviews ?? 0}
               showReviews={false}
               isFavorite={isFavorite}

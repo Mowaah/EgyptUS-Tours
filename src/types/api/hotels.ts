@@ -5,6 +5,7 @@ export interface HotelRoom {
   external_room_id: string;
   name: string;
   description: string;
+  category_label: string;
   type_label: string;
   view_label: string;
   price_per_night: string;
@@ -40,8 +41,10 @@ export interface HotelList {
 }
 
 export interface HotelDetail extends HotelList {
+  subtitle: string;
   address: string;
   description: string;
+  second_description: string;
   gallery_images: string[];
   overview_sections: { title: string; body: string }[];
   facilities: string[];

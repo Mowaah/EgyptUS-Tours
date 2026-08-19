@@ -55,7 +55,7 @@ function MediaUploadBlock({
               value={field.value || (defaultFileMock ? ({ name: "Description of the problem.png", size: 200000 } as File) : undefined)}
               onFileSelect={(file) => {
                 if (!file) {
-                  setValue(`photos.${index}.id` as never, undefined as never, { shouldDirty: true });
+                  setValue(`photos.${index}.id` as never, null as never, { shouldDirty: true });
                 }
                 field.onChange(file);
               }}

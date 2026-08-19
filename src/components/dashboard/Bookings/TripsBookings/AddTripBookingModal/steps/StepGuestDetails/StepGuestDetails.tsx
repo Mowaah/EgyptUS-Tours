@@ -46,11 +46,14 @@ export default function StepGuestDetails({ formData, onChange }: StepGuestDetail
               variant="ghost" 
             />
             <input
-              type="text"
+              type="tel"
               className={styles.phoneInput}
               placeholder="000-0000"
               value={formData.guestPhone}
-              onChange={(e) => onChange({ guestPhone: e.target.value })}
+              onChange={(e) => {
+                const val = e.target.value.replace(/[^0-9+\-()\s]/g, "");
+                onChange({ guestPhone: val });
+              }}
             />
           </div>
         </div>

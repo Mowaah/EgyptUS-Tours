@@ -14,11 +14,13 @@ const TYPE_OPTIONS = ["All", "Single", "Double Room", "Triple Room"];
 const VIEW_OPTIONS = ["All", "Sea View", "Pool View", "Garden View"];
 
 export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
+  const [roomCategory, setRoomCategory] = useState("All");
   const [roomType, setRoomType] = useState("All");
   const [roomView, setRoomView] = useState("All");
   const [priceRange, setPriceRange] = useState({ min: 1, max: 12000 });
 
   const [expanded, setExpanded] = useState({
+    category: true,
     type: true,
     view: true,
     price: true,
@@ -26,13 +28,15 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
+    if (roomCategory !== "All") count++;
     if (roomType !== "All") count++;
     if (roomView !== "All") count++;
     if (priceRange.min !== 1 || priceRange.max !== 12000) count++;
     return count;
-  }, [roomType, roomView, priceRange]);
+  }, [roomCategory, roomType, roomView, priceRange]);
 
   const handleReset = () => {
+    setRoomCategory("All");
     setRoomType("All");
     setRoomView("All");
     setPriceRange({ min: 1, max: 12000 });
@@ -42,10 +46,11 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
 
   // Filtering logic
   const filteredRooms = rooms.filter(room => {
+    const matchesCategory = roomCategory === "All" || room.category === roomCategory;
     const matchesType = roomType === "All" || room.type === roomType;
     const matchesView = roomView === "All" || room.view === roomView;
     const matchesPrice = room.pricePerNight >= priceRange.min && room.pricePerNight <= priceRange.max;
-    return matchesType && matchesView && matchesPrice;
+    return matchesCategory && matchesType && matchesView && matchesPrice;
   });
 
   const toggleExpand = (key: keyof typeof expanded) => {
@@ -70,6 +75,20 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
           onReset={handleReset}
           id="hotel-rooms-sidebar"
         >
+          {/* Room Category */}
+          <FilterGroup
+            title="Room Category"
+            isExpanded={expanded.category}
+            onToggle={() => toggleExpand("category")}
+          >
+            <RadioFilterList
+              options={["All", ...Array.from(new Set(rooms.map(r => r.category).filter(Boolean))) as string[]]}
+              name="roomCategory"
+              selectedValue={roomCategory}
+              onChange={setRoomCategory}
+            />
+          </FilterGroup>
+
           {/* Type of Room */}
           <FilterGroup
             title="Type Of Room"
@@ -139,7 +158,7 @@ function RoomCard({ room }: { room: HotelRoom }) {
     <div className={styles.roomCard}>
       {/* ── Image ── */}
       <div className={styles.roomGallery}>
-        <Image src={room.images[0]} alt={room.name} fill className={styles.roomImg} />
+        <Image src={room.images?.[0] || "/images/dashboard/catalog/hotels/roomtype.jpg"} alt={room.name} fill className={styles.roomImg} />
 
         {/* Gradient overlay */}
         <div className={styles.roomGradient} />

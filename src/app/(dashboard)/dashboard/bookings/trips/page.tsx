@@ -10,9 +10,7 @@ export default async function TripsPage({
 
   return (
     <>
-            
-                <TripsBookings searchQuery={searchQuery} />
-      
+      <TripsBookings searchQuery={searchQuery} />
     </>
   );
 }

@@ -6,8 +6,8 @@ import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import styles from "./FormFields.module.scss";
 
 interface UploadDropzoneProps {
-  value?: File | string;
-  onFileSelect?: (file: File | undefined) => void;
+  value?: File | string | null;
+  onFileSelect?: (file: File | null) => void;
   accept?: string;
   className?: string;
   title?: string;
@@ -119,7 +119,17 @@ export function UploadDropzone({
             </p>
             <div className={styles.fileMeta}>
               {typeof value === 'string' ? (
-                <span className={styles.fileSize}>Uploaded Image</span>
+                <>
+                  <span className={styles.fileSize}>Saved on server</span>
+                  <div className={styles.fileDivider}></div>
+                  <span className={styles.fileStatus}>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M8 14.6667C11.6819 14.6667 14.6667 11.6819 14.6667 8C14.6667 4.3181 11.6819 1.33334 8 1.33334C4.3181 1.33334 1.33333 4.3181 1.33333 8C1.33333 11.6819 4.3181 14.6667 8 14.6667Z" stroke="#079455" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M5.33333 8.00001L7.11111 9.77779L10.6667 6.22223" stroke="#079455" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    Complete
+                  </span>
+                </>
               ) : (
                 <>
                   <span className={styles.fileSize}>{formatBytes(value.size)} of {formatBytes(value.size)}</span>
@@ -155,7 +165,7 @@ export function UploadDropzone({
             className={styles.fileDeleteBtn}
             onClick={(e) => {
               e.stopPropagation();
-              onFileSelect?.(undefined);
+              onFileSelect?.(null);
             }}
           >
             <Image src="/images/dashboard/delete.svg" alt="Delete" width={20} height={20} />

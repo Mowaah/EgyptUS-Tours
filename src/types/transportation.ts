@@ -20,11 +20,7 @@ export interface TransportationBookingData {
   pickupTime: string;
   passengers: number;
   luggage: number;
-  services: {
-    childSeat: boolean;
-    extraLuggage: boolean;
-    meetAndGreet: boolean;
-  };
+  additionalServiceIds: number[];
   name: string;
   email: string;
   phone: string;
@@ -45,11 +41,7 @@ export const INITIAL_TRANSPORT_BOOKING: TransportationBookingData = {
   pickupTime: "",
   passengers: 2,
   luggage: 1,
-  services: {
-    childSeat: true,
-    extraLuggage: false,
-    meetAndGreet: false,
-  },
+  additionalServiceIds: [],
   name: "",
   email: "",
   phone: "",

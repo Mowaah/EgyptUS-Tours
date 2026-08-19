@@ -72,6 +72,14 @@ export async function previewHotelBooking(payload: any): Promise<any> {
   return await adminDataClient.post(`/bookings/hotels/preview/`, payload);
 }
 
+export async function createTransportationBooking(payload: any): Promise<any> {
+  return await adminDataClient.post(`/bookings/transportation/`, payload);
+}
+
+export async function previewTransportationBooking(payload: any): Promise<any> {
+  return await adminDataClient.post(`/bookings/transportation/preview/`, payload);
+}
+
 export async function sendHotelBookingReminder(id: string | number, message: string = ''): Promise<any> {
   return await adminDataClient.post(`/bookings/hotels/${id}/send_reminder/`, { message });
 }

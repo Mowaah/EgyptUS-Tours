@@ -140,13 +140,7 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
       </DashboardNavbar>
 
       <div className={styles.contentWrapper}>
-        <DashboardStatusBanner 
-          message={bannerMessage} 
-          variant={bannerVariant}
-          show={!!bannerMessage} 
-          onClose={() => setBannerMessage("")} 
-          className={styles.toastBanner}
-        />
+
         {isLoading ? (
           <div style={{ padding: "40px", textAlign: "center", color: "#6B7280" }}>Loading booking details...</div>
         ) : (
@@ -196,6 +190,12 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
           setBannerMessage("The Refunded Payment has been Successfully Done");
           mutate();
         }}
+      />
+      <DashboardStatusBanner 
+        message={bannerMessage} 
+        variant={bannerVariant}
+        show={!!bannerMessage} 
+        onClose={() => setBannerMessage("")} 
       />
     </>
   );

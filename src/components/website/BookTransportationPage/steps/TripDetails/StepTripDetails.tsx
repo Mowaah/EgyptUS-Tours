@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { TransportationBookingData, Vehicle } from "@/types";
+import useSWR from "swr";
+import { apiClient } from "@/lib/api";
 import { FormField, Button, CustomDatePicker, SelectDropdown, CheckboxIndicator, TimePicker, TimeValue, BookingStepFooter } from "@/components/shared";
 import formStyles from "@/components/shared/FormField/FormField.module.scss";
 import styles from "./StepTripDetails.module.scss";
@@ -18,11 +20,8 @@ const LUGGAGE_OPTIONS = [1, 2, 3, 4].map((n) => ({
   value: n.toString(),
 }));
 
-const ADDITIONAL_SERVICES = [
-  { key: "childSeat" as const, label: "Child Seat", price: "+$10.00" },
-  { key: "extraLuggage" as const, label: "Extra Luggage Space", price: "+$15.00" },
-  { key: "meetAndGreet" as const, label: "Meet & Greet Service", price: "+$20.00" },
-];
+
+const fetcher = (url: string) => apiClient.get(url).then((res: any) => res.results || res);
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface StepTripDetailsProps {
@@ -172,8 +171,12 @@ export default function StepTripDetails({
   formData,
   onChange,
   onContinue,
+  vehicle,
   errors = {},
 }: StepTripDetailsProps) {
+  const { data: vehicleDetailsData } = useSWR(`/vehicles/${vehicle.id}/`, fetcher);
+  const additionalServices = vehicleDetailsData?.additional_services || [];
+
   return (
     <div className={styles.stepCard}>
       {/* Header */}
@@ -261,17 +264,24 @@ export default function StepTripDetails({
         <div className={styles.servicesSection}>
           <label className={styles.label}>Additional Services</label>
           <div className={styles.serviceList}>
-            {ADDITIONAL_SERVICES.map(({ key, label, price }) => (
-              <ServiceItem
-                key={key}
-                label={label}
-                price={price}
-                checked={formData.services[key]}
-                onChange={(checked) =>
-                  onChange({ services: { ...formData.services, [key]: checked } })
-                }
-              />
-            ))}
+            {additionalServices.map((service: any) => {
+              const isSelected = formData.additionalServiceIds.includes(service.id);
+              return (
+                <ServiceItem
+                  key={service.id}
+                  label={service.name}
+                  price={`+$${service.price}`}
+                  checked={isSelected}
+                  onChange={() => {
+                    if (isSelected) {
+                      onChange({ additionalServiceIds: formData.additionalServiceIds.filter(id => id !== service.id) });
+                    } else {
+                      onChange({ additionalServiceIds: [...formData.additionalServiceIds, service.id] });
+                    }
+                  }}
+                />
+              );
+            })}
           </div>
         </div>
       </div>

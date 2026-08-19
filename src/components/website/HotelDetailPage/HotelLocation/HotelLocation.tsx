@@ -17,10 +17,10 @@ export default function HotelLocation({ hotel }: HotelLocationProps) {
       </div>
 
       <div className={styles.mapContainer}>
-        {hotel.mapEmbedUrl ? (
+        {hotel.address || hotel.location ? (
           <iframe
             className={styles.mapIframe}
-            src={hotel.mapEmbedUrl}
+            src={hotel.mapEmbedUrl || `https://maps.google.com/maps?q=${encodeURIComponent(hotel.address || hotel.location || "")}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
             width="100%"
             height="100%"
             style={{ border: 0 }}

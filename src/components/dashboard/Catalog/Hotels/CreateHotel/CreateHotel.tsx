@@ -9,7 +9,6 @@ import { OverviewStep } from "./Steps/Overview/OverviewStep";
 import { RoomsStep } from "./Steps/Rooms/RoomsStep";
 import { WizardMediaStep } from "@/components/dashboard/shared";
 import { SEOStep } from "./Steps/SEO/SEOStep";
-import { PricingStep } from "./Steps/Pricing/PricingStep";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { WizardLayout } from "@/components/dashboard/shared";
 import { useWizard, WizardStepConfig, WizardSubmitIntent } from "@/hooks/useWizard";
@@ -20,7 +19,6 @@ import styles from "./CreateHotel.module.scss";
 const STEPS: WizardStepConfig[] = [
   { label: "Overview", iconSrc: "/images/dashboard/catalog/trips/overview.svg", fieldsToValidate: ["hotelName", "totalRooms", "subtitle", "cityLocation", "starRating", "facilities", "description", "secondDescription"] },
   { label: "Rooms", iconSrc: "/images/dashboard/catalog/hotels/basic.svg", fieldsToValidate: ["rooms"] },
-  { label: "Pricing", iconSrc: "/images/dashboard/catalog/trips/pricing.svg", fieldsToValidate: ["vat", "insurance"] },
   { label: "Media", iconSrc: "/images/dashboard/catalog/trips/media.svg", fieldsToValidate: ["photos"] },
   { label: "SEO", iconSrc: "/images/dashboard/catalog/trips/seo.svg", fieldsToValidate: ["metaTitle", "metaDescription", "metaKeywords", "slug"] },
 ];
@@ -117,9 +115,6 @@ const EMPTY_VALUES: CreateHotelValues = {
     facilities: [],
     photos: []
   }],
-  basePrice: "",
-  vat: "",
-  insurance: "",
   photos: [
     { file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } }, // index 0 = hero/banner
     { file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } }, // index 1 = gallery 1
@@ -179,16 +174,13 @@ function mapHotelToFormValues(hotel: any): CreateHotelValues {
     hotelName: { en: tEn.name || hotel?.name || "", it: tIt.name || "", es: tEs.name || "" },
     totalRooms: hotel?.total_rooms ? String(hotel.total_rooms) : "",
     subtitle: { en: tEn.subtitle || hotel?.subtitle || "", it: tIt.subtitle || "", es: tEs.subtitle || "" },
-    cityLocation: hotel?.location_id ? String(hotel.location_id) : (hotel?.location_text || ""),
+    cityLocation: hotel?.location?.id ? String(hotel.location.id) : (hotel?.location_text || ""),
     address: hotel?.address || "",
     starRating: hotel?.stars ? String(hotel.stars) : "",
     description: { en: tEn.description || hotel?.description || "", it: tIt.description || "", es: tEs.description || "" },
     secondDescription: { en: tEn.second_description || hotel?.second_description || "", it: tIt.second_description || "", es: tEs.second_description || "" },
     facilities: hotel?.facilities || [],
     rooms,
-    basePrice: hotel?.pricing_summary?.base_price || "",
-    vat: hotel?.vat_amount || "",
-    insurance: hotel?.insurance_fee || "",
     photos: padPhotos(photoRows),
     metaTitle: { en: tEn.meta_title || "", it: tIt.meta_title || "", es: tEs.meta_title || "" },
     metaDescription: { en: tEn.meta_description || "", it: tIt.meta_description || "", es: tEs.meta_description || "" },
@@ -382,8 +374,6 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
         stars: data.starRating ? parseFloat(cleanNumber(data.starRating) || "0") : undefined,
         total_rooms: data.totalRooms ? parseInt(cleanNumber(data.totalRooms) || "0") : undefined,
         facilities: data.facilities,
-        vat_amount: cleanNumber(data.vat),
-        insurance_fee: cleanNumber(data.insurance),
         replace_rooms: true,
         replace_media_items: true,
         media_items: mediaItems,
@@ -435,9 +425,8 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
     switch (currentStep) {
       case 0: return <OverviewStep />;
       case 1: return <RoomsStep />;
-      case 2: return <PricingStep />;
-      case 3: return <WizardMediaStep />;
-      case 4: return <SEOStep />;
+      case 2: return <WizardMediaStep />;
+      case 3: return <SEOStep />;
       default: return null;
     }
   };

@@ -33,11 +33,6 @@ export const createHotelSchema = z.object({
   metaKeywords: localizedStringSchema,
   slug: localizedStringSchema,
   
-  // Pricing
-  basePrice: z.string().optional(), // Now read-only derived from rooms
-  vat: z.string().optional(),
-  insurance: z.string().optional(),
-  
   // Media
   photos: z
     .array(z.any())

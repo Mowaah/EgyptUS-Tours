@@ -67,8 +67,8 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
     }
     return total + typeTotal;
   }, 0) * nights;
-  const vatAmount = totalAmount * 0.1;
-  const depositAmount = (totalAmount + vatAmount) * 0.3;
+  const vatAmount = 0;
+  const depositAmount = totalAmount * 0.3;
 
   const handleContinue = () => {
     if (currentStep < 3) setCurrentStep((s) => s + 1);
@@ -142,7 +142,7 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
             { label: "Hotel", value: hotel.name },
             { label: "Check-in", value: formData.startDate || "—" },
             { label: "Check-out", value: formData.endDate || "—" },
-            { label: "Total Price", value: `$${(totalAmount + vatAmount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, valueColor: "#FF6600" },
+            { label: "Total Price", value: `$${(totalAmount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, valueColor: "#FF6600" },
             { label: "Paid Now", value: `$${depositAmount.toFixed(2)}`, valueColor: "#FF6600" },
           ]}
         />

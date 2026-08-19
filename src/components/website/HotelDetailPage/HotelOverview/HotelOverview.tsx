@@ -13,12 +13,20 @@ export default function HotelOverview({ hotel }: HotelOverviewProps) {
     <section id="overview" className={styles.section}>
       <h2 className={styles.heading}>Overview</h2>
 
-      {ov?.sections.map((section, idx) => (
-        <div key={idx} className={styles.overviewSection}>
-          <h3 className={styles.label}>{section.heading}</h3>
-          <p className={styles.text}>{section.body}</p>
-        </div>
-      ))}
+      <div className={styles.overviewSection}>
+        {hotel.description && (
+          <div style={{ marginBottom: '32px' }}>
+            <h3 className={styles.label}>Prime Location & Accessibility</h3>
+            <p className={styles.text} dangerouslySetInnerHTML={{ __html: hotel.description.replace(/\n/g, '<br />') }} />
+          </div>
+        )}
+        {hotel.secondDescription && (
+          <div>
+            <h3 className={styles.label}>Luxury & Guest Experience</h3>
+            <p className={styles.text} dangerouslySetInnerHTML={{ __html: hotel.secondDescription.replace(/\n/g, '<br />') }} />
+          </div>
+        )}
+      </div>
 
       <div className={styles.integratedSection}>
         <HotelFacilities hotel={hotel} />

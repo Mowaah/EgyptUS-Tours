@@ -3,7 +3,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Vehicle, TransportationBookingData } from "@/types";
+import useSWR from "swr";
+import { apiClient } from "@/lib/api";
 import styles from "./BookingSummary.module.scss";
+
+const fetcher = (url: string) => apiClient.get(url).then((res: any) => res.results || res);
 
 interface BookingSummaryProps {
   vehicle: Vehicle;
@@ -13,10 +17,18 @@ interface BookingSummaryProps {
 export default function BookingSummary({ vehicle, formData }: BookingSummaryProps) {
   const [expanded, setExpanded] = useState(false);
 
+  const { data: servicesData } = useSWR("/catalog/vehicle-additional-services/", fetcher);
+  const additionalServices = servicesData || [];
+
   const basePrice = 85.42;
   const serviceFee = 5.00;
   const insurance = 10.00;
-  const total = basePrice + serviceFee + insurance;
+
+  const servicesTotal = additionalServices
+    .filter((s: any) => formData.additionalServiceIds?.includes(s.id))
+    .reduce((acc: number, s: any) => acc + parseFloat(s.price || 0), 0);
+
+  const total = basePrice + serviceFee + insurance + servicesTotal;
 
   const pickupShort = formData.pickupLocation
     ? formData.pickupLocation.split(",")[0]
@@ -103,6 +115,14 @@ export default function BookingSummary({ vehicle, formData }: BookingSummaryProp
                       <span className={styles.priceLabel}>Insurance</span>
                       <span className={styles.priceValue}>${insurance.toFixed(2)}</span>
                     </div>
+                    {additionalServices
+                      .filter((s: any) => formData.additionalServiceIds?.includes(s.id))
+                      .map((s: any) => (
+                        <div className={styles.priceRow} key={s.id}>
+                          <span className={styles.priceLabel}>{s.name}</span>
+                          <span className={styles.priceValue}>${parseFloat(s.price).toFixed(2)}</span>
+                        </div>
+                      ))}
                   </div>
                 </div>
               </div>

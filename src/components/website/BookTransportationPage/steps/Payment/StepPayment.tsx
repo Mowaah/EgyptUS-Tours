@@ -65,12 +65,7 @@ export default function StepPayment({
         pickup_time: formatTime(formData.pickupTime),
         passengers: formData.passengers,
         luggage: String(formData.luggage),
-        additional_service_ids: [],
-        services: {
-          child_seat: formData.services.childSeat,
-          extra_luggage: formData.services.extraLuggage,
-          meet_and_greet: formData.services.meetAndGreet,
-        },
+        additional_service_ids: formData.additionalServiceIds,
         email: formData.email,
         phone: formData.phone,
         nationality: formData.nationality,

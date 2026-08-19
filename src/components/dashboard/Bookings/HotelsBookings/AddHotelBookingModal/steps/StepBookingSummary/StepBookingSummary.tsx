@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import RatingBadge from "@/components/shared/RatingBadge/RatingBadge";
 import styles from "./StepBookingSummary.module.scss";
 import { AddHotelBookingData } from "../../AddHotelBookingModal";
 import { previewHotelBooking } from "@/services/admin/adminBookingsService";
@@ -78,10 +77,10 @@ export default function StepBookingSummary({ formData, onSummaryLoad }: StepBook
   const hotelName = previewData?.hotel_name || formData?.hotelLocation || "Selected Hotel";
   const nights = previewData?.nights || 0;
   
-  const subtotal = previewData?.subtotal || "0.00";
   const discount = previewData?.discount || "0.00";
-  const vat = previewData?.vat || "0.00";
+  
   const total = previewData?.total_price || "0.00";
+  
   const lineItems = previewData?.line_items || [];
 
   return (
@@ -91,7 +90,6 @@ export default function StepBookingSummary({ formData, onSummaryLoad }: StepBook
         <div className={styles.leftInner}>
           <div className={styles.titleWrap}>
             <h3 className={styles.tripTitle}>{hotelName}</h3>
-            <RatingBadge rating={4.9} reviews={248} size="md" className={styles.ratingBadge} />
           </div>
 
           <div className={styles.middleSection}>
@@ -176,11 +174,6 @@ export default function StepBookingSummary({ formData, onSummaryLoad }: StepBook
                     <span className={styles.discountValue}>-${discount}</span>
                   </div>
                 )}
-                
-                <div className={styles.priceRow}>
-                  <span className={styles.priceLabel}>VAT</span>
-                  <span className={styles.priceValue}>${vat}</span>
-                </div>
               </div>
             
               <div className={styles.totalRow}>

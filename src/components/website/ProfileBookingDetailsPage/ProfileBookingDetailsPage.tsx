@@ -137,8 +137,8 @@ export default function ProfileBookingDetailsPage() {
   const hotelTotalGuests = safeFormData.adults + safeFormData.children + safeFormData.infants;
   
   const hotelTotalAmount = totalAmount; 
-  const hotelVatAmount = hotelTotalAmount * 0.1;
-  const hotelDepositAmount = (hotelTotalAmount + hotelVatAmount) * 0.3;
+  const hotelVatAmount = 0;
+  const hotelDepositAmount = hotelTotalAmount * 0.3;
   
   const hotelRoomsList = [
     safeFormData.rooms.single > 0 ? `${safeFormData.rooms.single} × Single Room` : null,

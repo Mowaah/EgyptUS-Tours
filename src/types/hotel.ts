@@ -31,6 +31,8 @@ export interface Hotel {
   rooms: number;
   pricePerNight: number;
   reviews: number;
+  subtitle?: string;
+  secondDescription?: string;
   description?: string;
   isFavorite?: boolean;
   overview?: {

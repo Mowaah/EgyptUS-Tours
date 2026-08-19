@@ -53,6 +53,8 @@ export function mapHotelDetailToHotel(hotelDetail: HotelDetail): import("@/types
     pricePerNight: parseFloat(hotelDetail.price_per_night) || 0,
     reviews: hotelDetail.review_count,
     description: hotelDetail.description,
+    secondDescription: hotelDetail.second_description,
+    subtitle: hotelDetail.subtitle,
     isFavorite: hotelDetail.is_favorite,
     overview: {
       sections: (hotelDetail.overview_sections || []).map(s => ({
@@ -66,6 +68,7 @@ export function mapHotelDetailToHotel(hotelDetail: HotelDetail): import("@/types
       id: r.id.toString(),
       name: r.name,
       description: r.description,
+      category: r.category_label || "",
       type: r.type_label || "",
       view: r.view_label || "",
       pricePerNight: parseFloat(r.price_per_night) || 0,

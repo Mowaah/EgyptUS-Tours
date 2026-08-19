@@ -1,40 +1,78 @@
 import React from "react";
 import Image from "next/image";
+import useSWR from "swr";
 import { AddTransportationBookingData } from "../../AddTransportationBookingModal";
+import { previewTransportationBooking } from "@/services/admin/adminBookingsService";
 import styles from "./StepBookingSummary.module.scss";
 
 interface StepBookingSummaryProps {
   formData: AddTransportationBookingData;
 }
 
+const fetchPreview = async (url: string, payload: any) => {
+  return await previewTransportationBooking(payload);
+};
+
 export default function StepBookingSummary({ formData }: StepBookingSummaryProps) {
-  // Calculate dynamic prices
-  const getVehicleBasePrice = (type: string) => {
-    switch (type) {
-      case "SUV": return 80;
-      case "Van": return 120;
-      case "Bus": return 200;
-      case "Sedan":
-      default: return 50;
-    }
+  const formatDateToYMD = (dateString: string) => {
+    if (!dateString) return dateString;
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return dateString;
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
   };
 
-  const basePrice = getVehicleBasePrice(formData.vehicleType);
-  const tripMultiplier = formData.tripType === "Round Trip" ? 2 : 1;
-  const vehicleTotal = basePrice * tripMultiplier;
-  
-  const childSeatPrice = 10;
-  const extraLuggagePrice = 15;
-  const meetAndGreetPrice = 20;
-  
-  let subtotal = vehicleTotal;
-  if (formData.childSeat) subtotal += childSeatPrice;
-  if (formData.extraLuggageSpace) subtotal += extraLuggagePrice;
-  if (formData.meetAndGreetService) subtotal += meetAndGreetPrice;
-  
-  const discount = 5;
-  const vat = subtotal * 0.10; // 10% VAT
-  const total = subtotal - discount + vat;
+  const formatTime = (timeStr: string) => {
+    if (!timeStr) return null;
+    if (!timeStr.toLowerCase().includes("m")) {
+      return timeStr.includes(":") ? timeStr : null;
+    }
+    const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)$/i);
+    if (!match) return null;
+    let hours = parseInt(match[1], 10);
+    const minutes = match[2];
+    const period = match[3].toUpperCase();
+    if (period === "AM" && hours === 12) hours = 0;
+    if (period === "PM" && hours < 12) hours += 12;
+    return `${String(hours).padStart(2, "0")}:${minutes}:00`;
+  };
+
+  const payload = {
+    vehicle_id: formData.vehicleId,
+    distance_km: parseFloat(formData.distanceKm) || 0,
+    trip_type: formData.tripType,
+    full_name: formData.guestName,
+    email: formData.guestEmail,
+    phone: `${formData.guestPhonePrefix}${formData.guestPhone}`,
+    nationality: formData.guestNationality,
+    pickup_location: formData.pickupLocation,
+    dropoff_location: formData.dropoffLocation,
+    pickup_date: formatDateToYMD(formData.pickupDate),
+    pickup_time: formatTime(formData.pickupTime),
+    passengers: formData.passengers,
+    luggage: formData.luggage,
+    additional_service_ids: formData.additionalServiceIds,
+    special_requests: formData.specialRequests,
+  };
+
+  const { data: previewData, isLoading } = useSWR(
+    formData.vehicleId && formData.pickupDate ? ["/bookings/transportation/preview", payload] : null,
+    ([url, payload]) => fetchPreview(url, payload)
+  );
+
+  const preview = previewData?.data || {};
+  const basePrice = preview.base_price || 0;
+  const servicesTotal = preview.additional_services_price || 0;
+  const subtotal = preview.subtotal || 0;
+  const vat = preview.vat_amount || 0;
+  const insurance = preview.insurance_fee || 0;
+  const discount = preview.discount_amount || 0;
+  const total = preview.total_price || 0;
+  if (isLoading) {
+    return <div className={styles.loadingContainer}>Loading pricing preview...</div>;
+  }
 
   return (
     <div className={styles.container}>
@@ -72,42 +110,36 @@ export default function StepBookingSummary({ formData }: StepBookingSummaryProps
           <div className={styles.priceItemsContainer}>
             <div className={styles.priceRow}>
               <span className={styles.priceLabel}>
-                {tripMultiplier} × {formData.vehicleType || "Sedan"} Vehicle 
-                {formData.tripType === "Round Trip" ? " (Round Trip)" : ""}
+                Base Vehicle Price ({formData.tripType.replace("_", " ")})
               </span>
-              <span className={styles.priceValue}>${vehicleTotal.toFixed(2)}</span>
+              <span className={styles.priceValue}>${basePrice.toFixed(2)}</span>
             </div>
             
-            {formData.childSeat && (
+            {servicesTotal > 0 && (
               <div className={styles.priceRow}>
-                <span className={styles.priceLabel}>Child Seat</span>
-                <span className={styles.priceValue}>${childSeatPrice.toFixed(2)}</span>
+                <span className={styles.priceLabel}>Additional Services</span>
+                <span className={styles.priceValue}>${servicesTotal.toFixed(2)}</span>
               </div>
             )}
             
-            {formData.extraLuggageSpace && (
+            {discount > 0 && (
               <div className={styles.priceRow}>
-                <span className={styles.priceLabel}>Extra Luggage Space</span>
-                <span className={styles.priceValue}>${extraLuggagePrice.toFixed(2)}</span>
-              </div>
-            )}
-
-            {formData.meetAndGreetService && (
-              <div className={styles.priceRow}>
-                <span className={styles.priceLabel}>Meet & Greet Service</span>
-                <span className={styles.priceValue}>${meetAndGreetPrice.toFixed(2)}</span>
+                <span className={styles.priceLabel}>Special Discount</span>
+                <span className={styles.discountValue}>-${discount.toFixed(2)}</span>
               </div>
             )}
             
             <div className={styles.priceRow}>
-              <span className={styles.priceLabel}>Special Discount</span>
-              <span className={styles.discountValue}>-${discount.toFixed(2)}</span>
-            </div>
-            
-            <div className={styles.priceRow}>
-              <span className={styles.priceLabel}>VAT (10%)</span>
+              <span className={styles.priceLabel}>VAT</span>
               <span className={styles.priceValue}>${vat.toFixed(2)}</span>
             </div>
+
+            {insurance > 0 && (
+              <div className={styles.priceRow}>
+                <span className={styles.priceLabel}>Insurance Fee</span>
+                <span className={styles.priceValue}>${insurance.toFixed(2)}</span>
+              </div>
+            )}
           </div>
         
           <div className={styles.totalRow}>

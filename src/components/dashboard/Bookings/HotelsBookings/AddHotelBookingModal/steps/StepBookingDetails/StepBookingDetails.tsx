@@ -1,6 +1,8 @@
 import React from "react";
 import Image from "next/image";
 import { CounterPill, SelectDropdown } from "@/components/shared";
+import useSWR from "swr";
+import { getAllHotels, getFullHotelBySlug } from "@/services/hotelsService";
 import { AddHotelBookingData } from "../../AddHotelBookingModal";
 import styles from "./StepBookingDetails.module.scss";
 
@@ -10,8 +12,6 @@ interface StepBookingDetailsProps {
   errors?: Record<string, string>;
 }
 
-import useSWR from "swr";
-import { getAllHotels, getFullHotelBySlug } from "@/services/hotelsService";
 
 export default function StepBookingDetails({ formData, onChange, errors = {} }: StepBookingDetailsProps) {
   const { data: allHotels } = useSWR('/hotels/all', getAllHotels);

@@ -52,7 +52,6 @@ function buildTabs(id: string) {
   return [
     { id: "overview", label: "Overview", href: `${base}/overview`, iconSrc: "/images/dashboard/catalog/trips/overview.svg" },
     { id: "rooms",    label: "Rooms",    href: `${base}/rooms`,    iconSrc: "/images/dashboard/catalog/hotels/basic.svg" },
-    { id: "pricing",  label: "Pricing",  href: `${base}/pricing`,  iconSrc: "/images/dashboard/catalog/trips/pricing.svg" },
     { id: "media",    label: "Media",    href: `${base}/media`,    iconSrc: "/images/dashboard/catalog/trips/media.svg" },
     { id: "seo",      label: "SEO",      href: `${base}/seo`,      iconSrc: "/images/dashboard/catalog/trips/seo.svg" },
   ];
