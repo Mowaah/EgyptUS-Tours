@@ -3,7 +3,9 @@ import { useFormContext, Controller } from "react-hook-form";
 import { FormSection, FormSpec } from "@/components/dashboard/FormFields";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
+import { getLangKey } from "@/components/dashboard/shared/i18n";
 import { CreateHotelValues } from "../../CreateHotelSchema";
+import { useCatalogHotelLocations } from "@/hooks/useCatalogHotels";
 import dashboardStyles from "../../CreateHotel.module.scss";
 import styles from "./OverviewStep.module.scss";
 
@@ -15,6 +17,12 @@ export function OverviewStep() {
   
   const { register, watch, setValue, control, formState: { errors } } = useFormContext<CreateHotelValues>();
   const facilities = watch("facilities") || [];
+
+  const { locations } = useCatalogHotelLocations();
+  const locationOptions = locations.map((loc: any) => ({
+    label: loc.translations?.en?.name || loc.name,
+    value: String(loc.id)
+  }));
 
   const handleAddFacility = () => {
     const trimmed = facilityInput.trim();
@@ -40,10 +48,10 @@ export function OverviewStep() {
             <LanguageTabs active={basicLang} onChange={setBasicLang} className={styles.whiteTabs} />
             <div className={styles.inputRow}>
               <DashboardField 
-                label="Hotel Name" 
+                label={`Hotel Name (${basicLang})`} 
                 placeholder="Enter hotel name" 
                 error={errors.hotelName?.message}
-                {...register("hotelName")} 
+                {...register(`hotelName.${getLangKey(basicLang)}` as const)} 
               />
               <Controller
                 name="totalRooms"
@@ -62,10 +70,10 @@ export function OverviewStep() {
             </div>
             
             <DashboardField 
-              label="Subtitle" 
+              label={`Subtitle (${basicLang})`} 
               placeholder="Enter subtitle" 
               error={errors.subtitle?.message}
-              {...register("subtitle")} 
+              {...register(`subtitle.${getLangKey(basicLang)}` as const)} 
             />
 
             <Controller
@@ -74,8 +82,12 @@ export function OverviewStep() {
               render={({ field, fieldState }) => (
                 <DashboardField 
                   {...field}
+                  control="select"
+                  options={[
+                    { label: "Select Location...", value: "", disabled: true },
+                    ...locationOptions
+                  ]}
                   label="City / Location" 
-                  placeholder="Enter city or location" 
                   error={fieldState.error?.message}
                 />
               )}
@@ -185,18 +197,18 @@ export function OverviewStep() {
           <FormSpec>
             <LanguageTabs active={contentLang} onChange={setContentLang} className={styles.whiteTabs} />
             <DashboardField 
-              label="Description" 
+              label={`Description (${contentLang})`} 
               control="textarea"
               placeholder="Description"
               error={errors.description?.message}
-              {...register("description")}
+              {...register(`description.${getLangKey(contentLang)}` as const)}
             />
             <DashboardField 
-              label="Second Description" 
+              label={`Second Description (${contentLang})`} 
               control="textarea"
               placeholder="Description"
               error={errors.secondDescription?.message}
-              {...register("secondDescription")}
+              {...register(`secondDescription.${getLangKey(contentLang)}` as const)}
             />
           </FormSpec>
         </FormSection>

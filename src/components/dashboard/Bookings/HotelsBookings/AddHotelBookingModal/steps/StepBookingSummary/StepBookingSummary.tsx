@@ -1,17 +1,88 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import RatingBadge from "@/components/shared/RatingBadge/RatingBadge";
 import styles from "./StepBookingSummary.module.scss";
 import { AddHotelBookingData } from "../../AddHotelBookingModal";
+import { previewHotelBooking } from "@/services/admin/adminBookingsService";
 
 interface StepBookingSummaryProps {
   formData?: AddHotelBookingData;
+  onSummaryLoad?: (data: any) => void;
 }
 
-export default function StepBookingSummary({ formData }: StepBookingSummaryProps) {
+export default function StepBookingSummary({ formData, onSummaryLoad }: StepBookingSummaryProps) {
+  const [previewData, setPreviewData] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const formatDateToYMD = (dateString: string) => {
+    if (!dateString) return dateString;
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return dateString;
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  useEffect(() => {
+    if (!formData || !formData.specificHotel) return;
+    
+    let isMounted = true;
+    setLoading(true);
+    
+    let room_selections: { hotel_room_id: number; quantity: number }[] = [];
+    if (formData.roomCustomizations) {
+      Object.values(formData.roomCustomizations).forEach(roomIds => {
+        roomIds.forEach(id => {
+          const parsedId = parseInt(id);
+          if (isNaN(parsedId)) return;
+          const existing = room_selections.find(s => s.hotel_room_id === parsedId);
+          if (existing) {
+            existing.quantity += 1;
+          } else {
+            room_selections.push({ hotel_room_id: parsedId, quantity: 1 });
+          }
+        });
+      });
+    }
+
+    const payload = {
+      hotel_id: parseInt(formData.specificHotel),
+      check_in_date: formatDateToYMD(formData.checkInDate),
+      check_out_date: formatDateToYMD(formData.checkOutDate),
+      room_selections
+    };
+    
+    previewHotelBooking(payload).then((res) => {
+      if (isMounted) {
+        const data = res.data || res;
+        setPreviewData(data);
+        if (onSummaryLoad) onSummaryLoad(data);
+        setLoading(false);
+      }
+    }).catch((err) => {
+      if (isMounted) {
+        console.error(err);
+        setError("Failed to load booking summary from server.");
+        setLoading(false);
+      }
+    });
+    
+    return () => { isMounted = false; };
+  }, [formData]);
+
   const numGuests = formData ? (formData.adults + formData.infants + formData.children) || 2 : 2;
-  const numRooms = formData ? (formData.rooms.single + formData.rooms.double + formData.rooms.triple) || 3 : 3;
-  const hotelName = formData?.specificHotel ? "Beach Nile Palace Hotel & Spa" : "Nile Palace Hotel";
+  const numRooms = formData?.roomCustomizations ? Object.values(formData.roomCustomizations).reduce((acc, ids) => acc + ids.length, 0) : 0;
+  
+  const hotelName = previewData?.hotel_name || formData?.hotelLocation || "Selected Hotel";
+  const nights = previewData?.nights || 0;
+  
+  const subtotal = previewData?.subtotal || "0.00";
+  const discount = previewData?.discount || "0.00";
+  const vat = previewData?.vat || "0.00";
+  const total = previewData?.total_price || "0.00";
+  const lineItems = previewData?.line_items || [];
 
   return (
     <div className={styles.container}>
@@ -61,15 +132,15 @@ export default function StepBookingSummary({ formData }: StepBookingSummaryProps
           <div className={styles.badgesRow}>
             <div className={styles.badge}>
               <Image src="/images/night.svg" alt="" width={16} height={16} />
-              <span>3 Night</span>
+              <span>{nights} Night{nights !== 1 && 's'}</span>
             </div>
             <div className={styles.badge}>
               <Image src="/images/room.svg" alt="" width={16} height={16} />
-              <span>{numRooms} Room</span>
+              <span>{numRooms} Room{numRooms !== 1 && 's'}</span>
             </div>
             <div className={styles.badge}>
               <Image src="/images/summary/adults.svg" alt="" width={16} height={16} />
-              <span>{numGuests} Guests</span>
+              <span>{numGuests} Guest{numGuests !== 1 && 's'}</span>
             </div>
             </div>
           </div>
@@ -79,38 +150,45 @@ export default function StepBookingSummary({ formData }: StepBookingSummaryProps
       {/* Right Panel: Price Details */}
       <div className={`${styles.panel} ${styles.rightPanel}`}>
         <div className={styles.rightInner}>
-          <div className={styles.priceListSection}>
-            <div className={styles.priceTitleWrap}>
-              <span className={styles.priceTitle}>Price Details</span>
-            </div>
+          {loading ? (
+            <div style={{ padding: '2rem', textAlign: 'center', color: '#666' }}>Loading pricing...</div>
+          ) : error ? (
+            <div style={{ padding: '2rem', textAlign: 'center', color: '#C11515' }}>{error}</div>
+          ) : (
+            <div className={styles.priceListSection}>
+              <div className={styles.priceTitleWrap}>
+                <span className={styles.priceTitle}>Price Details</span>
+              </div>
+              
+              <div className={styles.priceItemsContainer}>
+                {lineItems.map((item: any, idx: number) => (
+                  <div key={idx} className={styles.priceRow}>
+                    <span className={styles.priceLabel}>
+                      {item.quantity} × {item.type_label} - {item.view_label} ({nights} {nights === 1 ? 'night' : 'nights'})
+                    </span>
+                    <span className={styles.priceValue}>${item.line_total}</span>
+                  </div>
+                ))}
+                
+                {parseFloat(discount) > 0 && (
+                  <div className={styles.priceRow}>
+                    <span className={styles.priceLabel}>Special Discount</span>
+                    <span className={styles.discountValue}>-${discount}</span>
+                  </div>
+                )}
+                
+                <div className={styles.priceRow}>
+                  <span className={styles.priceLabel}>VAT</span>
+                  <span className={styles.priceValue}>${vat}</span>
+                </div>
+              </div>
             
-            <div className={styles.priceItemsContainer}>
-              <div className={styles.priceRow}>
-                <span className={styles.priceLabel}>2 × Double Room - Garden View</span>
-                <span className={styles.priceValue}>$85.42</span>
-              </div>
-              
-              <div className={styles.priceRow}>
-                <span className={styles.priceLabel}>1 × Triple Room - Garden View</span>
-                <span className={styles.priceValue}>$85.42</span>
-              </div>
-              
-              <div className={styles.priceRow}>
-                <span className={styles.priceLabel}>Special Discount</span>
-                <span className={styles.discountValue}>-$5.00</span>
-              </div>
-              
-              <div className={styles.priceRow}>
-                <span className={styles.priceLabel}>VAT</span>
-                <span className={styles.priceValue}>$10.00</span>
+              <div className={styles.totalRow}>
+                <span className={styles.totalLabel}>Total</span>
+                <span className={styles.totalValue}>${total}</span>
               </div>
             </div>
-          
-            <div className={styles.totalRow}>
-              <span className={styles.totalLabel}>Total</span>
-              <span className={styles.totalValue}>$100.42</span>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

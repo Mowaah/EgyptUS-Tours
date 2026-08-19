@@ -354,6 +354,7 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
             meta_description: data.metaDescription?.en || "",
             meta_keywords: data.metaKeywords?.en ? data.metaKeywords.en.split(",").map(k => k.trim()).filter(Boolean) : [],
             slug: generatedSlug,
+            address: data.address || "",
           },
           it: {
             name: data.hotelName?.it || "",
@@ -378,7 +379,6 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
         },
         location_id: data.cityLocation ? parseInt(data.cityLocation, 10) : undefined,
         location_text: undefined, // Clear location_text to prefer location_id
-        address: data.address,
         stars: data.starRating ? parseFloat(cleanNumber(data.starRating) || "0") : undefined,
         total_rooms: data.totalRooms ? parseInt(cleanNumber(data.totalRooms) || "0") : undefined,
         facilities: data.facilities,

@@ -35,7 +35,7 @@ const cancelBookingConfig: ActionNoteModalConfig = {
   isDanger: true,
 };
 
-import { getHotelBookingById, cancelHotelBooking } from "@/services/admin/adminBookingsService";
+import { getHotelBookingById, cancelHotelBooking, sendHotelBookingReminder } from "@/services/admin/adminBookingsService";
 import useSWR from "swr";
 
 export default function ViewHotel({ bookingId }: ViewHotelProps) {
@@ -43,6 +43,7 @@ export default function ViewHotel({ bookingId }: ViewHotelProps) {
   const [isRefundModalOpen, setIsRefundModalOpen] = useState(false);
   const [bannerMessage, setBannerMessage] = useState("");
   const [bannerVariant, setBannerVariant] = useState<"success" | "warning" | "error">("success");
+  const [isSendingReminder, setIsSendingReminder] = useState(false);
   
   const { data: hotelData, isLoading, mutate } = useSWR(
     bookingId ? ["/bookings/hotels", bookingId] : null,
@@ -69,13 +70,28 @@ export default function ViewHotel({ bookingId }: ViewHotelProps) {
       <span className={getTripsPillStyle(payload.stay?.source)}>
         {payload.stay?.source === "website" ? (
           <Image src="/images/dashboard/customers/custom/website.svg" alt="website" width={14} height={14} />
-        ) : payload.stay?.source === "agent" ? (
+        ) : (payload.stay?.source === "agent" || payload.stay?.source === "admin") ? (
           <Image src="/images/dashboard/customers/custom/agent.svg" alt="agent" width={14} height={14} />
         ) : null}
-        {payload.stay?.source ? payload.stay.source.charAt(0).toUpperCase() + payload.stay.source.slice(1) : "-"}
+        {payload.stay?.source ? (payload.stay?.source === "admin" ? "Agent" : payload.stay.source.charAt(0).toUpperCase() + payload.stay.source.slice(1)) : "-"}
       </span>
     </div>
   ) : null;
+
+  const handleSendReminder = async () => {
+    try {
+      setIsSendingReminder(true);
+      await sendHotelBookingReminder(bookingId);
+      setBannerVariant("success");
+      setBannerMessage("Email reminder sent successfully.");
+      mutate(); // Refresh the activity timeline
+    } catch (err: any) {
+      setBannerVariant("error");
+      setBannerMessage(err?.response?.data?.payment?.[0] || err?.response?.data?.detail || "Failed to send email reminder.");
+    } finally {
+      setIsSendingReminder(false);
+    }
+  };
 
   const actionButtons = isRefunded ? null : isCancelled ? (
     <button 
@@ -97,8 +113,14 @@ export default function ViewHotel({ bookingId }: ViewHotelProps) {
         <Image src="/images/dashboard/booking/trips/view/cancel.svg" alt="" width={20} height={20} />
       </button>
 
-      <button className={styles.primaryActionButton} type="button">
-        Send Email Reminder
+      <button 
+        className={styles.primaryActionButton} 
+        type="button"
+        onClick={handleSendReminder}
+        disabled={isSendingReminder}
+        style={{ opacity: isSendingReminder ? 0.7 : 1 }}
+      >
+        {isSendingReminder ? "Sending..." : "Send Email Reminder"}
         <Image src="/images/dashboard/booking/trips/view/reminder.svg" alt="" width={20} height={20} />
       </button>
     </>

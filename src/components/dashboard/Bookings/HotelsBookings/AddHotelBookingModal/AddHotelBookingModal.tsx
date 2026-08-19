@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
-import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";
+import useSWRMutation from "swr/mutation";
+import { useSWRConfig } from "swr";
 import { SuccessModal } from "@/components/shared";
 import StatusPill from "@/components/shared/StatusPill/StatusPill";
-import { IconStepper, IconStepDef } from "@/components/shared/IconStepper/IconStepper";
+import { IconStepDef } from "@/components/shared/IconStepper/IconStepper";
 
 import StepBookingDetails from "./steps/StepBookingDetails/StepBookingDetails";
 import StepGuestDetails from "./steps/StepGuestDetails/StepGuestDetails";
@@ -13,8 +13,8 @@ import StepBookingSummary from "./steps/StepBookingSummary/StepBookingSummary";
 import PaymentStep from "@/components/dashboard/shared/PaymentStep/PaymentStep";
 import BookingModalContainer from "../../shared/BookingModalContainer/BookingModalContainer";
 import { BaseGuestDetails } from "../../shared/types";
-
-import styles from "./AddHotelBookingModal.module.scss";
+import { isValidEmail, isValidPhone } from "@/utils/validators";
+import { createHotelBooking } from "@/services/admin/adminBookingsService";
 
 interface AddHotelBookingModalProps {
   open: boolean;
@@ -36,10 +36,8 @@ export interface AddHotelBookingData extends BaseGuestDetails {
   children: number;
   
   // Booking Details
-  hotelCategory: string;
+  hotelLocation: string;
   specificHotel: string;
-  roomsCount: number;
-  rooms: { single: number; double: number; triple: number };
   roomCustomizations: Record<string, string[]>;
 }
 
@@ -56,19 +54,39 @@ const INITIAL_DATA: AddHotelBookingData = {
   children: 0,
   specialRequests: "",
   
-  hotelCategory: "",
+  hotelLocation: "",
   specificHotel: "",
-  roomsCount: 1,
-  rooms: { single: 0, double: 2, triple: 1 },
   roomCustomizations: {},
+};
+
+const triggerToast = (message: string, variant: "error" | "success" = "error") => {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent("dashboard-toast", {
+        detail: { message, variant },
+      })
+    );
+  } else {
+    alert(message);
+  }
 };
 
 export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingModalProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [isConfirmed, setIsConfirmed] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<AddHotelBookingData>(INITIAL_DATA);
   const [bookingId, setBookingId] = useState("");
+  const [previewData, setPreviewData] = useState<any>(null);
+  const { mutate } = useSWRConfig();
+
+  const { trigger: submitBooking, isMutating: isSubmitting } = useSWRMutation(
+    "/bookings/hotels/",
+    async (url, { arg }: { arg: any }) => {
+      return await createHotelBooking(arg);
+    }
+  );
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!open) return;
@@ -76,32 +94,107 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
     // Reset state when opening
     setCurrentStep(0);
     setIsConfirmed(false);
-    setIsSubmitting(false);
     setFormData(INITIAL_DATA);
+    setErrors({});
+    setPreviewData(null);
     setBookingId(`#BK${Math.floor(Math.random() * 1000000)}`);
   }, [open]);
 
   if (!open) return null;
 
-  const calculateTotal = () => {
-    // Mock calculation for hotel price based on rooms
-    const basePrice = 100;
-    const roomsTotal = (formData.rooms.single * 1) + (formData.rooms.double * 1.5) + (formData.rooms.triple * 2);
-    return basePrice * (roomsTotal || 1);
-  };
-  
-  const total = calculateTotal();
+  const total = previewData ? parseFloat(previewData.total_price) : 0;
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    const newErrors: Record<string, string> = {};
+
+    if (currentStep === 0) {
+      if (!formData.guestName) newErrors.guestName = "Guest name is required";
+      if (!formData.guestEmail) newErrors.guestEmail = "Email is required";
+      else if (!isValidEmail(formData.guestEmail)) newErrors.guestEmail = "Invalid email format";
+      
+      if (!formData.guestPhone) newErrors.guestPhone = "Phone is required";
+      else if (!isValidPhone(formData.guestPhone)) newErrors.guestPhone = "Invalid phone format";
+      
+      if (!formData.guestNationality) newErrors.guestNationality = "Nationality is required";
+      if (!formData.checkInDate) newErrors.checkInDate = "Check-in date is required";
+      if (!formData.checkOutDate) newErrors.checkOutDate = "Check-out date is required";
+      if (formData.adults === 0) newErrors.adults = "At least one adult is required";
+
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return;
+      }
+    }
+
+    if (currentStep === 1) {
+      if (!formData.hotelLocation) newErrors.hotelLocation = "Hotel location is required";
+      if (!formData.specificHotel) newErrors.specificHotel = "Specific hotel is required";
+      
+      const totalRooms = Object.values(formData.roomCustomizations).reduce((sum, ids) => sum + ids.length, 0);
+      if (totalRooms === 0) newErrors.rooms = "At least one room is required";
+
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return;
+      }
+    }
+
+    setErrors({});
+
     if (currentStep < STEPS.length - 1) {
       setCurrentStep((prev) => prev + 1);
     } else {
-      setIsSubmitting(true);
-      // Simulate API call
-      setTimeout(() => {
-        setIsSubmitting(false);
+      try {
+        const room_selections: { hotel_room_id: number; quantity: number }[] = [];
+        Object.values(formData.roomCustomizations).forEach(roomIds => {
+          roomIds.forEach(id => {
+            const parsedId = parseInt(id);
+            if (isNaN(parsedId)) return;
+            const existing = room_selections.find(s => s.hotel_room_id === parsedId);
+            if (existing) {
+              existing.quantity += 1;
+            } else {
+              room_selections.push({ hotel_room_id: parsedId, quantity: 1 });
+            }
+          });
+        });
+
+        const formatDateToYMD = (dateString: string) => {
+          if (!dateString) return dateString;
+          const d = new Date(dateString);
+          if (isNaN(d.getTime())) return dateString;
+          const yyyy = d.getFullYear();
+          const mm = String(d.getMonth() + 1).padStart(2, "0");
+          const dd = String(d.getDate()).padStart(2, "0");
+          return `${yyyy}-${mm}-${dd}`;
+        };
+
+        const payload = {
+          hotel_id: parseInt(formData.specificHotel),
+          full_name: formData.guestName,
+          email: formData.guestEmail,
+          phone: `${formData.guestPhonePrefix}${formData.guestPhone}`,
+          nationality: formData.guestNationality,
+          check_in_date: formatDateToYMD(formData.checkInDate),
+          check_out_date: formatDateToYMD(formData.checkOutDate),
+          adults: formData.adults,
+          infants: formData.infants,
+          children: formData.children,
+          room_selections,
+          special_requests: formData.specialRequests,
+          payment_plan: "full",
+          payment_method: "cash",
+          terms_accepted: true,
+        };
+        
+        await submitBooking(payload);
+        triggerToast("Booking created successfully!", "success");
         setIsConfirmed(true);
-      }, 1500);
+        // Refresh hotels list
+        mutate("/bookings/hotels/");
+      } catch (error: any) {
+        triggerToast(error?.response?.data?.detail || "Failed to create booking. Please try again.");
+      }
     }
   };
 
@@ -113,6 +206,15 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
 
   const handleChange = (patch: Partial<AddHotelBookingData>) => {
     setFormData((prev) => ({ ...prev, ...patch }));
+    // clear errors for fields being updated
+    if (Object.keys(errors).length > 0) {
+      const keys = Object.keys(patch);
+      setErrors((prev) => {
+        const next = { ...prev };
+        keys.forEach((k) => delete next[k]);
+        return next;
+      });
+    }
   };
 
   if (isConfirmed) {
@@ -154,9 +256,9 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
       isSubmitting={isSubmitting}
       isConfirmed={isConfirmed}
     >
-      {currentStep === 0 && <StepGuestDetails formData={formData} onChange={handleChange} />}
-      {currentStep === 1 && <StepBookingDetails formData={formData} onChange={handleChange} />}
-      {currentStep === 2 && <StepBookingSummary formData={formData} />}
+      {currentStep === 0 && <StepGuestDetails formData={formData} onChange={handleChange} errors={errors} />}
+      {currentStep === 1 && <StepBookingDetails formData={formData} onChange={handleChange} errors={errors} />}
+      {currentStep === 2 && <StepBookingSummary formData={formData} onSummaryLoad={setPreviewData} />}
       {currentStep === 3 && <PaymentStep total={total} />}
     </BookingModalContainer>
   );

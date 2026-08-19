@@ -96,12 +96,12 @@ export const transportationColumns: DataTableColumn<TransportationBookingRow>[] 
       <span className={getPillStyle(row.source)}>
         {row.source === "website" ? (
           <Image src="/images/dashboard/customers/custom/website.svg" alt="" width={14} height={14} aria-hidden />
-        ) : row.source === "admin" ? (
+        ) : (row.source === "admin" || row.source === "agent") ? (
           <Image src="/images/dashboard/customers/custom/agent.svg" alt="" width={14} height={14} aria-hidden />
         ) : (
           <i aria-hidden />
         )}
-        {row.source ? row.source.charAt(0).toUpperCase() + row.source.slice(1) : "-"}
+        {row.source ? (row.source === "admin" ? "Agent" : row.source.charAt(0).toUpperCase() + row.source.slice(1)) : "-"}
       </span>
     ),
   },

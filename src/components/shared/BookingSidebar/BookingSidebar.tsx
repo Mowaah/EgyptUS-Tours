@@ -43,7 +43,8 @@ export default function BookingSidebar({
   // On desktop this state is ignored (CSS always shows the details).
   const [expanded, setExpanded] = useState(false);
 
-  const remainingAmount = totalAmount - depositAmount;
+  const finalTotal = totalAmount + vatAmount;
+  const remainingAmount = finalTotal - depositAmount;
   const isHotel = !!hotel;
 
   const image = isHotel ? (hotel!.image || "/images/pyramids.jpg") : (trip!.image || "/images/cruise.jpg");
@@ -223,28 +224,36 @@ export default function BookingSidebar({
           {/* Price Details */}
           <div className={styles.sidebarSectionLabel}>Price Details</div>
           <div className={styles.priceRows}>
-            {formData.rooms.single > 0 && (
+            {isHotel ? Object.entries(formData.rooms || {}).map(([type, count]) => {
+              if (!count) return null;
+              
+              const roomIds = formData.roomCustomizations?.[type] || [];
+              const hotelRoomsOfType = (hotel!.hotelRooms || []).filter(r => r.type.toLowerCase() === type);
+              const baseRoom = hotelRoomsOfType.sort((a, b) => a.pricePerNight - b.pricePerNight)[0];
+
+              const rows = [];
+              for (let i = 0; i < count; i++) {
+                const roomId = roomIds[i];
+                const room = (hotel!.hotelRooms || []).find(r => r.id === roomId) || baseRoom;
+                if (!room) continue;
+
+                const name = type.toLowerCase().includes("room") ? type.charAt(0).toUpperCase() + type.slice(1) : `${type.charAt(0).toUpperCase() + type.slice(1)} Room`;
+                const price = room.pricePerNight * nights;
+
+                rows.push(
+                  <div key={`${type}-${i}`} className={styles.priceRow}>
+                    <span>1 × {name} - {room.view} ({nights} {nights === 1 ? 'Night' : 'Nights'})</span>
+                    <strong>${price.toFixed(2)}</strong>
+                  </div>
+                );
+              }
+              return rows;
+            }) : (
               <div className={styles.priceRow}>
-                <span>{formData.rooms.single} × Single Room - Garden View</span>
-                <strong>${isHotel ? (hotel!.pricePerNight * formData.rooms.single).toFixed(2) : "50.00"}</strong>
+                 <span>Trip Package</span>
+                 <strong>${totalAmount.toFixed(2)}</strong>
               </div>
             )}
-            {formData.rooms.double > 0 && (
-              <div className={styles.priceRow}>
-                <span>{formData.rooms.double} × Double Room - Garden View</span>
-                <strong>${isHotel ? (hotel!.pricePerNight * 1.5 * formData.rooms.double).toFixed(2) : "50.00"}</strong>
-              </div>
-            )}
-            {formData.rooms.triple > 0 && (
-              <div className={styles.priceRow}>
-                <span>{formData.rooms.triple} × Triple Room - Garden View</span>
-                <strong>${isHotel ? (hotel!.pricePerNight * 2 * formData.rooms.triple).toFixed(2) : "50.00"}</strong>
-              </div>
-            )}
-            <div className={styles.priceRow}>
-              <span>Special Discount</span>
-              <strong className={styles.discount}>-$5.00</strong>
-            </div>
             {isHotel && vatAmount > 0 && (
               <div className={styles.priceRow}>
                 <span>VAT</span>
@@ -257,18 +266,18 @@ export default function BookingSidebar({
 
           <div className={styles.totalRow}>
             <span className={styles.totalLabel}>Total</span>
-            <span className={styles.totalValue}>${totalAmount.toLocaleString()}.00</span>
+            <span className={styles.totalValue}>${finalTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
 
           {/* Deposit card */}
           <div className={styles.depositCard}>
             <div className={styles.depositTopRow}>
               <span className={styles.depositLabel}>Pay now (30% deposit)</span>
-              <span className={styles.depositAmount}>${depositAmount.toLocaleString()}</span>
+              <span className={styles.depositAmount}>${depositAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
             <div className={styles.depositBottomRow}>
               <span className={styles.depositNote}>Remaining 70% due one month before your trip</span>
-              <span className={styles.remainingAmount}>${remainingAmount.toLocaleString()}</span>
+              <span className={styles.remainingAmount}>${remainingAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
           </div>
 

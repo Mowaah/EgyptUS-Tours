@@ -9,6 +9,18 @@ export interface DashboardToastEventDetail {
   durationMs?: number;
 }
 
+export const triggerToast = (message: string, variant: DashboardStatusBannerVariant = "error", durationMs?: number) => {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent("dashboard-toast", {
+        detail: { message, variant, durationMs },
+      })
+    );
+  } else {
+    alert(message);
+  }
+};
+
 export default function GlobalToastContainer() {
   const [toast, setToast] = useState<DashboardToastEventDetail | null>(null);
 

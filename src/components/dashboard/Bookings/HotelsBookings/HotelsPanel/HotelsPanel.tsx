@@ -9,10 +9,11 @@ import {
   TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
 import useSWR from "swr";
-import { getHotelBookings, reassignBooking } from "@/services/admin/adminBookingsService";
+import { getHotelBookings, reassignBooking, sendHotelBookingReminder } from "@/services/admin/adminBookingsService";
 import { getAdminUsers } from "@/services/admin/adminUsersService";
 import { hotelsColumns, hotelsRowActions } from "./hotelsColumns";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import { triggerToast } from "@/components/dashboard/shared/GlobalToastContainer/GlobalToastContainer";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import { ReassignModal } from "@/components/dashboard/shared";
 
@@ -140,12 +141,19 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
           columns={hotelsColumns}
           getRowId={(row) => String(row.id)}
           selectable
-          rowActions={(row) => hotelsRowActions((action, r) => {
+          rowActions={(row) => hotelsRowActions(async (action, r) => {
             if (action === "View") {
               router.push(`/dashboard/bookings/hotels/${r.id}`);
             } else if (action === "Re-Assign To") {
               setSelectedRow(r);
               setReassignModalOpen(true);
+            } else if (action === "Send Email Reminder") {
+              try {
+                await sendHotelBookingReminder(r.id);
+                triggerToast("Email reminder sent successfully.", "success");
+              } catch (err: any) {
+                triggerToast(err?.response?.data?.payment?.[0] || err?.response?.data?.detail || "Failed to send email reminder.");
+              }
             } else {
               console.log(`Action ${action} triggered for row`, r);
             }

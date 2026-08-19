@@ -35,9 +35,38 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
     setFormData((prev) => ({ ...prev, ...patch }));
   };
 
-  const totalRooms = formData.rooms.single + formData.rooms.double + formData.rooms.triple;
+  const nights = (() => {
+    if (!formData.startDate || !formData.endDate) return 1;
+    const diff = Math.round(
+      (new Date(formData.endDate).getTime() - new Date(formData.startDate).getTime()) / 86400000
+    );
+    return diff > 0 ? diff : 1;
+  })();
+
+  const totalRooms = Object.values(formData.rooms || {}).reduce((acc, count) => acc + (count || 0), 0);
   const totalGuests = formData.adults + formData.children + formData.infants;
-  const totalAmount = hotel.pricePerNight * Math.max(totalRooms, 1);
+  
+  const totalAmount = Object.entries(formData.rooms || {}).reduce((total, [type, count]) => {
+    if (!count) return total;
+    const roomIds = formData.roomCustomizations?.[type] || [];
+    let typeTotal = 0;
+    
+    const hotelRoomsOfType = (hotel.hotelRooms || []).filter(r => r.type.toLowerCase() === type);
+    const baseRoom = hotelRoomsOfType.sort((a, b) => a.pricePerNight - b.pricePerNight)[0];
+    
+    for (let i = 0; i < count; i++) {
+       const roomId = roomIds[i];
+       const room = (hotel.hotelRooms || []).find(r => r.id === roomId);
+       if (room) {
+         typeTotal += room.pricePerNight;
+       } else if (baseRoom) {
+         typeTotal += baseRoom.pricePerNight;
+       } else {
+         typeTotal += hotel.pricePerNight;
+       }
+    }
+    return total + typeTotal;
+  }, 0) * nights;
   const vatAmount = totalAmount * 0.1;
   const depositAmount = (totalAmount + vatAmount) * 0.3;
 
@@ -113,7 +142,7 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
             { label: "Hotel", value: hotel.name },
             { label: "Check-in", value: formData.startDate || "—" },
             { label: "Check-out", value: formData.endDate || "—" },
-            { label: "Total Price", value: `$${totalAmount.toFixed(2)}`, valueColor: "#FF6600" },
+            { label: "Total Price", value: `$${(totalAmount + vatAmount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, valueColor: "#FF6600" },
             { label: "Paid Now", value: `$${depositAmount.toFixed(2)}`, valueColor: "#FF6600" },
           ]}
         />

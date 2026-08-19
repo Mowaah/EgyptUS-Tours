@@ -8,7 +8,7 @@ interface PriceDetailsProps {
 }
 
 export default function PriceDetails({ details, overview }: PriceDetailsProps) {
-  const items = details?.items || [];
+  const items = details?.items || details?.line_items || [];
   const title = details?.title || "Booking Details";
 
   return (
@@ -45,8 +45,12 @@ export default function PriceDetails({ details, overview }: PriceDetailsProps) {
           <div className={styles.priceList}>
             {items.map((item: any, idx: number) => (
               <div key={idx} className={styles.priceListItem}>
-                <span className={styles.priceItemName}>{item.quantity ? `${item.quantity} × ` : ""}{item.name}</span>
-                <span className={styles.priceItemCost}>${item.price || item.amount}</span>
+                <span className={styles.priceItemName}>
+                  {item.quantity ? `${item.quantity} × ` : ""}
+                  {item.name || (item.type_label ? `${item.type_label} - ${item.view_label}` : "Room")}
+                  {details?.nights ? ` (${details.nights} ${details.nights === 1 ? 'night' : 'nights'})` : ""}
+                </span>
+                <span className={styles.priceItemCost}>${item.price || item.amount || item.line_total}</span>
               </div>
             ))}
             {items.length === 0 && (

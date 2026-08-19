@@ -1,160 +1,205 @@
+import React from "react";
+import Image from "next/image";
 import { CounterPill, SelectDropdown } from "@/components/shared";
-import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import { AddHotelBookingData } from "../../AddHotelBookingModal";
 import styles from "./StepBookingDetails.module.scss";
 
 interface StepBookingDetailsProps {
   formData: AddHotelBookingData;
   onChange: (patch: Partial<AddHotelBookingData>) => void;
+  errors?: Record<string, string>;
 }
 
-const CATEGORY_OPTIONS = [
-  { label: "Select hotel category", value: "", disabled: true },
-  { label: "Luxury", value: "luxury" },
-  { label: "Boutique", value: "boutique" },
-  { label: "Budget", value: "budget" },
-];
+import useSWR from "swr";
+import { getAllHotels, getFullHotelBySlug } from "@/services/hotelsService";
 
-const HOTEL_OPTIONS = [
-  { label: "Select hotel category first...", value: "", disabled: true },
-  { label: "Beach Nile Palace Hotel & Spa", value: "beach-nile-palace" },
-  { label: "Four Seasons Hotel", value: "four-seasons" },
-  { label: "Marriott Mena House", value: "marriott" },
-];
+export default function StepBookingDetails({ formData, onChange, errors = {} }: StepBookingDetailsProps) {
+  const { data: allHotels } = useSWR('/hotels/all', getAllHotels);
 
-const ROOM_VIEW_OPTIONS = [
-  { label: "Garden View", value: "garden-view", price: "Included", isFree: true },
-  { label: "Sea View", value: "sea-view", price: "+$ 50" },
-  { label: "Pool View", value: "pool-view", price: "+$ 20" },
-];
+  const locations = Array.from(new Set(allHotels?.map(h => h.location_text) || [])).filter(Boolean);
+  const locationOptions = [
+    { label: "Select location", value: "", disabled: true },
+    ...locations.map(loc => ({ label: loc, value: loc }))
+  ];
 
-export default function StepBookingDetails({ formData, onChange }: StepBookingDetailsProps) {
-  const updateRoomCount = (type: "single" | "double" | "triple", val: number) => {
-    onChange({ rooms: { ...formData.rooms, [type]: val } });
+  const filteredHotels = formData.hotelLocation 
+    ? allHotels?.filter(h => h.location_text === formData.hotelLocation) || []
+    : [];
+
+  const hotelOptions = [
+    { label: formData.hotelLocation ? "Select hotel" : "Select location first...", value: "", disabled: true },
+    ...filteredHotels.map(h => ({ label: h.name, value: h.id.toString() }))
+  ];
+
+  const selectedHotel = allHotels?.find(h => h.id.toString() === formData.specificHotel);
+  const slug = selectedHotel?.slug;
+
+  const { data: hotelDetail } = useSWR(
+    slug ? `/hotels/${slug}/` : null, 
+    () => getFullHotelBySlug(slug as string)
+  );
+
+  const groupedRooms = React.useMemo(() => {
+    if (!hotelDetail?.hotelRooms) return {};
+    const groups: Record<string, typeof hotelDetail.hotelRooms> = {};
+    for (const room of hotelDetail.hotelRooms) {
+      if (!groups[room.type]) groups[room.type] = [];
+      groups[room.type].push(room);
+    }
+    return groups;
+  }, [hotelDetail]);
+
+  const updateRoomCount = (type: string, val: number, defaultRoomId: string) => {
+    const currentList = formData.roomCustomizations[type] || [];
+    let newList = [...currentList];
+    if (val > currentList.length) {
+      const diff = val - currentList.length;
+      for (let i = 0; i < diff; i++) {
+        newList.push(defaultRoomId);
+      }
+    } else if (val < currentList.length) {
+      newList = newList.slice(0, val);
+    }
+    onChange({ roomCustomizations: { ...formData.roomCustomizations, [type]: newList } });
   };
 
-  const updateRoomCustomization = (type: string, index: number, value: string) => {
-    const current = formData.roomCustomizations[type] || [];
-    const updated = [...current];
-    updated[index] = value;
-    onChange({ roomCustomizations: { ...formData.roomCustomizations, [type]: updated } });
+  const updateRoomCustomization = (type: string, index: number, roomId: string) => {
+    const currentList = formData.roomCustomizations[type] || [];
+    const newList = [...currentList];
+    newList[index] = roomId;
+    onChange({ roomCustomizations: { ...formData.roomCustomizations, [type]: newList } });
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.row}>
         <div className={styles.col}>
-          <DashboardField
-            control="select"
-            label="Hotel Category"
-            options={CATEGORY_OPTIONS}
-            value={formData.hotelCategory}
-            onChange={(e: any) => onChange({ hotelCategory: e.target.value })}
-          />
+          <div className={styles.fieldWrapper}>
+            <label>Hotel Location</label>
+            <SelectDropdown
+              id="hotel-location"
+              options={locationOptions}
+              value={formData.hotelLocation}
+              onChange={(val) => onChange({ hotelLocation: val, specificHotel: "" })}
+              triggerClassName={`${styles.fieldTrigger} ${errors.hotelLocation ? styles.errorBorder : ""}`}
+            />
+            {errors.hotelLocation && <span className={styles.errorText}>{errors.hotelLocation}</span>}
+          </div>
         </div>
         <div className={styles.col}>
-          <DashboardField
-            control="select"
-            label="Specific Hotel"
-            options={HOTEL_OPTIONS}
-            value={formData.specificHotel}
-            onChange={(e: any) => onChange({ specificHotel: e.target.value })}
-            disabled={!formData.hotelCategory}
-          />
+          <div className={styles.fieldWrapper}>
+            <label>Specific Hotel</label>
+            <SelectDropdown
+              id="specific-hotel"
+              options={hotelOptions}
+              value={formData.specificHotel}
+              onChange={(val) => onChange({ specificHotel: val, roomCustomizations: {} })}
+              triggerClassName={`${styles.fieldTrigger} ${errors.specificHotel ? styles.errorBorder : ""}`}
+            />
+            {errors.specificHotel && <span className={styles.errorText}>{errors.specificHotel}</span>}
+          </div>
         </div>
       </div>
 
       <div className={styles.fieldGroup}>
-        <h3 className={styles.sectionTitle}>Type of Room</h3>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+          <h3 className={styles.sectionTitle} style={{ marginBottom: 0 }}>Type of Room</h3>
+          {errors.rooms && (
+            <div className={styles.errorText} style={{ color: "#C11515", fontSize: "0.75rem", display: "flex", alignItems: "center", gap: "4px" }}>
+              <Image src="/images/information-fill.svg" alt="" width={16} height={16} />
+              <span>{errors.rooms}</span>
+            </div>
+          )}
+        </div>
         
         <div className={styles.roomList}>
-          {[
-            { id: "single", label: "Single Room - Garden View", price: "EGP 5,800", count: formData.rooms.single },
-            { id: "double", label: "Double Room - Garden View", price: "EGP 4,100", count: formData.rooms.double },
-            { id: "triple", label: "Triple Room - Garden View", price: "EGP 3,500", count: formData.rooms.triple }
-          ].map((room) => (
-            <div key={room.id} className={styles.roomRowWrapper}>
-              <div className={styles.roomInfoBox}>
-                <div className={styles.roomTexts}>
-                  <span className={styles.roomTitle}>{room.label}</span>
-                  <span className={styles.roomSubtitle}>1 person</span>
+          {!hotelDetail && formData.specificHotel && (
+            <div className={styles.roomSubtitle} style={{ padding: '1rem' }}>Loading rooms...</div>
+          )}
+          {!formData.specificHotel && (
+            <div className={styles.roomSubtitle} style={{ padding: '1rem' }}>Please select a hotel to view rooms.</div>
+          )}
+          
+          {Object.entries(groupedRooms).map(([type, rooms]) => {
+            // Find base room: prefer Garden View, else the cheapest
+            let baseRoom = rooms.find(r => r.view.toLowerCase().includes("garden"));
+            if (!baseRoom) {
+              baseRoom = rooms.reduce((prev, curr) => prev.pricePerNight < curr.pricePerNight ? prev : curr);
+            }
+            
+            const count = (formData.roomCustomizations[type] || []).length;
+            
+            return (
+              <div key={type} className={styles.roomRowWrapper}>
+                <div className={styles.roomInfoBox}>
+                  <div className={styles.roomTexts}>
+                    <span className={styles.roomTitle}>{type} - {baseRoom.view}</span>
+                    <span className={styles.roomSubtitle}>{baseRoom.name}</span>
+                  </div>
+                  <div className={styles.priceContainer}>
+                    <span className={styles.priceValue}>${baseRoom.pricePerNight}</span>
+                    <span className={styles.roomSubtitle}>/ night</span>
+                  </div>
                 </div>
-                <div className={styles.priceContainer}>
-                  <span className={styles.priceValue}>{room.price}</span>
-                  <span className={styles.roomSubtitle}>/ person</span>
+                <div className={styles.counterWrap}>
+                  <CounterPill
+                    value={count}
+                    onIncrease={() => updateRoomCount(type, count + 1, baseRoom.id.toString())}
+                    onDecrease={() => updateRoomCount(type, Math.max(0, count - 1), baseRoom.id.toString())}
+                    pillOnly
+                  />
                 </div>
               </div>
-              <div className={styles.counterWrap}>
-                <CounterPill
-                  value={room.count}
-                  onIncrease={() => updateRoomCount(room.id as "single"|"double"|"triple", room.count + 1)}
-                  onDecrease={() => updateRoomCount(room.id as "single"|"double"|"triple", Math.max(0, room.count - 1))}
-                  pillOnly
-                />
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        {formData.rooms.single > 0 && (
-          <div className={styles.customRoomsSection}>
-            <h4 className={styles.subSectionTitle}>Customize Single Rooms ({formData.rooms.single} selected)</h4>
-            <div className={styles.customRoomsGrid}>
-              {Array.from({ length: formData.rooms.single }).map((_, i) => (
-                <div key={`single-${i}`} className={styles.customRoomField}>
-                  <label>Room {i + 1}</label>
-                  <SelectDropdown
-                    id={`single-room-${i}`}
-                    options={ROOM_VIEW_OPTIONS}
-                    value={formData.roomCustomizations["single"]?.[i] || ROOM_VIEW_OPTIONS[0].value}
-                    onChange={(val) => updateRoomCustomization("single", i, val)}
-                    triggerClassName={styles.fieldTrigger}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {(() => {
+          let globalRoomIndex = 1;
+          return Object.entries(groupedRooms).map(([type, rooms]) => {
+            const selectedRoomIds = formData.roomCustomizations[type] || [];
+            if (selectedRoomIds.length === 0) return null;
+            
+            let baseRoom = rooms.find(r => r.view.toLowerCase().includes("garden"));
+            if (!baseRoom) {
+              baseRoom = rooms.reduce((prev, curr) => prev.pricePerNight < curr.pricePerNight ? prev : curr);
+            }
 
-        {formData.rooms.double > 0 && (
-          <div className={styles.customRoomsSection}>
-            <h4 className={styles.subSectionTitle}>Customize Double Rooms ({formData.rooms.double} selected)</h4>
-            <div className={styles.customRoomsGrid}>
-              {Array.from({ length: formData.rooms.double }).map((_, i) => (
-                <div key={`double-${i}`} className={styles.customRoomField}>
-                  <label>Room {i + 1}</label>
-                  <SelectDropdown
-                    id={`double-room-${i}`}
-                    options={ROOM_VIEW_OPTIONS}
-                    value={formData.roomCustomizations["double"]?.[i] || ROOM_VIEW_OPTIONS[0].value}
-                    onChange={(val) => updateRoomCustomization("double", i, val)}
-                    triggerClassName={styles.fieldTrigger}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+            const viewOptions = rooms.map(r => {
+              const isBase = r.id === baseRoom.id;
+              const diff = r.pricePerNight - baseRoom.pricePerNight;
+              return {
+                label: r.view,
+                value: r.id.toString(),
+                price: isBase ? "Included" : (diff > 0 ? `+$${diff}` : `-$${Math.abs(diff)}`),
+                isFree: isBase
+              };
+            });
 
-        {formData.rooms.triple > 0 && (
-          <div className={styles.customRoomsSection}>
-            <h4 className={styles.subSectionTitle}>Customize Triple Rooms ({formData.rooms.triple} selected)</h4>
-            <div className={styles.customRoomsGrid}>
-              {Array.from({ length: formData.rooms.triple }).map((_, i) => (
-                <div key={`triple-${i}`} className={styles.customRoomField}>
-                  <label>Room {i + 1}</label>
-                  <SelectDropdown
-                    id={`triple-room-${i}`}
-                    options={ROOM_VIEW_OPTIONS}
-                    value={formData.roomCustomizations["triple"]?.[i] || ROOM_VIEW_OPTIONS[0].value}
-                    onChange={(val) => updateRoomCustomization("triple", i, val)}
-                    triggerClassName={styles.fieldTrigger}
-                  />
+            return (
+              <div key={`custom-${type}`} className={styles.customRoomsSection}>
+                <h4 className={styles.subSectionTitle}>Customize {type}s ({selectedRoomIds.length} selected)</h4>
+                <div className={styles.customRoomsGrid}>
+                  {selectedRoomIds.map((selectedId, i) => {
+                    const currentRoomNumber = globalRoomIndex++;
+                    return (
+                      <div key={`${type}-${i}`} className={styles.customRoomField}>
+                        <label>Room {currentRoomNumber}</label>
+                        <SelectDropdown
+                          id={`${type}-room-${i}`}
+                          options={viewOptions}
+                          value={selectedId}
+                          onChange={(val) => updateRoomCustomization(type, i, val)}
+                          triggerClassName={styles.fieldTrigger}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
+              </div>
+            );
+          });
+        })()}
       </div>
     </div>
   );

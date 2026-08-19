@@ -9,9 +9,10 @@ import styles from "./StepGuestDetails.module.scss";
 interface StepGuestDetailsProps {
   formData: AddHotelBookingData;
   onChange: (patch: Partial<AddHotelBookingData>) => void;
+  errors?: Record<string, string>;
 }
 
-export default function StepGuestDetails({ formData, onChange }: StepGuestDetailsProps) {
+export default function StepGuestDetails({ formData, onChange, errors = {} }: StepGuestDetailsProps) {
   return (
     <div className={styles.container}>
       <div className={styles.row}>
@@ -22,6 +23,7 @@ export default function StepGuestDetails({ formData, onChange }: StepGuestDetail
             placeholder="Enter Your Name"
             value={formData.guestName}
             onChange={(e: any) => onChange({ guestName: e.target.value })}
+            error={errors.guestName}
           />
         </div>
         <div className={styles.col}>
@@ -32,6 +34,7 @@ export default function StepGuestDetails({ formData, onChange }: StepGuestDetail
             type="email"
             value={formData.guestEmail}
             onChange={(e: any) => onChange({ guestEmail: e.target.value })}
+            error={errors.guestEmail}
           />
         </div>
       </div>
@@ -40,7 +43,7 @@ export default function StepGuestDetails({ formData, onChange }: StepGuestDetail
         <div className={styles.col}>
           <div className={styles.phoneField}>
             <label className={styles.phoneLabel}>Enter Guest Phone number</label>
-            <div className={styles.phoneInputWrapper}>
+            <div className={`${styles.phoneInputWrapper} ${errors.guestPhone ? styles.errorWrapper : ""}`}>
               <PhonePrefixSelect 
                 phoneValue={formData.guestPhonePrefix} 
                 onPhoneChange={(val) => onChange({ guestPhonePrefix: val })} 
@@ -54,6 +57,12 @@ export default function StepGuestDetails({ formData, onChange }: StepGuestDetail
                 onChange={(e) => onChange({ guestPhone: e.target.value })}
               />
             </div>
+            {errors.guestPhone && (
+              <div className={styles.errorText} style={{ color: "#C11515", fontSize: "0.75rem", marginTop: "-0.25rem", display: "flex", alignItems: "center", gap: "4px" }}>
+                <Image src="/images/information-fill.svg" alt="" width={16} height={16} />
+                <span>{errors.guestPhone}</span>
+              </div>
+            )}
           </div>
         </div>
         <div className={styles.col}>
@@ -63,6 +72,12 @@ export default function StepGuestDetails({ formData, onChange }: StepGuestDetail
               value={formData.guestNationality}
               onChange={(val) => onChange({ guestNationality: val })}
             />
+            {errors.guestNationality && (
+              <div className={styles.errorText} style={{ color: "#C11515", fontSize: "0.75rem", marginTop: "-0.25rem", display: "flex", alignItems: "center", gap: "4px" }}>
+                <Image src="/images/information-fill.svg" alt="" width={16} height={16} />
+                <span>{errors.guestNationality}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -81,6 +96,7 @@ export default function StepGuestDetails({ formData, onChange }: StepGuestDetail
                   readOnly
                   placeholder="DD/MM/YYYY"
                   endAdornment={<Image src="/images/calendar3.svg" alt="calendar icon" width={20} height={20} aria-hidden className={styles.iconOverlay} />}
+                  error={errors.checkInDate}
                 />
               </div>
             )}
@@ -99,6 +115,7 @@ export default function StepGuestDetails({ formData, onChange }: StepGuestDetail
                   readOnly
                   placeholder="DD/MM/YYYY"
                   endAdornment={<Image src="/images/calendar3.svg" alt="calendar icon" width={20} height={20} aria-hidden className={styles.iconOverlay} />}
+                  error={errors.checkOutDate}
                 />
               </div>
             )}
@@ -107,18 +124,26 @@ export default function StepGuestDetails({ formData, onChange }: StepGuestDetail
       </div>
 
       <div className={styles.countersRow}>
-        <div className={styles.counterWrap}>
-          <div className={styles.counterLabelWrap}>
-            <span className={styles.counterLabel}>No of Adults</span>
-            <span className={styles.counterHint}>(+12 years)</span>
+        <div className={styles.counterWrap} style={{ flexDirection: "column", alignItems: "flex-start", gap: "0.25rem" }}>
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0.75rem" }}>
+            <div className={styles.counterLabelWrap}>
+              <span className={styles.counterLabel}>No of Adults</span>
+              <span className={styles.counterHint}>(+12 years)</span>
+            </div>
+            <CounterPill 
+              value={formData.adults} 
+              onIncrease={() => onChange({ adults: formData.adults + 1 })} 
+              onDecrease={() => onChange({ adults: Math.max(0, formData.adults - 1) })} 
+              min={0}
+              pillOnly
+            />
           </div>
-          <CounterPill 
-            value={formData.adults} 
-            onIncrease={() => onChange({ adults: formData.adults + 1 })} 
-            onDecrease={() => onChange({ adults: Math.max(0, formData.adults - 1) })} 
-            min={0}
-            pillOnly
-          />
+          {errors.adults && (
+            <div className={styles.errorText} style={{ color: "#C11515", fontSize: "0.75rem", marginTop: "0.25rem", display: "flex", alignItems: "center", gap: "4px" }}>
+              <Image src="/images/information-fill.svg" alt="" width={16} height={16} />
+              <span>{errors.adults}</span>
+            </div>
+          )}
         </div>
 
         <div className={styles.counterWrap}>

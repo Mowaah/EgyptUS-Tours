@@ -9,10 +9,11 @@ import {
   TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
 import useSWR from "swr";
-import { getTransportationBookings, reassignBooking } from "@/services/admin/adminBookingsService";
+import { getTransportationBookings, reassignBooking, sendTransportationBookingReminder } from "@/services/admin/adminBookingsService";
 import { getAdminUsers } from "@/services/admin/adminUsersService";
 import { transportationColumns, transportationRowActions } from "./transportationColumns";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import { triggerToast } from "@/components/dashboard/shared/GlobalToastContainer/GlobalToastContainer";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import { ReassignModal } from "@/components/dashboard/shared";
 
@@ -143,12 +144,19 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
           columns={transportationColumns}
           getRowId={(row) => String(row.id)}
           selectable
-          rowActions={(row) => transportationRowActions((action, r) => {
+          rowActions={(row) => transportationRowActions(async (action, r) => {
             if (action === "View") {
               router.push(`/dashboard/bookings/transportation/${r.id}`);
             } else if (action === "Re-Assign To") {
               setSelectedRow(r);
               setReassignModalOpen(true);
+            } else if (action === "Send Email Reminder") {
+              try {
+                await sendTransportationBookingReminder(r.id);
+                triggerToast("Email reminder sent successfully.", "success");
+              } catch (err: any) {
+                triggerToast(err?.response?.data?.payment?.[0] || err?.response?.data?.detail || "Failed to send email reminder.");
+              }
             } else {
               console.log(`Action ${action} triggered for row`, r);
             }

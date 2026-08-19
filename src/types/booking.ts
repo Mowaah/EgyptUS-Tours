@@ -10,11 +10,7 @@ export interface BookingData {
   adults: number;
   children: number;
   infants: number;
-  rooms: {
-    single: number;
-    double: number;
-    triple: number;
-  };
+  rooms: Record<string, number>;
   specialRequests: string;
   termsAccepted: boolean;
   cardNumber: string;
@@ -24,6 +20,7 @@ export interface BookingData {
   // Group trips specific fields
   departureMonth?: string;
   departureDateId?: string;
+  roomCustomizations?: Record<string, string[]>;
 }
 
 export const INITIAL_BOOKING_DATA: BookingData = {
@@ -45,4 +42,5 @@ export const INITIAL_BOOKING_DATA: BookingData = {
   cvv: "",
   departureMonth: "April 2026",
   departureDateId: "",
+  roomCustomizations: {},
 };

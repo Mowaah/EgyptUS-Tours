@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import {
   BookingStepFooter,
   FormField,
@@ -14,17 +15,7 @@ import styles from "./StepRoomDates.module.scss";
 import { BookingData } from "../../BookHotelPage";
 import { Hotel } from "@/types";
 
-const ROOM_VIEW_OPTIONS: SelectOption[] = [
-  { label: "Garden View (Included)", value: "garden", price: "Free", isFree: true },
-  { label: "Nile View", value: "nile", price: "+$ 456" },
-  { label: "Sea View", value: "sea", price: "+$ 456" },
-];
-
-const ROOM_TYPES = [
-  { id: "single" as const, label: "Single Room", sub: "1 person", price: "EGP 5,800", per: "/ person" },
-  { id: "double" as const, label: "Double Room", sub: "1 person", price: "EGP 4,100", per: "/ person" },
-  { id: "triple" as const, label: "Triple Room", sub: "1 person", price: "EGP 3,500", per: "/ person" },
-];
+// The hardcoded constants have been replaced by dynamic grouping based on hotel.hotelRooms.
 
 interface StepRoomDatesProps {
   formData: BookingData;
@@ -33,14 +24,45 @@ interface StepRoomDatesProps {
   hotel: Hotel;
 }
 
-export default function StepRoomDates({ formData, onChange, onContinue }: StepRoomDatesProps) {
-  const handleRoomChange = (roomType: "single" | "double" | "triple", increment: boolean) => {
-    onChange({
-      rooms: {
-        ...formData.rooms,
-        [roomType]: Math.max(0, formData.rooms[roomType] + (increment ? 1 : -1)),
-      },
+export default function StepRoomDates({ formData, onChange, onContinue, hotel }: StepRoomDatesProps) {
+  const [errors, setErrors] = React.useState<Record<string, string>>({});
+
+  const groupedRooms = React.useMemo(() => {
+    if (!hotel.hotelRooms) return {};
+    const groups: Record<string, typeof hotel.hotelRooms> = {};
+    for (const room of hotel.hotelRooms) {
+      if (!groups[room.type]) groups[room.type] = [];
+      groups[room.type].push(room);
+    }
+    return groups;
+  }, [hotel.hotelRooms]);
+
+  const handleRoomChange = (roomType: string, increment: boolean, defaultRoomId?: string) => {
+    const currentCount = formData.rooms[roomType] || 0;
+    const newCount = Math.max(0, currentCount + (increment ? 1 : -1));
+    const newRooms = { ...formData.rooms, [roomType]: newCount };
+    
+    const currentList = formData.roomCustomizations?.[roomType] || [];
+    let newList = [...currentList];
+    if (newCount > currentList.length && defaultRoomId) {
+      for (let i = 0; i < newCount - currentList.length; i++) {
+        newList.push(defaultRoomId);
+      }
+    } else if (newCount < currentList.length) {
+      newList = newList.slice(0, newCount);
+    }
+
+    onChange({ 
+      rooms: newRooms,
+      roomCustomizations: { ...(formData.roomCustomizations || {}), [roomType]: newList }
     });
+  };
+
+  const updateRoomCustomization = (type: string, index: number, roomId: string) => {
+    const currentList = formData.roomCustomizations?.[type] || [];
+    const newList = [...currentList];
+    newList[index] = roomId;
+    onChange({ roomCustomizations: { ...(formData.roomCustomizations || {}), [type]: newList } });
   };
 
   const handleGuestChange = (type: "adults" | "children" | "infants", increment: boolean) => {
@@ -48,19 +70,24 @@ export default function StepRoomDates({ formData, onChange, onContinue }: StepRo
   };
 
   const handleContinue = () => {
-    if (!formData.startDate || !formData.endDate) {
-      alert("Please select your Check-in and Check-out dates.");
-      return;
-    }
-    const totalRooms = formData.rooms.single + formData.rooms.double + formData.rooms.triple;
+    const newErrors: Record<string, string> = {};
+    if (!formData.startDate) newErrors.startDate = "Check-in date is required.";
+    if (!formData.endDate) newErrors.endDate = "Check-out date is required.";
+
+    const totalRooms = Object.values(formData.rooms || {}).reduce((acc, count) => acc + (count || 0), 0);
     if (totalRooms === 0) {
-      alert("Please select at least one room.");
-      return;
+      newErrors.rooms = "Please select at least one room.";
     }
     if (formData.adults === 0) {
-      alert("Please select at least one adult.");
+      newErrors.adults = "Please select at least one adult.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
+
+    setErrors({});
     onContinue();
   };
 
@@ -76,20 +103,26 @@ export default function StepRoomDates({ formData, onChange, onContinue }: StepRo
       <div className={planPage.stepFormCardScroll}>
         {/* ── Dates & Guests ── */}
         <div className={planPage.formGrid}>
-          <FormField label="Check-in" required>
+          <FormField label="Check-in" required error={errors.startDate}>
             <CustomDatePicker
               variant="input"
-              className={`${formStyles.input} ${planPage.dateInput}`}
+              className={`${formStyles.input} ${planPage.dateInput} ${errors.startDate ? formStyles.inputInvalid : ""}`}
               value={formData.startDate}
-              onChange={(date) => onChange({ startDate: date })}
+              onChange={(date) => {
+                onChange({ startDate: date });
+                if (errors.startDate) setErrors(e => ({ ...e, startDate: "" }));
+              }}
             />
           </FormField>
-          <FormField label="Check-out" required>
+          <FormField label="Check-out" required error={errors.endDate}>
             <CustomDatePicker
               variant="input"
-              className={`${formStyles.input} ${planPage.dateInput}`}
+              className={`${formStyles.input} ${planPage.dateInput} ${errors.endDate ? formStyles.inputInvalid : ""}`}
               value={formData.endDate}
-              onChange={(date) => onChange({ endDate: date })}
+              onChange={(date) => {
+                onChange({ endDate: date });
+                if (errors.endDate) setErrors(e => ({ ...e, endDate: "" }));
+              }}
             />
           </FormField>
 
@@ -113,29 +146,57 @@ export default function StepRoomDates({ formData, onChange, onContinue }: StepRo
             );
           })}
         </div>
+        {errors.adults && (
+          <div className={styles.errorText} style={{ color: "#C11515", fontSize: "0.75rem", display: "flex", alignItems: "center", gap: "4px", marginTop: "8px" }}>
+            <Image src="/images/information-fill.svg" alt="" width={16} height={16} />
+            <span>{errors.adults}</span>
+          </div>
+        )}
         <hr className={styles.divider} aria-hidden="true" />
 
         {/* ── Room Type ── */}
-        <h3 className={styles.sectionTitle}>Type of Room <span style={{ color: '#0E2851' }}>*</span></h3>
+        <h3 className={styles.sectionTitle} style={{ marginBottom: errors.rooms ? '0.5rem' : '1.5rem' }}>
+          Type of Room <span style={{ color: '#0E2851' }}>*</span>
+        </h3>
+        {errors.rooms && (
+          <div className={styles.errorText} style={{ color: "#C11515", fontSize: "0.75rem", display: "flex", alignItems: "center", gap: "4px", marginBottom: "1rem" }}>
+            <Image src="/images/information-fill.svg" alt="" width={16} height={16} />
+            <span>{errors.rooms}</span>
+          </div>
+        )}
         <div className={styles.roomList}>
-          {ROOM_TYPES.map((room) => {
-            const count = formData.rooms[room.id];
+          {Object.entries(groupedRooms).length === 0 && (
+            <div style={{ color: "#666", padding: "1rem" }}>No rooms available for this hotel.</div>
+          )}
+          {Object.entries(groupedRooms).map(([type, rooms]) => {
+            if (!rooms || rooms.length === 0) return null;
+            const t = type.toLowerCase() as "single" | "double" | "triple";
+            
+            // Base room is either Garden View, or cheapest, or first.
+            const gardenRoom = rooms.find(r => r.view.toLowerCase().includes("garden"));
+            const baseRoom = gardenRoom || [...rooms].sort((a, b) => a.pricePerNight - b.pricePerNight)[0];
+            
+            const count = formData.rooms[t] || 0;
+            const guestsNum = t === "single" ? 1 : t === "double" ? 2 : 3;
+            
             return (
-              <div key={room.id} className={styles.roomRowWrapper}>
+              <div key={type} className={styles.roomRowWrapper}>
                 <label className={`${styles.roomInfoBox} ${count > 0 ? styles.selected : ""}`}>
                   <div className={styles.roomTexts}>
-                    <span className={styles.roomTitle}>{room.label}</span>
-                    <span className={styles.roomSub}>{room.sub}</span>
+                    <span className={styles.roomTitle}>
+                      {type.toLowerCase().includes("room") ? type.charAt(0).toUpperCase() + type.slice(1) : `${type.charAt(0).toUpperCase() + type.slice(1)} Room`} - {baseRoom.view}
+                    </span>
+                    <span className={styles.roomSub}>{guestsNum} {guestsNum === 1 ? 'person' : 'people'}</span>
                   </div>
                   <div className={styles.priceCol}>
-                    <span className={styles.priceVal}>{room.price}</span>
-                    <span className={styles.roomSub}>{room.per}</span>
+                    <span className={styles.priceVal}>${baseRoom.pricePerNight}</span>
+                    <span className={styles.roomSub}>/ night</span>
                   </div>
                 </label>
                 <CounterPill
                   value={count}
-                  onIncrease={() => handleRoomChange(room.id, true)}
-                  onDecrease={() => handleRoomChange(room.id, false)}
+                  onIncrease={() => handleRoomChange(t, true, baseRoom.id)}
+                  onDecrease={() => handleRoomChange(t, false, baseRoom.id)}
                   className={styles.roomCounter}
                   pillOnly
                 />
@@ -144,35 +205,49 @@ export default function StepRoomDates({ formData, onChange, onContinue }: StepRo
           })}
         </div>
 
-        {/* Customize double rooms */}
-        {formData.rooms.double > 0 && (
-          <>
-            <h3 className={styles.sectionTitle}>Customize Your Double Rooms ( {formData.rooms.double} selected )</h3>
-            <div className={planPage.formGrid}>
-              {Array.from({ length: formData.rooms.double }).map((_, i) => (
-                <div key={i} className={planPage.formGroup}>
-                  <label className={formStyles.fieldLabel}>Room {i + 1}</label>
-                  <SelectDropdown id={`double-room-${i}`} options={ROOM_VIEW_OPTIONS} value="garden" onChange={() => { }} />
-                </div>
-              ))}
-            </div>
-          </>
-        )}
+        {Object.entries(groupedRooms).map(([type, rooms]) => {
+          const t = type.toLowerCase() as "single" | "double" | "triple";
+          const count = formData.rooms[t] || 0;
+          if (count === 0) return null;
+          
+          const gardenRoom = rooms.find(r => r.view.toLowerCase().includes("garden"));
+          const baseRoom = gardenRoom || [...rooms].sort((a, b) => a.pricePerNight - b.pricePerNight)[0];
 
-        {/* Customize triple rooms */}
-        {formData.rooms.triple > 0 && (
-          <>
-            <h3 className={styles.sectionTitle}>Customize Your Triple Rooms ( {formData.rooms.triple} selected )</h3>
-            <div className={planPage.formGrid}>
-              {Array.from({ length: formData.rooms.triple }).map((_, i) => (
-                <div key={i} className={planPage.formGroup}>
-                  <label className={formStyles.fieldLabel}>Room {i + 1}</label>
-                  <SelectDropdown id={`triple-room-${i}`} options={ROOM_VIEW_OPTIONS} value="garden" onChange={() => { }} />
-                </div>
-              ))}
-            </div>
-          </>
-        )}
+          // Map other views to dropdown options
+          const options: SelectOption[] = rooms.map(r => {
+            const isBase = r.id === baseRoom.id;
+            const diff = r.pricePerNight - baseRoom.pricePerNight;
+            const displayPrice = isBase ? "Included" : `+$${diff}`;
+            return {
+              label: `${r.view}${isBase ? " (Included)" : ""}`,
+              value: r.id,
+              price: displayPrice,
+              isFree: isBase,
+            };
+          });
+
+          return (
+            <React.Fragment key={`custom-${type}`}>
+              <h3 className={styles.sectionTitle}>Customize {type.charAt(0).toUpperCase() + type.slice(1)} Rooms ({count} selected)</h3>
+              <div className={planPage.formGrid}>
+                {Array.from({ length: count }).map((_, i) => {
+                  const val = formData.roomCustomizations?.[t]?.[i] || baseRoom.id;
+                  return (
+                    <div key={i} className={planPage.formGroup}>
+                      <label className={formStyles.fieldLabel}>Room {i + 1}</label>
+                      <SelectDropdown
+                        id={`${type}-room-${i}`}
+                        options={options}
+                        value={val}
+                        onChange={(newVal) => updateRoomCustomization(t, i, newVal)}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </React.Fragment>
+          );
+        })}
 
         {(formData.rooms.double > 0 || formData.rooms.triple > 0) && (
           <hr className={styles.divider} aria-hidden="true" />

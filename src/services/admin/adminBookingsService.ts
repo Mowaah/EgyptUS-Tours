@@ -63,3 +63,23 @@ export async function cancelTransportationBooking(id: string | number, reason: s
 export async function cancelHotelBooking(id: string | number, reason: string): Promise<any> {
   return await adminDataClient.post(`/bookings/hotels/${id}/cancel/`, { cancellation_reason: reason });
 }
+
+export async function createHotelBooking(payload: any): Promise<any> {
+  return await adminDataClient.post(`/bookings/hotels/`, payload);
+}
+
+export async function previewHotelBooking(payload: any): Promise<any> {
+  return await adminDataClient.post(`/bookings/hotels/preview/`, payload);
+}
+
+export async function sendHotelBookingReminder(id: string | number, message: string = ''): Promise<any> {
+  return await adminDataClient.post(`/bookings/hotels/${id}/send_reminder/`, { message });
+}
+
+export async function sendTripBookingReminder(id: string | number, message: string = ''): Promise<any> {
+  return await adminDataClient.post(`/bookings/trips/${id}/send_reminder/`, { message });
+}
+
+export async function sendTransportationBookingReminder(id: string | number, message: string = ''): Promise<any> {
+  return await adminDataClient.post(`/bookings/transportation/${id}/send_reminder/`, { message });
+}

@@ -32,7 +32,7 @@ const cancelBookingConfig: ActionNoteModalConfig = {
   isDanger: true,
 };
 
-import { getTransportationBookingById, cancelTransportationBooking } from "@/services/admin/adminBookingsService";
+import { getTransportationBookingById, cancelTransportationBooking, sendTransportationBookingReminder } from "@/services/admin/adminBookingsService";
 import useSWR from "swr";
 
 export default function ViewTransportation({ id }: ViewTransportationProps) {
@@ -40,6 +40,7 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
   const [isRefundModalOpen, setIsRefundModalOpen] = React.useState(false);
   const [bannerMessage, setBannerMessage] = React.useState("");
   const [bannerVariant, setBannerVariant] = React.useState<"success" | "warning" | "error">("success");
+  const [isSendingReminder, setIsSendingReminder] = React.useState(false);
   
   const { data: transportData, isLoading, mutate } = useSWR(
     id ? ["/bookings/transportation", id] : null,
@@ -66,13 +67,28 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
       <span className={getPillStyle(payload.transfer?.source)}>
         {payload.transfer?.source === "website" ? (
           <Image src="/images/dashboard/customers/custom/website.svg" alt="website" width={14} height={14} />
-        ) : payload.transfer?.source === "agent" ? (
+        ) : (payload.transfer?.source === "agent" || payload.transfer?.source === "admin") ? (
           <Image src="/images/dashboard/customers/custom/agent.svg" alt="agent" width={14} height={14} />
         ) : null}
-        {payload.transfer?.source ? payload.transfer.source.charAt(0).toUpperCase() + payload.transfer.source.slice(1) : "-"}
+        {payload.transfer?.source ? (payload.transfer?.source === "admin" ? "Agent" : payload.transfer.source.charAt(0).toUpperCase() + payload.transfer.source.slice(1)) : "-"}
       </span>
     </div>
   ) : null;
+
+  const handleSendReminder = async () => {
+    try {
+      setIsSendingReminder(true);
+      await sendTransportationBookingReminder(id);
+      setBannerVariant("success");
+      setBannerMessage("Email reminder sent successfully.");
+      mutate(); // Refresh the activity timeline
+    } catch (err: any) {
+      setBannerVariant("error");
+      setBannerMessage(err?.response?.data?.payment?.[0] || err?.response?.data?.detail || "Failed to send email reminder.");
+    } finally {
+      setIsSendingReminder(false);
+    }
+  };
 
   const actionButtons = isRefunded ? null : isCancelled ? (
     <button 
@@ -93,8 +109,14 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
         <Image src="/images/dashboard/booking/trips/view/cancel.svg" alt="" width={20} height={20} />
       </button>
 
-      <button className={styles.primaryActionButton} type="button">
-        Send Email Reminder
+      <button 
+        className={styles.primaryActionButton} 
+        type="button"
+        onClick={handleSendReminder}
+        disabled={isSendingReminder}
+        style={{ opacity: isSendingReminder ? 0.7 : 1 }}
+      >
+        {isSendingReminder ? "Sending..." : "Send Email Reminder"}
         <Image src="/images/dashboard/booking/trips/view/reminder.svg" alt="" width={20} height={20} />
       </button>
     </>

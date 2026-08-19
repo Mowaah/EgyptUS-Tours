@@ -106,7 +106,7 @@ export const hotelsColumns: DataTableColumn<HotelBookingRow>[] = [
       const label = (
         <span style={{ display: "flex", alignItems: "center", gap: "6px", textTransform: "capitalize" }}>
           <Image src={icon} alt="" width={14} height={14} aria-hidden />
-          {source}
+          {source === "admin" ? "Agent" : source}
         </span>
       );
       return <StatusPill label={label} variant={variant} hideDot />;

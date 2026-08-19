@@ -176,7 +176,7 @@ export function RoomsStep() {
                           options={[
                             { label: "Standard Room", value: "Standard Room" },
                             { label: "Deluxe Room", value: "Deluxe Room" },
-                            { label: "Executive Room", value: "Executive Room" },
+                            { label: "Premium Room", value: "Premium Room" },
                             { label: "Suite", value: "Suite" },
                           ]}
                           label="Room Category"
@@ -195,15 +195,12 @@ export function RoomsStep() {
                           {...field}
                           control="select"
                           options={[
-                            { label: "Single Room", value: "Single Room" },
+                            { label: "Single", value: "Single" },
                             { label: "Double Room", value: "Double Room" },
-                            { label: "Twin Room", value: "Twin Room" },
-                            { label: "King Room", value: "King Room" },
-                            { label: "Queen Room", value: "Queen Room" },
-                            { label: "Studio Room", value: "Studio Room" },
+                            { label: "Triple Room", value: "Triple Room" },
                           ]}
                           label="Room Type"
-                          placeholder="e.g. Deluxe Room"
+                          placeholder="e.g. Single"
                           error={(errors?.rooms?.[index] as any)?.type?.message || fieldState.error?.message}
                         />
                       )}
@@ -221,14 +218,12 @@ export function RoomsStep() {
                           {...field}
                           control="select"
                           options={[
-                            { label: "City View", value: "City View" },
                             { label: "Sea View", value: "Sea View" },
                             { label: "Pool View", value: "Pool View" },
                             { label: "Garden View", value: "Garden View" },
-                            { label: "Street View", value: "Street View" },
                           ]}
                           label="Room View"
-                          placeholder="e.g. City View"
+                          placeholder="e.g. Garden View"
                           error={(errors?.rooms?.[index] as any)?.view?.message || fieldState.error?.message}
                         />
                       )}
