@@ -18,18 +18,24 @@ interface TripsBookingsProps {
 export default function TripsBookings({ searchQuery = "", onClearSearch, onNewBooking }: TripsBookingsProps) {
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const [isAddTripModalOpen, setIsAddTripModalOpen] = useState(false);
+  const [selectedTourType, setSelectedTourType] = useState<"private" | "group">("private");
+  const [selectedTripId, setSelectedTripId] = useState<string>("");
 
   const handleNewBooking = () => {
     setIsBookModalOpen(true);
     if (onNewBooking) onNewBooking();
   };
 
-  const handleBookPrivate = () => {
+  const handleBookPrivate = (tripId: string) => {
+    setSelectedTripId(tripId);
+    setSelectedTourType("private");
     setIsBookModalOpen(false);
     setIsAddTripModalOpen(true);
   };
 
-  const handleBookGroup = () => {
+  const handleBookGroup = (tripId: string) => {
+    setSelectedTripId(tripId);
+    setSelectedTourType("group");
     setIsBookModalOpen(false);
     setIsAddTripModalOpen(true);
   };
@@ -43,8 +49,8 @@ export default function TripsBookings({ searchQuery = "", onClearSearch, onNewBo
         onClearSearch={onClearSearch}
         onNewBooking={handleNewBooking}
       />
-      <BookTripModal 
-        open={isBookModalOpen} 
+      <BookTripModal
+        open={isBookModalOpen}
         onClose={() => setIsBookModalOpen(false)}
         onBookPrivate={handleBookPrivate}
         onBookGroup={handleBookGroup}
@@ -52,6 +58,8 @@ export default function TripsBookings({ searchQuery = "", onClearSearch, onNewBo
       <AddTripBookingModal
         open={isAddTripModalOpen}
         onClose={() => setIsAddTripModalOpen(false)}
+        tourType={selectedTourType}
+        tripId={selectedTripId}
       />
     </div>
   );

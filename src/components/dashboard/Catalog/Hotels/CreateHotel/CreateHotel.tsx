@@ -13,7 +13,7 @@ import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { WizardLayout } from "@/components/dashboard/shared";
 import { useWizard, WizardStepConfig, WizardSubmitIntent } from "@/hooks/useWizard";
 import { createCatalogHotel, updateCatalogHotel, publishCatalogHotel, archiveCatalogHotel, unpublishCatalogHotel } from "@/services/admin/adminCatalogHotelsService";
-import { useCatalogHotelDetail } from "@/hooks/useCatalogHotels";
+import { useCatalogHotelDetail, useCatalogHotelLocations } from "@/hooks/useCatalogHotels";
 import styles from "./CreateHotel.module.scss";
 
 const STEPS: WizardStepConfig[] = [
@@ -221,7 +221,7 @@ function validateBeforePublish(data: CreateHotelValues, intent: WizardSubmitInte
   return errors;
 }
 
-export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDirtyChange?: (isDirty: boolean) => void }) {
+export function CreateHotel({ hotelId, onDirtyChange, onSavingChange }: { hotelId?: string; onDirtyChange?: (isDirty: boolean) => void; onSavingChange?: (isSaving: boolean) => void }) {
   const router = useRouter();
   const [isPublishedModalOpen, setIsPublishedModalOpen] = useState(false);
   const [savedHotelId, setSavedHotelId] = useState<string | null>(null);
@@ -229,6 +229,7 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
   const [saveError, setSaveError] = useState<string | null>(null);
   
   const { hotel, loading: hotelLoading } = useCatalogHotelDetail(hotelId || "");
+  const { locations } = useCatalogHotelLocations();
 
   const methods = useForm<CreateHotelValues>({
     resolver: zodResolver(createHotelSchema) as any,
@@ -246,6 +247,10 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
   useEffect(() => {
     onDirtyChange?.(isDirty);
   }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    onSavingChange?.(isSaving);
+  }, [isSaving, onSavingChange]);
 
   const onSubmit = async (data: CreateHotelValues, options?: { intent?: WizardSubmitIntent }) => {
     setIsSaving(true);
@@ -334,6 +339,9 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
         })
       );
 
+      const selectedLocation = locations.find((l: any) => String(l.id) === String(data.cityLocation));
+      const selectedLocationName = selectedLocation?.name || undefined;
+
       // Map payload
       const payload: any = {
         translations: {
@@ -342,6 +350,7 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
             subtitle: data.subtitle?.en || "",
             description: data.description?.en || "",
             second_description: data.secondDescription?.en || "",
+            location_text: selectedLocationName,
             meta_title: data.metaTitle?.en || "",
             meta_description: data.metaDescription?.en || "",
             meta_keywords: data.metaKeywords?.en ? data.metaKeywords.en.split(",").map(k => k.trim()).filter(Boolean) : [],
@@ -353,6 +362,7 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
             subtitle: data.subtitle?.it || "",
             description: data.description?.it || "",
             second_description: data.secondDescription?.it || "",
+            location_text: selectedLocationName,
             meta_title: data.metaTitle?.it || "",
             meta_description: data.metaDescription?.it || "",
             meta_keywords: data.metaKeywords?.it ? data.metaKeywords.it.split(",").map(k => k.trim()).filter(Boolean) : [],
@@ -363,6 +373,7 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
             subtitle: data.subtitle?.es || "",
             description: data.description?.es || "",
             second_description: data.secondDescription?.es || "",
+            location_text: selectedLocationName,
             meta_title: data.metaTitle?.es || "",
             meta_description: data.metaDescription?.es || "",
             meta_keywords: data.metaKeywords?.es ? data.metaKeywords.es.split(",").map(k => k.trim()).filter(Boolean) : [],
@@ -370,7 +381,6 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
           }
         },
         location_id: data.cityLocation ? parseInt(data.cityLocation, 10) : undefined,
-        location_text: undefined, // Clear location_text to prefer location_id
         stars: data.starRating ? parseFloat(cleanNumber(data.starRating) || "0") : undefined,
         total_rooms: data.totalRooms ? parseInt(cleanNumber(data.totalRooms) || "0") : undefined,
         facilities: data.facilities,
@@ -443,7 +453,6 @@ export function CreateHotel({ hotelId, onDirtyChange }: { hotelId?: string; onDi
         onSubmit={handleSubmit((data) => onSubmit(data, { intent: "save" }).then(() => setIsPublishedModalOpen(true)))}
       >
         {saveError && <div className={styles.saveError}>{saveError}</div>}
-        {isSaving && <div className={styles.saveNotice}>Saving hotel...</div>}
 
         <WizardLayout
           steps={STEPS}

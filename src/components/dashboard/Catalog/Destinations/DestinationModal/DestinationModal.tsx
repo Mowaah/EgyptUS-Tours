@@ -98,7 +98,7 @@ export default function DestinationModal({
             </label>
             <UploadDropzone
               value={file}
-              onFileSelect={(newFile) => setFile(newFile)}
+              onFileSelect={(newFile) => setFile(newFile ?? undefined)}
               title="Click to upload an image or drag & drop"
               subtitle="PNG, JPG up to 10MB"
             />

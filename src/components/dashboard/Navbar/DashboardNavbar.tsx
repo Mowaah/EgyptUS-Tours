@@ -18,6 +18,7 @@ interface ActionConfig {
   hideIcon?: boolean;
   variant?: "primary" | "secondary" | "tertiary";
   disabled?: boolean;
+  loading?: boolean;
 }
 
 interface DashboardNavbarProps {
@@ -229,10 +230,13 @@ export default function DashboardNavbar({
                   form={visiblePrimaryAction.form}
                   className={getActionClass(visiblePrimaryAction, styles.primaryActionButton)}
                   onClick={onPrimaryAction}
-                  disabled={visiblePrimaryAction.disabled}
+                  disabled={visiblePrimaryAction.disabled || visiblePrimaryAction.loading}
                 >
+                  {visiblePrimaryAction.loading && (
+                    <span className={styles.loadingSpinner} aria-hidden="true" />
+                  )}
                   {visiblePrimaryAction.label}
-                  {!visiblePrimaryAction.hideIcon && (
+                  {!visiblePrimaryAction.loading && !visiblePrimaryAction.hideIcon && (
                     <Image
                       src={visiblePrimaryAction.iconSrc || "/images/dashboard/navbar/add-circle.svg"}
                       alt=""

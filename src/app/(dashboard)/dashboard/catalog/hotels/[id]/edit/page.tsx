@@ -13,6 +13,7 @@ export default function EditHotelPage({ params }: { params: Promise<{ id: string
   
   const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleSaveChanges = () => {
     const form = document.getElementById("create-hotel-form") as HTMLFormElement;
@@ -33,13 +34,13 @@ export default function EditHotelPage({ params }: { params: Promise<{ id: string
         ]}
         hideSearch={true}
         hideFilterButton={true}
-        secondaryAction={{ label: "Discard", disabled: !isDirty }}
-        primaryAction={{ label: "Save Changes", iconSrc: "/images/dashboard/save.svg", disabled: !isDirty }}
+        secondaryAction={{ label: "Discard", disabled: !isDirty || isSaving }}
+        primaryAction={{ label: "Save Changes", iconSrc: "/images/dashboard/save.svg", disabled: !isDirty, loading: isSaving }}
         onSecondaryAction={() => setIsDiscardModalOpen(true)}
         onPrimaryAction={handleSaveChanges}
       />
       <Suspense fallback={<div>Loading...</div>}>
-        <CreateHotel hotelId={id} onDirtyChange={setIsDirty} />
+        <CreateHotel hotelId={id} onDirtyChange={setIsDirty} onSavingChange={setIsSaving} />
       </Suspense>
 
       <DashboardConfirmationModal

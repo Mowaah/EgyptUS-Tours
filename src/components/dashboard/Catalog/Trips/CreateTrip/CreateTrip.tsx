@@ -300,6 +300,7 @@ function mapTripToFormValues(trip: any): CreateTripValues {
     datesAvailability: {
       enabled: !!trip?.availability_enabled,
       dates: asList(trip?.availability_slots).map((slot) => ({
+        id: slot?.id,
         dateRange: [slot?.start_date, slot?.end_date].filter(Boolean).join(" - "),
         spots: asText(slot?.capacity_total || slot?.spots || ""),
       })),
@@ -314,6 +315,7 @@ function mapTripToFormValues(trip: any): CreateTripValues {
       es: asList(tEs.meta_keywords).join(", ")
     },
     slug: { en: asText(tEn.slug || trip?.slug), it: asText(tIt.slug), es: asText(tEs.slug) },
+    brochureFile: trip?.brochure_url || undefined,
   };
 }
 
@@ -406,6 +408,11 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
     who_is_it_for: data.whoIsTripFor?.[lang] || "",
   });
 
+  const selectedDestinationNames = destinationIds
+    .map((id) => destinationRecords.find((d: any) => d.id === id)?.name || destinationRecords.find((d: any) => d.id === id)?.title)
+    .filter(Boolean);
+  const locationText = selectedDestinationNames.join(" · ") || "Egypt";
+
   return {
     translations: {
       en: {
@@ -413,6 +420,7 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
         slug: slugEn,
         description: data.description?.en || "",
         short_description: data.culturalValue?.en || "",
+        location_text: locationText,
         overview: buildOverview("en"),
         meta_title: data.metaTitle?.en || "",
         meta_description: data.metaDescription?.en || "",
@@ -423,6 +431,7 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
         slug: data.slug?.it || "",
         description: data.description?.it || "",
         short_description: data.culturalValue?.it || "",
+        location_text: locationText,
         overview: buildOverview("it"),
         meta_title: data.metaTitle?.it || "",
         meta_description: data.metaDescription?.it || "",
@@ -433,6 +442,7 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
         slug: data.slug?.es || "",
         description: data.description?.es || "",
         short_description: data.culturalValue?.es || "",
+        location_text: locationText,
         overview: buildOverview("es"),
         meta_title: data.metaTitle?.es || "",
         meta_description: data.metaDescription?.es || "",
@@ -496,6 +506,7 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
         const capacity = intValue(slot.spots);
         if (!range.start_date || !range.end_date || capacity === undefined) return null;
         return {
+          id: (slot as any).id,
           start_date: range.start_date,
           end_date: range.end_date,
           capacity_total: capacity,
@@ -571,7 +582,7 @@ function errorMessage(error: any): string {
   return error?.message || "Could not save trip.";
 }
 
-export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirtyChange?: (isDirty: boolean) => void }) {
+export function CreateTrip({ tripId, onDirtyChange, onSavingChange }: { tripId?: string; onDirtyChange?: (isDirty: boolean) => void; onSavingChange?: (isSaving: boolean) => void }) {
   const router = useRouter();
   const [isPublishedModalOpen, setIsPublishedModalOpen] = useState(false);
   const [savedTripId, setSavedTripId] = useState<string | number | undefined>(tripId);
@@ -588,6 +599,10 @@ export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirty
   useEffect(() => {
     onDirtyChange?.(isDirty);
   }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    onSavingChange?.(isSaving);
+  }, [isSaving, onSavingChange]);
 
   useEffect(() => {
     if (!tripId) return;
@@ -696,7 +711,6 @@ export function CreateTrip({ tripId, onDirtyChange }: { tripId?: string; onDirty
         onSubmit={handleSubmit((data) => onSubmit(data, { intent: "save" }).then(() => setIsPublishedModalOpen(true)))}
       >
         {saveError && <div className={styles.saveError}>{saveError}</div>}
-        {isSaving && <div className={styles.saveNotice}>Saving trip...</div>}
 
         <WizardLayout
           steps={STEPS}

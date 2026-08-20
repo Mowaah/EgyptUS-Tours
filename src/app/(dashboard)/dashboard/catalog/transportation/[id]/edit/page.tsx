@@ -13,6 +13,7 @@ export default function EditVehiclePage({ params }: { params: Promise<{ id: stri
   
   const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleSaveChanges = () => {
     const form = document.getElementById("create-vehicle-form") as HTMLFormElement;
@@ -33,13 +34,13 @@ export default function EditVehiclePage({ params }: { params: Promise<{ id: stri
         ]}
         hideSearch={true}
         hideFilterButton={true}
-        secondaryAction={{ label: "Discard", disabled: !isDirty }}
-        primaryAction={{ label: "Save Changes", iconSrc: "/images/dashboard/save.svg", disabled: !isDirty }}
+        secondaryAction={{ label: "Discard", disabled: !isDirty || isSaving }}
+        primaryAction={{ label: "Save Changes", iconSrc: "/images/dashboard/save.svg", disabled: !isDirty, loading: isSaving }}
         onSecondaryAction={() => setIsDiscardModalOpen(true)}
         onPrimaryAction={handleSaveChanges}
       />
       <Suspense fallback={<div>Loading...</div>}>
-        <CreateVehicle vehicleId={id} onDirtyChange={setIsDirty} />
+        <CreateVehicle vehicleId={id} onDirtyChange={setIsDirty} onSavingChange={setIsSaving} />
       </Suspense>
 
       <DashboardConfirmationModal

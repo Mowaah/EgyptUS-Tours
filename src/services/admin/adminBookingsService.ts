@@ -88,6 +88,32 @@ export async function sendTripBookingReminder(id: string | number, message: stri
   return await adminDataClient.post(`/bookings/trips/${id}/send_reminder/`, { message });
 }
 
+export async function createTripBooking(payload: any): Promise<any> {
+  return await adminDataClient.post(`/bookings/trips/`, payload);
+}
+
+export async function previewTripBooking(payload: any): Promise<any> {
+  return await adminDataClient.post(`/bookings/trips/preview/`, payload);
+}
+
 export async function sendTransportationBookingReminder(id: string | number, message: string = ''): Promise<any> {
   return await adminDataClient.post(`/bookings/transportation/${id}/send_reminder/`, { message });
+}
+
+export async function refundTripBooking(id: string | number, formData: FormData): Promise<any> {
+  return await adminDataClient.post(`/bookings/trips/${id}/refund/`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+}
+
+export async function refundHotelBooking(id: string | number, formData: FormData): Promise<any> {
+  return await adminDataClient.post(`/bookings/hotels/${id}/refund/`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+}
+
+export async function refundTransportationBooking(id: string | number, formData: FormData): Promise<any> {
+  return await adminDataClient.post(`/bookings/transportation/${id}/refund/`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
 }

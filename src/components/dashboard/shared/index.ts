@@ -35,3 +35,4 @@ export { default as TablePagination } from './TablePagination/TablePagination';
 export { default as WizardLayout } from './WizardLayout/WizardLayout';
 export { default as WizardMediaStep } from './WizardMediaStep/WizardMediaStep';
 export * from './CatalogMediaView/CatalogMediaView';
+export { default as DashboardPhoneField } from "./DashboardPhoneField/DashboardPhoneField";

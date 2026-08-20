@@ -1,4 +1,5 @@
 export interface TripHotel {
+  slug: string;
   name: string;
   location: string;
   description: string;
@@ -24,8 +25,10 @@ export interface Trip {
   };
   countries?: number;
   isFavorite?: boolean;
+  discountLabel?: string;
 
   // ── Detail-page fields ──────────────────────────────────────
+  brochureUrl?: string;
   images?: string[];
   rating?: number;
   reviewCount?: number;
@@ -81,6 +84,7 @@ export interface Trip {
   }>;
 
   pricing?: Array<{
+    tourType?: "private" | "group";
     season: string; // e.g. "Sep – May"
     tiers: Array<{
       label: string; // e.g. "Per Single Cabin"

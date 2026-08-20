@@ -24,14 +24,15 @@ export default function RoomSelection({ selections }: RoomSelectionProps) {
         <div className={styles.boxTitle}>Type of Room</div>
         <div className={styles.roomBadgeList}>
           {selections.map((sel, idx) => {
-            const roomTypeStr = sel.room_type || sel.type_label || "";
-            const icon = roomTypeStr.toLowerCase().includes("single") ? "single_room.svg" : 
-                         roomTypeStr.toLowerCase().includes("double") ? "double_room.svg" : 
+            const roomTypeRaw = sel.room_type || sel.type_label || "";
+            const roomTypeStr = roomTypeRaw ? roomTypeRaw.charAt(0).toUpperCase() + roomTypeRaw.slice(1) : "";
+            const icon = roomTypeRaw.toLowerCase().includes("single") ? "single_room.svg" : 
+                         roomTypeRaw.toLowerCase().includes("double") ? "double_room.svg" : 
                          "triple_room.svg";
             
-            const label = [sel.room_type || sel.type_label, sel.view_label].filter(Boolean).join(" - ") || `Room ${idx + 1}`;
+            const label = [roomTypeStr, sel.view_label].filter(Boolean).join(" - ") || `Room ${idx + 1}`;
             const count = sel.count ?? sel.quantity ?? 1;
-            const guests = sel.guests || (roomTypeStr.toLowerCase().includes("single") ? 1 : roomTypeStr.toLowerCase().includes("double") ? 2 : 3);
+            const guests = sel.guests || (roomTypeRaw.toLowerCase().includes("single") ? 1 : roomTypeRaw.toLowerCase().includes("double") ? 2 : 3);
             
             return (
               <div key={idx} className={styles.roomBadge}>

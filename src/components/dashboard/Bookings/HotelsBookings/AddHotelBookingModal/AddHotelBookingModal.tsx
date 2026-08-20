@@ -38,6 +38,7 @@ export interface AddHotelBookingData extends BaseGuestDetails {
   // Booking Details
   hotelLocation: string;
   specificHotel: string;
+  rooms?: Record<string, number>;
   roomCustomizations: Record<string, string[]>;
 }
 
@@ -56,6 +57,7 @@ const INITIAL_DATA: AddHotelBookingData = {
   
   hotelLocation: "",
   specificHotel: "",
+  rooms: {},
   roomCustomizations: {},
 };
 
@@ -188,7 +190,6 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
         };
         
         await submitBooking(payload);
-        triggerToast("Booking created successfully!", "success");
         setIsConfirmed(true);
         // Refresh hotels list
         mutate("/bookings/hotels/");

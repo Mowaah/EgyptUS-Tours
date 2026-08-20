@@ -18,7 +18,7 @@ import { getTripsPillStyle } from "../TripsPanel/tripsColumns";
 import ActionNoteModal, { ActionNoteModalConfig } from "@/components/dashboard/LeadsInquiries/ActionNoteModal/ActionNoteModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import useSWR from "swr";
-import { getTripBookingById, cancelTripBooking, sendTripBookingReminder } from "@/services/admin/adminBookingsService";
+import { getTripBookingById, cancelTripBooking, sendTripBookingReminder, refundTripBooking } from "@/services/admin/adminBookingsService";
 import { RefundModal, RefundSummary } from "@/components/dashboard/shared";
 import type { RefundData } from "@/components/dashboard/shared/RefundSummary/RefundSummary";
 
@@ -184,11 +184,23 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
         open={isRefundModalOpen}
         onClose={() => setIsRefundModalOpen(false)}
         onSubmit={async (data) => {
-          // Implement real refund API call here later
-          console.log("Refunding payment with data:", data);
-          setIsRefundModalOpen(false);
-          setBannerMessage("The Refunded Payment has been Successfully Done");
-          mutate();
+          try {
+            const formData = new FormData();
+            formData.append("transaction_reference", data.reference);
+            if (data.notes) formData.append("notes", data.notes);
+            if (data.file) formData.append("receipt_file", data.file);
+            
+            await refundTripBooking(tripId, formData);
+            setIsRefundModalOpen(false);
+            setBannerVariant("success");
+            setBannerMessage("The Refunded Payment has been Successfully Done");
+            mutate();
+          } catch (err: any) {
+            console.error("Failed to refund trip booking:", err);
+            setBannerVariant("error");
+            setBannerMessage(err?.response?.data?.message || err?.response?.data?.detail || "Failed to process refund.");
+            setIsRefundModalOpen(false);
+          }
         }}
       />
       <DashboardStatusBanner 

@@ -92,95 +92,69 @@
   gap: 1.5rem;
   padding-top: 0.5rem;
 
+@use "@/styles/variables" as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+
   @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
+    grid-template-columns: 1fr;
   }
 }
 
-/* Override NationalitySelect to match dashboard field styling */
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.fullRow {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.customLabel {
+  font-weight: 700;
+  font-size: $font-size-sm;
+  color: #344054;
+  margin-bottom: 0.25rem;
+}
+
+.phoneLabel {
+  font-size: $font-size-sm;
+  font-weight: 500;
+  line-height: 1.25rem;
+  color: $gray-600;
+}
+
 .countrySelectWrap {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem; /* Match DashboardField default gap */
-}
-
-.countrySelectWrap :global([class*="NationalitySelect_wrapper"]) {
+  gap: 0.5rem;
   width: 100%;
 }
 
-.countrySelectWrap :global([class*="NationalitySelect_trigger"]) {
-  width: 100%;
-  height: 3rem !important;
-  min-height: 3rem !important;
-  padding: 0 1rem !important;
-  background: $background;
-  border: 1px solid $gray-200-zinc !important;
-  border-radius: 24px !important;
-  font-family: inherit;
-  font-size: $font-size-sm;
-  line-height: 1.35;
-  color: #444A51;
-  box-shadow: none !important;
-}
-
-.countrySelectWrap :global([class*="NationalitySelect_trigger"]):focus-within {
-  border-color: $primary !important;
-  box-shadow: 0 0 0 3px rgba(41, 113, 230, 0.12) !important;
-}
-
-.countrySelectWrap :global([class*="NationalitySelect_placeholder"]) {
-  color: $gray-400 !important;
-}
-
-.counterWrap {
+.errorText {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
-  gap: 0.75rem;
-  flex: 1;
-}
-
-.counterLabelWrap {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  white-space: nowrap;
-}
-
-.counterLabel {
-  font-weight: 700;
-  font-size: $font-size-sm;
-  color: $dark;
-  white-space: nowrap;
-}
-
-.counterHint {
-  font-weight: 500;
-  font-size: $font-size-xs;
-  color: $text-light;
-}
-
-.datePickerTrigger {
-  cursor: pointer;
-  width: 100%;
-}
-
-.iconOverlay {
-  cursor: pointer;
-}
-
-.hasError {
-  border: 1px solid $danger !important;
-  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05), 0px 0px 0px 4px #fee4e2 !important;
-}
-
-.errorMessage {
-  display: flex;
-  align-items: center;
+  padding: 0;
   gap: 4px;
-  color: #c11515;
+  margin: -4px 0 0 0;
+  
+  font-style: normal;
+  font-weight: 400;
   font-size: $font-size-xs;
-  margin-top: -0.25rem;
+  line-height: 16px;
+  color: #C11515;
 }
+

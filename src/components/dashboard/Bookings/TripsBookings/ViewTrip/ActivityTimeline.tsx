@@ -1,4 +1,4 @@
-import { ActivityTimeline, Milestone } from "@/components/dashboard/shared";;
+import { ActivityTimeline, Milestone } from "@/components/dashboard/shared";
 
 interface ActivityTimelineProps {
   events: any[];

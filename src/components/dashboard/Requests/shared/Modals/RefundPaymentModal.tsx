@@ -94,7 +94,7 @@ export default function RefundPaymentModal({ open, onClose, onSubmit }: RefundPa
           <label className={styles.fieldLabel}>Upload Refund Receipt <span style={{ color: "#EF4444" }}>*</span></label>
           <UploadDropzone
             value={file}
-            onFileSelect={setFile}
+            onFileSelect={(f) => setFile(f ?? undefined)}
             accept="application/pdf, image/png, image/jpeg"
             title="Click to upload a PDF File or PNG"
             subtitle="up to 10MB"

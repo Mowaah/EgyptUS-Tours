@@ -11,11 +11,10 @@ import styles from "./TripCard.module.scss";
 interface TripCardProps {
   trip: Trip;
   onFavoriteToggle?: (id: string) => void;
-  discountLabel?: React.ReactNode;
   className?: string;
 }
 
-export default function TripCard({ trip, onFavoriteToggle, discountLabel, className = "" }: TripCardProps) {
+export default function TripCard({ trip, onFavoriteToggle, className = "" }: TripCardProps) {
   const tripDetailsHref = `/trips/${trip.id}`;
   const { isAuthenticated } = useAuth();
   const { isFavorite, isLoading, toggle } = useFavorite({
@@ -42,9 +41,9 @@ export default function TripCard({ trip, onFavoriteToggle, discountLabel, classN
           sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, (max-width: 1279px) 33vw, 400px"
           className={styles.image}
         />
-        {discountLabel && (
+        {trip.discountLabel && (
           <div className={styles.discountBanner}>
-            <span>{discountLabel}</span>
+            <span>{trip.discountLabel}</span>
           </div>
         )}
         {isAuthenticated && (

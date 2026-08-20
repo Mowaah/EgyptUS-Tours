@@ -15,7 +15,7 @@ import { tripsColumns, tripsRowActions } from "./tripsColumns";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import { triggerToast } from "@/components/dashboard/shared/GlobalToastContainer/GlobalToastContainer";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
-import { ReassignModal } from "@/components/dashboard/shared";;
+import { ReassignModal } from "@/components/dashboard/shared";
 
 const filterOptions = {
   tourType: ["All", "Private", "Group"],
@@ -158,8 +158,6 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
               } catch (err: any) {
                 triggerToast(err?.response?.data?.payment?.[0] || err?.response?.data?.detail || "Failed to send email reminder.");
               }
-            } else {
-              console.log(`Action ${action} triggered for row`, r);
             }
           })}
           serverSidePagination={true}

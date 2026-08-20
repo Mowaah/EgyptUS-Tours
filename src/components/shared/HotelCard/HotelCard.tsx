@@ -88,7 +88,7 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
           <span className={styles.starLabel}>
             {hotel.stars}-Star Luxury Hotel
           </span>
-          <StarRating filled={hotel.stars} value={hotel.rating} className={styles.starRating} />
+          <StarRating filled={hotel.stars} value={hotel.stars} className={styles.starRating} />
         </div>
 
         <div className={styles.stats}>
@@ -99,10 +99,6 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
           <div className={styles.stat}>
             <span className={styles.statValue}>${hotel.pricePerNight}</span>
             <span className={styles.statLabel}>/night</span>
-          </div>
-          <div className={styles.stat}>
-            <span className={styles.statValue}>{hotel.reviews}</span>
-            <span className={styles.statLabel}>Reviews</span>
           </div>
         </div>
 

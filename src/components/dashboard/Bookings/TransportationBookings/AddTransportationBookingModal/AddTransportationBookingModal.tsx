@@ -171,7 +171,6 @@ export default function AddTransportationBookingModal({ open, onClose }: AddTran
         };
         
         await createTransportationBooking(payload);
-        triggerToast("Transportation booking created successfully!", "success");
         setIsConfirmed(true);
         mutate("/bookings/transportation/");
       } catch (error: any) {

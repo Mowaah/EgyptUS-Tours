@@ -9,6 +9,7 @@ import styles from "./HotelsStep.module.scss";
 
 type HotelOption = {
   id: string;
+  slug: string;
   name: string;
   location: string;
   description: string;
@@ -20,6 +21,7 @@ type HotelOption = {
 
 type HotelRecord = {
   id?: string | number;
+  slug?: string;
   name?: string;
   title?: string;
   description?: string;
@@ -64,6 +66,7 @@ function mapHotelOption(hotel: HotelRecord): HotelOption {
 
   return {
     id: String(hotel.id),
+    slug: String(hotel.slug || hotel.id),
     name: hotel.name || translation.name || translation.title || "Untitled hotel",
     location: hotel.location?.name || hotel.location_name || hotel.city || "Egypt",
     description: hotel.description || translation.description || "",

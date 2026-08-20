@@ -243,7 +243,7 @@ function mapVehicleToFormValues(vehicle: any): CreateVehicleValues {
   };
 }
 
-export function CreateVehicle({ vehicleId, onDirtyChange }: { vehicleId?: string; onDirtyChange?: (isDirty: boolean) => void }) {
+export function CreateVehicle({ vehicleId, onDirtyChange, onSavingChange }: { vehicleId?: string; onDirtyChange?: (isDirty: boolean) => void; onSavingChange?: (isSaving: boolean) => void }) {
   const router = useRouter();
   const [isPublishedModalOpen, setIsPublishedModalOpen] = useState(false);
   const [savedVehicleId, setSavedVehicleId] = useState<string | number | undefined>(vehicleId);
@@ -263,6 +263,10 @@ export function CreateVehicle({ vehicleId, onDirtyChange }: { vehicleId?: string
   useEffect(() => {
     onDirtyChange?.(isDirty);
   }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    onSavingChange?.(isSaving);
+  }, [isSaving, onSavingChange]);
 
   useEffect(() => {
     if (vehicleData) {
@@ -330,7 +334,6 @@ export function CreateVehicle({ vehicleId, onDirtyChange }: { vehicleId?: string
         onSubmit={handleSubmit((data) => onSubmit(data, { intent: "save" }).then(() => setIsPublishedModalOpen(true)))}
       >
         {saveError && <div className={styles.saveError}>{saveError}</div>}
-        {isSaving && <div className={styles.saveNotice}>Saving vehicle...</div>}
 
         <WizardLayout
           steps={STEPS}

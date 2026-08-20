@@ -3,11 +3,34 @@ import styles from "./PaymentStep.module.scss";
 
 export interface PaymentStepProps {
   total: number;
+  paymentPlan?: "deposit" | "full";
+  onChangePlan?: (plan: "deposit" | "full") => void;
+  paymentMethod?: "cash" | "paymob";
+  onChangeMethod?: (method: "cash" | "paymob") => void;
 }
 
-export default function PaymentStep({ total }: PaymentStepProps) {
-  const [paymentPlan, setPaymentPlan] = useState<"deposit" | "full">("deposit");
-  const [paymentMethod, setPaymentMethod] = useState<"cash" | "paymob">("cash");
+export default function PaymentStep({
+  total,
+  paymentPlan: propPlan,
+  onChangePlan,
+  paymentMethod: propMethod,
+  onChangeMethod,
+}: PaymentStepProps) {
+  const [internalPlan, setInternalPlan] = useState<"deposit" | "full">("deposit");
+  const [internalMethod, setInternalMethod] = useState<"cash" | "paymob">("cash");
+
+  const paymentPlan = propPlan ?? internalPlan;
+  const paymentMethod = propMethod ?? internalMethod;
+
+  const handlePlanChange = (p: "deposit" | "full") => {
+    setInternalPlan(p);
+    onChangePlan?.(p);
+  };
+
+  const handleMethodChange = (m: "cash" | "paymob") => {
+    setInternalMethod(m);
+    onChangeMethod?.(m);
+  };
 
   const amountDue = paymentPlan === "deposit" ? total * 0.3 : total;
   const remainingBalance = total - amountDue;
@@ -21,7 +44,7 @@ export default function PaymentStep({ total }: PaymentStepProps) {
           <button
             type="button"
             className={`${styles.optionCard} ${paymentPlan === "deposit" ? styles.selected : ""}`}
-            onClick={() => setPaymentPlan("deposit")}
+            onClick={() => handlePlanChange("deposit")}
           >
             <div className={styles.radioCircle}>
               {paymentPlan === "deposit" && (
@@ -42,7 +65,7 @@ export default function PaymentStep({ total }: PaymentStepProps) {
           <button
             type="button"
             className={`${styles.optionCard} ${paymentPlan === "full" ? styles.selected : ""}`}
-            onClick={() => setPaymentPlan("full")}
+            onClick={() => handlePlanChange("full")}
           >
             <div className={styles.radioCircle}>
               {paymentPlan === "full" && (
@@ -69,7 +92,7 @@ export default function PaymentStep({ total }: PaymentStepProps) {
           <button
             type="button"
             className={`${styles.optionCard} ${paymentMethod === "cash" ? styles.selected : ""}`}
-            onClick={() => setPaymentMethod("cash")}
+            onClick={() => handleMethodChange("cash")}
           >
             <div className={styles.radioCircle}>
               {paymentMethod === "cash" && (
@@ -90,7 +113,7 @@ export default function PaymentStep({ total }: PaymentStepProps) {
           <button
             type="button"
             className={`${styles.optionCard} ${paymentMethod === "paymob" ? styles.selected : ""}`}
-            onClick={() => setPaymentMethod("paymob")}
+            onClick={() => handleMethodChange("paymob")}
           >
             <div className={styles.radioCircle}>
               {paymentMethod === "paymob" && (

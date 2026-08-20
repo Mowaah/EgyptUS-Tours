@@ -1,6 +1,7 @@
 import { PaginatedResponse, TripList, TripDetail } from "@/types/api";
 import { serverFetch } from "@/lib/api";
 import { Trip } from "@/types";
+import { getFullHotelBySlug } from "@/services/hotelsService";
 
 export async function getAllTrips(params?: Record<string, string>): Promise<TripList[]> {
   try {
@@ -64,7 +65,7 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
     description: tripDetail.description || tripDetail.short_description,
     image: tripDetail.image || "/images/pyramids4.jpg",
     images: tripDetail.images?.length ? tripDetail.images : ["/images/pyramids4.jpg"],
-    location: tripDetail.location_text || "Egypt",
+    location: (tripDetail.destinations?.length ? tripDetail.destinations.map(d => typeof d === 'string' ? d : (d.name || d.title)).filter(Boolean).join(' · ') : null) || tripDetail.location_text || "Egypt",
     price: parseFloat(tripDetail.base_price) || 0,
     currency: tripDetail.currency_code === "USD" ? "$" : tripDetail.currency_code,
     priceLabel: tripDetail.price_label,
@@ -72,6 +73,7 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
     rating: parseFloat(tripDetail.rating_avg) || 0,
     reviewCount: tripDetail.review_count,
     isFavorite: tripDetail.is_favorite,
+    brochureUrl: tripDetail.brochure_url || undefined,
     tags: tripDetail.tags?.map(t => t.name) || [],
     privatePrice: tripDetail.private_price ? parseFloat(tripDetail.private_price) : undefined,
     groupPrice: tripDetail.group_price ? parseFloat(tripDetail.group_price) : undefined,
@@ -115,24 +117,60 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
       label: link.label,
       href: link.href,
     })),
-    pricing: (tripDetail.pricing || []).map(season => ({
-      season: season.season_label,
-      tiers: (season.tiers || []).map(tier => ({
-        label: tier.label,
-        price: parseFloat(tier.price) || 0,
-      }))
-    })),
+    pricing: (tripDetail.pricing || []).map((season, idx) => {
+      let tourType: "private" | "group" = season.tour_type as "private" | "group";
+      if (!tourType) {
+        if (tripDetail.pricing && tripDetail.pricing.length === 2) {
+          tourType = idx === 0 ? "private" : "group";
+        } else {
+          tourType = "group";
+        }
+      }
+      return {
+        tourType,
+        season: season.season_label,
+        tiers: (season.tiers || []).map(tier => ({
+          label: tier.label,
+          price: parseFloat(tier.price) || 0,
+        }))
+      };
+    }),
     travelerPhotos: tripDetail.traveler_photos || [],
-    hotels: (tripDetail.hotels || []).map(link => ({
-      name: link.hotel.name,
-      location: link.hotel.location_text,
-      description: "",
-      image: link.hotel.hero_image || "/images/accommodation/accomodation3.jpg",
-      photos: link.hotel.hero_image ? [link.hotel.hero_image] : [],
-      rating: 0,
-      reviewCount: 0,
-      amenities: [],
-    })),
+    hotels: await Promise.all(
+      (tripDetail.hotels || []).map(async (link) => {
+        try {
+          if (link.hotel?.slug) {
+            const fullHotel = await getFullHotelBySlug(link.hotel.slug);
+            if (fullHotel) {
+              return {
+                slug: fullHotel.id,
+                name: fullHotel.name,
+                location: fullHotel.location,
+                description: fullHotel.description || fullHotel.subtitle || fullHotel.secondDescription || "",
+                image: fullHotel.image || link.hotel.hero_image || "/images/hotels/hotel1.jpg",
+                photos: fullHotel.images?.length ? fullHotel.images : (fullHotel.image ? [fullHotel.image] : ["/images/hotels/hotel1.jpg"]),
+                rating: fullHotel.stars || 0,
+                reviewCount: fullHotel.reviews || 0,
+                amenities: fullHotel.facilities?.length ? fullHotel.facilities : (link.hotel.amenities || link.hotel.facilities || []),
+              };
+            }
+          }
+        } catch (err) {
+          console.error("Error fetching full hotel detail:", err);
+        }
+        return {
+          slug: link.hotel.slug,
+          name: link.hotel.name,
+          location: link.hotel.location_text,
+          description: link.hotel.description || "",
+          image: link.hotel.hero_image || "/images/hotels/hotel1.jpg",
+          photos: link.hotel.photos?.length ? link.hotel.photos : (link.hotel.hero_image ? [link.hotel.hero_image] : ["/images/hotels/hotel1.jpg"]),
+          rating: link.hotel.stars || 0,
+          reviewCount: link.hotel.review_count || 0,
+          amenities: link.hotel.amenities || link.hotel.facilities || [],
+        };
+      })
+    ),
     reviews: (tripDetail.trip_reviews || []).map(r => ({
       image: "/images/testimonials/marcus.jpg",
       name: r.author_name,
@@ -148,7 +186,7 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
         title: t.title,
         description: t.short_description || t.title,
         image: t.image || "/images/home/hero-bg.png",
-        location: t.location_text || "Egypt",
+        location: (t.destinations?.length ? t.destinations.map(d => typeof d === 'string' ? d : (d.name || d.title)).filter(Boolean).join(' · ') : null) || t.location_text || "Egypt",
         price: parseFloat(t.base_price) || 0,
         currency: t.currency_code === "USD" ? "$" : t.currency_code,
         duration: t.duration,
@@ -156,6 +194,7 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
         reviewCount: t.review_count,
         isFavorite: t.is_favorite,
         priceLabel: t.price_label,
+        discountLabel: (t as any).discount_label || undefined,
         tags: t.tags?.map(tag => tag.name) || [],
       }))
   };

@@ -30,6 +30,7 @@ export default function TripHotelsPage() {
         <div className={styles.grid}>
           {hotels.map((hotel: any, i: number) => (
             <IncludedHotelCard key={hotel.hotel_id || i} hotel={{
+              slug: hotel.slug || String(hotel.hotel_id || i),
               name: hotel.name,
               location: hotel.location_text,
               description: "",

@@ -6,6 +6,56 @@
   gap: 1.5rem;
 }
 
+.row {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.fieldWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $gray-600;
+  }
+}
+
+.fieldTrigger {
+  height: 48px;
+  border: 1px solid $gray-100-zinc;
+  border-radius: 24px;
+  padding: 0 16px;
+
+  svg {
+    color: $text-light;
+  }
+}
+
+.errorBorder {
+  border-color: $danger !important;
+}
+
+.errorText {
+  font-size: $font-size-xs;
+  color: $danger;
+  margin-top: 2px;
+}
+
 .sectionTitle {
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;

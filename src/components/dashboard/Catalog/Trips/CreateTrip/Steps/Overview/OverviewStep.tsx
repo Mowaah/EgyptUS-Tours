@@ -228,6 +228,9 @@ export function OverviewStep() {
                       field.onChange(file);
                     }} 
                     value={field.value} 
+                    accept="application/pdf"
+                    title="Click to upload a PDF brochure or drag & drop"
+                    subtitle="PDF up to 10MB"
                   />
                 )}
               />

@@ -490,9 +490,6 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
                       key={trip.id}
                       trip={trip}
                       onFavoriteToggle={handleFavoriteToggle}
-                      discountLabel={index === 0 ? (
-                        <>Limited Time – <strong>15% Off</strong></>
-                      ) : undefined}
                     />
                   ))}
                 </div>

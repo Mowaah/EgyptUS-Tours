@@ -94,7 +94,7 @@ export default function RefundModal({ open, onClose, onSubmit }: RefundModalProp
           <div className={styles.uploadField}>
             <label className={styles.uploadLabel}>Upload Refund Receipt *</label>
             <UploadDropzone
-              onFileSelect={(f) => setFile(f)}
+              onFileSelect={(f) => setFile(f ?? undefined)}
               value={file}
               accept="application/pdf, image/png"
               title="Click to upload an PDF File or PNG"

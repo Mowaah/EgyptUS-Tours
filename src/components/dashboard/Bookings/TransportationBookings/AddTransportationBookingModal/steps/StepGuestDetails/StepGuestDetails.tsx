@@ -1,7 +1,8 @@
 import React from "react";
 import Image from "next/image";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
-import { PhonePrefixSelect, NationalitySelect } from "@/components/shared";
+import { DashboardPhoneField } from "@/components/dashboard/shared";
+import { NationalitySelect } from "@/components/shared";
 import { AddTransportationBookingData } from "../../AddTransportationBookingModal";
 
 import styles from "./StepGuestDetails.module.scss";
@@ -41,32 +42,14 @@ export default function StepGuestDetails({ formData, onChange, errors = {} }: St
 
       <div className={styles.row}>
         <div className={styles.col}>
-          <div className={styles.phoneField}>
-            <label className={styles.phoneLabel}>Enter Guest Phone number</label>
-            <div className={`${styles.phoneInputWrapper} ${errors.guestPhone ? styles.hasError : ""}`}>
-              <PhonePrefixSelect 
-                phoneValue={formData.guestPhonePrefix} 
-                onPhoneChange={(val) => onChange({ guestPhonePrefix: val })} 
-                variant="ghost" 
-              />
-              <input
-                type="tel"
-                className={styles.phoneInput}
-                placeholder="000-0000"
-                value={formData.guestPhone}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/[^0-9+\-()\s]/g, "");
-                  onChange({ guestPhone: val });
-                }}
-              />
-            </div>
-            {errors.guestPhone && (
-              <div className={styles.errorMessage}>
-                <Image src="/images/information-fill.svg" alt="" width={16} height={16} />
-                <span>{errors.guestPhone}</span>
-              </div>
-            )}
-          </div>
+          <DashboardPhoneField
+            label="Enter Guest Phone number"
+            phoneValue={formData.guestPhone}
+            prefixValue={formData.guestPhonePrefix}
+            onPhoneChange={(val) => onChange({ guestPhone: val })}
+            onPrefixChange={(val) => onChange({ guestPhonePrefix: val })}
+            error={errors.guestPhone}
+          />
         </div>
         <div className={styles.col}>
           <div className={styles.countrySelectWrap}>
@@ -75,11 +58,11 @@ export default function StepGuestDetails({ formData, onChange, errors = {} }: St
               value={formData.guestNationality}
               onChange={(val) => onChange({ guestNationality: val })}
               placeholder="Your Nationality"
-              variant="outline"
+              variant="dashboard"
               error={!!errors.guestNationality}
             />
             {errors.guestNationality && (
-              <div className={styles.errorMessage}>
+              <div className={styles.errorText}>
                 <Image src="/images/information-fill.svg" alt="" width={16} height={16} />
                 <span>{errors.guestNationality}</span>
               </div>

@@ -9,6 +9,7 @@ interface DashboardFooterProps {
   hideActions?: boolean;
   isSaveDisabled?: boolean;
   isDiscardDisabled?: boolean;
+  isSaving?: boolean;
   className?: string;
 }
 
@@ -20,6 +21,7 @@ export function DashboardFooter({
   hideActions = false,
   isSaveDisabled = false,
   isDiscardDisabled = false,
+  isSaving = false,
   className = "",
 }: DashboardFooterProps) {
   return (
@@ -38,7 +40,7 @@ export function DashboardFooter({
             type="button" 
             className={styles.discardButton} 
             onClick={onDiscard}
-            disabled={isDiscardDisabled}
+            disabled={isDiscardDisabled || isSaving}
           >
             Discard
           </button>
@@ -46,16 +48,21 @@ export function DashboardFooter({
             type={isSubmit ? "submit" : "button"}
             className={styles.saveButton}
             onClick={onSave}
-            disabled={isSaveDisabled}
+            disabled={isSaveDisabled || isSaving}
           >
+            {isSaving && (
+              <span className={styles.loadingSpinner} aria-hidden="true" style={{ marginRight: '8px' }} />
+            )}
             Save Changes
-            <Image
-              src="/images/dashboard/save.svg"
-              alt=""
-              width={22}
-              height={22}
-              className={styles.buttonIcon}
-            />
+            {!isSaving && (
+              <Image
+                src="/images/dashboard/save.svg"
+                alt=""
+                width={22}
+                height={22}
+                className={styles.buttonIcon}
+              />
+            )}
           </button>
         </div>
       )}

@@ -43,16 +43,21 @@ export default function PriceDetails({ details, overview }: PriceDetailsProps) {
           </div>
 
           <div className={styles.priceList}>
-            {items.map((item: any, idx: number) => (
-              <div key={idx} className={styles.priceListItem}>
-                <span className={styles.priceItemName}>
-                  {item.quantity ? `${item.quantity} × ` : ""}
-                  {item.name || (item.type_label ? `${item.type_label} - ${item.view_label}` : "Room")}
-                  {details?.nights ? ` (${details.nights} ${details.nights === 1 ? 'night' : 'nights'})` : ""}
-                </span>
-                <span className={styles.priceItemCost}>${item.price || item.amount || item.line_total}</span>
-              </div>
-            ))}
+            {items.map((item: any, idx: number) => {
+              const rawType = item.type_label || item.room_type || "";
+              const capType = rawType ? rawType.charAt(0).toUpperCase() + rawType.slice(1) : "";
+              const label = item.name || (capType ? `${capType}${item.view_label ? ` - ${item.view_label}` : ""}` : "Room");
+              return (
+                <div key={idx} className={styles.priceListItem}>
+                  <span className={styles.priceItemName}>
+                    {item.quantity ? `${item.quantity} × ` : ""}
+                    {label}
+                    {details?.nights ? ` (${details.nights} ${details.nights === 1 ? 'night' : 'nights'})` : ""}
+                  </span>
+                  <span className={styles.priceItemCost}>${item.price || item.amount || item.line_total}</span>
+                </div>
+              );
+            })}
             {items.length === 0 && (
               <div className={styles.priceListItem}>
                 <span className={styles.priceItemName}>Base Price</span>

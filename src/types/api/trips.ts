@@ -60,6 +60,7 @@ export interface TripSeasonTier {
 }
 
 export interface TripSeasonPricing {
+  tour_type?: "private" | "group";
   season_label: string;
   start_date: string | null;
   end_date: string | null;
@@ -74,7 +75,15 @@ export interface TripHotelLink {
     slug: string;
     name: string;
     location_text: string;
+    description?: string;
     hero_image: string | null;
+    rating?: string | number;
+    rating_avg?: string | number;
+    stars?: number;
+    review_count?: number;
+    amenities?: string[];
+    facilities?: string[];
+    photos?: string[];
   };
 }
 
@@ -95,6 +104,7 @@ export interface TripList {
   title: string;
   short_description: string;
   location_text: string;
+  destinations?: Array<{ name?: string; title?: string; slug?: string } | string>;
   base_price: string;
   currency_code: string;
   price_label: string;
@@ -125,6 +135,7 @@ export interface TripDetail extends TripList {
   traveler_photos: string[];
   hotels: TripHotelLink[];
   trip_reviews: TripReview[];
+  brochure_url?: string | null;
   created_at: string;
   updated_at: string;
 }

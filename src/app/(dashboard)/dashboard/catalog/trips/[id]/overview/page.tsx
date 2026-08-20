@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import StarRating from "@/components/shared/StarRating/StarRating";
 import styles from "./page.module.scss";
 import { useTripDetailContext } from "../layout";
 
@@ -24,6 +25,7 @@ export default function TripOverviewPage() {
   const t = trip?.translations?.[langKey] || {};
   const tEn = trip?.translations?.en || {};
   const title = t.title || tEn.title || trip?.title;
+  const rating = trip?.rating_avg ? parseFloat(String(trip.rating_avg)) : 0;
 
   return (
     <div className={styles.viewLayout}>
@@ -80,7 +82,7 @@ export default function TripOverviewPage() {
                   <span>Group Tour</span>
                 </div>
               )}
-              {!trip.offers_private_tour && !trip.offers_group_tour && (
+              {!trip.offers_group_tour && !trip.offers_private_tour && (
                 <span className={styles.value}>Not specified</span>
               )}
             </div>
@@ -88,9 +90,11 @@ export default function TripOverviewPage() {
 
           <div className={styles.horizontalBorder}>
             <span className={styles.label}>Star Rating</span>
-            <div className={styles.ratingStarsWrap} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Image src="/images/dashboard/catalog/hotels/star-fill.svg" alt="" width={16} height={16} />
-              <span className={styles.value} style={{ fontWeight: 600 }}>{trip.rating_avg ? Number(trip.rating_avg).toFixed(1) : "N/A"}</span>
+            <div className={styles.starRatingWrap}>
+              <div className={styles.stars}>
+                <StarRating filled={rating} showValue={false} size={18} />
+              </div>
+              <span className={styles.ratingText}>( {rating} )</span>
             </div>
           </div>
 

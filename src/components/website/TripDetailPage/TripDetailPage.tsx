@@ -66,6 +66,34 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
     }
   };
 
+  const handleDownloadBrochure = async () => {
+    if (trip.brochureUrl) {
+      try {
+        const response = await fetch(trip.brochureUrl);
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = blobUrl;
+        link.download = `${trip.title.replace(/[^a-zA-Z0-9_-]/g, "_")}_Brochure.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(blobUrl);
+      } catch {
+        const link = document.createElement("a");
+        link.href = trip.brochureUrl;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.download = `${trip.title.replace(/[^a-zA-Z0-9_-]/g, "_")}_Brochure.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } else {
+      alert("No brochure file has been uploaded for this trip yet.");
+    }
+  };
+
   return (
     <div className={styles.page}>
       <PageHeader
@@ -97,9 +125,10 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
               description={trip.description}
               rating={trip.rating ?? 0}
               reviewCount={trip.reviewCount ?? 0}
+              showReviews={false}
               isFavorite={isFavorite}
               onFavoriteToggle={toggle}
-              location={trip.location || "Luxor & Aswan"}
+              location={trip.location || "Egypt"}
               duration={`${trip.duration.days} days / ${trip.duration.nights} nights`}
               mobileBrochureButton={
                 <Button
@@ -107,6 +136,7 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
                   size="lg"
                   icon={<Image src="/images/brochure.svg" alt="" width={18} height={18} style={{ filter: 'brightness(0) invert(1)' }} />}
                   iconPosition="left"
+                  onClick={handleDownloadBrochure}
                 >
                   Get the Brochure
                 </Button>
@@ -118,6 +148,7 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
                 className={styles.actionBtn}
                 icon={<Image src="/images/brochure.svg" alt="" width={18} height={18} />}
                 iconPosition="left"
+                onClick={handleDownloadBrochure}
               >
                 Get the Brochure
               </Button>

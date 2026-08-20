@@ -66,7 +66,7 @@ export default function UploadRevisedProposalModal({ open, onClose, onSubmit }: 
             <label className={styles.fieldLabel}>Proposal File</label>
             <UploadDropzone
               value={file}
-              onFileSelect={setFile}
+              onFileSelect={(f) => setFile(f ?? undefined)}
               accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               title="Click to upload an image or drag & drop"
               subtitle="PDF up to 10MB"

@@ -343,3 +343,21 @@
     }
   }
 }
+
+.starRatingWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .stars {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .ratingText {
+    font-weight: 500;
+    font-size: $font-size-base;
+    color: $text-lighter;
+  }
+}

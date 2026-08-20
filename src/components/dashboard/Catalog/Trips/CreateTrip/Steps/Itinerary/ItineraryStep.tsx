@@ -136,9 +136,10 @@ function DayCard({ index, onRemove }: DayCardProps) {
               <UploadDropzone
                 value={field.value as File | undefined}
                 onFileSelect={field.onChange}
-                accept="image/png, image/jpeg, image/gif"
+                accept="image/png, image/jpeg, image/webp"
                 title="Click to upload an image or drag & drop"
-                subtitle="PNG, JPG, GIF up to 10MB"
+                subtitle="PNG, JPG, WEBP up to 5MB"
+                maxSizeBytes={5 * 1024 * 1024}
               />
             </div>
           )}

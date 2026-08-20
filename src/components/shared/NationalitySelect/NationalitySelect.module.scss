@@ -41,6 +41,21 @@
     border-color: $danger !important;
     box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05), 0px 0px 0px 4px #FEE4E2 !important;
   }
+
+  &.dashboard {
+    height: 3rem;
+    min-height: 3rem;
+    padding: 0 1rem;
+    background: $background;
+    border-color: $gray-200-zinc;
+    color: #444A51;
+    line-height: 1.35;
+
+    @media (min-width: 768px) {
+      padding: 0 1rem;
+      min-height: 3rem;
+    }
+  }
 }
 
 .placeholder {

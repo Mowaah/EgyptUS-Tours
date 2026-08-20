@@ -10,8 +10,7 @@ interface IncludedHotelCardProps {
 }
 
 export default function IncludedHotelCard({ hotel, selected, onClick }: IncludedHotelCardProps) {
-  // Use a placeholder if image fails or isn't provided (for mock data)
-  const imageSrc = hotel.image && hotel.image.startsWith("/") ? hotel.image : "/images/hotels/hotel1.jpg";
+  const imageSrc = hotel.image || "/images/hotels/hotel1.jpg";
 
   return (
     <article 
@@ -32,7 +31,6 @@ export default function IncludedHotelCard({ hotel, selected, onClick }: Included
         {selected && <span className={styles.badge}>✓ INCLUDED</span>}
         <RatingBadge
           rating={hotel.rating}
-          reviews={hotel.reviewCount}
           size="sm"
           className={styles.ratingBadge}
         />
