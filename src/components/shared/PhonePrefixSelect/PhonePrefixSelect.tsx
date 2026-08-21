@@ -11,9 +11,10 @@ interface PhonePrefixSelectProps {
   phoneValue?: string;
   onPhoneChange?: (val: string) => void;
   variant?: "default" | "ghost";
+  error?: boolean;
 }
 
-export default function PhonePrefixSelect({ phoneValue = "", onPhoneChange, variant = "default" }: PhonePrefixSelectProps) {
+export default function PhonePrefixSelect({ phoneValue = "", onPhoneChange, variant = "default", error }: PhonePrefixSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState(PHONE_CODES[0]);
   const [typedChars, setTypedChars] = useState("");
@@ -117,7 +118,7 @@ export default function PhonePrefixSelect({ phoneValue = "", onPhoneChange, vari
     }
   };
 
-  const triggerClass = `${styles.trigger} ${isOpen ? styles.open : ""} ${variant === "ghost" ? styles.ghost : ""}`;
+  const triggerClass = `${styles.trigger} ${isOpen ? styles.open : ""} ${error ? styles.error : ""} ${variant === "ghost" ? styles.ghost : ""}`;
   const wrapperClass = `${styles.wrapper} ${variant === "ghost" ? styles.wrapperGhost : ""}`;
 
   return (

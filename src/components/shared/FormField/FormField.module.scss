@@ -67,18 +67,26 @@
 }
 
 .inputInvalid {
-  border-color: #D32F2F !important;
+  border-color: $danger !important;
+  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05), 0px 0px 0px 4px #FEE4E2 !important;
   color: $dark !important;
+
+  &:focus {
+    border-color: $danger !important;
+    box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05), 0px 0px 0px 4px #FEE4E2 !important;
+  }
 }
 
 .errorMessage {
   display: flex;
   align-items: center;
-  gap: 6px;
-  color: #D32F2F;
+  gap: 4px;
+  color: #C11515;
   font-size: $font-size-xs;
-  margin-top: 2px;
+  line-height: 16px;
+  margin-top: 4px;
 
+  img,
   svg {
     flex-shrink: 0;
   }

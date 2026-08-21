@@ -38,6 +38,9 @@ interface RoomSelectorProps {
   loading?: boolean;
   loadingMessage?: string;
   emptyMessage?: string;
+  required?: boolean;
+  title?: React.ReactNode;
+  hideTitle?: boolean;
 }
 
 export default function RoomSelector({
@@ -50,14 +53,22 @@ export default function RoomSelector({
   loading,
   loadingMessage = "Loading rooms...",
   emptyMessage = "No rooms available.",
+  required,
+  title,
+  hideTitle,
 }: RoomSelectorProps) {
   let globalRoomIndex = 1;
 
   return (
     <div className={styles.fieldGroup}>
-      <div className={styles.titleRow}>
-        <h3 className={styles.sectionTitle}>Type of Room</h3>
-      </div>
+      {!hideTitle && (
+        <div className={styles.titleRow}>
+          <h3 className={styles.sectionTitle}>
+            {title || "Type of Room"}
+            {required && <span className={styles.required}> *</span>}
+          </h3>
+        </div>
+      )}
 
       <div className={styles.roomList}>
         {loading && (

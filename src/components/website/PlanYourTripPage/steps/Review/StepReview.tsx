@@ -1,6 +1,7 @@
 import { BookingStepFooter, BookingDetailsSections } from "@/components/shared";
 import pageStyles from "../../PlanYourTripPage.module.scss";
 import type { TripData } from "../../planYourTripTypes";
+import { getNationalityName } from "@/utils/nationality";
 
 interface StepReviewProps {
   tripData: TripData;
@@ -87,7 +88,7 @@ export default function StepReview({
         { label: "Full Name", value: travelerInfo.name || "N/A" },
         { label: "Email", value: travelerInfo.email || "N/A" },
         { label: "Phone Number", value: travelerInfo.phone || "N/A" },
-        { label: "Nationality", value: travelerInfo.nationality || "N/A" },
+        { label: "Nationality", value: travelerInfo.nationality ? getNationalityName(travelerInfo.nationality) : "N/A" },
         { label: "Travel Dates", value: formatTravelDates(travelerInfo.startDate, travelerInfo.endDate) },
         { label: "Travelers", value: travelersValue },
       ],

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { BookingStepFooter, FormField, CustomDatePicker, NationalitySelect, CounterPill, PhoneInput } from "@/components/shared";
 import { isValidEmail, isValidPhone } from "@/utils/validators";
 
@@ -43,17 +44,28 @@ export default function StepTravelerInfo({
   const emailValid = isValidEmail(travelerInfo.email);
   const phoneValid = isValidPhone(travelerInfo.phone);
 
+  const phoneDigits = (travelerInfo.phone || "").replace(/^(\+\d+\s*)/, "").replace(/\D/g, "");
+  const isPhoneFilled = travelerInfo.phone.trim() !== "" && phoneDigits.length > 0;
+  const isEmailFilled = travelerInfo.email.trim() !== "";
+  const isNameFilled = travelerInfo.name.trim() !== "";
+  const isNationalityFilled = travelerInfo.nationality.trim() !== "";
+  const isStartDateFilled = travelerInfo.startDate.trim() !== "";
+  const isEndDateFilled = travelerInfo.endDate.trim() !== "";
+  const areAdultsValid = travelerInfo.adults > 0;
+
   const handleContinueClick = () => {
     setShowErrors(true);
     const isValid = 
-      travelerInfo.name.trim() !== "" &&
+      isNameFilled &&
+      isEmailFilled &&
       emailValid &&
+      isPhoneFilled &&
       phoneValid &&
-      travelerInfo.nationality !== "" &&
-      travelerInfo.startDate !== "" &&
-      travelerInfo.endDate !== "" &&
+      isNationalityFilled &&
+      isStartDateFilled &&
+      isEndDateFilled &&
       !isDateInvalid &&
-      travelerInfo.adults > 0;
+      areAdultsValid;
       
     if (isValid) {
       onContinue();
@@ -84,7 +96,7 @@ export default function StepTravelerInfo({
             value={travelerInfo.name}
             onChange={(e) => onTravelerChange("name", e.target.value)}
             required
-            error={showErrors && !travelerInfo.name.trim() ? "This field is required" : undefined}
+            error={showErrors && !isNameFilled ? "This field is required" : undefined}
           />
 
           <FormField
@@ -98,14 +110,14 @@ export default function StepTravelerInfo({
             value={travelerInfo.email}
             onChange={(e) => onTravelerChange("email", e.target.value)}
             required
-            error={showErrors ? (travelerInfo.email.trim() === "" ? "This field is required" : !emailValid ? "Please enter a valid email address" : undefined) : undefined}
+            error={showErrors ? (!isEmailFilled ? "This field is required" : !emailValid ? "Please enter a valid email address" : undefined) : undefined}
           />
 
           <FormField
             id="pti-phone"
             label="Phone Number"
             required
-            error={showErrors ? (travelerInfo.phone.trim() === "" ? "This field is required" : !phoneValid ? "Please enter a valid phone number" : undefined) : undefined}
+            error={showErrors ? (!isPhoneFilled ? "This field is required" : !phoneValid ? "Please enter a valid phone number" : undefined) : undefined}
           >
             <PhoneInput 
               id="pti-phone"
@@ -113,28 +125,30 @@ export default function StepTravelerInfo({
               autoComplete="tel"
               value={travelerInfo.phone}
               onChange={(val) => onTravelerChange("phone", val)}
+              hasError={showErrors && (!isPhoneFilled || !phoneValid)}
             />
           </FormField>
 
           <FormField 
             label="Select Your Nationality" 
             required
-            error={showErrors && !travelerInfo.nationality ? "This field is required" : undefined}
+            error={showErrors && !isNationalityFilled ? "This field is required" : undefined}
           >
             <NationalitySelect
               value={travelerInfo.nationality}
               onChange={(val) => onTravelerChange("nationality", val)}
+              error={showErrors && !isNationalityFilled}
             />
           </FormField>
 
           <FormField 
             label="Start Date" 
             required
-            error={showErrors && !travelerInfo.startDate ? "This field is required" : undefined}
+            error={showErrors && !isStartDateFilled ? "This field is required" : undefined}
           >
             <CustomDatePicker
               variant="input"
-              className={`${formStyles.input} ${pageStyles.dateInput}`}
+              className={`${formStyles.input} ${pageStyles.dateInput} ${showErrors && !isStartDateFilled ? formStyles.inputInvalid : ""}`}
               value={travelerInfo.startDate}
               onChange={(date) => onTravelerChange("startDate", date)}
             />
@@ -143,11 +157,11 @@ export default function StepTravelerInfo({
           <FormField 
             label="End Date" 
             required
-            error={showErrors ? (!travelerInfo.endDate ? "This field is required" : isDateInvalid ? "End date cannot be before start date" : undefined) : undefined}
+            error={showErrors ? (!isEndDateFilled ? "This field is required" : isDateInvalid ? "End date cannot be before start date" : undefined) : undefined}
           >
             <CustomDatePicker
               variant="input"
-              className={`${formStyles.input} ${pageStyles.dateInput}`}
+              className={`${formStyles.input} ${pageStyles.dateInput} ${showErrors && (!isEndDateFilled || isDateInvalid) ? formStyles.inputInvalid : ""}`}
               value={travelerInfo.endDate}
               onChange={(date) => onTravelerChange("endDate", date)}
             />
@@ -168,12 +182,11 @@ export default function StepTravelerInfo({
                   onIncrease={() => onNumberChange(type, true)}
                   onDecrease={() => onNumberChange(type, false)}
                   required={type === "adults"}
+                  error={type === "adults" && showErrors && !areAdultsValid}
                 />
-                {type === "adults" && showErrors && travelerInfo.adults === 0 && (
+                {type === "adults" && showErrors && !areAdultsValid && (
                   <div className={formStyles.errorMessage} style={{ marginTop: '4px' }}>
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M6 1C3.23858 1 1 3.23858 1 6C1 8.76142 3.23858 11 6 11C8.76142 11 11 8.76142 11 6C11 3.23858 8.76142 1 6 1ZM6.5 8.5H5.5V5.5H6.5V8.5ZM6.5 4.5H5.5V3.5H6.5V4.5Z" fill="#D32F2F" />
-                    </svg>
+                    <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
                     <span>At least 1 adult is required</span>
                   </div>
                 )}

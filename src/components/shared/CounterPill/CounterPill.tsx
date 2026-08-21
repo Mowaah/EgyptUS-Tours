@@ -15,6 +15,7 @@ interface CounterPillProps {
   /** Renders only the pill without the label row — useful inside custom layouts like room selectors */
   pillOnly?: boolean;
   required?: boolean;
+  error?: boolean;
 }
 
 export default function CounterPill({
@@ -28,11 +29,12 @@ export default function CounterPill({
   className = "",
   pillOnly = false,
   required = false,
+  error = false,
 }: CounterPillProps) {
   const id = label ? `counter-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined;
 
   const pill = (
-    <div className={`${styles.pill} ${pillOnly ? className : ""}`} role="group" aria-labelledby={id}>
+    <div className={`${styles.pill} ${error ? styles.error : ""} ${pillOnly ? className : ""}`} role="group" aria-labelledby={id}>
       <button
         type="button"
         onClick={onDecrease}

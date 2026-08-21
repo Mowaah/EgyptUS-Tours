@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import PhonePrefixSelect from "../PhonePrefixSelect/PhonePrefixSelect";
 import styles from "./PhoneInput.module.scss";
 import formStyles from "../FormField/FormField.module.scss";
@@ -34,6 +35,10 @@ export interface PhoneInputProps {
    * Error message to display below the input
    */
   error?: string;
+  /**
+   * Whether the field has an error (used when error message is displayed by a parent FormField)
+   */
+  hasError?: boolean;
 }
 
 export default function PhoneInput({
@@ -42,17 +47,20 @@ export default function PhoneInput({
   autoComplete = "tel",
   value,
   onChange,
-  placeholder = "555-0000",
+  placeholder = "202-555-0111",
   error,
+  hasError,
 }: PhoneInputProps) {
   // Extract just the digits for the text input so the prefix isn't duplicated
   const displayValue = value.replace(/^(\+\d+\s*)/, "");
+  const isInvalid = !!error || !!hasError;
 
   return (
     <div className={styles.phoneRow} style={{ alignItems: error ? "flex-start" : undefined }}>
       <PhonePrefixSelect 
         phoneValue={value} 
         onPhoneChange={onChange} 
+        error={isInvalid}
       />
       <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
         <input
@@ -60,7 +68,7 @@ export default function PhoneInput({
           name={name}
           autoComplete={autoComplete}
           type="tel"
-          className={`${formStyles.input} ${styles.inputPhone} ${error ? formStyles.inputInvalid : ""}`}
+          className={`${formStyles.input} ${styles.inputPhone} ${isInvalid ? formStyles.inputInvalid : ""}`}
           value={displayValue}
           onChange={(e) => {
             const sanitized = e.target.value.replace(/[^0-9+\-()\s]/g, "");
@@ -78,9 +86,7 @@ export default function PhoneInput({
         />
         {error && (
           <div className={formStyles.errorMessage} style={{ marginTop: "4px" }}>
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 1C3.23858 1 1 3.23858 1 6C1 8.76142 3.23858 11 6 11C8.76142 11 11 8.76142 11 6C11 3.23858 8.76142 1 6 1ZM6.5 8.5H5.5V5.5H6.5V8.5ZM6.5 4.5H5.5V3.5H6.5V4.5Z" fill="#D32F2F" />
-            </svg>
+            <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
             <span>{error}</span>
           </div>
         )}

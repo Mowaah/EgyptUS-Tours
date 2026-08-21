@@ -19,6 +19,11 @@
   margin: 0;
 }
 
+.required {
+  color: $dark;
+  margin-left: 2px;
+}
+
 .errorText {
   display: flex;
   flex-direction: row;

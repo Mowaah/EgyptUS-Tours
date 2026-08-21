@@ -40,7 +40,7 @@ export const INITIAL_BOOKING_DATA: BookingData = {
   cardName: "",
   expiry: "",
   cvv: "",
-  departureMonth: "April 2026",
+  departureMonth: "",
   departureDateId: "",
   roomCustomizations: {},
 };

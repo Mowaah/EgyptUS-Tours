@@ -7,7 +7,6 @@ import { BookingData, INITIAL_BOOKING_DATA } from "@/types";
 import { PageHeader, SuccessModal, StepIndicator } from "@/components/shared";
 
 import planPageStyles from "../PlanYourTripPage/PlanYourTripPage.module.scss";
-import styles from "../BookPrivateTripPage/BookPrivateTripPage.module.scss";
 
 import StepYourDetails from "./steps/YourDetails/StepYourDetails";
 import StepBookingSummary from "./steps/BookingSummary/StepBookingSummary";
@@ -81,6 +80,7 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
         <div className={planPageStyles.content}>
           {currentStep === 1 && (
             <StepYourDetails
+              trip={trip}
               formData={formData}
               onChange={handleChange}
               onContinue={() => setCurrentStep(2)}
@@ -97,6 +97,7 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
               onContinue={handleContinue}
               totalAmount={totalAmount}
               depositAmount={depositAmount}
+              isGroupTrip={isGroupTrip}
             />
           )}
 

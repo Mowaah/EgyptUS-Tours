@@ -7,6 +7,7 @@ import { Trip } from "@/types";
 import RightSidebar from "@/components/shared/BookingSidebar/BookingSidebar";
 import { BookingDetailsSections, BookingStepFooter, CheckboxIndicator } from "@/components/shared";
 import ImportantLinksModal from "@/components/website/TripDetailPage/TripImportantLinks/ImportantLinksModal";
+import { getNationalityName } from "@/utils/nationality";
 
 interface StepBookingSummaryProps {
   trip: Trip;
@@ -16,6 +17,7 @@ interface StepBookingSummaryProps {
   onContinue: () => void;
   totalAmount: number;
   depositAmount: number;
+  isGroupTrip?: boolean;
 }
 
 export default function StepBookingSummary({
@@ -25,18 +27,34 @@ export default function StepBookingSummary({
   onPrevious,
   onContinue,
   totalAmount,
-  depositAmount
+  depositAmount,
+  isGroupTrip,
 }: StepBookingSummaryProps) {
   const [showTermsModal, setShowTermsModal] = useState(false);
 
   const specialRequestItems = formData.specialRequests
     ? formData.specialRequests.split(",").map((s) => s.trim()).filter(Boolean)
     : [];
-  const rooms = [
-    formData.rooms.single > 0 ? `${formData.rooms.single} × Single Room - Garden View` : null,
-    formData.rooms.double > 0 ? `${formData.rooms.double} × Double Room - Sea View` : null,
-    formData.rooms.triple > 0 ? `${formData.rooms.triple} × Triple Room - Garden View` : null,
-  ].filter((room): room is string => Boolean(room));
+
+  const rooms = Object.entries(formData.rooms || {})
+    .filter(([_, count]) => (count as number) > 0)
+    .map(([key, count]) => {
+      const typeName = key.charAt(0).toUpperCase() + key.slice(1);
+      const roomTitle = typeName.toLowerCase().endsWith("room") ? typeName : `${typeName} Room`;
+      return `${count} × ${roomTitle}`;
+    });
+
+  const formattedDuration = (() => {
+    if (!trip.duration) return "N/A";
+    if (typeof trip.duration === "string") return trip.duration;
+    const { days, nights } = trip.duration;
+    if (days && nights) return `${nights} Nights / ${days} Days`;
+    if (days) return `${days} Days`;
+    return "N/A";
+  })();
+
+  const destination = trip.location || "Egypt";
+  const travelType = isGroupTrip ? "Group" : "Private";
 
   const sections = [
     {
@@ -46,7 +64,7 @@ export default function StepBookingSummary({
         { label: "Name", value: formData.name },
         { label: "Email", value: formData.email },
         { label: "Phone Number", value: formData.phone },
-        { label: "Nationality", value: formData.nationality },
+        { label: "Nationality", value: getNationalityName(formData.nationality) },
       ],
     },
     {
@@ -54,9 +72,9 @@ export default function StepBookingSummary({
       icon: "/images/summary/trip.svg",
       fields: [
         { label: "Trip Name", value: trip.title },
-        { label: "Destination", value: "Santorini, Greece" },
-        { label: "Travel Type", value: "Private" },
-        { label: "Duration", value: "7 Nights / 8 Days" },
+        { label: "Destination", value: destination },
+        { label: "Travel Type", value: travelType },
+        { label: "Duration", value: formattedDuration },
       ],
     },
     ...(rooms.length > 0

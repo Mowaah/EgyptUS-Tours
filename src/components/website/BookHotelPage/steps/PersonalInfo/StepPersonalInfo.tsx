@@ -34,24 +34,34 @@ export default function StepPersonalInfo({
   totalAmount, vatAmount, depositAmount, totalRooms, totalGuests,
 }: StepPersonalInfoProps) {
   const [showTermsModal, setShowTermsModal] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleContinue = () => {
-    if (!formData.name || !formData.email || !formData.phone || !formData.nationality) {
-      alert("Please fill in all required personal information fields.");
-      return;
+    const errs: Record<string, string> = {};
+    if (!formData.name?.trim()) errs.name = "Name is required.";
+    if (!formData.email?.trim()) {
+      errs.email = "Email is required.";
+    } else if (!isValidEmail(formData.email)) {
+      errs.email = "Please enter a valid email address.";
     }
-    
-    if (!isValidEmail(formData.email)) {
-      alert("Please enter a valid email address.");
+
+    const phoneDigits = (formData.phone || "").replace(/^(\+\d+\s*)/, "").replace(/\D/g, "");
+    if (!formData.phone?.trim() || phoneDigits.length === 0) {
+      errs.phone = "Phone number is required.";
+    } else if (!isValidPhone(formData.phone)) {
+      errs.phone = "The phone number entered is not valid.";
+    }
+
+    if (!formData.nationality?.trim()) errs.nationality = "Nationality is required.";
+    if (!formData.termsAccepted) {
+      alert("Please accept the Terms and Conditions and Privacy Policy to continue.");
       return;
     }
 
-    if (!isValidPhone(formData.phone)) {
-      alert("Please enter a valid phone number.");
-      return;
+    setErrors(errs);
+    if (Object.keys(errs).length === 0) {
+      onContinue();
     }
-
-    onContinue();
   };
 
   return (
@@ -92,6 +102,7 @@ export default function StepPersonalInfo({
                 placeholder="John Doe"
                 value={formData.name}
                 onChange={(e) => onChange({ name: e.target.value })}
+                error={errors.name}
               />
               <FormField
                 id="pi-email"
@@ -104,10 +115,12 @@ export default function StepPersonalInfo({
                 placeholder="Example@Gmail.Com"
                 value={formData.email}
                 onChange={(e) => onChange({ email: e.target.value })}
+                error={errors.email}
               />
               <FormField
                 label="Enter your Phone Number"
                 required
+                error={errors.phone}
               >
                 <PhoneInput 
                   id="pi-phone"
@@ -115,16 +128,19 @@ export default function StepPersonalInfo({
                   autoComplete="tel"
                   value={formData.phone}
                   onChange={(val) => onChange({ phone: val })}
+                  hasError={!!errors.phone}
                 />
               </FormField>
 
               <FormField
                 label="Select Your Nationality"
                 required
+                error={errors.nationality}
               >
                 <NationalitySelect 
                   value={formData.nationality}
                   onChange={(val) => onChange({ nationality: val })}
+                  error={!!errors.nationality}
                 />
               </FormField>
             </div>

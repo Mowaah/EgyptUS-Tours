@@ -8,15 +8,11 @@
 }
 
 .sectionTitle {
-  margin-top: 24px;
-  margin-bottom: 16px;
+  margin-top: 0;
+  margin-bottom: 12px;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   color: $dark-navy;
-
-  &:first-of-type {
-    margin-top: 0;
-  }
 }
 
 .roomList {

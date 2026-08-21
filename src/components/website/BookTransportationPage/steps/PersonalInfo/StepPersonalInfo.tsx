@@ -1,19 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
+import { useState } from "react";
 import { TransportationBookingData, Vehicle } from "@/types";
 import { 
   FormField, 
   PhoneInput, 
   CheckboxIndicator, 
-  Button,
   NationalitySelect,
   BookingStepFooter
 } from "@/components/shared";
 import styles from "./StepPersonalInfo.module.scss";
-import travelerStyles from "../../../PlanYourTripPage/steps/TravelerInfo/StepTravelerInfo.module.scss";
-import formStyles from "@/components/shared/FormField/FormField.module.scss";
 import ImportantLinksModal from "@/components/website/TripDetailPage/TripImportantLinks/ImportantLinksModal";
 
 interface StepPersonalInfoProps {
@@ -21,12 +17,11 @@ interface StepPersonalInfoProps {
   onChange: (patch: Partial<TransportationBookingData>) => void;
   onPrevious: () => void;
   onContinue: () => void;
-  vehicle: Vehicle;
   errors?: Record<string, string>;
 }
 
 export default function StepPersonalInfo({
-  formData, onChange, onPrevious, onContinue, vehicle, errors = {},
+  formData, onChange, onPrevious, onContinue, errors = {},
 }: StepPersonalInfoProps) {
   const [showTermsModal, setShowTermsModal] = useState(false);
 
@@ -71,12 +66,14 @@ export default function StepPersonalInfo({
               autoComplete="tel"
               value={formData.phone}
               onChange={(val) => onChange({ phone: val })}
+              hasError={!!errors.phone}
             />
           </FormField>
           <FormField label="Select Your Nationality" required error={errors.nationality}>
             <NationalitySelect 
               value={formData.nationality}
               onChange={(val) => onChange({ nationality: val })}
+              error={!!errors.nationality}
             />
           </FormField>
         </div>

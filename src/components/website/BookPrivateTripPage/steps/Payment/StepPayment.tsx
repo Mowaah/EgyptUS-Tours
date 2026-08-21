@@ -4,6 +4,7 @@ import BookingSidebar from "@/components/shared/BookingSidebar/BookingSidebar";
 import { BookingData } from "../../BookPrivateTripPage";
 import { Trip } from "@/types";
 import { submitTripBooking } from "@/lib/api";
+import { formatPhoneE164 } from "@/utils/validators";
 import { useState } from "react";
 
 interface StepPaymentProps {
@@ -45,7 +46,7 @@ export default function StepPayment({
         name: formData.name,
         trip_slug: trip.id,
         email: formData.email,
-        phone: formData.phone,
+        phone: formatPhoneE164(formData.phone),
         nationality: formData.nationality,
         start_date: formatDate(formData.startDate),
         end_date: formatDate(formData.endDate),
