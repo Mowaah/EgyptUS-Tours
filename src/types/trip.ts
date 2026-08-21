@@ -57,7 +57,9 @@ export interface Trip {
     highlights?: string[];
   }>;
 
+  availabilityEnabled?: boolean;
   availability?: Array<{
+    id?: number | string;
     dates: string; // e.g. "March 15-19, 2026"
     duration: string; // e.g. "5 Days / 4 Nights"
     spotsLeft: number;

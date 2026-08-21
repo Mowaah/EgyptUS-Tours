@@ -14,6 +14,7 @@ interface CustomDatePickerProps {
   renderTrigger?: (isOpen: boolean, setIsOpen: (o: boolean) => void, displayTxt: string) => React.ReactNode;
   selectsRange?: boolean;
   placeholder?: string;
+  fixedDurationDays?: number;
 }
 
 const WEEKDAYS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -46,7 +47,7 @@ const parseDateString = (val: string) => {
   return null;
 };
 
-export default function CustomDatePicker({ value, onChange, className, dropdownClassName = "", variant = "card", renderTrigger, selectsRange = false, placeholder }: CustomDatePickerProps) {
+export default function CustomDatePicker({ value, onChange, className, dropdownClassName = "", variant = "card", renderTrigger, selectsRange = false, placeholder, fixedDurationDays }: CustomDatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const initialDate = parseDateString(value) || new Date();
 
@@ -109,20 +110,25 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
     const dStr = `${mm}/${dd}/${yyyy}`;
 
     if (selectsRange) {
-      const parts = (value || "").split(" - ");
-      const start = parts[0] || "";
-      const end = parts[1] || "";
-      if (start && !end && start !== dStr) {
-        // Have start, picking end
-        const startDate = parseDateString(start);
-        if (startDate && d < startDate) {
-          onChange(`${dStr} - ${start}`);
+      if (fixedDurationDays && fixedDurationDays > 0) {
+        const endDate = new Date(d);
+        endDate.setDate(endDate.getDate() + fixedDurationDays - 1);
+        const endStr = `${String(endDate.getMonth() + 1).padStart(2, "0")}/${String(endDate.getDate()).padStart(2, "0")}/${endDate.getFullYear()}`;
+        onChange(`${dStr} - ${endStr}`);
+        setIsOpen(false);
+        return;
+      }
+
+      if (value && value.includes(" - ") && value.split(" - ")[1] === "") {
+        const startStr = value.split(" - ")[0];
+        const start = new Date(startStr);
+        if (d < start) {
+          onChange(`${dStr} - `);
         } else {
-          onChange(`${start} - ${dStr}`);
+          onChange(`${startStr} - ${dStr}`);
         }
         setIsOpen(false);
       } else {
-        // Picking start
         onChange(`${dStr} - `);
       }
     } else {

@@ -22,19 +22,6 @@
   gap: 0.5rem;
 }
 
-.fullRow {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.customLabel {
-  font-weight: 700;
-  font-size: $font-size-sm;
-  color: #344054;
-  margin-bottom: 0.25rem;
-}
-
 .phoneLabel {
   font-size: $font-size-sm;
   font-weight: 500;

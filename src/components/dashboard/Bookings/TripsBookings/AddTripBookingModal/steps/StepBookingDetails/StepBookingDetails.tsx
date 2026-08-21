@@ -12,9 +12,10 @@ interface StepBookingDetailsProps {
   formData: AddTripBookingData;
   onChange: (patch: Partial<AddTripBookingData>) => void;
   errors?: Record<string, string>;
+  hasFixedAvailability?: boolean;
 }
 
-export default function StepBookingDetails({ formData, onChange, errors = {} }: StepBookingDetailsProps) {
+export default function StepBookingDetails({ formData, onChange, errors = {}, hasFixedAvailability }: StepBookingDetailsProps) {
   const { data: allTrips } = useSWR("/trips/all", () => getAllTrips());
 
   const selectedTripBasic = allTrips?.find(t => t.id.toString() === formData.tripId);
@@ -23,6 +24,8 @@ export default function StepBookingDetails({ formData, onChange, errors = {} }: 
     selectedTripBasic?.slug ? `/trips/${selectedTripBasic.slug}/` : null,
     () => getFullTripById(selectedTripBasic!.slug)
   );
+
+  const isFixedDates = hasFixedAvailability ?? Boolean(tripDetail?.availability && tripDetail.availability.length > 0);
 
   const tripHotelSlug = tripDetail?.hotels?.[0]?.slug;
 
@@ -89,10 +92,10 @@ export default function StepBookingDetails({ formData, onChange, errors = {} }: 
   }, [tripDetail]);
 
   useEffect(() => {
-    if (formData.tourType === "group" && !formData.departureMonth && DEPARTURE_MONTHS.length > 0) {
+    if (isFixedDates && !formData.departureMonth && DEPARTURE_MONTHS.length > 0) {
       onChange({ departureMonth: DEPARTURE_MONTHS[0].value });
     }
-  }, [formData.departureMonth, DEPARTURE_MONTHS, onChange, formData.tourType]);
+  }, [formData.departureMonth, DEPARTURE_MONTHS, onChange, isFixedDates]);
 
   const availableSlots = useMemo(() => {
     if (!tripDetail?.availability || !formData.departureMonth) return [];
@@ -141,7 +144,25 @@ export default function StepBookingDetails({ formData, onChange, errors = {} }: 
 
   return (
     <div className={styles.container}>
-      {formData.tourType === "group" && (
+      {tripDetail && !tripHotelSlug && (
+        <p className={styles.emptyText}>No hotel is assigned to this trip yet.</p>
+      )}
+
+      {tripHotelSlug && (
+        <RoomSelector
+          rooms={roomGroups}
+          counts={flatCounts}
+          customizations={flatCustomizations}
+          onCountChange={handleCountChange}
+          onCustomizationChange={(type, i, val) => handleCustomizationChange(type, i, val)}
+          error={errors.rooms}
+          loading={!hotelDetail}
+          loadingMessage="Loading assigned hotel rooms..."
+          emptyMessage="No rooms found for this assigned hotel."
+        />
+      )}
+
+      {isFixedDates && (
         <div className={styles.groupSection}>
           <div className={styles.fieldGroup}>
             <h3 className={styles.sectionTitle}>Select Month</h3>
@@ -165,47 +186,61 @@ export default function StepBookingDetails({ formData, onChange, errors = {} }: 
           <div className={styles.fieldGroup}>
             <h3 className={styles.sectionTitle}>Choose Departure Date</h3>
             <div className={styles.departureGrid}>
-              {availableSlots.length > 0 ? availableSlots.map((slot: any) => {
+              {(() => {
+                const formatDateRange = (datesStr: string) => {
+                  const parts = datesStr.split(" - ");
+                  if (parts.length !== 2) return datesStr;
+                  const d1 = new Date(parts[0]);
+                  const d2 = new Date(parts[1]);
+                  if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return datesStr;
+                  const m1 = d1.toLocaleString("default", { month: "short" });
+                  const m2 = d2.toLocaleString("default", { month: "short" });
+                  if (d1.getFullYear() !== d2.getFullYear()) {
+                    return `${m1} ${d1.getDate()}, ${d1.getFullYear()} - ${m2} ${d2.getDate()}, ${d2.getFullYear()}`;
+                  }
+                  if (m1 === m2) {
+                    return `${m1} ${d1.getDate()}-${d2.getDate()}, ${d1.getFullYear()}`;
+                  }
+                  return `${m1} ${d1.getDate()} - ${m2} ${d2.getDate()}, ${d1.getFullYear()}`;
+                };
+                
+                return availableSlots.length > 0 ? availableSlots.map((slot: any) => {
                 const isSelected = formData.departureDateId === slot.id?.toString();
                 return (
                   <div
                     key={slot.id || slot.dates}
                     className={`${styles.departureCard} ${isSelected ? styles.departureSelected : ""}`}
-                    onClick={() => onChange({ departureDateId: slot.id?.toString() })}
+                    onClick={() => {
+                      const parts = (slot.dates || "").split(" - ");
+                      const sStart = parts[0]?.trim() || "";
+                      const sEnd = parts[1]?.trim() || "";
+                      onChange({
+                        departureDateId: slot.id?.toString() || slot.dates,
+                        startDate: sStart,
+                        endDate: sEnd,
+                      });
+                    }}
                   >
                     <div className={styles.departureInfo}>
-                      <span className={styles.departureDate}>{slot.dates}</span>
+                      <span className={styles.departureDate}>{formatDateRange(slot.dates)}</span>
                       <span className={styles.departureDuration}>{slot.duration}</span>
-                      <span className={styles.departureDuration}>{slot.spotsLeft} spots left</span>
                     </div>
                     <CheckboxIndicator variant="square" size="md" selected={isSelected} aria-hidden />
                   </div>
                 );
               }) : (
                 <p className={styles.emptyText}>No departure dates available for this month.</p>
-              )}
+              );
+              })()}
             </div>
-            {errors.departureDateId && <span className={styles.errorText}>{errors.departureDateId}</span>}
+            {errors.departureDateId && (
+              <div className={styles.errorText}>
+                <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+                <span>{errors.departureDateId}</span>
+              </div>
+            )}
           </div>
         </div>
-      )}
-
-      {tripDetail && !tripHotelSlug && (
-        <p className={styles.emptyText}>No hotel is assigned to this trip yet.</p>
-      )}
-
-      {tripHotelSlug && (
-        <RoomSelector
-          rooms={roomGroups}
-          counts={flatCounts}
-          customizations={flatCustomizations}
-          onCountChange={handleCountChange}
-          onCustomizationChange={(type, i, val) => handleCustomizationChange(type, i, val)}
-          error={errors.rooms}
-          loading={!hotelDetail}
-          loadingMessage="Loading assigned hotel rooms..."
-          emptyMessage="No rooms found for this assigned hotel."
-        />
       )}
     </div>
   );

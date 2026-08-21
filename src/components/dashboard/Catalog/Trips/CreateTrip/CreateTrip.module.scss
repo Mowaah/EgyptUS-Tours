@@ -7,29 +7,6 @@
   width: 100%;
 }
 
-.saveError,
-.saveNotice {
-  width: 100%;
-  border-radius: 8px;
-  padding: 12px 16px;
-  font-family: 'Trip Sans', sans-serif;
-  font-size: $font-size-sm;
-  font-weight: 600;
-  white-space: pre-line;
-}
-
-.saveError {
-  border: 1px solid #fecdca;
-  background: #fffbfa;
-  color: #b42318;
-}
-
-.saveNotice {
-  border: 1px solid #b2ddff;
-  background: #eff8ff;
-  color: #175cd3;
-}
-
 .stepIndicatorWrapper {
   background: $background;
   border-radius: 24px;

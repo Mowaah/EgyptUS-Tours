@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-import { useFormContext, useFieldArray, Controller } from "react-hook-form";
+import { useEffect, useRef } from "react";
+import { useFormContext, useFieldArray, Controller, useWatch } from "react-hook-form";
 import Image from "next/image";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import CustomDatePicker from "@/components/shared/CustomDatePicker/CustomDatePicker";
@@ -9,9 +9,7 @@ import { ToggleField } from "@/components/dashboard/FormFields";
 import { CreateTripValues } from "../../CreateTripSchema";
 import styles from "./DatesAvailabilityStep.module.scss";
 
-
-
-// ─── Number Spinner (reusing same pattern as Pricing) ───────────────────────
+// ─── Number Spinner ──────────────────────────────────────────────────────────
 
 function NumberSpinner({ fieldName }: { fieldName: string }) {
   const { getValues, setValue, setFocus } = useFormContext();
@@ -53,7 +51,18 @@ function NumberSpinner({ fieldName }: { fieldName: string }) {
 // ─── Dates Availability Step ─────────────────────────────────────────────────
 
 export function DatesAvailabilityStep() {
-  const { control, register } = useFormContext<CreateTripValues>();
+  const { control, setError, clearErrors, formState: { errors } } = useFormContext<CreateTripValues>();
+
+  const durationStr = useWatch({
+    control,
+    name: "duration" as any,
+  });
+  const durationDays = durationStr ? parseInt(durationStr.split('d')[0], 10) || 0 : 0;
+
+  const isEnabled = useWatch({
+    control,
+    name: "datesAvailability.enabled" as any,
+  });
 
   const { fields: dates, append: appendDate, remove: removeDate } = useFieldArray({
     control,
@@ -61,13 +70,16 @@ export function DatesAvailabilityStep() {
   });
 
   useEffect(() => {
-    if (dates.length === 0) {
-      appendDate({ dateRange: "", spots: "" } as never);
-      appendDate({ dateRange: "", spots: "" } as never);
-      appendDate({ dateRange: "", spots: "" } as never);
+    if (isEnabled && dates.length === 0) {
+      appendDate({ dateRange: "", spots: "10" } as never);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isEnabled, dates.length, appendDate]);
+
+  const handleRemoveDate = (index: number) => {
+    removeDate(index);
+  };
+
+  const rootError = (errors.datesAvailability as any)?.dates?.message || (errors.datesAvailability as any)?.message;
 
   return (
     <div className={styles.container}>
@@ -99,7 +111,8 @@ export function DatesAvailabilityStep() {
         <button
           type="button"
           className={styles.addButton}
-          onClick={() => appendDate({ dateRange: "", spots: "" } as never)}
+          onClick={() => appendDate({ dateRange: "", spots: "10" } as never)}
+          disabled={!isEnabled}
           aria-label="Add date"
         >
           <Image
@@ -111,58 +124,93 @@ export function DatesAvailabilityStep() {
         </button>
       </div>
 
-      {/* Dates Grid */}
-      <div className={styles.datesGrid}>
-        {dates.map((field, index) => (
-          <div key={field.id} className={styles.dateCard} style={{ position: "relative" }}>
-            <button
-              type="button"
-              className={styles.deleteButton}
-              onClick={() => removeDate(index)}
-              aria-label="Delete date"
-              style={{ position: "absolute", right: "16px", top: "16px", zIndex: 10 }}
-            >
-              <Image src="/images/dashboard/delete.svg" alt="Delete" width={20} height={20} />
-            </button>
+      {/* Dates Grid / Disabled Notice */}
+      {!isEnabled ? (
+        <div className={styles.disabledNotice}>
+          <Image
+            src="/images/dashboard/fields/document-upload.svg"
+            alt=""
+            width={36}
+            height={36}
+            style={{ opacity: 0.4 }}
+          />
+          <p className={styles.disabledTitle}>Fixed Departure Dates Disabled</p>
+          <p className={styles.disabledSubtitle}>
+            Enable the switch above if this trip offers fixed departure dates and allocated spots.
+          </p>
+        </div>
+      ) : (
+        <div className={styles.datesGrid}>
+          {dates.map((field, index) => (
+            <div key={field.id} className={styles.dateCard} style={{ position: "relative" }}>
+              <button
+                type="button"
+                className={styles.deleteButton}
+                onClick={() => handleRemoveDate(index)}
+                aria-label="Delete date"
+                style={{ position: "absolute", right: "16px", top: "16px", zIndex: 10 }}
+              >
+                <Image src="/images/dashboard/delete.svg" alt="Delete" width={20} height={20} />
+              </button>
 
-            <Controller
-              name={`datesAvailability.dates.${index}.dateRange` as any}
-              control={control}
-              render={({ field: f }) => (
-                <CustomDatePicker
-                  variant="custom"
-                  value={f.value}
-                  onChange={f.onChange}
-                  renderTrigger={(isOpen, setIsOpen, displayTxt) => (
-                    <div onClick={() => setIsOpen(!isOpen)} style={{ cursor: "pointer" }}>
-                      <DashboardField
-                        variant="modal"
-                        label="Trip date"
-                        placeholder="Select trip date"
-                        value={displayTxt || f.value || ""}
-                        readOnly
-                        endAdornment={<Image src="/images/calendar.svg" alt="Calendar" width={20} height={20} />}
-                      />
-                    </div>
-                  )}
-                />
-              )}
-            />
+              <Controller
+                name={`datesAvailability.dates.${index}.dateRange` as any}
+                control={control}
+                render={({ field: f, fieldState }) => (
+                  <CustomDatePicker
+                    variant="custom"
+                    selectsRange={true}
+                    fixedDurationDays={durationDays}
+                    value={f.value || ""}
+                    onChange={f.onChange}
+                    placeholder="Select trip date range"
+                    renderTrigger={(isOpen, setIsOpen, displayTxt) => (
+                      <div onClick={() => setIsOpen(!isOpen)} style={{ cursor: "pointer" }}>
+                        <DashboardField
+                          variant="modal"
+                          label="Trip date"
+                          placeholder="Select trip date range"
+                          value={displayTxt || f.value || ""}
+                          readOnly
+                          error={fieldState.error?.message}
+                          endAdornment={<Image src="/images/calendar.svg" alt="Calendar" width={20} height={20} />}
+                        />
+                      </div>
+                    )}
+                  />
+                )}
+              />
 
-            {/* Number of Spots field */}
-            <DashboardField
-              variant="modal"
-              label="Number of Spots"
-              placeholder="e.g. 3"
-              type="text"
-              {...register(`datesAvailability.dates.${index}.spots` as any)}
-              endAdornment={
-                <NumberSpinner fieldName={`datesAvailability.dates.${index}.spots`} />
-              }
-            />
-          </div>
-        ))}
-      </div>
+              {/* Number of Spots field */}
+              <Controller
+                name={`datesAvailability.dates.${index}.spots` as any}
+                control={control}
+                render={({ field: f, fieldState }) => (
+                  <DashboardField
+                    variant="modal"
+                    label="Number of Spots"
+                    placeholder="e.g. 3"
+                    type="text"
+                    value={f.value || ""}
+                    onChange={f.onChange}
+                    error={fieldState.error?.message}
+                    endAdornment={
+                      <NumberSpinner fieldName={`datesAvailability.dates.${index}.spots`} />
+                    }
+                  />
+                )}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {isEnabled && rootError && (
+        <div className={styles.errorText} role="alert">
+          <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+          <span>{rootError}</span>
+        </div>
+      )}
     </div>
   );
 }

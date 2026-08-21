@@ -254,7 +254,7 @@ function mapTripToFormValues(trip: any): CreateTripValues {
     tripName: { en: asText(tEn.title || trip?.title), it: asText(tIt.title), es: asText(tEs.title) },
     category: asText(trip?.tags?.[0]?.slug || trip?.tags?.[0]?.id || ""),
     destinations: asList(trip?.destinations).map((destination) => asText(destination?.slug || destination?.id)).filter(Boolean),
-    duration,
+    duration: trip?.duration_days ? `${trip.duration_days}d-${trip.duration_nights || 0}n` : "",
     tourTypes: [
       trip?.offers_private_tour ? "private-tour" : "",
       trip?.offers_group_tour ? "group-tour" : "",
@@ -299,11 +299,24 @@ function mapTripToFormValues(trip: any): CreateTripValues {
     })),
     datesAvailability: {
       enabled: !!trip?.availability_enabled,
-      dates: asList(trip?.availability_slots).map((slot) => ({
-        id: slot?.id,
-        dateRange: [slot?.start_date, slot?.end_date].filter(Boolean).join(" - "),
-        spots: asText(slot?.capacity_total || slot?.spots || ""),
-      })),
+      dates: asList(trip?.availability_slots).map((slot) => {
+        const formatYMD = (val?: string) => {
+          if (!val) return "";
+          const parts = val.split("-").map(Number);
+          if (parts.length === 3 && parts.every((n) => !Number.isNaN(n))) {
+            const [y, m, d] = parts;
+            return `${String(m).padStart(2, "0")}/${String(d).padStart(2, "0")}/${y}`;
+          }
+          return val;
+        };
+        const sDate = formatYMD(slot?.start_date);
+        const eDate = formatYMD(slot?.end_date);
+        return {
+          id: slot?.id,
+          dateRange: [sDate, eDate].filter(Boolean).join(" - "),
+          spots: asText(slot?.capacity_total || slot?.spots || ""),
+        };
+      }),
     },
     hotels: asList(trip?.hotel_links).map((link: any) => asText(link?.hotel?.hotel_id || link?.hotel?.id || link?.hotel_id)).filter(Boolean),
     photos: padPhotos(photoRows),
@@ -339,7 +352,9 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
     throw new Error(`These destinations do not exist in the backend yet: ${unresolvedDestinations.join(", ")}`);
   }
 
-  const duration = parseDuration(data.duration);
+  const durationStr = typeof data.duration === 'string' ? data.duration : "";
+  const durationDays = durationStr ? parseInt(durationStr.split('d')[0], 10) || 0 : 0;
+  const durationNights = durationStr && durationStr.includes('-') ? parseInt(durationStr.split('-')[1].split('n')[0], 10) || 0 : 0;
   const tourTypes = data.tourTypes || [];
   const photos = await Promise.all(
     (data.photos || [])
@@ -451,8 +466,8 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
     },
     tag_ids: [tagId],
     destination_ids: destinationIds,
-    duration_days: duration.days,
-    duration_nights: duration.nights,
+    duration_days: durationDays || 1,
+    duration_nights: durationNights || 0,
     offers_private_tour: tourTypes.includes("private-tour"),
     offers_group_tour: tourTypes.includes("group-tour"),
     private_price: money(data.pricing?.privateTour?.basePrice) || null,
@@ -500,21 +515,23 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
       };
     }),
     itinerary_days: itinerary,
-    availability_slots: (data.datesAvailability?.dates || [])
-      .map((slot, index) => {
-        const range = parseDateRange(slot.dateRange || "");
-        const capacity = intValue(slot.spots);
-        if (!range.start_date || !range.end_date || capacity === undefined) return null;
-        return {
-          id: (slot as any).id,
-          start_date: range.start_date,
-          end_date: range.end_date,
-          capacity_total: capacity,
-          capacity_remaining: capacity,
-          order: index,
-        };
-      })
-      .filter(Boolean),
+    availability_slots: data.datesAvailability?.enabled
+      ? (data.datesAvailability?.dates || [])
+          .map((slot, index) => {
+            const range = parseDateRange(slot.dateRange || "");
+            const capacity = intValue(slot.spots);
+            if (!range.start_date || !range.end_date || capacity === undefined) return null;
+            return {
+              id: (slot as any).id,
+              start_date: range.start_date,
+              end_date: range.end_date,
+              capacity_total: capacity,
+              capacity_remaining: capacity,
+              order: index,
+            };
+          })
+          .filter(Boolean)
+      : [],
     hotel_ids: (data.hotels || []).map((id) => Number(id)).filter((id) => Number.isInteger(id) && id > 0),
     media_items: photos.filter(Boolean),
     replace_bullets: true,
@@ -535,6 +552,10 @@ function humanFieldName(path: string): string {
 }
 
 function humanBackendMessage(message: string): string {
+  if (typeof message === "string" && (message.includes("uniq_trip_availability_window") || message.includes("duplicate key value violates unique constraint"))) {
+    return "A departure date slot with this exact date range already exists. Please choose a different date range.";
+  }
+
   const blockerLabels: Record<string, string> = {
     "catalog.trip.missing_title": "Trip title is required.",
     "catalog.trip.missing_tour_type": "Select at least one tour type.",
@@ -591,6 +612,7 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange }: { tripId?:
 
   const methods = useForm<CreateTripValues>({
     resolver: zodResolver(createTripSchema),
+    reValidateMode: "onSubmit",
     defaultValues: EMPTY_VALUES,
   });
 
@@ -645,8 +667,53 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange }: { tripId?:
       if (!tripId && meta.intent === "publish" && nextTripId) {
         await publishCatalogTrip(nextTripId);
       }
-    } catch (error) {
-      setSaveError(errorMessage(error));
+    } catch (error: any) {
+      const errStr = JSON.stringify(error?.response?.data || error?.message || "");
+      if (
+        errStr.includes("uniq_trip_availability_window") ||
+        errStr.includes("duplicate key value violates unique constraint") ||
+        errStr.includes("duplicate_availability_slot")
+      ) {
+        const slots = methods.getValues("datesAvailability.dates") || [];
+        let matchedIndex = -1;
+        // Prioritize a matching slot without an existing id (i.e. the one just added), searching from last to first
+        for (let i = slots.length - 1; i >= 0; i--) {
+          const s = slots[i];
+          const range = s?.dateRange || "";
+          if (range && !(s as any).id) {
+            const parsed = parseDateRange(range);
+            if (parsed.start_date && errStr.includes(parsed.start_date)) {
+              matchedIndex = i;
+              break;
+            }
+          }
+        }
+        // If not found, find the latest matching slot index from end of list
+        if (matchedIndex === -1) {
+          for (let i = slots.length - 1; i >= 0; i--) {
+            const s = slots[i];
+            const range = s?.dateRange || "";
+            if (range) {
+              const parsed = parseDateRange(range);
+              if (parsed.start_date && errStr.includes(parsed.start_date)) {
+                matchedIndex = i;
+                break;
+              }
+            }
+          }
+        }
+        // Fallback to the last slot if nothing matched specifically
+        if (matchedIndex === -1 && slots.length > 0) {
+          matchedIndex = slots.length - 1;
+        }
+
+        if (matchedIndex >= 0) {
+          methods.setError(`datesAvailability.dates.${matchedIndex}.dateRange` as any, {
+            type: "manual",
+            message: "This date range has already been added.",
+          });
+        }
+      }
       throw error;
     } finally {
       setIsSaving(false);
@@ -710,8 +777,6 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange }: { tripId?:
         className={styles.page}
         onSubmit={handleSubmit((data) => onSubmit(data, { intent: "save" }).then(() => setIsPublishedModalOpen(true)))}
       >
-        {saveError && <div className={styles.saveError}>{saveError}</div>}
-
         <WizardLayout
           steps={STEPS}
           currentStep={currentStep}

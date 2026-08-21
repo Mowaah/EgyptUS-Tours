@@ -9,9 +9,11 @@ interface StepGuestDetailsProps {
   formData: AddTripBookingData;
   onChange: (patch: Partial<AddTripBookingData>) => void;
   errors?: Record<string, string>;
+  hasFixedAvailability?: boolean;
+  durationDays?: number;
 }
 
-export default function StepGuestDetails({ formData, onChange, errors = {} }: StepGuestDetailsProps) {
+export default function StepGuestDetails({ formData, onChange, errors = {}, hasFixedAvailability = false, durationDays }: StepGuestDetailsProps) {
   return (
     <div className={styles.container}>
       <div className={styles.row}>
@@ -68,13 +70,21 @@ export default function StepGuestDetails({ formData, onChange, errors = {} }: St
         </div>
       </div>
 
-      {formData.tourType === "private" && (
+      {!hasFixedAvailability && (
         <div className={styles.row}>
           <div className={styles.col}>
             <CustomDatePicker
               variant="custom"
               value={formData.startDate}
-              onChange={(date) => onChange({ startDate: date })}
+              onChange={(date) => {
+                onChange({ startDate: date });
+                if (date && durationDays) {
+                  const d = new Date(date);
+                  d.setDate(d.getDate() + durationDays - 1);
+                  const endStr = `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}/${d.getFullYear()}`;
+                  onChange({ startDate: date, endDate: endStr });
+                }
+              }}
               renderTrigger={(isOpen, setIsOpen, displayTxt) => (
                 <div onClick={() => setIsOpen(!isOpen)} className={styles.datePickerTrigger}>
                   <DashboardField
@@ -90,22 +100,13 @@ export default function StepGuestDetails({ formData, onChange, errors = {} }: St
             />
           </div>
           <div className={styles.col}>
-            <CustomDatePicker
-              variant="custom"
-              value={formData.endDate}
-              onChange={(date) => onChange({ endDate: date })}
-              renderTrigger={(isOpen, setIsOpen, displayTxt) => (
-                <div onClick={() => setIsOpen(!isOpen)} className={styles.datePickerTrigger}>
-                  <DashboardField
-                    label="End Date"
-                    value={displayTxt || formData.endDate || ""}
-                    readOnly
-                    placeholder="DD/MM/YYYY"
-                    error={errors.endDate}
-                    endAdornment={<Image src="/images/calendar3.svg" alt="calendar icon" width={20} height={20} aria-hidden className={styles.iconOverlay} />}
-                  />
-                </div>
-              )}
+            <DashboardField
+              label="End Date"
+              value={formData.endDate || ""}
+              readOnly
+              placeholder="DD/MM/YYYY"
+              error={errors.endDate}
+              endAdornment={<Image src="/images/calendar3.svg" alt="calendar icon" width={20} height={20} aria-hidden className={styles.iconOverlay} />}
             />
           </div>
         </div>

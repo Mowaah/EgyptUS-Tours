@@ -25,6 +25,7 @@ export interface TripItineraryDay {
 }
 
 export interface TripAvailabilitySlot {
+  id?: number;
   start_date: string;
   end_date: string;
   capacity_total: number;
@@ -116,6 +117,7 @@ export interface TripList {
   is_featured: boolean;
   image: string | null;
   is_favorite: boolean;
+  availability_enabled?: boolean;
   tags: TripTag[];
 }
 

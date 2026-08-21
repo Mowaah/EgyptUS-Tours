@@ -6,35 +6,6 @@
   gap: 1.5rem;
 }
 
-.row {
-  display: flex;
-  flex-direction: row;
-  gap: 16px;
-  width: 100%;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
-}
-
-.col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.fieldWrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-
-  label {
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    color: $gray-600;
-  }
-}
-
 .fieldTrigger {
   height: 48px;
   border: 1px solid $gray-100-zinc;
@@ -46,14 +17,26 @@
   }
 }
 
-.errorBorder {
-  border-color: $danger !important;
+.errorText {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
+  gap: 4px;
+  margin: 4px 0 0 0;
+  
+  font-style: normal;
+  font-weight: 400;
+  font-size: $font-size-xs;
+  line-height: 16px;
+  color: #C11515;
 }
 
-.errorText {
-  font-size: $font-size-xs;
-  color: $danger;
-  margin-top: 2px;
+.emptyText {
+  font-size: $font-size-sm;
+  color: $gray-400;
+  margin: 0;
+  padding: 8px 0;
 }
 
 .sectionTitle {
@@ -61,72 +44,6 @@
   font-weight: $font-weight-medium;
   color: $dark-navy;
   margin-bottom: 0.5rem;
-}
-
-.roomList {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.roomRowWrapper {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 12px;
-
-  @media (min-width: 640px) {
-    gap: 20px;
-  }
-}
-
-.roomInfoBox {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 14px;
-  border-radius: 12px;
-  background: $white;
-  border: 1px solid $border-strong;
-  transition: border-color $transition-fast;
-
-  @media (min-width: 640px) {
-    max-width: 319px;
-    padding: 7px 16px;
-  }
-}
-
-.roomTexts {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.roomTitle {
-  font-size: $font-size-13;
-  font-weight: $font-weight-medium;
-  color: $dark-navy;
-}
-
-.roomSubtitle {
-  font-size: $font-size-2xs;
-  font-weight: $font-weight-normal;
-  color: $gray-blue-400;
-}
-
-.priceContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0;
-}
-
-.priceValue {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-bold;
-  color: $dark-navy;
 }
 
 .groupSection {
@@ -148,6 +65,18 @@
 .monthSelectDropdownWrapper {
   width: 100%;
   align-self: flex-start;
+}
+
+.monthValueWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.monthValueText {
+  color: $gray-400;
+  font-weight: 400;
+  font-size: $font-size-sm;
 }
 
 .departureGrid {
@@ -202,63 +131,4 @@
 .departureDuration {
   font-size: $font-size-13;
   color: $gray-500;
-}
-
-.fieldTrigger {
-  height: 48px;
-  border: 1px solid $gray-100-zinc;
-  border-radius: 24px;
-  padding: 0 16px;
-
-  svg {
-    color: $text-light;
-  }
-}
-
-.monthValueWrapper {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.monthValueText {
-  color: $gray-400;
-  font-weight: 400;
-  font-size: $font-size-sm;
-}
-
-.customRoomsSection {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 16px;
-}
-
-.subSectionTitle {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: $dark-navy;
-}
-
-.customRoomsGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-
-  @media (min-width: 640px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.customRoomField {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-
-  label {
-    font-size: $font-size-sm;
-    font-weight: 500;
-    line-height: 19px;
-    color: $gray-600;
-  }
 }

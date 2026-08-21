@@ -1,6 +1,35 @@
 import { z } from "zod";
 import { localizedStringSchema, requiredLocalizedStringSchema } from "@/components/dashboard/shared/i18n";
 
+function normalizeDateRangeKey(value: string): string {
+  // Must have both start and end separated by " - "
+  const dashIdx = value.indexOf(" - ");
+  if (dashIdx === -1) return "";
+  const startRaw = value.slice(0, dashIdx).trim();
+  const endRaw = value.slice(dashIdx + 3).trim();
+  // Incomplete range (end not picked yet)
+  if (!startRaw || !endRaw) return "";
+
+  const parseSingle = (s: string) => {
+    // YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+    // MM/DD/YYYY
+    const slashParts = s.split("/");
+    if (slashParts.length === 3) {
+      const [m, d, y] = slashParts.map(Number);
+      if (!Number.isNaN(m) && !Number.isNaN(d) && !Number.isNaN(y)) {
+        return `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      }
+    }
+    return "";
+  };
+
+  const start = parseSingle(startRaw);
+  const end = parseSingle(endRaw);
+  if (!start || !end) return "";
+  return `${start}|${end}`;
+}
+
 export const createTripSchema = z
   .object({
     // Basic Information
@@ -82,11 +111,48 @@ export const createTripSchema = z
         dates: z
           .array(
             z.object({
+              id: z.union([z.string(), z.number()]).optional(),
               dateRange: z.string().optional(),
               spots: z.string().optional(),
             })
           )
           .optional(),
+      })
+      .superRefine((val, ctx) => {
+        if (val?.enabled) {
+          const validDates = (val.dates || []).filter(
+            (d) => d.dateRange && d.dateRange.trim() !== ""
+          );
+          if (validDates.length === 0) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "At least one departure date range is required when dates & availability is enabled",
+              path: ["dates"],
+            });
+          }
+
+          // Check for duplicate date ranges
+          const seen = new Map<string, number>();
+          (val.dates || []).forEach((item, index) => {
+            const range = item.dateRange?.trim();
+            if (range) {
+
+
+              const key = normalizeDateRangeKey(range);
+              if (key) {
+                if (seen.has(key)) {
+                  ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: "This date range has already been added.",
+                    path: ["dates", index, "dateRange"],
+                  });
+                } else {
+                  seen.set(key, index);
+                }
+              }
+            }
+          });
+        }
       })
       .optional(),
 
@@ -126,6 +192,31 @@ export const createTripSchema = z
     // Validate Pricing based on selected tourTypes
     const isPrivate = data.tourTypes?.includes("private-tour");
     const isGroup = data.tourTypes?.includes("group-tour");
+
+    const durationStr = data.duration || "";
+    const durationDays = durationStr ? parseInt(durationStr.split('d')[0], 10) || 0 : 0;
+
+    if (data.datesAvailability?.enabled && durationDays > 0) {
+      (data.datesAvailability.dates || []).forEach((item, index) => {
+        const range = item.dateRange?.trim();
+        if (range) {
+          const parts = range.split(" to ");
+          if (parts.length === 2) {
+            const start = new Date(parts[0]);
+            const end = new Date(parts[1]);
+            const diffTime = Math.abs(end.getTime() - start.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end days
+            if (diffDays !== durationDays) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: `Date range must exactly match the trip duration (${durationDays} days)`,
+                path: ["datesAvailability", "dates", index, "dateRange"],
+              });
+            }
+          }
+        }
+      });
+    }
 
     if (isPrivate) {
       const basePrice = data.pricing?.privateTour?.basePrice;

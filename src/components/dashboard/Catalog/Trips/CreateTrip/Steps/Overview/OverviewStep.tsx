@@ -13,9 +13,14 @@ import { CreateTripValues } from "../../CreateTripSchema";
 
 const durationOptions = [
   { label: "Select Duration", value: "", disabled: true },
-  { label: "4 Days - 3 Nights", value: "4d-3n" },
-  { label: "8 Days - 7 Nights", value: "8d-7n" },
-  { label: "10 Days - 9 Nights", value: "10d-9n" },
+  ...Array.from({ length: 30 }, (_, i) => {
+    const days = i + 1;
+    const nights = i;
+    return {
+      label: `${days} Day${days > 1 ? 's' : ''} - ${nights} Night${nights !== 1 ? 's' : ''}`,
+      value: `${days}d-${nights}n`,
+    };
+  })
 ];
 
 const tourTypeOptions = [

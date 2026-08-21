@@ -64,9 +64,9 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
       adults: formData.adults || 1,
       children: formData.children || 0,
       infants: formData.infants || 0,
-      start_date: formData.tourType === "private" ? formatDateToYMD(formData.startDate) : null,
-      end_date: formData.tourType === "private" ? formatDateToYMD(formData.endDate) : null,
-      availability_slot_id: formData.tourType === "group" && formData.departureDateId ? parseInt(formData.departureDateId, 10) : null,
+      start_date: formatDateToYMD(formData.startDate),
+      end_date: formatDateToYMD(formData.endDate),
+      availability_slot_id: formData.departureDateId ? (parseInt(formData.departureDateId, 10) || null) : null,
       rooms_single: resolvedSingle,
       rooms_double: doubleCount,
       rooms_triple: tripleCount,
@@ -115,7 +115,7 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
   const lineItems: any[] = activePreview?.line_items || activePreview?.price_breakdown?.line_items || activePreview?.items || [];
   const total = activePreview?.total_price || activePreview?.price_breakdown?.total || activePreview?.total || 0;
   const discount = activePreview?.discount || activePreview?.price_breakdown?.discount || 0;
-  const vat = activePreview?.vat || activePreview?.price_breakdown?.vat || 0;
+
 
   return (
     <div className={styles.container}>
@@ -213,12 +213,6 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
                     </div>
                   )}
 
-                  {parseFloat(vat) > 0 && (
-                    <div className={styles.priceRow}>
-                      <span className={styles.priceLabel}>VAT</span>
-                      <span className={styles.priceValue}>${parseFloat(vat).toFixed(2)}</span>
-                    </div>
-                  )}
                 </div>
 
                 <div className={styles.totalRow}>

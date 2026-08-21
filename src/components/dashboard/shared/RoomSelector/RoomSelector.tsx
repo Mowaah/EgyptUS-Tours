@@ -1,6 +1,7 @@
-﻿"use client";
+"use client";
 
 import { CounterPill, SelectDropdown } from "@/components/shared";
+import Image from "next/image";
 import styles from "./RoomSelector.module.scss";
 
 export interface RoomOption {
@@ -56,7 +57,6 @@ export default function RoomSelector({
     <div className={styles.fieldGroup}>
       <div className={styles.titleRow}>
         <h3 className={styles.sectionTitle}>Type of Room</h3>
-        {error && <span className={styles.errorText}>{error}</span>}
       </div>
 
       <div className={styles.roomList}>
@@ -92,6 +92,13 @@ export default function RoomSelector({
           );
         })}
       </div>
+
+      {error && (
+        <div className={styles.errorText}>
+          <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+          <span>{error}</span>
+        </div>
+      )}
 
       {/* Per-room customization — only shown when there are options to pick from */}
       {rooms.map((room) => {

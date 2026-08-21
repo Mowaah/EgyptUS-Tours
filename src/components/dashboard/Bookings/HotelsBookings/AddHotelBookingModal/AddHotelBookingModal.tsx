@@ -133,7 +133,28 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
       if (!formData.specificHotel) newErrors.specificHotel = "Specific hotel is required";
       
       const totalRooms = Object.values(formData.roomCustomizations).reduce((sum, ids) => sum + ids.length, 0);
-      if (totalRooms === 0) newErrors.rooms = "At least one room is required";
+      if (totalRooms === 0) {
+        newErrors.rooms = "At least one room is required";
+      } else {
+        const getRoomCount = (key: string) => {
+          if (!formData.rooms) return 0;
+          let count = 0;
+          const lowerKey = key.toLowerCase();
+          for (const [k, v] of Object.entries(formData.rooms)) {
+            if (k.toLowerCase().includes(lowerKey)) {
+              count += (v as number) || 0;
+            }
+          }
+          return count;
+        };
+        const singleCount = getRoomCount("Single");
+        const doubleCount = getRoomCount("Double");
+        const tripleCount = getRoomCount("Triple");
+        const totalCapacity = (singleCount * 1) + (doubleCount * 2) + (tripleCount * 3);
+        if (formData.adults > totalCapacity) {
+          newErrors.rooms = `Selected rooms only accommodate ${totalCapacity} adults, but ${formData.adults} adults are booked.`;
+        }
+      }
 
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);

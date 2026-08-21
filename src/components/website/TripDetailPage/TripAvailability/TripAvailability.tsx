@@ -29,9 +29,34 @@ export default function TripAvailability({ trip }: Props) {
 
   const filteredSlots = selectedMonth === "all"
     ? slots
-    : slots.filter(slot => 
-        slot.dates.toLowerCase().includes(selectedMonth.toLowerCase())
-      );
+    : slots.filter(slot => {
+        const parts = slot.dates.split(" - ");
+        if (parts.length > 0) {
+          const d = new Date(parts[0]);
+          if (!isNaN(d.getTime())) {
+            const m = d.toLocaleString("default", { month: "long" }).toLowerCase();
+            return m === selectedMonth.toLowerCase();
+          }
+        }
+        return slot.dates.toLowerCase().includes(selectedMonth.toLowerCase());
+      });
+
+  const formatDateRange = (datesStr: string) => {
+    const parts = datesStr.split(" - ");
+    if (parts.length !== 2) return datesStr;
+    const d1 = new Date(parts[0]);
+    const d2 = new Date(parts[1]);
+    if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return datesStr;
+    const m1 = d1.toLocaleString("default", { month: "short" });
+    const m2 = d2.toLocaleString("default", { month: "short" });
+    if (d1.getFullYear() !== d2.getFullYear()) {
+      return `${m1} ${d1.getDate()}, ${d1.getFullYear()} - ${m2} ${d2.getDate()}, ${d2.getFullYear()}`;
+    }
+    if (m1 === m2) {
+      return `${m1} ${d1.getDate()}-${d2.getDate()}, ${d1.getFullYear()}`;
+    }
+    return `${m1} ${d1.getDate()} - ${m2} ${d2.getDate()}, ${d1.getFullYear()}`;
+  };
 
   return (
     <section id="dates-availability" className={styles.section}>
@@ -58,7 +83,7 @@ export default function TripAvailability({ trip }: Props) {
           const { pct, color } = getStatus(slot.spotsLeft, slot.totalSpots);
           return (
             <div key={i} className={styles.card}>
-              <p className={styles.dates}>{slot.dates}</p>
+              <p className={styles.dates}>{formatDateRange(slot.dates)}</p>
               <p className={styles.duration}>{slot.duration}</p>
               <div className={`${styles.spotsBadge} ${styles[color]}`}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">

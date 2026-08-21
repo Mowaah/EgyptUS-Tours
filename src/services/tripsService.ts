@@ -95,7 +95,9 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
       meals: day.meals_count || undefined,
       highlights: day.highlights || [],
     })),
+    availabilityEnabled: Boolean(tripDetail.availability_enabled ?? ((tripDetail.availability || []).length > 0)),
     availability: (tripDetail.availability || []).map(slot => ({
+      id: slot.id,
       dates: `${slot.start_date} - ${slot.end_date}`,
       duration: `${tripDetail.duration.days} Days / ${tripDetail.duration.nights} Nights`,
       spotsLeft: slot.capacity_remaining,

@@ -139,6 +139,10 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
     return `${yyyy}-${mm}-${dd}`;
   };
 
+  const hasFixedAvailability = Boolean(
+    tripDetail?.availability && tripDetail.availability.length > 0
+  );
+
   const handleNext = async () => {
     const newErrors: Record<string, string> = {};
 
@@ -152,7 +156,7 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
 
       if (!formData.guestNationality) newErrors.guestNationality = "Nationality is required";
 
-      if (formData.tourType === "private") {
+      if (!hasFixedAvailability) {
         if (!formData.startDate) newErrors.startDate = "Start date is required";
         if (!formData.endDate) newErrors.endDate = "End date is required";
       }
@@ -168,12 +172,40 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
     if (currentStep === 1) {
       if (!formData.tripId) newErrors.tripId = "Specific trip is required";
 
-      if (formData.tourType === "group") {
+      if (hasFixedAvailability) {
         if (!formData.departureDateId) newErrors.departureDateId = "Departure date is required";
+      } else if (tripDetail?.duration?.days && formData.startDate) {
+        const d = new Date(formData.startDate);
+        d.setDate(d.getDate() + tripDetail.duration.days - 1);
+        const endStr = `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}/${d.getFullYear()}`;
+        if (formData.endDate !== endStr) {
+          setFormData((prev) => ({ ...prev, endDate: endStr }));
+        }
       }
 
       const totalRooms = Object.values(formData.roomCustomizations || {}).reduce((sum, ids) => sum + ids.length, 0);
-      if (totalRooms === 0) newErrors.rooms = "At least one room is required";
+      if (totalRooms === 0) {
+        newErrors.rooms = "At least one room is required";
+      } else {
+        const getRoomCount = (key: string) => {
+          if (!formData.rooms) return 0;
+          let count = 0;
+          const lowerKey = key.toLowerCase();
+          for (const [k, v] of Object.entries(formData.rooms)) {
+            if (k.toLowerCase().includes(lowerKey)) {
+              count += (v as number) || 0;
+            }
+          }
+          return count;
+        };
+        const singleCount = getRoomCount("Single");
+        const doubleCount = getRoomCount("Double");
+        const tripleCount = getRoomCount("Triple");
+        const totalCapacity = (singleCount * 1) + (doubleCount * 2) + (tripleCount * 3);
+        if (formData.adults > totalCapacity) {
+          newErrors.rooms = `Selected rooms only accommodate ${totalCapacity} adults, but ${formData.adults} adults are booked.`;
+        }
+      }
 
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
@@ -216,9 +248,9 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
           adults: formData.adults || 1,
           children: formData.children || 0,
           infants: formData.infants || 0,
-          start_date: formData.tourType === "private" ? formatDateToYMD(formData.startDate) : null,
-          end_date: formData.tourType === "private" ? formatDateToYMD(formData.endDate) : null,
-          availability_slot_id: formData.tourType === "group" && formData.departureDateId ? parseInt(formData.departureDateId, 10) : null,
+          start_date: formatDateToYMD(formData.startDate),
+          end_date: formatDateToYMD(formData.endDate),
+          availability_slot_id: hasFixedAvailability && formData.departureDateId ? (parseInt(formData.departureDateId, 10) || null) : null,
           rooms_single: resolvedSingle,
           rooms_double: doubleCount,
           rooms_triple: tripleCount,
@@ -341,9 +373,22 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
       isConfirmed={isConfirmed}
     >
       {currentStep === 0 && (
-        <StepGuestDetails formData={formData} onChange={handleChange} errors={errors} />
+        <StepGuestDetails
+          formData={formData}
+          onChange={handleChange}
+          errors={errors}
+          hasFixedAvailability={hasFixedAvailability}
+          durationDays={tripDetail?.duration?.days}
+        />
       )}
-      {currentStep === 1 && <StepBookingDetails formData={formData} onChange={handleChange} errors={errors} />}
+      {currentStep === 1 && (
+        <StepBookingDetails
+          formData={formData}
+          onChange={handleChange}
+          errors={errors}
+          hasFixedAvailability={hasFixedAvailability}
+        />
+      )}
       {currentStep === 2 && (
         <StepBookingSummary
           formData={formData}
