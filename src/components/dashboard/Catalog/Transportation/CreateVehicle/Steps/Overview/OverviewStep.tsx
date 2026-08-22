@@ -110,8 +110,17 @@ export function OverviewStep() {
                     control="select"
                     options={[
                       { label: "1 Hour", value: "1 Hour" },
+                      { label: "2 Hours", value: "2 Hours" },
                       { label: "3 Hours", value: "3 Hours" },
+                      { label: "4 Hours", value: "4 Hours" },
+                      { label: "5 Hours", value: "5 Hours" },
+                      { label: "6 Hours", value: "6 Hours" },
                       { label: "7 Hours", value: "7 Hours" },
+                      { label: "8 Hours", value: "8 Hours" },
+                      { label: "9 Hours", value: "9 Hours" },
+                      { label: "10 Hours", value: "10 Hours" },
+                      { label: "11 Hours", value: "11 Hours" },
+                      { label: "12 Hours", value: "12 Hours" },
                       { label: "Full Day", value: "Full Day" },
                     ]}
                   />

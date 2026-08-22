@@ -25,15 +25,7 @@ export default function BookingWidget({ vehicleId, totalPrice = "$1299" }: Booki
           <div className={styles.rowsSection}>
             <div className={styles.row}>
               <span className={styles.label}>Base Price</span>
-              <span className={styles.value}>$85.42</span>
-            </div>
-            <div className={styles.row}>
-              <span className={styles.label}>Service Fee</span>
-              <span className={styles.value}>$10.00</span>
-            </div>
-            <div className={styles.row}>
-              <span className={styles.label}>Insurance</span>
-              <span className={styles.value}>$5.00</span>
+              <span className={styles.value}>{totalPrice}</span>
             </div>
           </div>
 

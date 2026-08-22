@@ -27,6 +27,7 @@ export interface VehicleList {
   currency_code: string;
   passengers: number;
   luggage: string;
+  luggage_capacity?: number;
   duration_hours_min?: number;
   duration_hours_max?: number;
   rating: string;
@@ -37,6 +38,15 @@ export interface VehicleList {
   is_featured: boolean;
 }
 
+export interface VehicleAdditionalServicePublic {
+  id: number;
+  name: string;
+  slug: string;
+  price: string;
+  price_egp?: string | null;
+  currency_code?: string;
+}
+
 export interface VehicleDetail extends VehicleList {
   description: string;
   gallery: VehicleGalleryImage[];
@@ -45,6 +55,7 @@ export interface VehicleDetail extends VehicleList {
     hours_max: number;
   };
   vehicle_reviews: VehicleReview[];
+  additional_services?: VehicleAdditionalServicePublic[];
 }
 
 export interface VehiclePaginatedResponse {

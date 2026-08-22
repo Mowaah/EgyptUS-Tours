@@ -11,14 +11,9 @@ export default function TransportationPricingPage() {
   if (!vehicle) return <div>Vehicle not found.</div>;
 
   const basePrice = vehicle.price_amount !== null ? `$${vehicle.price_amount}` : "-";
-  const vat = vehicle.vat_amount !== null ? `$${vehicle.vat_amount}` : "-";
-  const insurance = vehicle.insurance_fee !== null ? `$${vehicle.insurance_fee}` : "-";
   const pricePerKm = vehicle.price_per_km !== null ? `$${vehicle.price_per_km}` : "-";
   
-  let totalPrice = 0;
-  if (vehicle.price_amount) totalPrice += Number(vehicle.price_amount);
-  if (vehicle.vat_amount) totalPrice += Number(vehicle.vat_amount);
-  if (vehicle.insurance_fee) totalPrice += Number(vehicle.insurance_fee);
+  const totalPrice = vehicle.price_amount ? Number(vehicle.price_amount) : 0;
   
   const additionalServices = vehicle.additional_services || [];
 
@@ -36,8 +31,6 @@ export default function TransportationPricingPage() {
         <div className={styles.priceGrid}>
           {[
             { label: "Base Price", value: basePrice },
-            { label: "VAT", value: vat },
-            { label: "Insurance", value: insurance },
             { label: "Price Per KM", value: pricePerKm },
           ].map((item) => (
             <div key={item.label} className={styles.priceCell}>

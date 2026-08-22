@@ -445,6 +445,8 @@ export interface AssistantCard {
   currency_code: string;
   rating: string;
   review_count: number;
+  duration_days?: number | null;
+  duration_nights?: number | null;
   cta_label: string;
   href: string;
 }

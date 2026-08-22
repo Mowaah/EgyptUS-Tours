@@ -17,18 +17,23 @@ interface BookingSummaryProps {
 export default function BookingSummary({ vehicle, formData }: BookingSummaryProps) {
   const [expanded, setExpanded] = useState(false);
 
-  const { data: servicesData } = useSWR("/catalog/vehicle-additional-services/", fetcher);
-  const additionalServices = servicesData || [];
+  const { data: vehicleDetailsData } = useSWR(vehicle.id ? `/vehicles/${vehicle.id}/` : null, fetcher);
+  const additionalServices = vehicleDetailsData?.additional_services || [];
 
-  const basePrice = 85.42;
-  const serviceFee = 5.00;
-  const insurance = 10.00;
+  const basePrice = parseFloat((vehicle.price ?? "0").replace(/[^0-9.]/g, "")) || 0;
 
-  const servicesTotal = additionalServices
-    .filter((s: any) => formData.additionalServiceIds?.includes(s.id))
-    .reduce((acc: number, s: any) => acc + parseFloat(s.price || 0), 0);
+  const selectedServices = additionalServices.filter((s: any) =>
+    formData.additionalServiceIds?.includes(s.id)
+  );
 
-  const total = basePrice + serviceFee + insurance + servicesTotal;
+  const servicesTotal = selectedServices.reduce(
+    (acc: number, s: any) => acc + (parseFloat(s.price) || 0),
+    0
+  );
+
+  const total = basePrice + servicesTotal;
+  const deposit = total * 0.3;
+  const remaining = total * 0.7;
 
   const pickupShort = formData.pickupLocation
     ? formData.pickupLocation.split(",")[0]
@@ -89,7 +94,6 @@ export default function BookingSummary({ vehicle, formData }: BookingSummaryProp
                   <Image src="/images/star-yellow3.svg" alt="" width={18} height={18} />
                 </div>
                 <span className={styles.ratingVal}>{vehicle.rating}</span>
-                <span className={styles.reviews}>({vehicle.reviews})</span>
               </div>
             </div>
 
@@ -107,22 +111,12 @@ export default function BookingSummary({ vehicle, formData }: BookingSummaryProp
                       <span className={styles.priceLabel}>Base Price</span>
                       <span className={styles.priceValue}>${basePrice.toFixed(2)}</span>
                     </div>
-                    <div className={styles.priceRow}>
-                      <span className={styles.priceLabel}>Service Fee</span>
-                      <span className={styles.priceValue}>${serviceFee.toFixed(2)}</span>
-                    </div>
-                    <div className={styles.priceRow}>
-                      <span className={styles.priceLabel}>Insurance</span>
-                      <span className={styles.priceValue}>${insurance.toFixed(2)}</span>
-                    </div>
-                    {additionalServices
-                      .filter((s: any) => formData.additionalServiceIds?.includes(s.id))
-                      .map((s: any) => (
-                        <div className={styles.priceRow} key={s.id}>
-                          <span className={styles.priceLabel}>{s.name}</span>
-                          <span className={styles.priceValue}>${parseFloat(s.price).toFixed(2)}</span>
-                        </div>
-                      ))}
+                    {selectedServices.map((s: any) => (
+                      <div className={styles.priceRow} key={s.id}>
+                        <span className={styles.priceLabel}>{s.name}</span>
+                        <span className={styles.priceValue}>+${(parseFloat(s.price) || 0).toFixed(2)}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -135,11 +129,11 @@ export default function BookingSummary({ vehicle, formData }: BookingSummaryProp
               <div className={styles.depositBox}>
                 <div className={styles.depositRow}>
                   <span className={styles.depositLabel}>Pay now (30% deposit)</span>
-                  <span className={styles.depositAmount}>$1,470</span>
+                  <span className={styles.depositAmount}>${deposit.toFixed(2)}</span>
                 </div>
                 <div className={styles.remainingRow}>
                   <span className={styles.remainingNote}>Remaining 70% due one month before your trip</span>
-                  <span className={styles.remainingVal}>$3,430</span>
+                  <span className={styles.remainingVal}>${remaining.toFixed(2)}</span>
                 </div>
               </div>
 

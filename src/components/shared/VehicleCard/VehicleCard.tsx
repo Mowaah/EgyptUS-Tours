@@ -26,6 +26,13 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
   const isList = view === "list";
   const vehicleDetailsHref = `/transportation/${vehicle.id}`;
 
+  const formatDuration = (val?: string) => {
+    if (!val) return "";
+    const clean = val.replace(/^(\d+)-\1$/, "$1");
+    if (clean.toLowerCase().includes("hour")) return clean;
+    return `${clean} ${clean === "1" ? "hour" : "hours"}`;
+  };
+
   return (
     <div className={`${styles.card} ${isList ? styles.listCard : ""}`}>
       <Link href={vehicleDetailsHref} className={`${styles.imageArea} ${isList ? styles.listImageArea : ""}`}>
@@ -53,7 +60,6 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
           <div className={`${styles.rating} ${isList ? styles.listRating : ""}`}>
             <Image src="/images/star-yellow3.svg" alt="" width={12} height={12} />
             <span>{vehicle.rating}</span>
-            <span className={styles.reviews}>({vehicle.reviews})</span>
           </div>
         </Link>
 
@@ -70,7 +76,7 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
           {vehicle.durationHours && (
             <div className={styles.specItem}>
               <span className={styles.specLabel}>Duration</span>
-              <span className={styles.specValue}>{vehicle.durationHours} hours</span>
+              <span className={styles.specValue}>{formatDuration(vehicle.durationHours)}</span>
             </div>
           )}
         </div>
@@ -90,8 +96,7 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
               <span className={styles.priceLabel}>Total Price</span>
               <span className={styles.priceValue}>{vehicle.price}</span>
             </div>
-            {/* Defaulting to a placeholder booking action for now */}
-            <Button variant="primary" size="sm" href={`/transportation/book/${vehicle.id}`}>
+            <Button variant="primary" size="sm" href={`/transportation/${vehicle.id}/book`}>
               Book Now
             </Button>
           </div>

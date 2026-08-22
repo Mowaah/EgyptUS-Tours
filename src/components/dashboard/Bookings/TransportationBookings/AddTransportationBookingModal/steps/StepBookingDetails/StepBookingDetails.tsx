@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useEffect } from "react";
 import Image from "next/image";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import dashboardFieldStyles from "@/components/dashboard/shared/DashboardField/DashboardField.module.scss";
@@ -29,6 +29,43 @@ export default function StepBookingDetails({ formData, onChange, errors = {} }: 
 
   const vehicles = vehiclesData?.results || vehiclesData?.data?.results || [];
   const additionalServices = (vehicleDetailsData as any)?.additional_services || [];
+
+  const selectedVehicle = vehicles.find((v: any) => String(v.id) === String(formData.vehicleId));
+  const maxPassengers = Math.max(1, (vehicleDetailsData as any)?.passengers || selectedVehicle?.passengers || 1);
+  const maxLuggage = Math.max(0, (vehicleDetailsData as any)?.luggage_capacity ?? selectedVehicle?.luggage_capacity ?? (typeof selectedVehicle?.luggage === "number" ? selectedVehicle?.luggage : parseInt(selectedVehicle?.luggage) || 0));
+
+  const passengerOptions = useMemo(() => {
+    return Array.from({ length: maxPassengers }, (_, i) => {
+      const val = i + 1;
+      return {
+        label: `${val} Passenger${val > 1 ? "s" : ""}`,
+        value: val.toString(),
+      };
+    });
+  }, [maxPassengers]);
+
+  const luggageOptions = useMemo(() => {
+    if (maxLuggage === 0) {
+      return [{ label: "0 Bags", value: "0" }];
+    }
+    return Array.from({ length: maxLuggage }, (_, i) => {
+      const val = i + 1;
+      return {
+        label: `${val} Bag${val > 1 ? "s" : ""}`,
+        value: val.toString(),
+      };
+    });
+  }, [maxLuggage]);
+
+  useEffect(() => {
+    if (formData.passengers > maxPassengers) {
+      onChange({ passengers: maxPassengers });
+    }
+    const currentLuggage = parseInt(formData.luggage) || 0;
+    if (currentLuggage > maxLuggage && maxLuggage >= 0) {
+      onChange({ luggage: maxLuggage.toString() });
+    }
+  }, [maxPassengers, maxLuggage, formData.passengers, formData.luggage, onChange]);
 
   return (
     <div className={styles.container}>
@@ -116,13 +153,19 @@ export default function StepBookingDetails({ formData, onChange, errors = {} }: 
                   variant="input"
                   value={formData.pickupTime}
                   onChange={(v, str) => onChange({ pickupTime: str })}
-                  className={`${dashboardFieldStyles.input} ${dashboardFieldStyles.hasAdornment}`}
+                  className={`${dashboardFieldStyles.input} ${dashboardFieldStyles.hasAdornment} ${errors.pickupTime ? styles.hasError : ""}`}
                 />
                 <div className={dashboardFieldStyles.endAdornment} style={{ pointerEvents: 'none' }}>
                    <Image src="/images/clock-gray.svg" alt="" width={20} height={20} />
                 </div>
               </div>
             </div>
+            {errors.pickupTime && (
+              <div className={styles.errorMessage}>
+                <Image src="/images/information-fill.svg" alt="" width={16} height={16} />
+                <span>{errors.pickupTime}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -167,13 +210,7 @@ export default function StepBookingDetails({ formData, onChange, errors = {} }: 
           <DashboardField
             control="select"
             label="Passengers"
-            options={[
-              { label: "1 Passenger", value: "1" },
-              { label: "2 Passengers", value: "2" },
-              { label: "3 Passengers", value: "3" },
-              { label: "4 Passengers", value: "4" },
-              { label: "5+ Passengers", value: "5" },
-            ]}
+            options={passengerOptions}
             value={formData.passengers.toString()}
             onChange={(e: any) => onChange({ passengers: parseInt(e.target.value) || 1 })}
           />
@@ -182,13 +219,7 @@ export default function StepBookingDetails({ formData, onChange, errors = {} }: 
           <DashboardField
             control="select"
             label="Luggage"
-            options={[
-              { label: "0 Bags", value: "0" },
-              { label: "1 Bag", value: "1" },
-              { label: "2 Bags", value: "2" },
-              { label: "3 Bags", value: "3" },
-              { label: "4+ Bags", value: "4" },
-            ]}
+            options={luggageOptions}
             value={formData.luggage}
             onChange={(e: any) => onChange({ luggage: e.target.value })}
           />

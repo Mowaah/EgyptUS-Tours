@@ -24,10 +24,18 @@ export default async function Page() {
     image: v.image || "/images/sedan.png",
     price: v.price_amount,
     passengers: v.passengers,
-    luggage: v.luggage || "2 bags",
+    luggage: (v.luggage_capacity !== undefined && v.luggage_capacity !== null && v.luggage_capacity > 0)
+      ? `${v.luggage_capacity} large suitcase${v.luggage_capacity > 1 ? "s" : ""}`
+      : v.luggage || "Standard",
     durationHours: v.duration_hours_min && v.duration_hours_max
-      ? `${v.duration_hours_min}-${v.duration_hours_max}`
-      : v.duration_hours_min ? `${v.duration_hours_min}+` : undefined,
+      ? v.duration_hours_min === v.duration_hours_max
+        ? `${v.duration_hours_min}`
+        : `${v.duration_hours_min}-${v.duration_hours_max}`
+      : v.duration_hours_min
+      ? `${v.duration_hours_min}`
+      : v.duration_hours_max
+      ? `${v.duration_hours_max}`
+      : undefined,
     description: "",
     rating: parseFloat(v.rating_avg) || 0,
     reviews: v.review_count,

@@ -89,6 +89,7 @@
   line-height: 1.4;
   color: $dark;
   margin: 0;
+  text-transform: capitalize;
 
   @media (min-width: 768px) {
     font-size: $font-size-base;

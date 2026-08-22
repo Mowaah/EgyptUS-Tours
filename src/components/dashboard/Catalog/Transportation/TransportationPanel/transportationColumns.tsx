@@ -17,6 +17,18 @@ export const transportationColumns: DataTableColumn<any>[] = [
     render: (row) => row.category?.name || "-",
   },
   {
+    id: "duration",
+    header: "Duration",
+    render: (row) => {
+      const min = row.duration_hours_min;
+      const max = row.duration_hours_max;
+      if (!min && !max) return "-";
+      if (min === 24 || max === 24) return "Full Day";
+      if (min && max && min !== max) return `${min}-${max} hrs`;
+      return min === 1 ? "1 hr" : `${min || max} hrs`;
+    },
+  },
+  {
     id: "passengers",
     header: "Passengers",
     render: (row) => row.passengers?.toString() || "0",

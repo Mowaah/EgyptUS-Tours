@@ -58,11 +58,10 @@ export default function TransportationDetailPage({ vehicleDetail }: Transportati
         className={styles.pageHeader}
         breadcrumbs={[
           { label: "Transportation", href: "/transportation" },
-          { label: vehicle.title, isCurrent: true },
+          { label: "Transportation Details", isCurrent: true },
         ]}
-        title={vehicle.title}
-        subtitle="Experience seamless travel across Egypt in our premium, modern fleet with professional drivers."
-        decorationSrc="/images/dotted-line3.svg"
+        backButton={{ text: "Back To Transportation", href: "/transportation" }}
+        showMobileActions={true}
       />
 
       <div className={styles.heroSection}>
@@ -71,7 +70,6 @@ export default function TransportationDetailPage({ vehicleDetail }: Transportati
             images={vehicle.images}
             title={vehicle.title}
             rating={vehicle.rating}
-            reviewCount={vehicle.reviews}
             description={vehicle.description}
           />
 
@@ -80,7 +78,8 @@ export default function TransportationDetailPage({ vehicleDetail }: Transportati
               title={vehicle.title}
               description={vehicle.description}
               rating={vehicle.rating}
-              reviewCount={vehicle.reviews}
+              reviewCount={0}
+              showReviews={false}
               showFavorite={false}
             >
               <Button
@@ -106,6 +105,7 @@ export default function TransportationDetailPage({ vehicleDetail }: Transportati
             <TransportationOverview
               description={vehicle.description}
               luggage={vehicleDetail.luggage}
+              luggageCapacity={vehicleDetail.luggage_capacity}
               passengers={vehicleDetail.passengers}
               durationHoursMin={vehicleDetail.duration_hours_min}
               durationHoursMax={vehicleDetail.duration_hours_max}

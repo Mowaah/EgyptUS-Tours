@@ -22,8 +22,6 @@ export const createVehicleSchema = z.object({
 
   // Pricing
   basePrice: z.string().min(1, "Base Price is required"),
-  vat: z.string().min(1, "VAT is required"),
-  insurance: z.string().min(1, "Insurance is required"),
   pricePerKm: z.string().min(1, "Price Per KM is required"),
   additionalServices: z.array(z.string()).default([]),
 

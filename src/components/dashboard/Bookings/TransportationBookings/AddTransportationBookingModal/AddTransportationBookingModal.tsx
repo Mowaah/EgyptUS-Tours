@@ -112,6 +112,7 @@ export default function AddTransportationBookingModal({ open, onClose }: AddTran
       if (!formData.pickupLocation) newErrors.pickupLocation = "Pickup location is required";
       if (!formData.dropoffLocation) newErrors.dropoffLocation = "Drop-off location is required";
       if (!formData.pickupDate) newErrors.pickupDate = "Pickup date is required";
+      if (!formData.pickupTime) newErrors.pickupTime = "Pickup time is required";
 
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);

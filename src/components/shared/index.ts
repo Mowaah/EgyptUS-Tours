@@ -83,4 +83,6 @@ export { IconStepper } from "./IconStepper/IconStepper";
 export { default as IncludedHotelCard } from "./IncludedHotelCard/IncludedHotelCard";
 export { default as LoadingSpinner } from "./LoadingSpinner/LoadingSpinner";
 export type { LoadingSpinnerProps } from "./LoadingSpinner/LoadingSpinner";
+export { default as FavoriteButton } from "./FavoriteButton/FavoriteButton";
+export type { FavoriteButtonProps } from "./FavoriteButton/FavoriteButton";
 

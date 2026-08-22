@@ -48,7 +48,7 @@
 .arrow {
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
+  translate: 0 -50%;
   width: 35px;
   height: 35px;
   border-radius: 50%;
@@ -62,14 +62,27 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   transition: background $transition-fast;
 
-  &:hover,
-  &:hover:not(:disabled) {
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      background: $secondary;
+
+      img {
+        filter: brightness(0) invert(1);
+      }
+    }
+  }
+
+  &:active:not(:disabled) {
     background: $secondary;
-    transform: translateY(calc(-50% - 1px)) !important;
 
     img {
       filter: brightness(0) invert(1);
     }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $secondary;
+    outline-offset: 2px;
   }
 
   img {

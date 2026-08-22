@@ -6,6 +6,14 @@ import { useVehicleDetailContext } from "../layout";
 import { getLangKey } from "@/components/dashboard/shared/i18n";
 import styles from "./page.module.scss";
 
+function formatDuration(min?: number | null, max?: number | null): string {
+  if (!min && !max) return "-";
+  if (min === 24 || max === 24) return "Full Day";
+  if (min && max && min !== max) return `${min} - ${max} Hours`;
+  const hours = min || max;
+  return hours === 1 ? "1 Hour" : `${hours} Hours`;
+}
+
 export default function TransportationOverviewPage() {
   const { vehicle, loading, activeLang } = useVehicleDetailContext();
 
@@ -48,6 +56,11 @@ export default function TransportationOverviewPage() {
           <div className={styles.horizontalBorder}>
             <span className={styles.label}>Category</span>
             <span className={styles.value}>{vehicle.category?.name || "-"}</span>
+          </div>
+
+          <div className={styles.horizontalBorder}>
+            <span className={styles.label}>Duration</span>
+            <span className={styles.value}>{formatDuration(vehicle.duration_hours_min, vehicle.duration_hours_max)}</span>
           </div>
 
           <div className={styles.horizontalBorder}>

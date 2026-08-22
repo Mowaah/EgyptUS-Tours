@@ -19,7 +19,7 @@ import styles from "./CreateVehicle.module.scss";
 
 const STEPS: WizardStepConfig[] = [
   { label: "Overview", iconSrc: "/images/dashboard/catalog/trips/overview.svg", fieldsToValidate: ["vehicleName", "model", "category", "passengerCapacity"] },
-  { label: "Pricing", iconSrc: "/images/dashboard/catalog/trips/pricing.svg", fieldsToValidate: ["basePrice", "vat", "insurance", "pricePerKm"] },
+  { label: "Pricing", iconSrc: "/images/dashboard/catalog/trips/pricing.svg", fieldsToValidate: ["basePrice", "pricePerKm"] },
   { label: "Media", iconSrc: "/images/dashboard/catalog/trips/media.svg", fieldsToValidate: ["photos"] },
   { label: "SEO", iconSrc: "/images/dashboard/catalog/trips/seo.svg", fieldsToValidate: ["seoTitle", "seoDescription", "seoKeywords", "seoSlug"] },
 ];
@@ -35,8 +35,6 @@ const EMPTY_VALUES: CreateVehicleValues = {
   features: { en: [], it: [], es: [] },
   description: { en: "", it: "", es: "" },
   basePrice: "",
-  vat: "",
-  insurance: "",
   pricePerKm: "",
   additionalServices: [],
   photos: [
@@ -88,6 +86,39 @@ function slugify(value: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+function parseDurationHours(durationStr?: string): { duration_hours_min: number | null; duration_hours_max: number | null } {
+  if (!durationStr) return { duration_hours_min: null, duration_hours_max: null };
+  const lower = durationStr.trim().toLowerCase();
+  if (lower.includes("full day") || lower === "24") {
+    return { duration_hours_min: 24, duration_hours_max: 24 };
+  }
+  const matchRange = durationStr.match(/(\d+)\s*-\s*(\d+)/);
+  if (matchRange) {
+    return {
+      duration_hours_min: parseInt(matchRange[1], 10),
+      duration_hours_max: parseInt(matchRange[2], 10),
+    };
+  }
+  const matchSingle = durationStr.match(/(\d+)/);
+  if (matchSingle) {
+    const hours = parseInt(matchSingle[1], 10);
+    return {
+      duration_hours_min: hours,
+      duration_hours_max: hours,
+    };
+  }
+  return { duration_hours_min: null, duration_hours_max: null };
+}
+
+function formatDurationHours(minHours?: number | null, maxHours?: number | null): string {
+  if (!minHours && !maxHours) return "";
+  if (minHours === 24 || maxHours === 24) return "Full Day";
+  if (minHours && maxHours && minHours !== maxHours) return `${minHours}-${maxHours} Hours`;
+  const hours = minHours || maxHours;
+  if (!hours) return "";
+  return hours === 1 ? "1 Hour" : `${hours} Hours`;
+}
+
 async function buildPayload(data: CreateVehicleValues, intent: WizardSubmitIntent, isEdit: boolean = false, categories: any[]) {
   const categoryId = categories.find(c => c.name === data.category || String(c.id) === data.category)?.id;
   
@@ -128,6 +159,7 @@ async function buildPayload(data: CreateVehicleValues, intent: WizardSubmitInten
     }
   }
 
+  const { duration_hours_min, duration_hours_max } = parseDurationHours(data.duration);
   const userSlugEn = data.seoSlug?.en ? slugify(data.seoSlug.en) : "";
   const baseSlugEn = slugify(data.vehicleName?.en || "vehicle");
   const slugEn = userSlugEn || (isEdit ? baseSlugEn : `${baseSlugEn}-${Math.random().toString(36).substring(2, 6)}`);
@@ -164,14 +196,14 @@ async function buildPayload(data: CreateVehicleValues, intent: WizardSubmitInten
     },
     category_id: categoryId,
     model_year: intValue(data.model) || null,
+    duration_hours_min,
+    duration_hours_max,
     passengers: intValue(data.passengerCapacity) || 1,
     luggage_capacity: intValue(data.luggageCapacity) || 0,
     rating_avg: data.starRating ? parseFloat(data.starRating) : null,
     additional_service_ids: data.additionalServices?.map(id => parseInt(id, 10)) || [],
     currency_code: "USD",
     price_amount: money(data.basePrice) || null,
-    vat_amount: money(data.vat) || null,
-    insurance_fee: money(data.insurance) || null,
     price_per_km: money(data.pricePerKm) || null,
     media_items: photos.filter(Boolean),
     replace_media_items: true,
@@ -216,7 +248,7 @@ function mapVehicleToFormValues(vehicle: any): CreateVehicleValues {
     vehicleName: { en: asText(tEn.name || vehicle.name), it: asText(tIt.name), es: asText(tEs.name) },
     model: asText(vehicle.model_year),
     category: asText(vehicle.category?.name),
-    duration: "", // Ignored for now based on user feedback
+    duration: formatDurationHours(vehicle.duration_hours_min, vehicle.duration_hours_max),
     passengerCapacity: asText(vehicle.passengers),
     luggageCapacity: asText(vehicle.luggage_capacity),
     starRating: vehicle.rating_avg ? String(vehicle.rating_avg) : "",
@@ -227,8 +259,6 @@ function mapVehicleToFormValues(vehicle: any): CreateVehicleValues {
     },
     description: { en: asText(tEn.description || vehicle.description), it: asText(tIt.description), es: asText(tEs.description) },
     basePrice: asText(vehicle.price_amount),
-    vat: asText(vehicle.vat_amount),
-    insurance: asText(vehicle.insurance_fee),
     pricePerKm: asText(vehicle.price_per_km),
     additionalServices: (vehicle.additional_services || []).map((s: any) => String(s.id || s)),
     photos,

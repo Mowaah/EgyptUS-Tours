@@ -12,18 +12,14 @@ export function PricingStep() {
   const { watch, control, setValue, formState: { errors } } = useFormContext<CreateVehicleValues>();
 
   const basePrice = watch("basePrice");
-  const vat = watch("vat");
-  const insurance = watch("insurance");
   const additionalServices = watch("additionalServices") || [];
 
   const numBase = parseFloat(basePrice as string) || 0;
-  const numVat = parseFloat(vat as string) || 0;
-  const numInsurance = parseFloat(insurance as string) || 0;
   const { services } = useVehicleAdditionalServices();
 
   const selectedServices = services.filter((s: any) => additionalServices.includes(String(s.id)));
   const additionalServicesTotal = selectedServices.reduce((acc: number, s: any) => acc + (parseFloat(s.price) || 0), 0);
-  const total = numBase + numVat + numInsurance + additionalServicesTotal;
+  const total = numBase + additionalServicesTotal;
 
   const handleToggleService = (tag: string) => {
     if (additionalServices.includes(tag)) {
@@ -49,21 +45,6 @@ export function PricingStep() {
               control={control}
               error={errors.basePrice?.message}
             />
-
-            <div className={styles.inputRow}>
-              <CurrencyField
-                name="vat"
-                label="Vat (14%)"
-                control={control}
-                error={errors.vat?.message}
-              />
-              <CurrencyField
-                name="insurance"
-                label="Insurance Fee ($)"
-                control={control}
-                error={errors.insurance?.message}
-              />
-            </div>
 
             <CurrencyField
               name="pricePerKm"
@@ -124,14 +105,6 @@ export function PricingStep() {
             <div className={styles.summaryRow}>
               <span className={styles.summaryLabel}>Base Price</span>
               <span className={styles.summaryValue}>{numBase}$</span>
-            </div>
-            <div className={styles.summaryRow}>
-              <span className={styles.summaryLabel}>Vat (14%)</span>
-              <span className={styles.summaryValue}>{numVat}$</span>
-            </div>
-            <div className={styles.summaryRow}>
-              <span className={styles.summaryLabel}>Insurance</span>
-              <span className={styles.summaryValue}>{numInsurance}$</span>
             </div>
             {selectedServices.map((service: any) => (
               <div key={service.id} className={styles.summaryRow}>

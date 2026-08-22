@@ -4,18 +4,12 @@
   background: $white;
   border-radius: 32px;
   border: 1px solid $border-card;
-  transition: box-shadow $transition-base, transform $transition-base;
   display: flex;
   flex-direction: column;
   padding: 80px 16px 24px;
   position: relative;
   margin-top: 100px;
   isolation: isolate;
-
-  &:hover {
-    box-shadow: $shadow-md;
-    transform: translateY(-4px);
-  }
 }
 
 .imageArea {
@@ -152,6 +146,7 @@
   border-radius: $radius-full;
   font-size: $font-size-2xs;
   color: #0CA572;
+  text-transform: capitalize;
 }
 
 .footerWrapper {

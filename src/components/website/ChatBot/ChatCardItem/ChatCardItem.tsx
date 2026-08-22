@@ -15,8 +15,12 @@ export default function ChatCardItem({ card, onCardClick }: ChatCardItemProps) {
   if (card.type === "trip") {
     const daysMatch = (card.title + " " + card.subtitle).match(/(\d+)\s*days?/i);
     const nightsMatch = (card.title + " " + card.subtitle).match(/(\d+)\s*nights?/i);
-    const days = daysMatch ? parseInt(daysMatch[1], 10) : 8;
-    const nights = nightsMatch ? parseInt(nightsMatch[1], 10) : Math.max(1, days - 1);
+    const days = (card.duration_days !== undefined && card.duration_days !== null && card.duration_days > 0)
+      ? card.duration_days
+      : daysMatch ? parseInt(daysMatch[1], 10) : 1;
+    const nights = (card.duration_nights !== undefined && card.duration_nights !== null)
+      ? card.duration_nights
+      : nightsMatch ? parseInt(nightsMatch[1], 10) : Math.max(0, days - 1);
 
     const tripObj: Trip = {
       id: card.slug || String(card.id),

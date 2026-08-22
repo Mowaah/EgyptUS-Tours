@@ -3,13 +3,14 @@ import Image from "next/image";
 import useSWR from "swr";
 import { AddTransportationBookingData } from "../../AddTransportationBookingModal";
 import { previewTransportationBooking } from "@/services/admin/adminBookingsService";
+import { apiClient } from "@/lib/api";
 import styles from "./StepBookingSummary.module.scss";
 
 interface StepBookingSummaryProps {
   formData: AddTransportationBookingData;
 }
 
-const fetchPreview = async (url: string, payload: any) => {
+const fetchPreview = async (payload: any) => {
   return await previewTransportationBooking(payload);
 };
 
@@ -39,38 +40,73 @@ export default function StepBookingSummary({ formData }: StepBookingSummaryProps
     return `${String(hours).padStart(2, "0")}:${minutes}:00`;
   };
 
+  // 1. Fetch public vehicle detail for actual car rating, image, and base price fallback
+  const { data: vehicleData } = useSWR(
+    formData.vehicleId ? `/vehicles/${formData.vehicleId}/` : null,
+    (url) => apiClient.get(url)
+  );
+  const vehicle = (vehicleData as any) || {};
+
+  // 2. Fetch backend preview pricing
   const payload = {
     vehicle_id: formData.vehicleId,
     distance_km: parseFloat(formData.distanceKm) || 0,
-    trip_type: formData.tripType,
-    full_name: formData.guestName,
-    email: formData.guestEmail,
-    phone: `${formData.guestPhonePrefix}${formData.guestPhone}`,
-    nationality: formData.guestNationality,
-    pickup_location: formData.pickupLocation,
-    dropoff_location: formData.dropoffLocation,
-    pickup_date: formatDateToYMD(formData.pickupDate),
-    pickup_time: formatTime(formData.pickupTime),
-    passengers: formData.passengers,
-    luggage: formData.luggage,
-    additional_service_ids: formData.additionalServiceIds,
-    special_requests: formData.specialRequests,
+    trip_type: formData.tripType || "one_way",
+    full_name: formData.guestName || "Guest",
+    email: formData.guestEmail || "guest@example.com",
+    phone: `${formData.guestPhonePrefix || "+1"}${formData.guestPhone || "000000000"}`,
+    nationality: formData.guestNationality || "US",
+    pickup_location: formData.pickupLocation || "Pickup",
+    dropoff_location: formData.dropoffLocation || "Dropoff",
+    pickup_date: formatDateToYMD(formData.pickupDate) || new Date().toISOString().split("T")[0],
+    pickup_time: formatTime(formData.pickupTime) || "12:00:00",
+    passengers: formData.passengers || 1,
+    luggage: formData.luggage || "0",
+    additional_service_ids: formData.additionalServiceIds || [],
+    special_requests: formData.specialRequests || "",
   };
 
   const { data: previewData, isLoading } = useSWR(
-    formData.vehicleId && formData.pickupDate ? ["/bookings/transportation/preview", payload] : null,
-    ([url, payload]) => fetchPreview(url, payload)
+    formData.vehicleId ? ["/bookings/transportation/preview/", payload] : null,
+    ([, p]) => fetchPreview(p)
   );
 
-  const preview = previewData?.data || {};
-  const basePrice = preview.base_price || 0;
-  const servicesTotal = preview.additional_services_price || 0;
-  const subtotal = preview.subtotal || 0;
-  const vat = preview.vat_amount || 0;
-  const insurance = preview.insurance_fee || 0;
-  const discount = preview.discount_amount || 0;
-  const total = preview.total_price || 0;
-  if (isLoading) {
+  const preview = previewData?.data || previewData || {};
+  const priceBreakdown = preview.price_breakdown || {};
+
+  // Base price
+  const basePrice =
+    parseFloat(priceBreakdown.base_price ?? preview.base_price ?? (vehicle.price_amount || vehicle.price || 0)) || 0;
+
+  // Selected additional services
+  const additionalServicesList = vehicle.additional_services || [];
+  const selectedAddons = additionalServicesList.filter((s: any) =>
+    formData.additionalServiceIds?.includes(s.id)
+  );
+  const fallbackServicesTotal = selectedAddons.reduce(
+    (acc: number, s: any) => acc + (parseFloat(s.price) || 0),
+    0
+  );
+
+  const servicesTotal =
+    parseFloat(
+      priceBreakdown.services_total ??
+      preview.additional_services_price ??
+      fallbackServicesTotal
+    ) || 0;
+
+  const discount = parseFloat(preview.discount ?? priceBreakdown.discount ?? preview.discount_amount ?? 0) || 0;
+  const total =
+    parseFloat(
+      preview.total_price ??
+      priceBreakdown.total ??
+      (basePrice + servicesTotal - discount)
+    ) || 0;
+
+  const rating = vehicle.rating || vehicle.rating_avg || vehicle.average_rating || "5.0";
+  const carImage = vehicle.image || vehicle.hero_image || "/images/sedan.png";
+
+  if (isLoading && !vehicleData) {
     return <div className={styles.loadingContainer}>Loading pricing preview...</div>;
   }
 
@@ -80,18 +116,17 @@ export default function StepBookingSummary({ formData }: StepBookingSummaryProps
       <div className={styles.panel}>
         <div className={styles.leftInner}>
           <div className={styles.titleWrap}>
-            <h3 className={styles.tripTitle}>Booking Summary</h3>
+            <h3 className={styles.tripTitle}>{vehicle.name || "Booking Summary"}</h3>
             <div className={styles.ratingBadge}>
               <Image src="/images/star-yellow.svg" alt="Rating" width={18} height={18} />
-              <span className={styles.ratingValue}>4.9</span>
-              <span className={styles.ratingCount}>(248)</span>
+              <span className={styles.ratingValue}>{rating}</span>
             </div>
           </div>
 
           <div className={styles.carImageWrap}>
             <Image 
-              src="/images/sedan.png" 
-              alt="Transportation Vehicle" 
+              src={carImage} 
+              alt={vehicle.name || "Transportation Vehicle"} 
               width={273} 
               height={178} 
               style={{ objectFit: 'contain' }}
@@ -115,29 +150,24 @@ export default function StepBookingSummary({ formData }: StepBookingSummaryProps
               <span className={styles.priceValue}>${basePrice.toFixed(2)}</span>
             </div>
             
-            {servicesTotal > 0 && (
+            {selectedAddons.length > 0 ? (
+              selectedAddons.map((addon: any) => (
+                <div className={styles.priceRow} key={addon.id}>
+                  <span className={styles.priceLabel}>{addon.name}</span>
+                  <span className={styles.priceValue}>+${(parseFloat(addon.price) || 0).toFixed(2)}</span>
+                </div>
+              ))
+            ) : servicesTotal > 0 ? (
               <div className={styles.priceRow}>
                 <span className={styles.priceLabel}>Additional Services</span>
-                <span className={styles.priceValue}>${servicesTotal.toFixed(2)}</span>
+                <span className={styles.priceValue}>+${servicesTotal.toFixed(2)}</span>
               </div>
-            )}
+            ) : null}
             
             {discount > 0 && (
               <div className={styles.priceRow}>
                 <span className={styles.priceLabel}>Special Discount</span>
                 <span className={styles.discountValue}>-${discount.toFixed(2)}</span>
-              </div>
-            )}
-            
-            <div className={styles.priceRow}>
-              <span className={styles.priceLabel}>VAT</span>
-              <span className={styles.priceValue}>${vat.toFixed(2)}</span>
-            </div>
-
-            {insurance > 0 && (
-              <div className={styles.priceRow}>
-                <span className={styles.priceLabel}>Insurance Fee</span>
-                <span className={styles.priceValue}>${insurance.toFixed(2)}</span>
               </div>
             )}
           </div>

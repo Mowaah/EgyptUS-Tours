@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { TransportationBookingData, Vehicle } from "@/types";
 import useSWR from "swr";
@@ -8,18 +8,6 @@ import { apiClient } from "@/lib/api";
 import { FormField, Button, CustomDatePicker, SelectDropdown, CheckboxIndicator, TimePicker, TimeValue, BookingStepFooter } from "@/components/shared";
 import formStyles from "@/components/shared/FormField/FormField.module.scss";
 import styles from "./StepTripDetails.module.scss";
-
-// ─── Static option lists ─────────────────────────────────────────────────────
-const PASSENGER_OPTIONS = [1, 2, 3, 4, 5, 6].map((n) => ({
-  label: `${n} Passenger${n > 1 ? "s" : ""}`,
-  value: n.toString(),
-}));
-
-const LUGGAGE_OPTIONS = [1, 2, 3, 4].map((n) => ({
-  label: `${n} Bag${n > 1 ? "s" : ""}`,
-  value: n.toString(),
-}));
-
 
 const fetcher = (url: string) => apiClient.get(url).then((res: any) => res.results || res);
 
@@ -177,6 +165,41 @@ export default function StepTripDetails({
   const { data: vehicleDetailsData } = useSWR(`/vehicles/${vehicle.id}/`, fetcher);
   const additionalServices = vehicleDetailsData?.additional_services || [];
 
+  const maxPassengers = Math.max(1, vehicleDetailsData?.passengers || vehicle.passengers || 1);
+  const maxLuggage = Math.max(0, vehicleDetailsData?.luggage_capacity ?? (typeof vehicle.luggage === "number" ? vehicle.luggage : parseInt(vehicle.luggage) || 0));
+
+  const passengerOptions = useMemo(() => {
+    return Array.from({ length: maxPassengers }, (_, i) => {
+      const val = i + 1;
+      return {
+        label: `${val} Passenger${val > 1 ? "s" : ""}`,
+        value: val.toString(),
+      };
+    });
+  }, [maxPassengers]);
+
+  const luggageOptions = useMemo(() => {
+    if (maxLuggage === 0) {
+      return [{ label: "0 Bags", value: "0" }];
+    }
+    return Array.from({ length: maxLuggage }, (_, i) => {
+      const val = i + 1;
+      return {
+        label: `${val} Bag${val > 1 ? "s" : ""}`,
+        value: val.toString(),
+      };
+    });
+  }, [maxLuggage]);
+
+  useEffect(() => {
+    if (formData.passengers > maxPassengers) {
+      onChange({ passengers: maxPassengers });
+    }
+    if (formData.luggage > maxLuggage && maxLuggage >= 0) {
+      onChange({ luggage: maxLuggage });
+    }
+  }, [maxPassengers, maxLuggage, formData.passengers, formData.luggage, onChange]);
+
   return (
     <div className={styles.stepCard}>
       {/* Header */}
@@ -227,7 +250,7 @@ export default function StepTripDetails({
                 value={formData.pickupDate}
                 onChange={(val) => onChange({ pickupDate: val })}
                 variant="input"
-                className={`${formStyles.input} ${styles.tallInput} ${styles.inputWithPaddingLeft}`}
+                className={`${formStyles.input} ${styles.tallInput} ${styles.inputWithPaddingLeft} ${errors.pickupDate ? formStyles.inputInvalid : ""}`}
               />
             </div>
           </FormField>
@@ -235,7 +258,7 @@ export default function StepTripDetails({
             <TimePickerField
               value={formData.pickupTime}
               onChange={(val) => onChange({ pickupTime: val })}
-              inputClassName={`${formStyles.input} ${styles.tallInput}`}
+              inputClassName={`${formStyles.input} ${styles.tallInput} ${styles.inputWithPaddingLeft} ${errors.pickupTime ? formStyles.inputInvalid : ""}`}
             />
           </FormField>
         </div>
@@ -244,7 +267,7 @@ export default function StepTripDetails({
         <div className={styles.twoColumn}>
           <FormField label="Passengers" required wrapperClassName={styles.formField}>
             <SelectDropdown
-              options={PASSENGER_OPTIONS}
+              options={passengerOptions}
               value={formData.passengers.toString()}
               onChange={(val) => onChange({ passengers: parseInt(val) })}
               triggerClassName={styles.selectTrigger}
@@ -252,7 +275,7 @@ export default function StepTripDetails({
           </FormField>
           <FormField label="Luggage" required wrapperClassName={styles.formField}>
             <SelectDropdown
-              options={LUGGAGE_OPTIONS}
+              options={luggageOptions}
               value={formData.luggage.toString()}
               onChange={(val) => onChange({ luggage: parseInt(val) })}
               triggerClassName={styles.selectTrigger}

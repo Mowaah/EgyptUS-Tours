@@ -22,113 +22,6 @@
   gap: 0.5rem;
 }
 
-.fullRow {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.customLabel {
-  font-weight: 700;
-  font-size: $font-size-sm;
-  color: #344054;
-  margin-bottom: 0.25rem;
-}
-.phoneField {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem; /* Match DashboardField default gap */
-}
-
-.phoneLabel {
-  font-size: $font-size-sm;
-  font-weight: 500;
-  line-height: 1.25rem;
-  color: $gray-600; /* match DashboardField label color */
-}
-
-.phoneInputWrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 3rem; /* match DashboardField height */
-  padding: 0 16px;
-  border: 1px solid $gray-200-zinc; /* match DashboardField border */
-  border-radius: 24px; /* match DashboardField border-radius */
-  background: $background;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  
-  &:focus-within {
-    border-color: $primary; /* $primary */
-    box-shadow: 0 0 0 3px rgba(41,113,230,0.12); /* $primary-soft */
-  }
-}
-
-.phoneInput {
-  flex: 1;
-  border: none;
-  background: transparent;
-  outline: none;
-  font-family: inherit;
-  font-size: $font-size-sm;
-  line-height: 1.35;
-  letter-spacing: 0.01em;
-  color: #444A51;
-  padding: 0;
-  min-width: 0;
-  
-  &::placeholder {
-    color: $gray-400; /* $gray-400 */
-  }
-}
-
-
-.countersRow {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1.5rem;
-  padding-top: 0.5rem;
-
-@use "@/styles/variables" as *;
-
-.container {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.col {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.fullRow {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.customLabel {
-  font-weight: 700;
-  font-size: $font-size-sm;
-  color: #344054;
-  margin-bottom: 0.25rem;
-}
-
 .phoneLabel {
   font-size: $font-size-sm;
   font-weight: 500;
@@ -158,3 +51,8 @@
   color: #C11515;
 }
 
+.specialRequestsSection {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}

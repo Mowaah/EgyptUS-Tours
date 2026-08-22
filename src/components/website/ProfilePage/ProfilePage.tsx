@@ -103,7 +103,7 @@ export default function ProfilePage() {
               currency: t.currency_code === "USD" ? "$" : t.currency_code,
               priceLabel: t.price_label,
               duration: t.duration,
-              image: t.image || "/images/trip-placeholder.jpg",
+              image: t.image || "/images/destination1.png",
               isFavorite: t.is_favorite,
             }))
           );
@@ -113,7 +113,7 @@ export default function ProfilePage() {
               id: h.slug,
               name: h.name,
               location: h.location_text,
-              image: h.hero_image || "/images/hotel-placeholder.jpg",
+              image: h.hero_image || h.image || "/images/pyramids.jpg",
               stars: h.stars,
               rating: h.rating_avg,
               reviews: h.review_count,
