@@ -6,33 +6,53 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to Droplet via SSH
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Next.js
+        run: |
+          echo "NEXT_PUBLIC_API_URL=https://api.egypt-us.com" > .env.local
+          npm run build
+
+      - name: Zip build files
+        run: tar -czf deploy.tar.gz .next public package.json package-lock.json next.config.ts .env.local
+
+      - name: Copy zip to Droplet
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DROPLET_IP }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          source: "deploy.tar.gz"
+          target: "/var/www/EgyptUS-Tours-Frontend"
+
+      - name: Extract and restart PM2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DROPLET_IP }}
           username: ${{ secrets.DROPLET_USER }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
-          command_timeout: 30m
           script: |
-            # Navigate to the project directory on your Droplet
-            # Change this path if you clone the repo somewhere else!
             cd /var/www/EgyptUS-Tours-Frontend
             
-            # Pull latest changes from the main branch
-            git pull origin main
+            # Extract the pre-built files from GitHub
+            tar -xzf deploy.tar.gz
+            rm deploy.tar.gz
             
-            # Install dependencies
-            npm install
+            # Install only production dependencies (much faster/lighter)
+            npm ci --production
             
-            # Create/update .env.local file with the production API URL
-            echo "NEXT_PUBLIC_API_URL=https://api.egypt-us.com" > .env.local
-            
-            # Build the Next.js frontend
-            npm run build
-            
-            # Restart the Next.js server using PM2
+            # Restart the server
             pm2 restart next-frontend || pm2 start npm --name "next-frontend" -- start
