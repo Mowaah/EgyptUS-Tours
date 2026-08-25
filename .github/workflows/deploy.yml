@@ -16,6 +16,7 @@ jobs:
           host: ${{ secrets.DROPLET_IP }}
           username: ${{ secrets.DROPLET_USER }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
+          command_timeout: 30m
           script: |
             # Navigate to the project directory on your Droplet
             # Change this path if you clone the repo somewhere else!
