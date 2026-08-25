@@ -100,7 +100,7 @@ export default function ProfilePage() {
               description: t.short_description,
               location: t.location_text,
               price: parseFloat(t.base_price),
-              currency: t.currency_code === "USD" ? "$" : t.currency_code,
+              currency: t.currency_code === "USD" ? "£" : t.currency_code,
               priceLabel: t.price_label,
               duration: t.duration,
               image: t.image || "/images/destination1.png",
@@ -119,7 +119,7 @@ export default function ProfilePage() {
               reviews: h.review_count,
               rooms: h.rooms,
               pricePerNight: parseFloat(h.price_per_night),
-              currency: h.currency_code === "USD" ? "$" : h.currency_code,
+              currency: h.currency_code === "USD" ? "£" : h.currency_code,
               isFavorite: h.is_favorite,
             }))
           );

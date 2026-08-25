@@ -7,7 +7,7 @@ import styles from "./RoomViewDropdown.module.scss";
 export interface RoomViewOption {
   label: string;
   value: string;
-  price?: string; // e.g. "+$ 456", or omit/null for "Free"
+  price?: string; // e.g. "+£456", or omit/null for "Free"
 }
 
 interface RoomViewDropdownProps {

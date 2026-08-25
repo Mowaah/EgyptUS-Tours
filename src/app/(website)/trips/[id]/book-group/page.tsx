@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import BookPrivateTripPage from "@/components/website/BookPrivateTripPage/BookPrivateTripPage";
 import { notFound } from "next/navigation";
 import { getFullTripById } from "@/services/tripsService";
@@ -15,5 +16,9 @@ export default async function BookGroupTrip({ params }: PageProps) {
     notFound();
   }
 
-  return <BookPrivateTripPage trip={trip} isGroupTrip={true} />;
+  return (
+    <Suspense fallback={<div style={{ minHeight: "60vh", padding: "100px 20px", textAlign: "center" }}>Loading booking...</div>}>
+      <BookPrivateTripPage trip={trip} isGroupTrip={true} />
+    </Suspense>
+  );
 }

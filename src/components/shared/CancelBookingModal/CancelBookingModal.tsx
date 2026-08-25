@@ -130,7 +130,7 @@ export default function CancelBookingModal({ open, onClose, onSubmit }: CancelBo
             <div className={styles.summaryCard}>
               <div className={styles.summaryRow}>
                 <span className={styles.summaryLabel}>Package Total</span>
-                <span className={styles.summaryValue}>$2,500</span>
+                <span className={styles.summaryValue}>£2,500</span>
               </div>
               <div className={styles.summaryRow}>
                 <span className={styles.summaryLabel}>Cancellation Window</span>
@@ -142,12 +142,12 @@ export default function CancelBookingModal({ open, onClose, onSubmit }: CancelBo
               </div>
               <div className={styles.summaryRow}>
                 <span className={styles.summaryLabel}>Deduction Amount</span>
-                <span className={styles.summaryValue}>$1,000</span>
+                <span className={styles.summaryValue}>£1,000</span>
               </div>
               <div className={styles.summaryRow}>
                 <span className={styles.summaryLabel}>Estimated Refund</span>
                 <div className={styles.estimatedRefund}>
-                  <span style={{ marginLeft: "4px" }}>$1,500</span>
+                  <span style={{ marginLeft: "4px" }}>£1,500</span>
                 </div>
               </div>
             </div>

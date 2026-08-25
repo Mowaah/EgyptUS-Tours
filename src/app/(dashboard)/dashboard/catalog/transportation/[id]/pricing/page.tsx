@@ -10,8 +10,8 @@ export default function TransportationPricingPage() {
   if (loading) return <div>Loading pricing...</div>;
   if (!vehicle) return <div>Vehicle not found.</div>;
 
-  const basePrice = vehicle.price_amount !== null ? `$${vehicle.price_amount}` : "-";
-  const pricePerKm = vehicle.price_per_km !== null ? `$${vehicle.price_per_km}` : "-";
+  const basePrice = vehicle.price_amount !== null ? `£${vehicle.price_amount}` : "-";
+  const pricePerKm = vehicle.price_per_km !== null ? `£${vehicle.price_per_km}` : "-";
   
   const totalPrice = vehicle.price_amount ? Number(vehicle.price_amount) : 0;
   
@@ -42,7 +42,7 @@ export default function TransportationPricingPage() {
 
         <div className={styles.totalRow}>
           <span className={styles.totalLabel}>Total Price</span>
-          <span className={styles.totalValue}>${totalPrice}</span>
+          <span className={styles.totalValue}>£{totalPrice}</span>
         </div>
       </div>
 
@@ -60,7 +60,7 @@ export default function TransportationPricingPage() {
             {additionalServices.map((service: any) => (
               <div key={service.name || service} className={styles.priceCell}>
                 <span className={styles.cellLabel}>{service.name || service}</span>
-                <span className={styles.cellValue}>{service.price ? `$${service.price}` : "-"}</span>
+                <span className={styles.cellValue}>{service.price ? `£${service.price}` : "-"}</span>
               </div>
             ))}
           </div>

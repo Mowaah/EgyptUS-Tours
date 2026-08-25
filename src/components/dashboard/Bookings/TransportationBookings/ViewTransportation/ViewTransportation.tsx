@@ -50,7 +50,7 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
   const payload = transportData;
   const isRefunded = payload?.operational_status === "refunded";
   const isCancelled = payload?.operational_status === "cancelled";
-  const displayId = payload?.booking_code || `BK-${id}`;
+  const displayId = payload?.booking_code || `BK-${String(id).padStart(6, "0")}`;
 
   const customPills = payload ? (
     <div className={styles.customPills}>

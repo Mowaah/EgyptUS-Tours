@@ -129,8 +129,7 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
     }
 
     if (currentStep === 1) {
-      if (!formData.hotelLocation) newErrors.hotelLocation = "Hotel location is required";
-      if (!formData.specificHotel) newErrors.specificHotel = "Specific hotel is required";
+      if (!formData.specificHotel) newErrors.specificHotel = "Please select a hotel";
       
       const totalRooms = Object.values(formData.roomCustomizations).reduce((sum, ids) => sum + ids.length, 0);
       if (totalRooms === 0) {
@@ -250,18 +249,19 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
         onPrimaryClick={onClose}
         metadata={[
           { label: "Booking Reference", value: bookingId },
-          { label: "Hotel", value: formData.specificHotel || "Beach Nile Palace Hotel & Spa" },
-          { label: "Check-in", value: formData.checkInDate || "12 Oct 2026" },
-          { label: "Check-out", value: formData.checkOutDate || "24 Oct 2026" },
+          { label: "Hotel", value: formData.specificHotel || "Selected Hotel" },
+          { label: "Check-in", value: formData.checkInDate || "—" },
+          { label: "Check-out", value: formData.checkOutDate || "—" },
           { 
             label: "Payment Status", 
             value: <StatusPill label="Paid" variant="green" hideDot /> 
           },
-          { label: "Amount Paid", value: `$${total.toFixed(2)}`, valueColor: "#FF6600" }
+          { label: "Amount Paid", value: `£${Number(total).toLocaleString()}`, valueColor: "#FF6600" }
         ]}
       />
     );
   }
+
 
   return (
     <BookingModalContainer

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Button from "../Button/Button";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import styles from "./VehicleCard.module.scss";
 
 export interface Vehicle {
@@ -23,12 +24,13 @@ interface VehicleCardProps {
   view?: "grid" | "list";
 }
 export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps) {
+  const { formatCurrency } = useCurrency();
   const isList = view === "list";
   const vehicleDetailsHref = `/transportation/${vehicle.id}`;
 
   const formatDuration = (val?: string) => {
     if (!val) return "";
-    const clean = val.replace(/^(\d+)-\1$/, "$1");
+    const clean = val.replace(/^(\d+)-\1$/, "£1");
     if (clean.toLowerCase().includes("hour")) return clean;
     return `${clean} ${clean === "1" ? "hour" : "hours"}`;
   };
@@ -94,7 +96,7 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
           <div className={styles.footer}>
             <div className={styles.priceCol}>
               <span className={styles.priceLabel}>Total Price</span>
-              <span className={styles.priceValue}>{vehicle.price}</span>
+              <span className={styles.priceValue}>{formatCurrency(Number(String(vehicle.price).replace(/,/g, "")) || 0)}</span>
             </div>
             <Button variant="primary" size="sm" href={`/transportation/${vehicle.id}/book`}>
               Book Now

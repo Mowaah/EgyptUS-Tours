@@ -36,7 +36,7 @@ export default function TablePanel({
   onExportClick,
 }: TablePanelProps) {
   const panelClassName = className ? `${styles.panel} ${className}` : styles.panel;
-  const [isToolbarOpen, setIsToolbarOpen] = useState(true);
+  const [isToolbarOpen, setIsToolbarOpen] = useState(false);
 
   const handleFilterClick = () => {
     setIsToolbarOpen((prev) => !prev);

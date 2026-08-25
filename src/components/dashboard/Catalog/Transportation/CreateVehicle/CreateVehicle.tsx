@@ -202,7 +202,7 @@ async function buildPayload(data: CreateVehicleValues, intent: WizardSubmitInten
     luggage_capacity: intValue(data.luggageCapacity) || 0,
     rating_avg: data.starRating ? parseFloat(data.starRating) : null,
     additional_service_ids: data.additionalServices?.map(id => parseInt(id, 10)) || [],
-    currency_code: "USD",
+    currency_code: "£",
     price_amount: money(data.basePrice) || null,
     price_per_km: money(data.pricePerKm) || null,
     media_items: photos.filter(Boolean),

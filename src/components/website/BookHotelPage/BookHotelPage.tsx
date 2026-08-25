@@ -1,16 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Hotel } from "@/types";
 import { BookingData, INITIAL_BOOKING_DATA } from "@/types";
-import { PageHeader, SuccessModal, StepIndicator } from "@/components/shared";
+import { PageHeader, StepIndicator, SuccessModal } from "@/components/shared";
+import { BASE_URL, extractApiError, submitHotelBooking } from "@/lib/api";
+import { formatPhoneE164 } from "@/utils/validators";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 import planPageStyles from "../PlanYourTripPage/PlanYourTripPage.module.scss";
 
 import StepRoomDates from "./steps/RoomDates/StepRoomDates";
 import StepPersonalInfo from "./steps/PersonalInfo/StepPersonalInfo";
-import StepPayment from "./steps/Payment/StepPayment";
 
 export type { BookingData };
 
@@ -24,12 +26,151 @@ interface BookHotelPageProps {
   hotel: Hotel;
 }
 
+interface SavedBookingInfo {
+  id?: number | string;
+  hotelSlug?: string;
+  hotelName?: string;
+  startDate?: string;
+  endDate?: string;
+  totalAmount?: number;
+  depositAmount?: number;
+  timestamp?: number;
+}
+
+function formatDateForBooking(dateStr: string) {
+  if (!dateStr) return null;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+  const parts = dateStr.split("/");
+  if (parts.length === 3) {
+    const [month, day, year] = parts;
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  }
+  return dateStr;
+}
+
+function buildRoomSelections(formData: BookingData, hotel: Hotel) {
+  const selectedRoomIds = Object.values(formData.roomCustomizations || {}).flat();
+  if (selectedRoomIds.length === 0) return undefined;
+
+  const roomsById = new Map((hotel.hotelRooms || []).map((room) => [room.id, room]));
+  const groupedSelections = new Map<string, { quantity: number; view_label?: string }>();
+
+  for (const roomId of selectedRoomIds) {
+    if (!roomId) continue;
+    const existing = groupedSelections.get(roomId);
+    const room = roomsById.get(roomId);
+    groupedSelections.set(roomId, {
+      quantity: (existing?.quantity || 0) + 1,
+      view_label: existing?.view_label || room?.view,
+    });
+  }
+
+  return Array.from(groupedSelections.entries())
+    .map(([roomId, selection]) => ({
+      hotel_room_id: Number(roomId),
+      quantity: selection.quantity,
+      view_label: selection.view_label || "Standard",
+    }))
+    .filter((selection) => Number.isFinite(selection.hotel_room_id) && selection.quantity > 0);
+}
+
+function resolvePaymentUrl(paymentUrl: string) {
+  const trimmed = paymentUrl.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return new URL(trimmed, BASE_URL).toString();
+}
+
+function saveBookingInfo(info: SavedBookingInfo) {
+  try {
+    const data = JSON.stringify({ ...info, timestamp: Date.now() });
+    localStorage.setItem("last_hotel_booking", data);
+    sessionStorage.setItem("last_hotel_booking", data);
+  } catch (e) {
+    console.error("Failed to save booking info", e);
+  }
+}
+
+function getBookingInfo(): SavedBookingInfo | null {
+  try {
+    const raw = localStorage.getItem("last_hotel_booking") || sessionStorage.getItem("last_hotel_booking");
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    const savedAt = Number(parsed.timestamp || 0);
+    // Allow up to 2 hours expiration
+    if (savedAt && Date.now() - savedAt > 2 * 60 * 60 * 1000) {
+      clearBookingInfo();
+      return null;
+    }
+    return parsed;
+  } catch (e) {
+    console.error("Failed to read booking info", e);
+  }
+  return null;
+}
+
+function clearBookingInfo() {
+  try {
+    localStorage.removeItem("last_hotel_booking");
+    sessionStorage.removeItem("last_hotel_booking");
+  } catch {}
+}
+
 export default function BookHotelPage({ hotel }: BookHotelPageProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { formatCurrency } = useCurrency();
   const [currentStep, setCurrentStep] = useState(1);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [isStartingCheckout, setIsStartingCheckout] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [confirmedBooking, setConfirmedBooking] = useState<SavedBookingInfo | null>(null);
   const stepIndicatorRef = useRef<HTMLDivElement | null>(null);
   const [formData, setFormData] = useState<BookingData>(INITIAL_BOOKING_DATA);
+
+  // Check for successful payment redirect back to this page
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const isBookingSuccess =
+      urlParams.get("booking_success") === "true" ||
+      urlParams.get("booking_success") === "1" ||
+      searchParams.get("booking_success") === "true" ||
+      searchParams.get("booking_success") === "1";
+
+    const successParam = (urlParams.get("success") || searchParams.get("success") || "").toLowerCase();
+    const pendingParam = (urlParams.get("pending") || searchParams.get("pending") || "").toLowerCase();
+    const isDirectPaymobSuccess =
+      (successParam === "true" || successParam === "1") &&
+      pendingParam !== "true";
+
+    if (isBookingSuccess || isDirectPaymobSuccess) {
+      const savedInfo = getBookingInfo();
+      const rawBookingId =
+        urlParams.get("booking_id") ||
+        searchParams.get("booking_id") ||
+        urlParams.get("id") ||
+        searchParams.get("id") ||
+        savedInfo?.id ||
+        Math.floor(Math.random() * 90000000 + 10000000);
+
+      const bookingId = String(rawBookingId).replace(/[^a-zA-Z0-9-_]/g, "");
+
+      setConfirmedBooking({
+        id: bookingId,
+        hotelName: savedInfo?.hotelName || hotel.name,
+        startDate: savedInfo?.startDate,
+        endDate: savedInfo?.endDate,
+        totalAmount: savedInfo?.totalAmount,
+        depositAmount: savedInfo?.depositAmount,
+      });
+      setShowSuccessModal(true);
+
+      // Clean query parameters from URL without page reload
+      try {
+        window.history.replaceState({}, "", window.location.pathname);
+      } catch {}
+    }
+  }, [searchParams, hotel.name]);
 
   const handleChange = (patch: Partial<BookingData>) => {
     setFormData((prev) => ({ ...prev, ...patch }));
@@ -70,13 +211,57 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
   const vatAmount = 0;
   const depositAmount = totalAmount * 0.3;
 
-  const handleContinue = () => {
-    if (currentStep < 3) setCurrentStep((s) => s + 1);
-    else setShowSuccess(true);
-  };
-
   const handlePrevious = () => {
     if (currentStep > 1) setCurrentStep((s) => s - 1);
+  };
+
+  const handleStartCheckout = async () => {
+    setIsStartingCheckout(true);
+    try {
+      const roomSelections = buildRoomSelections(formData, hotel);
+      const booking = await submitHotelBooking({
+        name: formData.name.trim(),
+        hotel_slug: hotel.id,
+        email: formData.email.trim(),
+        phone: formatPhoneE164(formData.phone),
+        nationality: formData.nationality,
+        start_date: formatDateForBooking(formData.startDate),
+        end_date: formatDateForBooking(formData.endDate),
+        adults: formData.adults,
+        children: formData.children,
+        infants: formData.infants,
+        rooms: {
+          single: formData.rooms?.single || 0,
+          double: formData.rooms?.double || 0,
+          triple: formData.rooms?.triple || 0,
+        },
+        ...(roomSelections?.length ? { room_selections: roomSelections } : {}),
+        requested_room_type: "Any",
+        special_requests: formData.specialRequests,
+        terms_accepted: formData.termsAccepted,
+      });
+
+      if (!booking.payment_url) {
+        throw new Error("The booking was created, but no Paymob checkout URL was returned.");
+      }
+
+      // Save context to storage so we can display details upon returning
+      saveBookingInfo({
+        id: booking.id,
+        hotelSlug: hotel.id,
+        hotelName: hotel.name,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        totalAmount: parseFloat(booking.total_price) || totalAmount,
+        depositAmount: parseFloat(booking.deposit_amount) || depositAmount,
+      });
+
+      window.location.assign(resolvePaymentUrl(booking.payment_url));
+    } catch (error) {
+      console.error("Failed to start hotel checkout", error);
+      alert(extractApiError(error, "Something went wrong while starting Paymob checkout. Please try again."));
+      setIsStartingCheckout(false);
+    }
   };
 
   useEffect(() => {
@@ -88,12 +273,25 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
     formData,
     onChange: handleChange,
     onPrevious: handlePrevious,
-    onContinue: handleContinue,
+    onContinue: handleStartCheckout,
+    isSubmitting: isStartingCheckout,
     totalAmount,
     vatAmount,
     depositAmount,
     totalRooms,
     totalGuests,
+  };
+
+  const handleCloseModal = () => {
+    setShowSuccessModal(false);
+    clearBookingInfo();
+    router.push("/hotels");
+  };
+
+  const handlePrimaryModal = () => {
+    setShowSuccessModal(false);
+    clearBookingInfo();
+    router.push("/profile");
   };
 
   return (
@@ -125,28 +323,28 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
             />
           )}
           {currentStep === 2 && <StepPersonalInfo {...sharedProps} />}
-          {currentStep === 3 && <StepPayment {...sharedProps} />}
         </div>
       </main>
 
-      {showSuccess && (
+      {showSuccessModal && (
         <SuccessModal
           title="Booking Confirmed!"
           message="Your hotel reservation has been successfully booked. Confirmation details have been sent to your email."
-          primaryButtonText="View Booking"
-          buttonText="Back to Home"
-          onPrimaryClick={() => router.push("/")}
-          onClose={() => router.push("/")}
+          primaryButtonText="View My Bookings"
+          buttonText="Back to Hotels"
+          onPrimaryClick={handlePrimaryModal}
+          onClose={handleCloseModal}
           metadata={[
-            { label: "Booking Reference", value: `#HB${Math.floor(Math.random() * 90000000 + 10000000)}` },
-            { label: "Hotel", value: hotel.name },
-            { label: "Check-in", value: formData.startDate || "—" },
-            { label: "Check-out", value: formData.endDate || "—" },
-            { label: "Total Price", value: `$${(totalAmount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, valueColor: "#FF6600" },
-            { label: "Paid Now", value: `$${depositAmount.toFixed(2)}`, valueColor: "#FF6600" },
+            { label: "Booking Reference", value: `BK-${String(confirmedBooking?.id || "1024").padStart(6, "0")}` },
+            { label: "Hotel", value: confirmedBooking?.hotelName || hotel.name },
+            { label: "Check-in", value: confirmedBooking?.startDate || formData.startDate || "—" },
+            { label: "Check-out", value: confirmedBooking?.endDate || formData.endDate || "—" },
+            { label: "Total Price", value: confirmedBooking?.totalAmount ? formatCurrency(Number(confirmedBooking.totalAmount)) : formatCurrency(totalAmount), valueColor: "#FF6600" },
+            { label: "Paid Now", value: confirmedBooking?.depositAmount ? formatCurrency(Number(confirmedBooking.depositAmount)) : formatCurrency(depositAmount), valueColor: "#FF6600" },
           ]}
         />
       )}
     </div>
   );
 }
+

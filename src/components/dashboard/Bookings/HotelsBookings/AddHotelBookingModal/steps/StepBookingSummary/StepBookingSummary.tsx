@@ -164,21 +164,21 @@ export default function StepBookingSummary({ formData, onSummaryLoad }: StepBook
                     <span className={styles.priceLabel}>
                       {item.quantity} × {item.type_label} - {item.view_label} ({nights} {nights === 1 ? 'night' : 'nights'})
                     </span>
-                    <span className={styles.priceValue}>${item.line_total}</span>
+                    <span className={styles.priceValue}>£{Number(item.line_total).toLocaleString()}</span>
                   </div>
                 ))}
                 
                 {parseFloat(discount) > 0 && (
                   <div className={styles.priceRow}>
                     <span className={styles.priceLabel}>Special Discount</span>
-                    <span className={styles.discountValue}>-${discount}</span>
+                    <span className={styles.discountValue}>-£{Number(discount).toLocaleString()}</span>
                   </div>
                 )}
               </div>
             
               <div className={styles.totalRow}>
                 <span className={styles.totalLabel}>Total</span>
-                <span className={styles.totalValue}>${total}</span>
+                <span className={styles.totalValue}>£{Number(total).toLocaleString()}</span>
               </div>
             </div>
           )}

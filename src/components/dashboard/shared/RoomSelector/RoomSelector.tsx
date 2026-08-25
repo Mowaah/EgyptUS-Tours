@@ -111,15 +111,18 @@ export default function RoomSelector({
         </div>
       )}
 
-      {/* Per-room customization — only shown when there are options to pick from */}
+      {/* Per-room customization — shown whenever room count > 0 */}
       {rooms.map((room) => {
         const count = counts[room.key] || 0;
-        if (count === 0 || room.options.length <= 1) return null;
+        if (count === 0 || room.options.length === 0) return null;
+
+        const baseTypeName = room.title.split(" - ")[0] || room.title;
+        const pluralTitle = baseTypeName.endsWith("s") ? baseTypeName : `${baseTypeName}s`;
 
         return (
           <div key={`custom-${room.key}`} className={styles.customRoomsSection}>
             <h4 className={styles.subSectionTitle}>
-              Customize {room.title}s ({count} selected)
+              Customize {pluralTitle} ({count} selected)
             </h4>
             <div className={styles.customRoomsGrid}>
               {Array.from({ length: count }).map((_, i) => {

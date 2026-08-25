@@ -48,7 +48,7 @@ export default function RefundPaymentModal({ open, onClose, onSubmit }: RefundPa
           
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #F8FAFC" }}>
             <span style={{ color: "#A3A3A3", fontSize: "14px", fontWeight: 500 }}>Package Total</span>
-            <span style={{ color: "#374151", fontSize: "16px", fontFamily: "Trip Sans", fontWeight: 500 }}>$2,500</span>
+            <span style={{ color: "#374151", fontSize: "16px", fontFamily: "Trip Sans", fontWeight: 500 }}>£2,500</span>
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #F8FAFC" }}>
@@ -68,13 +68,13 @@ export default function RefundPaymentModal({ open, onClose, onSubmit }: RefundPa
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #F8FAFC" }}>
             <span style={{ color: "#A3A3A3", fontSize: "14px", fontWeight: 500 }}>Deduction Amount</span>
-            <span style={{ color: "#374151", fontSize: "16px", fontFamily: "Trip Sans", fontWeight: 500 }}>$1,000</span>
+            <span style={{ color: "#374151", fontSize: "16px", fontFamily: "Trip Sans", fontWeight: 500 }}>£1,000</span>
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #F8FAFC" }}>
             <span style={{ color: "#A3A3A3", fontSize: "14px", fontWeight: 500 }}>Refund Amount</span>
             <div style={{ background: "rgba(255, 102, 0, 0.1)", borderRadius: "128px", padding: "4px 12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ color: "#FF6600", fontSize: "16px", fontFamily: "Trip Sans", fontWeight: 500 }}>$1,500</span>
+              <span style={{ color: "#FF6600", fontSize: "16px", fontFamily: "Trip Sans", fontWeight: 500 }}>£1,500</span>
             </div>
           </div>
           

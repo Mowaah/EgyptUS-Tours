@@ -46,7 +46,7 @@ export const transportationColumns: DataTableColumn<any>[] = [
   {
     id: "startingFrom",
     header: "Starting From",
-    render: (row) => `$${row.starting_from || "0.00"}`,
+    render: (row) => `£${row.starting_from || "0.00"}`,
   },
   {
     id: "status",

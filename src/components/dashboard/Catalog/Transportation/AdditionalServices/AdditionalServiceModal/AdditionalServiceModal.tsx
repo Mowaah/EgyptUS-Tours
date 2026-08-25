@@ -78,14 +78,14 @@ export default function AdditionalServiceModal({
   const handleIncrement = () => {
     const rawVal = price.replace(/[^0-9.]/g, "");
     const current = parseFloat(rawVal) || 0;
-    setPrice((current + 1).toString() + "$");
+    setPrice(`${current + 1}£`);
   };
 
   const handleDecrement = () => {
     const rawVal = price.replace(/[^0-9.]/g, "");
     const current = parseFloat(rawVal) || 0;
     if (current > 0) {
-      setPrice((current - 1).toString() + "$");
+      setPrice(`${current - 1}£`);
     }
   };
 
@@ -123,13 +123,13 @@ export default function AdditionalServiceModal({
             variant="modal"
           />
           <DashboardField
-            label="Price"
+            label="Price (EGP)"
             id="additional-service-price"
-            placeholder="0$"
+            placeholder="0£"
             value={price}
             onChange={(e) => {
               const raw = e.target.value.replace(/[^0-9.]/g, "");
-              setPrice(raw ? raw + "$" : "");
+              setPrice(raw ? `${raw}£` : "");
             }}
             variant="modal"
             endAdornment={

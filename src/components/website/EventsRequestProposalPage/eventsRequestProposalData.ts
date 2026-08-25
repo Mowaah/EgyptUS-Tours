@@ -56,10 +56,10 @@ export const ADDITIONAL_SERVICES = [
 ];
 
 export const BUDGET_RANGES = [
-  { label: "$10,000 - $25,000", value: "10k-25k" },
-  { label: "$25,000 - $50,000", value: "25k-50k" },
-  { label: "$50,000 - $100,000", value: "50k-100k" },
-  { label: "$100,000+", value: "100k-plus" },
+  { label: "£10,000 - £25,000", value: "10k-25k" },
+  { label: "£25,000 - £50,000", value: "25k-50k" },
+  { label: "£50,000 - £100,000", value: "50k-100k" },
+  { label: "£100,000+", value: "100k-plus" },
 ];
 
 export const BUDGET_FLEXIBILITY = [

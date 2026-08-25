@@ -1,4 +1,4 @@
-import { isValidPhoneNumber, parsePhoneNumber } from "libphonenumber-js";
+import { isValidPhoneNumber, parsePhoneNumber } from "libphonenumber-js/max";
 
 /**
  * Reusable form validation helper functions

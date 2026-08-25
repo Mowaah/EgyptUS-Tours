@@ -8,6 +8,7 @@ import FavoriteButton from "../FavoriteButton/FavoriteButton";
 import { StarRating } from "@/components/shared";
 import { useFavorite } from "@/hooks/useFavorite";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import styles from "./HotelCard.module.scss";
 
 interface HotelCardProps {
@@ -23,6 +24,7 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
   const isList = view === "list";
   const hotelDetailsHref = `/hotels/${hotel.id}`;
   const { isAuthenticated } = useAuth();
+  const { formatCurrency } = useCurrency();
   const { isFavorite, isLoading, toggle } = useFavorite({
     slug: hotel.id,
     kind: "hotel",
@@ -78,7 +80,7 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
             <span className={styles.statLabel}>Rooms</span>
           </div>
           <div className={styles.stat}>
-            <span className={styles.statValue}>${hotel.pricePerNight}</span>
+            <span className={styles.statValue}>{formatCurrency(hotel.pricePerNight)}</span>
             <span className={styles.statLabel}>/night</span>
           </div>
         </div>
@@ -89,7 +91,7 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
           <div className={styles.price}>
             <span className={styles.priceLabel}>Starting from</span>
             <span className={styles.priceValue}>
-              ${hotel.pricePerNight}
+              {formatCurrency(hotel.pricePerNight)}
               <small>/night</small>
             </span>
           </div>

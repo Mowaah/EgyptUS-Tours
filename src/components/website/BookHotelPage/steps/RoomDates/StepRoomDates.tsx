@@ -8,14 +8,13 @@ import {
   CounterPill,
 } from "@/components/shared";
 import type { SelectOption } from "@/components/shared";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import planPage from "../../../PlanYourTripPage/PlanYourTripPage.module.scss";
 import travelerStyles from "../../../PlanYourTripPage/steps/TravelerInfo/StepTravelerInfo.module.scss";
 import formStyles from "@/components/shared/FormField/FormField.module.scss";
 import styles from "./StepRoomDates.module.scss";
 import { BookingData } from "../../BookHotelPage";
-import { Hotel } from "@/types";
-
-// The hardcoded constants have been replaced by dynamic grouping based on hotel.hotelRooms.
+import { Hotel, HotelRoom } from "@/types";
 
 interface StepRoomDatesProps {
   formData: BookingData;
@@ -26,10 +25,11 @@ interface StepRoomDatesProps {
 
 export default function StepRoomDates({ formData, onChange, onContinue, hotel }: StepRoomDatesProps) {
   const [errors, setErrors] = React.useState<Record<string, string>>({});
+  const { formatCurrency } = useCurrency();
 
   const groupedRooms = React.useMemo(() => {
     if (!hotel.hotelRooms) return {};
-    const groups: Record<string, typeof hotel.hotelRooms> = {};
+    const groups: Record<string, HotelRoom[]> = {};
     for (const room of hotel.hotelRooms) {
       if (!groups[room.type]) groups[room.type] = [];
       groups[room.type].push(room);
@@ -52,6 +52,8 @@ export default function StepRoomDates({ formData, onChange, onContinue, hotel }:
       newList = newList.slice(0, newCount);
     }
 
+    if (errors.rooms) setErrors((e) => ({ ...e, rooms: "" }));
+
     onChange({ 
       rooms: newRooms,
       roomCustomizations: { ...(formData.roomCustomizations || {}), [roomType]: newList }
@@ -66,6 +68,8 @@ export default function StepRoomDates({ formData, onChange, onContinue, hotel }:
   };
 
   const handleGuestChange = (type: "adults" | "children" | "infants", increment: boolean) => {
+    if (errors.adults && type === "adults") setErrors((e) => ({ ...e, adults: "" }));
+    if (errors.rooms) setErrors((e) => ({ ...e, rooms: "" }));
     onChange({ [type]: Math.max(0, formData[type] + (increment ? 1 : -1)) });
   };
 
@@ -74,12 +78,26 @@ export default function StepRoomDates({ formData, onChange, onContinue, hotel }:
     if (!formData.startDate) newErrors.startDate = "Check-in date is required.";
     if (!formData.endDate) newErrors.endDate = "Check-out date is required.";
 
-    const totalRooms = Object.values(formData.rooms || {}).reduce((acc, count) => acc + (count || 0), 0);
+    if (!formData.adults || formData.adults < 1) {
+      newErrors.adults = "Please select at least one adult.";
+    }
+
+    let totalCapacity = 0;
+    let totalRooms = 0;
+    Object.entries(formData.rooms || {}).forEach(([key, count]) => {
+      const c = Number(count) || 0;
+      totalRooms += c;
+      const k = key.toLowerCase();
+      if (k.includes("single")) totalCapacity += c * 1;
+      else if (k.includes("double")) totalCapacity += c * 2;
+      else if (k.includes("triple")) totalCapacity += c * 3;
+      else totalCapacity += c * 2; // fallback
+    });
+
     if (totalRooms === 0) {
       newErrors.rooms = "Please select at least one room.";
-    }
-    if (formData.adults === 0) {
-      newErrors.adults = "Please select at least one adult.";
+    } else if (formData.adults > totalCapacity) {
+      newErrors.rooms = `Selected rooms only accommodate ${totalCapacity} ${totalCapacity === 1 ? "adult" : "adults"}, but ${formData.adults} adults are selected.`;
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -110,7 +128,7 @@ export default function StepRoomDates({ formData, onChange, onContinue, hotel }:
               value={formData.startDate}
               onChange={(date) => {
                 onChange({ startDate: date });
-                if (errors.startDate) setErrors(e => ({ ...e, startDate: "" }));
+                if (errors.startDate) setErrors((e) => ({ ...e, startDate: "" }));
               }}
             />
           </FormField>
@@ -121,7 +139,7 @@ export default function StepRoomDates({ formData, onChange, onContinue, hotel }:
               value={formData.endDate}
               onChange={(date) => {
                 onChange({ endDate: date });
-                if (errors.endDate) setErrors(e => ({ ...e, endDate: "" }));
+                if (errors.endDate) setErrors((e) => ({ ...e, endDate: "" }));
               }}
             />
           </FormField>
@@ -173,7 +191,7 @@ export default function StepRoomDates({ formData, onChange, onContinue, hotel }:
             const t = type.toLowerCase() as "single" | "double" | "triple";
             
             // Base room is either Garden View, or cheapest, or first.
-            const gardenRoom = rooms.find(r => r.view.toLowerCase().includes("garden"));
+            const gardenRoom = rooms.find((r) => r.view.toLowerCase().includes("garden"));
             const baseRoom = gardenRoom || [...rooms].sort((a, b) => a.pricePerNight - b.pricePerNight)[0];
             
             const count = formData.rooms[t] || 0;
@@ -189,7 +207,7 @@ export default function StepRoomDates({ formData, onChange, onContinue, hotel }:
                     <span className={styles.roomSub}>{guestsNum} {guestsNum === 1 ? 'person' : 'people'}</span>
                   </div>
                   <div className={styles.priceCol}>
-                    <span className={styles.priceVal}>${baseRoom.pricePerNight}</span>
+                    <span className={styles.priceVal}>{formatCurrency(baseRoom.pricePerNight)}</span>
                     <span className={styles.roomSub}>/ night</span>
                   </div>
                 </label>
@@ -210,14 +228,16 @@ export default function StepRoomDates({ formData, onChange, onContinue, hotel }:
           const count = formData.rooms[t] || 0;
           if (count === 0) return null;
           
-          const gardenRoom = rooms.find(r => r.view.toLowerCase().includes("garden"));
+          const gardenRoom = rooms.find((r) => r.view.toLowerCase().includes("garden"));
           const baseRoom = gardenRoom || [...rooms].sort((a, b) => a.pricePerNight - b.pricePerNight)[0];
 
           // Map other views to dropdown options
-          const options: SelectOption[] = rooms.map(r => {
+          const options: SelectOption[] = rooms.map((r) => {
             const isBase = r.id === baseRoom.id;
             const diff = r.pricePerNight - baseRoom.pricePerNight;
-            const displayPrice = isBase ? "Included" : `+$${diff}`;
+            const displayPrice = isBase
+              ? "Included"
+              : `${diff > 0 ? "+" : "-"}${formatCurrency(Math.abs(diff))}`;
             return {
               label: `${r.view}${isBase ? " (Included)" : ""}`,
               value: r.id,

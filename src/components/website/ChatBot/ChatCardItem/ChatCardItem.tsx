@@ -29,7 +29,7 @@ export default function ChatCardItem({ card, onCardClick }: ChatCardItemProps) {
       image: card.image || "/images/destination1.png",
       location: card.subtitle?.split("·")[0]?.trim() || "Egypt",
       price: parseFloat(card.price) || 0,
-      currency: card.currency_code ? ` ${card.currency_code}` : "$",
+      currency: card.currency_code ? ` ${card.currency_code}` : "£",
       duration: {
         days,
         nights,

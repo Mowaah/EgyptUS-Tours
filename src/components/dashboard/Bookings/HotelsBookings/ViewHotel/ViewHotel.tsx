@@ -53,7 +53,7 @@ export default function ViewHotel({ bookingId }: ViewHotelProps) {
   const payload = hotelData;
   const isRefunded = payload?.operational_status === "refunded";
   const isCancelled = payload?.operational_status === "cancelled";
-  const displayId = payload?.booking_code || `BK-${bookingId}`;
+  const displayId = payload?.booking_code || `BK-${String(bookingId).padStart(6, "0")}`;
 
   const customPills = payload ? (
     <div className={styles.customPills}>

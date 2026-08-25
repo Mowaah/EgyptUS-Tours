@@ -155,8 +155,8 @@ function mapHotelToFormValues(hotel: any): CreateHotelValues {
       category: room.category_label || "",
       type: room.type_label || "",
       view: room.view_label || "",
-      pricePerNight: room.price_per_night || "",
-      pricePerNightEgp: room.price_per_night_egp || "",
+      pricePerNight: room.price_per_night_egp || room.price_per_night || "",
+      pricePerNightEgp: room.price_per_night_egp || room.price_per_night || "",
       description: {
         en: room.translations?.en?.description || room.description || "",
         it: room.translations?.it?.description || "",
@@ -211,9 +211,9 @@ function validateBeforePublish(data: CreateHotelValues, intent: WizardSubmitInte
     if (!data.rooms || data.rooms.length === 0) {
       errors.push("Rooms: add at least one room before publishing.");
     } else {
-      const hasPricedRoom = data.rooms.some(r => parseFloat(String(r.pricePerNight || 0)) > 0);
+      const hasPricedRoom = data.rooms.some(r => parseFloat(String(r.pricePerNightEgp || r.pricePerNight || 0)) > 0);
       if (!hasPricedRoom) {
-        errors.push("Rooms: at least one room must have a price before publishing.");
+        errors.push("Rooms: at least one room must have an £ price before publishing.");
       }
     }
   }
@@ -320,13 +320,15 @@ export function CreateHotel({ hotelId, onDirtyChange, onSavingChange }: { hotelI
           );
           const validImages = roomPhotos.filter((item): item is NonNullable<typeof item> => Boolean(item && (item.image || item.id)));
 
+          const roomPriceEgp = cleanNumber(r.pricePerNightEgp) || cleanNumber(r.pricePerNight);
+
           return {
             id: r.id,
             category_label: r.category,
             type_label: r.type,
             view_label: r.view,
-            price_per_night: cleanNumber(r.pricePerNight) ? parseFloat(cleanNumber(r.pricePerNight)!) : undefined,
-            price_per_night_egp: cleanNumber(r.pricePerNightEgp) ? parseFloat(cleanNumber(r.pricePerNightEgp)!) : undefined,
+            price_per_night: roomPriceEgp ? parseFloat(roomPriceEgp) : undefined,
+            price_per_night_egp: roomPriceEgp ? parseFloat(roomPriceEgp) : undefined,
             description: r.description?.en || "", // Fallback
             features: r.facilities,
             images: validImages,

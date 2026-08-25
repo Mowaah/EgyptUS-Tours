@@ -1,6 +1,10 @@
 import { HotelPaginatedResponse, HotelDetail, HotelList } from "@/types/api";
 import { serverFetch } from "@/lib/api";
 
+function parseHotelPriceEgp(priceEgp?: string | null, fallbackPrice?: string | null): number {
+  return parseFloat(priceEgp || fallbackPrice || "0") || 0;
+}
+
 /**
  * Fetch all hotels (Paginated)
  */
@@ -50,7 +54,7 @@ export function mapHotelDetailToHotel(hotelDetail: HotelDetail): import("@/types
     stars: hotelDetail.stars,
     rating: parseFloat(hotelDetail.rating_avg) || 0,
     rooms: hotelDetail.rooms,
-    pricePerNight: parseFloat(hotelDetail.price_per_night) || 0,
+    pricePerNight: parseHotelPriceEgp(hotelDetail.price_per_night_egp, hotelDetail.price_per_night),
     reviews: hotelDetail.review_count,
     description: hotelDetail.description,
     secondDescription: hotelDetail.second_description,
@@ -71,7 +75,7 @@ export function mapHotelDetailToHotel(hotelDetail: HotelDetail): import("@/types
       category: r.category_label || "",
       type: r.type_label || "",
       view: r.view_label || "",
-      pricePerNight: parseFloat(r.price_per_night) || 0,
+      pricePerNight: parseHotelPriceEgp(r.price_per_night_egp, r.price_per_night),
       discountPercent: r.discount_percent,
       features: r.features || [],
       images: (r.images || []).map(img => img.image)

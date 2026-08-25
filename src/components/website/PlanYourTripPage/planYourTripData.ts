@@ -54,10 +54,10 @@ export const DURATION_OPTIONS = [
 ] as const;
 
 export const BUDGET_OPTIONS = [
-  "$500 - $1,000",
-  "$1,000 - $3,000",
-  "$3,000 - $5,000",
-  "$5,000+",
+  "£500 - £1,000",
+  "£1,000 - £3,000",
+  "£3,000 - £5,000",
+  "£5,000+",
   "Flexible",
 ] as const;
 

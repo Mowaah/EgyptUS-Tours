@@ -30,7 +30,7 @@ export default function TopCustomersByRevenueTable({
       header: "Amount",
       render: (row: TopCustomer) => (
         <span className={styles.cellText}>
-          $ {parseFloat(row.total_revenue).toLocaleString()}
+          £{parseFloat(row.total_revenue).toLocaleString()}
         </span>
       ),
     },

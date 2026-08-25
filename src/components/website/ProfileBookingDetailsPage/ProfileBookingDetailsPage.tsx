@@ -287,7 +287,7 @@ export default function ProfileBookingDetailsPage() {
         image: bData.image || bData.trip?.image || "/images/home/hero-bg.png",
         location: bData.details?.destination || bData.trip?.location_text || "",
         price: parseFloat(bData.total_amount || bData.trip?.base_price || "0"),
-        currency: bData.payment_summary?.currency_code || bData.trip?.currency_code || "$",
+        currency: bData.payment_summary?.currency_code || bData.trip?.currency_code || "£",
         duration: { days: 0, nights: 0, label: bData.details?.duration_label } as any
       }}
       formData={safeFormData as any}
@@ -371,7 +371,7 @@ export default function ProfileBookingDetailsPage() {
                     className={styles.payButton}
                     onClick={() => router.push(buildDetailsHref("payment"))}
                   >
-                    <span>Pay remaining $3,430</span>
+                    <span>Pay remaining £3,430</span>
                     <Image src="/images/money-send.svg" alt="" width={24} height={24} aria-hidden />
                   </button>
                 )}
@@ -397,7 +397,7 @@ export default function ProfileBookingDetailsPage() {
           onPrimaryClick={() => router.push("/profile?tab=bookings")}
           onClose={() => router.push("/")}
           metadata={[
-            { label: "Booking Reference", value: `#BK${bData.id || "0000"}` },
+            { label: "Booking Reference", value: `BK-${String(bData.id || "0000").padStart(6, "0")}` },
             {
               label: isTransport ? "Vehicle" : isHotel ? "Hotel" : "Trip Name",
               value: isTransport
@@ -448,7 +448,7 @@ export default function ProfileBookingDetailsPage() {
           }}
           metadata={[
             { label: "Booking Reference", value: "#BK53602205" },
-            { label: "Refund Amount", value: "$1,500", valueColor: "#FF6600" },
+            { label: "Refund Amount", value: "£1,500", valueColor: "#FF6600" },
             { label: "Refund Method", value: "Bank Transfer" },
             { label: "Estimated Processing Time", value: "7 - 10 Business Days" }
           ]}

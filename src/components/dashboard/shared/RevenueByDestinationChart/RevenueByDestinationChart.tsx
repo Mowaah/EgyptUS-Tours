@@ -19,7 +19,7 @@ const defaultData: ChartData[] = [
   { label: "SIWA", value: 283000, percentage: 63 },
 ];
 
-const defaultGridLabels = ["$0K", "$75K", "$150K", "$225K", "$300K", "$375K", "$450K"];
+const defaultGridLabels = ["£0K", "£75K", "£150K", "£225K", "£300K", "£375K", "£450K"];
 
 export interface RevenueByDestinationChartProps {
   title?: string;
@@ -47,7 +47,7 @@ export default function RevenueByDestinationChart({
   const activeMaxVal = maxValue || Math.max(100, ...data.map(d => d.value));
   
   const activeGridLabels = gridLabels || [
-    "$0K",
+    "£0K",
     `$${Math.round((activeMaxVal * 0.25) / 1000)}K`,
     `$${Math.round((activeMaxVal * 0.5) / 1000)}K`,
     `$${Math.round((activeMaxVal * 0.75) / 1000)}K`,

@@ -1,7 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Hotel } from "@/types";
 import Button from "@/components/shared/Button/Button";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import styles from "./HotelBookingWidget.module.scss";
 
 interface HotelBookingWidgetProps {
@@ -10,7 +13,8 @@ interface HotelBookingWidgetProps {
 
 export default function HotelBookingWidget({ hotel }: HotelBookingWidgetProps) {
   const bookHref = `/hotels/${hotel.id}/book`;
-  const price = hotel.pricePerNight?.toLocaleString();
+  const { formatCurrency } = useCurrency();
+  const price = formatCurrency(hotel.pricePerNight);
 
   return (
     <aside className={styles.sidebar} aria-label="Book this hotel">
@@ -29,7 +33,7 @@ export default function HotelBookingWidget({ hotel }: HotelBookingWidgetProps) {
                 <span className={styles.priceLabel}>Start From</span>
                 <span className={styles.priceSub}>Per Night</span>
               </div>
-              <span className={styles.priceValue}>${price}</span>
+              <span className={styles.priceValue}>{price}</span>
             </div>
           </div>
 
@@ -57,7 +61,7 @@ export default function HotelBookingWidget({ hotel }: HotelBookingWidgetProps) {
                 <span className={styles.mobilePriceLabel}>Start From</span>
                 <span className={styles.mobilePriceHint}>Per Night</span>
               </div>
-              <span className={styles.mobilePriceValue}>${price}</span>
+              <span className={styles.mobilePriceValue}>{price}</span>
             </div>
           </div>
 

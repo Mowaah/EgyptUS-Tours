@@ -1,16 +1,24 @@
 import React from "react";
-import { useFormContext, Controller } from "react-hook-form";
+import { Control, Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import styles from "./CurrencyField.module.scss";
 
-const NumberSpinnerAdornment = ({ fieldName }: { fieldName: string }) => {
-  const { getValues, setValue, setFocus } = useFormContext();
+const NumberSpinnerAdornment = <TFieldValues extends FieldValues>({
+  fieldName,
+  suffix,
+}: {
+  fieldName: Path<TFieldValues>;
+  suffix: string;
+}) => {
+  const { getValues, setValue, setFocus } = useFormContext<TFieldValues>();
+
+  const formatValue = (value: number) => `${value}${suffix}`;
 
   const handleIncrement = (e: React.MouseEvent) => {
     e.preventDefault();
     const rawVal = String(getValues(fieldName) || "").replace(/[^0-9.]/g, "");
     const current = parseFloat(rawVal) || 0;
-    setValue(fieldName, (current + 1).toString() + "$", { shouldValidate: true, shouldDirty: true });
+    setValue(fieldName, formatValue(current + 1) as TFieldValues[typeof fieldName], { shouldValidate: true, shouldDirty: true });
     setFocus(fieldName);
   };
 
@@ -19,7 +27,7 @@ const NumberSpinnerAdornment = ({ fieldName }: { fieldName: string }) => {
     const rawVal = String(getValues(fieldName) || "").replace(/[^0-9.]/g, "");
     const current = parseFloat(rawVal) || 0;
     if (current > 0) {
-      setValue(fieldName, (current - 1).toString() + "$", { shouldValidate: true, shouldDirty: true });
+      setValue(fieldName, formatValue(current - 1) as TFieldValues[typeof fieldName], { shouldValidate: true, shouldDirty: true });
     }
     setFocus(fieldName);
   };
@@ -42,7 +50,23 @@ const NumberSpinnerAdornment = ({ fieldName }: { fieldName: string }) => {
   );
 };
 
-export const CurrencyField = ({ name, label, control, error }: { name: any; label: string; control: any; error?: string }) => {
+interface CurrencyFieldProps<TFieldValues extends FieldValues> {
+  name: Path<TFieldValues>;
+  label: string;
+  control: Control<TFieldValues>;
+  error?: string;
+  suffix?: string;
+}
+
+export const CurrencyField = <TFieldValues extends FieldValues>({
+  name,
+  label,
+  control,
+  error,
+  suffix = "£",
+}: CurrencyFieldProps<TFieldValues>) => {
+  const formatValue = (value: string) => `${value}${suffix}`;
+
   return (
     <Controller
       name={name}
@@ -50,7 +74,7 @@ export const CurrencyField = ({ name, label, control, error }: { name: any; labe
       render={({ field }) => (
         <DashboardField
           label={label}
-          placeholder="0$"
+          placeholder={`0${suffix}`}
           inputMode="numeric"
           type="text"
           {...field}
@@ -58,12 +82,12 @@ export const CurrencyField = ({ name, label, control, error }: { name: any; labe
           onChange={(e) => {
             const raw = e.target.value.replace(/[^0-9.]/g, "");
             if (raw) {
-              field.onChange(raw + "$");
+              field.onChange(formatValue(raw));
             } else {
               field.onChange("");
             }
           }}
-          endAdornment={<NumberSpinnerAdornment fieldName={name} />}
+          endAdornment={<NumberSpinnerAdornment<TFieldValues> fieldName={name} suffix={suffix} />}
           error={error}
         />
       )}

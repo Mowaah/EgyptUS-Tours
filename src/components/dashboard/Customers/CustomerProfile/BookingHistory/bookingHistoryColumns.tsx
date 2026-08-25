@@ -72,7 +72,7 @@ export const bookingHistoryColumns: DataTableColumn<any>[] = [
     header: "Total Price",
     render: (row: any) => (
       <span className={styles.priceCell}>
-        {row.currency?.toLowerCase() === 'usd' ? '$' : row.currency?.toUpperCase()} {Number(row.total_price || 0).toLocaleString()}
+        {row.currency?.toLowerCase() === 'usd' ? '£' : row.currency?.toUpperCase()} {Number(row.total_price || 0).toLocaleString()}
       </span>
     ),
   },

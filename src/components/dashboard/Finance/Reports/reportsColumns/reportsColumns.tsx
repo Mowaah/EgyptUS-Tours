@@ -61,7 +61,7 @@ export const reportsColumns: DataTableColumn<ReportRow>[] = [
   {
     id: "revenue",
     header: "Revenue",
-    render: (row) => row.total_revenue ? `$${row.total_revenue}` : (row.revenue || "$0.00"),
+    render: (row) => row.total_revenue ? `$${row.total_revenue}` : (row.revenue || "£0.00"),
   },
   {
     id: "margin",

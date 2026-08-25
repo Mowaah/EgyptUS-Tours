@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/shared";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import styles from "./BookingWidget.module.scss";
 
 interface BookingWidgetProps {
@@ -8,7 +9,9 @@ interface BookingWidgetProps {
   totalPrice?: string;
 }
 
-export default function BookingWidget({ vehicleId, totalPrice = "$1299" }: BookingWidgetProps) {
+export default function BookingWidget({ vehicleId, totalPrice = "1299" }: BookingWidgetProps) {
+  const { formatCurrency } = useCurrency();
+  const formattedPrice = formatCurrency(Number(String(totalPrice).replace(/,/g, "")) || 0);
   const bookHref = `/transportation/${vehicleId}/book`;
 
   return (
@@ -25,7 +28,7 @@ export default function BookingWidget({ vehicleId, totalPrice = "$1299" }: Booki
           <div className={styles.rowsSection}>
             <div className={styles.row}>
               <span className={styles.label}>Base Price</span>
-              <span className={styles.value}>{totalPrice}</span>
+              <span className={styles.value}>{formattedPrice}</span>
             </div>
           </div>
 
@@ -35,7 +38,7 @@ export default function BookingWidget({ vehicleId, totalPrice = "$1299" }: Booki
                 <span className={styles.totalLabel}>Start From</span>
                 <span className={styles.perDay}>Per Day</span>
               </div>
-              <span className={styles.totalPrice}>{totalPrice}</span>
+              <span className={styles.totalPrice}>{formattedPrice}</span>
             </div>
           </div>
 
@@ -60,7 +63,7 @@ export default function BookingWidget({ vehicleId, totalPrice = "$1299" }: Booki
                 <span className={styles.mobilePriceLabel}>Start From</span>
                 <span className={styles.mobilePriceHint}>Per Day</span>
               </div>
-              <span className={styles.mobilePriceValue}>{totalPrice}</span>
+              <span className={styles.mobilePriceValue}>{formattedPrice}</span>
             </div>
           </div>
 

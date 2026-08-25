@@ -6,8 +6,8 @@ export const roomSchema = z.object({
   category: z.string().min(1, "Category is required"),
   type: z.string().min(1, "Type is required"),
   view: z.string().optional(),
-  pricePerNight: z.string().min(1, "Price is required"), // We'll convert to number on submit
-  pricePerNightEgp: z.string().optional(),
+  pricePerNight: z.string().optional(),
+  pricePerNightEgp: z.string().min(1, "£ price is required"),
   description: localizedStringSchema,
   facilities: z.array(z.string()).default([]),
   photos: z.array(z.any()).default([]),

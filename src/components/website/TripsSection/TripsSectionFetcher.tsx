@@ -23,7 +23,7 @@ export default async function TripsSectionFetcher({ apiParams, searchParams }: T
     image: t.image || "/images/home/hero-bg.png",
     location: t.location_text || "Egypt",
     price: parseFloat(t.base_price) || 0,
-    currency: t.currency_code === "USD" ? "$" : t.currency_code,
+    currency: t.currency_code === "USD" ? "£" : t.currency_code,
     duration: t.duration,
     rating: parseFloat(t.rating_avg) || 0,
     reviewCount: t.review_count,

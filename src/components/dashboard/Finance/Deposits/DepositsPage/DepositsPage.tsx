@@ -13,7 +13,7 @@ import { downloadBlobAsCSV } from "@/lib/utils";
 
 const formatCurrencyK = (value: string | number) => {
   const num = typeof value === 'string' ? parseFloat(value.replace(/[^0-9.-]+/g, "")) : value;
-  if (isNaN(num)) return "$0";
+  if (isNaN(num)) return "£0";
   if (num >= 1000) {
     return `$${(num / 1000).toFixed(1).replace(/\.0$/, '')}k`;
   }

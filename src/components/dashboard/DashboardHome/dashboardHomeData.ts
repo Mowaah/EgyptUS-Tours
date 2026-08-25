@@ -10,11 +10,11 @@ export const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "
 
 export const metricCards: MetricCardData[] = [
   { label: "Total Bookings", value: "1,284", change: "+12.5%", trend: "up", tone: "blue", icon: "total-bookings", spark: "M0 34 C18 22 28 42 44 29 S72 37 90 25 S124 31 144 12 S178 18 208 4" },
-  { label: "Total Revenue", value: "$ 284,50", change: "+8.2%", trend: "up", tone: "green", icon: "total-revenue", spark: "M0 31 C24 24 34 35 52 27 S86 35 104 22 S134 26 150 12 S178 15 208 5" },
+  { label: "Total Revenue", value: "£284,50", change: "+8.2%", trend: "up", tone: "green", icon: "total-revenue", spark: "M0 31 C24 24 34 35 52 27 S86 35 104 22 S134 26 150 12 S178 15 208 5" },
   { label: "Pending Confirmations", value: "16", change: "-5.1%", trend: "down", tone: "orange", icon: "pending-confirmation", spark: "M0 5 C20 12 28 4 46 18 S78 25 96 31 S130 34 148 28 S178 20 208 25" },
   { label: "New Leads Today", value: "24", change: "+18.3%", trend: "up", tone: "purple", icon: "new-leads", spark: "M0 28 C18 23 32 33 50 25 S80 34 102 27 S138 30 152 18 S184 16 208 5" },
   { label: "Upcoming Departures", value: "56", change: "+12.5%", trend: "up", tone: "pink", icon: "upcoming-deartures", spark: "M0 30 C16 24 34 29 48 34 S78 31 94 26 S124 36 140 22 S174 15 208 6" },
-  { label: "Outstanding Deposits", value: "$42,180", change: "-5.1%", trend: "down", tone: "amber", icon: "outstanding-deposits", spark: "M0 8 C20 14 28 5 46 22 S78 32 98 27 S136 30 154 22 S184 25 208 28" },
+  { label: "Outstanding Deposits", value: "£42,180", change: "-5.1%", trend: "down", tone: "amber", icon: "outstanding-deposits", spark: "M0 8 C20 14 28 5 46 22 S78 32 98 27 S136 30 154 22 S184 25 208 28" },
 ];
 
 export const revenueLines: ChartLine[] = [

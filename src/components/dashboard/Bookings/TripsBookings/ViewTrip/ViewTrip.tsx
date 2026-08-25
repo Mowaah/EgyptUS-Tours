@@ -49,7 +49,7 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
   const payload = tripData;
   const isRefunded = payload?.operational_status === "refunded";
   const isCancelled = payload?.operational_status === "cancelled";
-  const displayId = payload?.booking_code || `BK-${tripId}`;
+  const displayId = payload?.booking_code || `BK-${String(tripId).padStart(6, "0")}`;
 
   const customPills = payload ? (
     <div className={styles.customPills}>

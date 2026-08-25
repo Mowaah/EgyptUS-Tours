@@ -17,7 +17,7 @@ interface PaymentFormProps {
   /** Controlled card field values */
   formData: PaymentFormData;
   onChange: (patch: Partial<PaymentFormData>) => void;
-  /** Label shown inside the Confirm button, e.g. "Confirm & Pay $500 Deposit" */
+  /** Label shown inside the Confirm button, e.g. "Confirm & Pay £500 Deposit" */
   confirmLabel: React.ReactNode;
   onPrevious: () => void;
   onConfirm: () => void;

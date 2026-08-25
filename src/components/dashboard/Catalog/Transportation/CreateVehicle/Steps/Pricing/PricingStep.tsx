@@ -41,14 +41,14 @@ export function PricingStep() {
           <div className={styles.inputContainer}>
             <CurrencyField
               name="basePrice"
-              label="Base Price Per Person ($)"
+              label="Base Price Per Person (EGP)"
               control={control}
               error={errors.basePrice?.message}
             />
 
             <CurrencyField
               name="pricePerKm"
-              label="Price per Km ($)"
+              label="Price per Km (EGP)"
               control={control}
               error={errors.pricePerKm?.message}
             />
@@ -104,18 +104,18 @@ export function PricingStep() {
           <div className={styles.summaryContainer}>
             <div className={styles.summaryRow}>
               <span className={styles.summaryLabel}>Base Price</span>
-              <span className={styles.summaryValue}>{numBase}$</span>
+              <span className={styles.summaryValue}>£{numBase}</span>
             </div>
             {selectedServices.map((service: any) => (
               <div key={service.id} className={styles.summaryRow}>
                 <span className={styles.summaryLabel}>{getLocalizedName(service, "English")}</span>
-                <span className={styles.summaryValue}>{service.price || 0}$</span>
+                <span className={styles.summaryValue}>£{service.price || 0}</span>
               </div>
             ))}
 
             <div className={styles.totalRow}>
               <span className={styles.totalLabel}>Total Price Person</span>
-              <span className={styles.totalValue}>{total}$</span>
+              <span className={styles.totalValue}>£{total}</span>
             </div>
           </div>
         </FormSection>

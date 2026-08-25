@@ -77,7 +77,7 @@ export default function TripPricingPage() {
                 <span className={styles.tourTitle}>{tourLabel}</span>
                 {subtitle && <span className={styles.tourSubtitle}>{subtitle}</span>}
               </div>
-              {basePrice && <div className={styles.headerPrice}>${basePrice}</div>}
+              {basePrice && <div className={styles.headerPrice}>£{basePrice}</div>}
             </div>
 
             {/* Seasons Row */}
@@ -91,7 +91,7 @@ export default function TripPricingPage() {
                         <span className={styles.perPerson}>Per Person</span>
                         <span className={styles.roomType}>{tier.label}</span>
                       </div>
-                      <div className={styles.priceValue}>${tier.price}</div>
+                      <div className={styles.priceValue}>£{tier.price}</div>
                     </div>
                   ))}
                 </div>

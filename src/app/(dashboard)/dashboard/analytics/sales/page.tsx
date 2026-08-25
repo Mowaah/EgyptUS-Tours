@@ -41,12 +41,12 @@ export default function SalesReportsPage() {
       maxValue: maxVal,
       gridLabels: [
         "0$",
-        Math.round(step).toString() + "$",
-        Math.round(step * 2).toString() + "$",
-        Math.round(step * 3).toString() + "$",
-        Math.round(step * 4).toString() + "$",
-        Math.round(step * 5).toString() + "$",
-        Math.round(maxVal).toString() + "$",
+        Math.round(step).toString() + "£",
+        Math.round(step * 2).toString() + "£",
+        Math.round(step * 3).toString() + "£",
+        Math.round(step * 4).toString() + "£",
+        Math.round(step * 5).toString() + "£",
+        Math.round(maxVal).toString() + "£",
       ]
     };
   }, [reportsData]);

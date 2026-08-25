@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { CURRENCY_OPTIONS, DisplayCurrencyCode, useCurrency } from "@/contexts/CurrencyContext";
 
 import styles from "./TopBar.module.scss";
 
@@ -14,15 +15,18 @@ const LANGUAGES = [
   { code: "ES", name: "Spanish", icon: "/images/es.svg" },
 ];
 
-const CURRENCIES = [
-  { code: "USD", symbol: "$" },
-  { code: "EUR", symbol: "€" },
-];
+type DropdownOption = {
+  code: string;
+  name?: string;
+  icon?: string;
+  symbol?: string;
+  value?: string;
+};
 
 interface SimpleDropdownProps {
-  options: any[];
-  value: any;
-  onChange: (val: any) => void;
+  options: DropdownOption[];
+  value: DropdownOption;
+  onChange: (val: DropdownOption) => void;
   className?: string;
   type?: "lang" | "curr";
 }
@@ -41,8 +45,8 @@ function SimpleDropdown({ options, value, onChange, className, type }: SimpleDro
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const selectedValue = value.code || value;
-  const activeOption = options.find(opt => (opt.code || opt.value) === selectedValue);
+  const selectedValue = value.code;
+  const activeOption = options.find(opt => (opt.code || opt.value) === selectedValue) ?? options[0];
 
   return (
     <div className={`${styles.dropdownWrapper} ${className || ""}`} ref={containerRef}>
@@ -53,7 +57,7 @@ function SimpleDropdown({ options, value, onChange, className, type }: SimpleDro
       >
         {type === "lang" ? (
           <>
-            <Image src={activeOption.icon} alt={activeOption.name} width={16} height={16} className={styles.flagIcon} />
+            <Image src={activeOption.icon || ""} alt={activeOption.name || activeOption.code} width={16} height={16} className={styles.flagIcon} />
             <span>{activeOption.code}</span>
           </>
         ) : (
@@ -87,7 +91,7 @@ function SimpleDropdown({ options, value, onChange, className, type }: SimpleDro
                 )}
 
                 {type === "lang" && (
-                  <Image src={opt.icon} alt="" width={16} height={16} className={styles.miniFlag} />
+                  <Image src={opt.icon || ""} alt="" width={16} height={16} className={styles.miniFlag} />
                 )}
 
                 <span className={styles.menuText}>{type === "lang" ? opt.name : `${opt.code} (${opt.symbol})`}</span>
@@ -103,7 +107,8 @@ function SimpleDropdown({ options, value, onChange, className, type }: SimpleDro
 export default function TopBar() {
   const pathname = usePathname();
   const [activeLang, setActiveLang] = useState(LANGUAGES[0]);
-  const [activeCurr, setActiveCurr] = useState(CURRENCIES[0]);
+  const { currency, setCurrency } = useCurrency();
+  const activeCurr = CURRENCY_OPTIONS.find((option) => option.code === currency) ?? CURRENCY_OPTIONS[0];
 
   if (pathname === HIDE_TOPBAR_PREFIX || pathname.startsWith(`${HIDE_TOPBAR_PREFIX}/`)) {
     return null;
@@ -128,13 +133,16 @@ export default function TopBar() {
           <SimpleDropdown
             options={LANGUAGES}
             value={activeLang}
-            onChange={setActiveLang}
+            onChange={(option) => {
+              const nextLang = LANGUAGES.find((language) => language.code === option.code);
+              if (nextLang) setActiveLang(nextLang);
+            }}
             type="lang"
           />
           <SimpleDropdown
-            options={CURRENCIES}
+            options={CURRENCY_OPTIONS}
             value={activeCurr}
-            onChange={setActiveCurr}
+            onChange={(option) => setCurrency(option.code as DisplayCurrencyCode)}
             type="curr"
           />
         </div>

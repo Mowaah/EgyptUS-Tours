@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useLayoutEffect, useMemo } from "react";
-import Image from "next/image";
 import {
   Button,
   CheckboxIndicator,
@@ -17,7 +16,9 @@ import {
   PriceRangeFilter,
 } from "@/components/shared";
 import { useScrollLock } from "@/hooks/useScrollLock";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { Hotel } from "@/types";
+import { HotelList } from "@/types/api";
 import styles from "./HotelsPageSection.module.scss";
 
 // ── Data ────────────────────────────────────────────────────────
@@ -66,14 +67,14 @@ const SORT_OPTIONS = [
 const ITEMS_PER_PAGE = 6;
 
 // ── Component ───────────────────────────────────────────────────
-import { HotelList } from "@/types/api";
-
 interface HotelsPageSectionProps {
   initialHotels?: HotelList[];
 }
 
 export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSectionProps) {
-  const mappedHotels: Hotel[] = initialHotels.map(h => ({
+  const { formatCurrency } = useCurrency();
+
+  const mappedHotels: Hotel[] = initialHotels.map((h) => ({
     id: h.slug,
     name: h.name,
     location: h.location_text || "",
@@ -81,14 +82,21 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
     stars: h.stars,
     rating: parseFloat(h.rating_avg) || 0,
     rooms: h.rooms,
-    pricePerNight: parseFloat(h.price_per_night) || 0,
+    pricePerNight: parseFloat(h.price_per_night_egp || h.price_per_night) || 0,
     reviews: h.review_count,
-    isFavorite: h.is_favorite
+    isFavorite: h.is_favorite,
   }));
+
+  const maxHotelPriceLimit = useMemo(() => {
+    if (mappedHotels.length === 0) return 50000;
+    const max = Math.max(...mappedHotels.map((h) => h.pricePerNight || 0));
+    return Math.max(Math.ceil(max / 1000) * 1000, 12000);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialHotels]);
 
   const [hotels, setHotels] = useState<Hotel[]>(mappedHotels);
   const [ratingFilter, setRatingFilter] = useState("any");
-  const [priceRange, setPriceRange] = useState({ min: 1, max: 12000 });
+  const [priceRange, setPriceRange] = useState({ min: 1, max: maxHotelPriceLimit });
   const [priceExpanded, setPriceExpanded] = useState(true);
   const [ratingExpanded, setRatingExpanded] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -109,12 +117,11 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
   const activeFilterCount = useMemo(() => {
     let n = 0;
     if (ratingFilter !== "any") n += 1;
-    if (priceRange.min !== 1 || priceRange.max !== 12000) n += 1;
+    if (priceRange.min !== 1 || priceRange.max < maxHotelPriceLimit) n += 1;
     return n;
-  }, [ratingFilter, priceRange.min, priceRange.max]);
+  }, [ratingFilter, priceRange.min, priceRange.max, maxHotelPriceLimit]);
 
-  // useLayoutEffect: align JS with CSS before paint. Initial isLg=false + useEffect
-  // would briefly show the mobile "Filters" row while the sidebar is in-flow (≥768px).
+  // useLayoutEffect: align JS with CSS before paint.
   useLayoutEffect(() => {
     const mq = window.matchMedia("(min-width: 768px)");
     const apply = () => {
@@ -139,21 +146,17 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
 
   // Apply Filters
   const filteredHotels = hotels.filter((h) => {
-    // Search
     const matchesSearch =
       h.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       h.location.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    // Location Tab
+
     const matchesLocation =
       selectedLocation === "All Locations" ||
       h.location.toLowerCase().includes(selectedLocation.toLowerCase());
-    
-    // Rating
+
     const matchesRating =
       ratingFilter === "any" || h.rating >= parseFloat(ratingFilter);
-    
-    // Price
+
     const matchesPrice =
       h.pricePerNight >= priceRange.min && h.pricePerNight <= priceRange.max;
 
@@ -165,7 +168,7 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
     if (sortOption === "price-low") return a.pricePerNight - b.pricePerNight;
     if (sortOption === "price-high") return b.pricePerNight - a.pricePerNight;
     if (sortOption === "rating") return b.rating - a.rating;
-    return 0; // recommended
+    return 0;
   });
 
   const totalPages = Math.max(1, Math.ceil(sortedHotels.length / ITEMS_PER_PAGE));
@@ -178,7 +181,7 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
   const handleResetSearch = () => {
     setSearchQuery("");
     setRatingFilter("any");
-    setPriceRange({ min: 1, max: 12000 });
+    setPriceRange({ min: 1, max: maxHotelPriceLimit });
     setSelectedLocation("All Locations");
     setSortOption("recommended");
     setCurrentPage(1);
@@ -218,9 +221,9 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
           </div>
         </div>
 
-        <CategoryTabs 
-          tabs={ALL_TABS} 
-          wrap 
+        <CategoryTabs
+          tabs={ALL_TABS}
+          wrap
           onTabChange={(tab) => {
             setSelectedLocation(tab);
             setCurrentPage(1);
@@ -331,10 +334,11 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
             >
               <PriceRangeFilter
                 min={1}
-                max={12000}
+                max={maxHotelPriceLimit}
                 valueMin={priceRange.min}
-                valueMax={priceRange.max}
+                valueMax={Math.min(priceRange.max, maxHotelPriceLimit)}
                 onChange={(min, max) => setPriceRange({ min, max })}
+                formatValue={formatCurrency}
               />
             </FilterGroup>
 

@@ -47,7 +47,7 @@ export default function AdditionalServicesPanel({
           it: it?.name || it?.title || "",
           es: es?.name || es?.title || "",
         },
-        price: typeof r.price === 'number' ? `$${r.price}` : String(r.price_amount || r.price || "0$"),
+        price: `£${r.price_amount || r.price || "0"}`,
       };
     });
   }, [data, lang]);

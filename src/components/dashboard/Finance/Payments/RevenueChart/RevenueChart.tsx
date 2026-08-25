@@ -24,7 +24,7 @@ export default function RevenueChart({ chartData }: RevenueChartProps) {
     `$${maxVal >= 1000 ? (maxVal * 0.75 / 1000).toFixed(0) + 'k' : Math.round(maxVal * 0.75)}`,
     `$${maxVal >= 1000 ? (maxVal * 0.5 / 1000).toFixed(0) + 'k' : Math.round(maxVal * 0.5)}`,
     `$${maxVal >= 1000 ? (maxVal * 0.25 / 1000).toFixed(0) + 'k' : Math.round(maxVal * 0.25)}`,
-    "$0"
+    "£0"
   ];
 
   return (
@@ -77,7 +77,7 @@ export default function RevenueChart({ chartData }: RevenueChartProps) {
                 >
                   <div className={styles.barWrapper}>
                     <div className={styles.tooltip}>
-                      $ <AnimatedNumber value={col.value} isActive={isActive} />
+                      £ <AnimatedNumber value={col.value} isActive={isActive} />
                     </div>
                     <div 
                       className={`${styles.barFill} ${isActive ? styles.barFillActive : ""}`} 

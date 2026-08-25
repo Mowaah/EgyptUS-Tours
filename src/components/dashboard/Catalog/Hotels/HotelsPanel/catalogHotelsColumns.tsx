@@ -1,7 +1,17 @@
 import { DataTableColumn, DataTableRowAction } from "@/components/dashboard/DataTable/types";
 
-// Using any to match the dynamic backend payload
-export const catalogHotelsColumns: DataTableColumn<any>[] = [
+interface CatalogHotelRow {
+  id: string | number;
+  hotel_code?: string;
+  name?: string;
+  location?: { name?: string };
+  location_text?: string;
+  stars?: number | string;
+  starting_from?: string;
+  status?: string;
+}
+
+export const catalogHotelsColumns: DataTableColumn<CatalogHotelRow>[] = [
   {
     id: "hotel_code",
     header: "Hotel Code",
@@ -25,7 +35,7 @@ export const catalogHotelsColumns: DataTableColumn<any>[] = [
   {
     id: "startingFrom",
     header: "Starting From",
-    render: (row) => row.starting_from ? `$${row.starting_from}` : "-",
+    render: (row) => row.starting_from ? `£${row.starting_from}` : "-",
   },
   {
     id: "status",
@@ -69,8 +79,8 @@ export const catalogHotelsColumns: DataTableColumn<any>[] = [
 ];
 
 export const catalogHotelsRowActions = (
-  onAction: (action: string, row: any) => void
-): DataTableRowAction<any>[] => [
+  onAction: (action: string, row: CatalogHotelRow) => void
+): DataTableRowAction<CatalogHotelRow>[] => [
   {
     label: "View",
     iconSrc: "/images/dashboard/view.svg",

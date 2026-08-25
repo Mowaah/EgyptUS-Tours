@@ -8,9 +8,9 @@ import { GlassCard, CheckboxDropdown, CustomDatePicker } from "@/components/shar
 
 const BUDGET_OPTIONS = [
   { label: "less than 1,000$", value: "less than 1,000$" },
-  { label: "1,000$ - 2,000$", value: "1,000$ - 2,000$" },
-  { label: "2,000$ - 3,000$", value: "2,000$ - 3,000$" },
-  { label: "4,000$ - 5,000$", value: "4,000$ - 5,000$" },
+  { label: "1,000£ - 2,000$", value: "1,000£ - 2,000$" },
+  { label: "2,000£ - 3,000$", value: "2,000£ - 3,000$" },
+  { label: "4,000£ - 5,000$", value: "4,000£ - 5,000$" },
   { label: "Over 5,000$", value: "Over 5,000$" },
 ];
 

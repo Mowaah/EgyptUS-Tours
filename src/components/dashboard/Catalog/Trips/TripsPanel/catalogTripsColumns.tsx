@@ -1,17 +1,11 @@
 import { DataTableColumn, DataTableRowAction } from "@/components/dashboard/DataTable/types";
-import { CatalogTrip } from "../mockCatalogTrips";
 
-const getStatusVariant = (status: CatalogTrip["status"]) => {
-  switch (status) {
-    case "Published":
-      return "success";
-    case "Archived":
-      return "warning";
-    case "Draft":
-    default:
-      return "default";
-  }
-};
+interface CatalogTripRow {
+  id: string | number;
+  status?: string;
+  [key: string]: any;
+}
+
 
 export const catalogTripsColumns: DataTableColumn<any>[] = [
   {
@@ -42,7 +36,7 @@ export const catalogTripsColumns: DataTableColumn<any>[] = [
   {
     id: "startingFrom",
     header: "Starting From",
-    render: (row) => row.starting_from || "N/A",
+    render: (row) => row.starting_from ? `£${row.starting_from}` : "N/A",
   },
   {
     id: "status",
@@ -83,8 +77,8 @@ export const catalogTripsColumns: DataTableColumn<any>[] = [
 ];
 
 export const catalogTripsRowActions = (
-  onAction: (action: string, row: CatalogTrip) => void
-): DataTableRowAction<CatalogTrip>[] => [
+  onAction: (action: string, row: CatalogTripRow) => void
+): DataTableRowAction<CatalogTripRow>[] => [
   {
     label: "View",
     iconSrc: "/images/dashboard/view.svg",

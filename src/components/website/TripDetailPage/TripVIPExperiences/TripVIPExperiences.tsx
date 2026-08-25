@@ -52,7 +52,7 @@ export default function TripVIPExperiences({ trip }: Props) {
         </p>
         <span className={styles.savePill}>
           <Image src="/images/flame.svg" alt="" width={18} height={18} />
-          Book now and save up to $150 on these experiences
+          Book now and save up to £150 on these experiences
         </span>
       </div>
 

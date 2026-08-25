@@ -93,7 +93,7 @@ export default function BookTripModal({ open, onClose, onBookPrivate, onBookGrou
       ? `$${parseFloat(tripDetail.private_price.toString()).toFixed(2)}`
       : tripDetail.base_price
         ? `$${parseFloat(tripDetail.base_price.toString()).toFixed(2)}`
-        : "$--"
+        : "£--"
     : selectedTrip?.base_price 
       ? `$${parseFloat(selectedTrip.base_price.toString()).toFixed(2)}` 
       : "---";
@@ -101,7 +101,7 @@ export default function BookTripModal({ open, onClose, onBookPrivate, onBookGrou
   const groupPrice = tripDetail
     ? tripDetail.group_price
       ? `$${parseFloat(tripDetail.group_price.toString()).toFixed(2)}`
-      : "$--"
+      : "£--"
     : "---";
 
   const hasGroupOption = !!(tripDetail && tripDetail.group_price);

@@ -18,7 +18,7 @@ export default function OverdueDepositsChart({ chartData }: { chartData?: Record
 
   const formatCurrencyK = (value: string | number) => {
     const num = typeof value === 'string' ? parseFloat(value.replace(/[^0-9.-]+/g, "")) : value;
-    if (isNaN(num)) return "$0";
+    if (isNaN(num)) return "£0";
     if (num >= 1000) {
       return `$${(num / 1000).toFixed(1).replace(/\.0$/, '')}k`;
     }
@@ -48,7 +48,7 @@ export default function OverdueDepositsChart({ chartData }: { chartData?: Record
     formatCurrencyK(maxVal * 0.75),
     formatCurrencyK(maxVal * 0.5),
     formatCurrencyK(maxVal * 0.25),
-    "$0",
+    "£0",
   ];
 
   return (

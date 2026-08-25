@@ -7,6 +7,7 @@ import Button from "../Button/Button";
 import FavoriteButton from "../FavoriteButton/FavoriteButton";
 import { useFavorite } from "@/hooks/useFavorite";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import styles from "./TripCard.module.scss";
 
 interface TripCardProps {
@@ -18,6 +19,7 @@ interface TripCardProps {
 export default function TripCard({ trip, onFavoriteToggle, className = "" }: TripCardProps) {
   const tripDetailsHref = `/trips/${trip.id}`;
   const { isAuthenticated } = useAuth();
+  const { formatCurrency } = useCurrency();
   const { isFavorite, isLoading, toggle } = useFavorite({
     slug: trip.id,
     kind: "trip",
@@ -74,8 +76,7 @@ export default function TripCard({ trip, onFavoriteToggle, className = "" }: Tri
             )}
             <span className={styles.priceFrom}>From </span>
             <span className={styles.priceValue}>
-              {trip.price}
-              {trip.currency}
+              {formatCurrency(Number(String(trip.price).replace(/,/g, "")) || 0)}
             </span>
             <span className={styles.pricePer}>per person</span>
           </div>

@@ -1,15 +1,14 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Trip } from "@/types";
 import Button from "@/components/shared/Button/Button";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import styles from "./TripBookingWidget.module.scss";
 
 interface TripBookingWidgetProps {
   trip: Trip;
-}
-
-function formatPrice(value?: number) {
-  return value != null ? `$${value.toLocaleString()}` : null;
 }
 
 function mobileLabel(price: string | null, action: string) {
@@ -23,6 +22,12 @@ function mobileLabel(price: string | null, action: string) {
 }
 
 export default function TripBookingWidget({ trip }: TripBookingWidgetProps) {
+  const { formatCurrency } = useCurrency();
+
+  function formatPrice(value?: number) {
+    return value != null ? formatCurrency(value) : null;
+  }
+
   const privatePrice = formatPrice(trip.privatePrice);
   const groupPrice = formatPrice(trip.groupPrice);
 
@@ -41,7 +46,7 @@ export default function TripBookingWidget({ trip }: TripBookingWidgetProps) {
               <span className={styles.tierName}>Private Tour</span>
               <span className={styles.tierHint}>Maximum flexibility</span>
             </div>
-            <span className={styles.tierPrice}>${trip.privatePrice?.toLocaleString()}</span>
+            <span className={styles.tierPrice}>{formatPrice(trip.privatePrice)}</span>
           </div>
 
           <div className={styles.tier}>
@@ -49,7 +54,7 @@ export default function TripBookingWidget({ trip }: TripBookingWidgetProps) {
               <span className={styles.tierName}>Group Tour</span>
               <span className={styles.tierHint}>Up to 12 travelers</span>
             </div>
-            <span className={styles.tierPrice}>${trip.groupPrice?.toLocaleString()}</span>
+            <span className={styles.tierPrice}>{formatPrice(trip.groupPrice)}</span>
           </div>
 
           <div className={styles.actions}>

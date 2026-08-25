@@ -18,6 +18,7 @@ interface StepBookingSummaryProps {
   totalAmount: number;
   depositAmount: number;
   isGroupTrip?: boolean;
+  isSubmitting?: boolean;
 }
 
 export default function StepBookingSummary({
@@ -29,6 +30,7 @@ export default function StepBookingSummary({
   totalAmount,
   depositAmount,
   isGroupTrip,
+  isSubmitting = false,
 }: StepBookingSummaryProps) {
   const [showTermsModal, setShowTermsModal] = useState(false);
 
@@ -143,8 +145,8 @@ export default function StepBookingSummary({
       <BookingStepFooter
         onPrevious={onPrevious}
         onContinue={onContinue}
-        continueLabel="Continue To Payment"
-        continueDisabled={!formData.termsAccepted}
+        continueLabel={isSubmitting ? "Connecting to Paymob..." : "Continue To Payment"}
+        continueDisabled={!formData.termsAccepted || isSubmitting}
         showMoneyIcon
       />
 

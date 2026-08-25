@@ -9,6 +9,7 @@ export interface HotelRoom {
   type_label: string;
   view_label: string;
   price_per_night: string;
+  price_per_night_egp: string | null;
   discount_percent: number;
   features: string[];
   order: number;
@@ -36,6 +37,7 @@ export interface HotelList {
   review_count: number;
   rooms: number;
   price_per_night: string;
+  price_per_night_egp: string | null;
   currency_code: string;
   is_favorite: boolean;
 }

@@ -6,7 +6,6 @@ import { DataTable } from "@/components/dashboard/DataTable";
 import {
   TablePanel,
   TablePanelFilterBar,
-  TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
 import { useCatalogHotels, useCatalogHotelLocations } from "@/hooks/useCatalogHotels";
 import { archiveCatalogHotel, deleteCatalogHotel, updateCatalogHotel } from "@/services/admin/adminCatalogHotelsService";
@@ -18,9 +17,21 @@ import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatus
 
 const staticFilterOptions = {
   rating: ["All", "5", "4", "3", "2", "1", "Unrated"],
-  startingFrom: ["All", "Under $1000", "$1000 - $2000", "Over $2000"],
+  startingFrom: ["All", "Under £1,000", "£1,000 - 2,000", "Over £2,000"],
   status: ["All", "Published", "Archived", "Draft"],
 };
+
+interface CatalogHotelLocation {
+  id: string | number;
+  name?: string;
+}
+
+interface CatalogHotelRow {
+  id: string | number;
+  name?: string;
+  hotelName?: string;
+  is_featured?: boolean;
+}
 
 interface HotelsPanelProps {
   searchQuery?: string;
@@ -39,21 +50,24 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
 
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
-  const [confirmModal, setConfirmModal] = useState<{ open: boolean; action: "Archive" | "Delete" | null; row: any }>({ open: false, action: null, row: null });
+  const [confirmModal, setConfirmModal] = useState<{ open: boolean; action: "Archive" | "Delete" | null; row: CatalogHotelRow | null }>({ open: false, action: null, row: null });
   const [banner, setBanner] = useState<{ show: boolean; message: string; variant: "success" | "warning" }>({ show: false, message: "", variant: "success" });
-  const { locations, loading: locLoading } = useCatalogHotelLocations();
-  const locationOptions = ["All", ...Array.from(new Set(locations.map((l: any) => l.name).filter(Boolean)))];
+  const { locations } = useCatalogHotelLocations();
+  const locationOptions = [
+    "All",
+    ...Array.from(new Set((locations as CatalogHotelLocation[]).map((l) => l.name).filter((name): name is string => Boolean(name)))),
+  ];
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
   const queryParams = useMemo(() => {
-    const params: any = { page, page_size: pageSize };
+    const params: Record<string, string | number> = { page, page_size: pageSize };
     if (searchQuery) params.search = searchQuery;
     if (appliedFilters.status !== "All") params.status = appliedFilters.status.toLowerCase();
     
     if (appliedFilters.destination !== "All") {
-      const dest = locations.find((l: any) => l.name === appliedFilters.destination);
+      const dest = (locations as CatalogHotelLocation[]).find((l) => l.name === appliedFilters.destination);
       if (dest) params.location_id = dest.id;
     }
     
@@ -64,9 +78,9 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
     }
     
     if (appliedFilters.startingFrom !== "All") {
-      if (appliedFilters.startingFrom === "Under $1000") { params.max_price = 1000; }
-      else if (appliedFilters.startingFrom === "$1000 - $2000") { params.min_price = 1000; params.max_price = 2000; }
-      else if (appliedFilters.startingFrom === "Over $2000") { params.min_price = 2000; }
+      if (appliedFilters.startingFrom === "Under £1,000") { params.max_price = 1000; }
+      else if (appliedFilters.startingFrom === "£1,000 - 2,000") { params.min_price = 1000; params.max_price = 2000; }
+      else if (appliedFilters.startingFrom === "Over £2,000") { params.min_price = 2000; }
     }
     
     return params;
@@ -94,7 +108,7 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
     id,
     label,
     value: filters[id as keyof typeof filters],
-    options: options as any[],
+    options: [...options],
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
 
@@ -159,7 +173,7 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
         getRowId={(row) => String(row.id)}
         selectable
         selectionType="star"
-        selectedRowIds={hotelsData.filter((t: any) => t.is_featured).map((t: any) => String(t.id))}
+        selectedRowIds={(hotelsData as CatalogHotelRow[]).filter((t) => t.is_featured).map((t) => String(t.id))}
         onSelectionChange={handleSelectionChange}
         serverSidePagination={true}
         totalCount={totalCount}
@@ -190,7 +204,7 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
         title={confirmModal.action === "Delete" ? "Delete Hotel" : "Archive Hotel?"}
         message={
           confirmModal.action === "Delete"
-            ? `Are you sure you want to delete "${confirmModal.row?.hotelName}"? This action cannot be undone.`
+            ? `Are you sure you want to delete "${confirmModal.row?.hotelName || confirmModal.row?.name || "this hotel"}"? This action cannot be undone.`
             : "The hotel will no longer be available for bookings or visible in the catalog, but you can restore it at any time."
         }
         confirmLabel={confirmModal.action === "Delete" ? "Yes, delete it" : "Archive Hotel"}

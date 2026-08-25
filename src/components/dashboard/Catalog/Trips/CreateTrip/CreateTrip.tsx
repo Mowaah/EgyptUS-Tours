@@ -480,7 +480,7 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
       Number(money(data.pricing?.privateTour?.basePrice) || Infinity)
     ).toString(),
     rating_avg: data.starRating ? parseFloat(data.starRating) : null,
-    currency_code: "USD",
+    currency_code: "£",
     availability_enabled: !!data.datesAvailability?.enabled,
     force_draft: intent !== "publish" && !isEdit,
     inclusions: (data.inclusions || []).map(inc => ({

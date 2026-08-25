@@ -7,9 +7,10 @@ interface PriceRangeFilterProps {
   valueMax: number;
   onChange: (newMin: number, newMax: number) => void;
   step?: number;
+  formatValue?: (value: number) => string;
 }
 
-export default function PriceRangeFilter({ min, max, valueMin, valueMax, onChange, step = 500 }: PriceRangeFilterProps) {
+export default function PriceRangeFilter({ min, max, valueMin, valueMax, onChange, step = 500, formatValue }: PriceRangeFilterProps) {
   const rangeWidth = max - min;
   
   // Calculate percentage positions for the filled track
@@ -53,7 +54,7 @@ export default function PriceRangeFilter({ min, max, valueMin, valueMax, onChang
         />
       </div>
       <span className={styles.rangeLabel}>
-        ${valueMin} - ${valueMax}
+        {formatValue ? `${formatValue(valueMin)} - ${formatValue(valueMax)}` : `$${valueMin} - $${valueMax}`}
       </span>
     </div>
   );

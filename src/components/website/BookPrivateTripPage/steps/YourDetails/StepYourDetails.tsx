@@ -21,6 +21,7 @@ import stepStyles from "./StepYourDetails.module.scss";
 import { BookingData } from "../../BookPrivateTripPage";
 import { Trip } from "@/types";
 import { isValidEmail, isValidPhone } from "@/utils/validators";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface StepYourDetailsProps {
   trip: Trip;
@@ -31,6 +32,7 @@ interface StepYourDetailsProps {
 }
 
 export default function StepYourDetails({ trip, formData, onChange, onContinue, isGroupTrip }: StepYourDetailsProps) {
+  const { formatCurrency } = useCurrency();
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const tripHotelSlug = trip?.hotels?.[0]?.slug;
@@ -44,8 +46,11 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
     if (!hotelDetail?.hotelRooms) return {};
     const groups: Record<string, typeof hotelDetail.hotelRooms> = {};
     for (const room of hotelDetail.hotelRooms) {
-      if (!groups[room.type]) groups[room.type] = [];
-      groups[room.type].push(room);
+      const category = room.category ? room.category.trim().replace(/\s*[Rr]oom\s*/i, "") : "";
+      const type = room.type ? room.type.trim() : "";
+      const groupKey = category ? `${category} ${type}`.trim() : type;
+      if (!groups[groupKey]) groups[groupKey] = [];
+      groups[groupKey].push(room);
     }
     return groups;
   }, [hotelDetail]);
@@ -63,7 +68,7 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
         return {
           label: r.view,
           value: r.id.toString(),
-          price: isBase ? "Included" : (diff > 0 ? `+$${diff}` : `-$${Math.abs(diff)}`),
+          price: isBase ? "Included" : (diff > 0 ? `+${formatCurrency(diff)}` : `-${formatCurrency(Math.abs(diff))}`),
           isFree: isBase,
         };
       });
@@ -73,11 +78,18 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
         ? rawTitle
         : `${rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1)} Room`;
 
+      const lowerTitle = title.toLowerCase();
+      let capacity = 2;
+      if (lowerTitle.includes("single")) capacity = 1;
+      else if (lowerTitle.includes("double") || lowerTitle.includes("twin")) capacity = 2;
+      else if (lowerTitle.includes("triple")) capacity = 3;
+      else if (lowerTitle.includes("quad")) capacity = 4;
+
       return {
         key: type.toLowerCase(),
         title,
-        subtitle: "1 person",
-        displayPrice: `EGP ${baseRoom!.pricePerNight.toLocaleString()}`,
+        subtitle: `${capacity} person${capacity > 1 ? "s" : ""}`,
+        displayPrice: formatCurrency(baseRoom!.pricePerNight),
         priceUnit: "/ night",
         options,
         defaultOptionValue: baseRoom!.id.toString(),
@@ -168,13 +180,14 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
 
     let totalCapacity = 0;
     let totalRoomCount = 0;
-    Object.entries(formData.rooms).forEach(([key, count]) => {
-      const c = (count as number) || 0;
+    roomGroups.forEach((group) => {
+      const c = formData.rooms[group.key] || 0;
       totalRoomCount += c;
-      const k = key.toLowerCase();
+      const k = group.key.toLowerCase();
       if (k.includes("single")) totalCapacity += c * 1;
-      else if (k.includes("double")) totalCapacity += c * 2;
+      else if (k.includes("double") || k.includes("twin")) totalCapacity += c * 2;
       else if (k.includes("triple")) totalCapacity += c * 3;
+      else if (k.includes("quad")) totalCapacity += c * 4;
       else totalCapacity += c * 2; // fallback
     });
 

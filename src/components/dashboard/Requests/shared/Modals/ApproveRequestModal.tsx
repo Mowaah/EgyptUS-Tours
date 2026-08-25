@@ -83,12 +83,12 @@ export default function ApproveRequestModal({ open, onClose, onSubmit }: Approve
               label=""
               id="total-trip-cost"
               variant="modal"
-              value={totalCost === undefined ? "" : `$ ${totalCost.toLocaleString()}`}
+              value={totalCost === undefined ? "" : `£${totalCost.toLocaleString()}`}
               onChange={(e: any) => {
                 const val = e.target.value.replace(/[^0-9]/g, "");
                 setTotalCost(val ? parseInt(val, 10) : undefined);
               }}
-              placeholder="$ 0"
+              placeholder="£0"
             />
           </div>
 

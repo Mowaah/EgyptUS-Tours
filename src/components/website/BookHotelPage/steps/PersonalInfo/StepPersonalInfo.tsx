@@ -8,8 +8,6 @@ import {
 } from "@/components/shared";
 import { isValidEmail, isValidPhone } from "@/utils/validators";
 import planPage from "../../../PlanYourTripPage/PlanYourTripPage.module.scss";
-import travelerStyles from "../../../PlanYourTripPage/steps/TravelerInfo/StepTravelerInfo.module.scss";
-import formStyles from "@/components/shared/FormField/FormField.module.scss";
 import styles from "./StepPersonalInfo.module.scss";
 import { BookingData } from "../../BookHotelPage";
 import { Hotel } from "@/types";
@@ -22,6 +20,7 @@ interface StepPersonalInfoProps {
   onChange: (patch: Partial<BookingData>) => void;
   onPrevious: () => void;
   onContinue: () => void;
+  isSubmitting?: boolean;
   totalAmount: number;
   vatAmount: number;
   depositAmount: number;
@@ -31,6 +30,7 @@ interface StepPersonalInfoProps {
 
 export default function StepPersonalInfo({
   hotel, formData, onChange, onPrevious, onContinue,
+  isSubmitting,
   totalAmount, vatAmount, depositAmount, totalRooms, totalGuests,
 }: StepPersonalInfoProps) {
   const [showTermsModal, setShowTermsModal] = useState(false);
@@ -174,8 +174,8 @@ export default function StepPersonalInfo({
             <BookingStepFooter
               onPrevious={onPrevious}
               onContinue={handleContinue}
-              continueLabel="Continue To Payment"
-              continueDisabled={!formData.termsAccepted}
+              continueLabel={isSubmitting ? "Starting Checkout..." : "Continue To Payment"}
+              continueDisabled={!formData.termsAccepted || isSubmitting}
               showMoneyIcon
             />
 

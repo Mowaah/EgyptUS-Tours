@@ -59,7 +59,7 @@ export default function RefundModal({ open, onClose, onSubmit }: RefundModalProp
           <div className={styles.summarySection}>
             <div className={styles.summaryRow}>
               <span className={styles.summaryLabel}>Package Total</span>
-              <span className={styles.summaryValue}>$2,500</span>
+              <span className={styles.summaryValue}>£2,500</span>
             </div>
             <div className={styles.summaryRow}>
               <span className={styles.summaryLabel}>Days Before Travel</span>
@@ -75,11 +75,11 @@ export default function RefundModal({ open, onClose, onSubmit }: RefundModalProp
             </div>
             <div className={styles.summaryRow}>
               <span className={styles.summaryLabel}>Deduction Amount</span>
-              <span className={styles.summaryValue}>$1,000</span>
+              <span className={styles.summaryValue}>£1,000</span>
             </div>
             <div className={styles.summaryRow}>
               <span className={styles.summaryLabel}>Refund Amount</span>
-              <span className={styles.refundAmountValue}>$1,500</span>
+              <span className={styles.refundAmountValue}>£1,500</span>
             </div>
           </div>
 

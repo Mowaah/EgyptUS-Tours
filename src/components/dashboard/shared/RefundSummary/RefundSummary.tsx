@@ -46,7 +46,7 @@ export default function RefundSummary({ data }: RefundSummaryProps) {
 
       <div className={styles.row}>
         <span className={styles.label}>Package Total</span>
-        <span className={styles.value}>$2,500</span>
+        <span className={styles.value}>£2,500</span>
       </div>
 
       <div className={styles.row}>
@@ -66,12 +66,12 @@ export default function RefundSummary({ data }: RefundSummaryProps) {
 
       <div className={styles.row}>
         <span className={styles.label}>Deduction Amount</span>
-        <span className={styles.value}>$1,000</span>
+        <span className={styles.value}>£1,000</span>
       </div>
 
       <div className={styles.row}>
         <span className={styles.label}>Refund Amount</span>
-        <span className={styles.refundAmountPill}>$1,500</span>
+        <span className={styles.refundAmountPill}>£1,500</span>
       </div>
 
       <div className={styles.row}>

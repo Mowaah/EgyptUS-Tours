@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Trip } from "@/types";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import styles from "./TripPricing.module.scss";
 
 interface TripPricingProps {
@@ -10,6 +11,7 @@ interface TripPricingProps {
 }
 
 export default function TripPricing({ trip }: TripPricingProps) {
+  const { formatCurrency } = useCurrency();
   const [pricingType, setPricingType] = useState<"private" | "group">("private");
   const allPricing = trip.pricing ?? [];
 
@@ -73,7 +75,7 @@ export default function TripPricing({ trip }: TripPricingProps) {
                     <div className={styles.tierIconWrap}>
                       <Image src="/images/currency.svg" alt="" width={22} height={22} />
                     </div>
-                    <p className={styles.tierPrice}>US$ {tier.price.toLocaleString()}</p>
+                    <p className={styles.tierPrice}>{formatCurrency(tier.price)}</p>
                   </div>
                   <p className={styles.tierLabel}>{tier.label}</p>
                 </div>

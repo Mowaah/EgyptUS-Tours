@@ -38,11 +38,11 @@ export default function ServiceRevenueChart({ data, actions }: ServiceRevenueCha
     const maxVal = Math.max(10, ...distribution.map(d => d.rawValue));
     const step = maxVal / 5;
     return [
-      Math.round(maxVal) + "$",
-      Math.round(maxVal - step) + "$",
-      Math.round(maxVal - step * 2) + "$",
-      Math.round(maxVal - step * 3) + "$",
-      Math.round(maxVal - step * 4) + "$",
+      Math.round(maxVal) + "£",
+      Math.round(maxVal - step) + "£",
+      Math.round(maxVal - step * 2) + "£",
+      Math.round(maxVal - step * 3) + "£",
+      Math.round(maxVal - step * 4) + "£",
       "0$"
     ];
   }, [distribution]);

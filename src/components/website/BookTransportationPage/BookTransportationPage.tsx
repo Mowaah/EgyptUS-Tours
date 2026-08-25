@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { Vehicle, TransportationBookingData, INITIAL_TRANSPORT_BOOKING } from "@/types";
 import { PageHeader, SuccessModal, StepIndicator } from "@/components/shared";
 
@@ -25,6 +26,7 @@ interface BookTransportationPageProps {
 
 export default function BookTransportationPage({ vehicle }: BookTransportationPageProps) {
   const router = useRouter();
+  const { formatCurrency } = useCurrency();
   const [currentStep, setCurrentStep] = useState(1);
   const [showSuccess, setShowSuccess] = useState(false);
   const stepIndicatorRef = useRef<HTMLDivElement | null>(null);
@@ -125,10 +127,10 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
           onPrimaryClick={() => router.push("/")}
           onClose={() => router.push("/")}
           metadata={[
-            { label: "Booking Reference", value: `#BK${Math.floor(Math.random() * 90000000 + 10000000)}` },
+            { label: "Booking Reference", value: `BK-${String(Math.floor(Math.random() * 90000000 + 10000000)).padStart(6, "0")}` },
             { label: "Vehicle", value: `${vehicle.type} - ${vehicle.name}` },
             { label: "Pickup Date", value: formData.pickupDate || "2026-01-22" },
-            { label: "Total Paid", value: "$110.42", valueColor: "#FF6600" },
+            { label: "Total Paid", value: formatCurrency(Number(vehicle.price.replace(/,/g, "")) || 0), valueColor: "#FF6600" },
           ]}
         />
       )}

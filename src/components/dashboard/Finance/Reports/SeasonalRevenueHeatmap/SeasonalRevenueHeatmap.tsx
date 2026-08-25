@@ -111,15 +111,15 @@ export default function SeasonalRevenueHeatmap({ heatmapData: rawData }: Seasona
         <div className={styles.legendArea}>
           <div className={styles.legend}>
             <div className={styles.legendItem}>
-              <span className={styles.legendLabel}>&lt; $500</span>
+              <span className={styles.legendLabel}>&lt; £500</span>
               <div className={`${styles.legendColor} ${styles.level1}`} />
             </div>
             <div className={styles.legendItem}>
-              <span className={styles.legendLabel}>$500 - $2K</span>
+              <span className={styles.legendLabel}>£500 - £2K</span>
               <div className={`${styles.legendColor} ${styles.level2}`} />
             </div>
             <div className={styles.legendItem}>
-              <span className={styles.legendLabel}>&gt; $2K</span>
+              <span className={styles.legendLabel}>&gt; £2K</span>
               <div className={`${styles.legendColor} ${styles.level3}`} />
             </div>
           </div>

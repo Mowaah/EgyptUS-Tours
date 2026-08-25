@@ -64,6 +64,8 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
   const isPage = variant === "page";
   const isSearchResults = isPage && !!searchParams;
 
+
+
   const [expanded, setExpanded] = useState<{
     duration: boolean;
     offers: boolean;
@@ -73,7 +75,7 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
     duration: true,
     offers: true,
     price: true,
-    priceRange: { min: 0, max: 12000 },
+    priceRange: { min: 0, max: 100000 },
   });
 
   const [durationFilter, setDurationFilter] = useState(DURATION_OPTIONS[0]);
@@ -104,6 +106,13 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
   const PAGE_SIZE = 6;
   const [trips, setTrips] = useState<Trip[]>(initialTrips);
 
+  const maxPriceLimit = useMemo(() => {
+    const src = trips.length > 0 ? trips : initialTrips;
+    if (src.length === 0) return 50000;
+    const max = Math.max(...src.map((t) => t.price || 0));
+    return Math.max(Math.ceil(max / 1000) * 1000, 12000);
+  }, [trips, initialTrips]);
+
   const dynamicCategories = useMemo(() => {
     const cats = new Set<string>();
     trips.forEach((trip) => {
@@ -123,13 +132,25 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
     }
   }, [initialTrips]);
 
+  useEffect(() => {
+    setExpanded((prev) => {
+      if (prev.priceRange.max < maxPriceLimit || prev.priceRange.max === 12000) {
+        return {
+          ...prev,
+          priceRange: { min: prev.priceRange.min, max: maxPriceLimit },
+        };
+      }
+      return prev;
+    });
+  }, [maxPriceLimit]);
+
   const activeFilterCount = useMemo(() => {
     let n = 0;
     if (durationFilter !== DURATION_OPTIONS[0]) n += 1;
     if (offersFilter !== SPECIAL_OFFERS[0]) n += 1;
-    if (expanded.priceRange.min !== 1 || expanded.priceRange.max !== 12000) n += 1;
+    if (expanded.priceRange.min !== 0 || expanded.priceRange.max < maxPriceLimit) n += 1;
     return n;
-  }, [durationFilter, offersFilter, expanded.priceRange.min, expanded.priceRange.max]);
+  }, [durationFilter, offersFilter, expanded.priceRange.min, expanded.priceRange.max, maxPriceLimit]);
 
   const [isLg, setIsLg] = useState(false);
 
@@ -457,9 +478,9 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
             >
               <PriceRangeFilter
                 min={0}
-                max={12000}
+                max={maxPriceLimit}
                 valueMin={expanded.priceRange.min}
-                valueMax={expanded.priceRange.max}
+                valueMax={Math.min(expanded.priceRange.max, maxPriceLimit)}
                 onChange={(min, max) => setExpanded((prev) => ({
                   ...prev,
                   priceRange: { min, max }

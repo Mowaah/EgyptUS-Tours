@@ -57,7 +57,7 @@ export default function RecordRemainingPaymentModal({ open, onClose, onSubmit }:
               label=""
               id="total-trip-cost"
               variant="modal"
-              value="$ 5,000"
+              value="£5,000"
               disabled
               onChange={() => {}}
             />
@@ -79,11 +79,11 @@ export default function RecordRemainingPaymentModal({ open, onClose, onSubmit }:
           <div className={styles.summaryBox}>
             <div className={styles.summaryCol}>
               <span className={styles.summaryTitle}>Deposit Amount</span>
-              <span className={styles.summaryValue}>$750</span>
+              <span className={styles.summaryValue}>£750</span>
             </div>
             <div className={styles.summaryCol}>
               <span className={styles.summaryTitle}>Remaining Balance</span>
-              <span className={styles.summaryValue}>$1,750</span>
+              <span className={styles.summaryValue}>£1,750</span>
             </div>
           </div>
           

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useFormContext, useFieldArray, Controller, useWatch } from "react-hook-form";
+import { Controller, FieldErrors, useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import { CurrencyField } from "@/components/dashboard/shared";
 import { MultiUploadDropzone } from "@/components/dashboard/FormFields";
@@ -8,6 +8,14 @@ import { getLangKey } from "@/components/dashboard/shared/i18n";
 import { CreateHotelValues } from "../../CreateHotelSchema";
 import styles from "./RoomsStep.module.scss";
 import Image from "next/image";
+
+type RoomErrorKey = "category" | "type" | "view" | "pricePerNightEgp";
+type RoomFieldErrors = Partial<Record<RoomErrorKey, { message?: string }>>;
+
+function getRoomError(errors: FieldErrors<CreateHotelValues>, index: number, key: RoomErrorKey): string | undefined {
+  const roomError = errors.rooms?.[index] as RoomFieldErrors | undefined;
+  return roomError?.[key]?.message;
+}
 
 function RoomPreview({ index }: { index: number }) {
   const { control } = useFormContext<CreateHotelValues>();
@@ -96,7 +104,7 @@ function FacilitiesSelector({ value = [], onChange }: { value: string[]; onChang
 
 export function RoomsStep() {
   const [roomsLang, setRoomsLang] = useState<Language>("English");
-  const { control, register, formState: { errors } } = useFormContext<CreateHotelValues>();
+  const { control, formState: { errors } } = useFormContext<CreateHotelValues>();
   
   const rawRoomsError = errors.rooms as { root?: { message?: string }; message?: string } | undefined;
   const roomsErrorMessage = rawRoomsError?.root?.message || rawRoomsError?.message;
@@ -111,6 +119,7 @@ export function RoomsStep() {
       type: "",
       view: "",
       pricePerNight: "",
+      pricePerNightEgp: "",
       description: { en: "", it: "", es: "" },
       facilities: [],
       photos: [],
@@ -181,7 +190,7 @@ export function RoomsStep() {
                           ]}
                           label="Room Category"
                           placeholder="e.g. Standard Room"
-                          error={(errors?.rooms?.[index] as any)?.category?.message || fieldState.error?.message}
+                          error={getRoomError(errors, index, "category") || fieldState.error?.message}
                         />
                       )}
                     />
@@ -201,7 +210,7 @@ export function RoomsStep() {
                           ]}
                           label="Room Type"
                           placeholder="e.g. Single"
-                          error={(errors?.rooms?.[index] as any)?.type?.message || fieldState.error?.message}
+                          error={getRoomError(errors, index, "type") || fieldState.error?.message}
                         />
                       )}
                     />
@@ -224,21 +233,21 @@ export function RoomsStep() {
                           ]}
                           label="Room View"
                           placeholder="e.g. Garden View"
-                          error={(errors?.rooms?.[index] as any)?.view?.message || fieldState.error?.message}
+                          error={getRoomError(errors, index, "view") || fieldState.error?.message}
                         />
                       )}
                     />
                   </div>
                   <div className={styles.fieldItem}>
                     <Controller
-                      name={`rooms.${index}.pricePerNight`}
+                      name={`rooms.${index}.pricePerNightEgp`}
                       control={control}
-                      render={({ field, fieldState }) => (
+                      render={({ fieldState }) => (
                         <CurrencyField 
-                          name={`rooms.${index}.pricePerNight`}
-                          label="Price per Night ($)"
+                          name={`rooms.${index}.pricePerNightEgp`}
+                          label="Price per Night (EGP)"
                           control={control}
-                          error={(errors?.rooms?.[index] as any)?.pricePerNight?.message || fieldState.error?.message}
+                          error={getRoomError(errors, index, "pricePerNightEgp") || fieldState.error?.message}
                         />
                       )}
                     />
@@ -300,7 +309,7 @@ export function RoomsStep() {
         ))}
         {fields.length === 0 && (
           <div style={{ padding: '40px', textAlign: 'center', color: '#9CA3AF' }}>
-            No rooms added yet. Click "+ Add" to create a room.
+            No rooms added yet. Click Add to create a room.
           </div>
         )}
       </div>

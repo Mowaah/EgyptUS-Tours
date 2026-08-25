@@ -295,8 +295,20 @@ export async function getProfileBookingDetail(type: string, id: string): Promise
   return await apiClient.get(`/profile/bookings/${id}/?type=${type}`);
 }
 
-export async function submitHotelBooking(data: any): Promise<any> {
-  return await apiClient.post('/booking-requests/hotels/', data);
+export interface PublicBookingPaymentResponse {
+  id: number;
+  message: string;
+  payment_url: string;
+  payment_link_status: string;
+  payment_plan: string;
+  payment_method: string;
+  total_price: string;
+  deposit_amount: string;
+  currency: string;
+}
+
+export async function submitHotelBooking(data: Record<string, unknown>): Promise<PublicBookingPaymentResponse> {
+  return await apiClient.post('/hotel-bookings/', data);
 }
 
 export async function submitTripBooking(data: any): Promise<any> {
@@ -486,4 +498,3 @@ export async function sendAssistantMessage(message: string, currentPath: string 
     current_path: currentPath,
   });
 }
-

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo, useEffect, useLayoutEffect } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import { Hotel, HotelRoom } from "@/types";
-import { FilterGroup, RadioFilterList, PriceRangeFilter, EmptyState, Button, FilterSidebar } from "@/components/shared";
+import { FilterGroup, RadioFilterList, PriceRangeFilter, EmptyState, FilterSidebar } from "@/components/shared";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import styles from "./HotelRoomTypes.module.scss";
 
 interface HotelRoomTypesProps {
@@ -14,6 +15,7 @@ const TYPE_OPTIONS = ["All", "Single", "Double Room", "Triple Room"];
 const VIEW_OPTIONS = ["All", "Sea View", "Pool View", "Garden View"];
 
 export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
+  const { formatCurrency } = useCurrency();
   const [roomCategory, setRoomCategory] = useState("All");
   const [roomType, setRoomType] = useState("All");
   const [roomView, setRoomView] = useState("All");
@@ -129,6 +131,7 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
               valueMin={priceRange.min}
               valueMax={priceRange.max}
               onChange={(newMin, newMax) => setPriceRange({ min: newMin, max: newMax })}
+              formatValue={formatCurrency}
             />
           </FilterGroup>
         </FilterSidebar>
@@ -154,6 +157,8 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
 }
 
 function RoomCard({ room }: { room: HotelRoom }) {
+  const { formatCurrency } = useCurrency();
+
   return (
     <div className={styles.roomCard}>
       {/* ── Image ── */}
@@ -203,7 +208,7 @@ function RoomCard({ room }: { room: HotelRoom }) {
         <div className={styles.priceInfo}>
           <span className={styles.priceLabel}>Start From</span>
           <div className={styles.priceValue}>
-            <span className={styles.amount}>${room.pricePerNight?.toLocaleString()}</span>
+            <span className={styles.amount}>{formatCurrency(room.pricePerNight)}</span>
             <span className={styles.per}>Per Night</span>
           </div>
         </div>

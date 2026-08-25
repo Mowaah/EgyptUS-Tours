@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { Trip, Hotel } from "@/types";
 import { BookingData } from "@/types";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import styles from "./BookingSidebar.module.scss";
 
 interface BookingSidebarProps {
@@ -42,10 +43,12 @@ export default function BookingSidebar({
   // Mobile-only: the full details collapse into a compact summary strip.
   // On desktop this state is ignored (CSS always shows the details).
   const [expanded, setExpanded] = useState(false);
+  const { formatCurrency } = useCurrency();
 
   const finalTotal = totalAmount + vatAmount;
   const remainingAmount = finalTotal - depositAmount;
   const isHotel = !!hotel;
+  const formatMoney = formatCurrency;
 
   const image = isHotel ? (hotel!.image || "/images/pyramids.jpg") : (trip!.image || "/images/cruise.jpg");
   const title = isHotel ? hotel!.name : trip!.title;
@@ -104,7 +107,7 @@ export default function BookingSidebar({
               {isHotel ? `${nights} Night` : `${formData.adults} Adults`} <span aria-hidden="true">•</span> {totalRooms} Room <span aria-hidden="true">•</span> {compactGuests} Guests
             </div>
             <div className={styles.compactBottomRow}>
-              <span className={styles.compactTotalValue}>Total: ${totalAmount.toLocaleString()}.00</span>
+              <span className={styles.compactTotalValue}>Total: {formatMoney(totalAmount)}</span>
               <span className={styles.compactChevron} aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path
@@ -240,7 +243,7 @@ export default function BookingSidebar({
                 rows.push(
                   <div key={`${type}-${i}`} className={styles.priceRow}>
                     <span>1 × {name} - {room.view} ({nights} {nights === 1 ? 'Night' : 'Nights'})</span>
-                    <strong>${price.toFixed(2)}</strong>
+                    <strong>{formatMoney(price)}</strong>
                   </div>
                 );
               }
@@ -248,13 +251,13 @@ export default function BookingSidebar({
             }) : (
               <div className={styles.priceRow}>
                  <span>Trip Package</span>
-                 <strong>${totalAmount.toFixed(2)}</strong>
+                 <strong>{formatMoney(totalAmount)}</strong>
               </div>
             )}
             {isHotel && vatAmount > 0 && (
               <div className={styles.priceRow}>
                 <span>VAT</span>
-                <strong>${vatAmount.toFixed(2)}</strong>
+                <strong>{formatMoney(vatAmount)}</strong>
               </div>
             )}
           </div>
@@ -263,18 +266,18 @@ export default function BookingSidebar({
 
           <div className={styles.totalRow}>
             <span className={styles.totalLabel}>Total</span>
-            <span className={styles.totalValue}>${finalTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span className={styles.totalValue}>{formatMoney(finalTotal)}</span>
           </div>
 
           {/* Deposit card */}
           <div className={styles.depositCard}>
             <div className={styles.depositTopRow}>
               <span className={styles.depositLabel}>Pay now (30% deposit)</span>
-              <span className={styles.depositAmount}>${depositAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span className={styles.depositAmount}>{formatMoney(depositAmount)}</span>
             </div>
             <div className={styles.depositBottomRow}>
               <span className={styles.depositNote}>Remaining 70% due one month before your trip</span>
-              <span className={styles.remainingAmount}>${remainingAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span className={styles.remainingAmount}>{formatMoney(remainingAmount)}</span>
             </div>
           </div>
 

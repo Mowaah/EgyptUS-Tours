@@ -10,7 +10,7 @@ const filterOptions = {
   type: ["All", "Single", "Double Room", "Superior Room", "Deluxe Room"],
   category: ["All", "Standard", "Premium", "Suite"],
   view: ["All", "Sea View", "Partial Sea View", "Nile View", "Pool View", "City View"],
-  price: ["All", "Under $100", "$100 - $200", "Over $200"],
+  price: ["All", "Under £1,000", "£1,000 - 2,000", "Over £2,000"],
 };
 
 export default function HotelRoomsPage() {
@@ -39,7 +39,7 @@ export default function HotelRoomsPage() {
     const title = [category, type, view].filter(Boolean).join(" - ") || "Hotel Room";
     const description = room.description || "Comfortable guest room with modern amenities.";
     const facilities: string[] = Array.isArray(room.features) ? room.features : Array.isArray(room.facilities) ? room.facilities : [];
-    const price = room.price_per_night ? String(room.price_per_night) : room.pricePerNight ? String(room.pricePerNight) : "0";
+    const price = room.price_per_night_egp ? String(room.price_per_night_egp) : room.price_per_night ? String(room.price_per_night) : room.pricePerNight ? String(room.pricePerNight) : "0";
     const images: string[] = Array.isArray(room.images)
       ? room.images.map((img: any) => img.image_url || img.image || img.file || img).filter(Boolean)
       : Array.isArray(room.photos)
@@ -70,9 +70,9 @@ export default function HotelRoomsPage() {
       return false;
     }
     const numPrice = parseFloat(room.price);
-    if (appliedFilters.price === "Under $100" && numPrice >= 100) return false;
-    if (appliedFilters.price === "$100 - $200" && (numPrice < 100 || numPrice > 200)) return false;
-    if (appliedFilters.price === "Over $200" && numPrice <= 200) return false;
+    if (appliedFilters.price === "Under £1,000" && numPrice >= 1000) return false;
+    if (appliedFilters.price === "£1,000 - 2,000" && (numPrice < 1000 || numPrice > 2000)) return false;
+    if (appliedFilters.price === "Over £2,000" && numPrice <= 2000) return false;
 
     return true;
   });
@@ -184,7 +184,7 @@ function RoomCard({ room }: { room: any }) {
         )}
 
         <div className={styles.price}>
-          <span className={styles.amount}>${room.price}</span>
+          <span className={styles.amount}>£{room.price}</span>
           <span className={styles.perNight}>/per night</span>
         </div>
       </div>
