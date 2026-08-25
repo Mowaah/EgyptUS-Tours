@@ -1,6 +1,11 @@
+import { Suspense } from "react";
 import PlanYourTripPage from "@/components/website/PlanYourTripPage/PlanYourTripPage";
 
 export default function BookingPage() {
-  return <PlanYourTripPage />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PlanYourTripPage />
+    </Suspense>
+  );
 }
 

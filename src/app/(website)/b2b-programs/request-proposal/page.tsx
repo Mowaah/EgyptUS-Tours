@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import B2BRequestProposalPage from "@/components/website/B2BRequestProposalPage/B2BRequestProposalPage";
 
 export const metadata = {
@@ -6,5 +7,9 @@ export const metadata = {
 };
 
 export default function RequestProposal() {
-  return <B2BRequestProposalPage />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <B2BRequestProposalPage />
+    </Suspense>
+  );
 }

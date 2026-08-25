@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import EventsRequestProposalPage from "@/components/website/EventsRequestProposalPage/EventsRequestProposalPage";
 
 export const metadata = {
@@ -5,5 +6,9 @@ export const metadata = {
 };
 
 export default function Page() {
-  return <EventsRequestProposalPage />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <EventsRequestProposalPage />
+    </Suspense>
+  );
 }

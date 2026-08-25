@@ -65,6 +65,9 @@ const nextConfig: NextConfig = {
     });
     return config;
   },
+  experimental: {
+    missingSuspenseWithCsrBailout: false,
+  },
 };
 
 export default nextConfig;

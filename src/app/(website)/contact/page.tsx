@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import ContactPage from "@/components/website/ContactPage/ContactPage";
 
 export const metadata = {
@@ -6,5 +7,9 @@ export const metadata = {
 };
 
 export default function Page() {
-  return <ContactPage />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ContactPage />
+    </Suspense>
+  );
 }
