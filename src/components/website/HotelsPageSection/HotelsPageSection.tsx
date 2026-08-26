@@ -74,7 +74,7 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
 
   const [hotels, setHotels] = useState<Hotel[]>(mappedHotels);
   const [ratingFilter, setRatingFilter] = useState("any");
-  const [priceRange, setPriceRange] = useState({ min: 1, max: maxHotelPriceLimit });
+  const [priceRange, setPriceRange] = useState({ min: 0, max: maxHotelPriceLimit });
   const [priceExpanded, setPriceExpanded] = useState(true);
   const [ratingExpanded, setRatingExpanded] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -95,7 +95,7 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
   const activeFilterCount = useMemo(() => {
     let n = 0;
     if (ratingFilter !== "any") n += 1;
-    if (priceRange.min !== 1 || priceRange.max < maxHotelPriceLimit) n += 1;
+    if (priceRange.min !== 0 || priceRange.max < maxHotelPriceLimit) n += 1;
     return n;
   }, [ratingFilter, priceRange.min, priceRange.max, maxHotelPriceLimit]);
 
@@ -311,7 +311,7 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
               onToggle={() => setPriceExpanded((v) => !v)}
             >
               <PriceRangeFilter
-                min={1}
+                min={0}
                 max={maxHotelPriceLimit}
                 valueMin={priceRange.min}
                 valueMax={Math.min(priceRange.max, maxHotelPriceLimit)}
