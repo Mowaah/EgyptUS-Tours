@@ -117,3 +117,11 @@ export async function refundTransportationBooking(id: string | number, formData:
     headers: { 'Content-Type': 'multipart/form-data' }
   });
 }
+
+export async function generateTripPaymentLink(id: string | number): Promise<any> {
+  return await adminDataClient.post(`/bookings/trips/${id}/generate_payment_link/`);
+}
+
+export async function generateHotelPaymentLink(id: string | number): Promise<any> {
+  return await adminDataClient.post(`/bookings/hotels/${id}/generate_payment_link/`);
+}

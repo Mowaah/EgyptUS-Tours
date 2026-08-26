@@ -121,7 +121,7 @@
     border-color: rgba(102, 107, 109, 0.4);
     transform: none !important;
   }
-  
+
   &:active {
     transform: none !important;
   }
@@ -223,8 +223,9 @@
 
 /* Inner content row inside each item */
 .filterDropdownItem {
-  > span,
-  > div {
+
+  >span,
+  >div {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -236,7 +237,7 @@
   }
 }
 
-.filterDropdownItemSelected > * {
+.filterDropdownItemSelected>* {
   background: $border;
   border-radius: 16px;
 }

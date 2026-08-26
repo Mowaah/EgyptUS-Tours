@@ -18,6 +18,7 @@ export interface TablePanelProps {
   showExport?: boolean;
   exportLabel?: string;
   onExportClick?: () => void;
+  alwaysShowToolbar?: boolean;
 }
 
 export default function TablePanel({
@@ -34,6 +35,7 @@ export default function TablePanel({
   showExport,
   exportLabel = "Export Data",
   onExportClick,
+  alwaysShowToolbar,
 }: TablePanelProps) {
   const panelClassName = className ? `${styles.panel} ${className}` : styles.panel;
   const [isToolbarOpen, setIsToolbarOpen] = useState(false);
@@ -74,7 +76,7 @@ export default function TablePanel({
         </div>
       )}
 
-      {isToolbarOpen && toolbar ? <div style={{ marginBottom: "24px" }}>{toolbar}</div> : null}
+      {(isToolbarOpen || alwaysShowToolbar) && toolbar ? <div style={{ marginBottom: "24px" }}>{toolbar}</div> : null}
 
       {children}
     </section>

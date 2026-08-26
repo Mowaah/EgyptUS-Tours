@@ -91,10 +91,13 @@ export default function StepBookingDetails({ formData, onChange, errors = {} }: 
   const roomGroups: RoomGroup[] = useMemo(() => {
     if (!rawRooms || rawRooms.length === 0) return [];
 
-    // Group rooms by category/type if present, or by room name
+    // Group rooms by category and type
     const groups: Record<string, any[]> = {};
     for (const room of rawRooms) {
-      const groupKey = (room.type_label || room.category_label || room.type || room.name || `Room ${room.id}`).trim();
+      const cat = (room.category_label || room.category || "").trim().replace(/\s*[Rr]oom\s*/i, "");
+      const typ = (room.type_label || room.type || "").trim();
+      const groupKey = cat ? `${cat} ${typ}`.trim() : (typ || room.name || `Room ${room.id}`).trim();
+      
       if (!groups[groupKey]) groups[groupKey] = [];
       groups[groupKey].push(room);
     }
@@ -124,18 +127,29 @@ export default function StepBookingDetails({ formData, onChange, errors = {} }: 
         };
       });
 
-      const typeLabel = (baseRoom.type_label || baseRoom.type || typeKey || "Room").trim();
-      const formattedType = typeLabel.toLowerCase().includes("room")
-        ? typeLabel.charAt(0).toUpperCase() + typeLabel.slice(1)
-        : `${typeLabel.charAt(0).toUpperCase() + typeLabel.slice(1)} Room`;
+      const typeLabel = typeKey || "Room";
+      const formattedType = typeLabel.toLowerCase().endsWith("room")
+        ? typeLabel
+        : `${typeLabel} Room`;
+        
+      const finalTitle = formattedType.split(' ')
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join(' ');
 
-      const viewLabel = baseRoom.view_label || baseRoom.view || "Garden View";
-      const displayTitle = `${formattedType} - ${viewLabel}`;
+      const viewLabel = baseRoom.view_label || baseRoom.view || "Standard View";
+      const displayTitle = `${finalTitle} - ${viewLabel}`;
+
+      let capacity = 2;
+      const lowerType = typeKey.toLowerCase();
+      if (lowerType.includes("single")) capacity = 1;
+      else if (lowerType.includes("double") || lowerType.includes("twin")) capacity = 2;
+      else if (lowerType.includes("triple")) capacity = 3;
+      else if (lowerType.includes("quad")) capacity = 4;
 
       return {
-        key: typeKey.toLowerCase().replace(/\s+/g, "_"),
+        key: typeKey.toLowerCase(),
         title: displayTitle,
-        subtitle: baseRoom.name || baseRoom.title || "",
+        subtitle: `${capacity} person${capacity > 1 ? "s" : ""}`,
         displayPrice: `£${Math.round(basePrice).toLocaleString()}`,
         priceUnit: "/ night",
         options,

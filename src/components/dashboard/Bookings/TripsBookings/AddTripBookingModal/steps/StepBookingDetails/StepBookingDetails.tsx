@@ -39,8 +39,11 @@ export default function StepBookingDetails({ formData, onChange, errors = {}, ha
     if (!hotelDetail?.hotelRooms) return {};
     const groups: Record<string, typeof hotelDetail.hotelRooms> = {};
     for (const room of hotelDetail.hotelRooms) {
-      if (!groups[room.type]) groups[room.type] = [];
-      groups[room.type].push(room);
+      const category = room.category ? room.category.trim().replace(/\s*[Rr]oom\s*/i, "") : "";
+      const type = room.type ? room.type.trim() : "";
+      const groupKey = category ? `${category} ${type}`.trim() : type;
+      if (!groups[groupKey]) groups[groupKey] = [];
+      groups[groupKey].push(room);
     }
     return groups;
   }, [hotelDetail]);
@@ -64,10 +67,22 @@ export default function StepBookingDetails({ formData, onChange, errors = {}, ha
         };
       });
 
+      const rawTitle = type.trim();
+      const title = rawTitle.toLowerCase().endsWith("room")
+        ? rawTitle
+        : `${rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1)} Room`;
+
+      const lowerTitle = title.toLowerCase();
+      let capacity = 2;
+      if (lowerTitle.includes("single")) capacity = 1;
+      else if (lowerTitle.includes("double") || lowerTitle.includes("twin")) capacity = 2;
+      else if (lowerTitle.includes("triple")) capacity = 3;
+      else if (lowerTitle.includes("quad")) capacity = 4;
+
       return {
-        key: type,
-        title: `${type} - ${baseRoom!.view}`,
-        subtitle: baseRoom!.name,
+        key: type.toLowerCase(),
+        title,
+        subtitle: `${capacity} person${capacity > 1 ? "s" : ""}`,
         displayPrice: `$${baseRoom!.pricePerNight}`,
         priceUnit: "/ night",
         options,

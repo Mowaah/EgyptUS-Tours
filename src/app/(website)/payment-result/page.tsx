@@ -98,7 +98,18 @@ function PaymentResultContent() {
       }
     } else {
       if (success) {
-        router.replace("/profile");
+        const amountCents = urlParams.get("amount_cents");
+        const merchantOrderId = urlParams.get("merchant_order_id");
+        
+        let extraParams = "";
+        if (amountCents) extraParams += `&amount_cents=${amountCents}`;
+        if (merchantOrderId) {
+          // Extract just the PAY-YYYY-XXXX part, stripping our added random UUID
+          const cleanRef = merchantOrderId.split("-").slice(0, 3).join("-");
+          extraParams += `&ref=${cleanRef}`;
+        }
+        
+        router.replace(`/profile?booking_success=true&booking_id=${bookingIdParam}${extraParams}`);
       } else {
         router.replace("/trips");
       }

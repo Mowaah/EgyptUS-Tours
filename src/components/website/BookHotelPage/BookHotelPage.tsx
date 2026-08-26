@@ -252,8 +252,8 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
         hotelName: hotel.name,
         startDate: formData.startDate,
         endDate: formData.endDate,
-        totalAmount: parseFloat(booking.total_price) || totalAmount,
-        depositAmount: parseFloat(booking.deposit_amount) || depositAmount,
+        totalAmount: parseFloat((booking as any).total_amount || (booking as any).total_price || (booking as any).price_breakdown?.total) || totalAmount,
+        depositAmount: parseFloat((booking as any).deposit_amount || (booking as any).payment?.amount_due) || depositAmount,
       });
 
       window.location.assign(resolvePaymentUrl(booking.payment_url));

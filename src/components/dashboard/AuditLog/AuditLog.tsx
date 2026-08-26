@@ -57,7 +57,19 @@ const extractIdentifier = (obj: Record<string, any>): string | null => {
 
 const AuditValueRender = ({ value, otherValue, isAfter }: { value: any, otherValue: any, isAfter: boolean }) => {
   if (value === null || value === undefined || value === "") return <span>-</span>;
-  if (typeof value !== "object") return <span>{String(value)}</span>;
+  if (typeof value !== "object") {
+    const strVal = String(value);
+    const isLong = strVal.length > 80;
+    const displayString = isLong ? strVal.slice(0, 80) + "..." : strVal;
+    return (
+      <span 
+        style={{ overflowWrap: "anywhere", wordBreak: "break-word" }} 
+        title={isLong ? strVal : undefined}
+      >
+        {displayString}
+      </span>
+    );
+  }
 
   let displayKey = "";
   let displayVal: any = "";
@@ -98,9 +110,9 @@ const AuditValueRender = ({ value, otherValue, isAfter }: { value: any, otherVal
       const identifier = extractIdentifier(value);
       const str = JSON.stringify(value);
       if (identifier) {
-        return <span title={str} style={{ color: "#64748b" }}>{identifier}</span>;
+        return <span title={str} style={{ color: "#64748b", overflowWrap: "anywhere", wordBreak: "break-word" }}>{identifier}</span>;
       }
-      return <span title={str} style={{ color: "#64748b" }}>{str.length > 30 ? str.slice(0, 30) + "..." : str}</span>;
+      return <span title={str} style={{ color: "#64748b", overflowWrap: "anywhere", wordBreak: "break-word" }}>{str.length > 80 ? str.slice(0, 80) + "..." : str}</span>;
     }
   }
 
@@ -129,7 +141,45 @@ const AuditValueRender = ({ value, otherValue, isAfter }: { value: any, otherVal
     }
   }
 
-  return <span style={{ color: "#64748b" }}>{label}: {String(displayVal)}</span>;
+  let formattedVal = displayVal;
+  if (formattedVal !== null && typeof formattedVal === "object") {
+    if (Array.isArray(formattedVal)) {
+      if (formattedVal.every(item => typeof item !== "object" || item === null)) {
+        formattedVal = formattedVal.join(", ");
+      } else {
+        formattedVal = formattedVal.map((item, index) => {
+          if (item && typeof item === "object") {
+            return item.name || item.title || item.text || item.label || (item.id ? `#${item.id}` : `Item ${index + 1}`);
+          }
+          return String(item);
+        }).join(" • ");
+      }
+    } else {
+      const name = formattedVal.name || formattedVal.title || formattedVal.text || formattedVal.label;
+      if (name) {
+        formattedVal = String(name);
+      } else {
+        formattedVal = Object.entries(formattedVal)
+          .filter(([k]) => !["id", "created_at", "updated_at"].includes(k))
+          .map(([k, v]) => `${k}: ${v}`)
+          .join(", ");
+      }
+    }
+  } else {
+    formattedVal = String(formattedVal);
+  }
+
+  const isLong = formattedVal.length > 80;
+  const displayString = isLong ? formattedVal.slice(0, 80) + "..." : formattedVal;
+
+  return (
+    <span 
+      style={{ color: "#64748b", overflowWrap: "anywhere", wordBreak: "break-word" }}
+      title={isLong ? formattedVal : undefined}
+    >
+      {label}: {displayString}
+    </span>
+  );
 };
 
 export default function AuditLog() {

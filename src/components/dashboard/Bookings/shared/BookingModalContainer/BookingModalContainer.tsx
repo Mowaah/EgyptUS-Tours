@@ -18,8 +18,13 @@ interface BookingModalContainerProps {
   onNext: () => void;
   onPrevious: () => void;
   
+  hidePrimaryButton?: boolean;
+  disablePrevious?: boolean;
+  isPrimaryDisabled?: boolean;
+  
   isSubmitting?: boolean;
   isConfirmed?: boolean;
+  finalStepButtonLabel?: string;
   
   children: React.ReactNode;
 }
@@ -35,8 +40,12 @@ export default function BookingModalContainer({
   onStepClick,
   onNext,
   onPrevious,
+  hidePrimaryButton = false,
+  disablePrevious = false,
+  isPrimaryDisabled = false,
   isSubmitting = false,
   isConfirmed = false,
+  finalStepButtonLabel,
   children,
 }: BookingModalContainerProps) {
   useEffect(() => {
@@ -100,7 +109,7 @@ export default function BookingModalContainer({
                 <span>
                   {isSubmitting 
                     ? "Submitting..." 
-                    : (currentStep === steps.length - 1 ? "Confirm Booking" : "Next")}
+                    : (currentStep === steps.length - 1 ? (finalStepButtonLabel || "Confirm Booking") : "Next")}
                 </span>
                 {currentStep !== steps.length - 1 && !isSubmitting && (
                   <Image
@@ -114,7 +123,8 @@ export default function BookingModalContainer({
               </>
             }
             primaryOnClick={onNext}
-            primaryDisabled={isSubmitting}
+            hidePrimaryButton={hidePrimaryButton}
+            primaryDisabled={isSubmitting || isPrimaryDisabled}
             primaryIsLoading={isSubmitting}
           />
         </div>

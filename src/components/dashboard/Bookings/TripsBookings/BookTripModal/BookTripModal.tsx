@@ -90,17 +90,17 @@ export default function BookTripModal({ open, onClose, onBookPrivate, onBookGrou
 
   const privatePrice = tripDetail
     ? tripDetail.private_price
-      ? `$${parseFloat(tripDetail.private_price.toString()).toFixed(2)}`
+      ? `£${parseFloat(tripDetail.private_price.toString()).toLocaleString("en-US", { maximumFractionDigits: 2 })}`
       : tripDetail.base_price
-        ? `$${parseFloat(tripDetail.base_price.toString()).toFixed(2)}`
+        ? `£${parseFloat(tripDetail.base_price.toString()).toLocaleString("en-US", { maximumFractionDigits: 2 })}`
         : "£--"
     : selectedTrip?.base_price 
-      ? `$${parseFloat(selectedTrip.base_price.toString()).toFixed(2)}` 
+      ? `£${parseFloat(selectedTrip.base_price.toString()).toLocaleString("en-US", { maximumFractionDigits: 2 })}` 
       : "---";
 
   const groupPrice = tripDetail
     ? tripDetail.group_price
-      ? `$${parseFloat(tripDetail.group_price.toString()).toFixed(2)}`
+      ? `£${parseFloat(tripDetail.group_price.toString()).toLocaleString("en-US", { maximumFractionDigits: 2 })}`
       : "£--"
     : "---";
 

@@ -30,10 +30,17 @@ export function FilterSelect({ id, label, value, options, onChange }: FilterSele
   return (
     <div className={`${styles.filterField} ${open ? styles.filterFieldOpen : ""}`} ref={ref}>
       {/* Pill */}
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         className={styles.filterPill}
         onClick={() => setOpen((o) => !o)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setOpen((o) => !o);
+          }
+        }}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={`Filter by ${label}`}
@@ -48,7 +55,7 @@ export function FilterSelect({ id, label, value, options, onChange }: FilterSele
             <polyline points="1 1 5 5 9 1" />
           </svg>
         </span>
-      </button>
+      </div>
 
       {/* Dropdown menu */}
       {open && (

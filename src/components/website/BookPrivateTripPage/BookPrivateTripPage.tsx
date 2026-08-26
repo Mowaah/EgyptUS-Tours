@@ -231,8 +231,8 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
         startDate: formData.startDate,
         endDate: formData.endDate,
         isGroupTrip: isGroupTrip,
-        totalAmount: parseFloat(booking.total_price) || totalAmount,
-        depositAmount: parseFloat(booking.deposit_amount) || depositAmount,
+        totalAmount: parseFloat(booking.total_amount || booking.total_price || booking.price_breakdown?.total) || totalAmount,
+        depositAmount: parseFloat(booking.deposit_amount || booking.payment?.amount_due) || depositAmount,
       });
 
       window.location.assign(resolvePaymentUrl(booking.payment_url));

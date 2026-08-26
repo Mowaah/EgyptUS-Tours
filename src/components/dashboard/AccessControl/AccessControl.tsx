@@ -137,6 +137,7 @@ export default function AccessControl({
         title="Role Editor"
         iconSrc="/images/dashboard/user-edit.svg"
         className={styles.panel}
+        alwaysShowToolbar={true}
         toolbar={
           <div className={styles.toolbarStack}>
             <DashboardStatusBanner

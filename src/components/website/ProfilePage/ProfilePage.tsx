@@ -11,11 +11,12 @@ import {
   TripCard,
   HotelCard,
   TripBookingCard,
+  SuccessModal,
 } from "@/components/shared";
 import type { TabType, TripBookingCardProps } from "@/components/shared";
 import { Trip, Hotel } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";
-import { getFavoriteTrips, getFavoriteHotels, getProfileRequests, getProfileSummary, getProfileBookings } from "@/lib/api";
+import { getFavoriteTrips, getFavoriteHotels, getProfileRequests, getProfileSummary, getProfileBookings, getPaymentReceipt } from "@/lib/api";
 import styles from "./ProfilePage.module.scss";
 
 const profileFavoriteCategoryTabs = ["Trips", "Hotels"];
@@ -38,6 +39,44 @@ export default function ProfilePage() {
     [searchParams]
   );
 
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successBookingRef, setSuccessBookingRef] = useState<string | null>(null);
+  const [successAmount, setSuccessAmount] = useState<string | null>(null);
+  const [receiptData, setReceiptData] = useState<{
+    booking_reference: string;
+    trip_name: string;
+    travel_type: string;
+    start_date: string;
+    amount: string;
+    total_amount: string;
+    status: string;
+  } | null>(null);
+
+  useEffect(() => {
+    if (searchParams.get("booking_success") === "true") {
+      setShowSuccessModal(true);
+      const ref = searchParams.get("ref");
+      setSuccessBookingRef(ref);
+      
+      if (ref) {
+        getPaymentReceipt(ref).then(data => {
+          setReceiptData(data);
+        }).catch(err => {
+          console.error("Failed to fetch receipt", err);
+          const amountCents = searchParams.get("amount_cents");
+          if (amountCents && !isNaN(Number(amountCents))) {
+            setSuccessAmount((Number(amountCents) / 100).toFixed(2));
+          }
+        });
+      } else {
+        const amountCents = searchParams.get("amount_cents");
+        if (amountCents && !isNaN(Number(amountCents))) {
+          setSuccessAmount((Number(amountCents) / 100).toFixed(2));
+        }
+      }
+    }
+  }, [searchParams]);
+
   const handleTabChange = useCallback(
     (tab: TabType) => {
       router.replace(`/profile?tab=${tab}`, { scroll: false });
@@ -45,11 +84,10 @@ export default function ProfilePage() {
     [router]
   );
 
-  // Redirect unauthenticated users to home
+  // Note: Guest users can still land here (e.g. from payment redirect) so we don't force redirect them away.
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.replace("/");
-    }
+    // If we wanted to restrict certain tabs to authenticated users, we could do it here
+    // But we let them stay on the page to see modals or empty states
   }, [isLoading, isAuthenticated, router]);
 
   const [favoriteCategoryIndex, setFavoriteCategoryIndex] = useState(0);
@@ -591,6 +629,44 @@ export default function ProfilePage() {
           </main>
         </div>
       </div>
+
+      {showSuccessModal && (
+        <SuccessModal
+          title="Booking Confirmed!"
+          message="Your booking has been successfully paid and confirmed. Confirmation details have been sent to your email."
+          primaryButtonText="View Bookings"
+          buttonText="Back to Home"
+          onPrimaryClick={() => {
+            setShowSuccessModal(false);
+            router.replace("/profile?tab=bookings", { scroll: false });
+          }}
+          onClose={() => {
+            setShowSuccessModal(false);
+            router.replace("/", { scroll: false });
+          }}
+          metadata={
+            receiptData
+              ? [
+                  { label: "Booking Reference", value: receiptData.booking_reference },
+                  { label: "Trip Name", value: receiptData.trip_name },
+                  { label: "Travel Type", value: receiptData.travel_type },
+                  { label: "Date", value: receiptData.start_date || "—" },
+                  { label: "Total Price", value: `£${receiptData.total_amount}`, valueColor: "#FF6600" },
+                  { label: "Paid Now", value: `£${receiptData.amount}`, valueColor: "#FF6600" },
+                ]
+              : successBookingRef || successAmount
+              ? [
+                  ...(successBookingRef
+                    ? [{ label: "Payment Reference", value: successBookingRef }]
+                    : []),
+                  ...(successAmount
+                    ? [{ label: "Total Paid", value: `£${successAmount}`, valueColor: "#10B981" }]
+                    : []),
+                ]
+              : undefined
+          }
+        />
+      )}
     </div>
   );
 }

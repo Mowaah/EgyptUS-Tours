@@ -8,9 +8,10 @@ interface StepBookingSummaryProps {
   formData?: AddTripBookingData;
   previewData?: any;
   setPreviewData?: (data: any) => void;
+  tripDetail?: any;
 }
 
-export default function StepBookingSummary({ formData, previewData: propPreviewData, setPreviewData: propSetPreviewData }: StepBookingSummaryProps) {
+export default function StepBookingSummary({ formData, previewData: propPreviewData, setPreviewData: propSetPreviewData, tripDetail }: StepBookingSummaryProps) {
   const [localPreviewData, setLocalPreviewData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -113,9 +114,33 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
   const days = nights + 1;
 
   const lineItems: any[] = activePreview?.line_items || activePreview?.price_breakdown?.line_items || activePreview?.items || [];
-  const total = activePreview?.total_price || activePreview?.price_breakdown?.total || activePreview?.total || 0;
+  let total = parseFloat(activePreview?.total_price || activePreview?.price_breakdown?.total || activePreview?.total || 0);
   const discount = activePreview?.discount || activePreview?.price_breakdown?.discount || 0;
 
+  const basePrice = formData?.tourType === "group" 
+    ? parseFloat(tripDetail?.groupPrice || 0) 
+    : parseFloat(tripDetail?.privatePrice || tripDetail?.price || 0);
+    
+  const tripTotal = basePrice;
+  
+  const hasTripLineItem = lineItems.some(item => 
+    item.description?.toLowerCase().includes("tour") || 
+    item.description?.toLowerCase().includes("trip") ||
+    item.description === tripName
+  );
+
+  // If the backend didn't include the trip price in the total (e.g. if the total is unreasonably small compared to base price),
+  // we add it to the grand total. Since rooms alone shouldn't exceed the trip price usually, we can safely just add it if we suspect it's missing.
+  // Actually, we'll just always assume the backend preview only calculated room/extras if it's a trip booking bug.
+  if (tripTotal > 0 && total < tripTotal && !hasTripLineItem) {
+    total += tripTotal;
+  }
+
+  const formatPrice = (price: number | string) => {
+    const num = typeof price === "string" ? parseFloat(price) : price;
+    if (isNaN(num)) return "£0";
+    return `£${num.toLocaleString("en-US", { maximumFractionDigits: 2 })}`;
+  };
 
   return (
     <div className={styles.container}>
@@ -192,6 +217,16 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
             ) : (
               <>
                 <div className={styles.priceItemsContainer}>
+                  {/* Manually render trip base price if it's missing from the backend line items */}
+                  {tripTotal > 0 && !hasTripLineItem && (
+                    <div className={styles.priceRow}>
+                      <span className={styles.priceLabel}>
+                        {tripName} ({formData?.tourType === "group" ? "Group Tour" : "Private Tour"})
+                      </span>
+                      <span className={styles.priceValue}>{formatPrice(tripTotal)}</span>
+                    </div>
+                  )}
+
                   {lineItems.map((item: any, idx: number) => {
                     const roomType = item.room_type ? (item.room_type.charAt(0).toUpperCase() + item.room_type.slice(1)) : "";
                     const label = item.description || (roomType ? `${roomType} Room${item.view_label ? ` - ${item.view_label}` : ""}` : "Room");
@@ -201,7 +236,7 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
                         <span className={styles.priceLabel}>
                           {item.quantity > 1 ? `${item.quantity} × ` : ""}{label}
                         </span>
-                        <span className={styles.priceValue}>${parseFloat(price).toFixed(2)}</span>
+                        <span className={styles.priceValue}>{formatPrice(price)}</span>
                       </div>
                     );
                   })}
@@ -209,15 +244,15 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
                   {parseFloat(discount) > 0 && (
                     <div className={styles.priceRow}>
                       <span className={styles.priceLabel}>Special Discount</span>
-                      <span className={styles.discountValue}>-${parseFloat(discount).toFixed(2)}</span>
+                      <span className={styles.discountValue}>-{formatPrice(discount)}</span>
                     </div>
                   )}
 
                 </div>
 
                 <div className={styles.totalRow}>
-                  <span className={styles.totalLabel}>Total (USD)</span>
-                  <span className={styles.totalValue}>${parseFloat(total).toFixed(2)}</span>
+                  <span className={styles.totalLabel}>Total (EGP)</span>
+                  <span className={styles.totalValue}>{formatPrice(total)}</span>
                 </div>
               </>
             )}

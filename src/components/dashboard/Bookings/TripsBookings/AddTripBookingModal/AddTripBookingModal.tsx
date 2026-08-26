@@ -4,16 +4,20 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useSWR, { useSWRConfig } from "swr";
 import { getFullTripById } from "@/services/tripsService";
-import { createTripBooking } from "@/services/admin/adminBookingsService";
+import {
+  createTripBooking,
+  generateTripPaymentLink,
+  getTripBookingById,
+} from "@/services/admin/adminBookingsService";
 import { SuccessModal } from "@/components/shared";
 import StatusPill from "@/components/shared/StatusPill/StatusPill";
 import { IconStepDef } from "@/components/shared/IconStepper/IconStepper";
-
 import StepGuestDetails from "./steps/StepGuestDetails/StepGuestDetails";
 import StepBookingDetails from "./steps/StepBookingDetails/StepBookingDetails";
 import StepBookingSummary from "./steps/StepBookingSummary/StepBookingSummary";
 import PaymentStep from "@/components/dashboard/shared/PaymentStep/PaymentStep";
 import BookingModalContainer from "../../shared/BookingModalContainer/BookingModalContainer";
+import { isValidEmail, isValidPhone } from "@/utils/validators";
 import { BaseGuestDetails } from "../../shared/types";
 
 interface AddTripBookingModalProps {
@@ -95,10 +99,25 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
   const [paymentPlan, setPaymentPlan] = useState<"deposit" | "full">("deposit");
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "paymob">("cash");
 
+
   const { data: tripDetail } = useSWR(
     open && (formData.tripId || tripId) ? ["tripDetail", formData.tripId || tripId] : null,
     () => getFullTripById((formData.tripId || tripId) as string)
   );
+
+  const { data: polledBooking } = useSWR(
+    createdBooking?.id && createdBooking.payment_status !== "paid" && paymentMethod === "paymob"
+      ? `/bookings/trips/${createdBooking.id}`
+      : null,
+    async () => {
+      const res = await getTripBookingById(createdBooking.id);
+      return res.data || res;
+    },
+    { refreshInterval: 5000 }
+  );
+
+  const currentBooking = polledBooking || createdBooking;
+  const isPaid = currentBooking?.payment_status === "paid";
 
   useEffect(() => {
     if (!open) return;
@@ -126,9 +145,6 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
 
   const amountPaid = paymentPlan === "deposit" ? total * 0.3 : total;
 
-  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const isValidPhone = (phone: string) => /^\d{7,15}$/.test(phone.replace(/\D/g, ""));
-
   const formatDateToYMD = (dateString?: string) => {
     if (!dateString) return null;
     const d = new Date(dateString);
@@ -143,7 +159,14 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
     tripDetail?.availability && tripDetail.availability.length > 0
   );
 
-  const handleNext = async () => {
+  const handleNext = async (generateLink: boolean = false) => {
+    if (createdBooking) {
+      if (paymentMethod === "cash" || isPaid) {
+        setIsConfirmed(true);
+      }
+      return;
+    }
+
     const newErrors: Record<string, string> = {};
 
     if (currentStep === 0) {
@@ -152,7 +175,7 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
       else if (!isValidEmail(formData.guestEmail)) newErrors.guestEmail = "Invalid email format";
 
       if (!formData.guestPhone) newErrors.guestPhone = "Phone is required";
-      else if (!isValidPhone(formData.guestPhone)) newErrors.guestPhone = "Invalid phone format";
+      else if (!isValidPhone(`${formData.guestPhonePrefix || ""}${formData.guestPhone || ""}`)) newErrors.guestPhone = "Invalid phone format";
 
       if (!formData.guestNationality) newErrors.guestNationality = "Nationality is required";
 
@@ -261,12 +284,23 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
         };
 
         const res = await createTripBooking(payload);
-        const data = res.data || res;
+        let data = res.data || res;
+        
+        if (generateLink && data.id) {
+          try {
+            const linkRes = await generateTripPaymentLink(data.id);
+            data = linkRes.data || linkRes;
+          } catch (err: any) {
+            console.error("Link generation failed:", err);
+            triggerToast("Booking created but failed to generate payment link.");
+          }
+        }
+        
         setCreatedBooking(data);
         if (data.booking_code || data.id) {
           setBookingId(data.booking_code || `#${data.id}`);
         }
-        setIsConfirmed(true);
+        
         // Revalidate trips bookings table
         mutate(
           (key: any) =>
@@ -276,6 +310,10 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
           undefined,
           { revalidate: true }
         );
+
+        if (!generateLink) {
+          setIsConfirmed(true);
+        }
       } catch (err: any) {
         console.error("Failed to create trip booking:", err);
         const errorMsg =
@@ -353,7 +391,29 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
           },
           { label: "Amount Paid", value: `$${amountPaid.toFixed(2)}`, valueColor: "#FF6600" },
         ]}
-      />
+      >
+        {createdBooking?.payment_url && (
+          <div style={{ marginTop: "1rem", padding: "1rem", background: "#f8f9fa", borderRadius: "8px", border: "1px solid #e9ecef" }}>
+            <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#495057", marginBottom: "0.5rem" }}>
+              Payment Link
+            </label>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              <input 
+                type="text" 
+                readOnly 
+                value={createdBooking.payment_url} 
+                style={{ flex: 1, padding: "0.5rem", borderRadius: "4px", border: "1px solid #ced4da", fontSize: "0.875rem" }} 
+              />
+              <button 
+                onClick={() => navigator.clipboard.writeText(createdBooking.payment_url)}
+                style={{ padding: "0.5rem 1rem", background: "#2971E6", color: "white", border: "none", borderRadius: "4px", cursor: "pointer", fontSize: "0.875rem" }}
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+        )}
+      </SuccessModal>
     );
   }
 
@@ -371,6 +431,10 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
       onPrevious={handlePrevious}
       isSubmitting={isSubmitting}
       isConfirmed={isConfirmed}
+      disablePrevious={!!createdBooking}
+      isPrimaryDisabled={paymentMethod === "paymob" && !!createdBooking && !isPaid}
+      finalStepButtonLabel={paymentMethod === "paymob" && !createdBooking?.payment_url ? "Generate Payment Link" : "Confirm Booking"}
+      hidePrimaryButton={paymentMethod === "paymob" && !createdBooking?.payment_url && currentStep === STEPS.length - 1}
     >
       {currentStep === 0 && (
         <StepGuestDetails
@@ -394,6 +458,7 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
           formData={formData}
           previewData={previewData}
           setPreviewData={setPreviewData}
+          tripDetail={tripDetail}
         />
       )}
       {currentStep === 3 && (
@@ -403,6 +468,10 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
           onChangePlan={setPaymentPlan}
           paymentMethod={paymentMethod}
           onChangeMethod={setPaymentMethod}
+          onGenerateLink={() => handleNext(true)}
+          isSubmitting={isSubmitting}
+          paymentUrl={currentBooking?.payment_url}
+          paymentStatus={currentBooking?.payment_status}
         />
       )}
     </BookingModalContainer>

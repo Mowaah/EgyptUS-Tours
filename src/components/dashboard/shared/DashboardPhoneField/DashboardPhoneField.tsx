@@ -57,6 +57,7 @@ export default function DashboardPhoneField({
         <input
           id={id}
           type="tel"
+          autoComplete="tel"
           className={styles.phoneInput}
           placeholder="000-0000"
           value={phoneValue}

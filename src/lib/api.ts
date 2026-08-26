@@ -498,3 +498,11 @@ export async function sendAssistantMessage(message: string, currentPath: string 
     current_path: currentPath,
   });
 }
+
+// ----------------------------------------------------------------------
+// Payment Receipt
+// ----------------------------------------------------------------------
+export const getPaymentReceipt = async (paymentNumber: string) => {
+  const res = await apiClient.get(`/payments/receipt/${paymentNumber}/`);
+  return res as any;
+};

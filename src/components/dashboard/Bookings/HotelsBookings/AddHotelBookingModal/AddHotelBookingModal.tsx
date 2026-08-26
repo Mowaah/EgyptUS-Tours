@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import useSWRMutation from "swr/mutation";
-import { useSWRConfig } from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import { SuccessModal } from "@/components/shared";
 import StatusPill from "@/components/shared/StatusPill/StatusPill";
 import { IconStepDef } from "@/components/shared/IconStepper/IconStepper";
@@ -14,7 +14,11 @@ import PaymentStep from "@/components/dashboard/shared/PaymentStep/PaymentStep";
 import BookingModalContainer from "../../shared/BookingModalContainer/BookingModalContainer";
 import { BaseGuestDetails } from "../../shared/types";
 import { isValidEmail, isValidPhone } from "@/utils/validators";
-import { createHotelBooking } from "@/services/admin/adminBookingsService";
+import { 
+  createHotelBooking,
+  generateHotelPaymentLink,
+  getHotelBookingById,
+} from "@/services/admin/adminBookingsService";
 
 interface AddHotelBookingModalProps {
   open: boolean;
@@ -40,6 +44,8 @@ export interface AddHotelBookingData extends BaseGuestDetails {
   specificHotel: string;
   rooms?: Record<string, number>;
   roomCustomizations: Record<string, string[]>;
+  paymentPlan: "deposit" | "full";
+  paymentMethod: "cash" | "paymob";
 }
 
 const INITIAL_DATA: AddHotelBookingData = {
@@ -59,6 +65,8 @@ const INITIAL_DATA: AddHotelBookingData = {
   specificHotel: "",
   rooms: {},
   roomCustomizations: {},
+  paymentPlan: "deposit",
+  paymentMethod: "cash",
 };
 
 const triggerToast = (message: string, variant: "error" | "success" = "error") => {
@@ -79,6 +87,22 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
   const [formData, setFormData] = useState<AddHotelBookingData>(INITIAL_DATA);
   const [bookingId, setBookingId] = useState("");
   const [previewData, setPreviewData] = useState<any>(null);
+  const [createdBooking, setCreatedBooking] = useState<any>(null);
+
+  const { data: polledBooking } = useSWR(
+    createdBooking?.id && createdBooking.payment_status !== "paid" && formData.paymentMethod === "paymob"
+      ? `/bookings/hotels/${createdBooking.id}`
+      : null,
+    async () => {
+      const res = await getHotelBookingById(createdBooking.id);
+      return res.data || res;
+    },
+    { refreshInterval: 5000 }
+  );
+
+  const currentBooking = polledBooking || createdBooking;
+  const isPaid = currentBooking?.payment_status === "paid";
+
   const { mutate } = useSWRConfig();
 
   const { trigger: submitBooking, isMutating: isSubmitting } = useSWRMutation(
@@ -95,10 +119,10 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
     
     // Reset state when opening
     setCurrentStep(0);
-    setIsConfirmed(false);
     setFormData(INITIAL_DATA);
     setErrors({});
     setPreviewData(null);
+    setCreatedBooking(null);
     setBookingId(`#BK${Math.floor(Math.random() * 1000000)}`);
   }, [open]);
 
@@ -106,7 +130,14 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
 
   const total = previewData ? parseFloat(previewData.total_price) : 0;
 
-  const handleNext = async () => {
+  const handleNext = async (generateLink: boolean = false) => {
+    if (createdBooking) {
+      if (formData.paymentMethod === "cash" || isPaid) {
+        setIsConfirmed(true);
+      }
+      return;
+    }
+
     const newErrors: Record<string, string> = {};
 
     if (currentStep === 0) {
@@ -115,11 +146,32 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
       else if (!isValidEmail(formData.guestEmail)) newErrors.guestEmail = "Invalid email format";
       
       if (!formData.guestPhone) newErrors.guestPhone = "Phone is required";
-      else if (!isValidPhone(formData.guestPhone)) newErrors.guestPhone = "Invalid phone format";
+      else if (!isValidPhone(`${formData.guestPhonePrefix || ""}${formData.guestPhone || ""}`)) newErrors.guestPhone = "Invalid phone format";
       
       if (!formData.guestNationality) newErrors.guestNationality = "Nationality is required";
-      if (!formData.checkInDate) newErrors.checkInDate = "Check-in date is required";
-      if (!formData.checkOutDate) newErrors.checkOutDate = "Check-out date is required";
+      if (!formData.checkInDate) {
+        newErrors.checkInDate = "Check-in date is required";
+      } else {
+        const checkIn = new Date(formData.checkInDate);
+        checkIn.setHours(0, 0, 0, 0);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (checkIn < today) {
+          newErrors.checkInDate = "Check-in date cannot be in the past";
+        }
+      }
+
+      if (!formData.checkOutDate) {
+        newErrors.checkOutDate = "Check-out date is required";
+      } else if (formData.checkInDate) {
+        const checkIn = new Date(formData.checkInDate);
+        checkIn.setHours(0, 0, 0, 0);
+        const checkOut = new Date(formData.checkOutDate);
+        checkOut.setHours(0, 0, 0, 0);
+        if (checkOut < checkIn) {
+          newErrors.checkOutDate = "Check-out date cannot be before check-in date";
+        }
+      }
       if (formData.adults === 0) newErrors.adults = "At least one adult is required";
 
       if (Object.keys(newErrors).length > 0) {
@@ -202,17 +254,37 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
           adults: formData.adults,
           infants: formData.infants,
           children: formData.children,
-          room_selections,
           special_requests: formData.specialRequests,
-          payment_plan: "full",
-          payment_method: "cash",
+          payment_plan: formData.paymentPlan,
+          payment_method: formData.paymentMethod,
           terms_accepted: true,
+          room_selections,
         };
         
-        await submitBooking(payload);
-        setIsConfirmed(true);
+        const res = await createHotelBooking(payload);
+        let data = res.data || res;
+        
+        if (generateLink && data.id) {
+          try {
+            const linkRes = await generateHotelPaymentLink(data.id);
+            data = linkRes.data || linkRes;
+          } catch (err: any) {
+            console.error("Link generation failed:", err);
+            triggerToast("Booking created but failed to generate payment link.");
+          }
+        }
+        
+        setCreatedBooking(data);
+        if (data.booking_code || data.id) {
+          setBookingId(data.booking_code || `#${data.id}`);
+        }
+        
         // Refresh hotels list
         mutate("/bookings/hotels/");
+
+        if (!generateLink) {
+          setIsConfirmed(true);
+        }
       } catch (error: any) {
         triggerToast(error?.response?.data?.detail || "Failed to create booking. Please try again.");
       }
@@ -250,7 +322,6 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
         metadata={[
           { label: "Booking Reference", value: bookingId },
           { label: "Hotel", value: formData.specificHotel || "Selected Hotel" },
-          { label: "Check-in", value: formData.checkInDate || "—" },
           { label: "Check-out", value: formData.checkOutDate || "—" },
           { 
             label: "Payment Status", 
@@ -258,7 +329,29 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
           },
           { label: "Amount Paid", value: `£${Number(total).toLocaleString()}`, valueColor: "#FF6600" }
         ]}
-      />
+      >
+        {createdBooking?.payment_url && (
+          <div style={{ marginTop: "1rem", padding: "1rem", background: "#f8f9fa", borderRadius: "8px", border: "1px solid #e9ecef" }}>
+            <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#495057", marginBottom: "0.5rem" }}>
+              Payment Link
+            </label>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              <input 
+                type="text" 
+                readOnly 
+                value={createdBooking.payment_url} 
+                style={{ flex: 1, padding: "0.5rem", borderRadius: "4px", border: "1px solid #ced4da", fontSize: "0.875rem" }} 
+              />
+              <button 
+                onClick={() => navigator.clipboard.writeText(createdBooking.payment_url)}
+                style={{ padding: "0.5rem 1rem", background: "#2971E6", color: "white", border: "none", borderRadius: "4px", cursor: "pointer", fontSize: "0.875rem" }}
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+        )}
+      </SuccessModal>
     );
   }
 
@@ -277,11 +370,27 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
       onPrevious={handlePrevious}
       isSubmitting={isSubmitting}
       isConfirmed={isConfirmed}
+      disablePrevious={!!createdBooking}
+      isPrimaryDisabled={formData.paymentMethod === "paymob" && !!createdBooking && !isPaid}
+      finalStepButtonLabel={formData.paymentMethod === "paymob" && !createdBooking?.payment_url ? "Generate Payment Link" : "Confirm Booking"}
+      hidePrimaryButton={formData.paymentMethod === "paymob" && !createdBooking?.payment_url && currentStep === STEPS.length - 1}
     >
       {currentStep === 0 && <StepGuestDetails formData={formData} onChange={handleChange} errors={errors} />}
       {currentStep === 1 && <StepBookingDetails formData={formData} onChange={handleChange} errors={errors} />}
       {currentStep === 2 && <StepBookingSummary formData={formData} onSummaryLoad={setPreviewData} />}
-      {currentStep === 3 && <PaymentStep total={total} />}
+      {currentStep === 3 && (
+        <PaymentStep 
+          total={total} 
+          paymentPlan={formData.paymentPlan}
+          onChangePlan={(val) => handleChange({ paymentPlan: val })}
+          paymentMethod={formData.paymentMethod}
+          onChangeMethod={(val) => handleChange({ paymentMethod: val })}
+          onGenerateLink={() => handleNext(true)}
+          isSubmitting={isSubmitting}
+          paymentUrl={currentBooking?.payment_url}
+          paymentStatus={currentBooking?.payment_status}
+        />
+      )}
     </BookingModalContainer>
   );
 }

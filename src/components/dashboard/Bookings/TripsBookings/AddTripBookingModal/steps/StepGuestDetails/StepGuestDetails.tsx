@@ -25,6 +25,7 @@ export default function StepGuestDetails({ formData, onChange, errors = {}, hasF
             value={formData.guestName}
             onChange={(e: any) => onChange({ guestName: e.target.value })}
             error={errors.guestName}
+            autoComplete="name"
           />
         </div>
         <div className={styles.col}>
@@ -36,6 +37,7 @@ export default function StepGuestDetails({ formData, onChange, errors = {}, hasF
             value={formData.guestEmail}
             onChange={(e: any) => onChange({ guestEmail: e.target.value })}
             error={errors.guestEmail}
+            autoComplete="email"
           />
         </div>
       </div>

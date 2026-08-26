@@ -153,3 +153,140 @@
 .addCircleIcon {
   flex-shrink: 0;
 }
+.generatedLinkContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 0;
+  width: 100%;
+  background: $gray-50;
+  border-radius: 32px;
+}
+
+.generatedLinkRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 0px;
+  width: 100%;
+  gap: 8px;
+}
+
+.generatedLinkRow:first-child {
+  border-bottom: 1px solid $border-strong;
+}
+
+.generatedLinkLabel {
+  font-style: normal;
+  font-weight: 500;
+  font-size: $font-size-base;
+  color: $gray-500-alt;
+  flex-shrink: 0;
+}
+
+.generatedLinkRight {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  justify-content: flex-end;
+}
+
+.paymentUrlText {
+  font-style: normal;
+  font-weight: 700;
+  font-size: $font-size-lg;
+  color: $gray-700;
+  word-break: break-all;
+}
+
+.copyContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copyIconButton {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.copyTooltip {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+  background: $gray-700;
+  color: $background;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 10;
+  
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 4px 4px 0;
+    border-style: solid;
+    border-color: $gray-700 transparent transparent transparent;
+  }
+}
+
+.copyContainer:hover .copyTooltip:not(.copiedText) {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.copiedText {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  background: $success;
+  
+  &::after {
+    border-color: $success transparent transparent transparent;
+  }
+}
+
+.paymentStatusPill {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 96px;
+  font-style: normal;
+  font-weight: 700;
+  font-size: $font-size-sm;
+}
+
+.statusPending {
+  background: #FFEDD5;
+  color: #EA580C;
+}
+
+.statusPaid {
+  background: $status-success-bg;
+  color: #16A34A;
+}
