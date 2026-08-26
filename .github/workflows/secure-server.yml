@@ -1,0 +1,71 @@
+name: Secure Droplet Setup
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/secure-server.yml'
+
+jobs:
+  secure-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DROPLET_IP }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          script: |
+            # 1. Create a dedicated deployer user for the frontend (no password, disabled login)
+            if id "egyptus_frontend" >/dev/null 2>&1; then
+              echo "User egyptus_frontend already exists"
+            else
+              sudo useradd -m -s /bin/bash egyptus_frontend
+              echo "User egyptus_frontend created"
+            fi
+            
+            # 2. Transfer ownership of the Next.js application files
+            sudo chown -R egyptus_frontend:egyptus_frontend /var/www/EgyptUS-Tours-Frontend
+            
+            # 3. Copy the authorized_keys so GitHub Actions can deploy as egyptus_frontend
+            sudo mkdir -p /home/egyptus_frontend/.ssh
+            sudo cp ~/.ssh/authorized_keys /home/egyptus_frontend/.ssh/
+            sudo chown -R egyptus_frontend:egyptus_frontend /home/egyptus_frontend/.ssh
+            sudo chmod 700 /home/egyptus_frontend/.ssh
+            sudo chmod 600 /home/egyptus_frontend/.ssh/authorized_keys
+            
+            # 4. Install Nginx and Certbot
+            sudo apt-get update
+            sudo apt-get install -y nginx certbot python3-certbot-nginx
+            
+            # 5. Configure Nginx for the Next.js app
+            cat << 'EOF' | sudo tee /etc/nginx/sites-available/egypt-us.com
+            server {
+                server_name egypt-us.com www.egypt-us.com;
+            
+                location / {
+                    proxy_pass http://127.0.0.1:3000;
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade $http_upgrade;
+                    proxy_set_header Connection 'upgrade';
+                    proxy_set_header Host $host;
+                    proxy_cache_bypass $http_upgrade;
+                }
+            }
+            EOF
+            
+            sudo ln -sf /etc/nginx/sites-available/egypt-us.com /etc/nginx/sites-enabled/
+            sudo rm -f /etc/nginx/sites-enabled/default
+            sudo nginx -t
+            sudo systemctl restart nginx
+            
+            # 6. Run Certbot to generate SSL (using a dummy email to automate it without prompts)
+            sudo certbot --nginx -d egypt-us.com -d www.egypt-us.com --non-interactive --agree-tos -m admin@egypt-us.com || echo "Certbot might have already run"
+            
+            # 7. Restart PM2 under the new user
+            sudo pm2 stop all || true
+            sudo pm2 delete all || true
+            sudo -u egyptus_frontend -H sh -c "cd /var/www/EgyptUS-Tours-Frontend && npm install pm2 -g --prefix ~/.npm-global && export PATH=~/.npm-global/bin:\$PATH && pm2 start npm --name 'EgyptUS-Tours-Frontend' -- start"
+            
+            echo "SECURITY MIGRATION COMPLETE!"
