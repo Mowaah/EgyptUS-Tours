@@ -24,6 +24,7 @@ jobs:
       - name: Build Next.js
         run: |
           echo "NEXT_PUBLIC_API_URL=https://api.egypt-us.com" > .env.local
+          echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID=896835853442-khi4n2eknq7cn5j9nrre78j1f5nb1acm.apps.googleusercontent.com" >> .env.local
           npm run build
 
       - name: Zip build files
