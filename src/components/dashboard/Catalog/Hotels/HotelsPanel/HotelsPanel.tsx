@@ -141,11 +141,13 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
     }
   };
 
-  if (!hotelsLoading && Object.keys(queryParams).length > 0 && hotelsData.length === 0) {
+  const hasActiveFilters = searchQuery || Object.values(appliedFilters).some(v => v !== "All");
+
+  if (!hotelsLoading && hasActiveFilters && hotelsData.length === 0) {
     return <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />;
   }
 
-  if (!hotelsLoading && Object.keys(queryParams).length === 0 && hotelsData.length === 0) {
+  if (!hotelsLoading && !hasActiveFilters && hotelsData.length === 0) {
     return (
       <DashboardEmptyState
         title="No Hotels Found"

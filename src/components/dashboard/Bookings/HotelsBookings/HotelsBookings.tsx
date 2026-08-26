@@ -9,20 +9,27 @@ import styles from "./HotelsBookings.module.scss";
 
 interface HotelsBookingsProps {
   searchQuery?: string;
+  onClearSearch?: () => void;
+  onNewBooking?: () => void;
 }
 
-export default function HotelsBookings({ searchQuery = "" }: HotelsBookingsProps) {
+export default function HotelsBookings({ searchQuery = "", onClearSearch, onNewBooking }: HotelsBookingsProps) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const handleNewBooking = () => {
     setIsAddModalOpen(true);
+    if (onNewBooking) onNewBooking();
   };
 
   return (
     <div className={styles.page}>
       <DashboardNavbar onPrimaryAction={handleNewBooking} />
       <HotelsSummaryGrid />
-      <HotelsPanel searchQuery={searchQuery} />
+      <HotelsPanel 
+        searchQuery={searchQuery} 
+        onClearSearch={onClearSearch}
+        onNewBooking={handleNewBooking}
+      />
 
       <AddHotelBookingModal 
         open={isAddModalOpen} 

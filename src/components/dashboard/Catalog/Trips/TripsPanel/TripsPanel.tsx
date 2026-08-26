@@ -139,11 +139,13 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
     }
   };
 
-  if (!tripsLoading && Object.keys(queryParams).length > 0 && tripsData.length === 0) {
+  const hasActiveFilters = searchQuery || Object.values(appliedFilters).some(v => v !== "All");
+
+  if (!tripsLoading && hasActiveFilters && tripsData.length === 0) {
     return <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />;
   }
 
-  if (!tripsLoading && Object.keys(queryParams).length === 0 && tripsData.length === 0) {
+  if (!tripsLoading && !hasActiveFilters && tripsData.length === 0) {
     return (
       <DashboardEmptyState
         title="No Trips Found"
