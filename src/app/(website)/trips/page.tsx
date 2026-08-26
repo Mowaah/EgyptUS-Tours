@@ -5,7 +5,7 @@ import FaqSectionFetcher from "@/components/website/FaqSection/FaqSectionFetcher
 import BlogsSectionFetcher from "@/components/website/BlogsSection/BlogsSectionFetcher";
 
 export const metadata: Metadata = {
-  title: "Trips | Egypt US Tours (TESTING UPDATE)",
+  title: "Trips | Egypt US Tours",
   description:
     "Browse our handpicked collection of Egypt tours. Filter by duration, special offers, and price range to find your perfect adventure.",
 };
@@ -35,9 +35,6 @@ export default async function TripsPage({ searchParams }: TripsPageProps) {
 
   return (
     <>
-      <div style={{ background: 'red', color: 'white', padding: '20px', textAlign: 'center', fontSize: '24px', fontWeight: 'bold', position: 'relative', zIndex: 9999 }}>
-        THIS IS A VISIBLE TEST UPDATE!
-      </div>
       <Suspense fallback={
         <div style={{ padding: "10rem 2rem", textAlign: "center", color: "#666" }}>
           Loading trips...
