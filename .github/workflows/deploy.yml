@@ -57,5 +57,6 @@ jobs:
             # Install only production dependencies (much faster/lighter)
             npm ci --production
             
-            # Restart the server
-            pm2 restart next-frontend || pm2 start npm --name "next-frontend" -- start
+            # Restart the server - Force recreate to ensure it uses this exact directory
+            pm2 delete next-frontend || true
+            pm2 start npm --name "next-frontend" -- start
