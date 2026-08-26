@@ -149,9 +149,9 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
     return (
       <DashboardEmptyState
         title="No Hotels Found"
-        subtitle="Hotels will appear here once they are added."
-        actionLabel="New Hotel"
-        onAction={onNewHotel}
+        subtitle="Catalog hotels will appear here once they are created."
+        actionLabel="Add New Hotel"
+        onAction={() => router.push("/dashboard/catalog/hotels/new")}
         imageSrc="/images/dashboard/empty.png"
       />
     );
