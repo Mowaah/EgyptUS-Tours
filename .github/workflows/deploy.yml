@@ -58,5 +58,6 @@ jobs:
             npm ci --production
             
             # Restart the server - Force recreate to ensure it uses this exact directory
-            pm2 delete next-frontend || true
-            pm2 start npm --name "next-frontend" -- start
+            pm2 delete EgyptUS-Tours-Frontend || true
+            pm2 start npm --name "EgyptUS-Tours-Frontend" -- start
+            pm2 save
