@@ -6,6 +6,8 @@ import { getAllTrips } from "@/services/tripsService";
 import { getAllDestinations } from "@/services/destinationsService";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 
+import { Suspense } from "react";
+
 export default async function WebsiteLayout({
   children,
 }: {
@@ -29,7 +31,9 @@ export default async function WebsiteLayout({
   return (
     <CurrencyProvider>
       <TopBar />
-      <Navbar tripLinks={tripLinks} destinationLinks={destinationLinks} />
+      <Suspense fallback={null}>
+        <Navbar tripLinks={tripLinks} destinationLinks={destinationLinks} />
+      </Suspense>
       <main>{children}</main>
       <ChatBot />
       <Footer />
