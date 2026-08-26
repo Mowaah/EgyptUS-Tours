@@ -39,9 +39,16 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y nginx certbot python3-certbot-nginx
             
-            # 5. Configure Nginx for the Next.js app
+            # 5. Configure Nginx for the Next.js app (with forced HTTPS redirect)
             cat << 'EOF' | sudo tee /etc/nginx/sites-available/egypt-us.com
             server {
+                listen 80;
+                server_name egypt-us.com www.egypt-us.com;
+                return 301 https://$host$request_uri;
+            }
+
+            server {
+                listen 443 ssl;
                 server_name egypt-us.com www.egypt-us.com;
             
                 location / {
