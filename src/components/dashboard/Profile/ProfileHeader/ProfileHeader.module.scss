@@ -142,3 +142,81 @@
     color: $status-danger-dark;
   }
 }
+
+@media (max-width: 1500px) {
+  .name {
+    font-size: $font-size-26;
+  }
+
+  .signOutButton {
+    height: 44px;
+    width: 160px;
+    span {
+      font-size: $font-size-base;
+    }
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .avatarWrapper {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .name {
+    font-size: $font-size-2xl;
+  }
+
+  .signOutButton {
+    height: 40px;
+    width: 140px;
+    span {
+      font-size: $font-size-sm;
+    }
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .avatarWrapper {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+@media (max-width: 980px) {
+  .content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .headerContainer {
+    height: auto;
+    padding: 16px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .titleRow {
+    flex-direction: column;
+    align-items: flex-start;
+    height: auto;
+    gap: 8px;
+  }
+
+  .subtitleRow {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .metaDot {
+    display: none;
+  }
+}
+
