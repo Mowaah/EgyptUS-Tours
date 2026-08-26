@@ -31,8 +31,11 @@ export default function StepRoomDates({ formData, onChange, onContinue, hotel }:
     if (!hotel.hotelRooms) return {};
     const groups: Record<string, HotelRoom[]> = {};
     for (const room of hotel.hotelRooms) {
-      if (!groups[room.type]) groups[room.type] = [];
-      groups[room.type].push(room);
+      const category = room.category ? room.category.trim().replace(/\s*[Rr]oom\s*/i, "") : "";
+      const type = room.type ? room.type.trim() : "";
+      const groupKey = category ? `${category} ${type}`.trim() : type;
+      if (!groups[groupKey]) groups[groupKey] = [];
+      groups[groupKey].push(room);
     }
     return groups;
   }, [hotel.hotelRooms]);
@@ -78,8 +81,30 @@ export default function StepRoomDates({ formData, onChange, onContinue, hotel }:
     if (!formData.startDate) newErrors.startDate = "Check-in date is required.";
     if (!formData.endDate) newErrors.endDate = "Check-out date is required.";
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (formData.startDate) {
+      const checkInDate = new Date(formData.startDate);
+      checkInDate.setHours(0, 0, 0, 0);
+      if (checkInDate < today) {
+        newErrors.startDate = "Check-in date cannot be in the past.";
+      }
+    }
+
+    if (formData.startDate && formData.endDate) {
+      const checkInDate = new Date(formData.startDate);
+      checkInDate.setHours(0, 0, 0, 0);
+      const checkOutDate = new Date(formData.endDate);
+      checkOutDate.setHours(0, 0, 0, 0);
+
+      if (checkOutDate <= checkInDate) {
+        newErrors.endDate = "Check-out date must be after check-in date.";
+      }
+    }
+
     if (!formData.adults || formData.adults < 1) {
-      newErrors.adults = "Please select at least one adult.";
+      newErrors.adults = "At least 1 adult is required.";
     }
 
     let totalCapacity = 0;
@@ -160,49 +185,52 @@ export default function StepRoomDates({ formData, onChange, onContinue, hotel }:
                   onDecrease={() => handleGuestChange(type, false)}
                   required={type === "adults"}
                 />
+                {type === "adults" && errors.adults && (
+                  <div className={styles.errorText} style={{ color: "#C11515", fontSize: "0.75rem", display: "flex", alignItems: "center", gap: "4px", marginTop: "8px" }}>
+                    <Image src="/images/information-fill.svg" alt="" width={16} height={16} />
+                    <span>{errors.adults}</span>
+                  </div>
+                )}
               </div>
             );
           })}
         </div>
-        {errors.adults && (
-          <div className={styles.errorText} style={{ color: "#C11515", fontSize: "0.75rem", display: "flex", alignItems: "center", gap: "4px", marginTop: "8px" }}>
-            <Image src="/images/information-fill.svg" alt="" width={16} height={16} />
-            <span>{errors.adults}</span>
-          </div>
-        )}
         <hr className={styles.divider} aria-hidden="true" />
 
         {/* ── Room Type ── */}
-        <h3 className={styles.sectionTitle} style={{ marginBottom: errors.rooms ? '0.5rem' : '1.5rem' }}>
+        <h3 className={styles.sectionTitle} style={{ marginBottom: '1.5rem' }}>
           Type of Room <span style={{ color: '#0E2851' }}>*</span>
         </h3>
-        {errors.rooms && (
-          <div className={styles.errorText} style={{ color: "#C11515", fontSize: "0.75rem", display: "flex", alignItems: "center", gap: "4px", marginBottom: "1rem" }}>
-            <Image src="/images/information-fill.svg" alt="" width={16} height={16} />
-            <span>{errors.rooms}</span>
-          </div>
-        )}
         <div className={styles.roomList}>
           {Object.entries(groupedRooms).length === 0 && (
             <div style={{ color: "#666", padding: "1rem" }}>No rooms available for this hotel.</div>
           )}
           {Object.entries(groupedRooms).map(([type, rooms]) => {
             if (!rooms || rooms.length === 0) return null;
-            const t = type.toLowerCase() as "single" | "double" | "triple";
+            const t = type.toLowerCase();
             
             // Base room is either Garden View, or cheapest, or first.
             const gardenRoom = rooms.find((r) => r.view.toLowerCase().includes("garden"));
             const baseRoom = gardenRoom || [...rooms].sort((a, b) => a.pricePerNight - b.pricePerNight)[0];
             
             const count = formData.rooms[t] || 0;
-            const guestsNum = t === "single" ? 1 : t === "double" ? 2 : 3;
+            let guestsNum = 2;
+            if (t.includes("single")) guestsNum = 1;
+            else if (t.includes("double") || t.includes("twin")) guestsNum = 2;
+            else if (t.includes("triple")) guestsNum = 3;
+            else if (t.includes("quad")) guestsNum = 4;
+            
+            const rawTitle = type.trim();
+            const title = rawTitle.toLowerCase().endsWith("room")
+              ? rawTitle
+              : `${rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1)} Room`;
             
             return (
               <div key={type} className={styles.roomRowWrapper}>
                 <label className={`${styles.roomInfoBox} ${count > 0 ? styles.selected : ""}`}>
                   <div className={styles.roomTexts}>
                     <span className={styles.roomTitle}>
-                      {type.toLowerCase().includes("room") ? type.charAt(0).toUpperCase() + type.slice(1) : `${type.charAt(0).toUpperCase() + type.slice(1)} Room`} - {baseRoom.view}
+                      {title} - {baseRoom.view}
                     </span>
                     <span className={styles.roomSub}>{guestsNum} {guestsNum === 1 ? 'person' : 'people'}</span>
                   </div>
@@ -222,9 +250,15 @@ export default function StepRoomDates({ formData, onChange, onContinue, hotel }:
             );
           })}
         </div>
+        {errors.rooms && (
+          <div className={styles.errorText} style={{ color: "#C11515", fontSize: "0.75rem", display: "flex", alignItems: "center", gap: "4px" }}>
+            <Image src="/images/information-fill.svg" alt="" width={16} height={16} />
+            <span>{errors.rooms}</span>
+          </div>
+        )}
 
         {Object.entries(groupedRooms).map(([type, rooms]) => {
-          const t = type.toLowerCase() as "single" | "double" | "triple";
+          const t = type.toLowerCase();
           const count = formData.rooms[t] || 0;
           if (count === 0) return null;
           
