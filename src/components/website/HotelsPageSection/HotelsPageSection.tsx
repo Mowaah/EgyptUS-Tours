@@ -22,32 +22,6 @@ import { HotelList } from "@/types/api";
 import styles from "./HotelsPageSection.module.scss";
 
 // ── Data ────────────────────────────────────────────────────────
-const LOCATION_TABS_ROW1 = [
-  "All Locations",
-  "Giza",
-  "Cairo",
-  "Luxor",
-  "Aswan",
-  "Sharm El Sheikh",
-  "Alexandria",
-  "Hurghada",
-  "South Sinai",
-];
-
-const LOCATION_TABS_ROW2 = [
-  "New Valley",
-  "Ismailia",
-  "Cairo",
-  "Luxor",
-  "Aswan",
-  "Sharm El Sheikh",
-  "Alexandria",
-  "Hurghada",
-  "South Sinai",
-];
-
-const ALL_TABS = [...LOCATION_TABS_ROW1, ...LOCATION_TABS_ROW2];
-
 const RATING_OPTIONS = [
   { label: "Any", value: "any" },
   { label: "5.0", value: "5" },
@@ -74,7 +48,7 @@ interface HotelsPageSectionProps {
 export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSectionProps) {
   const { formatCurrency } = useCurrency();
 
-  const mappedHotels: Hotel[] = initialHotels.map((h) => ({
+  const mappedHotels: Hotel[] = useMemo(() => initialHotels.map((h) => ({
     id: h.slug,
     name: h.name,
     location: h.location_text || "",
@@ -85,14 +59,18 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
     pricePerNight: parseFloat(h.price_per_night_egp || h.price_per_night) || 0,
     reviews: h.review_count,
     isFavorite: h.is_favorite,
-  }));
+  })), [initialHotels]);
 
   const maxHotelPriceLimit = useMemo(() => {
     if (mappedHotels.length === 0) return 50000;
     const max = Math.max(...mappedHotels.map((h) => h.pricePerNight || 0));
     return Math.max(Math.ceil(max / 1000) * 1000, 12000);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialHotels]);
+  }, [mappedHotels]);
+
+  const dynamicTabs = useMemo(() => {
+    const locations = Array.from(new Set(mappedHotels.map((h) => h.location).filter(Boolean)));
+    return ["All Locations", ...locations.sort()];
+  }, [mappedHotels]);
 
   const [hotels, setHotels] = useState<Hotel[]>(mappedHotels);
   const [ratingFilter, setRatingFilter] = useState("any");
@@ -222,7 +200,7 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
         </div>
 
         <CategoryTabs
-          tabs={ALL_TABS}
+          tabs={dynamicTabs}
           wrap
           onTabChange={(tab) => {
             setSelectedLocation(tab);
