@@ -173,7 +173,7 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
     <section className={styles.section}>
       <PageHeader
         breadcrumbs={[{ label: "Hotels", isCurrent: true }]}
-        title="Find the perfect hotel for your trip (TESTING UPDATE)"
+        title="Find the perfect hotel for your trip"
         subtitle="We make hotel booking easy. Discover top-rated hotels, compare features and prices, and book a stay tailored to your travel style."
         decorationSrc="/images/dotted-line3.svg"
         subtitleMaxWidth="550px"
