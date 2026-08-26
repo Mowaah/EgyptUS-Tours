@@ -47,6 +47,9 @@ jobs:
           script: |
             cd /var/www/EgyptUS-Tours-Frontend
             
+            # Delete old build to prevent Next.js from serving stale cached files
+            rm -rf .next
+            
             # Extract the pre-built files from GitHub
             tar -xzf deploy.tar.gz
             rm deploy.tar.gz
