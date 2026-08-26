@@ -39,16 +39,10 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y nginx certbot python3-certbot-nginx
             
-            # 5. Configure Nginx for the Next.js app (with forced HTTPS redirect)
+            # 5. Configure Nginx for the Next.js app
             cat << 'EOF' | sudo tee /etc/nginx/sites-available/egypt-us.com
             server {
                 listen 80;
-                server_name egypt-us.com www.egypt-us.com;
-                return 301 https://$host$request_uri;
-            }
-
-            server {
-                listen 443 ssl;
                 server_name egypt-us.com www.egypt-us.com;
             
                 location / {
@@ -68,7 +62,7 @@ jobs:
             sudo systemctl restart nginx
             
             # 6. Run Certbot to generate SSL (using a dummy email to automate it without prompts)
-            sudo certbot --nginx -d egypt-us.com -d www.egypt-us.com --non-interactive --agree-tos -m admin@egypt-us.com || echo "Certbot might have already run"
+            sudo certbot --nginx -d egypt-us.com -d www.egypt-us.com --non-interactive --agree-tos --redirect -m admin@egypt-us.com || echo "Certbot might have already run"
             
             # 7. Restart PM2 under the new user
             sudo pm2 stop all || true
