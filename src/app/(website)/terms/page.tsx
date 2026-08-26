@@ -3,7 +3,7 @@ import { LegalSection } from "@/components/website/LegalPage/legalData";
 import { getTerms } from "@/services/legalHelpService";
 
 export const metadata = {
-  title: "Terms and Conditions | Egypt Us Tours",
+  title: "Terms and Conditions | Egypt-Us",
   description: "Read our terms and conditions to understand your rights and responsibilities.",
 };
 

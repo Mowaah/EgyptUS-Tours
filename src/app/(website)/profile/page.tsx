@@ -3,7 +3,7 @@ import ProfilePage from "@/components/website/ProfilePage/ProfilePage";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Profile | Egypt US Tours",
+  title: "Profile | Egypt-Us",
   description: "Manage your travel bookings, favorites, and trip requests in one place.",
 };
 

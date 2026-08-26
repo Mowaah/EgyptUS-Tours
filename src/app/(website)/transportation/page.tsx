@@ -5,7 +5,7 @@ import { getFaqs } from "@/services/legalHelpService";
 import { Vehicle } from "@/components/shared";
 
 export const metadata = {
-  title: "Transportation | EgyptUS Tours",
+  title: "Transportation | Egypt-Us",
   description: "Choose the perfect vehicle for every journey — from city rides to luxury transfers.",
 };
 

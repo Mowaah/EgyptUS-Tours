@@ -27,7 +27,7 @@ export default function DashboardAuthLayout({
             />
             <Image
               src="/images/logo-white.svg"
-              alt="Egypt US"
+              alt="Egypt-Us"
               width={150}
               height={36}
               className={styles.heroLogo}
@@ -56,7 +56,7 @@ export default function DashboardAuthLayout({
             </div>
 
             <footer className={styles.footer}>
-              <p>&copy; 2026 Egypt US | EG. All rights reserved.</p>
+              <p>&copy; 2026 Egypt-Us | EG. All rights reserved.</p>
             </footer>
           </div>
         </section>

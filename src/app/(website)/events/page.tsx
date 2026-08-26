@@ -1,7 +1,7 @@
 import EventsPage from "@/components/website/EventsPage/EventsPage";
 
 export const metadata = {
-  title: "Events & MICE | EgyptUS Tours",
+  title: "Events & MICE | Egypt-Us",
   description: "Professional corporate events and MICE solutions in Egypt.",
 };
 

@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import ViewLead from "@/components/dashboard/LeadsInquiries/ViewLead/ViewLead";
 
 export const metadata: Metadata = {
-  title: "View Lead - EgyptUS Tours",
+  title: "View Lead - Egypt-Us",
   description: "View lead details and activity timeline.",
 };
 

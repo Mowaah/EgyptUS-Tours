@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import CustomerProfile from "@/components/dashboard/Customers/CustomerProfile/CustomerProfile";
 
 export const metadata: Metadata = {
-  title: "Customer Profile - EgyptUS Tours",
+  title: "Customer Profile - Egypt-Us",
   description: "View customer details and history.",
 };
 

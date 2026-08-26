@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   try {
     const hotel = await getHotelBySlug(id);
     return {
-      title: `${hotel.name} | Egypt US Tours`,
+      title: `${hotel.name} | Egypt-Us`,
       description: hotel.description || `Stay at ${hotel.name}, ${hotel.location_text}`,
     };
   } catch (error) {

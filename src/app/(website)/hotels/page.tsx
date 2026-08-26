@@ -3,7 +3,7 @@ import HotelsPageSection from "@/components/website/HotelsPageSection/HotelsPage
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Hotels | Egypt US Tours",
+  title: "Hotels | Egypt-Us",
   description:
     "Browse our curated selection of Egypt hotels. Filter by rating, price range, and location to find the perfect stay for your trip.",
 };

@@ -6,8 +6,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   try {
     const vehicle = await getVehicleBySlug(id);
     return {
-      title: `${vehicle.name} | EgyptUS Tours`,
-      description: vehicle.description || `Book your ${vehicle.name} with EgyptUS Tours.`,
+      title: `${vehicle.name} | Egypt-Us`,
+      description: vehicle.description || `Book your ${vehicle.name} with Egypt-Us.`,
     };
   } catch (error) {
     return { title: "Vehicle Not Found" };

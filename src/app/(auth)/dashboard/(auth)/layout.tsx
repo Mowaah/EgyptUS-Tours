@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { AdminAuthProvider } from "@/contexts/AdminAuthContext";
 
 export const metadata: Metadata = {
-  title: "Sign In | Egypt US Dashboard",
+  title: "Sign In | Egypt-Us Dashboard",
   description: "Access and manage your tourism platform",
 };
 

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import ProfileRequestDetailsPage from "@/components/website/ProfileRequestDetailsPage/ProfileRequestDetailsPage";
 
 export const metadata: Metadata = {
-  title: "Request Details | Egypt US Tours",
+  title: "Request Details | Egypt-Us",
   description: "View your event request details and proposal status.",
 };
 

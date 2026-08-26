@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const trip = await getTripById(id);
   if (!trip) return { title: "Trip Not Found" };
   return {
-    title: `${trip.title} | Egypt US Tours`,
+    title: `${trip.title} | Egypt-Us`,
     description: trip.description || trip.short_description,
   };
 }

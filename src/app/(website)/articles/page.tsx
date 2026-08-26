@@ -5,7 +5,7 @@ import { getAllArticles, getFeaturedArticles } from "@/services/articlesService"
 import { getFaqs } from "@/services/legalHelpService";
 
 export const metadata: Metadata = {
-  title: "Articles | EgyptUS Tours",
+  title: "Articles | Egypt-Us",
   description: "Explore our insider guides and professional tips.",
 };
 

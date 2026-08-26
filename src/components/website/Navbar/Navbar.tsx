@@ -178,10 +178,10 @@ export default function Navbar({ tripLinks = [], destinationLinks = [] }: Navbar
         className={`${styles.navbar}${shouldShowScrolled ? ` ${styles.scrolled}` : ""}${lightNavBackground ? ` ${styles.lightPage}` : ""}${tripDetailPage ? ` ${styles.notSticky}` : ""}${mobileOpen ? ` ${styles.drawerOpen}` : ""}`}
       >
         <div className={styles.container}>
-          <Link href="/" className={styles.logo} aria-label="EgyptUS Tours — Home">
+          <Link href="/" className={styles.logo} aria-label="Egypt-Us — Home">
             <Image
               src={shouldShowScrolled || lightNavBackground ? "/images/logo-black.svg" : "/images/logo-white.svg"}
-              alt="EgyptUS Tours"
+              alt="Egypt-Us"
               width={150}
               height={30}
               priority

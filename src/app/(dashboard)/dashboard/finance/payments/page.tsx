@@ -2,7 +2,7 @@ import PaymentsPage from "@/components/dashboard/Finance/Payments/PaymentsPage/P
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Payments | EgyptUS Tours",
+  title: "Payments | Egypt-Us",
   description: "Track and manage all payment transactions.",
 };
 

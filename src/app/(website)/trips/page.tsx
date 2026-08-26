@@ -5,7 +5,7 @@ import FaqSectionFetcher from "@/components/website/FaqSection/FaqSectionFetcher
 import BlogsSectionFetcher from "@/components/website/BlogsSection/BlogsSectionFetcher";
 
 export const metadata: Metadata = {
-  title: "Trips | Egypt US Tours",
+  title: "Trips | Egypt-Us",
   description:
     "Browse our handpicked collection of Egypt tours. Filter by duration, special offers, and price range to find your perfect adventure.",
 };

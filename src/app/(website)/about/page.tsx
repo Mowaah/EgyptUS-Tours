@@ -1,7 +1,7 @@
 import AboutPage from "@/components/website/AboutPage/AboutPage";
 
 export const metadata = {
-  title: "About Us | EgyptUS Tours",
+  title: "About Us | Egypt-Us",
   description: "Where Corporate Vision Becomes Experience",
 };
 

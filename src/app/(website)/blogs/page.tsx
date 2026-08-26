@@ -3,7 +3,7 @@ import { getAllBlogs, getFeaturedBlogs } from "@/services/blogsService";
 import { getFaqs } from "@/services/legalHelpService";
 
 export const metadata = {
-  title: "Blogs | Egypt US Tours",
+  title: "Blogs | Egypt-Us",
   description: "Explore the heart of every destination through our latest insights and travel stories.",
 };
 

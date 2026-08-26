@@ -206,10 +206,10 @@ export default function DashboardSidebar() {
       <div className={styles.inner}>
         <div className={styles.top} ref={scrollRef} onScroll={(e) => localStorage.setItem("sidebarScrollPos", (e.target as HTMLDivElement).scrollTop.toString())} id="dashboard-sidebar-scroll">
           <div className={styles.sidebarHeader}>
-            <a href="/dashboard" className={styles.logoLink} aria-label="Egypt US dashboard home">
+            <a href="/dashboard" className={styles.logoLink} aria-label="Egypt-Us dashboard home">
               <Image
                 src="/images/logo-blue.svg"
-                alt="Egypt US"
+                alt="Egypt-Us"
                 width={189}
                 height={44}
                 priority

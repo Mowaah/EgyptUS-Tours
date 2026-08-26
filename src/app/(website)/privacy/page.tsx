@@ -3,7 +3,7 @@ import { LegalSection } from "@/components/website/LegalPage/legalData";
 import { getPrivacy } from "@/services/legalHelpService";
 
 export const metadata = {
-  title: "Privacy Policy | Egypt Us Tours",
+  title: "Privacy Policy | Egypt-Us",
   description: "Learn how we collect, use, and protect your personal information.",
 };
 

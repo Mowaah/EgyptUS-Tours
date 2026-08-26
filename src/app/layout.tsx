@@ -7,7 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import "./globals.scss";
 
 export const metadata: Metadata = {
-  title: "EgyptUS Tours",
+  title: "Egypt-Us",
   description: "History, culture, and adventure all in one trip",
 };
 

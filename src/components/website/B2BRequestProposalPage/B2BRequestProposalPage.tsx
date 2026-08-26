@@ -178,7 +178,7 @@ export default function B2BRequestProposalPage() {
                     autoComplete="url"
                     label="Website"
                     type="text"
-                    placeholder="www.egyptustours.com"
+                    placeholder="www.egyptus.com"
                     value={formData.website}
                     onChange={(e) => handleChange("website", e.target.value)}
                     error={errors.website}
