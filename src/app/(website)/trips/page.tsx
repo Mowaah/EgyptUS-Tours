@@ -35,6 +35,9 @@ export default async function TripsPage({ searchParams }: TripsPageProps) {
 
   return (
     <>
+      <div style={{ background: 'red', color: 'white', padding: '20px', textAlign: 'center', fontSize: '24px', fontWeight: 'bold', position: 'relative', zIndex: 9999 }}>
+        THIS IS A VISIBLE TEST UPDATE!
+      </div>
       <Suspense fallback={
         <div style={{ padding: "10rem 2rem", textAlign: "center", color: "#666" }}>
           Loading trips...
