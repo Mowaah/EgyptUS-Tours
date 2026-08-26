@@ -51,7 +51,7 @@ const navItems: NavItem[] = [
     children: [
       { label: "Payments", href: "/dashboard/finance/payments" },
       { label: "Deposits", href: "/dashboard/finance/deposits" },
-      { label: "Financial Reports", href: "/dashboard/finance/reports" },
+      // { label: "Financial Reports", href: "/dashboard/finance/reports" },
     ],
   },
   {
@@ -69,7 +69,7 @@ const navItems: NavItem[] = [
     children: [
       { label: "User Management", href: "/dashboard/settings/user-management" },
       { label: "Access Control", href: "/dashboard/settings/access-control" },
-      { label: "System Configuration", href: "/dashboard/settings/system-configuration" },
+      // { label: "System Configuration", href: "/dashboard/settings/system-configuration" },
       { label: "Audit Log", href: "/dashboard/settings/audit-log" },
     ],
   },
@@ -237,9 +237,8 @@ export default function DashboardSidebar() {
                     {hasChildren ? (
                       <button
                         type="button"
-                        className={`${styles.navLink} ${styles.navButton} ${
-                          isActive ? styles.active : ""
-                        }`}
+                        className={`${styles.navLink} ${styles.navButton} ${isActive ? styles.active : ""
+                          }`}
                         aria-expanded={isOpen}
                         aria-controls={subnavId}
                         onClick={() => toggleGroup(item.label)}
@@ -295,12 +294,12 @@ export default function DashboardSidebar() {
               )}
               <div className={styles.profileText}>
                 <strong>{adminUser?.full_name || "Name"}</strong>
-                <span>{adminUser?.job_title || "Admin"}</span>
+                <span>{adminUser?.role_label || adminUser?.role}</span>
               </div>
             </Link>
-            <button 
-              className={styles.logoutButton} 
-              type="button" 
+            <button
+              className={styles.logoutButton}
+              type="button"
               aria-label="Log out"
               onClick={() => setIsLogoutModalOpen(true)}
             >

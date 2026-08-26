@@ -294,6 +294,7 @@
   height: 3rem;
   border-radius: 50%;
   background: $dashboard-avatar;
+  flex-shrink: 0;
 }
 
 .avatarImage {
@@ -301,6 +302,7 @@
   height: 3rem;
   border-radius: 50%;
   object-fit: cover;
+  flex-shrink: 0;
 }
 
 .profileText {

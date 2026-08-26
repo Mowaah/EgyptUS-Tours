@@ -16,7 +16,7 @@ export function PersonalInfoTab() {
   const [phone, setPhone] = useState(adminUser?.phone || "");
   const [bio, setBio] = useState(adminUser?.bio || "");
   const [avatarPreview, setAvatarPreview] = useState<string | null>(adminUser?.profile_picture || null);
-  
+
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -56,7 +56,7 @@ export function PersonalInfoTab() {
     setIsSaving(true);
     setErrorMessage("");
     setSuccessMessage("");
-    
+
     try {
       const payload: any = {
         full_name: fullName,
@@ -71,7 +71,7 @@ export function PersonalInfoTab() {
       }
 
       const res = await updateAdminProfile(payload);
-      
+
       updateAdminUser(res);
       setSuccessMessage("Profile updated successfully!");
     } catch (err: any) {
@@ -104,14 +104,14 @@ export function PersonalInfoTab() {
     avatarPreview !== (adminUser.profile_picture || null)
   );
 
-  const formattedDate = adminUser?.updated_at 
-    ? new Date(adminUser.updated_at).toLocaleDateString('en-GB') 
+  const formattedDate = adminUser?.updated_at
+    ? new Date(adminUser.updated_at).toLocaleDateString('en-GB')
     : "Never";
 
   return (
     <div className={styles.container}>
       <div className={styles.formCard}>
-        
+
         <div className={styles.sectionHeader}>
           <span className={styles.sectionIcon}>
             <span className={`${styles.assetIcon} ${styles.userIcon}`} />
@@ -120,17 +120,17 @@ export function PersonalInfoTab() {
         </div>
 
         {errorMessage && (
-          <DashboardStatusBanner 
-            message={errorMessage} 
-            variant="warning" 
-            onClose={() => setErrorMessage("")} 
+          <DashboardStatusBanner
+            message={errorMessage}
+            variant="warning"
+            onClose={() => setErrorMessage("")}
           />
         )}
         {successMessage && (
-          <DashboardStatusBanner 
-            message={successMessage} 
-            variant="success" 
-            onClose={() => setSuccessMessage("")} 
+          <DashboardStatusBanner
+            message={successMessage}
+            variant="success"
+            onClose={() => setSuccessMessage("")}
           />
         )}
 
@@ -144,27 +144,30 @@ export function PersonalInfoTab() {
             )}
             <div className={styles.avatarText}>
               <h2 className={styles.avatarTitle}>{fullName || "Name"}</h2>
-              <p className={styles.avatarSubtitle}>{adminUser?.job_title || "Operations Manager"} • {adminUser?.department || "Operations"}</p>
+              <p className={styles.avatarSubtitle}>
+                {adminUser?.role_label || adminUser?.role}
+                {adminUser?.department ? ` • ${adminUser.department}` : ""}
+              </p>
             </div>
           </div>
-          
+
           <div className={styles.avatarActions}>
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              hidden 
-              accept="image/*" 
-              onChange={handleFileChange} 
+            <input
+              type="file"
+              ref={fileInputRef}
+              hidden
+              accept="image/*"
+              onChange={handleFileChange}
             />
-            <button 
-              type="button" 
+            <button
+              type="button"
               className={styles.btnUpload}
               onClick={() => fileInputRef.current?.click()}
             >
               <span>Upload New</span>
               <Image src="/images/dashboard/arrow-up.svg" alt="" width={20} height={20} />
             </button>
-            
+
             <button type="button" className={styles.btnRemove} onClick={handleRemove}>
               <span>Remove</span>
               <DeleteIcon className={styles.deleteIcon} />
@@ -174,7 +177,7 @@ export function PersonalInfoTab() {
 
         {/* Form Fields Area */}
         <div className={styles.formArea}>
-          
+
           <DashboardField
             id="profile-fullname"
             variant="modal"
@@ -184,7 +187,7 @@ export function PersonalInfoTab() {
             placeholder="Enter your full name"
             onChange={(e) => setFullName(e.target.value)}
           />
-          
+
           <DashboardField
             id="profile-email"
             variant="modal"
@@ -195,7 +198,7 @@ export function PersonalInfoTab() {
             onChange={(e) => setEmail(e.target.value)}
             disabled
           />
-          
+
           <DashboardField
             id="profile-phone"
             variant="modal"
@@ -217,12 +220,12 @@ export function PersonalInfoTab() {
               onChange={(e) => setBio(e.target.value)}
             />
           </div>
-          
+
         </div>
       </div>
 
       {/* Footer Area */}
-      <DashboardFooter 
+      <DashboardFooter
         lastUpdateDate={formattedDate}
         onSave={handleSave}
         onDiscard={handleDiscard}

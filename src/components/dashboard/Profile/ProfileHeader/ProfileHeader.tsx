@@ -11,14 +11,14 @@ export function ProfileHeader() {
   const { adminUser, logoutAdminTokens } = useAdminAuth();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
-  const formattedLastLogin = adminUser?.last_login 
-    ? new Date(adminUser.last_login).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) 
+  const formattedLastLogin = adminUser?.last_login
+    ? new Date(adminUser.last_login).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
     : "Never";
 
   return (
     <div className={styles.headerContainer}>
       <div className={styles.content}>
-        
+
         {/* User Info Left Side */}
         <div className={styles.userInfo}>
           <div className={styles.avatarWrapper}>
@@ -32,7 +32,7 @@ export function ProfileHeader() {
           <div className={styles.textGroup}>
             <div className={styles.titleRow}>
               <h1 className={styles.name}>{adminUser?.full_name || "Loading..."}</h1>
-              <span className={styles.badgeSuperAdmin}>{adminUser?.role_label || adminUser?.role || "Admin"}</span>
+              { (adminUser?.role_label || adminUser?.role) && <span className={styles.badgeSuperAdmin}>{adminUser?.role_label || adminUser?.role}</span> }
               {adminUser?.is_active && <span className={styles.badgeActive}>Active</span>}
             </div>
 
@@ -46,16 +46,16 @@ export function ProfileHeader() {
 
         {/* Action Button Right Side */}
         <div className={styles.actions}>
-          <button 
-            type="button" 
+          <button
+            type="button"
             className={styles.signOutButton}
             onClick={() => setIsLogoutModalOpen(true)}
           >
             <span>Sign Out</span>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M17.4395 14.62L19.9995 12.06L17.4395 9.5" stroke="#B91C1C" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M9.75977 12.0601H19.9298" stroke="#B91C1C" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M11.76 20C7.34 20 3.76 17 3.76 12C3.76 7 7.34 4 11.76 4" stroke="#B91C1C" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M17.4395 14.62L19.9995 12.06L17.4395 9.5" stroke="#B91C1C" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M9.75977 12.0601H19.9298" stroke="#B91C1C" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M11.76 20C7.34 20 3.76 17 3.76 12C3.76 7 7.34 4 11.76 4" stroke="#B91C1C" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
         </div>
