@@ -13,22 +13,7 @@ import { Hotel } from "@/types";
 import styles from "./HotelsSection.module.scss";
 import Image from "next/image";
 
-const LOCATION_TABS = [
-  "All",
-  "Giza",
-  "Cairo",
-  "Luxor",
-  "Aswan",
-  "Sharm El Sheikh",
-  "Alexandria",
-  "Hurghada",
-  "South Sinai",
-  "New Valley",
-  "Ismailia",
-  "Port Said",
-];
-
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 
 export default function HotelsSection({ initialHotels = [] }: { initialHotels?: Hotel[] }) {
   const [hotels, setHotels] = useState<Hotel[]>(initialHotels);
@@ -36,7 +21,12 @@ export default function HotelsSection({ initialHotels = [] }: { initialHotels?: 
   const [sortOption, setSortOption] = useState("recommended");
   const sliderRef = useRef<HTMLDivElement>(null);
 
-  const activeLocation = LOCATION_TABS[activeTab];
+  const dynamicTabs = useMemo(() => {
+    const locations = Array.from(new Set(hotels.map((h) => h.location).filter(Boolean)));
+    return ["All", ...locations.sort()];
+  }, [hotels]);
+
+  const activeLocation = dynamicTabs[activeTab];
 
   let filteredHotels = [...hotels];
 
@@ -89,7 +79,7 @@ export default function HotelsSection({ initialHotels = [] }: { initialHotels?: 
 
         <div className={styles.tabsRow}>
           <CategoryTabs 
-            tabs={LOCATION_TABS} 
+            tabs={dynamicTabs} 
             active={activeTab}
             onTabChange={(_, idx) => setActiveTab(idx)}
           />
