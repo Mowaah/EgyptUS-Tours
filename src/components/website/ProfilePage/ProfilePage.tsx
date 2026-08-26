@@ -12,6 +12,7 @@ import {
   HotelCard,
   TripBookingCard,
   SuccessModal,
+  AuthModal,
 } from "@/components/shared";
 import type { TabType, TripBookingCardProps } from "@/components/shared";
 import { Trip, Hotel } from "@/types";
@@ -40,6 +41,7 @@ export default function ProfilePage() {
   );
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [authModalState, setAuthModalState] = useState<{isOpen: boolean, mode: "login" | "signup"}>({isOpen: false, mode: "login"});
   const [successBookingRef, setSuccessBookingRef] = useState<string | null>(null);
   const [successAmount, setSuccessAmount] = useState<string | null>(null);
   const [receiptData, setReceiptData] = useState<{
@@ -407,6 +409,44 @@ export default function ProfilePage() {
         let emptyBBtn = "";
         let emptyBHref = "";
 
+        if (!isAuthenticated) {
+          return (
+            <EmptyState
+              framedIcon
+              iconSrc="/images/profile-blue.svg"
+              iconWidth={90}
+              iconHeight={90}
+              title="Create an Account to View Your Bookings"
+              description="Sign up or log in to access your bookings, requests, and upcoming trips in one place."
+              buttonText="Create Account"
+              buttonVariant="primary"
+              buttonStyle={{ width: "100%", maxWidth: "432px" }}
+              onButtonClick={() => setAuthModalState({ isOpen: true, mode: "signup" })}
+              footerNode={
+                <p style={{ margin: 0, fontSize: "16px", color: "#9E9E9E", fontFamily: "var(--font-trip-sans)" }}>
+                  Already have an Account ?{" "}
+                  <button
+                    type="button"
+                    onClick={() => setAuthModalState({ isOpen: true, mode: "login" })}
+                    style={{
+                      color: "#2971E6",
+                      fontWeight: 700,
+                      background: "none",
+                      border: "none",
+                      padding: 0,
+                      cursor: "pointer",
+                      textDecoration: "underline",
+                      fontFamily: "var(--font-trip-sans)",
+                    }}
+                  >
+                    Login
+                  </button>
+                </p>
+              }
+            />
+          );
+        }
+
         if (bookingCategoryIndex === 0) {
           bookingItems = tripBookings;
           emptyBIcon = "/images/profile/glyphs/trips.svg";
@@ -462,6 +502,44 @@ export default function ProfilePage() {
         let emptyDesc = "";
         let emptyBtn = "";
         let emptyHref = "";
+
+        if (!isAuthenticated) {
+          return (
+            <EmptyState
+              framedIcon
+              iconSrc="/images/profile-blue.svg"
+              iconWidth={90}
+              iconHeight={90}
+              title="Create an Account to View Your Requests"
+              description="Sign up or log in to track your trip requests, view their status, and manage your travel inquiries."
+              buttonText="Create Account"
+              buttonVariant="primary"
+              buttonStyle={{ width: "100%", maxWidth: "432px" }}
+              onButtonClick={() => setAuthModalState({ isOpen: true, mode: "signup" })}
+              footerNode={
+                <p style={{ margin: 0, fontSize: "16px", color: "#9E9E9E", fontFamily: "var(--font-trip-sans)" }}>
+                  Already have an Account ?{" "}
+                  <button
+                    type="button"
+                    onClick={() => setAuthModalState({ isOpen: true, mode: "login" })}
+                    style={{
+                      color: "#2971E6",
+                      fontWeight: 700,
+                      background: "none",
+                      border: "none",
+                      padding: 0,
+                      cursor: "pointer",
+                      textDecoration: "underline",
+                      fontFamily: "var(--font-trip-sans)",
+                    }}
+                  >
+                    Login
+                  </button>
+                </p>
+              }
+            />
+          );
+        }
 
         if (requestCategoryIndex === 0) {
           items = planYourTripRequests;
@@ -665,6 +743,13 @@ export default function ProfilePage() {
                 ]
               : undefined
           }
+        />
+      )}
+
+      {authModalState.isOpen && (
+        <AuthModal
+          initialMode={authModalState.mode}
+          onClose={() => setAuthModalState({ ...authModalState, isOpen: false })}
         />
       )}
     </div>

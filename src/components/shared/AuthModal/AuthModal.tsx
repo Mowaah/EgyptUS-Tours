@@ -14,15 +14,16 @@ import styles from "./AuthModal.module.scss";
 export interface AuthModalProps {
   onClose: () => void;
   onLoginSuccess?: () => void;
+  initialMode?: "login" | "signup" | "reset";
 }
 
-export default function AuthModal({ onClose, onLoginSuccess }: AuthModalProps) {
+export default function AuthModal({ onClose, onLoginSuccess, initialMode = "login" }: AuthModalProps) {
   const mounted = useSyncExternalStore(
     subscribeToClientMount,
     getClientSnapshot,
     getServerSnapshot,
   );
-  const [mode, setMode] = useState<"login" | "signup" | "reset">("login");
+  const [mode, setMode] = useState<"login" | "signup" | "reset">(initialMode);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

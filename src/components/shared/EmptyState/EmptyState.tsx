@@ -1,11 +1,13 @@
 import Image from "next/image";
 import Button from "../Button/Button";
 import styles from "./EmptyState.module.scss";
+import { ReactNode } from "react";
 
 interface EmptyStateProps {
   title?: string;
   description?: string;
   buttonText?: string;
+  buttonVariant?: "primary" | "secondary" | "outline" | "secondary-outline" | "dark";
   /** Prefer this for navigation; avoids client router when static href is enough */
   buttonHref?: string;
   onButtonClick?: () => void;
@@ -19,18 +21,23 @@ interface EmptyStateProps {
   /** Rendered size of the icon (px). Defaults: framed 90×90, standard 70×70 (legacy). */
   iconWidth?: number;
   iconHeight?: number;
+  footerNode?: ReactNode;
+  buttonStyle?: React.CSSProperties;
 }
 
 export default function EmptyState({
   title = "No Trips Found",
   description = "It looks like this trip isn't available right now. Browse other trips and discover new destinations.",
   buttonText = "View Available Trips",
+  buttonVariant = "outline",
   buttonHref,
   onButtonClick,
   iconSrc = "/images/empty-search.png",
   framedIcon = false,
   iconWidth: iconWidthProp,
   iconHeight: iconHeightProp,
+  footerNode,
+  buttonStyle,
 }: EmptyStateProps) {
   const defaultGlyph = framedIcon ? 90 : 70;
   let iconW: number;
@@ -83,23 +90,27 @@ export default function EmptyState({
       <p className={styles.description}>{description}</p>
       {buttonText && (
         <Button
-          variant="outline"
+          variant={buttonVariant}
           size="lg"
           href={buttonHref}
           onClick={buttonHref ? undefined : onButtonClick}
           className={styles.button}
+          style={buttonStyle}
           icon={
-            <Image
-              src="/images/arrows/arrow-right-blue.svg"
-              alt=""
-              width={20}
-              height={20}
-            />
+            buttonVariant === "outline" ? (
+              <Image
+                src="/images/arrows/arrow-right-blue.svg"
+                alt=""
+                width={20}
+                height={20}
+              />
+            ) : undefined
           }
         >
           {buttonText}
         </Button>
       )}
+      {footerNode && <div style={{ marginTop: "16px" }}>{footerNode}</div>}
     </div>
   );
 }

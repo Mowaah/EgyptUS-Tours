@@ -13,6 +13,7 @@ interface ButtonProps {
   href?: string;
   onClick?: () => void;
   className?: string;
+  style?: React.CSSProperties;
   disabled?: boolean;
   isLoading?: boolean;
   type?: "button" | "submit" | "reset";
@@ -28,6 +29,7 @@ export default function Button({
   href,
   onClick,
   className = "",
+  style,
   disabled,
   isLoading = false,
   type = "button",
@@ -45,7 +47,7 @@ export default function Button({
 
   if (href) {
     return (
-      <Link href={href} className={classes}>
+      <Link href={href} className={classes} style={style}>
         {icon && iconPosition === "left" && (
           <span className={styles.icon}>{icon}</span>
         )}
@@ -60,6 +62,7 @@ export default function Button({
   return (
     <button 
       className={classes} 
+      style={style}
       onClick={onClick} 
       disabled={disabled || isLoading}
       aria-busy={isLoading}
