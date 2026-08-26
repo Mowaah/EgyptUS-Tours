@@ -117,7 +117,7 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
         subtitle="Catalog vehicles will appear here once they are created."
         actionLabel="Add New Vehicle"
         onAction={() => router.push("/dashboard/catalog/transportation/new")}
-        imageSrc="/images/dashboard/empty-folder.svg"
+        imageSrc="/images/dashboard/empty.png"
       />
     );
   }

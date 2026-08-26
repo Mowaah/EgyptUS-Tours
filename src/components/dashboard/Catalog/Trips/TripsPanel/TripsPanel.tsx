@@ -150,7 +150,7 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
         subtitle="Catalog trips will appear here once they are created."
         actionLabel="Add New Trip"
         onAction={() => router.push("/dashboard/catalog/trips/new")}
-        imageSrc="/images/dashboard/empty-folder.svg"
+        imageSrc="/images/dashboard/empty.png"
       />
     );
   }

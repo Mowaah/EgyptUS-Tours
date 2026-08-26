@@ -109,11 +109,11 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
   if (totalCount === 0 && !isLoading) {
     return (
       <DashboardEmptyState
-        title="No Hotel Bookings Found"
-        subtitle="Hotel bookings will appear here once they are added."
+        title="No Bookings Found"
+        subtitle="Hotels bookings will appear here once they are added."
         actionLabel="New Booking"
         onAction={onNewBooking}
-        imageSrc="/images/dashboard/empty-folder.svg"
+        imageSrc="/images/dashboard/empty.png"
       />
     );
   }

@@ -112,11 +112,11 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
   if (totalCount === 0 && !isLoading) {
     return (
       <DashboardEmptyState
-        title="No Transportation Bookings Found"
+        title="No Bookings Found"
         subtitle="Transportation bookings will appear here once they are added."
         actionLabel="New Booking"
         onAction={onNewBooking}
-        imageSrc="/images/dashboard/empty-folder.svg"
+        imageSrc="/images/dashboard/empty.png"
       />
     );
   }

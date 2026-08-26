@@ -117,7 +117,7 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
         subtitle="Trips bookings will appear here once they are added."
         actionLabel="New Booking"
         onAction={onNewBooking}
-        imageSrc="/images/dashboard/empty-folder.svg"
+        imageSrc="/images/dashboard/empty.png"
       />
     );
   }
