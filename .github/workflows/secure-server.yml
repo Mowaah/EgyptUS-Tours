@@ -62,7 +62,8 @@ jobs:
             sudo systemctl restart nginx
             
             # 6. Run Certbot to generate SSL (using a dummy email to automate it without prompts)
-            sudo certbot --nginx -d egypt-us.com -d www.egypt-us.com --non-interactive --agree-tos --redirect -m admin@egypt-us.com || echo "Certbot might have already run"
+            sudo certbot --nginx -d egypt-us.com -d www.egypt-us.com --non-interactive --agree-tos -m admin@egypt-us.com || true
+            sudo certbot enhance --nginx -d egypt-us.com -d www.egypt-us.com --redirect --non-interactive || true
             
             # 7. Restart PM2 under the new user
             sudo pm2 stop all || true
