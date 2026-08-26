@@ -45,19 +45,12 @@ jobs:
           username: ${{ secrets.DROPLET_USER }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
           script: |
-            cd /var/www/EgyptUS-Tours-Frontend
-            
-            # Delete old build to prevent Next.js from serving stale cached files
-            rm -rf .next
-            
-            # Extract the pre-built files from GitHub
-            tar -xzf deploy.tar.gz
-            rm deploy.tar.gz
-            
-            # Install only production dependencies (much faster/lighter)
-            npm ci --production
-            
-            # Restart the server - Force recreate to ensure it uses this exact directory
-            pm2 delete EgyptUS-Tours-Frontend || true
-            pm2 start npm --name "EgyptUS-Tours-Frontend" -- start
-            pm2 save
+            chown egyptus_frontend:egyptus_frontend /var/www/EgyptUS-Tours-Frontend/deploy.tar.gz
+            su - egyptus_frontend -c "cd /var/www/EgyptUS-Tours-Frontend && \
+              rm -rf .next && \
+              tar -xzf deploy.tar.gz && \
+              rm deploy.tar.gz && \
+              npm ci --production && \
+              pm2 delete EgyptUS-Tours-Frontend || true && \
+              pm2 start npm --name 'EgyptUS-Tours-Frontend' -- start && \
+              pm2 save"
