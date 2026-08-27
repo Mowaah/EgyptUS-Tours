@@ -35,6 +35,12 @@ export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: 
   const [tripsData, setTripsData] = useState<any[]>([]);
   const [hotelsData, setHotelsData] = useState<any[]>([]);
   const [transportData, setTransportData] = useState<any[]>([]);
+
+  const langMap: Record<Language, "en" | "it" | "es"> = {
+    English: "en",
+    Italian: "it",
+    Spanish: "es",
+  };
   
   const {
     register,
@@ -47,8 +53,11 @@ export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: 
   } = useForm<CreatePromotionValues>({
     resolver: zodResolver(createPromotionSchema),
     defaultValues: {
-      title: "",
-      shortDescription: "",
+      translations: {
+        en: { title: "", shortDescription: "" },
+        it: { title: "", shortDescription: "" },
+        es: { title: "", shortDescription: "" },
+      },
       discountValue: 0,
       appliesToType: "trips",
       appliesToItems: [
@@ -106,8 +115,20 @@ export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: 
           }
 
           reset({
-            title: data.title || "",
-            shortDescription: data.translations?.en?.description || data.description || "",
+            translations: {
+              en: {
+                title: data.translations?.en?.title || data.title || "",
+                shortDescription: data.translations?.en?.description || data.description || "",
+              },
+              it: {
+                title: data.translations?.it?.title || "",
+                shortDescription: data.translations?.it?.description || "",
+              },
+              es: {
+                title: data.translations?.es?.title || "",
+                shortDescription: data.translations?.es?.description || "",
+              },
+            },
             discountValue: Number(data.discount_value),
             appliesToType: data.applies_to === "trip" ? "trips" : data.applies_to === "hotel" ? "hotels" : "transportation",
             appliesToItems: Array.isArray(data.applies_to_rules) && data.applies_to_rules.length > 0
@@ -209,8 +230,16 @@ export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: 
         valid_to: formattedEndDate,
         translations: {
           en: {
-            title: data.title,
-            description: data.shortDescription,
+            title: data.translations.en.title,
+            description: data.translations.en.shortDescription,
+          },
+          it: {
+            title: data.translations.it.title,
+            description: data.translations.it.shortDescription,
+          },
+          es: {
+            title: data.translations.es.title,
+            description: data.translations.es.shortDescription,
           }
         },
         applies_to_rules: data.appliesToItems.map(item => ({
@@ -235,8 +264,16 @@ export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: 
     }
   };
 
+  const onError = (formErrors: any) => {
+    if (formErrors.translations) {
+      if (formErrors.translations.en) setDetailsLang("English");
+      else if (formErrors.translations.it) setDetailsLang("Italian");
+      else if (formErrors.translations.es) setDetailsLang("Spanish");
+    }
+  };
+
   return (
-    <form id="create-promotion-form" className={styles.page} onSubmit={handleSubmit(onSubmit)}>
+    <form id="create-promotion-form" className={styles.page} onSubmit={handleSubmit(onSubmit, onError)}>
       <div className={styles.mainColumn}>
         <FormSection title="Offer Details" iconSrc="/images/dashboard/promotions/offer-details.svg">
           <FormSpec>
@@ -244,16 +281,16 @@ export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: 
             <DashboardField 
               label="Title" 
               placeholder="e.g. Summer Special 20% Off ..." 
-              {...register("title")} 
-              error={errors.title?.message} 
+              {...register(`translations.${langMap[detailsLang]}.title`)} 
+              error={errors.translations?.[langMap[detailsLang]]?.title?.message} 
             />
             <DashboardField
               control="textarea"
               label="Short Description"
               placeholder="Brief summary shown in listings (max 300 chars)..."
               maxLength={300}
-              {...register("shortDescription")}
-              error={errors.shortDescription?.message}
+              {...register(`translations.${langMap[detailsLang]}.shortDescription`)}
+              error={errors.translations?.[langMap[detailsLang]]?.shortDescription?.message}
             />
           </FormSpec>
         </FormSection>

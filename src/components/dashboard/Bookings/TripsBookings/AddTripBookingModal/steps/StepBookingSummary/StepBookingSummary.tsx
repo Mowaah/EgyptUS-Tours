@@ -3,6 +3,8 @@ import Image from "next/image";
 import styles from "./StepBookingSummary.module.scss";
 import { AddTripBookingData } from "../../AddTripBookingModal";
 import { previewTripBooking } from "@/services/admin/adminBookingsService";
+import { getFullHotelBySlug } from "@/services/hotelsService";
+import useSWR from "swr";
 
 interface StepBookingSummaryProps {
   formData?: AddTripBookingData;
@@ -18,6 +20,12 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
 
   const activePreview = propPreviewData || localPreviewData;
 
+  const tripHotelSlug = tripDetail?.hotels?.[0]?.slug;
+  const { data: hotelDetail } = useSWR(
+    tripHotelSlug ? `/hotels/${tripHotelSlug}/` : null,
+    () => getFullHotelBySlug(tripHotelSlug as string)
+  );
+
   const formatDateToYMD = (dateString?: string) => {
     if (!dateString) return null;
     const d = new Date(dateString);
@@ -30,6 +38,7 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
 
   useEffect(() => {
     if (!formData || !formData.tripId) return;
+    if (tripHotelSlug && !hotelDetail) return; // wait for hotel detail to correctly price rooms
 
     let isMounted = true;
     setLoading(true);
@@ -55,6 +64,35 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
     const totalCustomizedRooms = Object.values(formData.roomCustomizations || {}).reduce((sum, ids) => sum + ids.length, 0);
     const resolvedSingle = (singleCount > 0 || doubleCount > 0 || tripleCount > 0) ? singleCount : (totalCustomizedRooms || 1);
 
+    let nights = 0;
+    if (formData.startDate && formData.endDate) {
+      const start = new Date(formData.startDate);
+      const end = new Date(formData.endDate);
+      if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+        const diffTime = Math.abs(end.getTime() - start.getTime());
+        nights = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+      }
+    }
+
+    const roomSelections = [];
+    if (hotelDetail?.hotelRooms && formData.roomCustomizations) {
+      for (const [type, roomIds] of Object.entries(formData.roomCustomizations)) {
+        for (const roomId of roomIds) {
+          const room = hotelDetail.hotelRooms.find((r: any) => r.id.toString() === roomId.toString());
+          if (room) {
+            const rawType = type.toLowerCase();
+            const mappedType = rawType.includes("single") ? "single" : rawType.includes("triple") ? "triple" : "double";
+            roomSelections.push({
+              room_type: mappedType,
+              view_label: room.view || room.category || type,
+              quantity: 1,
+              unit_price: room.pricePerNight * nights
+            });
+          }
+        }
+      }
+    }
+
     const payload = {
       trip_id: parseInt(formData.tripId, 10),
       tour_type: formData.tourType || "private",
@@ -71,6 +109,7 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
       rooms_single: resolvedSingle,
       rooms_double: doubleCount,
       rooms_triple: tripleCount,
+      room_selections: roomSelections.length > 0 ? roomSelections : undefined,
     };
 
     previewTripBooking(payload)

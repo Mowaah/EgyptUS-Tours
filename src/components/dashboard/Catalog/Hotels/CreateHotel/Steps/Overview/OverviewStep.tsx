@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { FormSection, FormSpec } from "@/components/dashboard/FormFields";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
@@ -17,6 +17,28 @@ export function OverviewStep() {
   
   const { register, watch, setValue, control, formState: { errors } } = useFormContext<CreateHotelValues>();
   const facilities = watch("facilities") || [];
+
+  useEffect(() => {
+    if (errors.hotelName) {
+      if (errors.hotelName.en) setBasicLang("English");
+      else if (errors.hotelName.it) setBasicLang("Italian");
+      else if (errors.hotelName.es) setBasicLang("Spanish");
+    } else if (errors.subtitle) {
+      if (errors.subtitle.en) setBasicLang("English");
+      else if (errors.subtitle.it) setBasicLang("Italian");
+      else if (errors.subtitle.es) setBasicLang("Spanish");
+    }
+
+    if (errors.description) {
+      if (errors.description.en) setContentLang("English");
+      else if (errors.description.it) setContentLang("Italian");
+      else if (errors.description.es) setContentLang("Spanish");
+    } else if (errors.secondDescription) {
+      if (errors.secondDescription.en) setContentLang("English");
+      else if (errors.secondDescription.it) setContentLang("Italian");
+      else if (errors.secondDescription.es) setContentLang("Spanish");
+    }
+  }, [errors.hotelName, errors.subtitle, errors.description, errors.secondDescription]);
 
   const { locations } = useCatalogHotelLocations();
   const locationOptions = locations.map((loc: any) => ({

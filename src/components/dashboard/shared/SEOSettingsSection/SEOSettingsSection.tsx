@@ -14,6 +14,7 @@ interface SEOSettingsSectionProps<T extends FieldValues> {
   control: Control<T>;
   errors: FieldErrors<T>;
   title?: string;
+  pathPrefix?: string;
 }
 
 export default function SEOSettingsSection<T extends FieldValues>({
@@ -23,8 +24,24 @@ export default function SEOSettingsSection<T extends FieldValues>({
   control,
   errors,
   title = "SEO Settings",
+  pathPrefix = "",
 }: SEOSettingsSectionProps<T>) {
   const langKey = getLangKey(seoLang);
+  
+  const getPath = (field: string) => {
+    if (pathPrefix) return `${pathPrefix}.${langKey}.${field}` as Path<T>;
+    return `${field}.${langKey}` as Path<T>;
+  };
+
+  const getError = (field: string) => {
+    if (pathPrefix) {
+      const parts = pathPrefix.split('.');
+      let err: any = errors;
+      for (const p of parts) err = err?.[p];
+      return err?.[langKey]?.[field]?.message;
+    }
+    return (errors as any)[field]?.[langKey]?.message;
+  };
 
   return (
     <FormSection title={title} iconSrc="/images/dashboard/fields/seo-settings.svg">
@@ -34,8 +51,8 @@ export default function SEOSettingsSection<T extends FieldValues>({
           key={`metaTitle-${langKey}`}
           label="Meta Title"
           placeholder="Meta Title..."
-          {...register(`metaTitle.${langKey}` as Path<T>)}
-          error={(errors.metaTitle as any)?.[langKey]?.message}
+          {...register(getPath("metaTitle"))}
+          error={getError("metaTitle")}
         />
         <DashboardField
           key={`metaDescription-${langKey}`}
@@ -43,19 +60,19 @@ export default function SEOSettingsSection<T extends FieldValues>({
           label="Meta Description"
           placeholder="SEO description (max 300 char..."
           maxLength={300}
-          {...register(`metaDescription.${langKey}` as Path<T>)}
-          error={(errors.metaDescription as any)?.[langKey]?.message}
+          {...register(getPath("metaDescription"))}
+          error={getError("metaDescription")}
         />
         <Controller
           key={`metaKeywords-${langKey}`}
-          name={`metaKeywords.${langKey}` as Path<T>}
+          name={getPath("metaKeywords")}
           control={control}
           render={({ field }) => (
             <KeywordsField
               label="Meta keywords"
               value={field.value as string}
               onChange={field.onChange}
-              error={(errors.metaKeywords as any)?.[langKey]?.message}
+              error={getError("metaKeywords")}
             />
           )}
         />
@@ -63,8 +80,8 @@ export default function SEOSettingsSection<T extends FieldValues>({
           key={`slug-${langKey}`}
           label="Slug"
           placeholder="e.g. your-page-url-slug"
-          {...register(`slug.${langKey}` as Path<T>)}
-          error={(errors.slug as any)?.[langKey]?.message}
+          {...register(getPath("slug"))}
+          error={getError("slug")}
         />
       </FormSpec>
     </FormSection>

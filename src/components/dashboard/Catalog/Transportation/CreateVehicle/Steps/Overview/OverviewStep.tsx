@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { FormSection, FormSpec } from "@/components/dashboard/FormFields";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
@@ -18,6 +18,20 @@ export function OverviewStep() {
   const { categories } = useVehicleCategories();
 
   const { register, watch, setValue, control, formState: { errors } } = useFormContext<CreateVehicleValues>();
+
+  useEffect(() => {
+    if (errors.vehicleName) {
+      if (errors.vehicleName.en) setBasicLang("English");
+      else if (errors.vehicleName.it) setBasicLang("Italian");
+      else if (errors.vehicleName.es) setBasicLang("Spanish");
+    }
+
+    if (errors.description) {
+      if (errors.description.en) setContentLang("English");
+      else if (errors.description.it) setContentLang("Italian");
+      else if (errors.description.es) setContentLang("Spanish");
+    }
+  }, [errors.vehicleName, errors.description]);
   const allFeatures = watch("features") || { en: [], it: [], es: [] };
   const currentLangKey = getLangKey(featuresLang) as "en" | "it" | "es";
   const features = allFeatures[currentLangKey] || [];

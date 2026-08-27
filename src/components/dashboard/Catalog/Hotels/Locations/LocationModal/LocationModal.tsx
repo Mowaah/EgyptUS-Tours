@@ -35,6 +35,7 @@ export default function LocationModal({
     Italian: getInitial("it", "Italian"),
     Spanish: getInitial("es", "Spanish"),
   });
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -44,6 +45,7 @@ export default function LocationModal({
         Italian: getInitial("it", "Italian"),
         Spanish: getInitial("es", "Spanish"),
       });
+      setHasSubmitted(false);
     }
   }, [open, initialName]);
 
@@ -68,6 +70,15 @@ export default function LocationModal({
   if (!open) return null;
 
   const handleSave = () => {
+    setHasSubmitted(true);
+    const langs: Language[] = ["English", "Italian", "Spanish"];
+    for (const l of langs) {
+      if (!names[l].trim()) {
+        setLang(l);
+        return;
+      }
+    }
+
     onSave({
       translations: {
         en: { name: names.English },
@@ -107,6 +118,7 @@ export default function LocationModal({
             placeholder="Enter location name"
             value={names[lang]}
             onChange={(e) => setNames((prev) => ({ ...prev, [lang]: e.target.value }))}
+            error={hasSubmitted && !names[lang].trim() ? `${lang} name is required` : ""}
             variant="modal"
           />
         </div>

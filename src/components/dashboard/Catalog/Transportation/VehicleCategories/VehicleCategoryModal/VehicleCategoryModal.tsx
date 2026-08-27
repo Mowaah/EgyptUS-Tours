@@ -28,6 +28,7 @@ export default function VehicleCategoryModal({
     Italian: initialName.it || initialName.Italian || "",
     Spanish: initialName.es || initialName.Spanish || "",
   });
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -37,6 +38,7 @@ export default function VehicleCategoryModal({
         Italian: initialName.it || initialName.Italian || "",
         Spanish: initialName.es || initialName.Spanish || "",
       });
+      setHasSubmitted(false);
     }
   }, [open, initialName]);
 
@@ -61,6 +63,15 @@ export default function VehicleCategoryModal({
   if (!open) return null;
 
   const handleSave = () => {
+    setHasSubmitted(true);
+    const langs: Language[] = ["English", "Italian", "Spanish"];
+    for (const l of langs) {
+      if (!names[l].trim()) {
+        setLang(l);
+        return;
+      }
+    }
+
     onSave({
       translations: {
         en: { name: names.English },
@@ -100,6 +111,7 @@ export default function VehicleCategoryModal({
             placeholder="Enter vehicle category name"
             value={names[lang]}
             onChange={(e) => setNames((prev) => ({ ...prev, [lang]: e.target.value }))}
+            error={hasSubmitted && !names[lang].trim() ? `${lang} name is required` : ""}
             variant="modal"
           />
         </div>

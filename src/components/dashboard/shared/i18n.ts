@@ -20,15 +20,15 @@ export function getLocalizedName(item: any, lang: Language = "English"): string 
 }
 
 export const localizedStringSchema = z.object({
-  en: z.string().optional(),
-  it: z.string().optional(),
-  es: z.string().optional(),
+  en: z.string().min(1, "English translation is required"),
+  it: z.string().min(1, "Italian translation is required"),
+  es: z.string().min(1, "Spanish translation is required"),
 });
 
 export const requiredLocalizedStringSchema = (requiredMessage: string) => z.object({
   en: z.string({ message: requiredMessage }).min(1, requiredMessage),
-  it: z.string().optional(),
-  es: z.string().optional(),
+  it: z.string({ message: requiredMessage }).min(1, requiredMessage),
+  es: z.string({ message: requiredMessage }).min(1, requiredMessage),
 });
 
 export type LocalizedString = z.infer<typeof localizedStringSchema>;

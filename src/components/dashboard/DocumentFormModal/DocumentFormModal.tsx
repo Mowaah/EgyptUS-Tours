@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import Image from "next/image";
 import { LanguageTabs, type Language, RichTextEditor } from "@/components/shared";
 import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";;
@@ -84,19 +84,57 @@ export default function DocumentFormModal({
     };
   }, [open, onClose]);
 
+  const isDirty = useMemo(() => {
+    if (mode === "add") return true;
+    if (!initialData) return true;
+
+    const initialTitles = {
+      English: initialData.rawTranslations?.en?.title || initialData.title || "",
+      Italian: initialData.rawTranslations?.it?.title || "",
+      Spanish: initialData.rawTranslations?.es?.title || "",
+    };
+
+    const formatHtml = (val?: string) => {
+      if (!val) return "";
+      return /<[a-z][\s\S]*>/i.test(val) ? val : val.split("\n\n").map((p) => `<p>${p.replace(/\n/g, "<br>")}</p>`).join("");
+    };
+
+    const initialContents = {
+      English: formatHtml(initialData.rawTranslations?.en?.content || initialData.content),
+      Italian: formatHtml(initialData.rawTranslations?.it?.content),
+      Spanish: formatHtml(initialData.rawTranslations?.es?.content),
+    };
+
+    const initialPublished = initialData.status === "Published";
+
+    if (published !== initialPublished) return true;
+
+    for (const lang of ["English", "Italian", "Spanish"] as Language[]) {
+      if (titles[lang] !== initialTitles[lang]) return true;
+      if (contents[lang] !== initialContents[lang]) return true;
+    }
+
+    return false;
+  }, [mode, initialData, titles, contents, published]);
+
   const handleSave = useCallback(() => {
     setHasSubmitted(true);
-    if (!titles["English"].trim() || !contents["English"].trim() || contents["English"] === "<p></p>") {
-      setActiveLang("English");
-      return;
+    const langs: Language[] = ["English", "Italian", "Spanish"];
+    
+    // Check if any title or content is empty
+    for (const lang of langs) {
+      if (!titles[lang].trim() || !contents[lang].trim() || contents[lang] === "<p></p>") {
+        setActiveLang(lang);
+        return;
+      }
     }
     
     const unformat = (val: string) => val === "<p></p>" ? "" : val.trim();
 
     const translations = {
       en: { title: titles["English"].trim(), content: unformat(contents["English"]) },
-      it: { title: titles["Italian"].trim() || titles["English"].trim(), content: unformat(contents["Italian"]) || unformat(contents["English"]) },
-      es: { title: titles["Spanish"].trim() || titles["English"].trim(), content: unformat(contents["Spanish"]) || unformat(contents["English"]) },
+      it: { title: titles["Italian"].trim(), content: unformat(contents["Italian"]) },
+      es: { title: titles["Spanish"].trim(), content: unformat(contents["Spanish"]) },
     };
 
     onSave(translations, published);
@@ -133,7 +171,7 @@ export default function DocumentFormModal({
             <input 
               id="document-title" 
               type="text" 
-              className={`${styles.titleInput} ${hasSubmitted && activeLang === "English" && !titles["English"].trim() ? styles.inputError : ""}`} 
+              className={`${styles.titleInput} ${hasSubmitted && !titles[activeLang].trim() ? styles.inputError : ""}`} 
               placeholder={titlePlaceholder} 
               value={titles[activeLang]} 
               onChange={(e) => {
@@ -141,10 +179,10 @@ export default function DocumentFormModal({
                 if (hasSubmitted) setHasSubmitted(false);
               }} 
             />
-            {hasSubmitted && activeLang === "English" && !titles["English"].trim() && (
+            {hasSubmitted && !titles[activeLang].trim() && (
               <div className={styles.errorText}>
                 <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
-                <span>English translation is required</span>
+                <span>Title in {activeLang} is required</span>
               </div>
             )}
           </div>
@@ -160,12 +198,12 @@ export default function DocumentFormModal({
               }}
               placeholder={editorPlaceholder}
               showColorPicker={showColorPicker}
-              className={`${hasSubmitted && activeLang === "English" && (!contents["English"].trim() || contents["English"] === "<p></p>") ? styles.editorError : ""}`}
+              className={`${hasSubmitted && (!contents[activeLang].trim() || contents[activeLang] === "<p></p>") ? styles.editorError : ""}`}
             />
-            {hasSubmitted && activeLang === "English" && (!contents["English"].trim() || contents["English"] === "<p></p>") && (
+            {hasSubmitted && (!contents[activeLang].trim() || contents[activeLang] === "<p></p>") && (
               <div className={styles.errorText}>
                 <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
-                <span>English translation is required</span>
+                <span>Content in {activeLang} is required</span>
               </div>
             )}
           </div>
@@ -188,6 +226,7 @@ export default function DocumentFormModal({
           secondaryOnClick={onClose}
           primaryLabel={mode === "add" ? "Publish" : "Save Edits"}
           primaryOnClick={handleSave}
+          primaryDisabled={!isDirty}
         />
       </section>
     </div>

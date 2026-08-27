@@ -59,7 +59,12 @@ export function KeywordsField({
             />
           </div>
           <div className={styles.counterRow}>
-            {error && <span className={styles.errorText}>{error}</span>}
+            {error ? (
+              <div className={styles.errorText} role="alert">
+                <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+                <span>{error}</span>
+              </div>
+            ) : <div />}
             <span className={styles.counter}>{tags.length}/{maxKeywords}</span>
           </div>
         </div>

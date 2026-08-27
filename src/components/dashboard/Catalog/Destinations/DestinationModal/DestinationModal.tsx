@@ -33,6 +33,7 @@ export default function DestinationModal({
     Spanish: initialName.es || initialName.Spanish || "",
   });
   const [file, setFile] = useState<File | string | undefined>(initialImage);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -55,13 +56,22 @@ export default function DestinationModal({
   if (!open) return null;
 
   const handleSave = () => {
+    setHasSubmitted(true);
+    const langs: Language[] = ["English", "Italian", "Spanish"];
+    for (const l of langs) {
+      if (!names[l].trim()) {
+        setLang(l);
+        return;
+      }
+    }
+
     onSave({ 
       translations: {
         en: { name: names.English },
         it: { name: names.Italian },
         es: { name: names.Spanish },
       }, 
-      file: typeof file === 'string' ? undefined : file 
+      file: file instanceof File ? file : undefined
     });
   };
 
@@ -86,9 +96,10 @@ export default function DestinationModal({
           <DashboardField
             label="Destination Name"
             id={`destination-name-${lang}`}
-            placeholder="Enter destination name"
+            placeholder="e.g. Cairo"
             value={names[lang]}
-            onChange={(e) => setNames((prev) => ({ ...prev, [lang]: e.target.value }))}
+            onChange={(e: any) => setNames({ ...names, [lang]: e.target.value })}
+            error={hasSubmitted && !names[lang].trim() ? `${lang} name is required` : ""}
             variant="modal"
           />
 

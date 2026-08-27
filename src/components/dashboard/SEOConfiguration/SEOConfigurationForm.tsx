@@ -141,8 +141,38 @@ export default function SEOConfigurationForm({ pageKey, onSuccess }: SEOConfigur
 
   const imageLangKey = getLangKey(imageLang);
 
+  const onError = (formErrors: any) => {
+    // Collect all languages that have errors
+    const errorLangs = new Set<string>();
+
+    const checkField = (field: any) => {
+      if (!field) return;
+      if (field.en) errorLangs.add("English");
+      if (field.it) errorLangs.add("Italian");
+      if (field.es) errorLangs.add("Spanish");
+    };
+
+    checkField(formErrors.metaTitle);
+    checkField(formErrors.metaDescription);
+    checkField(formErrors.metaKeywords);
+    checkField(formErrors.slug);
+    checkField(formErrors.imageTitle);
+    checkField(formErrors.imageAlt);
+
+    if (errorLangs.has("English")) {
+      setSeoLang("English");
+      setImageLang("English");
+    } else if (errorLangs.has("Italian")) {
+      setSeoLang("Italian");
+      setImageLang("Italian");
+    } else if (errorLangs.has("Spanish")) {
+      setSeoLang("Spanish");
+      setImageLang("Spanish");
+    }
+  };
+
   return (
-    <form className={styles.container} onSubmit={handleSubmit(onSubmit)}>
+    <form className={styles.container} onSubmit={handleSubmit(onSubmit, onError)}>
       <div className={styles.formContainer}>
         {supportsOgImage && (
           <div className={styles.column}>

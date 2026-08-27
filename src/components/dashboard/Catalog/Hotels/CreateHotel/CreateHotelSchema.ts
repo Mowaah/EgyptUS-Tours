@@ -16,7 +16,7 @@ export const roomSchema = z.object({
 export const createHotelSchema = z.object({
   hotelName: requiredLocalizedStringSchema("Hotel Name is required"),
   totalRooms: z.string().min(1, "Total Rooms is required"),
-  subtitle: localizedStringSchema,
+  subtitle: requiredLocalizedStringSchema("Subtitle is required"),
   cityLocation: z.string().min(1, "Location is required"),
   address: z.string().optional(),
   starRating: z.string().refine((val) => {
@@ -24,14 +24,14 @@ export const createHotelSchema = z.object({
     return !isNaN(num) && num >= 0 && num <= 5;
   }, "Star Rating must be a number between 0 and 5"),
   facilities: z.array(z.string()).default([]),
-  description: localizedStringSchema,
-  secondDescription: localizedStringSchema,
+  description: requiredLocalizedStringSchema("Description is required"),
+  secondDescription: requiredLocalizedStringSchema("Second Description is required"),
   
   // SEO
-  metaTitle: localizedStringSchema,
-  metaDescription: localizedStringSchema,
-  metaKeywords: localizedStringSchema,
-  slug: localizedStringSchema,
+  metaTitle: requiredLocalizedStringSchema("Meta Title is required"),
+  metaDescription: requiredLocalizedStringSchema("Meta Description is required"),
+  metaKeywords: requiredLocalizedStringSchema("Meta Keywords are required"),
+  slug: requiredLocalizedStringSchema("Slug is required"),
   
   // Media
   photos: z

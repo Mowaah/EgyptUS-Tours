@@ -69,6 +69,28 @@ export function OverviewStep() {
   } = useFormContext<CreateTripValues>();
 
   useEffect(() => {
+    if (errors.tripName) {
+      if (errors.tripName.en) setBasicInfoLang("English");
+      else if (errors.tripName.it) setBasicInfoLang("Italian");
+      else if (errors.tripName.es) setBasicInfoLang("Spanish");
+    }
+
+    if (errors.description) {
+      if (errors.description.en) setTripContentLang("English");
+      else if (errors.description.it) setTripContentLang("Italian");
+      else if (errors.description.es) setTripContentLang("Spanish");
+    } else if (errors.culturalValue) {
+      if (errors.culturalValue.en) setTripContentLang("English");
+      else if (errors.culturalValue.it) setTripContentLang("Italian");
+      else if (errors.culturalValue.es) setTripContentLang("Spanish");
+    } else if (errors.whoIsTripFor) {
+      if (errors.whoIsTripFor.en) setTripContentLang("English");
+      else if (errors.whoIsTripFor.it) setTripContentLang("Italian");
+      else if (errors.whoIsTripFor.es) setTripContentLang("Spanish");
+    }
+  }, [errors.tripName, errors.description, errors.culturalValue, errors.whoIsTripFor]);
+
+  useEffect(() => {
     let ignore = false;
 
     Promise.all([getCategories({ page_size: 100 }), getDestinations({ page_size: 100 })])

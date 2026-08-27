@@ -1,20 +1,25 @@
 import { z } from "zod";
 
+const localizedFieldsSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  shortDescription: z.string().min(1, "Short Description is required").max(300, "Maximum 300 characters"),
+  content: z.string().min(1, "Content is required"),
+  thumbnailTitle: z.string().min(1, "Thumbnail Title is required"),
+  thumbnailAlt: z.string().min(1, "Thumbnail Alt is required"),
+  imageTitle: z.string().min(1, "Main Image Title is required"),
+  imageAlt: z.string().min(1, "Main Image Alt is required"),
+  metaTitle: z.string().min(1, "Meta Title is required"),
+  metaDescription: z.string().min(1, "Meta Description is required"),
+  metaKeywords: z.string().min(1, "Meta Keywords are required"),
+  slug: z.string().min(1, "Slug is required"),
+});
+
 export const marketingCreatePostSchema = z.object({
   // Upload Thumbnail
-  thumbnailFile: z.any().optional(), // Using any since File is browser specific
-  thumbnailTitle: z.string().optional(),
-  thumbnailAlt: z.string().optional(),
+  thumbnailFile: z.any().optional(),
 
   // Upload Image
   imageFile: z.any().optional(),
-  imageTitle: z.string().optional(),
-  imageAlt: z.string().optional(),
-
-  // Content
-  title: z.string({ message: "Title is required" }).min(1, "Title is required"),
-  shortDescription: z.string().max(300, "Short description must be 300 characters or less").optional(),
-  content: z.string({ message: "Content is required" }).min(1, "Content is required"),
 
   // Publish Settings
   scheduledDate: z.string().optional(),
@@ -24,14 +29,15 @@ export const marketingCreatePostSchema = z.object({
   // Details
   category: z.string({ message: "Category is required" }).min(1, "Category is required"),
 
-  // SEO Settings
-  metaTitle: z.string().optional(),
-  metaDescription: z.string().max(300, "Meta description must be 300 characters or less").optional(),
-  metaKeywords: z.string().optional(),
-  slug: z.string().optional(),
-
   // Author
   author: z.string({ message: "Author is required" }).min(1, "Author is required"),
+
+  // Translations
+  translations: z.object({
+    en: localizedFieldsSchema,
+    it: localizedFieldsSchema,
+    es: localizedFieldsSchema,
+  }),
 });
 
 export type MarketingCreatePostValues = z.infer<typeof marketingCreatePostSchema>;

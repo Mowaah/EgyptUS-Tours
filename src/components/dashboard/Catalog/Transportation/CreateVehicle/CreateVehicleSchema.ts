@@ -18,7 +18,7 @@ export const createVehicleSchema = z.object({
     it: z.array(z.string()).default([]),
     es: z.array(z.string()).default([]),
   }),
-  description: localizedStringSchema,
+  description: requiredLocalizedStringSchema("Description is required"),
 
   // Pricing
   basePrice: z.string().min(1, "Base Price is required"),
@@ -48,10 +48,10 @@ export const createVehicleSchema = z.object({
     ),
 
   // SEO
-  seoTitle: localizedStringSchema,
-  seoDescription: localizedStringSchema,
-  seoKeywords: localizedStringSchema,
-  seoSlug: localizedStringSchema,
+  metaTitle: requiredLocalizedStringSchema("Meta Title is required"),
+  metaDescription: requiredLocalizedStringSchema("Meta Description is required"),
+  metaKeywords: requiredLocalizedStringSchema("Meta Keywords are required"),
+  slug: requiredLocalizedStringSchema("Slug is required"),
 });
 
 export type CreateVehicleValues = z.infer<typeof createVehicleSchema>;

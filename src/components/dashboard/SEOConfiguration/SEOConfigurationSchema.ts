@@ -16,26 +16,26 @@ const fileSchema = z.any()
     return null;
   });
 
-const localizedString = z.object({
-  en: z.string().optional(),
-  es: z.string().optional(),
-  it: z.string().optional(),
-}).optional();
+const localizedString = (message: string) => z.object({
+  en: z.string().min(1, message),
+  es: z.string().min(1, message),
+  it: z.string().min(1, message),
+});
 
-const localizedStringMax = (max: number) => z.object({
-  en: z.string().max(max, `Cannot exceed ${max} characters.`).optional(),
-  es: z.string().max(max, `Cannot exceed ${max} characters.`).optional(),
-  it: z.string().max(max, `Cannot exceed ${max} characters.`).optional(),
-}).optional();
+const localizedStringMax = (max: number, message: string) => z.object({
+  en: z.string().min(1, message).max(max, `Cannot exceed ${max} characters.`),
+  es: z.string().min(1, message).max(max, `Cannot exceed ${max} characters.`),
+  it: z.string().min(1, message).max(max, `Cannot exceed ${max} characters.`),
+});
 
 export const seoConfigurationSchema = z.object({
   imageFile: fileSchema,
-  imageTitle: localizedString,
-  imageAlt: localizedString,
-  metaTitle: localizedStringMax(70),
-  metaDescription: localizedStringMax(300),
-  metaKeywords: localizedString, // Keywords field uses a comma-separated string in the UI
-  slug: localizedString,
+  imageTitle: localizedString("Image Title is required"),
+  imageAlt: localizedString("Image Alt is required"),
+  metaTitle: localizedStringMax(70, "Meta Title is required"),
+  metaDescription: localizedStringMax(300, "Meta Description is required"),
+  metaKeywords: localizedString("Meta Keywords are required"), // Keywords field uses a comma-separated string in the UI
+  slug: localizedString("Slug is required"),
 });
 
 export type SEOConfigurationValues = z.infer<typeof seoConfigurationSchema>;

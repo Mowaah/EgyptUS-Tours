@@ -58,6 +58,12 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
   const [showToast, setShowToast] = useState(false);
   const [showPublishModal, setShowPublishModal] = useState(false);
 
+  const langMap: Record<Language, "en" | "it" | "es"> = {
+    English: "en",
+    Italian: "it",
+    Spanish: "es",
+  };
+
   useEffect(() => {
     getAdminMarketingCategories()
       .then((data: any) => {
@@ -80,12 +86,14 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
   } = useForm<MarketingCreatePostValues>({
     resolver: zodResolver(marketingCreatePostSchema),
     defaultValues: {
-      title: "",
-      content: "",
       category: "",
-      author: "",
-      autoApply: false,
-      status: "Draft" as const,
+      author: "admin",
+      status: "Draft",
+      translations: {
+        en: { title: "", shortDescription: "", content: "", thumbnailTitle: "", thumbnailAlt: "", imageTitle: "", imageAlt: "", metaTitle: "", metaDescription: "", metaKeywords: "", slug: "" },
+        it: { title: "", shortDescription: "", content: "", thumbnailTitle: "", thumbnailAlt: "", imageTitle: "", imageAlt: "", metaTitle: "", metaDescription: "", metaKeywords: "", slug: "" },
+        es: { title: "", shortDescription: "", content: "", thumbnailTitle: "", thumbnailAlt: "", imageTitle: "", imageAlt: "", metaTitle: "", metaDescription: "", metaKeywords: "", slug: "" },
+      },
     },
   });
 
@@ -109,26 +117,37 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
           const data = contentType === "articles" 
             ? await getAdminArticleById(postId) 
             : await getAdminBlogById(postId);
-          const translation = data.translations?.en ?? {};
+          const trans = data.translations || {};
+
+          const buildLang = (code: "en" | "it" | "es") => ({
+            title: trans[code]?.title || "",
+            shortDescription: trans[code]?.short_description || "",
+            content: trans[code]?.content || "",
+            thumbnailTitle: trans[code]?.thumbnail_title || "",
+            thumbnailAlt: trans[code]?.thumbnail_alt || "",
+            imageTitle: trans[code]?.image_title || "",
+            imageAlt: trans[code]?.image_alt || "",
+            metaTitle: trans[code]?.meta_title || "",
+            metaDescription: trans[code]?.meta_description || "",
+            metaKeywords: Array.isArray(trans[code]?.meta_keywords) 
+              ? (trans[code]?.meta_keywords as string[]).join(', ') 
+              : (trans[code]?.meta_keywords || ""),
+            slug: trans[code]?.slug || "",
+          });
+
           reset({
-            title: translation.title || data.title || "",
-            shortDescription: translation.short_description || data.excerpt || "",
-            content: translation.content || data.content || "",
             category: String(data.category_id ?? data.category?.id ?? ""),
             author: "admin",
             status: data.status ? data.status.charAt(0).toUpperCase() + data.status.slice(1) : "Draft",
             thumbnailFile: getFullImageUrl(data.hero_image),
             imageFile: getFullImageUrl(data.featured_image),
-            thumbnailTitle: translation.thumbnail_title || "",
-            thumbnailAlt: translation.thumbnail_alt || "",
-            imageTitle: translation.image_title || "",
-            imageAlt: translation.image_alt || "",
-            metaTitle: translation.meta_title || "",
-            metaDescription: translation.meta_description || "",
-            metaKeywords: Array.isArray(translation.meta_keywords) ? translation.meta_keywords.join(', ') : (translation.meta_keywords || ""),
-            slug: translation.slug || "",
             autoApply: false,
             scheduledDate: data.published_at ? new Date(data.published_at).toISOString().split('T')[0] : "",
+            translations: {
+              en: buildLang("en"),
+              it: buildLang("it"),
+              es: buildLang("es"),
+            },
           });
         } catch (error) {
           console.error(`Failed to load ${contentType}:`, error);
@@ -156,7 +175,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
       } else if (typeof data.thumbnailFile === "string" && data.thumbnailFile.startsWith("data:")) {
         hero_image = data.thumbnailFile;
       } else if (!data.thumbnailFile) {
-        hero_image = null; // Explicitly remove
+        hero_image = null;
       }
 
       let featured_image: string | null | undefined = undefined;
@@ -165,7 +184,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
       } else if (typeof data.imageFile === "string" && data.imageFile.startsWith("data:")) {
         featured_image = data.imageFile;
       } else if (!data.imageFile) {
-        featured_image = null; // Explicitly remove
+        featured_image = null;
       }
 
       let formattedScheduledAt: string | null = null;
@@ -176,21 +195,28 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
         }
       }
 
+      const extractLang = (code: "en" | "it" | "es") => {
+        const t = data.translations?.[code] || {};
+        return {
+          title: t.title || "",
+          short_description: t.shortDescription || "",
+          content: t.content || "",
+          meta_title: t.metaTitle || "",
+          meta_description: t.metaDescription || "",
+          meta_keywords: t.metaKeywords ? t.metaKeywords.split(",").map((k: string) => k.trim()).filter(Boolean) : [],
+          slug: t.slug || "",
+          thumbnail_title: t.thumbnailTitle || "",
+          thumbnail_alt: t.thumbnailAlt || "",
+          image_title: t.imageTitle || "",
+          image_alt: t.imageAlt || "",
+        };
+      };
+
       const payload: Record<string, any> = {
         translations: {
-          en: {
-            title: data.title,
-            short_description: data.shortDescription ?? "",
-            content: data.content,
-            meta_title: data.metaTitle ?? "",
-            meta_description: data.metaDescription ?? "",
-            meta_keywords: data.metaKeywords ? data.metaKeywords.split(",").map(k => k.trim()).filter(Boolean) : [],
-            slug: data.slug ?? "",
-            thumbnail_title: data.thumbnailTitle ?? "",
-            thumbnail_alt: data.thumbnailAlt ?? "",
-            image_title: data.imageTitle ?? "",
-            image_alt: data.imageAlt ?? "",
-          },
+          en: extractLang("en"),
+          it: extractLang("it"),
+          es: extractLang("es"),
         },
         status: computedStatus,
         scheduled_at: formattedScheduledAt,
@@ -239,8 +265,27 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
 
   const itemName = contentType === "articles" ? "Article" : "Blog Post";
 
+  const onError = (formErrors: any) => {
+    if (formErrors.translations) {
+      const getLang = () => {
+        if (formErrors.translations.en) return "English";
+        if (formErrors.translations.it) return "Italian";
+        if (formErrors.translations.es) return "Spanish";
+        return null;
+      };
+      const langToSet = getLang();
+      if (langToSet) {
+        setThumbnailLang(langToSet);
+        setImageLang(langToSet);
+        setContentLang(langToSet);
+        setDetailsLang(langToSet);
+        setSeoLang(langToSet);
+      }
+    }
+  };
+
   return (
-    <form id="create-post-form" className={styles.page} onSubmit={handleSubmit(onSubmit)}>
+    <form id="create-post-form" className={styles.page} onSubmit={handleSubmit(onSubmit, onError)}>
       <div className={styles.mainColumn}>
         <FormSection title="Upload Thumbnail" iconSrc="/images/dashboard/fields/document-upload.svg">
           <FormSpec>
@@ -253,8 +298,8 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
             />
             <LanguageTabs active={thumbnailLang} onChange={setThumbnailLang} className={styles.whiteTabs} />
             <div className={styles.fieldRow}>
-              <DashboardField label="Thumbnail Title" placeholder="Thumbnail Title..." {...register("thumbnailTitle")} error={errors.thumbnailTitle?.message} />
-              <DashboardField label="Thumbnail Alt" placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" {...register("thumbnailAlt")} error={errors.thumbnailAlt?.message} />
+              <DashboardField label="Thumbnail Title" placeholder="Thumbnail Title..." {...register(`translations.${langMap[thumbnailLang]}.thumbnailTitle`)} error={errors.translations?.[langMap[thumbnailLang]]?.thumbnailTitle?.message} />
+              <DashboardField label="Thumbnail Alt" placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" {...register(`translations.${langMap[thumbnailLang]}.thumbnailAlt`)} error={errors.translations?.[langMap[thumbnailLang]]?.thumbnailAlt?.message} />
             </div>
           </FormSpec>
         </FormSection>
@@ -270,8 +315,8 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
             />
             <LanguageTabs active={imageLang} onChange={setImageLang} className={styles.whiteTabs} />
             <div className={styles.fieldRow}>
-              <DashboardField label="Image Title" placeholder="Image Title..." {...register("imageTitle")} error={errors.imageTitle?.message} />
-              <DashboardField label="Image Alt" placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" {...register("imageAlt")} error={errors.imageAlt?.message} />
+              <DashboardField label="Image Title" placeholder="Image Title..." {...register(`translations.${langMap[imageLang]}.imageTitle`)} error={errors.translations?.[langMap[imageLang]]?.imageTitle?.message} />
+              <DashboardField label="Image Alt" placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" {...register(`translations.${langMap[imageLang]}.imageAlt`)} error={errors.translations?.[langMap[imageLang]]?.imageAlt?.message} />
             </div>
           </FormSpec>
         </FormSection>
@@ -279,22 +324,29 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
         <FormSection title={`${itemName} Content`} iconSrc="/images/dashboard/fields/article-content.svg">
           <FormSpec>
             <LanguageTabs active={contentLang} onChange={setContentLang} className={styles.whiteTabs} />
-            <DashboardField label="Title" placeholder="e.g. Summer Special 20% Off ..." {...register("title")} error={errors.title?.message} />
+            <DashboardField label="Title" placeholder="e.g. Summer Special 20% Off ..." {...register(`translations.${langMap[contentLang]}.title`)} error={errors.translations?.[langMap[contentLang]]?.title?.message} />
             <DashboardField
               control="textarea"
               label="Short Description"
               placeholder="Brief summary shown in listings (max 300 chars)..."
               maxLength={300}
-              {...register("shortDescription")}
-              error={errors.shortDescription?.message}
+              {...register(`translations.${langMap[contentLang]}.shortDescription`)}
+              error={errors.translations?.[langMap[contentLang]]?.shortDescription?.message}
             />
-            <Controller
-              name="content"
-              control={control}
-              render={({ field }) => (
-                <RichTextField label="Content" value={field.value} onChange={field.onChange} error={errors.content?.message} />
-              )}
-            />
+            <div className={styles.editorWrapper}>
+              <Controller
+                name={`translations.${langMap[contentLang]}.content`}
+                control={control}
+                render={({ field }) => (
+                  <RichTextField 
+                    label="Content" 
+                    value={field.value ?? ""} 
+                    onChange={field.onChange} 
+                    error={errors.translations?.[langMap[contentLang]]?.content?.message} 
+                  />
+                )}
+              />
+            </div>
           </FormSpec>
         </FormSection>
       </div>
@@ -389,6 +441,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
           register={register}
           control={control}
           errors={errors}
+          pathPrefix="translations"
         />
 
         <FormSection title="Author" iconSrc="/images/dashboard/fields/author.svg">

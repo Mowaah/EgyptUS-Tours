@@ -46,13 +46,13 @@ export const createTripSchema = z
     brochureFile: z.any().optional(),
 
     // Trip Content
-    description: localizedStringSchema,
-    culturalValue: localizedStringSchema,
-    whoIsTripFor: localizedStringSchema,
+    description: requiredLocalizedStringSchema("Description is required"),
+    culturalValue: requiredLocalizedStringSchema("Cultural Value is required"),
+    whoIsTripFor: requiredLocalizedStringSchema("Who Is This Trip For is required"),
     
     // Inclusions Step
-    inclusions: z.array(localizedStringSchema),
-    exclusions: z.array(localizedStringSchema),
+    inclusions: z.array(requiredLocalizedStringSchema("Inclusion is required")),
+    exclusions: z.array(requiredLocalizedStringSchema("Exclusion is required")),
     
     // Pricing Step
     pricing: z
@@ -95,10 +95,10 @@ export const createTripSchema = z
       .array(
         z.object({
           id: z.union([z.string(), z.number()]).optional(),
-          title: localizedStringSchema,
-          subtitle: localizedStringSchema,
-          description: localizedStringSchema,
-          highlights: z.array(localizedStringSchema).optional(),
+          title: requiredLocalizedStringSchema("Itinerary title is required"),
+          subtitle: requiredLocalizedStringSchema("Itinerary subtitle is required"),
+          description: requiredLocalizedStringSchema("Itinerary description is required"),
+          highlights: z.array(requiredLocalizedStringSchema("Highlight is required")).optional(),
           image: z.any().optional(),
         })
       )
@@ -136,8 +136,6 @@ export const createTripSchema = z
           (val.dates || []).forEach((item, index) => {
             const range = item.dateRange?.trim();
             if (range) {
-
-
               const key = normalizeDateRangeKey(range);
               if (key) {
                 if (seen.has(key)) {
@@ -183,10 +181,10 @@ export const createTripSchema = z
       ),
 
     // SEO Step
-    metaTitle: localizedStringSchema,
-    metaDescription: localizedStringSchema,
-    metaKeywords: localizedStringSchema,
-    slug: localizedStringSchema,
+    metaTitle: requiredLocalizedStringSchema("Meta Title is required"),
+    metaDescription: requiredLocalizedStringSchema("Meta Description is required"),
+    metaKeywords: requiredLocalizedStringSchema("Meta Keywords are required"),
+    slug: requiredLocalizedStringSchema("Slug is required"),
   })
   .superRefine((data, ctx) => {
     // Validate Pricing based on selected tourTypes

@@ -45,10 +45,10 @@ const EMPTY_VALUES: CreateVehicleValues = {
     { file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } },
     { file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } },
   ],
-  seoTitle: { en: "", it: "", es: "" },
-  seoDescription: { en: "", it: "", es: "" },
-  seoKeywords: { en: "", it: "", es: "" },
-  seoSlug: { en: "", it: "", es: "" },
+  metaTitle: { en: "", it: "", es: "" },
+  metaDescription: { en: "", it: "", es: "" },
+  metaKeywords: { en: "", it: "", es: "" },
+  slug: { en: "", it: "", es: "" },
 };
 
 function asText(value: any): string {
@@ -160,7 +160,7 @@ async function buildPayload(data: CreateVehicleValues, intent: WizardSubmitInten
   }
 
   const { duration_hours_min, duration_hours_max } = parseDurationHours(data.duration);
-  const userSlugEn = data.seoSlug?.en ? slugify(data.seoSlug.en) : "";
+  const userSlugEn = data.slug?.en ? slugify(data.slug.en) : "";
   const baseSlugEn = slugify(data.vehicleName?.en || "vehicle");
   const slugEn = userSlugEn || (isEdit ? baseSlugEn : `${baseSlugEn}-${Math.random().toString(36).substring(2, 6)}`);
 
@@ -170,28 +170,28 @@ async function buildPayload(data: CreateVehicleValues, intent: WizardSubmitInten
         name: asText(data.vehicleName?.en),
         description: asText(data.description?.en),
         features: (data.features?.en || []).filter(Boolean),
-        meta_title: asText(data.seoTitle?.en),
-        meta_description: asText(data.seoDescription?.en),
-        meta_keywords: asText(data.seoKeywords?.en).split(",").map(k => k.trim()).filter(Boolean),
+        meta_title: asText(data.metaTitle?.en),
+        meta_description: asText(data.metaDescription?.en),
+        meta_keywords: asText(data.metaKeywords?.en).split(",").map(k => k.trim()).filter(Boolean),
         slug: slugEn,
       },
       it: {
         name: asText(data.vehicleName?.it),
         description: asText(data.description?.it),
         features: (data.features?.it || []).filter(Boolean),
-        meta_title: asText(data.seoTitle?.it),
-        meta_description: asText(data.seoDescription?.it),
-        meta_keywords: asText(data.seoKeywords?.it).split(",").map(k => k.trim()).filter(Boolean),
-        slug: asText(data.seoSlug?.it),
+        meta_title: asText(data.metaTitle?.it),
+        meta_description: asText(data.metaDescription?.it),
+        meta_keywords: asText(data.metaKeywords?.it).split(",").map(k => k.trim()).filter(Boolean),
+        slug: asText(data.slug?.it),
       },
       es: {
         name: asText(data.vehicleName?.es),
         description: asText(data.description?.es),
         features: (data.features?.es || []).filter(Boolean),
-        meta_title: asText(data.seoTitle?.es),
-        meta_description: asText(data.seoDescription?.es),
-        meta_keywords: asText(data.seoKeywords?.es).split(",").map(k => k.trim()).filter(Boolean),
-        slug: asText(data.seoSlug?.es),
+        meta_title: asText(data.metaTitle?.es),
+        meta_description: asText(data.metaDescription?.es),
+        meta_keywords: asText(data.metaKeywords?.es).split(",").map(k => k.trim()).filter(Boolean),
+        slug: asText(data.slug?.es),
       },
     },
     category_id: categoryId,
@@ -262,14 +262,14 @@ function mapVehicleToFormValues(vehicle: any): CreateVehicleValues {
     pricePerKm: asText(vehicle.price_per_km),
     additionalServices: (vehicle.additional_services || []).map((s: any) => String(s.id || s)),
     photos,
-    seoTitle: { en: asText(tEn.meta_title), it: asText(tIt.meta_title), es: asText(tEs.meta_title) },
-    seoDescription: { en: asText(tEn.meta_description), it: asText(tIt.meta_description), es: asText(tEs.meta_description) },
-    seoKeywords: { 
+    metaTitle: { en: asText(tEn.meta_title), it: asText(tIt.meta_title), es: asText(tEs.meta_title) },
+    metaDescription: { en: asText(tEn.meta_description), it: asText(tIt.meta_description), es: asText(tEs.meta_description) },
+    metaKeywords: { 
       en: (tEn.meta_keywords || []).join(", "),
       it: (tIt.meta_keywords || []).join(", "),
       es: (tEs.meta_keywords || []).join(", ")
     },
-    seoSlug: { en: asText(tEn.slug || vehicle.slug), it: asText(tIt.slug), es: asText(tEs.slug) },
+    slug: { en: asText(tEn.slug || vehicle.slug), it: asText(tIt.slug), es: asText(tEs.slug) },
   };
 }
 
@@ -288,7 +288,7 @@ export function CreateVehicle({ vehicleId, onDirtyChange, onSavingChange }: { ve
     defaultValues: EMPTY_VALUES,
   });
 
-  const { handleSubmit, formState: { isDirty }, reset } = methods;
+  const { handleSubmit, formState: { isDirty }, reset, watch, setValue } = methods;
 
   useEffect(() => {
     onDirtyChange?.(isDirty);
@@ -297,6 +297,15 @@ export function CreateVehicle({ vehicleId, onDirtyChange, onSavingChange }: { ve
   useEffect(() => {
     onSavingChange?.(isSaving);
   }, [isSaving, onSavingChange]);
+
+  const metaTitle = watch("metaTitle");
+  const slug = watch("slug");
+
+  useEffect(() => {
+    if (metaTitle && metaTitle.en && !slug?.en) {
+      setValue("slug.en", slugify(metaTitle.en));
+    }
+  }, [metaTitle, slug?.en, setValue]);
 
   useEffect(() => {
     if (vehicleData) {
