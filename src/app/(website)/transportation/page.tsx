@@ -1,13 +1,18 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
+import { generateSeoMetadata } from "@/lib/seoUtils";
 import TransportationPage from "@/components/website/TransportationPage/TransportationPage";
 import { getAllVehicles } from "@/services/transportationService";
 import { getFaqs } from "@/services/legalHelpService";
 import { Vehicle } from "@/components/shared";
 
-export const metadata = {
-  title: "Transportation | Egypt-Us",
-  description: "Choose the perfect vehicle for every journey — from city rides to luxury transfers.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return generateSeoMetadata({
+    pageKey: "transportation",
+    fallbackTitle: "Transportation | Egypt-Us",
+    fallbackDescription: "Choose the perfect vehicle for every journey — from city rides to luxury transfers.",
+  });
+}
 
 export const revalidate = 60;
 

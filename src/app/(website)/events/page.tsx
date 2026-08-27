@@ -1,9 +1,14 @@
+import type { Metadata } from "next";
+import { generateSeoMetadata } from "@/lib/seoUtils";
 import EventsPage from "@/components/website/EventsPage/EventsPage";
 
-export const metadata = {
-  title: "Events & MICE | Egypt-Us",
-  description: "Professional corporate events and MICE solutions in Egypt.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return generateSeoMetadata({
+    pageKey: "mice_events",
+    fallbackTitle: "Events & MICE | Egypt-Us",
+    fallbackDescription: "Professional corporate events and MICE solutions in Egypt.",
+  });
+}
 
 import { getTestimonials } from "@/services/testimonialsService";
 

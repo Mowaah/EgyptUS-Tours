@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
+import { generateSeoMetadata } from "@/lib/seoUtils";
 import { Suspense } from "react";
 import TripsSectionFetcher from "@/components/website/TripsSection/TripsSectionFetcher";
 import FaqSectionFetcher from "@/components/website/FaqSection/FaqSectionFetcher";
 import BlogsSectionFetcher from "@/components/website/BlogsSection/BlogsSectionFetcher";
 
-export const metadata: Metadata = {
-  title: "Trips | Egypt-Us",
-  description:
-    "Browse our handpicked collection of Egypt tours. Filter by duration, special offers, and price range to find your perfect adventure.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return generateSeoMetadata({
+    pageKey: "trips",
+    fallbackTitle: "Trips | Egypt-Us",
+    fallbackDescription: "Browse our handpicked collection of Egypt tours. Filter by duration, special offers, and price range to find your perfect adventure.",
+  });
+}
 
 export const revalidate = 60;
 

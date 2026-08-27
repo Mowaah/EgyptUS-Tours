@@ -71,7 +71,10 @@ export default function Navbar({ tripLinks = [], destinationLinks = [] }: Navbar
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [expandedDropdown, setExpandedDropdown] = useState<string | null>(null);
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated: authReady, isLoading: authLoading, user, logout } = useAuth();
+  // Never let auth state differ between SSR and the first client paint.
+  // Both authLoading and mounted must be resolved before showing logged-in UI.
+  const isAuthenticated = (!mounted || authLoading) ? false : authReady;
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
@@ -285,7 +288,7 @@ export default function Navbar({ tripLinks = [], destinationLinks = [] }: Navbar
               scrolled={shouldShowScrolled}
               lightNavBackground={lightNavBackground}
               isLoggedIn={isAuthenticated}
-              userName={user?.full_name}
+              userName={mounted ? user?.full_name : undefined}
               setIsLoggedIn={() => {}}
               openAuthModal={() => setIsAuthModalOpen(true)}
               onLogoutClick={() => setIsLogoutModalOpen(true)}

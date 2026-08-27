@@ -1,4 +1,6 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
+import { generateSeoMetadata } from "@/lib/seoUtils";
 import HeroSection from "@/components/website/HeroSection/HeroSection";
 import StatsBar from "@/components/website/StatsBar/StatsBar";
 import DesertSection from "@/components/website/DesertSection/DesertSection";
@@ -14,6 +16,14 @@ import HomeTripsFetcher from "@/components/website/HomeFetchers/HomeTripsFetcher
 import HomeHotelsFetcher from "@/components/website/HomeFetchers/HomeHotelsFetcher";
 import HomeTransportationFetcher from "@/components/website/HomeFetchers/HomeTransportationFetcher";
 import HomeTestimonialsFetcher from "@/components/website/HomeFetchers/HomeTestimonialsFetcher";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return generateSeoMetadata({
+    pageKey: "home",
+    fallbackTitle: "Egypt-Us | Discover Egypt",
+    fallbackDescription: "Explore the best Egypt tours, hotels, and transportation packages tailored for you.",
+  });
+}
 
 export default function Home() {
   return (

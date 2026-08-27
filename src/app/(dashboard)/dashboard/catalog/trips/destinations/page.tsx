@@ -32,11 +32,11 @@ function getMutationErrorMessage(error: unknown, fallback: string) {
 export default function CatalogDestinationsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingDest, setEditingDest] = useState<Destination | undefined>(undefined);
-  
+
   const [deletingDest, setDeletingDest] = useState<Destination | undefined>(undefined);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  
+
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const handleOpenAdd = () => {
@@ -56,14 +56,16 @@ export default function CatalogDestinationsPage() {
 
   const handleSaveModal = async (data: { translations: Record<string, { name: string }>; file?: File }) => {
     try {
+      const payload = { translations: data.translations, image: data.file };
+
       if (editingDest) {
-        await updateDestination(editingDest.id, data);
+        await updateDestination(editingDest.id, payload);
         setSuccessMessage("The Destination has been updated successfully");
       } else {
-        await createDestination(data);
+        await createDestination(payload);
         setSuccessMessage("The New Destination has been added successfully");
       }
-      
+
       setRefreshTrigger(prev => prev + 1);
       handleCloseModal();
     } catch (error: unknown) {
@@ -95,7 +97,7 @@ export default function CatalogDestinationsPage() {
 
   return (
     <div className={styles.page}>
-      <DashboardNavbar 
+      <DashboardNavbar
         title="Trips"
         subtitle="Manage all trip products visible on the website"
         primaryAction={{ label: "Add New Destination" }}
@@ -104,8 +106,8 @@ export default function CatalogDestinationsPage() {
       />
       <div className={styles.content}>
         <CatalogTabs />
-        <DestinationsPanel 
-          onEditDestination={handleOpenEdit} 
+        <DestinationsPanel
+          onEditDestination={handleOpenEdit}
           onDeleteDestination={setDeletingDest}
           refreshTrigger={refreshTrigger}
         />
@@ -144,7 +146,7 @@ export default function CatalogDestinationsPage() {
         onClose={() => setSuccessMessage("")}
         className={dashboardStyles.draftBanner}
       />
-      
+
       <DashboardStatusBanner
         show={!!errorMessage}
         message={errorMessage}

@@ -39,9 +39,21 @@ export default function SEOConfigurationForm({ pageKey, onSuccess }: SEOConfigur
     defaultValues: {},
   });
 
+  // Default slug for each page key — used when backend has no slug saved yet
+  const PAGE_KEY_TO_SLUG: Record<string, string> = {
+    home: "",
+    trips: "trips",
+    hotels: "hotels",
+    transportation: "transportation",
+    mice_events: "events",
+    b2b: "b2b-programs",
+  };
+
   // Load existing data
   useEffect(() => {
     if (data) {
+      const defaultSlug = PAGE_KEY_TO_SLUG[pageKey] ?? pageKey;
+
       const defaultValues: any = {
         metaTitle: {},
         metaDescription: {},
@@ -55,7 +67,8 @@ export default function SEOConfigurationForm({ pageKey, onSuccess }: SEOConfigur
         defaultValues.metaTitle[locale] = t.meta_title || "";
         defaultValues.metaDescription[locale] = t.meta_description || "";
         defaultValues.metaKeywords[locale] = (t.meta_keywords || []).join(", ");
-        defaultValues.slug[locale] = t.slug || "";
+        // Fall back to the default slug if the backend hasn't stored one yet
+        defaultValues.slug[locale] = t.slug || defaultSlug;
         if (supportsOgImage) {
           defaultValues.imageTitle[locale] = t.image_title || "";
           defaultValues.imageAlt[locale] = t.image_alt || "";
