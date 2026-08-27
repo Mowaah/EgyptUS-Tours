@@ -89,6 +89,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
       category: "",
       author: "admin",
       status: "Draft",
+      autoApply: false,
       translations: {
         en: { title: "", shortDescription: "", content: "", thumbnailTitle: "", thumbnailAlt: "", imageTitle: "", imageAlt: "", metaTitle: "", metaDescription: "", metaKeywords: "", slug: "" },
         it: { title: "", shortDescription: "", content: "", thumbnailTitle: "", thumbnailAlt: "", imageTitle: "", imageAlt: "", metaTitle: "", metaDescription: "", metaKeywords: "", slug: "" },
@@ -298,8 +299,8 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
             />
             <LanguageTabs active={thumbnailLang} onChange={setThumbnailLang} className={styles.whiteTabs} />
             <div className={styles.fieldRow}>
-              <DashboardField label="Thumbnail Title" placeholder="Thumbnail Title..." {...register(`translations.${langMap[thumbnailLang]}.thumbnailTitle`)} error={errors.translations?.[langMap[thumbnailLang]]?.thumbnailTitle?.message} />
-              <DashboardField label="Thumbnail Alt" placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" {...register(`translations.${langMap[thumbnailLang]}.thumbnailAlt`)} error={errors.translations?.[langMap[thumbnailLang]]?.thumbnailAlt?.message} />
+              <DashboardField key={`thumbnailTitle-${thumbnailLang}`} label="Thumbnail Title" placeholder="Thumbnail Title..." {...register(`translations.${langMap[thumbnailLang]}.thumbnailTitle`)} error={errors.translations?.[langMap[thumbnailLang]]?.thumbnailTitle?.message} />
+              <DashboardField key={`thumbnailAlt-${thumbnailLang}`} label="Thumbnail Alt" placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" {...register(`translations.${langMap[thumbnailLang]}.thumbnailAlt`)} error={errors.translations?.[langMap[thumbnailLang]]?.thumbnailAlt?.message} />
             </div>
           </FormSpec>
         </FormSection>
@@ -315,8 +316,8 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
             />
             <LanguageTabs active={imageLang} onChange={setImageLang} className={styles.whiteTabs} />
             <div className={styles.fieldRow}>
-              <DashboardField label="Image Title" placeholder="Image Title..." {...register(`translations.${langMap[imageLang]}.imageTitle`)} error={errors.translations?.[langMap[imageLang]]?.imageTitle?.message} />
-              <DashboardField label="Image Alt" placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" {...register(`translations.${langMap[imageLang]}.imageAlt`)} error={errors.translations?.[langMap[imageLang]]?.imageAlt?.message} />
+              <DashboardField key={`imageTitle-${imageLang}`} label="Image Title" placeholder="Image Title..." {...register(`translations.${langMap[imageLang]}.imageTitle`)} error={errors.translations?.[langMap[imageLang]]?.imageTitle?.message} />
+              <DashboardField key={`imageAlt-${imageLang}`} label="Image Alt" placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" {...register(`translations.${langMap[imageLang]}.imageAlt`)} error={errors.translations?.[langMap[imageLang]]?.imageAlt?.message} />
             </div>
           </FormSpec>
         </FormSection>
@@ -324,8 +325,9 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
         <FormSection title={`${itemName} Content`} iconSrc="/images/dashboard/fields/article-content.svg">
           <FormSpec>
             <LanguageTabs active={contentLang} onChange={setContentLang} className={styles.whiteTabs} />
-            <DashboardField label="Title" placeholder="e.g. Summer Special 20% Off ..." {...register(`translations.${langMap[contentLang]}.title`)} error={errors.translations?.[langMap[contentLang]]?.title?.message} />
+            <DashboardField key={`title-${contentLang}`} label="Title" placeholder="e.g. Summer Special 20% Off ..." {...register(`translations.${langMap[contentLang]}.title`)} error={errors.translations?.[langMap[contentLang]]?.title?.message} />
             <DashboardField
+              key={`shortDesc-${contentLang}`}
               control="textarea"
               label="Short Description"
               placeholder="Brief summary shown in listings (max 300 chars)..."
