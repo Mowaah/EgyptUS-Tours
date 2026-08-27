@@ -3,6 +3,7 @@
 import React, { useRef, useState } from "react";
 import Image from "next/image";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
+import dashboardFieldStyles from "@/components/dashboard/shared/DashboardField/DashboardField.module.scss";
 import styles from "./FormFields.module.scss";
 
 interface UploadDropzoneProps {
@@ -13,6 +14,7 @@ interface UploadDropzoneProps {
   title?: string;
   subtitle?: string;
   maxSizeBytes?: number;
+  error?: string;
 }
 
 function formatBytes(bytes: number, decimals = 2) {
@@ -32,6 +34,7 @@ export function UploadDropzone({
   title = "Click to upload an image or drag & drop",
   subtitle = "PNG, JPG, GIF up to 10MB",
   maxSizeBytes,
+  error,
 }: UploadDropzoneProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [progress, setProgress] = React.useState(100);
@@ -185,6 +188,12 @@ export function UploadDropzone({
             inputRef.current?.click();
           }}
         />
+      )}
+      {error && (
+        <div className={dashboardFieldStyles.errorText} role="alert" style={{ marginTop: "4px" }}>
+          <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+          <span>{error}</span>
+        </div>
       )}
     </div>
   );

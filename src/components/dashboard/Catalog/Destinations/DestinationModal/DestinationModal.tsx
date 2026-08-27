@@ -34,6 +34,7 @@ export default function DestinationModal({
   });
   const [file, setFile] = useState<File | string | undefined>(initialImage);
   const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [imageError, setImageError] = useState("");
 
   useEffect(() => {
     if (!open) return;
@@ -64,6 +65,12 @@ export default function DestinationModal({
         return;
       }
     }
+
+    if (!file) {
+      setImageError("Destination photo is required");
+      return;
+    }
+    setImageError("");
 
     onSave({ 
       translations: {
@@ -109,9 +116,13 @@ export default function DestinationModal({
             </label>
             <UploadDropzone
               value={file}
-              onFileSelect={(newFile) => setFile(newFile ?? undefined)}
+              onFileSelect={(newFile) => {
+                setFile(newFile ?? undefined);
+                if (newFile) setImageError("");
+              }}
               title="Click to upload an image or drag & drop"
               subtitle="PNG, JPG up to 10MB"
+              error={imageError}
             />
           </div>
         </div>
