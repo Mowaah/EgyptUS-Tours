@@ -22,7 +22,7 @@ import { marketingCreatePostSchema, type MarketingCreatePostValues } from "./Mar
 import SEOSettingsSection from "@/components/dashboard/shared/SEOSettingsSection/SEOSettingsSection";
 import styles from "./MarketingCreatePost.module.scss";
 import type { ContentType } from "../types";
-import { 
+import {
   getAdminMarketingCategories,
   getAdminArticleById,
   getAdminBlogById,
@@ -52,7 +52,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
   const [contentLang, setContentLang] = useState<Language>("English");
   const [detailsLang, setDetailsLang] = useState<Language>("English");
   const [seoLang, setSeoLang] = useState<Language>("English");
-  
+
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [categories, setCategories] = useState<{ label: string; value: string }[]>([]);
   const [showToast, setShowToast] = useState(false);
@@ -70,7 +70,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
         const items = Array.isArray(data) ? data : (data?.results ?? []);
         setCategories(items.map((c: any) => ({ label: c.name, value: String(c.id) })));
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const router = useRouter();
@@ -115,8 +115,8 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
     async function loadPost() {
       if (postId) {
         try {
-          const data = contentType === "articles" 
-            ? await getAdminArticleById(postId) 
+          const data = contentType === "articles"
+            ? await getAdminArticleById(postId)
             : await getAdminBlogById(postId);
           const trans = data.translations || {};
 
@@ -130,8 +130,8 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
             imageAlt: trans[code]?.image_alt || "",
             metaTitle: trans[code]?.meta_title || "",
             metaDescription: trans[code]?.meta_description || "",
-            metaKeywords: Array.isArray(trans[code]?.meta_keywords) 
-              ? (trans[code]?.meta_keywords as string[]).join(', ') 
+            metaKeywords: Array.isArray(trans[code]?.meta_keywords)
+              ? (trans[code]?.meta_keywords as string[]).join(', ')
               : (trans[code]?.meta_keywords || ""),
             slug: trans[code]?.slug || "",
           });
@@ -162,7 +162,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
     try {
       const submitter = (e?.nativeEvent as SubmitEvent)?.submitter as HTMLButtonElement | undefined;
       const btnText = (submitter?.innerText || submitter?.textContent || "").toLowerCase();
-      
+
       let computedStatus = "published";
       if (btnText.includes("draft") || btnText.includes("save draft") || btnText.includes("save as draft")) {
         computedStatus = "draft";
@@ -237,7 +237,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
         } else {
           await updateAdminBlog(postId, payload);
         }
-        
+
         if (fromList) {
           router.push(`/dashboard/marketing/${contentType}?editSaved=true`);
         } else {
@@ -249,7 +249,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
         } else {
           await createAdminBlog(payload);
         }
-        
+
         if (computedStatus === "draft") {
           router.push(`/dashboard/marketing/${contentType}?draftSaved=true`);
         } else {
@@ -322,7 +322,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
           </FormSpec>
         </FormSection>
 
-        <FormSection title={`${itemName} Content`} iconSrc="/images/dashboard/fields/article-content.svg">
+        <FormSection title={`${itemName} Content`} iconSrc="/images/dashboard/fields/blog-content.svg">
           <FormSpec>
             <LanguageTabs active={contentLang} onChange={setContentLang} className={styles.whiteTabs} />
             <DashboardField key={`title-${contentLang}`} label="Title" placeholder="e.g. Summer Special 20% Off ..." {...register(`translations.${langMap[contentLang]}.title`)} error={errors.translations?.[langMap[contentLang]]?.title?.message} />
@@ -340,11 +340,11 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
                 name={`translations.${langMap[contentLang]}.content`}
                 control={control}
                 render={({ field }) => (
-                  <RichTextField 
-                    label="Content" 
-                    value={field.value ?? ""} 
-                    onChange={field.onChange} 
-                    error={errors.translations?.[langMap[contentLang]]?.content?.message} 
+                  <RichTextField
+                    label="Content"
+                    value={field.value ?? ""}
+                    onChange={field.onChange}
+                    error={errors.translations?.[langMap[contentLang]]?.content?.message}
                   />
                 )}
               />
@@ -492,15 +492,15 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
         />
       )}
 
-      <CreateCategoryModal 
-        isOpen={isCategoryModalOpen} 
-        onClose={() => setIsCategoryModalOpen(false)} 
+      <CreateCategoryModal
+        isOpen={isCategoryModalOpen}
+        onClose={() => setIsCategoryModalOpen(false)}
         categories={categories}
         onCreate={(newCat) => {
           const newCategory = { label: newCat, value: newCat.toLowerCase().replace(/\s+/g, '-') };
           setCategories((prev) => [...prev, newCategory]);
           setShowToast(true);
-        }} 
+        }}
         onDelete={(catValue) => {
           setCategories((prev) => prev.filter((c) => c.value !== catValue));
         }}
