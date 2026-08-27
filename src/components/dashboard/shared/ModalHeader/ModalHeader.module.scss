@@ -82,3 +82,9 @@
   stroke-linecap: round;
   fill: none;
 }
+
+@media (max-width: 1500px) {
+  .headerText h2 {
+    font-size: $font-size-2xl;
+  }
+}

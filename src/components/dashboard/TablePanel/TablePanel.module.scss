@@ -299,6 +299,12 @@
   }
 }
 
+@media (max-width: 1500px) {
+  .panelTitle h2 {
+    font-size: $font-size-2xl;
+  }
+}
+
 @media (max-width: 1180px) {
   .filterBar {
     flex-direction: column;
