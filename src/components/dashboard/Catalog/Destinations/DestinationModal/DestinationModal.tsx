@@ -121,7 +121,8 @@ export default function DestinationModal({
                 if (newFile) setImageError("");
               }}
               title="Click to upload an image or drag & drop"
-              subtitle="PNG, JPG up to 10MB"
+              subtitle="PNG, JPG up to 5MB"
+              maxSizeBytes={5 * 1024 * 1024}
               error={imageError}
             />
           </div>
