@@ -41,59 +41,60 @@ export default function DestinationCard({ destination, onEdit, onDelete }: Desti
           fill
           className={styles.image}
         />
-        
-        <div className={styles.menuContainer} ref={menuRef}>
-          <button 
-            type="button"
-            className={`${styles.menuButton} ${menuOpen ? styles.menuButtonActive : ""}`}
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="More options"
-          >
-            <span className={styles.moreIcon} />
-          </button>
-
-          {menuOpen && (
-            <div className={styles.dropdownMenu}>
-              <button 
-                type="button" 
-                className={styles.menuItem}
-                onClick={() => {
-                  setMenuOpen(false);
-                  onEdit(destination.id);
-                }}
-              >
-                <span
-                  className={styles.actionIcon}
-                  style={{
-                    maskImage: 'url(/images/dashboard/edit.svg)',
-                    WebkitMaskImage: 'url(/images/dashboard/edit.svg)',
-                  }}
-                  aria-hidden
-                />
-                <span>Edit</span>
-              </button>
-              <button 
-                type="button" 
-                className={styles.menuItemDanger}
-                onClick={() => {
-                  setMenuOpen(false);
-                  onDelete(destination.id);
-                }}
-              >
-                <span
-                  className={styles.actionIcon}
-                  style={{
-                    maskImage: 'url(/images/dashboard/delete.svg)',
-                    WebkitMaskImage: 'url(/images/dashboard/delete.svg)',
-                  }}
-                  aria-hidden
-                />
-                <span>Delete</span>
-              </button>
-            </div>
-          )}
-        </div>
       </div>
+
+      <div className={styles.menuContainer} ref={menuRef}>
+        <button 
+          type="button"
+          className={`${styles.menuButton} ${menuOpen ? styles.menuButtonActive : ""}`}
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="More options"
+        >
+          <span className={styles.moreIcon} />
+        </button>
+
+        {menuOpen && (
+          <div className={styles.dropdownMenu}>
+            <button 
+              type="button" 
+              className={styles.menuItem}
+              onClick={() => {
+                setMenuOpen(false);
+                onEdit(destination.id);
+              }}
+            >
+              <span
+                className={styles.actionIcon}
+                style={{
+                  maskImage: 'url(/images/dashboard/edit.svg)',
+                  WebkitMaskImage: 'url(/images/dashboard/edit.svg)',
+                }}
+                aria-hidden
+              />
+              <span>Edit</span>
+            </button>
+            <button 
+              type="button" 
+              className={styles.menuItemDanger}
+              onClick={() => {
+                setMenuOpen(false);
+                onDelete(destination.id);
+              }}
+            >
+              <span
+                className={styles.actionIcon}
+                style={{
+                  maskImage: 'url(/images/dashboard/delete.svg)',
+                  WebkitMaskImage: 'url(/images/dashboard/delete.svg)',
+                }}
+                aria-hidden
+              />
+              <span>Delete</span>
+            </button>
+          </div>
+        )}
+      </div>
+
       <h3 className={styles.title}>{destination.name}</h3>
     </div>
   );
