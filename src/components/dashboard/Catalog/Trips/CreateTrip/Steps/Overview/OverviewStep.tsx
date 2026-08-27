@@ -144,6 +144,7 @@ export function OverviewStep() {
             
             <div className={styles.fieldRow}>
               <DashboardField 
+                key={`tripName-${basicInfoLang}`}
                 label="Trip Name" 
                 placeholder="Enter trip name" 
                 variant="modal"
@@ -273,6 +274,7 @@ export function OverviewStep() {
             <LanguageTabs active={tripContentLang} onChange={setTripContentLang} variant="white" className={styles.tabsMargin} />
             
             <DashboardField 
+              key={`description-${tripContentLang}`}
               control="textarea"
               variant="modal"
               label="Description (Long description)" 
@@ -282,6 +284,7 @@ export function OverviewStep() {
             />
 
             <DashboardField 
+              key={`culturalValue-${tripContentLang}`}
               control="textarea"
               variant="modal"
               label="Cultural Value (Short description)" 
@@ -291,6 +294,7 @@ export function OverviewStep() {
             />
 
             <DashboardField 
+              key={`whoIsTripFor-${tripContentLang}`}
               control="textarea"
               variant="modal"
               label="Who is this trip for?" 

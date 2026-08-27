@@ -1,7 +1,7 @@
 "use client";
 
-import { use, useState, createContext, useContext } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useState, createContext, useContext } from "react";
+import { useRouter, usePathname, useParams } from "next/navigation";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
 import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/DashboardTabs";
@@ -59,13 +59,13 @@ function buildTabs(id: string) {
 }
 
 export default function HotelLayout({
-  params,
   children,
 }: {
-  params: Promise<{ id: string }>;
+  params?: any;
   children: React.ReactNode;
 }) {
-  const { id } = use(params);
+  const paramsObj = useParams();
+  const id = (paramsObj?.id as string) || "";
   const router = useRouter();
   const pathname = usePathname();
 

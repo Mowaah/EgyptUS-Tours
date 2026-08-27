@@ -1,15 +1,16 @@
 "use client";
 
-import { Suspense, use, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { CreateTrip } from "@/components/dashboard/Catalog/Trips/CreateTrip";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import { DashboardConfirmationModal } from "@/components/dashboard/shared";
 import styles from "../../page.module.scss";
 
-export default function EditTripPage({ params }: { params: Promise<{ id: string }> }) {
+export default function EditTripPage() {
   const router = useRouter();
-  const { id } = use(params);
+  const paramsObj = useParams();
+  const id = (paramsObj?.id as string) || "";
   
   const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false);
   const [isDirty, setIsDirty] = useState(false);

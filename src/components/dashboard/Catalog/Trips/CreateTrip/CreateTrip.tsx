@@ -294,7 +294,17 @@ function mapTripToFormValues(trip: any): CreateTripValues {
         it: asText(day?.translations?.it?.description),
         es: asText(day?.translations?.es?.description),
       },
-      highlights: asList(day?.translations?.en?.highlights || day?.highlights).map(h => ({ en: asText(h), it: "", es: "" })), // Complex nested mapping
+      highlights: (() => {
+        const enHighlights = asList(day?.translations?.en?.highlights || day?.highlights);
+        const itHighlights = asList(day?.translations?.it?.highlights);
+        const esHighlights = asList(day?.translations?.es?.highlights);
+        const maxLen = Math.max(enHighlights.length, itHighlights.length, esHighlights.length);
+        return Array.from({ length: maxLen }, (_, i) => ({
+          en: asText(enHighlights[i] ?? ""),
+          it: asText(itHighlights[i] ?? ""),
+          es: asText(esHighlights[i] ?? ""),
+        }));
+      })(),
       image: day?.image_url,
     })),
     datesAvailability: {

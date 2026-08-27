@@ -79,8 +79,9 @@ export function InclusionsStep() {
 
           <div className={styles.fieldsList}>
             {inclusionFields.map((field, index) => (
-              <div key={field.id} style={{ width: '100%' }}>
+              <div key={`${field.id}-${includedLang}`} style={{ width: '100%' }}>
                 <DashboardField
+                  key={`inclusion-${field.id}-${includedLang}`}
                   variant="modal"
                   label={null}
                   placeholder="Enter inclusion..."
@@ -117,8 +118,9 @@ export function InclusionsStep() {
 
           <div className={styles.fieldsList}>
             {exclusionFields.map((field, index) => (
-              <div key={field.id} style={{ width: '100%' }}>
+              <div key={`${field.id}-${excludedLang}`} style={{ width: '100%' }}>
                 <DashboardField
+                  key={`exclusion-${field.id}-${excludedLang}`}
                   variant="modal"
                   label={null}
                   placeholder="Enter exclusion..."
