@@ -374,7 +374,10 @@
     font-size: $font-size-sm;
   }
   .heading h1 {
-    font-size: $font-size-26;
+    font-size: $font-size-4xl;
+  }
+  .heading p, .subtitle, .metaText {
+    font-size: $font-size-base;
   }
   .notificationButton {
     width: 2.5rem;
@@ -424,7 +427,10 @@
     font-size: $font-size-2xs;
   }
   .heading h1 {
-    font-size: $font-size-2xl;
+    font-size: $font-size-4xl;
+  }
+  .heading p, .subtitle, .metaText {
+    font-size: $font-size-base;
   }
   .notificationButton {
     width: 2.25rem;

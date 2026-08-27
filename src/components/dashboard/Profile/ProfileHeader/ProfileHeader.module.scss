@@ -145,7 +145,10 @@
 
 @media (max-width: 1500px) {
   .name {
-    font-size: $font-size-26;
+    font-size: $font-size-4xl;
+  }
+  .metaText, .badgeSuperAdmin, .badgeActive {
+    font-size: $font-size-base;
   }
 
   .signOutButton {
@@ -168,7 +171,10 @@
 
 @media (max-width: 1024px) {
   .name {
-    font-size: $font-size-2xl;
+    font-size: $font-size-4xl;
+  }
+  .metaText, .badgeSuperAdmin, .badgeActive {
+    font-size: $font-size-base;
   }
 
   .signOutButton {
