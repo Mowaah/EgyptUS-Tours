@@ -1,14 +1,12 @@
 import TransportationDetailPage from "@/components/website/TransportationDetailPage/TransportationDetailPage";
 import { getVehicleBySlug } from "@/services/transportationService";
+import { generateDynamicSeoMetadata } from "@/lib/seoUtils";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
     const vehicle = await getVehicleBySlug(id);
-    return {
-      title: `${vehicle.name} | Egypt-Us`,
-      description: vehicle.description || `Book your ${vehicle.name} with Egypt-Us.`,
-    };
+    return generateDynamicSeoMetadata(vehicle, "transportation", "Vehicle Details");
   } catch (error) {
     return { title: "Vehicle Not Found" };
   }

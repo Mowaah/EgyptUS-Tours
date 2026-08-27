@@ -49,7 +49,7 @@ export default function TransportationAdditionalServicesPage() {
     setEditingService(undefined);
   };
 
-  const handleSaveModal = async (data: { translations: Record<string, { name: string }>; price: string }) => {
+  const handleSaveModal = async (data: { translations: Record<string, { name: string }>; price: string; currency_code?: string }) => {
     try {
       const cleanPrice = data.price.replace(/[^0-9.]/g, "");
       const payload = { ...data, price: cleanPrice };

@@ -1,6 +1,6 @@
 import { useFormContext, useFieldArray } from "react-hook-form";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import { getLangKey } from "@/components/dashboard/shared/i18n";
@@ -11,7 +11,7 @@ export function InclusionsStep() {
   const [includedLang, setIncludedLang] = useState<Language>("English");
   const [excludedLang, setExcludedLang] = useState<Language>("English");
 
-  const { control } = useFormContext<CreateTripValues>();
+  const { control, formState: { errors } } = useFormContext<CreateTripValues>();
 
   const {
     fields: inclusionFields,
@@ -30,6 +30,28 @@ export function InclusionsStep() {
     control,
     name: "exclusions" as never,
   });
+
+  useEffect(() => {
+    if (errors.inclusions) {
+      const fieldWithError = (errors.inclusions as any)?.find((i: any) => i);
+      if (fieldWithError) {
+        if (fieldWithError.en) setIncludedLang("English");
+        else if (fieldWithError.it) setIncludedLang("Italian");
+        else if (fieldWithError.es) setIncludedLang("Spanish");
+      }
+    }
+  }, [errors.inclusions]);
+
+  useEffect(() => {
+    if (errors.exclusions) {
+      const fieldWithError = (errors.exclusions as any)?.find((i: any) => i);
+      if (fieldWithError) {
+        if (fieldWithError.en) setExcludedLang("English");
+        else if (fieldWithError.it) setExcludedLang("Italian");
+        else if (fieldWithError.es) setExcludedLang("Spanish");
+      }
+    }
+  }, [errors.exclusions]);
 
   return (
     <div className={styles.inclusionsContainer}>
@@ -63,6 +85,7 @@ export function InclusionsStep() {
                   label={null}
                   placeholder="Enter inclusion..."
                   {...control.register(`inclusions.${index}.${getLangKey(includedLang)}` as const)}
+                  error={(errors.inclusions as any)?.[index]?.[getLangKey(includedLang)]?.message}
                   endAdornment={
                     <button type="button" onClick={() => removeInclusion(index)} className={styles.deleteButton}>
                       <Image src="/images/dashboard/delete.svg" alt="Delete" width={18} height={18} />
@@ -100,6 +123,7 @@ export function InclusionsStep() {
                   label={null}
                   placeholder="Enter exclusion..."
                   {...control.register(`exclusions.${index}.${getLangKey(excludedLang)}` as const)}
+                  error={(errors.exclusions as any)?.[index]?.[getLangKey(excludedLang)]?.message}
                   endAdornment={
                     <button type="button" onClick={() => removeExclusion(index)} className={styles.deleteButton}>
                       <Image src="/images/dashboard/delete.svg" alt="Delete" width={18} height={18} />

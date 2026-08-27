@@ -10,7 +10,7 @@ import styles from "./AdditionalServiceModal.module.scss";
 interface AdditionalServiceModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (data: { translations: Record<string, { name: string }>; price: string }) => void;
+  onSave: (data: { translations: Record<string, { name: string }>; price: string; currency_code?: string }) => void;
   initialName?: Record<string, string>;
   initialPrice?: string;
   isEdit?: boolean;
@@ -83,6 +83,7 @@ export default function AdditionalServiceModal({
         es: { name: names.Spanish },
       },
       price,
+      currency_code: "£",
     });
   };
 

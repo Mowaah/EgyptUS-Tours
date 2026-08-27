@@ -104,7 +104,7 @@ const EMPTY_VALUES: CreateHotelValues = {
   starRating: "",
   description: { en: "", it: "", es: "" },
   secondDescription: { en: "", it: "", es: "" },
-  facilities: [],
+  facilities: { en: [], it: [], es: [] },
   rooms: [{
     category: "",
     type: "",
@@ -179,7 +179,11 @@ function mapHotelToFormValues(hotel: any): CreateHotelValues {
     starRating: hotel?.stars ? String(hotel.stars) : "",
     description: { en: tEn.description || hotel?.description || "", it: tIt.description || "", es: tEs.description || "" },
     secondDescription: { en: tEn.second_description || hotel?.second_description || "", it: tIt.second_description || "", es: tEs.second_description || "" },
-    facilities: hotel?.facilities || [],
+    facilities: {
+      en: Array.isArray(tEn.facilities) ? tEn.facilities : Array.isArray(hotel?.facilities) ? hotel?.facilities : [],
+      it: Array.isArray(tIt.facilities) ? tIt.facilities : [],
+      es: Array.isArray(tEs.facilities) ? tEs.facilities : [],
+    },
     rooms,
     photos: padPhotos(photoRows),
     metaTitle: { en: tEn.meta_title || "", it: tIt.meta_title || "", es: tEs.meta_title || "" },
@@ -358,6 +362,7 @@ export function CreateHotel({ hotelId, onDirtyChange, onSavingChange }: { hotelI
             meta_keywords: data.metaKeywords?.en ? data.metaKeywords.en.split(",").map(k => k.trim()).filter(Boolean) : [],
             slug: generatedSlug,
             address: data.address || "",
+            facilities: data.facilities.en || [],
           },
           it: {
             name: data.hotelName?.it || "",
@@ -369,6 +374,7 @@ export function CreateHotel({ hotelId, onDirtyChange, onSavingChange }: { hotelI
             meta_description: data.metaDescription?.it || "",
             meta_keywords: data.metaKeywords?.it ? data.metaKeywords.it.split(",").map(k => k.trim()).filter(Boolean) : [],
             slug: data.slug?.it || "",
+            facilities: data.facilities.it || [],
           },
           es: {
             name: data.hotelName?.es || "",
@@ -380,12 +386,13 @@ export function CreateHotel({ hotelId, onDirtyChange, onSavingChange }: { hotelI
             meta_description: data.metaDescription?.es || "",
             meta_keywords: data.metaKeywords?.es ? data.metaKeywords.es.split(",").map(k => k.trim()).filter(Boolean) : [],
             slug: data.slug?.es || "",
+            facilities: data.facilities.es || [],
           }
         },
         location_id: data.cityLocation ? parseInt(data.cityLocation, 10) : undefined,
         stars: data.starRating ? parseFloat(cleanNumber(data.starRating) || "0") : undefined,
         total_rooms: data.totalRooms ? parseInt(cleanNumber(data.totalRooms) || "0") : undefined,
-        facilities: data.facilities,
+        facilities: data.facilities.en || [],
         replace_rooms: true,
         replace_media_items: true,
         media_items: mediaItems,
@@ -420,11 +427,20 @@ export function CreateHotel({ hotelId, onDirtyChange, onSavingChange }: { hotelI
     }
   };
 
+const getErrorStepIndex = (errors: any) => {
+  if (errors.hotelName || errors.cityLocation || errors.starRating || errors.totalRooms || errors.description || errors.facilities) return 0;
+  if (errors.rooms) return 1;
+  if (errors.photos) return 2;
+  if (errors.metaTitle || errors.metaDescription || errors.metaKeywords || errors.slug) return 3;
+  return -1;
+};
+
   const {
     currentStep,
     handleNext,
     handlePrevious,
     handleStepClick,
+    setCurrentStep,
   } = useWizard<CreateHotelValues>({
     steps: STEPS,
     methods,
@@ -452,10 +468,16 @@ export function CreateHotel({ hotelId, onDirtyChange, onSavingChange }: { hotelI
       <form
         id="create-hotel-form"
         className={styles.page}
-        onSubmit={handleSubmit((data) => onSubmit(data, { intent: "save" }).then(() => setIsPublishedModalOpen(true)))}
+        onSubmit={handleSubmit(
+          (data) => onSubmit(data, { intent: "save" }).then(() => setIsPublishedModalOpen(true)),
+          (errors) => {
+            const errorStepIndex = getErrorStepIndex(errors);
+            if (errorStepIndex !== -1 && errorStepIndex !== currentStep) {
+              setCurrentStep(errorStepIndex);
+            }
+          }
+        )}
       >
-        {saveError && <div className={styles.saveError}>{saveError}</div>}
-
         <WizardLayout
           steps={STEPS}
           currentStep={currentStep}

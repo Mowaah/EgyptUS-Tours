@@ -343,7 +343,15 @@ export function CreateVehicle({ vehicleId, onDirtyChange, onSavingChange }: { ve
     }
   };
 
-  const { currentStep, handleNext, handlePrevious, handleStepClick } = useWizard<CreateVehicleValues>({
+const getErrorStepIndex = (errors: any) => {
+  if (errors.vehicleName || errors.category || errors.make || errors.model || errors.year || errors.description || errors.passengerCapacity || errors.luggageCapacity || errors.doors || errors.transmission || errors.features || errors.cancellationPolicy) return 0;
+  if (errors.basePrice || errors.pricePerKm || errors.additionalServices) return 1;
+  if (errors.photos) return 2;
+  if (errors.metaTitle || errors.metaDescription || errors.metaKeywords || errors.slug) return 3;
+  return -1;
+};
+
+  const { currentStep, handleNext, handlePrevious, handleStepClick, setCurrentStep } = useWizard<CreateVehicleValues>({
     steps: STEPS,
     methods,
     onSubmit,
@@ -370,10 +378,16 @@ export function CreateVehicle({ vehicleId, onDirtyChange, onSavingChange }: { ve
       <form
         id="create-vehicle-form"
         className={styles.page}
-        onSubmit={handleSubmit((data) => onSubmit(data, { intent: "save" }).then(() => setIsPublishedModalOpen(true)))}
+        onSubmit={handleSubmit(
+          (data) => onSubmit(data, { intent: "save" }).then(() => setIsPublishedModalOpen(true)),
+          (errors) => {
+            const errorStepIndex = getErrorStepIndex(errors);
+            if (errorStepIndex !== -1 && errorStepIndex !== currentStep) {
+              setCurrentStep(errorStepIndex);
+            }
+          }
+        )}
       >
-        {saveError && <div className={styles.saveError}>{saveError}</div>}
-
         <WizardLayout
           steps={STEPS}
           currentStep={currentStep}

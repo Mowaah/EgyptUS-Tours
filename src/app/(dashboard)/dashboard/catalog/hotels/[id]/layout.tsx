@@ -37,10 +37,11 @@ function formatBlockers(err: unknown): string {
   return message || "Failed to publish the hotel. Please try again.";
 }
 
-export const HotelDetailContext = createContext<{ hotel: any; refetch: () => void; loading: boolean }>({
+export const HotelDetailContext = createContext<{ hotel: any; refetch: () => void; loading: boolean; activeLang: Language }>({
   hotel: null,
   refetch: () => {},
   loading: true,
+  activeLang: "English",
 });
 
 export function useHotelDetailContext() {
@@ -144,7 +145,7 @@ export default function HotelLayout({
   const subtitle = translations.subtitle || hotel?.subtitle || "";
 
   return (
-    <HotelDetailContext.Provider value={{ hotel, refetch, loading }}>
+    <HotelDetailContext.Provider value={{ hotel, refetch, loading, activeLang }}>
       <div className={styles.page}>
         <DashboardNavbar
           breadcrumbTrail={[

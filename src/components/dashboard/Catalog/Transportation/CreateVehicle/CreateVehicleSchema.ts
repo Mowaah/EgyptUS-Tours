@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { localizedStringSchema, requiredLocalizedStringSchema } from "@/components/dashboard/shared/i18n";
+import { requiredLocalizedStringSchema, localizedSlugSchema } from "@/components/dashboard/shared/i18n";
 
 export const createVehicleSchema = z.object({
   vehicleName: requiredLocalizedStringSchema("Vehicle Name is required"),
@@ -51,7 +51,7 @@ export const createVehicleSchema = z.object({
   metaTitle: requiredLocalizedStringSchema("Meta Title is required"),
   metaDescription: requiredLocalizedStringSchema("Meta Description is required"),
   metaKeywords: requiredLocalizedStringSchema("Meta Keywords are required"),
-  slug: requiredLocalizedStringSchema("Slug is required"),
+  slug: localizedSlugSchema("Slug is required"),
 });
 
 export type CreateVehicleValues = z.infer<typeof createVehicleSchema>;

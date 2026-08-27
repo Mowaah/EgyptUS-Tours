@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { Controller, FieldErrors, useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import { CurrencyField } from "@/components/dashboard/shared";
@@ -103,7 +103,6 @@ function FacilitiesSelector({ value = [], onChange }: { value: string[]; onChang
 }
 
 export function RoomsStep() {
-  const [roomsLang, setRoomsLang] = useState<Language>("English");
   const { control, formState: { errors } } = useFormContext<CreateHotelValues>();
   
   const rawRoomsError = errors.rooms as { root?: { message?: string }; message?: string } | undefined;
@@ -150,168 +149,185 @@ export function RoomsStep() {
         </div>
       )}
 
-      <div style={{ padding: "0 24px", marginBottom: "16px" }}>
-        <LanguageTabs active={roomsLang} onChange={setRoomsLang} />
-      </div>
-
       <div className={styles.roomsList}>
         {fields.map((field, index) => (
-          <div key={field.id} className={styles.roomCard}>
-            <div className={styles.roomHeader}>
-              <div className={styles.roomTitleWrap}>
-                <h3 className={styles.roomTitle}>Room {index + 1}</h3>
-              </div>
-              <button type="button" className={styles.deleteBtn} onClick={() => remove(index)}>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M2.5 5H4.16667H17.5" stroke="#D80027" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M6.66667 5.00001V3.33334C6.66667 2.89131 6.84226 2.46739 7.15482 2.15483C7.46738 1.84227 7.89131 1.66667 8.33333 1.66667H11.6667C12.1087 1.66667 12.5326 1.84227 12.8452 2.15483C13.1577 2.46739 13.3333 2.89131 13.3333 3.33334V5.00001M15.8333 5.00001V16.6667C15.8333 17.1087 15.6577 17.5326 15.3452 17.8452C15.0326 18.1577 14.6087 18.3333 14.1667 18.3333H5.83333C5.39131 18.3333 4.96738 18.1577 4.65482 17.8452C4.34226 17.5326 4.16667 17.1087 4.16667 16.6667V5.00001H15.8333Z" stroke="#D80027" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M8.33333 9.16667V14.1667" stroke="#D80027" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M11.6667 9.16667V14.1667" stroke="#D80027" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-            </div>
-
-            <div className={styles.formFieldsArea}>
-              <div className={styles.rowGroup}>
-                <div className={styles.row}>
-                  <div className={styles.fieldItem}>
-                    <Controller
-                      name={`rooms.${index}.category`}
-                      control={control}
-                      render={({ field, fieldState }) => (
-                        <DashboardField
-                          {...field}
-                          control="select"
-                          options={[
-                            { label: "Standard Room", value: "Standard Room" },
-                            { label: "Deluxe Room", value: "Deluxe Room" },
-                            { label: "Premium Room", value: "Premium Room" },
-                            { label: "Suite", value: "Suite" },
-                          ]}
-                          label="Room Category"
-                          placeholder="e.g. Standard Room"
-                          error={getRoomError(errors, index, "category") || fieldState.error?.message}
-                        />
-                      )}
-                    />
-                  </div>
-                  <div className={styles.fieldItem}>
-                    <Controller
-                      name={`rooms.${index}.type`}
-                      control={control}
-                      render={({ field, fieldState }) => (
-                        <DashboardField
-                          {...field}
-                          control="select"
-                          options={[
-                            { label: "Single", value: "Single" },
-                            { label: "Double Room", value: "Double Room" },
-                            { label: "Triple Room", value: "Triple Room" },
-                          ]}
-                          label="Room Type"
-                          placeholder="e.g. Single"
-                          error={getRoomError(errors, index, "type") || fieldState.error?.message}
-                        />
-                      )}
-                    />
-                  </div>
-                </div>
-                
-                <div className={styles.row}>
-                  <div className={styles.fieldItem}>
-                    <Controller
-                      name={`rooms.${index}.view`}
-                      control={control}
-                      render={({ field, fieldState }) => (
-                        <DashboardField
-                          {...field}
-                          control="select"
-                          options={[
-                            { label: "Sea View", value: "Sea View" },
-                            { label: "Pool View", value: "Pool View" },
-                            { label: "Garden View", value: "Garden View" },
-                          ]}
-                          label="Room View"
-                          placeholder="e.g. Garden View"
-                          error={getRoomError(errors, index, "view") || fieldState.error?.message}
-                        />
-                      )}
-                    />
-                  </div>
-                  <div className={styles.fieldItem}>
-                    <Controller
-                      name={`rooms.${index}.pricePerNightEgp`}
-                      control={control}
-                      render={({ fieldState }) => (
-                        <CurrencyField 
-                          name={`rooms.${index}.pricePerNightEgp`}
-                          label="Price per Night (EGP)"
-                          control={control}
-                          error={getRoomError(errors, index, "pricePerNightEgp") || fieldState.error?.message}
-                        />
-                      )}
-                    />
-                  </div>
-                </div>
-
-                <div className={styles.row}>
-                  <div className={styles.fieldItem} style={{ width: '100%' }}>
-                    <Controller
-                      name={`rooms.${index}.description.${getLangKey(roomsLang)}` as const}
-                      control={control}
-                      render={({ field, fieldState }) => (
-                        <DashboardField 
-                          {...field}
-                          label={`Room Description (${roomsLang})`}
-                          placeholder="Spacious deluxe room featuring panoramic views..."
-                          error={fieldState.error?.message}
-                        />
-                      )}
-                    />
-                  </div>
-                </div>
-
-                <div className={styles.facilitiesField}>
-                  <Controller
-                    name={`rooms.${index}.facilities`}
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <>
-                        <div className={styles.facilitiesHeader}>
-                          <p className={styles.facilitiesLabel}>Facilities</p>
-                        </div>
-                        <FacilitiesSelector value={value || []} onChange={onChange} />
-                      </>
-                    )}
-                  />
-                </div>
-
-                <div className={styles.photoSection}>
-                  <p className={styles.photoLabel}>Room Photo ( 327 x 174 )</p>
-                  <Controller
-                    name={`rooms.${index}.photos`}
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <MultiUploadDropzone 
-                        values={value} 
-                        onFilesChange={onChange} 
-                        title="Click to upload an image or drag & drop"
-                        subtitle="PNG, JPG, GIF up to 10MB"
-                      />
-                    )}
-                  />
-                </div>
-
-                <RoomPreview index={index} />
-              </div>
-            </div>
-          </div>
+          <RoomItem key={field.id} field={field} index={index} remove={remove} />
         ))}
         {fields.length === 0 && (
           <div style={{ padding: '40px', textAlign: 'center', color: '#9CA3AF' }}>
             No rooms added yet. Click Add to create a room.
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function RoomItem({ field, index, remove }: { field: any, index: number, remove: (idx: number) => void }) {
+  const [roomsLang, setRoomsLang] = useState<Language>("English");
+  const { control, formState: { errors } } = useFormContext<CreateHotelValues>();
+
+  useEffect(() => {
+    const roomErrors = (errors.rooms as any)?.[index]?.description;
+    if (roomErrors) {
+      if (roomErrors.en) setRoomsLang("English");
+      else if (roomErrors.it) setRoomsLang("Italian");
+      else if (roomErrors.es) setRoomsLang("Spanish");
+    }
+  }, [errors.rooms, index]);
+
+  return (
+    <div className={styles.roomCard}>
+      <div className={styles.roomHeader}>
+        <div className={styles.roomTitleWrap}>
+          <h3 className={styles.roomTitle}>Room {index + 1}</h3>
+        </div>
+        <button type="button" className={styles.deleteBtn} onClick={() => remove(index)}>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2.5 5H4.16667H17.5" stroke="#D80027" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M6.66667 5.00001V3.33334C6.66667 2.89131 6.84226 2.46739 7.15482 2.15483C7.46738 1.84227 7.89131 1.66667 8.33333 1.66667H11.6667C12.1087 1.66667 12.5326 1.84227 12.8452 2.15483C13.1577 2.46739 13.3333 2.89131 13.3333 3.33334V5.00001M15.8333 5.00001V16.6667C15.8333 17.1087 15.6577 17.5326 15.3452 17.8452C15.0326 18.1577 14.6087 18.3333 14.1667 18.3333H5.83333C5.39131 18.3333 4.96738 18.1577 4.65482 17.8452C4.34226 17.5326 4.16667 17.1087 4.16667 16.6667V5.00001H15.8333Z" stroke="#D80027" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M8.33333 9.16667V14.1667" stroke="#D80027" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M11.6667 9.16667V14.1667" stroke="#D80027" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <LanguageTabs active={roomsLang} onChange={setRoomsLang} />
+
+      <div className={styles.formFieldsArea}>
+        <div className={styles.rowGroup}>
+          <div className={styles.row}>
+            <div className={styles.fieldItem}>
+              <Controller
+                name={`rooms.${index}.category`}
+                control={control}
+                render={({ field, fieldState }) => (
+                  <DashboardField
+                    {...field}
+                    control="select"
+                    options={[
+                      { label: "Standard Room", value: "Standard Room" },
+                      { label: "Deluxe Room", value: "Deluxe Room" },
+                      { label: "Premium Room", value: "Premium Room" },
+                      { label: "Suite", value: "Suite" },
+                    ]}
+                    label="Room Category"
+                    placeholder="e.g. Standard Room"
+                    error={getRoomError(errors, index, "category") || fieldState.error?.message}
+                  />
+                )}
+              />
+            </div>
+            <div className={styles.fieldItem}>
+              <Controller
+                name={`rooms.${index}.type`}
+                control={control}
+                render={({ field, fieldState }) => (
+                  <DashboardField
+                    {...field}
+                    control="select"
+                    options={[
+                      { label: "Single", value: "Single" },
+                      { label: "Double Room", value: "Double Room" },
+                      { label: "Triple Room", value: "Triple Room" },
+                    ]}
+                    label="Room Type"
+                    placeholder="e.g. Single"
+                    error={getRoomError(errors, index, "type") || fieldState.error?.message}
+                  />
+                )}
+              />
+            </div>
+          </div>
+          
+          <div className={styles.row}>
+            <div className={styles.fieldItem}>
+              <Controller
+                name={`rooms.${index}.view`}
+                control={control}
+                render={({ field, fieldState }) => (
+                  <DashboardField
+                    {...field}
+                    control="select"
+                    options={[
+                      { label: "Sea View", value: "Sea View" },
+                      { label: "Pool View", value: "Pool View" },
+                      { label: "Garden View", value: "Garden View" },
+                    ]}
+                    label="Room View"
+                    placeholder="e.g. Garden View"
+                    error={getRoomError(errors, index, "view") || fieldState.error?.message}
+                  />
+                )}
+              />
+            </div>
+            <div className={styles.fieldItem}>
+              <Controller
+                name={`rooms.${index}.pricePerNightEgp`}
+                control={control}
+                render={({ fieldState }) => (
+                  <CurrencyField 
+                    name={`rooms.${index}.pricePerNightEgp`}
+                    label="Price per Night (EGP)"
+                    control={control}
+                    error={getRoomError(errors, index, "pricePerNightEgp") || fieldState.error?.message}
+                  />
+                )}
+              />
+            </div>
+          </div>
+
+          <div className={styles.row}>
+            <div className={styles.fieldItem} style={{ width: '100%' }}>
+              <Controller
+                name={`rooms.${index}.description.${getLangKey(roomsLang)}` as const}
+                control={control}
+                render={({ field, fieldState }) => (
+                  <DashboardField 
+                    key={`roomDesc-${index}-${roomsLang}`}
+                    {...field}
+                    label="Room Description"
+                    placeholder="Spacious deluxe room featuring panoramic views..."
+                    error={fieldState.error?.message}
+                  />
+                )}
+              />
+            </div>
+          </div>
+
+          <div className={styles.facilitiesField}>
+            <Controller
+              name={`rooms.${index}.facilities`}
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <>
+                  <div className={styles.facilitiesHeader}>
+                    <p className={styles.facilitiesLabel}>Facilities</p>
+                  </div>
+                  <FacilitiesSelector value={value || []} onChange={onChange} />
+                </>
+              )}
+            />
+          </div>
+
+          <div className={styles.photoSection}>
+            <p className={styles.photoLabel}>Room Photo ( 327 x 174 )</p>
+            <Controller
+              name={`rooms.${index}.photos`}
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <MultiUploadDropzone 
+                  values={value} 
+                  onFilesChange={onChange} 
+                  title="Click to upload an image or drag & drop"
+                  subtitle="PNG, JPG, GIF up to 10MB"
+                />
+              )}
+            />
+          </div>
+
+          <RoomPreview index={index} />
+        </div>
       </div>
     </div>
   );

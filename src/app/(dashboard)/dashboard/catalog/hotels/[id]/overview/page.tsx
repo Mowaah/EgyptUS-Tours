@@ -2,28 +2,37 @@
 
 import Image from "next/image";
 import StarRating from "@/components/shared/StarRating/StarRating";
+import { getLangKey } from "@/components/dashboard/shared/i18n";
 import { useHotelDetailContext } from "../layout";
 import styles from "./page.module.scss";
 
 export default function HotelOverviewPage() {
-  const { hotel, loading } = useHotelDetailContext();
+  const { hotel, loading, activeLang } = useHotelDetailContext();
 
   if (loading) {
     return <div className={styles.viewLayout}>Loading overview...</div>;
   }
 
-  const translations = hotel?.translations?.en || {};
-  const hotelName = translations.name || hotel?.name || "-";
-  const subtitle = translations.subtitle || hotel?.subtitle || "-";
+  const langKey = getLangKey(activeLang);
+  const translations = hotel?.translations?.[langKey] || {};
+  const enTranslations = hotel?.translations?.en || {};
+  const hotelName = translations.name || enTranslations.name || hotel?.name || "-";
+  const subtitle = translations.subtitle || enTranslations.subtitle || hotel?.subtitle || "-";
   const locationName = hotel?.location?.name || hotel?.location_text || "-";
   const rating = hotel?.stars ? parseFloat(String(hotel.stars)) : 0;
   const totalRooms = hotel?.total_rooms ? `${hotel.total_rooms} Rooms` : "-";
   const totalReviews = hotel?.total_reviews ? `${hotel.total_reviews} Reviews` : "0 Reviews";
   const address = hotel?.address || hotel?.location?.address || "-";
 
-  const description = translations.description || hotel?.description || "-";
-  const secondDescription = translations.second_description || hotel?.second_description || "";
-  const facilities: string[] = Array.isArray(hotel?.facilities) ? hotel.facilities : [];
+  const description = translations.description || enTranslations.description || hotel?.description || "-";
+  const secondDescription = translations.second_description || enTranslations.second_description || hotel?.second_description || "";
+  const facilities: string[] = Array.isArray(translations.facilities) 
+    ? translations.facilities 
+    : Array.isArray(enTranslations.facilities) 
+      ? enTranslations.facilities 
+      : Array.isArray(hotel?.facilities) 
+        ? hotel.facilities 
+        : [];
 
   return (
     <div className={styles.viewLayout}>

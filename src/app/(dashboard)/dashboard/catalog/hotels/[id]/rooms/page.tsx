@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { TablePanelFilterBar } from "@/components/dashboard/TablePanel";
+import { getLangKey } from "@/components/dashboard/shared/i18n";
 import { useHotelDetailContext } from "../layout";
 import styles from "./page.module.scss";
 
@@ -14,7 +15,7 @@ const filterOptions = {
 };
 
 export default function HotelRoomsPage() {
-  const { hotel, loading } = useHotelDetailContext();
+  const { hotel, loading, activeLang } = useHotelDetailContext();
 
   const defaultFilters = {
     type: "All",
@@ -32,12 +33,18 @@ export default function HotelRoomsPage() {
 
   const rawRooms: any[] = Array.isArray(hotel?.rooms) ? hotel.rooms : [];
 
+  const langKey = getLangKey(activeLang);
+
   const rooms = rawRooms.map((room) => {
+    const translations = room.translations?.[langKey] || {};
+    const enTranslations = room.translations?.en || {};
+    
     const category = room.category_label || room.category || "";
     const type = room.type_label || room.type || "";
     const view = room.view_label || room.view || "";
     const title = [category, type, view].filter(Boolean).join(" - ") || "Hotel Room";
-    const description = room.description || "Comfortable guest room with modern amenities.";
+    
+    const description = translations.description || enTranslations.description || room.description || "Comfortable guest room with modern amenities.";
     const facilities: string[] = Array.isArray(room.features) ? room.features : Array.isArray(room.facilities) ? room.facilities : [];
     const price = room.price_per_night_egp ? String(room.price_per_night_egp) : room.price_per_night ? String(room.price_per_night) : room.pricePerNight ? String(room.pricePerNight) : "0";
     const images: string[] = Array.isArray(room.images)

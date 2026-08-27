@@ -599,16 +599,26 @@ function errorMessage(error: any): string {
   const data = error?.response?.data;
   const messages = flattenApiErrors(data);
 
-  if (messages.length) return messages.join("\n");
-  return error?.message || "Could not save trip.";
+  return messages.length > 0 ? messages.join("\n") : "An unexpected error occurred.";
 }
+
+const getErrorStepIndex = (errors: any) => {
+  if (errors.tripName || errors.category || errors.destinations || errors.duration || errors.tourTypes || errors.starRating || errors.brochureFile || errors.description || errors.culturalValue || errors.whoIsTripFor) return 0;
+  if (errors.inclusions || errors.exclusions) return 1;
+  if (errors.pricing) return 2;
+  if (errors.itinerary) return 3;
+  if (errors.datesAvailability) return 4;
+  if (errors.hotels) return 5;
+  if (errors.photos) return 6;
+  if (errors.metaTitle || errors.metaDescription || errors.metaKeywords || errors.slug) return 7;
+  return -1;
+};
 
 export function CreateTrip({ tripId, onDirtyChange, onSavingChange }: { tripId?: string; onDirtyChange?: (isDirty: boolean) => void; onSavingChange?: (isSaving: boolean) => void }) {
   const router = useRouter();
   const [isPublishedModalOpen, setIsPublishedModalOpen] = useState(false);
   const [savedTripId, setSavedTripId] = useState<string | number | undefined>(tripId);
   const [isSaving, setIsSaving] = useState(false);
-  const [saveError, setSaveError] = useState("");
 
   const methods = useForm<CreateTripValues>({
     resolver: zodResolver(createTripSchema),
@@ -635,7 +645,7 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange }: { tripId?:
         if (!ignore) methods.reset(mapTripToFormValues(trip));
       })
       .catch((error) => {
-        if (!ignore) setSaveError(errorMessage(error));
+        if (!ignore) console.error("Failed to load trip:", error);
       });
 
     return () => {
@@ -645,7 +655,6 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange }: { tripId?:
 
   const onSubmit = async (data: CreateTripValues, meta: { intent: WizardSubmitIntent }) => {
     setIsSaving(true);
-    setSaveError("");
 
     try {
       const clientValidationErrors = validateMediaBeforeSave(data, meta.intent);
@@ -725,6 +734,7 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange }: { tripId?:
     handleNext,
     handlePrevious,
     handleStepClick,
+    setCurrentStep,
   } = useWizard<CreateTripValues>({
     steps: STEPS,
     methods,
@@ -775,7 +785,15 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange }: { tripId?:
       <form
         id="create-trip-form"
         className={styles.page}
-        onSubmit={handleSubmit((data) => onSubmit(data, { intent: "save" }).then(() => setIsPublishedModalOpen(true)))}
+        onSubmit={handleSubmit(
+          (data) => onSubmit(data, { intent: "save" }).then(() => setIsPublishedModalOpen(true)),
+          (errors) => {
+            const errorStepIndex = getErrorStepIndex(errors);
+            if (errorStepIndex !== -1 && errorStepIndex !== currentStep) {
+              setCurrentStep(errorStepIndex);
+            }
+          }
+        )}
       >
         <WizardLayout
           steps={STEPS}

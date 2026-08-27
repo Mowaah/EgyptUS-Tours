@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import HotelDetailPage from "@/components/website/HotelDetailPage/HotelDetailPage";
 import { getHotelBySlug, getAllHotels, mapHotelDetailToHotel } from "@/services/hotelsService";
 import { Hotel } from "@/types";
+import { generateDynamicSeoMetadata } from "@/lib/seoUtils";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -12,10 +13,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { id } = await params;
   try {
     const hotel = await getHotelBySlug(id);
-    return {
-      title: `${hotel.name} | Egypt-Us`,
-      description: hotel.description || `Stay at ${hotel.name}, ${hotel.location_text}`,
-    };
+    return generateDynamicSeoMetadata(hotel, "hotels", "Hotel Details");
   } catch (error) {
     return { title: "Hotel Not Found" };
   }

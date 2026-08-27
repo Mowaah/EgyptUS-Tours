@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { localizedStringSchema, requiredLocalizedStringSchema } from "@/components/dashboard/shared/i18n";
+import { localizedStringSchema, requiredLocalizedStringSchema, localizedSlugSchema } from "@/components/dashboard/shared/i18n";
 
 export const roomSchema = z.object({
   id: z.union([z.string(), z.number()]).optional(),
@@ -8,7 +8,7 @@ export const roomSchema = z.object({
   view: z.string().optional(),
   pricePerNight: z.string().optional(),
   pricePerNightEgp: z.string().min(1, "£ price is required"),
-  description: localizedStringSchema,
+  description: requiredLocalizedStringSchema("Room Description is required"),
   facilities: z.array(z.string()).default([]),
   photos: z.array(z.any()).default([]),
 });
@@ -23,7 +23,11 @@ export const createHotelSchema = z.object({
     const num = parseFloat(val);
     return !isNaN(num) && num >= 0 && num <= 5;
   }, "Star Rating must be a number between 0 and 5"),
-  facilities: z.array(z.string()).default([]),
+  facilities: z.object({
+    en: z.array(z.string()).default([]),
+    it: z.array(z.string()).default([]),
+    es: z.array(z.string()).default([]),
+  }),
   description: requiredLocalizedStringSchema("Description is required"),
   secondDescription: requiredLocalizedStringSchema("Second Description is required"),
   
@@ -31,7 +35,7 @@ export const createHotelSchema = z.object({
   metaTitle: requiredLocalizedStringSchema("Meta Title is required"),
   metaDescription: requiredLocalizedStringSchema("Meta Description is required"),
   metaKeywords: requiredLocalizedStringSchema("Meta Keywords are required"),
-  slug: requiredLocalizedStringSchema("Slug is required"),
+  slug: localizedSlugSchema("Slug is required"),
   
   // Media
   photos: z

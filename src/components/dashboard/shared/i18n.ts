@@ -31,4 +31,16 @@ export const requiredLocalizedStringSchema = (requiredMessage: string) => z.obje
   es: z.string({ message: requiredMessage }).min(1, requiredMessage),
 });
 
+const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const slugString = (requiredMessage: string) => z.string({ message: requiredMessage })
+  .trim()
+  .min(1, requiredMessage)
+  .regex(slugRegex, "Slug can only contain lowercase letters, numbers, and hyphens (no spaces)");
+
+export const localizedSlugSchema = (requiredMessage: string = "Slug is required") => z.object({
+  en: slugString(requiredMessage),
+  it: slugString(requiredMessage),
+  es: slugString(requiredMessage),
+});
+
 export type LocalizedString = z.infer<typeof localizedStringSchema>;

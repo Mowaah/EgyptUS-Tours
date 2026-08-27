@@ -39,13 +39,13 @@ export function OverviewStep() {
   const handleAddFeature = () => {
     const trimmed = featureInput.trim();
     if (trimmed && !features.includes(trimmed)) {
-      setValue(`features.${currentLangKey}`, [...features, trimmed]);
+      setValue(`features.${currentLangKey}`, [...features, trimmed], { shouldDirty: true });
       setFeatureInput("");
     }
   };
 
   const handleRemoveFeature = (tag: string) => {
-    setValue(`features.${currentLangKey}`, features.filter((t) => t !== tag));
+    setValue(`features.${currentLangKey}`, features.filter((t) => t !== tag), { shouldDirty: true });
   };
 
   return (
@@ -285,6 +285,7 @@ export function OverviewStep() {
               placeholder="Enter vehicle overview..."
               error={errors.description?.[getLangKey(contentLang)]?.message}
               {...register(`description.${getLangKey(contentLang)}` as const)}
+              value={watch(`description.${getLangKey(contentLang)}` as const) || ""}
             />
           </FormSpec>
         </FormSection>

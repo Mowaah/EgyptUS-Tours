@@ -86,6 +86,7 @@ export function useWizard<TFormValues extends Record<string, any>>({
     handleNext,
     handlePrevious,
     handleStepClick,
+    setCurrentStep,
     stepsConfig: steps,
   };
 }

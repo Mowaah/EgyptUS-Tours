@@ -18,7 +18,7 @@ interface DayCardProps {
 }
 
 function DayCard({ index, onRemove }: DayCardProps) {
-  const { control, register } = useFormContext<CreateTripValues>();
+  const { control, register, formState: { errors } } = useFormContext<CreateTripValues>();
   const [lang, setLang] = useState<Language>("English");
 
   const {
@@ -29,6 +29,18 @@ function DayCard({ index, onRemove }: DayCardProps) {
     control,
     name: `itinerary.${index}.highlights` as never,
   });
+
+  useEffect(() => {
+    const dayErrors = (errors.itinerary as any)?.[index];
+    if (dayErrors) {
+      const fieldWithError = dayErrors.title || dayErrors.subtitle || dayErrors.description || dayErrors.highlights?.find((h: any) => h);
+      if (fieldWithError) {
+        if (fieldWithError.en) setLang("English");
+        else if (fieldWithError.it) setLang("Italian");
+        else if (fieldWithError.es) setLang("Spanish");
+      }
+    }
+  }, [errors.itinerary, index]);
 
   return (
     <div className={styles.dayCard}>
@@ -67,6 +79,7 @@ function DayCard({ index, onRemove }: DayCardProps) {
           label="Day Title"
           placeholder="Enter day title"
           {...register(`itinerary.${index}.title.${getLangKey(lang)}` as never)}
+          error={(errors.itinerary as any)?.[index]?.title?.[getLangKey(lang)]?.message}
         />
 
         {/* Short Subtitle */}
@@ -76,6 +89,7 @@ function DayCard({ index, onRemove }: DayCardProps) {
           label="Short Subtitle"
           placeholder="Enter short subtitle"
           {...register(`itinerary.${index}.subtitle.${getLangKey(lang)}` as never)}
+          error={(errors.itinerary as any)?.[index]?.subtitle?.[getLangKey(lang)]?.message}
         />
 
         {/* Day Description */}
@@ -87,6 +101,7 @@ function DayCard({ index, onRemove }: DayCardProps) {
           placeholder="Describe the day's activities..."
           rows={4}
           {...register(`itinerary.${index}.description.${getLangKey(lang)}` as never)}
+          error={(errors.itinerary as any)?.[index]?.description?.[getLangKey(lang)]?.message}
         />
 
         {/* Highlights */}
@@ -102,6 +117,7 @@ function DayCard({ index, onRemove }: DayCardProps) {
                   label={null}
                   placeholder="Enter highlight"
                   {...register(`itinerary.${index}.highlights.${hIdx}.${getLangKey(lang)}` as never)}
+                  error={(errors.itinerary as any)?.[index]?.highlights?.[hIdx]?.[getLangKey(lang)]?.message}
                   endAdornment={
                     <button
                       type="button"
