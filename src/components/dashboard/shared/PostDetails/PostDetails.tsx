@@ -106,7 +106,11 @@ export default function PostDetails({ type, postId, post }: PostDetailsProps) {
         <ProfileHeader
           title={post.title}
           pillLabel={post.status}
-          pillVariant={post.status.toLowerCase() === "published" ? "green" : "gray"}
+          pillVariant={
+            post.status.toLowerCase() === "published" ? "green" :
+            post.status.toLowerCase() === "scheduled" ? "blue" :
+            "gray"
+          }
           subtitleElements={[`Post ID: ${post.id}`, post.date]}
           secondaryAction={{
             label: "Edit",
