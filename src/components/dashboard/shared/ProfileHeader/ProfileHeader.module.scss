@@ -6,6 +6,8 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  gap: 16px;
+  min-width: 0;
 }
 
 .leftContent {
@@ -13,6 +15,7 @@
   flex-direction: row;
   align-items: center;
   gap: 16px;
+  min-width: 0;
 }
 
 .avatarContainer {
@@ -26,6 +29,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0;
 }
 
 .titleRow {
@@ -33,6 +37,7 @@
   flex-direction: row;
   align-items: center;
   gap: 12px;
+  min-width: 0;
 
   h1 {
     font-weight: 700;
@@ -40,6 +45,9 @@
     line-height: 1;
     color: $dark;
     margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
@@ -135,6 +143,7 @@
   flex-direction: row;
   align-items: center;
   gap: 16px;
+  flex-shrink: 0;
 }
 
 .primaryActionButton,

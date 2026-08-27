@@ -45,11 +45,6 @@ export default function ViewContactUsRequest({ requestId }: { requestId: string 
           await contactUsActions.addNote(requestId, payload.note);
         }
         break;
-      case "reply":
-        if (payload?.message) {
-          await contactUsActions.reply(requestId, payload.message);
-        }
-        break;
       case "close":
         await contactUsActions.close(requestId, payload?.note || "Closed by admin");
         break;
@@ -57,11 +52,28 @@ export default function ViewContactUsRequest({ requestId }: { requestId: string 
     await fetchData();
   };
 
+  const handleReplyViaEmail = async () => {
+    if (!data?.email) return;
+
+    const subject = encodeURIComponent(`Re: ${data.inquiry_code} - Your Inquiry`);
+    const mailtoLink = `mailto:${data.email}?subject=${subject}`;
+    window.open(mailtoLink, "_blank");
+
+    try {
+      await contactUsActions.reply(requestId, "Replied via email client");
+      await fetchData();
+    } catch (err) {
+      console.error("Failed to mark as replied:", err);
+    }
+  };
+
   if (loading || !data) {
     return <div style={{ padding: "2rem", textAlign: "center" }}>Loading...</div>;
   }
 
   const allowedActions = data.allowed_actions || [];
+  const displayStatus = (data.display_status || data.status || "").toLowerCase();
+  const isReplied = ["replied", "closed"].includes(displayStatus);
   let prependActionButtons: any = null;
   let appendActionButtons: any = null;
   const hideDefaultActions = data.status === "closed";
@@ -75,14 +87,15 @@ export default function ViewContactUsRequest({ requestId }: { requestId: string 
     );
   }
 
-  if (allowedActions.includes("reply")) {
-    appendActionButtons = (onAction: (key: string) => void) => (
-      <button className={phStyles.primaryActionButton} type="button" onClick={() => onAction("reply")}>
+  if (!isReplied && allowedActions.includes("reply")) {
+    appendActionButtons = () => (
+      <button className={phStyles.primaryActionButton} type="button" onClick={handleReplyViaEmail}>
         <Image src="/images/dashboard/requests/contact-us/reply-via-email.svg" alt="" width={20} height={20} />
         Reply via Email
       </button>
     );
   }
+
 
   return (
     <RequestDetailsLayout

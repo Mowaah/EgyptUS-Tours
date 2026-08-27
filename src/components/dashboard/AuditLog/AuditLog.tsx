@@ -161,7 +161,18 @@ const AuditValueRender = ({ value, otherValue, isAfter }: { value: any, otherVal
       } else {
         formattedVal = Object.entries(formattedVal)
           .filter(([k]) => !["id", "created_at", "updated_at"].includes(k))
-          .map(([k, v]) => `${k}: ${v}`)
+          .map(([k, v]) => {
+            if (v !== null && typeof v === "object") {
+              if (Array.isArray(v)) {
+                return `${k}: [${v.map(item => typeof item === "object" ? JSON.stringify(item) : String(item)).join(", ")}]`;
+              }
+              const inner = Object.entries(v)
+                .map(([ik, iv]) => `${ik}: ${typeof iv === "object" && iv !== null ? JSON.stringify(iv) : String(iv)}`)
+                .join(", ");
+              return `${k}: { ${inner} }`;
+            }
+            return `${k}: ${String(v)}`;
+          })
           .join(", ");
       }
     }

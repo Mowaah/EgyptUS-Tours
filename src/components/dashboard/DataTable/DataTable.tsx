@@ -4,6 +4,7 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import TablePagination from "../shared/TablePagination/TablePagination";
+import DashboardSearchEmptyState from "../DashboardEmptyState/DashboardSearchEmptyState";
 import styles from "./DataTable.module.scss";
 import type { DataTableProps, DataTableRowAction } from "./types";
 
@@ -235,44 +236,54 @@ export default function DataTable<T>({
           </tr>
         </thead>
         <tbody>
-          {visibleRows.map((row, index) => {
-            const rowId = getRowId(row);
-            const isSelected = selectedRows.includes(rowId);
-            const actions = rowActions?.(row);
+          {visibleRows.length === 0 ? (
+            <tr>
+              <td colSpan={columns.length + (selectable ? 1 : 0) + (hasActions ? 1 : 0)}>
+                <div style={{ padding: "40px 0" }}>
+                  <DashboardSearchEmptyState />
+                </div>
+              </td>
+            </tr>
+          ) : (
+            visibleRows.map((row, index) => {
+              const rowId = getRowId(row);
+              const isSelected = selectedRows.includes(rowId);
+              const actions = rowActions?.(row);
 
-            return (
-              <tr
-                key={rowId}
-                className={isSelected && selectionType === "checkbox" ? styles.selectedRow : undefined}
-              >
-                {selectable ? (
-                  <td>
-                    <input
-                      type="checkbox"
-                      className={selectionType === "star" ? styles.starCheckbox : undefined}
-                      checked={isSelected}
-                      onChange={() => toggleRow(rowId)}
-                      aria-label={`Select row ${rowId}`}
+              return (
+                <tr
+                  key={rowId}
+                  className={isSelected && selectionType === "checkbox" ? styles.selectedRow : undefined}
+                >
+                  {selectable ? (
+                    <td>
+                      <input
+                        type="checkbox"
+                        className={selectionType === "star" ? styles.starCheckbox : undefined}
+                        checked={isSelected}
+                        onChange={() => toggleRow(rowId)}
+                        aria-label={`Select row ${rowId}`}
+                      />
+                    </td>
+                  ) : null}
+                  {columns.map((column) => (
+                    <td key={column.id} className={column.cellClassName}>
+                      {column.render(row)}
+                    </td>
+                  ))}
+                  {hasActions && actions ? (
+                    <ActionsCell
+                      row={row}
+                      rowId={rowId}
+                      openRowId={openRowId}
+                      setOpenRowId={setOpenRowId}
+                      actions={actions}
                     />
-                  </td>
-                ) : null}
-                {columns.map((column) => (
-                  <td key={column.id} className={column.cellClassName}>
-                    {column.render(row)}
-                  </td>
-                ))}
-                {hasActions && actions ? (
-                  <ActionsCell
-                    row={row}
-                    rowId={rowId}
-                    openRowId={openRowId}
-                    setOpenRowId={setOpenRowId}
-                    actions={actions}
-                  />
-                ) : null}
-              </tr>
-            );
-          })}
+                  ) : null}
+                </tr>
+              );
+            })
+          )}
         </tbody>
       </table>
 
