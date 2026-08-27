@@ -22,7 +22,17 @@ export const marketingCreatePostSchema = z.object({
   imageFile: z.any().optional(),
 
   // Publish Settings
-  scheduledDate: z.string().optional(),
+  scheduledDate: z.string().optional().superRefine((val, ctx) => {
+    if (!val) return;
+    const date = new Date(val);
+    if (isNaN(date.getTime())) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Invalid date" });
+      return;
+    }
+    if (date <= new Date()) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Scheduled date must be in the future" });
+    }
+  }),
   autoApply: z.boolean().optional(),
   status: z.string().optional(),
 
