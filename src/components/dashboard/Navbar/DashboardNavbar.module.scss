@@ -343,19 +343,19 @@
     gap: 1rem;
   }
   .filterButton, .searchBox {
-    min-height: 40px;
+    min-height: 46px;
   }
   .searchBox {
     flex: 0 1 320px;
     width: 320px;
   }
   .filterButton {
-    flex: 0 0 40px;
-    width: 40px;
-    height: 40px;
+    flex: 0 0 46px;
+    width: 46px;
+    height: 46px;
   }
   .primaryActionButton, .secondaryActionButton, .tertiaryActionButton {
-    height: 40px;
+    height: 46px;
     font-size: $font-size-15;
   }
   .primaryActionButton {
