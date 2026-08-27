@@ -209,7 +209,16 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
     return total + typeTotal;
   }, 0) * nights;
   const vatAmount = 0;
-  const depositAmount = totalAmount * 0.3;
+  
+  let depositAmount = totalAmount * 0.3;
+  if (formData.startDate) {
+    const startDate = new Date(formData.startDate);
+    const today = new Date();
+    const daysUntil = (startDate.getTime() - today.getTime()) / (1000 * 3600 * 24);
+    if (daysUntil <= 30) {
+      depositAmount = totalAmount;
+    }
+  }
 
   const handlePrevious = () => {
     if (currentStep > 1) setCurrentStep((s) => s - 1);

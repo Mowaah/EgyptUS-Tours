@@ -32,8 +32,14 @@ export default function BookingSummary({ vehicle, formData }: BookingSummaryProp
   );
 
   const total = basePrice + servicesTotal;
-  const deposit = total * 0.3;
-  const remaining = total * 0.7;
+  let deposit = total * 0.3;
+  if (formData.pickupDate) {
+    const start = new Date(formData.pickupDate);
+    const today = new Date();
+    const daysUntil = (start.getTime() - today.getTime()) / (1000 * 3600 * 24);
+    if (daysUntil <= 30) deposit = total;
+  }
+  const remaining = total - deposit;
 
   const pickupShort = formData.pickupLocation
     ? formData.pickupLocation.split(",")[0]
@@ -128,7 +134,7 @@ export default function BookingSummary({ vehicle, formData }: BookingSummaryProp
 
               <div className={styles.depositBox}>
                 <div className={styles.depositRow}>
-                  <span className={styles.depositLabel}>Pay now (30% deposit)</span>
+                  <span className={styles.depositLabel}>Pay now {deposit === total ? "(Full amount)" : "(30% deposit)"}</span>
                   <span className={styles.depositAmount}>${deposit.toFixed(2)}</span>
                 </div>
                 <div className={styles.remainingRow}>

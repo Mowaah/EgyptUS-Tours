@@ -152,7 +152,7 @@ export default function ViewHotel({ bookingId }: ViewHotelProps) {
               <GuestDetails guest={payload?.guest} booking={payload?.stay} />
               <BookingInformation booking={payload?.stay} />
               <RoomSelection selections={payload?.room_selections} />
-              <PaymentOverview overview={payload?.payment_overview} />
+              <PaymentOverview overview={payload?.payment_overview} payload={payload} />
             </div>
             
             <div className={styles.rightColumn}>

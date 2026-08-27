@@ -131,14 +131,20 @@ export default function ProfileBookingDetailsPage() {
   };
   
   const totalAmount = parseFloat(payment.total_amount || bData.total_price || bData.price || "0");
-  const depositAmount = totalAmount * 0.3; // Using 30% for deposit
+  let depositAmount = totalAmount * 0.3; // Using 30% for deposit
+  if (safeFormData.startDate) {
+    const start = new Date(bData.check_in_date || bData.start_date || safeFormData.startDate);
+    const today = new Date();
+    const daysUntil = (start.getTime() - today.getTime()) / (1000 * 3600 * 24);
+    if (daysUntil <= 30) depositAmount = totalAmount;
+  }
   
   const hotelTotalRooms = safeFormData.rooms.single + safeFormData.rooms.double + safeFormData.rooms.triple;
   const hotelTotalGuests = safeFormData.adults + safeFormData.children + safeFormData.infants;
   
   const hotelTotalAmount = totalAmount; 
   const hotelVatAmount = 0;
-  const hotelDepositAmount = hotelTotalAmount * 0.3;
+  const hotelDepositAmount = depositAmount;
   
   const hotelRoomsList = [
     safeFormData.rooms.single > 0 ? `${safeFormData.rooms.single} × Single Room` : null,
@@ -321,7 +327,7 @@ export default function ProfileBookingDetailsPage() {
           <PaymentForm
             formData={safeFormData as any}
             onChange={() => undefined}
-            confirmLabel={`Confirm & Pay $${(isHotel ? hotelDepositAmount : depositAmount).toLocaleString()} Deposit`}
+            confirmLabel={`Confirm & Pay $${(isHotel ? hotelDepositAmount : depositAmount).toLocaleString()} ${(isHotel ? hotelDepositAmount : depositAmount) === totalAmount ? "(Full amount)" : "Deposit"}`}
             onPrevious={() => router.push(buildDetailsHref())}
             onConfirm={() => setShowSuccess(true)}
             sidebar={paymentSidebar}

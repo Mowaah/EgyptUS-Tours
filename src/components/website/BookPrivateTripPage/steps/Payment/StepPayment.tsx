@@ -79,7 +79,7 @@ export default function StepPayment({
     <PaymentForm
       formData={formData}
       onChange={onChange}
-      confirmLabel={`Confirm & Pay $${depositAmount.toLocaleString()} Deposit`}
+      confirmLabel={`Confirm & Pay $${depositAmount.toLocaleString()} ${depositAmount === totalAmount ? "(Full amount)" : "Deposit"}`}
       onPrevious={onPrevious}
       onConfirm={handleSubmit}
       isLoading={isSubmitting}

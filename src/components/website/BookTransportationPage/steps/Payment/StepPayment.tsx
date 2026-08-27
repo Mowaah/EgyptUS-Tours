@@ -18,7 +18,14 @@ export default function StepPayment({
 }: StepPaymentProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const numericPrice = parseFloat((vehicle.price ?? "0").replace(/[^0-9.]/g, ""));
-  const deposit = (numericPrice * 0.3).toFixed(2);
+  let depositAmt = numericPrice * 0.3;
+  if (formData.pickupDate) {
+    const start = new Date(formData.pickupDate);
+    const today = new Date();
+    const daysUntil = (start.getTime() - today.getTime()) / (1000 * 3600 * 24);
+    if (daysUntil <= 30) depositAmt = numericPrice;
+  }
+  const deposit = depositAmt.toFixed(2);
 
   const handleSubmit = async () => {
     if (!formData.cardNumber || !formData.cardName || !formData.expiry || !formData.cvv) {
@@ -88,7 +95,7 @@ export default function StepPayment({
     <PaymentForm
       formData={formData}
       onChange={onChange}
-      confirmLabel={`Confirm & Pay $${deposit} Deposit`}
+      confirmLabel={`Confirm & Pay $${deposit} ${depositAmt === numericPrice ? "(Full amount)" : "Deposit"}`}
       onPrevious={onPrevious}
       onConfirm={handleSubmit}
       isLoading={isSubmitting}

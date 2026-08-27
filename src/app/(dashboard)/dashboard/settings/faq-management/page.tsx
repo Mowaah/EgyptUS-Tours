@@ -17,6 +17,7 @@ const mapFaqToContentItem = (faq: AdminSiteFaq): ContentItem => ({
   content: faq.translations?.en?.answer || "",
   status: faq.is_active ? "Published" : "Unpublished",
   lastUpdated: new Date(faq.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+  rawTranslations: faq.translations,
 });
 
 export default function FaqManagementPage() {
@@ -51,17 +52,17 @@ export default function FaqManagementPage() {
       const res = await getAdminFaqs({ limit: 1000, search: searchQuery });
       return res.results.map(mapFaqToContentItem);
     },
-    createItem: async (title, content, published) => {
+    createItem: async (translations, published) => {
       const res = await createAdminFaq({
-        translations: { en: { question: title, answer: content } },
+        translations,
         is_active: published,
         order: 0, // Backend logic can handle default ordering
       });
       return mapFaqToContentItem(res);
     },
-    updateItem: async (id, title, content, published) => {
+    updateItem: async (id, translations, published) => {
       const res = await updateAdminFaq(id, {
-        translations: { en: { question: title, answer: content } },
+        translations,
         is_active: published,
       });
       return mapFaqToContentItem(res);
@@ -116,25 +117,24 @@ export default function FaqManagementPage() {
       />
 
       {/* Add modal */}
+      {/* Form modal */}
       <FaqFormModal
-        open={addOpen}
-        mode="add"
-        onClose={() => setAddOpen(false)}
-        onSave={(question, answer, published) => {
+        open={addOpen || !!editState}
+        mode={editState ? "edit" : "add"}
+        initialData={editState ? { 
+          question: editState.title, 
+          answer: editState.content, 
+          status: editState.status as "Unpublished" | "Published",
+          rawTranslations: editState.rawTranslations 
+        } : undefined}
+        onClose={() => {
           setAddOpen(false);
-          handleSave(question, answer, published, "add");
-        }}
-      />
-
-      {/* Edit modal */}
-      <FaqFormModal
-        open={editState !== null}
-        mode="edit"
-        initialData={editState ? { question: editState.title, answer: editState.content, status: editState.status as "Unpublished" | "Published" } : undefined}
-        onClose={() => setEditState(null)}
-        onSave={(question, answer, published) => {
           setEditState(null);
-          handleSave(question, answer, published, "edit");
+        }}
+        onSave={(translations, published) => {
+          handleSave(translations, published, editState ? "edit" : "add");
+          setAddOpen(false);
+          setEditState(null);
         }}
       />
 

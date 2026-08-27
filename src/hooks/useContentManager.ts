@@ -5,8 +5,8 @@ import { type ContentItem, type ContentGridRef } from "@/components/dashboard/Co
 export interface UseContentManagerProps {
   itemName: string;
   fetchData: () => Promise<ContentItem[]>;
-  createItem: (title: string, content: string, published: boolean) => Promise<ContentItem>;
-  updateItem: (id: string, title: string, content: string, published: boolean) => Promise<ContentItem>;
+  createItem: (translations: any, published: boolean) => Promise<ContentItem>;
+  updateItem: (id: string, translations: any, published: boolean) => Promise<ContentItem>;
   deleteItemApi: (id: string) => Promise<void>;
   updateStatus: (id: string, published: boolean) => Promise<void>;
   dependencies?: any[];
@@ -86,21 +86,24 @@ export function useContentManager({
     }
   };
 
-  const handleSave = async (title: string, content: string, published: boolean, mode: "add" | "edit") => {
+  const handleSave = async (translations: any, published: boolean, mode: "add" | "edit") => {
     try {
       if (mode === "add") {
-        const newItem = await createItem(title, content, published);
+        const newItem = await createItem(translations, published);
         mutate([...data, newItem], false);
       } else if (editState) {
-        const updatedItem = await updateItem(editState.id, title, content, published);
+        const updatedItem = await updateItem(editState.id, translations, published);
         mutate(data.map(i => i.id === editState.id ? updatedItem : i), false);
       }
 
       mutate();
       setSaveMode(mode);
       setSaveSuccessOpen(true);
-    } catch (err) {
-      console.error(`Failed to save ${itemName}:`, err);
+    } catch (err: any) {
+      console.error(`Failed to save ${itemName}:`, err, err.response?.data);
+      if (err.response?.data) {
+        alert("Validation error: " + JSON.stringify(err.response.data));
+      }
     }
   };
 

@@ -149,7 +149,7 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
               <GuestDetails guest={payload?.guest} booking={payload?.booking} />
               <BookingInformation booking={payload?.booking} />
               <RoomSelection selections={payload?.booking?.room_selections} />
-              <PaymentOverview overview={payload?.payment_overview} />
+              <PaymentOverview overview={payload?.payment_overview} payload={payload} />
             </div>
             
             <div className={styles.rightColumn}>

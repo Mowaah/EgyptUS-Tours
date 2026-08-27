@@ -117,7 +117,16 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
     return acc + c * roomPrices.double; // fallback to double
   }, 0);
   const totalAmount = baseRate + roomsTotal;
-  const depositAmount = totalAmount * 0.3;
+  
+  let depositAmount = totalAmount * 0.3;
+  if (formData.startDate) {
+    const startDate = new Date(formData.startDate);
+    const today = new Date();
+    const daysUntil = (startDate.getTime() - today.getTime()) / (1000 * 3600 * 24);
+    if (daysUntil <= 30) {
+      depositAmount = totalAmount;
+    }
+  }
 
   // Check for successful payment redirect back to this page
   useEffect(() => {

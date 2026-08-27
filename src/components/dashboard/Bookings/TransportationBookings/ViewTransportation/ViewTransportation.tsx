@@ -147,7 +147,7 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
             <div className={styles.leftColumn}>
               <PassengerInformation guest={payload?.guest} />
               <TransferDetails transfer={payload?.transfer} />
-              <PaymentOverview overview={payload?.payment_overview} />
+              <PaymentOverview overview={payload?.payment_overview} payload={payload} />
             </div>
             
             <div className={styles.rightColumn}>

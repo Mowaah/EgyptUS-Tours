@@ -272,7 +272,9 @@ export default function BookingSidebar({
           {/* Deposit card */}
           <div className={styles.depositCard}>
             <div className={styles.depositTopRow}>
-              <span className={styles.depositLabel}>Pay now (30% deposit)</span>
+              <span className={styles.depositLabel}>
+                Pay now {depositAmount === finalTotal ? "(Full amount)" : "(30% deposit)"}
+              </span>
               <span className={styles.depositAmount}>{formatMoney(depositAmount)}</span>
             </div>
             <div className={styles.depositBottomRow}>

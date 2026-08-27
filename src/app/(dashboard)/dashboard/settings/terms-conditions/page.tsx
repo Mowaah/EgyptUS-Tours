@@ -17,6 +17,7 @@ const mapSectionToContentItem = (section: AdminLegalSection): ContentItem => ({
   content: section.translations?.en?.content || "",
   status: section.is_active ? "Published" : "Unpublished",
   lastUpdated: new Date(section.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+  rawTranslations: section.translations,
 });
 
 export default function TermsConditionsPage() {
@@ -51,17 +52,17 @@ export default function TermsConditionsPage() {
       const res = await getAdminTermsSections({ limit: 1000, search: searchQuery });
       return res.results.map(mapSectionToContentItem);
     },
-    createItem: async (title, content, published) => {
+    createItem: async (translations, published) => {
       const res = await createAdminTermsSection({
-        translations: { en: { title, content } },
+        translations,
         is_active: published,
         order: 0,
       });
       return mapSectionToContentItem(res);
     },
-    updateItem: async (id, title, content, published) => {
+    updateItem: async (id, translations, published) => {
       const res = await updateAdminTermsSection(id, {
-        translations: { en: { title, content } },
+        translations,
         is_active: published,
       });
       return mapSectionToContentItem(res);
@@ -115,42 +116,32 @@ export default function TermsConditionsPage() {
         onEdit={() => handleEdit(viewState!.item)}
       />
 
-      {/* Add modal */}
+      {/* Form modal */}
       <DocumentFormModal
-        open={addOpen}
-        mode="add"
-        modalTitleAdd="Add New Terms & Conditions"
-        modalTitleEdit="Edit Terms & Conditions"
-        modalSubtitleAdd="Create a new Terms that will appear to visitors on the website."
-        modalSubtitleEdit="Update the Terms & Conditions content displayed to website"
-        titleLabel="Terms & Conditions Title"
-        titlePlaceholder="Enter title here"
+        open={addOpen || !!editState}
+        mode={editState ? "edit" : "add"}
+        initialData={editState ? { 
+          title: editState.title, 
+          content: editState.content, 
+          status: editState.status as "Unpublished" | "Published",
+          rawTranslations: editState.rawTranslations 
+        } : undefined}
+        modalTitleAdd="Add Terms Section"
+        modalTitleEdit="Edit Terms Section"
+        modalSubtitleAdd="Create a new section for the terms & conditions."
+        modalSubtitleEdit="Update the content of this terms section."
+        titleLabel="Section Title"
+        titlePlaceholder="e.g. Booking Policies"
         editorPlaceholder="Write your Terms & Conditions content here...."
         showColorPicker={true}
-        onClose={() => setAddOpen(false)}
-        onSave={(title, content, published) => {
+        onClose={() => {
           setAddOpen(false);
-          handleSave(title, content, published, "add");
-        }}
-      />
-
-      {/* Edit modal */}
-      <DocumentFormModal
-        open={editState !== null}
-        mode="edit"
-        initialData={editState ? { title: editState.title, content: editState.content, status: editState.status as "Unpublished" | "Published" } : undefined}
-        modalTitleAdd="Add New Terms & Conditions"
-        modalTitleEdit="Edit Terms & Conditions"
-        modalSubtitleAdd="Create a new Terms that will appear to visitors on the website."
-        modalSubtitleEdit="Update the Terms & Conditions content displayed to website"
-        titleLabel="Terms & Conditions Title"
-        titlePlaceholder="Enter title here"
-        editorPlaceholder="Write your Terms & Conditions content here...."
-        showColorPicker={true}
-        onClose={() => setEditState(null)}
-        onSave={(title, content, published) => {
           setEditState(null);
-          handleSave(title, content, published, "edit");
+        }}
+        onSave={(translations, published) => {
+          handleSave(translations, published, editState ? "edit" : "add");
+          setAddOpen(false);
+          setEditState(null);
         }}
       />
 

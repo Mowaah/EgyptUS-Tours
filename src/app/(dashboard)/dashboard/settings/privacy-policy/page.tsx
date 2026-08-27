@@ -17,6 +17,7 @@ const mapSectionToContentItem = (section: AdminLegalSection): ContentItem => ({
   content: section.translations?.en?.content || "",
   status: section.is_active ? "Published" : "Unpublished",
   lastUpdated: new Date(section.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+  rawTranslations: section.translations,
 });
 
 export default function PrivacyPolicyPage() {
@@ -51,17 +52,17 @@ export default function PrivacyPolicyPage() {
       const res = await getAdminPrivacySections({ limit: 1000, search: searchQuery });
       return res.results.map(mapSectionToContentItem);
     },
-    createItem: async (title, content, published) => {
+    createItem: async (translations, published) => {
       const res = await createAdminPrivacySection({
-        translations: { en: { title, content } },
+        translations,
         is_active: published,
         order: 0,
       });
       return mapSectionToContentItem(res);
     },
-    updateItem: async (id, title, content, published) => {
+    updateItem: async (id, translations, published) => {
       const res = await updateAdminPrivacySection(id, {
-        translations: { en: { title, content } },
+        translations,
         is_active: published,
       });
       return mapSectionToContentItem(res);
@@ -116,41 +117,32 @@ export default function PrivacyPolicyPage() {
       />
 
       {/* Add modal */}
+      {/* Form modal */}
       <DocumentFormModal
-        open={addOpen}
-        mode="add"
-        modalTitleAdd="Add New Privacy Policy"
-        modalTitleEdit="Edit Privacy Policy"
-        modalSubtitleAdd="Create a new Privacy Policy that will appear to visitors on the website."
-        modalSubtitleEdit="Update the Privacy Policy content displayed to website"
-        titleLabel="Privacy Policy Title"
-        titlePlaceholder="Enter title here"
+        open={addOpen || !!editState}
+        mode={editState ? "edit" : "add"}
+        initialData={editState ? { 
+          title: editState.title, 
+          content: editState.content, 
+          status: editState.status as "Unpublished" | "Published",
+          rawTranslations: editState.rawTranslations 
+        } : undefined}
+        modalTitleAdd="Add Privacy Section"
+        modalTitleEdit="Edit Privacy Section"
+        modalSubtitleAdd="Create a new section for the privacy policy."
+        modalSubtitleEdit="Update the content of this privacy section."
+        titleLabel="Section Title"
+        titlePlaceholder="e.g. Information Collection"
         editorPlaceholder="Write your Privacy Policy content here...."
         showColorPicker={true}
-        onClose={() => setAddOpen(false)}
-        onSave={(title, content, published) => {
+        onClose={() => {
           setAddOpen(false);
-          handleSave(title, content, published, "add");
-        }}
-      />
-
-      {/* Edit modal */}
-      <DocumentFormModal
-        open={editState !== null}
-        mode="edit"
-        initialData={editState ? { title: editState.title, content: editState.content, status: editState.status as "Unpublished" | "Published" } : undefined}
-        modalTitleAdd="Add New Privacy Policy"
-        modalTitleEdit="Edit Privacy Policy"
-        modalSubtitleAdd="Create a new Privacy Policy that will appear to visitors on the website."
-        modalSubtitleEdit="Update the Privacy Policy content displayed to website"
-        titleLabel="Privacy Policy Title"
-        titlePlaceholder="Enter title here"
-        editorPlaceholder="Write your Privacy Policy content here...."
-        showColorPicker={true}
-        onClose={() => setEditState(null)}
-        onSave={(title, content, published) => {
           setEditState(null);
-          handleSave(title, content, published, "edit");
+        }}
+        onSave={(translations, published) => {
+          handleSave(translations, published, editState ? "edit" : "add");
+          setAddOpen(false);
+          setEditState(null);
         }}
       />
 

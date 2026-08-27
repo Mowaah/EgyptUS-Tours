@@ -9,14 +9,14 @@ import styles from "./FaqFormModal.module.scss";
 interface FaqFormModalProps {
   open: boolean;
   mode?: "add" | "edit";
-  initialData?: { question: string; answer: string; status: "Published" | "Unpublished" };
+  initialData?: { question: string; answer: string; status: "Published" | "Unpublished", rawTranslations?: any };
   onClose: () => void;
-  onSave: (question: string, answer: string, published: boolean) => void;
+  onSave: (translations: any, published: boolean) => void;
 }
 
 export default function FaqFormModal({ open, mode = "add", initialData, onClose, onSave }: FaqFormModalProps) {
-  const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
+  const [questions, setQuestions] = useState<Record<Language, string>>({ English: "", Italian: "", Spanish: "" });
+  const [answers, setAnswers] = useState<Record<Language, string>>({ English: "", Italian: "", Spanish: "" });
   const [published, setPublished] = useState(true);
   const [activeLang, setActiveLang] = useState<Language>("English");
   const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -25,15 +25,24 @@ export default function FaqFormModal({ open, mode = "add", initialData, onClose,
   useEffect(() => {
     if (open) {
       if (mode === "edit" && initialData) {
-        setQuestion(initialData.question);
-        setAnswer(initialData.answer);
+        setQuestions({
+          English: initialData.rawTranslations?.en?.question || initialData.question || "",
+          Italian: initialData.rawTranslations?.it?.question || "",
+          Spanish: initialData.rawTranslations?.es?.question || "",
+        });
+        setAnswers({
+          English: initialData.rawTranslations?.en?.answer || initialData.answer || "",
+          Italian: initialData.rawTranslations?.it?.answer || "",
+          Spanish: initialData.rawTranslations?.es?.answer || "",
+        });
         setPublished(initialData.status === "Published");
       } else {
-        setQuestion("");
-        setAnswer("");
+        setQuestions({ English: "", Italian: "", Spanish: "" });
+        setAnswers({ English: "", Italian: "", Spanish: "" });
         setPublished(true);
       }
       setHasSubmitted(false);
+      setActiveLang("English");
     }
   }, [open, mode, initialData]);
 
@@ -55,8 +64,17 @@ export default function FaqFormModal({ open, mode = "add", initialData, onClose,
 
   const handleSave = () => {
     setHasSubmitted(true);
-    if (!question.trim() || !answer.trim()) return;
-    onSave(question.trim(), answer.trim(), published);
+    // Only English is strictly required for creation according to backend test, but let's check current tab or just English
+    if (!questions["English"].trim() || !answers["English"].trim()) {
+      setActiveLang("English");
+      return;
+    }
+    const translations = {
+      en: { question: questions["English"].trim(), answer: answers["English"].trim() },
+      it: { question: questions["Italian"].trim() || questions["English"].trim(), answer: answers["Italian"].trim() || answers["English"].trim() },
+      es: { question: questions["Spanish"].trim() || questions["English"].trim(), answer: answers["Spanish"].trim() || answers["English"].trim() },
+    };
+    onSave(translations, published);
   };
 
   if (!open) return null;
@@ -90,18 +108,18 @@ export default function FaqFormModal({ open, mode = "add", initialData, onClose,
             <input
               id="faq-question"
               type="text"
-              className={`${styles.inputPill} ${hasSubmitted && !question.trim() ? styles.inputError : ""}`}
+              className={`${styles.inputPill} ${hasSubmitted && activeLang === "English" && !questions["English"].trim() ? styles.inputError : ""}`}
               placeholder="Example: How can I cancel my booking?"
-              value={question}
+              value={questions[activeLang]}
               onChange={(e) => {
-                setQuestion(e.target.value);
+                setQuestions(prev => ({ ...prev, [activeLang]: e.target.value }));
                 if (hasSubmitted) setHasSubmitted(false);
               }}
             />
-            {hasSubmitted && !question.trim() && (
+            {hasSubmitted && activeLang === "English" && !questions["English"].trim() && (
               <div className={styles.errorText}>
                 <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
-                <span>This field is required</span>
+                <span>English translation is required</span>
               </div>
             )}
           </div>
@@ -111,18 +129,18 @@ export default function FaqFormModal({ open, mode = "add", initialData, onClose,
             <label className={styles.fieldLabel} htmlFor="faq-answer">Answer</label>
             <textarea
               id="faq-answer"
-              className={`${styles.textarea} ${hasSubmitted && !answer.trim() ? styles.inputError : ""}`}
+              className={`${styles.textarea} ${hasSubmitted && activeLang === "English" && !answers["English"].trim() ? styles.inputError : ""}`}
               placeholder="Write the answer here..."
-              value={answer}
+              value={answers[activeLang]}
               onChange={(e) => {
-                setAnswer(e.target.value);
+                setAnswers(prev => ({ ...prev, [activeLang]: e.target.value }));
                 if (hasSubmitted) setHasSubmitted(false);
               }}
             />
-            {hasSubmitted && !answer.trim() && (
+            {hasSubmitted && activeLang === "English" && !answers["English"].trim() && (
               <div className={styles.errorText}>
                 <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
-                <span>This field is required</span>
+                <span>English translation is required</span>
               </div>
             )}
           </div>
