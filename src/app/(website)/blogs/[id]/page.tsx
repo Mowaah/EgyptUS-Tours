@@ -2,8 +2,34 @@ import ArticleDetailPage, { ArticleContent } from "@/components/website/ArticleD
 import { getBlogBySlug, getAllBlogs } from "@/services/blogsService";
 import { notFound } from "next/navigation";
 
+import { Metadata } from "next";
+
 interface BlogDetailRouteProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: BlogDetailRouteProps): Promise<Metadata> {
+  const resolvedParams = await params;
+  const slug = resolvedParams.id;
+
+  try {
+    const blog = await getBlogBySlug(slug) as any;
+    
+    return {
+      title: blog.meta_title || blog.title,
+      description: blog.meta_description || blog.excerpt || "",
+      keywords: blog.meta_keywords || "",
+      openGraph: {
+        title: blog.meta_title || blog.title,
+        description: blog.meta_description || blog.excerpt || "",
+        images: [blog.hero_image || blog.featured_image || "/images/home/hero-bg.png"],
+      },
+    };
+  } catch (err) {
+    return {
+      title: "Blog Not Found",
+    };
+  }
 }
 
 export default async function BlogDetailRoute({ params }: BlogDetailRouteProps) {

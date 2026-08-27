@@ -2,8 +2,34 @@ import ArticleDetailPage, { ArticleContent } from "@/components/website/ArticleD
 import { getArticleBySlug, getAllArticles } from "@/services/articlesService";
 import { notFound } from "next/navigation";
 
+import { Metadata } from "next";
+
 interface ArticleDetailRouteProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: ArticleDetailRouteProps): Promise<Metadata> {
+  const resolvedParams = await params;
+  const slug = resolvedParams.id;
+
+  try {
+    const article = await getArticleBySlug(slug) as any;
+    
+    return {
+      title: article.meta_title || article.title,
+      description: article.meta_description || article.excerpt || "",
+      keywords: article.meta_keywords || "",
+      openGraph: {
+        title: article.meta_title || article.title,
+        description: article.meta_description || article.excerpt || "",
+        images: [article.hero_image || article.featured_image || "/images/home/hero-bg.png"],
+      },
+    };
+  } catch (err) {
+    return {
+      title: "Article Not Found",
+    };
+  }
 }
 
 export default async function ArticleDetailRoute({ params }: ArticleDetailRouteProps) {
