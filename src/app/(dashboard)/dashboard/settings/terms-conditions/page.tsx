@@ -111,6 +111,7 @@ export default function TermsConditionsPage() {
         open={viewState !== null}
         title={viewState?.item.title ?? ""}
         content={viewState?.item.content ?? ""}
+        rawTranslations={viewState?.item.rawTranslations}
         modalSubtitle="How the Terms appear on the website"
         onClose={() => setViewState(null)}
         onEdit={() => handleEdit(viewState!.item)}

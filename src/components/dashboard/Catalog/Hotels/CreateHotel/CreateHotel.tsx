@@ -14,6 +14,7 @@ import { WizardLayout } from "@/components/dashboard/shared";
 import { useWizard, WizardStepConfig, WizardSubmitIntent } from "@/hooks/useWizard";
 import { createCatalogHotel, updateCatalogHotel, publishCatalogHotel, archiveCatalogHotel, unpublishCatalogHotel } from "@/services/admin/adminCatalogHotelsService";
 import { useCatalogHotelDetail, useCatalogHotelLocations } from "@/hooks/useCatalogHotels";
+import { fileToBase64 } from "@/utils/imageUtils";
 import styles from "./CreateHotel.module.scss";
 
 const STEPS: WizardStepConfig[] = [
@@ -28,48 +29,7 @@ function isFile(value: any): value is File {
 }
 
 function fileToDataUrl(file: File, maxWidth = 1920, quality = 0.85): Promise<string> {
-  return new Promise((resolve, reject) => {
-    if (!file.type || !file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result));
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(file);
-      return;
-    }
-
-    const img = new window.Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      let { width, height } = img;
-      if (width > maxWidth) {
-        height = Math.round((height * maxWidth) / width);
-        width = maxWidth;
-      }
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result));
-        reader.onerror = () => reject(reader.error);
-        reader.readAsDataURL(file);
-        return;
-      }
-      ctx.drawImage(img, 0, 0, width, height);
-      const mimeType = file.type === "image/png" ? "image/png" : "image/jpeg";
-      resolve(canvas.toDataURL(mimeType, quality));
-    };
-    img.onerror = () => {
-      URL.revokeObjectURL(url);
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result));
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(file);
-    };
-    img.src = url;
-  });
+  return fileToBase64(file, maxWidth, quality);
 }
 
 function slugify(value: string): string {

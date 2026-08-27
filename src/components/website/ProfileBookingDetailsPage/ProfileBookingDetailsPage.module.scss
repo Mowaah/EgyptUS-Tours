@@ -291,3 +291,16 @@
     padding: 10px 12px;
   }
 }
+
+.payButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.payError {
+  width: 100%;
+  text-align: center;
+  color: #e53e3e;
+  font-size: $font-size-sm;
+  margin-bottom: 4px;
+}

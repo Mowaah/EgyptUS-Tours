@@ -295,6 +295,13 @@ export async function getProfileBookingDetail(type: string, id: string): Promise
   return await apiClient.get(`/profile/bookings/${id}/?type=${type}`);
 }
 
+export async function payRemainingBookingBalance(
+  type: string,
+  id: string
+): Promise<{ payment_url: string; payment_link_status: string }> {
+  return await apiClient.post(`/profile/bookings/${id}/pay-remaining/?type=${type}`, {});
+}
+
 export interface PublicBookingPaymentResponse {
   id: number;
   message: string;

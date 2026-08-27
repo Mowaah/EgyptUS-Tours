@@ -7,6 +7,7 @@ import { DashboardField, DashboardFooter, DashboardStatusBanner } from "@/compon
 import styles from "./PersonalInfoTab.module.scss";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { updateAdminProfile } from "@/lib/adminCoreApi";
+import { fileToBase64 } from "@/utils/imageUtils";
 
 export function PersonalInfoTab() {
   const { adminUser, updateAdminUser } = useAdminAuth();
@@ -33,14 +34,15 @@ export function PersonalInfoTab() {
     }
   }, [adminUser]);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatarPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const base64 = await fileToBase64(file, 800, 0.85);
+        setAvatarPreview(base64);
+      } catch (err) {
+        console.error("Failed to read avatar", err);
+      }
     }
   };
 

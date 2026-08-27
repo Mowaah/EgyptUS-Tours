@@ -6,6 +6,7 @@ import { mutate } from "swr";
 import { DashboardField, DashboardStatusBanner, DashboardFooter } from "@/components/dashboard/shared";;
 import { updateSystemConfig } from "@/services/admin/adminSystemConfigService";
 import type { SystemConfigResponse } from "@/services/admin/adminSystemConfigService";
+import { fileToBase64 } from "@/utils/imageUtils";
 import styles from "./SystemConfiguration.module.scss";
 
 interface ConfigurationValues {
@@ -139,13 +140,7 @@ export default function SystemConfiguration({ initialConfig }: SystemConfigurati
     });
   };
 
-  const toBase64 = (file: File): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
-    });
+  const toBase64 = (file: File): Promise<string> => fileToBase64(file);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

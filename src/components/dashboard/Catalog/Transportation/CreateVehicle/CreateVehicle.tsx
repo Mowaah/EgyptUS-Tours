@@ -15,6 +15,7 @@ import { WizardLayout } from "@/components/dashboard/shared";
 import { useWizard, WizardStepConfig, WizardSubmitIntent } from "@/hooks/useWizard";
 import { createCatalogVehicle, updateCatalogVehicle, publishCatalogVehicle } from "@/services/admin/adminCatalogVehiclesService";
 import { useVehicleCategories, useCatalogVehicleDetail } from "@/hooks/useCatalogVehicles";
+import { fileToBase64 } from "@/utils/imageUtils";
 import styles from "./CreateVehicle.module.scss";
 
 const STEPS: WizardStepConfig[] = [
@@ -66,12 +67,7 @@ function intValue(value: any): number | undefined {
 }
 
 function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
+  return fileToBase64(file);
 }
 
 function isFile(value: any): value is File {

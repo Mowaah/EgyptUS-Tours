@@ -32,19 +32,13 @@ import {
   updateAdminBlog
 } from "@/services/admin/adminMarketingService";
 
+import { fileToBase64 } from "@/utils/imageUtils";
+
 interface MarketingCreatePostProps {
   contentType: ContentType;
   postId?: string;
   onDirtyChange?: (isDirty: boolean) => void;
 }
-
-const fileToBase64 = (file: File): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
 
 export function MarketingCreatePost({ contentType, postId, onDirtyChange }: MarketingCreatePostProps) {
   const [thumbnailLang, setThumbnailLang] = useState<Language>("English");

@@ -17,6 +17,7 @@ import { SEOStep } from "./Steps/SEO/SEOStep";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { WizardLayout } from "@/components/dashboard/shared";
 import { useWizard, WizardStepConfig, WizardSubmitIntent } from "@/hooks/useWizard";
+import { fileToBase64 } from "@/utils/imageUtils";
 import {
   createCatalogTrip,
   getCatalogTripDetail,
@@ -98,12 +99,7 @@ function intValue(value: any): number | undefined {
 }
 
 function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
+  return fileToBase64(file);
 }
 
 function isFile(value: any): value is File {

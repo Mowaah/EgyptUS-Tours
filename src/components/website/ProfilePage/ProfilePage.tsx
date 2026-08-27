@@ -41,7 +41,7 @@ export default function ProfilePage() {
   );
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [authModalState, setAuthModalState] = useState<{isOpen: boolean, mode: "login" | "signup"}>({isOpen: false, mode: "login"});
+  const [authModalState, setAuthModalState] = useState<{ isOpen: boolean, mode: "login" | "signup" }>({ isOpen: false, mode: "login" });
   const [successBookingRef, setSuccessBookingRef] = useState<string | null>(null);
   const [successAmount, setSuccessAmount] = useState<string | null>(null);
   const [receiptData, setReceiptData] = useState<{
@@ -59,7 +59,7 @@ export default function ProfilePage() {
       setShowSuccessModal(true);
       const ref = searchParams.get("ref");
       setSuccessBookingRef(ref);
-      
+
       if (ref) {
         getPaymentReceipt(ref).then(data => {
           setReceiptData(data);
@@ -343,8 +343,8 @@ export default function ProfilePage() {
               <EmptyState
                 framedIcon
                 iconSrc="/images/profile/glyphs/heart.svg"
-                iconWidth={150}
-                iconHeight={150}
+                iconWidth={200}
+                iconHeight={200}
                 title="Your favorite trips list is empty"
                 description="Save trips you're interested in and come back anytime to complete your booking."
                 buttonText="Explore Trips"
@@ -413,7 +413,7 @@ export default function ProfilePage() {
           return (
             <EmptyState
               framedIcon
-              iconSrc="/images/profile-blue.svg"
+              iconSrc="/images/profile-blue2.svg"
               iconWidth={90}
               iconHeight={90}
               title="Create an Account to View Your Bookings"
@@ -725,15 +725,15 @@ export default function ProfilePage() {
           metadata={
             receiptData
               ? [
-                  { label: "Booking Reference", value: receiptData.booking_reference },
-                  { label: "Trip Name", value: receiptData.trip_name },
-                  { label: "Travel Type", value: receiptData.travel_type },
-                  { label: "Date", value: receiptData.start_date || "—" },
-                  { label: "Total Price", value: `£${receiptData.total_amount}`, valueColor: "#FF6600" },
-                  { label: "Paid Now", value: `£${receiptData.amount}`, valueColor: "#FF6600" },
-                ]
+                { label: "Booking Reference", value: receiptData.booking_reference },
+                { label: "Trip Name", value: receiptData.trip_name },
+                { label: "Travel Type", value: receiptData.travel_type },
+                { label: "Date", value: receiptData.start_date || "—" },
+                { label: "Total Price", value: `£${receiptData.total_amount}`, valueColor: "#FF6600" },
+                { label: "Paid Now", value: `£${receiptData.amount}`, valueColor: "#FF6600" },
+              ]
               : successBookingRef || successAmount
-              ? [
+                ? [
                   ...(successBookingRef
                     ? [{ label: "Payment Reference", value: successBookingRef }]
                     : []),
@@ -741,7 +741,7 @@ export default function ProfilePage() {
                     ? [{ label: "Total Paid", value: `£${successAmount}`, valueColor: "#10B981" }]
                     : []),
                 ]
-              : undefined
+                : undefined
           }
         />
       )}

@@ -14,9 +14,15 @@ import {
   type TripBookingStatus,
 } from "@/components/shared";
 import TransportBookingSummary from "@/components/website/BookTransportationPage/BookingSummary/BookingSummary";
-import type { BookingData, Hotel, TransportationBookingData, Trip, Vehicle } from "@/types";
-import { getProfileBookingDetail } from "@/lib/api";
+import { getProfileBookingDetail, payRemainingBookingBalance } from "@/lib/api";
+import { COUNTRIES } from "@/data/countries";
 import styles from "./ProfileBookingDetailsPage.module.scss";
+
+const getCountryName = (code: string) => {
+  if (!code) return "";
+  const country = COUNTRIES.find((c) => c.code.toLowerCase() === code.trim().toLowerCase());
+  return country ? country.nationality : code;
+};
 
 type TripDetailsStatus = Extract<TripBookingStatus, "confirmed" | "partially_paid" | "cancelled">;
 
@@ -84,18 +90,20 @@ export default function ProfileBookingDetailsPage() {
   const status = getStatusFromParam(rawStatus);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [isPaying, setIsPaying] = useState(false);
+  const [payError, setPayError] = useState<string | null>(null);
   const statusUi = getStatusUi(status);
   const isPartiallyPaid = status === "partially_paid";
   const showCancelAction = status !== "cancelled";
   const showPayAction = isPartiallyPaid;
   const showFooter = showCancelAction || showPayAction;
-  
+
   const bData = bookingDetail || {};
   const contact = bData.contact || {};
   const payment = bData.payment_summary || {};
   const roomsObj = bData.rooms || { single: 0, double: 0, triple: 0 };
   const specialRequests = [bData.special_requests || "None"];
-  
+
   const formatDate = (dateStr: string) => {
     if (!dateStr || dateStr === "—") return "";
     try {
@@ -129,23 +137,46 @@ export default function ProfileBookingDetailsPage() {
       triple: roomsObj.triple || 0,
     },
   };
-  
+
+  // Real amounts from payment_summary (backend now returns actual values)
   const totalAmount = parseFloat(payment.total_amount || bData.total_price || bData.price || "0");
-  let depositAmount = totalAmount * 0.3; // Using 30% for deposit
-  if (safeFormData.startDate) {
-    const start = new Date(bData.check_in_date || bData.start_date || safeFormData.startDate);
-    const today = new Date();
-    const daysUntil = (start.getTime() - today.getTime()) / (1000 * 3600 * 24);
-    if (daysUntil <= 30) depositAmount = totalAmount;
-  }
-  
+  const paidAmount = parseFloat(payment.paid_amount || "0");
+  const remainingAmount = parseFloat(payment.remaining_amount || "0") || (totalAmount - paidAmount);
+  const paymentUrl = payment.payment_url || null;
+  const currencySymbol = (payment.currency_code || bData.trip?.currency_code || "£").replace("EGP", "£");
+
+  const depositAmount = paidAmount || totalAmount * 0.3;
   const hotelTotalRooms = safeFormData.rooms.single + safeFormData.rooms.double + safeFormData.rooms.triple;
   const hotelTotalGuests = safeFormData.adults + safeFormData.children + safeFormData.infants;
-  
-  const hotelTotalAmount = totalAmount; 
+
+  const hotelTotalAmount = totalAmount;
   const hotelVatAmount = 0;
   const hotelDepositAmount = depositAmount;
-  
+
+  const handlePayRemaining = async () => {
+    if (!id || isPaying) return;
+    setPayError(null);
+    // If backend already has an active payment_url, redirect to it directly
+    if (paymentUrl) {
+      window.location.href = paymentUrl;
+      return;
+    }
+    // Otherwise request a new Paymob checkout link from the backend
+    setIsPaying(true);
+    try {
+      const result = await payRemainingBookingBalance(detailsType, id);
+      if (result.payment_url) {
+        window.location.href = result.payment_url;
+      } else {
+        setPayError("Could not generate payment link. Please try again.");
+      }
+    } catch {
+      setPayError("Payment failed. Please try again or contact support.");
+    } finally {
+      setIsPaying(false);
+    }
+  };
+
   const hotelRoomsList = [
     safeFormData.rooms.single > 0 ? `${safeFormData.rooms.single} × Single Room` : null,
     safeFormData.rooms.double > 0 ? `${safeFormData.rooms.double} × Double Room` : null,
@@ -154,6 +185,37 @@ export default function ProfileBookingDetailsPage() {
 
   const sections: BookingDetailsSection[] = isTransport
     ? [
+      {
+        title: "Contact Info",
+        icon: "/images/summary/contact.svg",
+        fields: [
+          { label: "Name", value: contact.full_name || "" },
+          { label: "Email", value: contact.email || "" },
+          { label: "Phone Number", value: safeFormData.phone || "" },
+          { label: "Nationality", value: contact.nationality || "" },
+        ],
+      },
+      {
+        title: "Trip Info",
+        icon: "/images/summary/trip.svg",
+        fields: [
+          { label: "Pickup Location", value: bData.pickup_location || bData.details?.pickup_location || "" },
+          { label: "Drop-off Location", value: bData.dropoff_location || bData.details?.dropoff_location || "" },
+          { label: "Trip Type", value: bData.trip_type || bData.details?.trip_type || "" },
+          { label: "Pickup Time", value: bData.pickup_time || bData.details?.pickup_time || "" },
+          { label: "Pickup Date", value: bData.pickup_date || bData.details?.pickup_date || "" },
+          { label: "Passengers", value: bData.details?.passengers_label || `${bData.passengers || 0} Passengers` },
+          { label: "Luggage", value: bData.details?.luggage_label || `${bData.luggage || 0} Bags` },
+        ],
+      },
+      {
+        title: "Special Requests",
+        icon: "/images/summary/special.svg",
+        listItems: specialRequests,
+      },
+    ]
+    : isHotel
+      ? [
         {
           title: "Contact Info",
           icon: "/images/summary/contact.svg",
@@ -161,21 +223,13 @@ export default function ProfileBookingDetailsPage() {
             { label: "Name", value: contact.full_name || "" },
             { label: "Email", value: contact.email || "" },
             { label: "Phone Number", value: safeFormData.phone || "" },
-            { label: "Nationality", value: contact.nationality || "" },
+            { label: "Nationality", value: getCountryName(contact.nationality || "") },
           ],
         },
         {
-          title: "Trip Info",
-          icon: "/images/summary/trip.svg",
-          fields: [
-            { label: "Pickup Location", value: bData.pickup_location || bData.details?.pickup_location || "" },
-            { label: "Drop-off Location", value: bData.dropoff_location || bData.details?.dropoff_location || "" },
-            { label: "Trip Type", value: bData.trip_type || bData.details?.trip_type || "" },
-            { label: "Pickup Time", value: bData.pickup_time || bData.details?.pickup_time || "" },
-            { label: "Pickup Date", value: bData.pickup_date || bData.details?.pickup_date || "" },
-            { label: "Passengers", value: bData.details?.passengers_label || `${bData.passengers || 0} Passengers` },
-            { label: "Luggage", value: bData.details?.luggage_label || `${bData.luggage || 0} Bags` },
-          ],
+          title: "Rooms",
+          icon: "/images/summary/rooms.svg",
+          listItems: hotelRoomsList.length ? hotelRoomsList : ["Standard Room"],
         },
         {
           title: "Special Requests",
@@ -183,60 +237,37 @@ export default function ProfileBookingDetailsPage() {
           listItems: specialRequests,
         },
       ]
-    : isHotel
-      ? [
-          {
-            title: "Contact Info",
-            icon: "/images/summary/contact.svg",
-            fields: [
-              { label: "Name", value: contact.full_name || "" },
-              { label: "Email", value: contact.email || "" },
-              { label: "Phone Number", value: safeFormData.phone || "" },
-              { label: "Nationality", value: contact.nationality || "" },
-            ],
-          },
-          {
-            title: "Rooms",
-            icon: "/images/summary/rooms.svg",
-            listItems: hotelRoomsList.length ? hotelRoomsList : ["Standard Room"],
-          },
-          {
-            title: "Special Requests",
-            icon: "/images/summary/special.svg",
-            listItems: specialRequests,
-          },
-        ]
       : [
-          {
-            title: "Contact Info",
-            icon: "/images/summary/contact.svg",
-            fields: [
-              { label: "Name", value: contact.full_name || "" },
-              { label: "Email", value: contact.email || "" },
-              { label: "Phone Number", value: safeFormData.phone || "" },
-              { label: "Nationality", value: contact.nationality || "" },
-            ],
-          },
-          {
-            title: "Trip Info",
-            icon: "/images/summary/trip.svg",
-            fields: [
-              { label: "Trip Name", value: bData.details?.trip_name || bData.title || bData.trip?.title || "" },
-              { label: "Destination", value: bData.details?.destination || bData.trip?.location_text || "" },
-              { label: "Duration", value: bData.details?.duration_label || `${bData.trip?.duration?.nights || 0} Nights / ${bData.trip?.duration?.days || 0} Days` },
-            ],
-          },
-          {
-            title: "Rooms",
-            icon: "/images/summary/rooms.svg",
-            listItems: hotelRoomsList.length ? hotelRoomsList : ["Standard Room"],
-          },
-          {
-            title: "Special Requests",
-            icon: "/images/summary/special.svg",
-            listItems: specialRequests,
-          },
-        ];
+        {
+          title: "Contact Info",
+          icon: "/images/summary/contact.svg",
+          fields: [
+            { label: "Name", value: contact.full_name || "" },
+            { label: "Email", value: contact.email || "" },
+            { label: "Phone Number", value: safeFormData.phone || "" },
+            { label: "Nationality", value: getCountryName(contact.nationality || "") },
+          ],
+        },
+        {
+          title: "Trip Info",
+          icon: "/images/summary/trip.svg",
+          fields: [
+            { label: "Trip Name", value: bData.details?.trip_name || bData.title || bData.trip?.title || "" },
+            { label: "Destination", value: bData.details?.destination || bData.trip?.location_text || "" },
+            { label: "Duration", value: bData.details?.duration_label || `${bData.trip?.duration?.nights || 0} Nights / ${bData.trip?.duration?.days || 0} Days` },
+          ],
+        },
+        {
+          title: "Rooms",
+          icon: "/images/summary/rooms.svg",
+          listItems: hotelRoomsList.length ? hotelRoomsList : ["Standard Room"],
+        },
+        {
+          title: "Special Requests",
+          icon: "/images/summary/special.svg",
+          listItems: specialRequests,
+        },
+      ];
 
   const buildDetailsHref = (view?: "payment") => {
     const params = new URLSearchParams(searchParams.toString());
@@ -249,7 +280,7 @@ export default function ProfileBookingDetailsPage() {
   };
 
   const paymentSidebar = isTransport ? (
-    <TransportBookingSummary 
+    <TransportBookingSummary
       vehicle={{
         id: bData.id || bData.vehicle?.id || "vehicle",
         name: bData.details?.vehicle_name || bData.title || bData.vehicle?.name || "Vehicle",
@@ -261,8 +292,8 @@ export default function ProfileBookingDetailsPage() {
         description: bData.vehicle?.description || "",
         rating: 5.0,
         reviews: 0
-      }} 
-      formData={safeFormData as any} 
+      }}
+      formData={safeFormData as any}
     />
   ) : isHotel ? (
     <BookingSidebar
@@ -322,70 +353,74 @@ export default function ProfileBookingDetailsPage() {
           <div className={styles.loading}>Booking not found.</div>
         </div>
       ) : (
-      <div className={styles.container}>
-        {isPaymentView ? (
-          <PaymentForm
-            formData={safeFormData as any}
-            onChange={() => undefined}
-            confirmLabel={`Confirm & Pay $${(isHotel ? hotelDepositAmount : depositAmount).toLocaleString()} ${(isHotel ? hotelDepositAmount : depositAmount) === totalAmount ? "(Full amount)" : "Deposit"}`}
-            onPrevious={() => router.push(buildDetailsHref())}
-            onConfirm={() => setShowSuccess(true)}
-            sidebar={paymentSidebar}
-          />
-        ) : (
-          <section className={styles.card}>
-            {isPartiallyPaid && (
-              <div className={styles.warningBanner}>
-                <span className={styles.warningDot}>
-                  <Image src="/images/info.svg" alt="" width={12} height={12} className={styles.warningDotIcon} />
+        <div className={styles.container}>
+          {isPaymentView ? (
+            <PaymentForm
+              formData={safeFormData as any}
+              onChange={() => undefined}
+              confirmLabel={`Confirm & Pay $${(isHotel ? hotelDepositAmount : depositAmount).toLocaleString()} ${(isHotel ? hotelDepositAmount : depositAmount) === totalAmount ? "(Full amount)" : "Deposit"}`}
+              onPrevious={() => router.push(buildDetailsHref())}
+              onConfirm={() => setShowSuccess(true)}
+              sidebar={paymentSidebar}
+            />
+          ) : (
+            <section className={styles.card}>
+              {isPartiallyPaid && (
+                <div className={styles.warningBanner}>
+                  <span className={styles.warningDot}>
+                    <Image src="/images/info.svg" alt="" width={12} height={12} className={styles.warningDotIcon} />
+                  </span>
+                  Final payment due by March 15, 2026 to keep your booking
+                </div>
+              )}
+
+              <header className={styles.header}>
+                <div>
+                  <h2>Booking Details</h2>
+                  <p>View your trip details, payment status, and manage your booking</p>
+                </div>
+                <span className={`${styles.statusBadge} ${statusUi.badgeClass}`}>
+                  <span className={styles.statusIcon}>{statusUi.icon}</span>
+                  {statusUi.label}
                 </span>
-                Final payment due by March 15, 2026 to keep your booking
+              </header>
+
+              <div className={styles.content}>
+                <BookingDetailsSections sections={sections} className={styles.left} />
+
+                <aside className={styles.sidebarWrap}>{paymentSidebar}</aside>
               </div>
-            )}
 
-            <header className={styles.header}>
-              <div>
-                <h2>Booking Details</h2>
-                <p>View your trip details, payment status, and manage your booking</p>
-              </div>
-              <span className={`${styles.statusBadge} ${statusUi.badgeClass}`}>
-                <span className={styles.statusIcon}>{statusUi.icon}</span>
-                {statusUi.label}
-              </span>
-            </header>
-
-            <div className={styles.content}>
-              <BookingDetailsSections sections={sections} className={styles.left} />
-
-              <aside className={styles.sidebarWrap}>{paymentSidebar}</aside>
-            </div>
-
-            {showFooter && (
-              <footer className={`${styles.footer} ${showPayAction ? styles.footerSplit : ""}`}>
-                {showCancelAction && (
-                  <button
-                    type="button"
-                    className={styles.cancelLink}
-                    onClick={() => setShowCancelModal(true)}
-                  >
-                    Cancel booking
-                  </button>
-                )}
-                {showPayAction && (
-                  <button
-                    type="button"
-                    className={styles.payButton}
-                    onClick={() => router.push(buildDetailsHref("payment"))}
-                  >
-                    <span>Pay remaining £3,430</span>
-                    <Image src="/images/money-send.svg" alt="" width={24} height={24} aria-hidden />
-                  </button>
-                )}
-              </footer>
-            )}
-          </section>
-        )}
-      </div>
+              {showFooter && (
+                <footer className={`${styles.footer} ${showPayAction ? styles.footerSplit : ""}`}>
+                  {showCancelAction && (
+                    <button
+                      type="button"
+                      className={styles.cancelLink}
+                      onClick={() => setShowCancelModal(true)}
+                    >
+                      Cancel booking
+                    </button>
+                  )}
+                  {showPayAction && (
+                    <>
+                      {payError && <p className={styles.payError}>{payError}</p>}
+                      <button
+                        type="button"
+                        className={styles.payButton}
+                        onClick={handlePayRemaining}
+                        disabled={isPaying}
+                      >
+                        <span>{isPaying ? "Generating payment link..." : `Pay remaining ${currencySymbol}${remainingAmount.toLocaleString()}`}</span>
+                        {!isPaying && <Image src="/images/money-send.svg" alt="" width={24} height={24} aria-hidden />}
+                      </button>
+                    </>
+                  )}
+                </footer>
+              )}
+            </section>
+          )}
+        </div>
       )}
 
       {showSuccess && (

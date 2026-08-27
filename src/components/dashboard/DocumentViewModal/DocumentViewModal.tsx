@@ -5,18 +5,25 @@ import { LanguageTabs, type Language } from "@/components/shared";
 import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";;
 import styles from "./DocumentViewModal.module.scss";
 
+import { getLangKey } from "@/components/dashboard/shared/i18n";
+
 interface DocumentViewModalProps {
   open: boolean;
   title: string;
   content: string;
+  rawTranslations?: any;
   modalSubtitle: string;
   onClose: () => void;
   onEdit: () => void;
 }
 
 
-export default function DocumentViewModal({ open, title, content, modalSubtitle, onClose, onEdit }: DocumentViewModalProps) {
+export default function DocumentViewModal({ open, title, content, rawTranslations, modalSubtitle, onClose, onEdit }: DocumentViewModalProps) {
   const [activeLang, setActiveLang] = useState<Language>("English");
+
+  const langKey = getLangKey(activeLang);
+  const localizedTitle = rawTranslations?.[langKey]?.title || rawTranslations?.[langKey]?.question || (langKey === "en" ? title : "") || title;
+  const localizedContent = rawTranslations?.[langKey]?.content || rawTranslations?.[langKey]?.answer || (langKey === "en" ? content : "") || content;
 
   useEffect(() => {
     if (!open) return;
@@ -60,14 +67,14 @@ export default function DocumentViewModal({ open, title, content, modalSubtitle,
             <div className={styles.contentCardInner}>
               <div className={styles.contentTitleRow}>
                 <span className={styles.dot} aria-hidden />
-                <span className={styles.contentTitle}>{title}</span>
+                <span className={styles.contentTitle}>{localizedTitle}</span>
               </div>
               <div className={`${styles.contentBody} tiptap-content`}>
                 <div 
                   dangerouslySetInnerHTML={{ 
-                    __html: /<[a-z][\s\S]*>/i.test(content) 
-                      ? content 
-                      : content.split("\n\n").map((p) => `<p>${p.replace(/\n/g, "<br>")}</p>`).join("") 
+                    __html: /<[a-z][\s\S]*>/i.test(localizedContent) 
+                      ? localizedContent 
+                      : localizedContent.split("\n\n").map((p: string) => `<p>${p.replace(/\n/g, "<br>")}</p>`).join("") 
                   }} 
                 />
               </div>

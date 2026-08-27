@@ -5,14 +5,7 @@ type QueryParams = Record<string, unknown>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ApiResponse = any;
 
-function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
-}
+import { fileToBase64 } from '@/utils/imageUtils';
 
 async function buildDestinationPayload(data: { translations?: Record<string, { name: string }>; image?: File }) {
   const payload: { translations?: Record<string, { name: string }>; name?: string; image?: string } = {};
@@ -20,7 +13,7 @@ async function buildDestinationPayload(data: { translations?: Record<string, { n
     payload.translations = data.translations;
     payload.name = data.translations.en?.name;
   }
-  if (data.image) payload.image = await fileToDataUrl(data.image);
+  if (data.image) payload.image = await fileToBase64(data.image);
   return payload;
 }
 

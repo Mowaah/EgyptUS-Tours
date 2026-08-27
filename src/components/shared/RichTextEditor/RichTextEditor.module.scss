@@ -239,7 +239,10 @@
   a { color: $primary; text-decoration: underline; }
 
   /* Placeholder */
-  p.is-editor-empty:first-child::before {
+  p.is-empty:first-child::before,
+  p.is-editor-empty:first-child::before,
+  p[data-placeholder].is-empty::before,
+  p[data-placeholder]:first-child::before {
     content: attr(data-placeholder);
     color: $gray-400;
     pointer-events: none;

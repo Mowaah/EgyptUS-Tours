@@ -112,6 +112,7 @@ export default function FaqManagementPage() {
         index={viewState?.index ?? 1}
         title={viewState?.item.title ?? ""}
         content={viewState?.item.content ?? ""}
+        rawTranslations={viewState?.item.rawTranslations}
         onClose={() => setViewState(null)}
         onEdit={() => handleEdit(viewState!.item)}
       />
