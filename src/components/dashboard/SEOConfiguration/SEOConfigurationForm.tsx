@@ -35,7 +35,7 @@ export default function SEOConfigurationForm({ pageKey, onSuccess }: SEOConfigur
     reset,
     formState: { errors, isSubmitting, isDirty },
   } = useForm<SEOConfigurationValues>({
-    resolver: zodResolver(seoConfigurationSchema),
+    resolver: zodResolver(seoConfigurationSchema) as any,
     defaultValues: {},
   });
 
@@ -93,7 +93,7 @@ export default function SEOConfigurationForm({ pageKey, onSuccess }: SEOConfigur
         const desc = (formData.metaDescription as any)?.[locale];
         const keywordsStr = (formData.metaKeywords as any)?.[locale];
         const slug = (formData.slug as any)?.[locale];
-        
+
         let imgTitle, imgAlt;
         if (supportsOgImage) {
           imgTitle = (formData.imageTitle as any)?.[locale];
@@ -242,8 +242,8 @@ export default function SEOConfigurationForm({ pageKey, onSuccess }: SEOConfigur
         </div>
       </div>
 
-      <DashboardFooter 
-        lastUpdateDate={data?.updated_at ? new Date(data.updated_at).toLocaleDateString() : ""} 
+      <DashboardFooter
+        lastUpdateDate={data?.updated_at ? new Date(data.updated_at).toLocaleDateString() : ""}
         isSubmit={true}
         isSaveDisabled={!isDirty || isSubmitting}
       />
