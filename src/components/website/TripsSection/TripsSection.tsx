@@ -127,9 +127,7 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
   }, [trips, searchParams?.tripType]);
 
   useEffect(() => {
-    if (initialTrips.length > 0) {
-      setTrips(initialTrips);
-    }
+    setTrips(initialTrips);
   }, [initialTrips]);
 
   useEffect(() => {

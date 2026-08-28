@@ -26,7 +26,7 @@ export default async function HomeTripsFetcher() {
     return (
       <>
         <TripsSection initialTrips={initialTrips} />
-        <MultiCountrySection initialTrips={initialTrips.slice(0, 6)} />
+        <MultiCountrySection initialTrips={initialTrips.filter(t => t.tags?.some(tag => tag.toLowerCase().includes("multi country"))).slice(0, 6)} />
       </>
     );
   } catch (error) {
