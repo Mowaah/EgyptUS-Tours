@@ -114,7 +114,7 @@ export default function AdminUsersPanel({
   return (
     <TablePanel
       ariaLabel="Admin users table"
-      title="All Admins"
+      title="All Users"
       iconSrc="/images/dashboard/sidebar/user-management.svg"
       showFilters={true}
       showExport={true}

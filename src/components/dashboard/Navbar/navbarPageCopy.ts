@@ -89,7 +89,7 @@ const pageCopyByPath: Record<string, PageCopy> = {
     subtitle: "Manage and organize all system users, control access levels",
     breadcrumbTrail: [{ label: "Settings" }, { label: "User Management" }],
     searchPlaceholder: "Search names, emails...",
-    primaryAction: { label: "New Admin" },
+    primaryAction: { label: "Add New User" },
   },
   "/dashboard/settings/access-control": {
     title: "Access Control",

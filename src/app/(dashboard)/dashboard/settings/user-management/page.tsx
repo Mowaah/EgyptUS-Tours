@@ -167,7 +167,7 @@ export default function UserManagementPage() {
 
   const handleConfirmAction = async () => {
     if (!confirmation) return;
-    
+
     try {
       if (confirmation.action === "delete") {
         await deleteAdminUser(confirmation.user.id);
@@ -188,40 +188,40 @@ export default function UserManagementPage() {
 
   const confirmationContent = confirmation
     ? {
-        activate: {
-          title: "Activate User Account",
-          message: (
-            <>
-              This user will regain access to the dashboard and
-              <br />
-              system features.
-            </>
-          ),
-          confirmLabel: "Activate",
-        },
-        deactivate: {
-          title: "Deactivate User Account",
-          message: (
-            <>
-              This user will no longer be able to access the system until
-              <br />
-              reactivated.
-            </>
-          ),
-          confirmLabel: "Deactivate",
-        },
-        delete: {
-          title: "Delete User",
-          message: (
-            <>
-              Are you sure you want to permanently delete this user?
-              <br />
-              This action cannot be undone.
-            </>
-          ),
-          confirmLabel: "Delete",
-        },
-      }[confirmation.action]
+      activate: {
+        title: "Activate User Account",
+        message: (
+          <>
+            This user will regain access to the dashboard and
+            <br />
+            system features.
+          </>
+        ),
+        confirmLabel: "Activate",
+      },
+      deactivate: {
+        title: "Deactivate User Account",
+        message: (
+          <>
+            This user will no longer be able to access the system until
+            <br />
+            reactivated.
+          </>
+        ),
+        confirmLabel: "Deactivate",
+      },
+      delete: {
+        title: "Delete User",
+        message: (
+          <>
+            Are you sure you want to permanently delete this user?
+            <br />
+            This action cannot be undone.
+          </>
+        ),
+        confirmLabel: "Delete",
+      },
+    }[confirmation.action]
     : null;
 
   const hasChanges =
@@ -234,12 +234,12 @@ export default function UserManagementPage() {
 
   return (
     <>
-      <DashboardNavbar 
-        onPrimaryAction={openCreateModal} 
+      <DashboardNavbar
+        onPrimaryAction={openCreateModal}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
       />
-      
+
       {rolesLoading ? (
         <div style={{ padding: "2rem", textAlign: "center" }}>Loading roles...</div>
       ) : (
@@ -255,14 +255,14 @@ export default function UserManagementPage() {
       <DashboardFormModal
         open={modalOpen}
         mode={modalMode}
-        title={modalMode === "create" ? "Add admin user" : "Edit user"}
+        title={modalMode === "create" ? "Add New User" : "Edit user"}
         subtitle={
           modalMode === "create"
             ? "Create a new admin account."
-            : "Update the admin account details."
+            : "Update the user account details."
         }
         fields={fields}
-        primaryLabel={modalMode === "create" ? "Create Admin" : "Save Admin"}
+        primaryLabel={modalMode === "create" ? "Add New User" : "Save"}
         primaryDisabled={modalMode === "edit" && !hasChanges}
         onClose={closeModal}
         onSubmit={handleSubmit}
