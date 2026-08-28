@@ -10,9 +10,15 @@ interface RecordRemainingPaymentModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: any) => void;
+  paymentOverview?: {
+    total_price: string;
+    deposit_amount: string;
+    remaining_balance: string;
+    currency: string;
+  };
 }
 
-export default function RecordRemainingPaymentModal({ open, onClose, onSubmit }: RecordRemainingPaymentModalProps) {
+export default function RecordRemainingPaymentModal({ open, onClose, onSubmit, paymentOverview }: RecordRemainingPaymentModalProps) {
   const [note, setNote] = useState("");
 
   useEffect(() => {
@@ -35,7 +41,7 @@ export default function RecordRemainingPaymentModal({ open, onClose, onSubmit }:
   if (!open) return null;
 
   const handleSubmit = () => {
-    onSubmit({ note });
+    onSubmit({ payment_note: note });
     onClose();
   };
 
@@ -57,7 +63,7 @@ export default function RecordRemainingPaymentModal({ open, onClose, onSubmit }:
               label=""
               id="total-trip-cost"
               variant="modal"
-              value="£5,000"
+              value={paymentOverview?.total_price ? `${paymentOverview.currency?.toUpperCase() === 'GBP' ? '£' : paymentOverview.currency?.toUpperCase() === 'USD' ? '$' : paymentOverview.currency?.toUpperCase() || ''} ${parseFloat(paymentOverview.total_price).toLocaleString()}` : "N/A"}
               disabled
               onChange={() => {}}
             />
@@ -79,11 +85,11 @@ export default function RecordRemainingPaymentModal({ open, onClose, onSubmit }:
           <div className={styles.summaryBox}>
             <div className={styles.summaryCol}>
               <span className={styles.summaryTitle}>Deposit Amount</span>
-              <span className={styles.summaryValue}>£750</span>
+              <span className={styles.summaryValue}>{paymentOverview?.deposit_amount ? `${paymentOverview.currency?.toUpperCase() === 'GBP' ? '£' : paymentOverview.currency?.toUpperCase() === 'USD' ? '$' : paymentOverview.currency?.toUpperCase() || ''} ${parseFloat(paymentOverview.deposit_amount).toLocaleString()}` : "N/A"}</span>
             </div>
             <div className={styles.summaryCol}>
               <span className={styles.summaryTitle}>Remaining Balance</span>
-              <span className={styles.summaryValue}>£1,750</span>
+              <span className={styles.summaryValue}>{paymentOverview?.remaining_balance ? `${paymentOverview.currency?.toUpperCase() === 'GBP' ? '£' : paymentOverview.currency?.toUpperCase() === 'USD' ? '$' : paymentOverview.currency?.toUpperCase() || ''} ${parseFloat(paymentOverview.remaining_balance).toLocaleString()}` : "N/A"}</span>
             </div>
           </div>
           

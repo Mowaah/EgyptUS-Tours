@@ -216,7 +216,13 @@ export function createRequestActions(resourceBaseUrl: string) {
       return await adminDataClient.post(`${resourceBaseUrl}/${id}/reopen/`, { reopen_reason });
     },
     async approve(id: string | number, payload: any) {
-      return await adminDataClient.post(`${resourceBaseUrl}/${id}/approve/`, payload);
+      try {
+        return await adminDataClient.post(`${resourceBaseUrl}/${id}/approve/`, payload);
+      } catch (err: any) {
+        console.error("Approve error payload:", payload);
+        console.error("Approve error response:", err.response?.data);
+        throw err;
+      }
     },
     async recordPayment(id: string | number, payload: any) {
       return await adminDataClient.post(`${resourceBaseUrl}/${id}/record-payment/`, payload);

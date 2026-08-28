@@ -107,6 +107,9 @@ export default function ViewPlanYourTrip({ requestId }: { requestId: string }) {
       status={formatStatusLabel(requestData.display_status)}
       date={new Date(requestData.created_at).toLocaleString()}
       lastUpdated={requestData.updated_at}
+      hasUnsentProposal={requestData.proposal_files?.some((p: any) => p.sent_at === null)}
+      paymentOverview={requestData.payment_overview}
+      refundSummary={requestData.refund_summary}
       leftColumnContent={
         <>
           <CustomerInformation 

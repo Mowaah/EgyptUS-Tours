@@ -50,6 +50,22 @@ interface RequestDetailsLayoutProps {
   statusVariant?: string;
   hideFooter?: boolean;
   onActionSubmit?: (action: string, payload?: any) => Promise<void>;
+  hasUnsentProposal?: boolean;
+  paymentOverview?: {
+    total_price: string;
+    deposit_amount: string;
+    remaining_balance: string;
+    currency: string;
+  };
+  refundSummary?: {
+    package_total: string;
+    days_before_travel: number;
+    policy_applied: string;
+    deduction_percentage: number;
+    deduction_amount: string;
+    refund_amount: string;
+    currency: string;
+  };
 }
 
 export default function RequestDetailsLayout({
@@ -67,7 +83,10 @@ export default function RequestDetailsLayout({
   hideDefaultActions,
   statusVariant,
   hideFooter,
-  onActionSubmit
+  onActionSubmit,
+  hasUnsentProposal,
+  paymentOverview,
+  refundSummary
 }: RequestDetailsLayoutProps) {
   const [activeModalKey, setActiveModalKey] = useState<string | null>(null);
   const [bannerMessage, setBannerMessage] = useState("");
@@ -228,14 +247,25 @@ export default function RequestDetailsLayout({
                     <Image src="/images/dashboard/requests/footer/mark-as-rejected.svg" alt="" width={20} height={20} />
                     Mark as Rejected
                   </button>
-                  <button
-                    className={styles.createProposalBtn}
-                    type="button"
-                    onClick={() => setActiveModalKey("upload_revised_proposal")}
-                  >
-                    <Image src="/images/dashboard/requests/footer/create-proposal.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
-                    Upload Revised Proposal
-                  </button>
+                  {hasUnsentProposal ? (
+                    <button
+                      className={styles.createProposalBtn}
+                      type="button"
+                      onClick={() => setActiveModalKey("mark_proposal_sent")}
+                    >
+                      <Image src="/images/dashboard/requests/footer/mark-proposal-as-sent.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
+                      Mark proposal as sent
+                    </button>
+                  ) : (
+                    <button
+                      className={styles.createProposalBtn}
+                      type="button"
+                      onClick={() => setActiveModalKey("upload_revised_proposal")}
+                    >
+                      <Image src="/images/dashboard/requests/footer/create-proposal.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
+                      Upload Revised Proposal
+                    </button>
+                  )}
                 </>
               ) : status === "30% Pending Payment" ? (
                 <>
@@ -515,18 +545,21 @@ export default function RequestDetailsLayout({
         open={activeModalKey === "record_deposit"}
         onClose={() => setActiveModalKey(null)}
         onSubmit={(data) => handleModalSubmit("record_deposit", data)}
+        paymentOverview={paymentOverview}
       />
 
       <RecordRemainingPaymentModal
         open={activeModalKey === "record_remaining"}
         onClose={() => setActiveModalKey(null)}
         onSubmit={(data) => handleModalSubmit("record_remaining", data)}
+        paymentOverview={paymentOverview}
       />
 
       <RefundPaymentModal
         open={activeModalKey === "refund_payment"}
         onClose={() => setActiveModalKey(null)}
         onSubmit={(data) => handleModalSubmit("refund_payment", data)}
+        refundSummary={refundSummary}
       />
 
       <CancelTripModal

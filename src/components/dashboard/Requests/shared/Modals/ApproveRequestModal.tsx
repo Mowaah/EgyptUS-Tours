@@ -43,13 +43,29 @@ export default function ApproveRequestModal({ open, onClose, onSubmit }: Approve
   if (!open) return null;
 
   const handleSubmit = () => {
-    onSubmit({
+    if (!totalCost || totalCost <= 0) {
+      alert("Please enter a valid total trip cost.");
+      return;
+    }
+
+    if (paymentMethod === "Paymob" && paymentStatus !== "Pending") {
+      alert("Paymob payments cannot be manually marked as paid at approval. Please set the payment status to Pending.");
+      return;
+    }
+
+    const payload: any = {
       total_price: totalCost,
       payment_plan: paymentPlan === "30% Deposit" ? "deposit" : "full",
       payment_method: paymentMethod.toLowerCase(),
       initial_payment_state: paymentStatus === "Pending" ? "pending" : "paid",
       approval_notes: approvalNote
-    });
+    };
+
+    if (paymentMethod === "Paymob") {
+      payload.currency = "egp";
+    }
+
+    onSubmit(payload);
     onClose();
   };
 
