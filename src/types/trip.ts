@@ -26,6 +26,8 @@ export interface Trip {
   countries?: number;
   isFavorite?: boolean;
   discountLabel?: string;
+  offersPrivateTour?: boolean;
+  offersGroupTour?: boolean;
 
   // ── Detail-page fields ──────────────────────────────────────
   brochureUrl?: string;
@@ -93,6 +95,18 @@ export interface Trip {
       price: number;
     }>;
   }>;
+
+  seasonPricing?: Array<{
+    label: string;
+    single: number;
+    double: number;
+    triple: number;
+  }>;
+
+  additionalRooms?: {
+    seaView?: number;
+    poolView?: number;
+  };
 
   travelerPhotos?: string[];
 

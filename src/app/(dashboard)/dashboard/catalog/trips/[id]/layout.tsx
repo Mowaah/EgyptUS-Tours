@@ -218,11 +218,13 @@ export default function TripLayout({
           />
         )}
         <DashboardTabs tabs={tabs} ariaLabel="Trip Tabs" />
-        <LanguageTabs active={activeLang} onChange={setActiveLang} variant="white" />
+        {!pathname?.endsWith("/pricing") && (
+          <LanguageTabs active={activeLang} onChange={setActiveLang} variant="white" />
+        )}
         {children}
       </div>
 
-      <DashboardFooter lastUpdateDate="6/6/2026" hideActions className={styles.customFooter} />
+      <DashboardFooter lastUpdateDate={trip?.updated_at ? new Date(trip.updated_at).toLocaleDateString() : "N/A"} hideActions className={styles.customFooter} />
 
       <DashboardConfirmationModal
         open={isDeleteModalOpen}

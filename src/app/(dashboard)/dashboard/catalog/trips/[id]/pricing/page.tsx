@@ -42,13 +42,28 @@ export default function TripPricingPage() {
     );
   }
 
-  // Group by tour_type
+  // Group by tour_type, skipping seasons that have no tiers to hide empty sections
   const byTourType = seasonPricings.reduce<Record<string, SeasonPricing[]>>((acc, s) => {
+    if (!s.tiers || s.tiers.length === 0) return acc;
     const key = s.tour_type || "General";
     if (!acc[key]) acc[key] = [];
     acc[key].push(s);
     return acc;
   }, {});
+
+  if (Object.keys(byTourType).length === 0) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.titleRow}>
+          <div className={styles.iconWrap}>
+            <Image src="/images/dashboard/catalog/trips/pricing.svg" alt="" width={20} height={20} />
+          </div>
+          <h2>Pricing</h2>
+        </div>
+        <p style={{ color: "#9ca3af", fontSize: "14px", padding: "24px 0" }}>No pricing seasons have been filled yet.</p>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>

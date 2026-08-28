@@ -255,11 +255,50 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
           return count;
         };
 
+        const roomSelections: Array<{ room_type: "single" | "double" | "triple"; view_label: string; quantity: number }> = [];
+        if (formData.roomCustomizations) {
+          const roomMap: Record<string, { room_type: "single" | "double" | "triple"; view_label: string; quantity: number }> = {};
+
+          for (const [type, optionsList] of Object.entries(formData.roomCustomizations)) {
+            const rawType = type.toLowerCase();
+            let mappedType: "single" | "double" | "triple" = "double";
+            if (rawType.includes("single")) {
+              mappedType = "single";
+            } else if (rawType.includes("triple")) {
+              mappedType = "triple";
+            } else {
+              mappedType = "double";
+            }
+
+            for (const opt of (optionsList as string[])) {
+              let viewLabel = "Garden View";
+              if (opt === "pool") {
+                viewLabel = "Pool View";
+              } else if (opt === "sea") {
+                viewLabel = "Sea View";
+              }
+
+              const key = `${mappedType}_${viewLabel}`;
+              if (!roomMap[key]) {
+                roomMap[key] = {
+                  room_type: mappedType,
+                  view_label: viewLabel,
+                  quantity: 0,
+                };
+              }
+              roomMap[key].quantity += 1;
+            }
+          }
+          roomSelections.push(...Object.values(roomMap));
+        }
+
         const singleCount = getRoomCount("Single");
         const doubleCount = getRoomCount("Double");
         const tripleCount = getRoomCount("Triple");
-        const totalCustomizedRooms = Object.values(formData.roomCustomizations || {}).reduce((sum, ids) => sum + ids.length, 0);
-        const resolvedSingle = (singleCount > 0 || doubleCount > 0 || tripleCount > 0) ? singleCount : (totalCustomizedRooms || 1);
+
+        const calculatedSingle = (formData.roomCustomizations?.single || []).length || singleCount;
+        const calculatedDouble = (formData.roomCustomizations?.double || []).length || doubleCount;
+        const calculatedTriple = (formData.roomCustomizations?.triple || []).length || tripleCount;
 
         const payload = {
           trip_id: parseInt(formData.tripId || "0", 10),
@@ -274,9 +313,10 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
           start_date: formatDateToYMD(formData.startDate),
           end_date: formatDateToYMD(formData.endDate),
           availability_slot_id: hasFixedAvailability && formData.departureDateId ? (parseInt(formData.departureDateId, 10) || null) : null,
-          rooms_single: resolvedSingle,
-          rooms_double: doubleCount,
-          rooms_triple: tripleCount,
+          rooms_single: calculatedSingle,
+          rooms_double: calculatedDouble,
+          rooms_triple: calculatedTriple,
+          room_selections: roomSelections.length > 0 ? roomSelections : undefined,
           special_requests: formData.specialRequests || "",
           payment_plan: paymentPlan,
           payment_method: paymentMethod,

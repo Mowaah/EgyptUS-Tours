@@ -86,26 +86,37 @@ export default function BookTripModal({ open, onClose, onBookPrivate, onBookGrou
     () => getTripById(specificTrip)
   );
 
-  if (!open) return null;
+  const formatPrice = (price: any) =>
+    price != null && !isNaN(parseFloat(price))
+      ? `£${parseFloat(price.toString()).toLocaleString("en-US", { maximumFractionDigits: 2 })}`
+      : "£--";
 
-  const privatePrice = tripDetail
-    ? tripDetail.private_price
-      ? `£${parseFloat(tripDetail.private_price.toString()).toLocaleString("en-US", { maximumFractionDigits: 2 })}`
-      : tripDetail.base_price
-        ? `£${parseFloat(tripDetail.base_price.toString()).toLocaleString("en-US", { maximumFractionDigits: 2 })}`
-        : "£--"
-    : selectedTrip?.base_price 
-      ? `£${parseFloat(selectedTrip.base_price.toString()).toLocaleString("en-US", { maximumFractionDigits: 2 })}` 
-      : "---";
+  const hasGroupOption = !!(tripDetail?.pricing?.some(s => s.tour_type === "group" && (s.tiers || []).length > 0));
+  const hasPrivateOption = !!(tripDetail?.pricing?.some(s => s.tour_type === "private" && (s.tiers || []).length > 0));
 
-  const groupPrice = tripDetail
-    ? tripDetail.group_price
-      ? `£${parseFloat(tripDetail.group_price.toString()).toLocaleString("en-US", { maximumFractionDigits: 2 })}`
-      : "£--"
+  const privateMinPrice = useMemo(() => {
+    if (!tripDetail?.pricing) return null;
+    const privateSeasons = tripDetail.pricing.filter(s => s.tour_type === "private");
+    const prices = privateSeasons.flatMap(s => (s.tiers || []).map(t => parseFloat(t.price)).filter(p => p > 0));
+    return prices.length > 0 ? Math.min(...prices) : (tripDetail.private_price ? parseFloat(tripDetail.private_price) : null);
+  }, [tripDetail]);
+
+  const groupMinPrice = useMemo(() => {
+    if (!tripDetail?.pricing) return null;
+    const groupSeasons = tripDetail.pricing.filter(s => s.tour_type === "group");
+    const prices = groupSeasons.flatMap(s => (s.tiers || []).map(t => parseFloat(t.price)).filter(p => p > 0));
+    return prices.length > 0 ? Math.min(...prices) : (tripDetail.group_price ? parseFloat(tripDetail.group_price) : null);
+  }, [tripDetail]);
+
+  const privatePrice = hasPrivateOption
+    ? formatPrice(privateMinPrice)
     : "---";
 
-  const hasGroupOption = !!(tripDetail && tripDetail.group_price);
-  const hasPrivateOption = !!(tripDetail && (tripDetail.private_price || tripDetail.base_price));
+  const groupPrice = hasGroupOption
+    ? formatPrice(groupMinPrice)
+    : "---";
+
+  if (!open) return null;
 
   return (
     <div className={styles.overlay} onMouseDown={onClose}>

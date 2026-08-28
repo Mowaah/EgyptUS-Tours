@@ -78,7 +78,7 @@ export default function TripCard({ trip, onFavoriteToggle, className = "" }: Tri
             <span className={styles.priceValue}>
               {formatCurrency(Number(String(trip.price).replace(/,/g, "")) || 0)}
             </span>
-            <span className={styles.pricePer}>per person</span>
+            <span className={styles.pricePer}>per night</span>
           </div>
           <div className={styles.details}>
             <span>

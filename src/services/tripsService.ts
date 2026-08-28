@@ -75,8 +75,18 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
     isFavorite: tripDetail.is_favorite,
     brochureUrl: tripDetail.brochure_url || undefined,
     tags: tripDetail.tags?.map(t => t.name) || [],
-    privatePrice: tripDetail.private_price ? parseFloat(tripDetail.private_price) : undefined,
-    groupPrice: tripDetail.group_price ? parseFloat(tripDetail.group_price) : undefined,
+    privatePrice: (() => {
+      const privateSeasons = (tripDetail.pricing || []).filter(s => s.tour_type === "private");
+      const allPrices = privateSeasons.flatMap(s => (s.tiers || []).map(t => parseFloat(t.price)).filter(p => p > 0));
+      return allPrices.length > 0 ? Math.min(...allPrices) : (tripDetail.private_price ? parseFloat(tripDetail.private_price) : undefined);
+    })(),
+    groupPrice: (() => {
+      const groupSeasons = (tripDetail.pricing || []).filter(s => s.tour_type === "group");
+      const allPrices = groupSeasons.flatMap(s => (s.tiers || []).map(t => parseFloat(t.price)).filter(p => p > 0));
+      return allPrices.length > 0 ? Math.min(...allPrices) : (tripDetail.group_price ? parseFloat(tripDetail.group_price) : undefined);
+    })(),
+    offersPrivateTour: (tripDetail.pricing || []).some(s => s.tour_type === "private" && (s.tiers || []).length > 0),
+    offersGroupTour: (tripDetail.pricing || []).some(s => s.tour_type === "group" && (s.tiers || []).length > 0),
     overview: tripDetail.overview ? {
       description: tripDetail.overview.description,
       culturalValue: tripDetail.overview.cultural_value,
@@ -137,6 +147,32 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
         }))
       };
     }),
+    seasonPricing: (() => {
+      // Create unified season pricing by grabbing the first tourType's seasons (since they share prices conceptually now)
+      // or just all seasons if they aren't split by tour type.
+      const seasons = tripDetail.pricing || [];
+      // Prefer private seasons if available, else group, else all
+      let targetSeasons = seasons.filter(s => s.tour_type === 'private');
+      if (targetSeasons.length === 0) targetSeasons = seasons.filter(s => s.tour_type === 'group');
+      if (targetSeasons.length === 0) targetSeasons = seasons;
+
+      return targetSeasons.map(s => {
+        const getTierPrice = (key: string) => {
+          const tier = (s.tiers || []).find(t => t.label.toLowerCase().includes(key));
+          return tier ? parseFloat(tier.price) : 0;
+        };
+        return {
+          label: s.season_label,
+          single: getTierPrice('single'),
+          double: getTierPrice('double'),
+          triple: getTierPrice('triple'),
+        };
+      });
+    })(),
+    additionalRooms: {
+      seaView: tripDetail.additional_rooms?.sea_view ? parseFloat(tripDetail.additional_rooms.sea_view) : 0,
+      poolView: tripDetail.additional_rooms?.pool_view ? parseFloat(tripDetail.additional_rooms.pool_view) : 0,
+    },
     travelerPhotos: tripDetail.traveler_photos || [],
     hotels: await Promise.all(
       (tripDetail.hotels || []).map(async (link) => {

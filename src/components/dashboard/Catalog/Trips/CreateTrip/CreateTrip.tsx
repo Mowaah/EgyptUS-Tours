@@ -56,8 +56,15 @@ const EMPTY_VALUES: CreateTripValues = {
   inclusions: [],
   exclusions: [],
   pricing: {
-    privateTour: { basePrice: "", seasons: [{ dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" }] },
-    groupTour: { basePrice: "", seasons: [{ dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" }] },
+    privateTour: { seasons: [
+      { dateRange: "May - Sep", singleRoom: "", doubleRoom: "", tripleRoom: "" },
+      { dateRange: "Oct - Apr", singleRoom: "", doubleRoom: "", tripleRoom: "" }
+    ] },
+    groupTour: { seasons: [
+      { dateRange: "May - Sep", singleRoom: "", doubleRoom: "", tripleRoom: "" },
+      { dateRange: "Oct - Apr", singleRoom: "", doubleRoom: "", tripleRoom: "" }
+    ] },
+    additionalRooms: { seaView: "", poolView: "" },
   },
   itinerary: [{ title: { en: "", it: "", es: "" }, subtitle: { en: "", it: "", es: "" }, description: { en: "", it: "", es: "" }, highlights: [], image: undefined }],
   hotels: [],
@@ -242,7 +249,10 @@ function mapTripToFormValues(trip: any): CreateTripValues {
             tripleRoom: byLabel("triple"),
           };
         })
-      : [{ dateRange: "", singleRoom: "", doubleRoom: "", tripleRoom: "" }];
+      : [
+          { dateRange: "May - Sep", singleRoom: "", doubleRoom: "", tripleRoom: "" },
+          { dateRange: "Oct - Apr", singleRoom: "", doubleRoom: "", tripleRoom: "" }
+        ];
   };
 
   return {
@@ -270,8 +280,12 @@ function mapTripToFormValues(trip: any): CreateTripValues {
       es: asText(row?.translations?.es?.text || ""),
     })),
     pricing: {
-      privateTour: { basePrice: money(trip?.private_price) || "", seasons: seasonValues("private") },
-      groupTour: { basePrice: money(trip?.group_price) || "", seasons: seasonValues("group") },
+      privateTour: { seasons: seasonValues("private") },
+      groupTour: { seasons: seasonValues("group") },
+      additionalRooms: {
+        seaView: money(trip?.additional_rooms?.sea_view) || "",
+        poolView: money(trip?.additional_rooms?.pool_view) || "",
+      }
     },
     itinerary: asList(trip?.itinerary_days).map((day) => ({
       id: day?.id,
@@ -414,9 +428,12 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
       }))
   );
 
+  const hasPrivate = tourTypes.includes("private-tour");
+  const hasGroup = tourTypes.includes("group-tour");
+
   const seasonRows = [
-    ...(data.pricing?.privateTour?.seasons || []).map((season) => ({ ...season, tourType: "private" })),
-    ...(data.pricing?.groupTour?.seasons || []).map((season) => ({ ...season, tourType: "group" })),
+    ...(hasPrivate ? (data.pricing?.privateTour?.seasons || []).map((season) => ({ ...season, tourType: "private" })) : []),
+    ...(hasGroup ? (data.pricing?.groupTour?.seasons || []).map((season) => ({ ...season, tourType: "group" })) : []),
   ].filter((season) => season.dateRange || season.singleRoom || season.doubleRoom || season.tripleRoom);
 
   const userSlugEn = data.slug?.en ? slugify(data.slug.en) : "";
@@ -476,15 +493,10 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
     duration_nights: durationNights || 0,
     offers_private_tour: tourTypes.includes("private-tour"),
     offers_group_tour: tourTypes.includes("group-tour"),
-    private_price: money(data.pricing?.privateTour?.basePrice) || null,
-    group_price: money(data.pricing?.groupTour?.basePrice) || null,
-    base_price: Math.min(
-      Number(money(data.pricing?.groupTour?.basePrice) || Infinity),
-      Number(money(data.pricing?.privateTour?.basePrice) || Infinity)
-    ) === Infinity ? null : Math.min(
-      Number(money(data.pricing?.groupTour?.basePrice) || Infinity),
-      Number(money(data.pricing?.privateTour?.basePrice) || Infinity)
-    ).toString(),
+    additional_rooms: {
+      sea_view: money(data.pricing?.additionalRooms?.seaView) || null,
+      pool_view: money(data.pricing?.additionalRooms?.poolView) || null,
+    },
     rating_avg: data.starRating ? parseFloat(data.starRating) : null,
     currency_code: "£",
     availability_enabled: !!data.datesAvailability?.enabled,

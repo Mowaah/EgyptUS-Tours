@@ -109,8 +109,16 @@
   cursor: pointer;
   transition: all 0.2s;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: rgba(255, 102, 0, 0.05);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+    border-color: $gray-tailwind-300;
+    color: $gray-400;
+    background: transparent;
   }
 }
 
@@ -130,8 +138,16 @@
   cursor: pointer;
   transition: all 0.2s;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: #E55C00;
     border-color: #E55C00;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+    background: $gray-tailwind-300;
+    border-color: $gray-tailwind-300;
+    color: $gray-400;
   }
 }

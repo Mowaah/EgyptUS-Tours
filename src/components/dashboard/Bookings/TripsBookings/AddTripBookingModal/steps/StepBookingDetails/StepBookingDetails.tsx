@@ -27,69 +27,57 @@ export default function StepBookingDetails({ formData, onChange, errors = {}, ha
 
   const isFixedDates = hasFixedAvailability ?? Boolean(tripDetail?.availability && tripDetail.availability.length > 0);
 
-  const tripHotelSlug = tripDetail?.hotels?.[0]?.slug;
+  // Extract rooms directly from trip season pricing instead of hotel
+  const roomGroups: RoomGroup[] = useMemo(() => {
+    const baseSeason = tripDetail?.seasonPricing?.[0] || { single: 0, double: 0, triple: 0 };
+    const addOns = tripDetail?.additionalRooms || {};
+    
+    const options = [
+      { label: "Garden View", value: "garden", price: "Included", isFree: true },
+    ];
+    if (addOns.poolView) {
+      options.push({ label: "Pool View", value: "pool", price: `+$${addOns.poolView}`, isFree: false });
+    }
+    if (addOns.seaView) {
+      options.push({ label: "Sea View", value: "sea", price: `+$${addOns.seaView}`, isFree: false });
+    }
 
-  const { data: hotelDetail } = useSWR(
-    tripHotelSlug ? `/hotels/${tripHotelSlug}/` : null,
-    () => getFullHotelBySlug(tripHotelSlug as string)
-  );
-
-  // Group rooms by type from the HOTEL assigned to the trip
-  const groupedRooms = useMemo(() => {
-    if (!hotelDetail?.hotelRooms) return {};
-    const groups: Record<string, typeof hotelDetail.hotelRooms> = {};
-    for (const room of hotelDetail.hotelRooms) {
-      const category = room.category ? room.category.trim().replace(/\s*[Rr]oom\s*/i, "") : "";
-      const type = room.type ? room.type.trim() : "";
-      const groupKey = category ? `${category} ${type}`.trim() : type;
-      if (!groups[groupKey]) groups[groupKey] = [];
-      groups[groupKey].push(room);
+    const groups: RoomGroup[] = [];
+    if (baseSeason.single > 0) {
+      groups.push({
+        key: "single",
+        title: "Single Room",
+        subtitle: "1 person",
+        displayPrice: `$${baseSeason.single}`,
+        priceUnit: "/ night",
+        defaultOptionValue: "garden",
+        options,
+      });
+    }
+    if (baseSeason.double > 0) {
+      groups.push({
+        key: "double",
+        title: "Double Room",
+        subtitle: "2 persons",
+        displayPrice: `$${baseSeason.double}`,
+        priceUnit: "/ night",
+        defaultOptionValue: "garden",
+        options,
+      });
+    }
+    if (baseSeason.triple > 0) {
+      groups.push({
+        key: "triple",
+        title: "Triple Room",
+        subtitle: "3 persons",
+        displayPrice: `$${baseSeason.triple}`,
+        priceUnit: "/ night",
+        defaultOptionValue: "garden",
+        options,
+      });
     }
     return groups;
-  }, [hotelDetail]);
-
-  // Normalize into RoomGroup[] for RoomSelector
-  const roomGroups: RoomGroup[] = useMemo(() => {
-    return Object.entries(groupedRooms).map(([type, rooms]) => {
-      const roomList = rooms || [];
-      let baseRoom = roomList.find(r => r.view.toLowerCase().includes("garden"));
-      if (!baseRoom && roomList.length > 0) {
-        baseRoom = roomList.reduce((prev, curr) => (prev.pricePerNight < curr.pricePerNight ? prev : curr));
-      }
-      const options = roomList.map(r => {
-        const isBase = baseRoom ? r.id === baseRoom.id : false;
-        const diff = baseRoom ? r.pricePerNight - baseRoom.pricePerNight : 0;
-        return {
-          label: r.view,
-          value: r.id.toString(),
-          price: isBase ? "Included" : (diff > 0 ? `+$${diff}` : `-$${Math.abs(diff)}`),
-          isFree: isBase,
-        };
-      });
-
-      const rawTitle = type.trim();
-      const title = rawTitle.toLowerCase().endsWith("room")
-        ? rawTitle
-        : `${rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1)} Room`;
-
-      const lowerTitle = title.toLowerCase();
-      let capacity = 2;
-      if (lowerTitle.includes("single")) capacity = 1;
-      else if (lowerTitle.includes("double") || lowerTitle.includes("twin")) capacity = 2;
-      else if (lowerTitle.includes("triple")) capacity = 3;
-      else if (lowerTitle.includes("quad")) capacity = 4;
-
-      return {
-        key: type.toLowerCase(),
-        title,
-        subtitle: `${capacity} person${capacity > 1 ? "s" : ""}`,
-        displayPrice: `$${baseRoom!.pricePerNight}`,
-        priceUnit: "/ night",
-        options,
-        defaultOptionValue: baseRoom!.id.toString(),
-      };
-    });
-  }, [groupedRooms]);
+  }, [tripDetail]);
 
   const DEPARTURE_MONTHS = useMemo(() => {
     if (!tripDetail?.availability) return [];
@@ -159,11 +147,11 @@ export default function StepBookingDetails({ formData, onChange, errors = {}, ha
 
   return (
     <div className={styles.container}>
-      {tripDetail && !tripHotelSlug && (
-        <p className={styles.emptyText}>No hotel is assigned to this trip yet.</p>
+      {tripDetail && roomGroups.length === 0 && (
+        <p className={styles.emptyText}>No room pricing found for this trip.</p>
       )}
 
-      {tripHotelSlug && (
+      {tripDetail && roomGroups.length > 0 && (
         <RoomSelector
           rooms={roomGroups}
           counts={flatCounts}
@@ -171,9 +159,9 @@ export default function StepBookingDetails({ formData, onChange, errors = {}, ha
           onCountChange={handleCountChange}
           onCustomizationChange={(type, i, val) => handleCustomizationChange(type, i, val)}
           error={errors.rooms}
-          loading={!hotelDetail}
-          loadingMessage="Loading assigned hotel rooms..."
-          emptyMessage="No rooms found for this assigned hotel."
+          loading={!tripDetail}
+          loadingMessage="Loading trip rooms..."
+          emptyMessage="No rooms found for this trip."
         />
       )}
 

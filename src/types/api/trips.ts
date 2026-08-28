@@ -133,6 +133,7 @@ export interface TripDetail extends TripList {
   vip_experiences: TripVipExperience[];
   important_links: TripImportantLink[];
   pricing: TripSeasonPricing[];
+  additional_rooms?: { sea_view?: string | null; pool_view?: string | null; };
   images: string[];
   traveler_photos: string[];
   hotels: TripHotelLink[];

@@ -103,20 +103,28 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
 
   const [formData, setFormData] = useState<BookingData>(INITIAL_BOOKING_DATA);
 
-  // Calculate pricing based on trip rates
-  const baseRate = isGroupTrip
-    ? trip.groupPrice || trip.price || 0
-    : trip.privatePrice || trip.price || 0;
-  const roomPrices = { single: 5500, double: 4100, triple: 3500 };
-  const roomsTotal = Object.entries(formData.rooms || {}).reduce((acc, [key, count]) => {
-    const k = key.toLowerCase();
-    const c = count as number || 0;
-    if (k.includes("single")) return acc + c * roomPrices.single;
-    if (k.includes("double")) return acc + c * roomPrices.double;
-    if (k.includes("triple")) return acc + c * roomPrices.triple;
-    return acc + c * roomPrices.double; // fallback to double
+  // Calculate total based on room prices per night * nights (no base trip rate)
+  const nights = trip.duration?.nights || 1;
+  const baseSeason = trip.seasonPricing?.[0] || { single: 0, double: 0, triple: 0 };
+  const poolSurcharge = trip.additionalRooms?.poolView || 0;
+  const seaSurcharge = trip.additionalRooms?.seaView || 0;
+
+  const totalAmount = Object.entries(formData.roomCustomizations || {}).reduce((acc, [type, optionsList]) => {
+    const k = type.toLowerCase();
+    let basePrice = 0;
+    if (k.includes("single")) basePrice = baseSeason.single;
+    else if (k.includes("triple")) basePrice = baseSeason.triple;
+    else basePrice = baseSeason.double;
+
+    const roomSum = (optionsList || []).reduce((rAcc, opt) => {
+      let addon = 0;
+      if (opt === "pool") addon = poolSurcharge;
+      if (opt === "sea") addon = seaSurcharge;
+      return rAcc + (basePrice + addon);
+    }, 0);
+
+    return acc + roomSum * nights;
   }, 0);
-  const totalAmount = baseRate + roomsTotal;
   
   let depositAmount = totalAmount * 0.3;
   if (formData.startDate) {
@@ -200,8 +208,47 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
         if (k.includes("single")) singleCount += c;
         else if (k.includes("double") || k.includes("twin")) doubleCount += c;
         else if (k.includes("triple")) tripleCount += c;
-        else doubleCount += c; // fallback
       });
+      const roomSelections: Array<{ room_type: "single" | "double" | "triple"; view_label: string; quantity: number }> = [];
+      if (formData.roomCustomizations) {
+        const roomMap: Record<string, { room_type: "single" | "double" | "triple"; view_label: string; quantity: number }> = {};
+
+        for (const [type, optionsList] of Object.entries(formData.roomCustomizations)) {
+          const rawType = type.toLowerCase();
+          let mappedType: "single" | "double" | "triple" = "double";
+          if (rawType.includes("single")) {
+            mappedType = "single";
+          } else if (rawType.includes("triple")) {
+            mappedType = "triple";
+          } else {
+            mappedType = "double";
+          }
+
+          for (const opt of (optionsList as string[])) {
+            let viewLabel = "Garden View";
+            if (opt === "pool") {
+              viewLabel = "Pool View";
+            } else if (opt === "sea") {
+              viewLabel = "Sea View";
+            }
+
+            const key = `${mappedType}_${viewLabel}`;
+            if (!roomMap[key]) {
+              roomMap[key] = {
+                room_type: mappedType,
+                view_label: viewLabel,
+                quantity: 0,
+              };
+            }
+            roomMap[key].quantity += 1;
+          }
+        }
+        roomSelections.push(...Object.values(roomMap));
+      }
+
+      const calculatedSingle = (formData.roomCustomizations?.single || []).length || singleCount;
+      const calculatedDouble = (formData.roomCustomizations?.double || []).length || doubleCount;
+      const calculatedTriple = (formData.roomCustomizations?.triple || []).length || tripleCount;
 
       const payload = {
         name: formData.name.trim(),
@@ -215,10 +262,11 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
         children: formData.children,
         infants: formData.infants,
         rooms: {
-          single: singleCount,
-          double: doubleCount,
-          triple: tripleCount,
+          single: calculatedSingle,
+          double: calculatedDouble,
+          triple: calculatedTriple,
         },
+        room_selections: roomSelections.length > 0 ? roomSelections : undefined,
         departure_month: isFixedDates ? formData.departureMonth : undefined,
         departure_date_id: isFixedDates && formData.departureDateId ? Number(formData.departureDateId) || undefined : undefined,
         special_requests: formData.specialRequests,

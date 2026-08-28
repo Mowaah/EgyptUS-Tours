@@ -70,7 +70,7 @@
 
 .basePriceWrapper {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 16px;
   width: 100%;
 }
@@ -83,15 +83,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 44px;
   height: 44px;
+  padding: 0 16px;
   background: $primary;
   border-radius: 100px;
   border: none;
   cursor: pointer;
   transition: filter 0.2s;
   flex-shrink: 0;
-  margin-bottom: 6px;
+  color: white; /* Make sure text is visible */
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
 
   &:hover {
     filter: brightness(0.9);

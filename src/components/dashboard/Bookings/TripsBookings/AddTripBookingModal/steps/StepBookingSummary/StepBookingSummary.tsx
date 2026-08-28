@@ -20,11 +20,7 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
 
   const activePreview = propPreviewData || localPreviewData;
 
-  const tripHotelSlug = tripDetail?.hotels?.[0]?.slug;
-  const { data: hotelDetail } = useSWR(
-    tripHotelSlug ? `/hotels/${tripHotelSlug}/` : null,
-    () => getFullHotelBySlug(tripHotelSlug as string)
-  );
+
 
   const formatDateToYMD = (dateString?: string) => {
     if (!dateString) return null;
@@ -38,7 +34,6 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
 
   useEffect(() => {
     if (!formData || !formData.tripId) return;
-    if (tripHotelSlug && !hotelDetail) return; // wait for hotel detail to correctly price rooms
 
     let isMounted = true;
     setLoading(true);
@@ -64,7 +59,7 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
     const totalCustomizedRooms = Object.values(formData.roomCustomizations || {}).reduce((sum, ids) => sum + ids.length, 0);
     const resolvedSingle = (singleCount > 0 || doubleCount > 0 || tripleCount > 0) ? singleCount : (totalCustomizedRooms || 1);
 
-    let nights = 0;
+    let nights = 1;
     if (formData.startDate && formData.endDate) {
       const start = new Date(formData.startDate);
       const end = new Date(formData.endDate);
@@ -74,23 +69,47 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
       }
     }
 
-    const roomSelections = [];
-    if (hotelDetail?.hotelRooms && formData.roomCustomizations) {
-      for (const [type, roomIds] of Object.entries(formData.roomCustomizations)) {
-        for (const roomId of roomIds) {
-          const room = hotelDetail.hotelRooms.find((r: any) => r.id.toString() === roomId.toString());
-          if (room) {
-            const rawType = type.toLowerCase();
-            const mappedType = rawType.includes("single") ? "single" : rawType.includes("triple") ? "triple" : "double";
-            roomSelections.push({
-              room_type: mappedType,
-              view_label: room.view || room.category || type,
-              quantity: 1,
-              unit_price: room.pricePerNight * nights
-            });
+    const roomSelections: Array<{ room_type: "single" | "double" | "triple"; view_label: string; quantity: number; unit_price: number }> = [];
+    if (formData.roomCustomizations) {
+      const baseSeason = tripDetail?.seasonPricing?.[0] || { single: 0, double: 0, triple: 0 };
+      const roomMap: Record<string, { room_type: "single" | "double" | "triple"; view_label: string; quantity: number; unit_price: number }> = {};
+
+      for (const [type, optionsList] of Object.entries(formData.roomCustomizations)) {
+        const rawType = type.toLowerCase();
+        let basePrice = 0;
+        let mappedType: "single" | "double" | "triple" = "double";
+        if (rawType.includes("single")) {
+          basePrice = baseSeason.single;
+          mappedType = "single";
+        } else if (rawType.includes("triple")) {
+          basePrice = baseSeason.triple;
+          mappedType = "triple";
+        } else {
+          basePrice = baseSeason.double;
+          mappedType = "double";
+        }
+
+        for (const opt of (optionsList as string[])) {
+          let viewLabel = "Garden View";
+          if (opt === "pool") {
+            viewLabel = "Pool View";
+          } else if (opt === "sea") {
+            viewLabel = "Sea View";
           }
+
+          const key = `${mappedType}_${viewLabel}`;
+          if (!roomMap[key]) {
+            roomMap[key] = {
+              room_type: mappedType,
+              view_label: viewLabel,
+              quantity: 0,
+              unit_price: basePrice
+            };
+          }
+          roomMap[key].quantity += 1;
         }
       }
+      roomSelections.push(...Object.values(roomMap));
     }
 
     const payload = {
@@ -156,24 +175,7 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
   let total = parseFloat(activePreview?.total_price || activePreview?.price_breakdown?.total || activePreview?.total || 0);
   const discount = activePreview?.discount || activePreview?.price_breakdown?.discount || 0;
 
-  const basePrice = formData?.tourType === "group" 
-    ? parseFloat(tripDetail?.groupPrice || 0) 
-    : parseFloat(tripDetail?.privatePrice || tripDetail?.price || 0);
-    
-  const tripTotal = basePrice;
-  
-  const hasTripLineItem = lineItems.some(item => 
-    item.description?.toLowerCase().includes("tour") || 
-    item.description?.toLowerCase().includes("trip") ||
-    item.description === tripName
-  );
 
-  // If the backend didn't include the trip price in the total (e.g. if the total is unreasonably small compared to base price),
-  // we add it to the grand total. Since rooms alone shouldn't exceed the trip price usually, we can safely just add it if we suspect it's missing.
-  // Actually, we'll just always assume the backend preview only calculated room/extras if it's a trip booking bug.
-  if (tripTotal > 0 && total < tripTotal && !hasTripLineItem) {
-    total += tripTotal;
-  }
 
   const formatPrice = (price: number | string) => {
     const num = typeof price === "string" ? parseFloat(price) : price;
@@ -256,15 +258,6 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
             ) : (
               <>
                 <div className={styles.priceItemsContainer}>
-                  {/* Manually render trip base price if it's missing from the backend line items */}
-                  {tripTotal > 0 && !hasTripLineItem && (
-                    <div className={styles.priceRow}>
-                      <span className={styles.priceLabel}>
-                        {tripName} ({formData?.tourType === "group" ? "Group Tour" : "Private Tour"})
-                      </span>
-                      <span className={styles.priceValue}>{formatPrice(tripTotal)}</span>
-                    </div>
-                  )}
 
                   {lineItems.map((item: any, idx: number) => {
                     const roomType = item.room_type ? (item.room_type.charAt(0).toUpperCase() + item.room_type.slice(1)) : "";
@@ -273,7 +266,7 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
                     return (
                       <div key={idx} className={styles.priceRow}>
                         <span className={styles.priceLabel}>
-                          {item.quantity > 1 ? `${item.quantity} × ` : ""}{label}
+                          {item.quantity > 1 ? `${item.quantity}x ` : ""}{label}
                         </span>
                         <span className={styles.priceValue}>{formatPrice(price)}</span>
                       </div>

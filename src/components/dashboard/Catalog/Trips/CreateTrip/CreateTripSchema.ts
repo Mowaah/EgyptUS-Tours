@@ -59,7 +59,6 @@ export const createTripSchema = z
       .object({
         privateTour: z
           .object({
-            basePrice: z.string().optional(),
             seasons: z
               .array(
                 z.object({
@@ -74,7 +73,6 @@ export const createTripSchema = z
           .optional(),
         groupTour: z
           .object({
-            basePrice: z.string().optional(),
             seasons: z
               .array(
                 z.object({
@@ -85,6 +83,12 @@ export const createTripSchema = z
                 })
               )
               .optional(),
+          })
+          .optional(),
+        additionalRooms: z
+          .object({
+            seaView: z.string().optional(),
+            poolView: z.string().optional(),
           })
           .optional(),
       })
@@ -217,19 +221,6 @@ export const createTripSchema = z
     }
 
     if (isPrivate) {
-      const basePrice = data.pricing?.privateTour?.basePrice;
-      if (!basePrice || String(basePrice).trim() === "") {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["pricing", "privateTour", "basePrice"],
-          message: "Private tour base price is required",
-        });
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["pricing"],
-          message: "Private tour base price is required",
-        });
-      }
 
       const seasons = data.pricing?.privateTour?.seasons || [];
       const validSeasons = seasons.filter(
@@ -265,19 +256,6 @@ export const createTripSchema = z
     }
 
     if (isGroup) {
-      const basePrice = data.pricing?.groupTour?.basePrice;
-      if (!basePrice || String(basePrice).trim() === "") {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["pricing", "groupTour", "basePrice"],
-          message: "Group tour base price is required",
-        });
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["pricing"],
-          message: "Group tour base price is required",
-        });
-      }
 
       const seasons = data.pricing?.groupTour?.seasons || [];
       const validSeasons = seasons.filter(

@@ -41,60 +41,72 @@ export default function TripBookingWidget({ trip }: TripBookingWidgetProps) {
           </p>
           <div className={styles.divider} />
 
-          <div className={styles.tier}>
-            <div>
-              <span className={styles.tierName}>Private Tour</span>
-              <span className={styles.tierHint}>Maximum flexibility</span>
+          {trip.privatePrice != null && (
+            <div className={styles.tier}>
+              <div>
+                <span className={styles.tierName}>Private Tour</span>
+                <span className={styles.tierHint}>Maximum flexibility</span>
+              </div>
+              <span className={styles.tierPrice}>{formatPrice(trip.privatePrice)}</span>
             </div>
-            <span className={styles.tierPrice}>{formatPrice(trip.privatePrice)}</span>
-          </div>
+          )}
 
-          <div className={styles.tier}>
-            <div>
-              <span className={styles.tierName}>Group Tour</span>
-              <span className={styles.tierHint}>Up to 12 travelers</span>
+          {trip.groupPrice != null && (
+            <div className={styles.tier}>
+              <div>
+                <span className={styles.tierName}>Group Tour</span>
+                <span className={styles.tierHint}>Up to 12 travelers</span>
+              </div>
+              <span className={styles.tierPrice}>{formatPrice(trip.groupPrice)}</span>
             </div>
-            <span className={styles.tierPrice}>{formatPrice(trip.groupPrice)}</span>
-          </div>
+          )}
 
           <div className={styles.actions}>
-            <Link href={`/trips/${trip.id}/book-private`} className={styles.cta}>
-              <Button
-                variant="secondary"
-                fullWidth
-                icon={<Image src="/images/profile.svg" alt="" width={24} height={24} />}
-                iconPosition="right"
-              >
-                Book Private Tour
-              </Button>
-            </Link>
-            <Link href={`/trips/${trip.id}/book-group`} className={styles.cta}>
-              <Button
-                variant="secondary-outline"
-                fullWidth
-                icon={<Image src="/images/profile2.svg" alt="" width={24} height={24} />}
-                iconPosition="right"
-              >
-                Book Group Tour
-              </Button>
-            </Link>
+            {trip.offersPrivateTour !== false && (
+              <Link href={`/trips/${trip.id}/book-private`} className={styles.cta}>
+                <Button
+                  variant="secondary"
+                  fullWidth
+                  icon={<Image src="/images/profile.svg" alt="" width={24} height={24} />}
+                  iconPosition="right"
+                >
+                  Book Private Tour
+                </Button>
+              </Link>
+            )}
+            {trip.offersGroupTour !== false && (
+              <Link href={`/trips/${trip.id}/book-group`} className={styles.cta}>
+                <Button
+                  variant="secondary-outline"
+                  fullWidth
+                  icon={<Image src="/images/profile2.svg" alt="" width={24} height={24} />}
+                  iconPosition="right"
+                >
+                  Book Group Tour
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
 
-        <Link
-          href={`/trips/${trip.id}/book-private`}
-          className={`${styles.mobileBtn} ${styles.mobileBtnFilled}`}
-        >
-          <span>{mobileLabel(privatePrice, "Book Private Tour")}</span>
-          <Image src="/images/profile.svg" alt="" width={24} height={24} />
-        </Link>
-        <Link
-          href={`/trips/${trip.id}/book-group`}
-          className={`${styles.mobileBtn} ${styles.mobileBtnOutline}`}
-        >
-          <span>{mobileLabel(groupPrice, "Book Group Tour")}</span>
-          <Image src="/images/profile2.svg" alt="" width={24} height={24} />
-        </Link>
+        {trip.offersPrivateTour !== false && (
+          <Link
+            href={`/trips/${trip.id}/book-private`}
+            className={`${styles.mobileBtn} ${styles.mobileBtnFilled}`}
+          >
+            <span>{mobileLabel(privatePrice, "Book Private Tour")}</span>
+            <Image src="/images/profile.svg" alt="" width={24} height={24} />
+          </Link>
+        )}
+        {trip.offersGroupTour !== false && (
+          <Link
+            href={`/trips/${trip.id}/book-group`}
+            className={`${styles.mobileBtn} ${styles.mobileBtnOutline}`}
+          >
+            <span>{mobileLabel(groupPrice, "Book Group Tour")}</span>
+            <Image src="/images/profile2.svg" alt="" width={24} height={24} />
+          </Link>
+        )}
       </div>
     </aside>
   );
