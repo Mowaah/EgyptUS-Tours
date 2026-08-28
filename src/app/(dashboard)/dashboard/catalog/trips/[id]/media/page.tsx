@@ -10,7 +10,7 @@ interface TripMediaItem {
   image_url?: string;
   caption?: string;
   translations?: {
-    en?: {
+    [key: string]: {
       alt?: string;
       title?: string;
       caption?: string;
@@ -18,13 +18,16 @@ interface TripMediaItem {
   };
 }
 
+import { getLangKey } from "@/components/dashboard/shared/i18n";
+
 export default function TripMediaPage() {
-  const { trip, loading } = useTripDetailContext();
+  const { trip, loading, activeLang } = useTripDetailContext();
 
   if (loading || !trip) {
     return <div style={{ padding: "24px" }}>Loading...</div>;
   }
 
+  const langKey = getLangKey(activeLang);
   const mediaItems: TripMediaItem[] = trip.media_items || [];
   const heroImageUrl = trip.hero_image_url;
 
@@ -45,7 +48,7 @@ export default function TripMediaPage() {
 
   mediaItems.forEach((item, idx: number) => {
     const kindLabel = item.kind === "hero" ? "Hero Image" : item.kind === "traveler_photo" ? "Traveler Photo" : `Gallery Photo ${idx + 1}`;
-    const translated = item.translations?.en || {};
+    const translated = item.translations?.[langKey] || item.translations?.en || {};
     cards.push({
       id: item.id || idx,
       title: kindLabel,
