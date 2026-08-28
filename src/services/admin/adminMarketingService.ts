@@ -70,6 +70,10 @@ export async function getAdminMarketingCategories(): Promise<any> {
   return await adminDataClient.get('/marketing/categories/');
 }
 
+export async function createAdminMarketingCategory(payload: any): Promise<any> {
+  return await adminDataClient.post('/marketing/categories/', payload);
+}
+
 export async function createAdminBlog(payload: any): Promise<any> {
   return await adminDataClient.post('/marketing/blogs/', payload);
 }

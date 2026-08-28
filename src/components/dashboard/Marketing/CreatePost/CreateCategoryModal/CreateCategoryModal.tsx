@@ -15,7 +15,7 @@ interface CreateCategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
   categories: CategoryItem[];
-  onCreate: (categoryName: string) => void;
+  onCreate: (categoryName: string) => Promise<void> | void;
   onDelete: (categoryValue: string) => void;
 }
 
@@ -27,13 +27,22 @@ export default function CreateCategoryModal({ isOpen, onClose, categories, onCre
     setMounted(true);
   }, []);
 
+  const [isCreating, setIsCreating] = useState(false);
+
   if (!isOpen || !mounted) return null;
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (categoryName.trim()) {
-      onCreate(categoryName.trim());
-      setCategoryName("");
-      onClose();
+      setIsCreating(true);
+      try {
+        await onCreate(categoryName.trim());
+        setCategoryName("");
+        onClose();
+      } catch (err) {
+        console.error("Failed to create category", err);
+      } finally {
+        setIsCreating(false);
+      }
     }
   };
 
@@ -75,9 +84,9 @@ export default function CreateCategoryModal({ isOpen, onClose, categories, onCre
         <ModalFooter
           secondaryLabel="Cancel"
           secondaryOnClick={onClose}
-          primaryLabel="Create Category"
+          primaryLabel={isCreating ? "Creating..." : "Create Category"}
           primaryOnClick={handleCreate}
-          primaryDisabled={!categoryName.trim()}
+          primaryDisabled={!categoryName.trim() || isCreating}
         />
       </div>
     </div>,

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import PostDetails, { PostData } from "@/components/dashboard/shared/PostDetails/PostDetails";
 import { getAdminArticleById, getAdminBlogById } from "@/services/admin/adminMarketingService";
 import type { ContentType } from "../types";
+import { getAdminUsers } from "@/services/admin/adminUsersService";
 
 interface MarketingContentDetailsProps {
   contentType: ContentType;
@@ -24,17 +25,48 @@ export function MarketingContentDetails({ contentType, postId }: MarketingConten
   useEffect(() => {
     async function loadPost() {
       try {
-        const data = contentType === "articles" 
-          ? await getAdminArticleById(postId) 
-          : await getAdminBlogById(postId);
+        const [data, usersData] = await Promise.all([
+          contentType === "articles" ? getAdminArticleById(postId) : getAdminBlogById(postId),
+          getAdminUsers().catch(() => ({ results: [] }))
+        ]);
+        
         const translation = data.translations?.en ?? data;
+        
+        const formatDate = (dateString?: string) => {
+          if (!dateString) return "N/A";
+          const date = new Date(dateString);
+          if (Number.isNaN(date.getTime())) return dateString;
+          return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit'
+          });
+        };
+
+        let authorName = data.display_author_name || "Admin";
+        if (data.author && typeof data.author === "object") {
+          authorName = data.author.display_name || data.author.full_name || data.author.first_name || data.author.email || authorName;
+        } else {
+          // Find user by ID in usersData
+          const authorId = data.author_id || data.author;
+          if (authorId) {
+            const users = Array.isArray(usersData) ? usersData : (usersData?.results ?? []);
+            const user = users.find((u: any) => String(u.staff_profile_id) === String(authorId) || String(u.id) === String(authorId));
+            if (user) {
+              authorName = user.full_name || user.email || authorName;
+            }
+          }
+        }
+
         setPost({
           id: String(data.id || postId),
           title: translation.title || data.title || "Untitled",
           status: data.status ? (data.status.charAt(0).toUpperCase() + data.status.slice(1).toLowerCase()) : "Draft",
-          date: data.published_at || data.created_at || "N/A",
-          author: data.display_author_name || "Admin",
-          publishedDate: data.published_at || "N/A",
+          date: formatDate(data.published_at || data.created_at),
+          author: authorName,
+          publishedDate: formatDate(data.published_at),
           category: data.category?.name || String(data.category ?? "Uncategorized"),
           thumbnailTitle: translation.title || data.title,
           thumbnailAlt: translation.title || data.title,

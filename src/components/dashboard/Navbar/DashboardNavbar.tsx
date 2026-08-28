@@ -27,8 +27,10 @@ interface DashboardNavbarProps {
   breadcrumbTrail?: BreadcrumbSegment[];
   primaryAction?: ActionConfig;
   secondaryAction?: ActionConfig;
+  tertiaryAction?: ActionConfig;
   onPrimaryAction?: () => void;
   onSecondaryAction?: () => void;
+  onTertiaryAction?: () => void;
   children?: React.ReactNode;
   hideFilterButton?: boolean;
   hideSearch?: boolean;
@@ -65,8 +67,10 @@ export default function DashboardNavbar({
   breadcrumbTrail,
   primaryAction,
   secondaryAction,
+  tertiaryAction,
   onPrimaryAction,
   onSecondaryAction,
+  onTertiaryAction,
   children,
   hideFilterButton,
   hideSearch,
@@ -113,6 +117,7 @@ export default function DashboardNavbar({
   const visibleTrail = breadcrumbTrail ?? pageCopy.breadcrumbTrail;
   const visiblePrimaryAction = primaryAction ?? pageCopy.primaryAction;
   const visibleSecondaryAction = secondaryAction ?? pageCopy.secondaryAction;
+  const visibleTertiaryAction = tertiaryAction ?? (pageCopy as any).tertiaryAction;
   const searchPlaceholderStr =
     searchPlaceholder ?? pageCopy.searchPlaceholder ?? "Search bookings, customers...";
   const isFilterHidden = hideFilterButton ?? pageCopy.hideFilterButton;
@@ -202,14 +207,44 @@ export default function DashboardNavbar({
                 </label>
               )}
 
+              {visibleTertiaryAction ? (
+                <button
+                  type={visibleTertiaryAction.type || "button"}
+                  form={visibleTertiaryAction.form}
+                  className={getActionClass(visibleTertiaryAction, styles.tertiaryActionButton)}
+                  onClick={onTertiaryAction}
+                  disabled={visibleTertiaryAction.disabled || visibleTertiaryAction.loading}
+                >
+                  {visibleTertiaryAction.loading && (
+                    <span className={styles.loadingSpinner} aria-hidden="true" />
+                  )}
+                  {visibleTertiaryAction.iconSrc && !visibleTertiaryAction.loading && !visibleTertiaryAction.hideIcon && (
+                    <Image
+                      src={visibleTertiaryAction.iconSrc}
+                      alt=""
+                      width={24}
+                      height={24}
+                      aria-hidden
+                      className={styles.actionIcon}
+                      style={visibleTertiaryAction.iconRotation ? { transform: `rotate(${visibleTertiaryAction.iconRotation}deg)` } : undefined}
+                    />
+                  )}
+                  {visibleTertiaryAction.label}
+                </button>
+              ) : null}
+
               {visibleSecondaryAction ? (
                 <button
                   type={visibleSecondaryAction.type || "button"}
                   form={visibleSecondaryAction.form}
                   className={getActionClass(visibleSecondaryAction, styles.secondaryActionButton)}
                   onClick={onSecondaryAction}
+                  disabled={visibleSecondaryAction.disabled || visibleSecondaryAction.loading}
                 >
-                  {visibleSecondaryAction.iconSrc && (
+                  {visibleSecondaryAction.loading && (
+                    <span className={styles.loadingSpinner} aria-hidden="true" />
+                  )}
+                  {visibleSecondaryAction.iconSrc && !visibleSecondaryAction.loading && !visibleSecondaryAction.hideIcon && (
                     <Image
                       src={visibleSecondaryAction.iconSrc}
                       alt=""

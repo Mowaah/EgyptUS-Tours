@@ -29,8 +29,10 @@ import {
   createAdminArticle,
   createAdminBlog,
   updateAdminArticle,
-  updateAdminBlog
+  updateAdminBlog,
+  createAdminMarketingCategory
 } from "@/services/admin/adminMarketingService";
+import { getAdminUsers } from "@/services/admin/adminUsersService";
 
 import { fileToBase64 } from "@/utils/imageUtils";
 
@@ -38,9 +40,10 @@ interface MarketingCreatePostProps {
   contentType: ContentType;
   postId?: string;
   onDirtyChange?: (isDirty: boolean) => void;
+  onStatusChange?: (status: string) => void;
 }
 
-export function MarketingCreatePost({ contentType, postId, onDirtyChange }: MarketingCreatePostProps) {
+export function MarketingCreatePost({ contentType, postId, onDirtyChange, onStatusChange }: MarketingCreatePostProps) {
   const [thumbnailLang, setThumbnailLang] = useState<Language>("English");
   const [imageLang, setImageLang] = useState<Language>("English");
   const [contentLang, setContentLang] = useState<Language>("English");
@@ -49,6 +52,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
 
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [categories, setCategories] = useState<{ label: string; value: string }[]>([]);
+  const [authors, setAuthors] = useState<{ label: string; value: string }[]>([]);
   const [showToast, setShowToast] = useState(false);
   const [showPublishModal, setShowPublishModal] = useState(false);
 
@@ -65,6 +69,20 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
         setCategories(items.map((c: any) => ({ label: c.name, value: String(c.id) })));
       })
       .catch(() => { });
+
+    getAdminUsers()
+      .then((data: any) => {
+        const items = Array.isArray(data) ? data : (data?.results ?? []);
+        // Map authors using their staff_profile_id since the Blog author field is a ForeignKey to StaffProfile
+        setAuthors(
+          items
+            .filter((u: any) => u.staff_profile_id != null)
+            .map((u: any) => {
+              return { label: u.full_name || u.email || String(u.id), value: String(u.staff_profile_id) };
+            })
+        );
+      })
+      .catch(() => { });
   }, []);
 
   const router = useRouter();
@@ -76,12 +94,13 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
     handleSubmit,
     control,
     reset,
+    getValues,
     formState: { errors, isDirty, dirtyFields },
   } = useForm<MarketingCreatePostValues>({
     resolver: zodResolver(marketingCreatePostSchema),
     defaultValues: {
       category: "",
-      author: "admin",
+      author: "",
       status: "Draft",
       autoApply: false,
       translations: {
@@ -130,14 +149,24 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
             slug: trans[code]?.slug || "",
           });
 
+          const normalizedStatus = data.status ? data.status.charAt(0).toUpperCase() + data.status.slice(1) : "Draft";
+          
+          if (onStatusChange) {
+            onStatusChange(normalizedStatus);
+          }
+
           reset({
             category: String(data.category_id ?? data.category?.id ?? ""),
-            author: "admin",
-            status: data.status ? data.status.charAt(0).toUpperCase() + data.status.slice(1) : "Draft",
+            author: String(data.author_id ?? data.author?.id ?? data.author ?? ""),
+            status: normalizedStatus,
             thumbnailFile: getFullImageUrl(data.hero_image),
             imageFile: getFullImageUrl(data.featured_image),
             autoApply: false,
-            scheduledDate: data.published_at ? new Date(data.published_at).toISOString().split('T')[0] : "",
+            scheduledDate: data.scheduled_at
+              ? new Date(data.scheduled_at).toISOString().split('T')[0]
+              : (data.status?.toLowerCase() === "scheduled" && data.published_at
+                ? new Date(data.published_at).toISOString().split('T')[0]
+                : ""),
             translations: {
               en: buildLang("en"),
               it: buildLang("it"),
@@ -157,12 +186,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
       const submitter = (e?.nativeEvent as SubmitEvent)?.submitter as HTMLButtonElement | undefined;
       const btnText = (submitter?.innerText || submitter?.textContent || "").toLowerCase();
 
-      let computedStatus = "published";
-      if (btnText.includes("draft") || btnText.includes("save draft") || btnText.includes("save as draft")) {
-        computedStatus = "draft";
-      } else if (data.scheduledDate) {
-        computedStatus = "scheduled";
-      }
+
 
       let hero_image: string | null | undefined = undefined;
       if (data.thumbnailFile instanceof File) {
@@ -188,6 +212,17 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
         if (!Number.isNaN(d.getTime())) {
           formattedScheduledAt = d.toISOString();
         }
+      }
+
+      let computedStatus = "published";
+      const btnTextLower = btnText.toLowerCase();
+      if (btnTextLower.includes("draft") || btnTextLower.includes("save draft") || btnTextLower.includes("save as draft")) {
+        computedStatus = "draft";
+      } else if (btnTextLower === "publish now" || btnTextLower === "publish post") {
+        computedStatus = "published";
+        formattedScheduledAt = null;
+      } else if (data.scheduledDate) {
+        computedStatus = "scheduled";
       }
 
       const extractLang = (code: "en" | "it" | "es") => {
@@ -220,9 +255,14 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
       if (hero_image !== undefined) payload.hero_image = hero_image;
       if (featured_image !== undefined) payload.featured_image = featured_image;
 
-      const categoryIdNum = Number(data.category);
-      if (!Number.isNaN(categoryIdNum) && categoryIdNum > 0) {
-        payload.category_id = categoryIdNum;
+      if (data.category) {
+        const categoryIdNum = Number(data.category);
+        payload.category_id = !Number.isNaN(categoryIdNum) ? categoryIdNum : data.category;
+      }
+
+      if (data.author) {
+        const authorIdNum = Number(data.author);
+        payload.author_id = !Number.isNaN(authorIdNum) ? authorIdNum : data.author;
       }
 
       if (postId) {
@@ -451,9 +491,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
                   label="Author"
                   options={[
                     { label: "Select Author .....", value: "", disabled: true },
-                    { label: "Admin User", value: "admin" },
-                    { label: "John Doe", value: "john" },
-                    { label: "Jane Smith", value: "jane" },
+                    ...authors
                   ]}
                   value={value}
                   onChange={onChange}
@@ -490,10 +528,26 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange }: Mark
         isOpen={isCategoryModalOpen}
         onClose={() => setIsCategoryModalOpen(false)}
         categories={categories}
-        onCreate={(newCat) => {
-          const newCategory = { label: newCat, value: newCat.toLowerCase().replace(/\s+/g, '-') };
-          setCategories((prev) => [...prev, newCategory]);
-          setShowToast(true);
+        onCreate={async (newCat) => {
+          try {
+            const response = await createAdminMarketingCategory({ name: newCat });
+            const newCategory = { label: response.name || newCat, value: String(response.id) };
+            setCategories((prev) => [...prev, newCategory]);
+            
+            // Automatically select the new category
+            const currentValues = getValues();
+            reset({ ...currentValues, category: String(response.id) });
+            
+            setShowToast(true);
+          } catch (error) {
+            console.error("Failed to create category", error);
+            // Fallback for UI if backend creation fails or isn't supported yet
+            const fallbackVal = newCat.toLowerCase().replace(/\s+/g, '-');
+            setCategories((prev) => [...prev, { label: newCat, value: fallbackVal }]);
+            const currentValues = getValues();
+            reset({ ...currentValues, category: fallbackVal });
+            setShowToast(true);
+          }
         }}
         onDelete={(catValue) => {
           setCategories((prev) => prev.filter((c) => c.value !== catValue));

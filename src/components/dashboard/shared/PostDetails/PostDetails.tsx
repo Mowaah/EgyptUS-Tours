@@ -111,7 +111,19 @@ export default function PostDetails({ type, postId, post }: PostDetailsProps) {
             post.status.toLowerCase() === "scheduled" ? "blue" :
             "gray"
           }
-          subtitleElements={[`Post ID: ${post.id}`, post.date]}
+          subtitleElements={[
+            `Post ID: ${post.id}`,
+            post.date && post.date !== "N/A"
+              ? new Date(post.date).toLocaleString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true,
+                })
+              : post.date,
+          ]}
           secondaryAction={{
             label: "Edit",
             icon: "/images/dashboard/edit.svg",
