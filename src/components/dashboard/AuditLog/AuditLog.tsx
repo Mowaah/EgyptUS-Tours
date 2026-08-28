@@ -389,6 +389,7 @@ export default function AuditLog() {
           onPageChange={setPageIndex}
           onPageSizeChange={setPageSize}
           defaultPageSize={10}
+        isLoading={isLoading}
         />
       </TablePanel>
 

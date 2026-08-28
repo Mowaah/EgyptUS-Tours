@@ -197,6 +197,7 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
         onPageChange={setPageIndex}
         onPageSizeChange={setPageSize}
         defaultPageSize={10}
+        isLoading={isLoading}
       />
       
       <ReassignModal

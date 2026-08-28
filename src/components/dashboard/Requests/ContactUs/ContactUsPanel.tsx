@@ -104,6 +104,7 @@ export default function ContactUsPanel({ searchQuery = "" }: ContactUsPanelProps
           onPageChange={(p) => setPage(p + 1)}
           onPageSizeChange={setPageSize}
           defaultPageSize={10}
+        isLoading={loading}
         />
       ) : (
         <div style={{ padding: "2rem", textAlign: "center", color: "#666" }}>

@@ -60,7 +60,8 @@ export default function BookingHistoryPanel({ customerId }: { customerId: string
         data={data}
         columns={bookingHistoryColumns as any}
         getRowId={(row: any) => row.id.toString()}
-      />
+      isLoading={isLoading}
+        />
     </TablePanel>
   );
 }

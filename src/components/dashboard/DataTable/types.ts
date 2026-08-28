@@ -36,4 +36,6 @@ export interface DataTableProps<T> {
   onPageChange?: (pageIndex: number) => void;
   onPageSizeChange?: (pageSize: number) => void;
   className?: string;
+  /** When true, suppresses the empty state so the table doesn't flash "No Results" during a fetch. */
+  isLoading?: boolean;
 }

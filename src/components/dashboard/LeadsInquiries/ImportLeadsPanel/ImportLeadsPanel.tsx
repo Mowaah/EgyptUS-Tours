@@ -173,6 +173,7 @@ export function ImportLeadsPanel({
             setDeleteModalOpen(true);
           }
         })}
+        isLoading={isLoading}
       />
 
       <ReassignModal 

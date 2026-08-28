@@ -6,7 +6,6 @@ import { DataTable } from "@/components/dashboard/DataTable";
 import {
   TablePanel,
   TablePanelFilterBar,
-  TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
 import useSWR from "swr";
 import { getTransportationBookings, reassignBooking, sendTransportationBookingReminder } from "@/services/admin/adminBookingsService";
@@ -103,7 +102,7 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
   const [reassignModalOpen, setReassignModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any>(null);
 
-  if (totalCount === 0 && (searchQuery || Object.values(appliedFilters).some(v => v !== "All"))) {
+  if (!isLoading && totalCount === 0 && (searchQuery || Object.values(appliedFilters).some(v => v !== "All"))) {
     return (
       <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
     );
@@ -127,16 +126,8 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
         ariaLabel="Transportation bookings table"
         title="Transportation"
         iconSrc="/images/dashboard/sidebar/transportation.svg"
-        headerActions={
-          <>
-            <TablePanelHeaderButton iconSrc="/images/dashboard/filter.svg">
-              Filters
-            </TablePanelHeaderButton>
-            <TablePanelHeaderButton iconSrc="/images/dashboard/export.svg">
-              Export Data
-            </TablePanelHeaderButton>
-          </>
-        }
+        showFilters
+        showExport
         toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
       >
         <DataTable
@@ -168,6 +159,7 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
           onPageChange={setPageIndex}
           onPageSizeChange={setPageSize}
           defaultPageSize={10}
+          isLoading={isLoading}
         />
       </TablePanel>
 

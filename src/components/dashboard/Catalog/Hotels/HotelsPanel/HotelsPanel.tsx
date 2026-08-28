@@ -199,6 +199,7 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
             }
           })
         }
+        isLoading={hotelsLoading}
       />
       <DashboardConfirmationModal
         open={confirmModal.open}

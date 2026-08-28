@@ -6,7 +6,6 @@ import { DataTable } from "@/components/dashboard/DataTable";
 import {
   TablePanel,
   TablePanelFilterBar,
-  TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
 import useSWR from "swr";
 import { getTripBookings, reassignBooking, sendTripBookingReminder } from "@/services/admin/adminBookingsService";
@@ -104,7 +103,7 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
   const [reassignModalOpen, setReassignModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any>(null);
 
-  if (totalCount === 0 && (searchQuery || Object.values(appliedFilters).some(v => v !== "All"))) {
+  if (!isLoading && totalCount === 0 && (searchQuery || Object.values(appliedFilters).some(v => v !== "All"))) {
     return (
       <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
     );
@@ -128,16 +127,8 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
         ariaLabel="Trips bookings table"
         title="Trips"
         iconSrc="/images/dashboard/sidebar/trips.svg"
-        headerActions={
-          <>
-            <TablePanelHeaderButton iconSrc="/images/dashboard/filter.svg">
-              Filters
-            </TablePanelHeaderButton>
-            <TablePanelHeaderButton iconSrc="/images/dashboard/export.svg">
-              Export Data
-            </TablePanelHeaderButton>
-          </>
-        }
+        showFilters
+        showExport
         toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
       >
         <DataTable
@@ -167,6 +158,7 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
           onPageChange={setPageIndex}
           onPageSizeChange={setPageSize}
           defaultPageSize={10}
+          isLoading={isLoading}
         />
       </TablePanel>
 

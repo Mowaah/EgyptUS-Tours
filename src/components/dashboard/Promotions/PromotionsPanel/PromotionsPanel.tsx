@@ -202,6 +202,7 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
         
         rowActions={rowActions}
         defaultPageSize={17}
+        isLoading={loading}
       />
 
       <DashboardConfirmationModal

@@ -119,6 +119,7 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
           onPageChange={(p) => setPage(p + 1)}
           onPageSizeChange={setPageSize}
           defaultPageSize={10}
+        isLoading={loading}
         />
       )}
     </TablePanel>

@@ -158,6 +158,7 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
             }
           })
         }
+        isLoading={vehiclesLoading}
       />
       <DashboardConfirmationModal
         open={confirmModal.open}

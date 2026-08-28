@@ -138,6 +138,7 @@ export default function DataTable<T>({
   onPageChange,
   onPageSizeChange,
   className,
+  isLoading = false,
 }: DataTableProps<T>) {
   const [internalPage, setInternalPage] = useState(1);
   const [internalRowsPerPage, setInternalRowsPerPage] = useState(defaultPageSize);
@@ -236,7 +237,7 @@ export default function DataTable<T>({
           </tr>
         </thead>
         <tbody>
-          {visibleRows.length === 0 ? (
+          {visibleRows.length === 0 && !isLoading ? (
             <tr>
               <td colSpan={columns.length + (selectable ? 1 : 0) + (hasActions ? 1 : 0)}>
                 <div style={{ padding: "40px 0" }}>

@@ -142,6 +142,7 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
         onPageChange={(p) => setPage(p + 1)}
         onPageSizeChange={setPageSize}
         defaultPageSize={10}
+        isLoading={isLoading}
       />
       
       {selectedRow && (

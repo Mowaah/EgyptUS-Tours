@@ -195,6 +195,7 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
             }
           })
         }
+        isLoading={tripsLoading}
       />
       <DashboardConfirmationModal
         open={confirmModal.open}

@@ -55,7 +55,8 @@ export default function CustomTripRequestsPanel({ customerId }: { customerId: st
         data={data}
         columns={customTripsColumns as any}
         getRowId={(row: any) => row.id.toString()}
-      />
+      isLoading={isLoading}
+        />
     </TablePanel>
   );
 }

@@ -270,6 +270,7 @@ export function ReviewsPanel({
           onPageChange={(p) => setPage(p + 1)}
           onPageSizeChange={setPageSize}
           defaultPageSize={10}
+        isLoading={loading}
         />
     </TablePanel>
 

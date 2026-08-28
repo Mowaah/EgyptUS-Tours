@@ -133,6 +133,7 @@ export default function AdminUsersPanel({
         onPageChange={setPageIndex}
         onPageSizeChange={setPageSize}
         defaultPageSize={10}
+        isLoading={isLoading}
       />
     </TablePanel>
   );
