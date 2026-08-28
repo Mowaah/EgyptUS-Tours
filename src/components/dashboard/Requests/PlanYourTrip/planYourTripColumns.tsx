@@ -7,6 +7,7 @@ import styles from "./PlanYourTrip.module.scss";
 export const formatStatusLabel = (rawStatus: string): string => {
   if (!rawStatus) return "Unknown";
   if (rawStatus === "awaiting_deposit") return "30% Pending Payment";
+  if (rawStatus === "awaiting_payment") return "100% Pending Payment";
   if (rawStatus === "refunded") return "Refund Completed";
   
   return rawStatus

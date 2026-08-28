@@ -81,7 +81,7 @@ export default function ViewPlanYourTrip({ requestId }: { requestId: string }) {
         case "mark_closed":
           await planYourTripActions.completeTrip(requestId);
           break;
-        // add send_payment_reminder, send_trip_reminder if they have UI buttons
+        case "send_payment_reminder": await planYourTripActions.sendPaymentReminder(requestId, data.reminder_type); break; case "send_trip_reminder": await planYourTripActions.sendTripReminder(requestId); break;
       }
       
       await fetchDetails();

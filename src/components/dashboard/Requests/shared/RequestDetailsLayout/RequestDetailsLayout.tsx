@@ -90,6 +90,8 @@ export default function RequestDetailsLayout({
 }: RequestDetailsLayoutProps) {
   const [activeModalKey, setActiveModalKey] = useState<string | null>(null);
   const [bannerMessage, setBannerMessage] = useState("");
+  
+  console.log("Current Status in Layout:", status);
   const [agents, setAgents] = useState<any[]>([]);
 
   React.useEffect(() => {
@@ -154,6 +156,19 @@ export default function RequestDetailsLayout({
     } catch (err) {
       console.error("Action failed:", err);
       // Optional: set an error banner
+    }
+  };
+
+  const handleActionClick = async (action: string, payload?: any, successMsg?: string) => {
+    if (onActionSubmit) {
+      try {
+        await onActionSubmit(action, payload);
+        if (successMsg) setBannerMessage(successMsg);
+      } catch (error) {
+        console.error(error);
+      }
+    } else if (successMsg) {
+      setBannerMessage(successMsg);
     }
   };
 
@@ -288,7 +303,7 @@ export default function RequestDetailsLayout({
                   <button
                     className={styles.reassignBtn}
                     type="button"
-                    onClick={() => setBannerMessage("Email reminder sent")}
+                    onClick={() => handleActionClick("send_payment_reminder", { reminder_type: "deposit" }, "Email reminder sent")}
                   >
                     <Image src="/images/dashboard/requests/footer/send-email-remainder.svg" alt="" width={20} height={20} />
                     Send Email Reminder
@@ -300,6 +315,41 @@ export default function RequestDetailsLayout({
                   >
                     <Image src="/images/dashboard/requests/footer/record-deposit-payment.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
                     Record Deposit Payment
+                  </button>
+                </>
+              ) : status === "100% Pending Payment" ? (
+                <>
+                  <button
+                    className={styles.reassignBtn}
+                    type="button"
+                    onClick={() => setActiveModalKey("assign")}
+                  >
+                    <Image src="/images/dashboard/requests/footer/re-assign.svg" alt="" width={20} height={20} />
+                    Re-Assign to Employee
+                  </button>
+                  <button
+                    className={styles.reassignBtn}
+                    type="button"
+                    onClick={() => setActiveModalKey("mark_rejected")}
+                  >
+                    <Image src="/images/dashboard/requests/footer/mark-as-rejected.svg" alt="" width={20} height={20} />
+                    Mark as Rejected
+                  </button>
+                  <button
+                    className={styles.reassignBtn}
+                    type="button"
+                    onClick={() => handleActionClick("send_payment_reminder", { reminder_type: "remaining" }, "Email reminder sent")}
+                  >
+                    <Image src="/images/dashboard/requests/footer/send-email-remainder.svg" alt="" width={20} height={20} />
+                    Send Email Reminder
+                  </button>
+                  <button
+                    className={styles.createProposalBtn}
+                    type="button"
+                    onClick={() => setActiveModalKey("record_remaining")}
+                  >
+                    <Image src="/images/dashboard/requests/footer/record-deposit-payment.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
+                    Record Full Payment
                   </button>
                 </>
               ) : status === "Deposit Paid" ? (
@@ -323,7 +373,7 @@ export default function RequestDetailsLayout({
                   <button
                     className={styles.reassignBtn}
                     type="button"
-                    onClick={() => setBannerMessage("Remaining payment reminder sent")}
+                    onClick={() => handleActionClick("send_payment_reminder", { reminder_type: "remaining" }, "Remaining payment reminder sent")}
                   >
                     <Image src="/images/dashboard/requests/footer/send-email-remainder.svg" alt="" width={20} height={20} />
                     Send Remaining Payment Reminder
@@ -358,7 +408,7 @@ export default function RequestDetailsLayout({
                   <button
                     className={styles.createProposalBtn}
                     type="button"
-                    onClick={() => setBannerMessage("The Trip Reminder send via email Successfully")}
+                    onClick={() => handleActionClick("send_trip_reminder", undefined, "The Trip Reminder sent via email Successfully")}
                   >
                     <Image src="/images/dashboard/requests/footer/send-email-remainder.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
                     Send Email Reminder
