@@ -106,21 +106,7 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
     }
   };
 
-  if (!vehiclesLoading && (!vehiclesData || vehiclesData.length === 0) && (searchQuery || Object.values(appliedFilters).some(v => v !== "All"))) {
-    return <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />;
-  }
 
-  if (!vehiclesLoading && (!vehiclesData || vehiclesData.length === 0)) {
-    return (
-      <DashboardEmptyState
-        title="No Vehicles Found"
-        subtitle="Catalog vehicles will appear here once they are created."
-        actionLabel="Add New Vehicle"
-        onAction={() => router.push("/dashboard/catalog/transportation/new")}
-        imageSrc="/images/dashboard/empty.png"
-      />
-    );
-  }
 
   return (
     <TablePanel
@@ -159,6 +145,18 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
           })
         }
         isLoading={vehiclesLoading}
+        onClearSearch={onClearSearch || resetFilters}
+        emptyState={
+          !searchQuery && Object.values(appliedFilters).every((v) => v === "All") ? (
+            <DashboardEmptyState
+              title="No Vehicles Found"
+              subtitle="Catalog vehicles will appear here once they are created."
+              actionLabel="Add New Vehicle"
+              onAction={() => router.push("/dashboard/catalog/transportation/new")}
+              imageSrc="/images/dashboard/empty.png"
+            />
+          ) : undefined
+        }
       />
       <DashboardConfirmationModal
         open={confirmModal.open}

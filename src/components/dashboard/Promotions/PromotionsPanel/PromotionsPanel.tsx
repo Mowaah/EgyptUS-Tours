@@ -163,27 +163,7 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
 
-  if (loading) {
-    return <div style={{ padding: "2rem", textAlign: "center" }}>Loading promotions...</div>;
-  }
 
-  if (promotions.length > 0 && filteredPromotions.length === 0) {
-    return (
-      <DashboardSearchEmptyState onClearSearch={resetFilters} />
-    );
-  }
-
-  if (promotions.length === 0) {
-    return (
-      <DashboardEmptyState
-        title="No Promotions Yet"
-        subtitle="There are no Promotions available at the moment."
-        actionLabel="Create Your First Promotion"
-        imageSrc="/images/dashboard/empty.png"
-        onAction={() => router.push("/dashboard/marketing/promotions/create")}
-      />
-    );
-  }
 
   return (
     <TablePanel
@@ -200,9 +180,21 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
         columns={promotionsColumns}
         getRowId={(row) => row.id}
         
-        rowActions={rowActions}
-        defaultPageSize={17}
+        pageSizeOptions={[5, 10, 15]}
+        defaultPageSize={10}
         isLoading={loading}
+        onClearSearch={resetFilters}
+        emptyState={
+          promotions.length === 0 ? (
+            <DashboardEmptyState
+              title="No Promotions Yet"
+              subtitle="There are no Promotions available at the moment."
+              actionLabel="Create Your First Promotion"
+              imageSrc="/images/dashboard/empty.png"
+              onAction={() => router.push("/dashboard/marketing/promotions/create")}
+            />
+          ) : undefined
+        }
       />
 
       <DashboardConfirmationModal

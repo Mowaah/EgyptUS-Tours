@@ -82,27 +82,6 @@ export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPane
     [sourceFilter, statusFilter]
   );
 
-  if (loading) {
-    return (
-      <TablePanel
-        ariaLabel="MICE requests"
-        title="MICE & Corporate Request"
-        iconSrc="/images/dashboard/sidebar/mice-corporate.svg"
-      >
-        <div style={{ padding: "40px", textAlign: "center" }}>Loading MICE Requests...</div>
-      </TablePanel>
-    );
-  }
-
-  if (!loading && data.length === 0 && !searchQuery && !appliedSourceFilter && !appliedStatusFilter) {
-    return (
-      <DashboardEmptyState
-        title="No MICE & Corporate Requests Yet"
-        subtitle="MICE requests will appear here once users start submitting them"
-      />
-    );
-  }
-
   return (
     <TablePanel
       ariaLabel="MICE requests"
@@ -111,7 +90,6 @@ export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPane
       showFilters
       showExport
       onExportClick={handleExport}
-      
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} />}
     >
       <DataTable
@@ -126,6 +104,16 @@ export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPane
         onPageSizeChange={setPageSize}
         defaultPageSize={10}
         isLoading={loading}
+        onClearSearch={handleClean}
+        emptyState={
+          !searchQuery && !appliedSourceFilter && !appliedStatusFilter ? (
+            <DashboardEmptyState
+              title="No MICE & Corporate Requests Yet"
+              subtitle="MICE requests will appear here once users start submitting them"
+              imageSrc="/images/dashboard/empty.png"
+            />
+          ) : undefined
+        }
       />
     </TablePanel>
   );

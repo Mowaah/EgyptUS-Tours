@@ -4,7 +4,8 @@ import React, { useState, useEffect } from "react";
 import CompanyInformation from "./CompanyInformation";
 import RequestDetailsLayout from "../../shared/RequestDetailsLayout/RequestDetailsLayout";
 import { ProposalFile, PaymentOverview, ActivityTimeline } from "../../shared/Sections";
-import { getB2BDetails, getB2BTimeline, b2bActions } from "@/services/admin/adminRequestsService";
+import { calculateRefundSummary } from "@/utils/cancellationPolicy";
+import { getB2BDetails } from "@/services/admin/adminRequestsService";
 import { formatStatusLabel } from "../b2bColumns";
 
 export default function ViewB2BRequest({ requestId }: { requestId: string }) {
@@ -26,10 +27,32 @@ export default function ViewB2BRequest({ requestId }: { requestId: string }) {
     fetchDetails();
   }, [requestId]);
 
+  const computedRefundSummary = React.useMemo(() => {
+    if (requestData?.refund_summary) return requestData.refund_summary;
+    if (!requestData?.payment_overview) return undefined;
+
+    const total = Number(requestData.payment_overview.total_price || 0);
+    const remaining = Number(requestData.payment_overview.remaining_balance || 0);
+    const totalPaid = total - remaining;
+    // B2B requests might not have a specific travel date, fallback to now
+    const travelDate = new Date().toISOString();
+
+    const summary = calculateRefundSummary(total, totalPaid, travelDate);
+    return {
+      package_total: summary.package_total.toString(),
+      days_before_travel: summary.days_before_travel,
+      policy_applied: summary.policy_applied,
+      deduction_percentage: summary.deduction_percentage,
+      deduction_amount: summary.deduction_amount.toString(),
+      refund_amount: summary.refund_amount.toString(),
+      currency: requestData.payment_overview.currency || "USD"
+    };
+  }, [requestData]);
+
   const handleActionSubmit = async (action: string, payload?: any) => {
     try {
       const { b2bActions } = await import("@/services/admin/adminRequestsService");
-      
+
       switch (action) {
         case "add_note":
           if (!payload?.note) throw new Error("Note is required");
@@ -79,11 +102,11 @@ export default function ViewB2BRequest({ requestId }: { requestId: string }) {
           await b2bActions.completeTrip(requestId);
           break;
       }
-      
+
       await fetchDetails();
     } catch (err) {
       console.error("Action failed:", err);
-      throw err; 
+      throw err;
     }
   };
 
@@ -105,7 +128,7 @@ export default function ViewB2BRequest({ requestId }: { requestId: string }) {
       lastUpdated={requestData.updated_at}
       hasUnsentProposal={requestData.proposal_files?.some((p: any) => p.sent_at === null)}
       paymentOverview={requestData.payment_overview}
-      refundSummary={requestData.refund_summary}
+      refundSummary={computedRefundSummary}
       leftColumnContent={
         <>
           <CompanyInformation request={requestData.company_information} />

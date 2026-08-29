@@ -83,15 +83,6 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
   );
 
 
-  if (!loading && data.length === 0 && !searchQuery && !appliedSourceFilter && !appliedStatusFilter) {
-    return (
-      <DashboardEmptyState
-        title="No B2B Requests Yet"
-        subtitle="B2B requests will appear here once users start submitting them"
-      />
-    );
-  }
-
   return (
     <TablePanel
       ariaLabel="B2B requests"
@@ -100,28 +91,31 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
       showFilters
       showExport
       onExportClick={handleExport}
-      
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} />}
     >
-      {loading ? (
-        <div style={{ padding: "40px", textAlign: "center", color: "#666" }}>Loading requests...</div>
-      ) : data.length === 0 ? (
-        <div style={{ padding: "40px", textAlign: "center", color: "#666" }}>No requests found for your filters.</div>
-      ) : (
-        <DataTable
-          data={data}
-          columns={b2bColumns}
-          getRowId={(row) => row.id.toString()}
-          serverSidePagination={true}
-          totalCount={totalCount}
-          pageIndex={page - 1}
-          pageSize={pageSize}
-          onPageChange={(p) => setPage(p + 1)}
-          onPageSizeChange={setPageSize}
-          defaultPageSize={10}
+      <DataTable
+        data={data}
+        columns={b2bColumns}
+        getRowId={(row) => row.id.toString()}
+        serverSidePagination={true}
+        totalCount={totalCount}
+        pageIndex={page - 1}
+        pageSize={pageSize}
+        onPageChange={(p) => setPage(p + 1)}
+        onPageSizeChange={setPageSize}
+        defaultPageSize={10}
         isLoading={loading}
-        />
-      )}
+        onClearSearch={handleClean}
+        emptyState={
+          !searchQuery && !appliedSourceFilter && !appliedStatusFilter ? (
+            <DashboardEmptyState
+              title="No B2B Requests Yet"
+              subtitle="B2B requests will appear here once users start submitting them"
+              imageSrc="/images/dashboard/empty.png"
+            />
+          ) : undefined
+        }
+      />
     </TablePanel>
   );
 }

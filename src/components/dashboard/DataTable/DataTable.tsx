@@ -139,6 +139,8 @@ export default function DataTable<T>({
   onPageSizeChange,
   className,
   isLoading = false,
+  emptyState,
+  onClearSearch,
 }: DataTableProps<T>) {
   const [internalPage, setInternalPage] = useState(1);
   const [internalRowsPerPage, setInternalRowsPerPage] = useState(defaultPageSize);
@@ -241,7 +243,7 @@ export default function DataTable<T>({
             <tr>
               <td colSpan={columns.length + (selectable ? 1 : 0) + (hasActions ? 1 : 0)}>
                 <div style={{ padding: "40px 0" }}>
-                  <DashboardSearchEmptyState />
+                  {emptyState ?? <DashboardSearchEmptyState onClearSearch={onClearSearch} />}
                 </div>
               </td>
             </tr>

@@ -58,29 +58,6 @@ export default function ContactUsPanel({ searchQuery = "" }: ContactUsPanelProps
     [statusFilter]
   );
 
-  if (loading) {
-    return (
-      <TablePanel
-        ariaLabel="Contact Us messages"
-        title="Contact Us"
-        iconSrc="/images/dashboard/sidebar/contact-us.svg"
-      >
-        <div style={{ padding: "2rem", textAlign: "center", color: "#666" }}>
-          Loading requests...
-        </div>
-      </TablePanel>
-    );
-  }
-
-  if (data.length === 0 && !searchQuery && !appliedStatusFilter) {
-    return (
-      <DashboardEmptyState
-        title="No Contact Us Messages Yet"
-        subtitle="Messages from customers will appear here."
-      />
-    );
-  }
-
   return (
     <TablePanel
       ariaLabel="Contact Us messages"
@@ -89,28 +66,31 @@ export default function ContactUsPanel({ searchQuery = "" }: ContactUsPanelProps
       showFilters
       showExport
       onExportClick={handleExport}
-      
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} />}
     >
-      {data.length > 0 ? (
-        <DataTable
-          data={data}
-          columns={contactUsColumns}
-          getRowId={(row) => row.id}
-          serverSidePagination={true}
-          totalCount={totalCount}
-          pageIndex={page - 1}
-          pageSize={pageSize}
-          onPageChange={(p) => setPage(p + 1)}
-          onPageSizeChange={setPageSize}
-          defaultPageSize={10}
+      <DataTable
+        data={data}
+        columns={contactUsColumns}
+        getRowId={(row) => row.id}
+        serverSidePagination={true}
+        totalCount={totalCount}
+        pageIndex={page - 1}
+        pageSize={pageSize}
+        onPageChange={(p) => setPage(p + 1)}
+        onPageSizeChange={setPageSize}
+        defaultPageSize={10}
         isLoading={loading}
-        />
-      ) : (
-        <div style={{ padding: "2rem", textAlign: "center", color: "#666" }}>
-          No requests found matching your filters.
-        </div>
-      )}
+        onClearSearch={handleClean}
+        emptyState={
+          !searchQuery && !appliedStatusFilter ? (
+            <DashboardEmptyState
+              title="No Contact Us Messages Yet"
+              subtitle="Messages from customers will appear here."
+              imageSrc="/images/dashboard/empty.png"
+            />
+          ) : undefined
+        }
+      />
     </TablePanel>
   );
 }

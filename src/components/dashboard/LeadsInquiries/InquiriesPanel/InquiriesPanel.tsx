@@ -128,31 +128,7 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
 
-  if (isLoading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
-        <p>Loading...</p>
-      </div>
-    );
-  }
 
-  if (leadsList.length === 0) {
-    return (
-      <DashboardEmptyState
-        title="No Leads Yet"
-        subtitle="Leads will appear here once they are added or imported."
-        actionLabel="Add New Lead"
-        onAction={onAddLead}
-        imageSrc="/images/dashboard/empty.png"
-      />
-    );
-  }
-
-  if (leadsList.length === 0 && (searchQuery || Object.values(appliedFilters).some(v => v !== "All"))) {
-    return (
-      <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
-    );
-  }
 
   return (
     <TablePanel
@@ -198,6 +174,18 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
         onPageSizeChange={setPageSize}
         defaultPageSize={10}
         isLoading={isLoading}
+        onClearSearch={onClearSearch || resetFilters}
+        emptyState={
+          !searchQuery && Object.values(appliedFilters).every((v) => v === "All") ? (
+            <DashboardEmptyState
+              title="No Leads Yet"
+              subtitle="Leads will appear here once they are added or imported."
+              actionLabel="Add New Lead"
+              onAction={onAddLead}
+              imageSrc="/images/dashboard/empty.png"
+            />
+          ) : undefined
+        }
       />
       
       <ReassignModal

@@ -3,12 +3,13 @@
 import React, { useState, useEffect } from "react";
 import { ProposalFile, PaymentOverview, ActivityTimeline } from "../../shared/Sections";
 import RefundSummary from "@/components/dashboard/shared/RefundSummary/RefundSummary";
+import { calculateRefundSummary } from "@/utils/cancellationPolicy";
 import OrganizationInformation from "./OrganizationInformation";
 import EventDetails from "./EventDetails";
 import EventRequirements from "./EventRequirements";
 import BudgetInformation from "./BudgetInformation";
 import RequestDetailsLayout from "../../shared/RequestDetailsLayout/RequestDetailsLayout";
-import { getEventsDetails, getMiceTimeline, eventsActions } from "@/services/admin/adminRequestsService";
+import { getEventsDetails } from "@/services/admin/adminRequestsService";
 import { formatStatusLabel } from "../miceColumns";
 
 export default function ViewMiceRequest({ requestId }: { requestId: string }) {
@@ -30,10 +31,31 @@ export default function ViewMiceRequest({ requestId }: { requestId: string }) {
     fetchDetails();
   }, [requestId]);
 
+  const computedRefundSummary = React.useMemo(() => {
+    if (requestData?.refund_summary) return requestData.refund_summary;
+    if (!requestData?.payment_overview) return undefined;
+
+    const total = Number(requestData.payment_overview.total_price || 0);
+    const remaining = Number(requestData.payment_overview.remaining_balance || 0);
+    const totalPaid = total - remaining;
+    const travelDate = requestData.event_details?.start_date || new Date().toISOString();
+
+    const summary = calculateRefundSummary(total, totalPaid, travelDate);
+    return {
+      package_total: summary.package_total.toString(),
+      days_before_travel: summary.days_before_travel,
+      policy_applied: summary.policy_applied,
+      deduction_percentage: summary.deduction_percentage,
+      deduction_amount: summary.deduction_amount.toString(),
+      refund_amount: summary.refund_amount.toString(),
+      currency: requestData.payment_overview.currency || "USD"
+    };
+  }, [requestData]);
+
   const handleActionSubmit = async (action: string, payload?: any) => {
     try {
       const { eventsActions } = await import("@/services/admin/adminRequestsService");
-      
+
       switch (action) {
         case "add_note":
           if (payload?.note) await eventsActions.addNote(requestId, payload.note);
@@ -74,11 +96,11 @@ export default function ViewMiceRequest({ requestId }: { requestId: string }) {
           await eventsActions.completeTrip(requestId);
           break;
       }
-      
+
       await fetchDetails();
     } catch (err) {
       console.error("Action failed:", err);
-      throw err; 
+      throw err;
     }
   };
 
@@ -100,7 +122,7 @@ export default function ViewMiceRequest({ requestId }: { requestId: string }) {
       lastUpdated={requestData.updated_at}
       hasUnsentProposal={requestData.proposal_files?.some((p: any) => p.sent_at === null)}
       paymentOverview={requestData.payment_overview}
-      refundSummary={requestData.refund_summary}
+      refundSummary={computedRefundSummary}
       leftColumnContent={
         <>
           <OrganizationInformation request={requestData.organization_information} />

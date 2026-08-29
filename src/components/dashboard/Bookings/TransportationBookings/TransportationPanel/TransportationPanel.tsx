@@ -130,18 +130,7 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
         showExport
         toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
       >
-        {!isLoading && totalCount === 0 && (searchQuery || Object.values(appliedFilters).some(v => v !== "All")) ? (
-          <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
-        ) : !isLoading && totalCount === 0 ? (
-          <DashboardEmptyState
-            title="No Bookings Found"
-            subtitle="Transportation bookings will appear here once they are added."
-            actionLabel="New Booking"
-            onAction={onNewBooking}
-            imageSrc="/images/dashboard/empty.png"
-          />
-        ) : (
-          <DataTable
+        <DataTable
           data={transportationData}
           columns={transportationColumns}
           getRowId={(row) => String(row.id)}
@@ -171,8 +160,19 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
           onPageSizeChange={setPageSize}
           defaultPageSize={10}
           isLoading={isLoading}
+          onClearSearch={onClearSearch || resetFilters}
+          emptyState={
+            !searchQuery && Object.values(appliedFilters).every((v) => v === "All") ? (
+              <DashboardEmptyState
+                title="No Bookings Found"
+                subtitle="Transportation bookings will appear here once they are added."
+                actionLabel="New Booking"
+                onAction={onNewBooking}
+                imageSrc="/images/dashboard/empty.png"
+              />
+            ) : undefined
+          }
         />
-        )}
       </TablePanel>
 
       <ReassignModal

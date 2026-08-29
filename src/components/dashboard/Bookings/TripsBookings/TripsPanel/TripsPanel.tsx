@@ -130,18 +130,7 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
         showExport
         toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
       >
-        {!isLoading && totalCount === 0 && (searchQuery || Object.values(appliedFilters).some(v => v !== "All")) ? (
-          <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
-        ) : !isLoading && totalCount === 0 ? (
-          <DashboardEmptyState
-            title="No Trips Found"
-            subtitle="Trips bookings will appear here once they are added."
-            actionLabel="New Booking"
-            onAction={onNewBooking}
-            imageSrc="/images/dashboard/empty.png"
-          />
-        ) : (
-          <DataTable
+        <DataTable
           data={tripsData}
           columns={tripsColumns}
           getRowId={(row) => String(row.id)}
@@ -169,8 +158,19 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
           onPageSizeChange={setPageSize}
           defaultPageSize={10}
           isLoading={isLoading}
+          onClearSearch={onClearSearch || resetFilters}
+          emptyState={
+            !searchQuery && Object.values(appliedFilters).every((v) => v === "All") ? (
+              <DashboardEmptyState
+                title="No Trips Found"
+                subtitle="Trips bookings will appear here once they are added."
+                actionLabel="New Booking"
+                onAction={onNewBooking}
+                imageSrc="/images/dashboard/empty.png"
+              />
+            ) : undefined
+          }
         />
-        )}
       </TablePanel>
 
       <ReassignModal

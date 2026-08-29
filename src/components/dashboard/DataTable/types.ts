@@ -38,4 +38,8 @@ export interface DataTableProps<T> {
   className?: string;
   /** When true, suppresses the empty state so the table doesn't flash "No Results" during a fetch. */
   isLoading?: boolean;
+  /** Custom empty state to render in table body when visibleRows is empty */
+  emptyState?: ReactNode;
+  /** Handler when the clear/search again button is clicked in the default search empty state */
+  onClearSearch?: () => void;
 }

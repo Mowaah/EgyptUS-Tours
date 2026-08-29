@@ -139,23 +139,7 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
     }
   };
 
-  const hasActiveFilters = searchQuery || Object.values(appliedFilters).some(v => v !== "All");
 
-  if (!tripsLoading && hasActiveFilters && tripsData.length === 0) {
-    return <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />;
-  }
-
-  if (!tripsLoading && !hasActiveFilters && tripsData.length === 0) {
-    return (
-      <DashboardEmptyState
-        title="No Trips Found"
-        subtitle="Catalog trips will appear here once they are created."
-        actionLabel="Add New Trip"
-        onAction={() => router.push("/dashboard/catalog/trips/new")}
-        imageSrc="/images/dashboard/empty.png"
-      />
-    );
-  }
 
   return (
     <TablePanel
@@ -196,6 +180,18 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
           })
         }
         isLoading={tripsLoading}
+        onClearSearch={onClearSearch || resetFilters}
+        emptyState={
+          !searchQuery && Object.values(appliedFilters).every((v) => v === "All") ? (
+            <DashboardEmptyState
+              title="No Trips Found"
+              subtitle="Catalog trips will appear here once they are created."
+              actionLabel="Add New Trip"
+              onAction={() => router.push("/dashboard/catalog/trips/new")}
+              imageSrc="/images/dashboard/empty.png"
+            />
+          ) : undefined
+        }
       />
       <DashboardConfirmationModal
         open={confirmModal.open}

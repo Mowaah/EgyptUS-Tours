@@ -238,7 +238,7 @@ export function createRequestActions(resourceBaseUrl: string) {
     },
     async refund(id: string | number, payload: any) {
       const formData = new FormData();
-      if (payload.transaction_ref) formData.append("transaction_ref", payload.transaction_ref);
+      if (payload.transaction_reference) formData.append("transaction_reference", payload.transaction_reference);
       if (payload.notes) formData.append("notes", payload.notes);
       if (payload.file) formData.append("receipt_file", payload.file); // Assuming the backend wants receipt_file
       

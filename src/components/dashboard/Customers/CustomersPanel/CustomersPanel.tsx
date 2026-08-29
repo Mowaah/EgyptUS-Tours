@@ -109,9 +109,7 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
     }
   };
 
-  if (!isLoading && customers && customers.count === 0 && (searchQuery || appliedFilters !== defaultFilters)) {
-    return <DashboardSearchEmptyState onClearSearch={resetFilters} />;
-  }
+
 
   return (
     <TablePanel
@@ -143,6 +141,7 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
         onPageSizeChange={setPageSize}
         defaultPageSize={10}
         isLoading={isLoading}
+        onClearSearch={resetFilters}
       />
       
       {selectedRow && (

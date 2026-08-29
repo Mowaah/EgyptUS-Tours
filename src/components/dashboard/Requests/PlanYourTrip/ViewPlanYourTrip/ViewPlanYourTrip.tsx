@@ -7,6 +7,7 @@ import TripPreferences from "./TripPreferences";
 import TripDetails from "./TripDetails";
 import RequestDetailsLayout from "../../shared/RequestDetailsLayout/RequestDetailsLayout";
 import RefundSummary from "@/components/dashboard/shared/RefundSummary/RefundSummary";
+import { calculateRefundSummary } from "@/utils/cancellationPolicy";
 import { formatStatusLabel } from "../planYourTripColumns";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -28,6 +29,27 @@ export default function ViewPlanYourTrip({ requestId }: { requestId: string }) {
   useEffect(() => {
     fetchDetails();
   }, [requestId]);
+
+  const computedRefundSummary = React.useMemo(() => {
+    if (requestData?.refund_summary) return requestData.refund_summary;
+    if (!requestData?.payment_overview) return undefined;
+    
+    const total = Number(requestData.payment_overview.total_price || 0);
+    const remaining = Number(requestData.payment_overview.remaining_balance || 0);
+    const totalPaid = total - remaining;
+    const travelDate = requestData.trip_details?.start_date || new Date().toISOString();
+    
+    const summary = calculateRefundSummary(total, totalPaid, travelDate);
+    return {
+      package_total: summary.package_total.toString(),
+      days_before_travel: summary.days_before_travel,
+      policy_applied: summary.policy_applied,
+      deduction_percentage: summary.deduction_percentage,
+      deduction_amount: summary.deduction_amount.toString(),
+      refund_amount: summary.refund_amount.toString(),
+      currency: requestData.payment_overview.currency || "USD"
+    };
+  }, [requestData]);
 
   const handleActionSubmit = async (action: string, payload?: any) => {
     try {
@@ -109,7 +131,7 @@ export default function ViewPlanYourTrip({ requestId }: { requestId: string }) {
       lastUpdated={requestData.updated_at}
       hasUnsentProposal={requestData.proposal_files?.some((p: any) => p.sent_at === null)}
       paymentOverview={requestData.payment_overview}
-      refundSummary={requestData.refund_summary}
+      refundSummary={computedRefundSummary}
       leftColumnContent={
         <>
           <CustomerInformation 

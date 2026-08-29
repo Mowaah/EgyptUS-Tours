@@ -141,23 +141,7 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
     }
   };
 
-  const hasActiveFilters = searchQuery || Object.values(appliedFilters).some(v => v !== "All");
 
-  if (!hotelsLoading && hasActiveFilters && hotelsData.length === 0) {
-    return <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />;
-  }
-
-  if (!hotelsLoading && !hasActiveFilters && hotelsData.length === 0) {
-    return (
-      <DashboardEmptyState
-        title="No Hotels Found"
-        subtitle="Catalog hotels will appear here once they are created."
-        actionLabel="Add New Hotel"
-        onAction={() => router.push("/dashboard/catalog/hotels/new")}
-        imageSrc="/images/dashboard/empty.png"
-      />
-    );
-  }
 
   return (
     <TablePanel
@@ -194,12 +178,22 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
               setConfirmModal({ open: true, action: "Archive", row: r });
             } else if (action === "Delete") {
               setConfirmModal({ open: true, action: "Delete", row: r });
-            } else {
-              console.log(`Action ${action} triggered for row`, r);
             }
           })
         }
         isLoading={hotelsLoading}
+        onClearSearch={onClearSearch || resetFilters}
+        emptyState={
+          !searchQuery && Object.values(appliedFilters).every((v) => v === "All") ? (
+            <DashboardEmptyState
+              title="No Hotels Found"
+              subtitle="Catalog hotels will appear here once they are created."
+              actionLabel="Add New Hotel"
+              onAction={() => router.push("/dashboard/catalog/hotels/new")}
+              imageSrc="/images/dashboard/empty.png"
+            />
+          ) : undefined
+        }
       />
       <DashboardConfirmationModal
         open={confirmModal.open}
