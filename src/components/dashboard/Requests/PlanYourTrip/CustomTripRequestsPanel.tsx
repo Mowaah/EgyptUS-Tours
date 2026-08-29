@@ -44,7 +44,7 @@ export default function CustomTripRequestsPanel({ searchQuery }: CustomTripReque
     exportFilename: "plan_your_trip.csv",
     swrKey: "adminPlanYourTripRequests",
   });
-  
+
 
   const filterFields = useMemo(
     () => [
@@ -99,7 +99,7 @@ export default function CustomTripRequestsPanel({ searchQuery }: CustomTripReque
       showFilters
       showExport
       onExportClick={handleExport}
-      
+
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={handleClean} onApply={handleApply} />}
     >
       {loading ? (
@@ -118,7 +118,7 @@ export default function CustomTripRequestsPanel({ searchQuery }: CustomTripReque
           onPageChange={(p) => setPage(p + 1)}
           onPageSizeChange={setPageSize}
           defaultPageSize={10}
-        isLoading={loading}
+          isLoading={loading}
         />
       )}
     </TablePanel>

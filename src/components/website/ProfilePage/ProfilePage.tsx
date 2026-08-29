@@ -218,15 +218,22 @@ export default function ProfilePage() {
               };
             }
 
+            const reqStatus = req.status || "proposal_in_progress";
+            const mappedStatus = ["closed", "converted", "fully_paid", "paid", "confirmed", "approved"].includes(reqStatus)
+              ? "confirmed"
+              : reqStatus === "proposal_sent"
+              ? "proposal_sent"
+              : "proposal_in_progress";
+
             return {
               variant: (req.type === "events" ? "mice" : req.type) as any,
               imageSrc: req.image || defaultImage,
               tripTitle: req.title || req.event_name || req.company_name || "",
-              status: req.status || "proposal_in_progress",
+              status: mappedStatus as any,
               infoMessage: req.info_message || "Proposal expected within 24-48 hrs",
               details: mappedDetails as any,
               primaryLabel: "View Details",
-              primaryHref: `/profile/requests-details?type=${req.type}&id=${req.id}&status=${req.status || "proposal_in_progress"}`,
+              primaryHref: `/profile/requests-details?type=${req.type}&id=${req.id}&status=${reqStatus}`,
             };
           };
 

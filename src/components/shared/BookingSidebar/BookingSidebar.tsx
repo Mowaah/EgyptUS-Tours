@@ -70,6 +70,66 @@ export default function BookingSidebar({
     return diff > 0 ? diff : 1;
   })();
 
+  const tripRoomRows = (() => {
+    if (isHotel || !trip) return [];
+    const baseSeason = trip.seasonPricing?.[0] || { single: 0, double: 0, triple: 0 };
+    const poolSurcharge = trip.additionalRooms?.poolView || 0;
+    const seaSurcharge = trip.additionalRooms?.seaView || 0;
+
+    const roomGroupsMap: Record<string, { count: number; name: string; view: string; unitPrice: number }> = {};
+    const roomEntries = Object.entries(formData.rooms || {}).filter(([_, count]) => (count as number) > 0);
+
+    if (roomEntries.length === 0) return [];
+
+    roomEntries.forEach(([type, count]) => {
+      const rawType = type.toLowerCase();
+      let basePrice = 0;
+      if (rawType.includes("single")) {
+        basePrice = baseSeason.single || trip.price || trip.privatePrice || 0;
+      } else if (rawType.includes("triple")) {
+        basePrice = baseSeason.triple || trip.price || trip.privatePrice || 0;
+      } else {
+        basePrice = baseSeason.double || trip.price || trip.privatePrice || 0;
+      }
+
+      const customizations = formData.roomCustomizations?.[type] || [];
+      const totalCount = count as number;
+
+      const typeName = type.charAt(0).toUpperCase() + type.slice(1);
+      const roomTitle = typeName.toLowerCase().endsWith("room") ? typeName : `${typeName} Room`;
+
+      for (let i = 0; i < totalCount; i++) {
+        const opt = customizations[i] || "garden";
+        let addon = 0;
+        if (opt.toLowerCase().includes("pool")) addon = poolSurcharge;
+        if (opt.toLowerCase().includes("sea")) addon = seaSurcharge;
+
+        let viewLabel = "Garden View";
+        if (opt.toLowerCase().includes("pool")) viewLabel = "Pool View";
+        else if (opt.toLowerCase().includes("sea")) viewLabel = "Sea View";
+        else if (opt && !opt.toLowerCase().includes("garden")) {
+          viewLabel = opt.toLowerCase().includes("view") ? opt : `${opt.charAt(0).toUpperCase() + opt.slice(1)} View`;
+        }
+
+        const groupKey = `${type}_${viewLabel}`;
+        if (!roomGroupsMap[groupKey]) {
+          roomGroupsMap[groupKey] = {
+            count: 0,
+            name: roomTitle,
+            view: viewLabel,
+            unitPrice: basePrice + addon,
+          };
+        }
+        roomGroupsMap[groupKey].count += 1;
+      }
+    });
+
+    return Object.values(roomGroupsMap).map((g) => ({
+      label: `${g.count} × ${g.name} - ${g.view}`,
+      price: g.unitPrice * g.count,
+    }));
+  })();
+
   return (
     <aside>
       <div className={`${styles.sidebarCard} ${expanded ? styles.sidebarCardExpanded : ""}`}>
@@ -99,54 +159,33 @@ export default function BookingSidebar({
               )}
             </div>
 
-            <div className={styles.compactDates}>
-              {shortStart} <span className={styles.compactArrow} aria-hidden="true">→</span> {shortEnd}
+            <div className={styles.compactMiddleRow}>
+              <span>{shortStart} - {shortEnd}</span>
+              <span className={styles.compactDot}>·</span>
+              <span>{compactGuests} Guests</span>
             </div>
 
-            <div className={styles.compactMeta}>
-              {isHotel ? `${nights} Night` : `${formData.adults} Adults`} <span aria-hidden="true">•</span> {totalRooms} Room <span aria-hidden="true">•</span> {compactGuests} Guests
-            </div>
             <div className={styles.compactBottomRow}>
-              <span className={styles.compactTotalValue}>Total: {formatMoney(totalAmount)}</span>
-              <span className={styles.compactChevron} aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M6 9l6 6 6-6"
-                    stroke="currentColor"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+              <div className={styles.compactTotal}>
+                <span className={styles.compactTotalLabel}>Total:</span>
+                <span className={styles.compactTotalValue}>{formatMoney(finalTotal)}</span>
+              </div>
+              <span className={styles.compactExpandText}>
+                {expanded ? "Hide Details" : "View Details"}
               </span>
             </div>
           </div>
         </button>
 
-        {/* Full details — always visible at ≥768px; on mobile only when expanded */}
-        <div
-          id={detailsId}
-          className={styles.details}
-          hidden={!expanded}
-        >
-          {/* Collapse button — only shown on mobile when expanded */}
-          <button
-            type="button"
-            className={styles.collapseBtn}
-            onClick={() => setExpanded(false)}
-            aria-label="Hide summary"
-          >
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
-              <path d="M4 10l4-4 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            Hide summary
-          </button>
-          {/* Image */}
-          <Image src={image} width={400} height={180} alt="" className={styles.sidebarImage} />
+        {/* Full sidebar content (always visible on desktop, toggled on mobile) */}
+        <div id={detailsId} className={styles.detailsContent}>
+          {/* Main card */}
+          <div className={styles.thumbWrap}>
+            <Image src={image} width={384} height={200} alt={title} className={styles.thumb} />
+          </div>
 
-          {/* Title + rating */}
           <div className={styles.titleRow}>
-            <h3 className={styles.sidebarTitle}>{title}</h3>
+            <h3 className={styles.title}>{title}</h3>
             {rating > 0 && (
               <div className={styles.ratingPill}>
                 <svg width="18" height="18" viewBox="0 0 28 28" fill="none" className={styles.starIcon}>
@@ -224,31 +263,40 @@ export default function BookingSidebar({
           {/* Price Details */}
           <div className={styles.sidebarSectionLabel}>Price Details</div>
           <div className={styles.priceRows}>
-            {isHotel ? Object.entries(formData.rooms || {}).map(([type, count]) => {
-              if (!count) return null;
-              
-              const roomIds = formData.roomCustomizations?.[type] || [];
-              const hotelRoomsOfType = (hotel!.hotelRooms || []).filter(r => r.type.toLowerCase() === type);
-              const baseRoom = hotelRoomsOfType.sort((a, b) => a.pricePerNight - b.pricePerNight)[0];
+            {isHotel ? (
+              Object.entries(formData.rooms || {}).map(([type, count]) => {
+                if (!count) return null;
+                
+                const roomIds = formData.roomCustomizations?.[type] || [];
+                const hotelRoomsOfType = (hotel!.hotelRooms || []).filter(r => r.type.toLowerCase() === type);
+                const baseRoom = hotelRoomsOfType.sort((a, b) => a.pricePerNight - b.pricePerNight)[0];
 
-              const rows = [];
-              for (let i = 0; i < count; i++) {
-                const roomId = roomIds[i];
-                const room = (hotel!.hotelRooms || []).find(r => r.id === roomId) || baseRoom;
-                if (!room) continue;
+                const rows = [];
+                for (let i = 0; i < count; i++) {
+                  const roomId = roomIds[i];
+                  const room = (hotel!.hotelRooms || []).find(r => r.id === roomId) || baseRoom;
+                  if (!room) continue;
 
-                const name = type.toLowerCase().includes("room") ? type.charAt(0).toUpperCase() + type.slice(1) : `${type.charAt(0).toUpperCase() + type.slice(1)} Room`;
-                const price = room.pricePerNight * nights;
+                  const name = type.toLowerCase().includes("room") ? type.charAt(0).toUpperCase() + type.slice(1) : `${type.charAt(0).toUpperCase() + type.slice(1)} Room`;
+                  const price = room.pricePerNight * nights;
 
-                rows.push(
-                  <div key={`${type}-${i}`} className={styles.priceRow}>
-                    <span>1 × {name} - {room.view} ({nights} {nights === 1 ? 'Night' : 'Nights'})</span>
-                    <strong>{formatMoney(price)}</strong>
-                  </div>
-                );
-              }
-              return rows;
-            }) : (
+                  rows.push(
+                    <div key={`${type}-${i}`} className={styles.priceRow}>
+                      <span>1 × {name} - {room.view} ({nights} {nights === 1 ? 'Night' : 'Nights'})</span>
+                      <strong>{formatMoney(price)}</strong>
+                    </div>
+                  );
+                }
+                return rows;
+              })
+            ) : tripRoomRows.length > 0 ? (
+              tripRoomRows.map((row, idx) => (
+                <div key={`${row.label}-${idx}`} className={styles.priceRow}>
+                  <span>{row.label}</span>
+                  <strong>{formatMoney(row.price)}</strong>
+                </div>
+              ))
+            ) : (
               <div className={styles.priceRow}>
                  <span>Trip Package</span>
                  <strong>{formatMoney(totalAmount)}</strong>

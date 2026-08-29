@@ -18,7 +18,7 @@ const getCountryName = (code: string) => {
   return country ? country.nationality : code;
 };
 
-type RequestStatus = Extract<TripBookingStatus, "proposal_in_progress" | "proposal_sent">;
+type RequestStatus = Extract<TripBookingStatus, "proposal_in_progress" | "proposal_sent" | "confirmed">;
 
 function LoadingGlyph() {
   return (
@@ -38,7 +38,11 @@ function LoadingGlyph() {
 }
 
 function getStatus(value: string | null): RequestStatus {
-  return value === "proposal_sent" ? "proposal_sent" : "proposal_in_progress";
+  if (value === "proposal_sent") return "proposal_sent";
+  if (value === "closed" || value === "converted" || value === "fully_paid" || value === "paid" || value === "confirmed" || value === "approved") {
+    return "confirmed";
+  }
+  return "proposal_in_progress";
 }
 
 export default function ProfileRequestDetailsPage() {
@@ -220,11 +224,11 @@ export default function ProfileRequestDetailsPage() {
                     : "Here are the details of your submitted event and its current status"}
               </p>
             </div>
-            <span className={`${styles.statusBadge} ${currentStatus === "proposal_sent" ? styles.sent : styles.inProgress}`}>
+            <span className={`${styles.statusBadge} ${currentStatus === "proposal_sent" || currentStatus === "confirmed" ? styles.sent : styles.inProgress}`}>
               <span className={styles.statusIcon}>
-                {currentStatus === "proposal_sent" ? "✓" : <LoadingGlyph />}
+                {currentStatus === "proposal_sent" || currentStatus === "confirmed" ? "✓" : <LoadingGlyph />}
               </span>
-              {currentStatus === "proposal_sent" ? "Proposal Sent" : "Proposal in progress"}
+              {currentStatus === "proposal_sent" ? "Proposal Sent" : currentStatus === "confirmed" ? "Confirmed" : "Proposal in progress"}
             </span>
           </header>
 

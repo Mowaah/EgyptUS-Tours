@@ -18,8 +18,8 @@ import { ReassignModal } from "@/components/dashboard/shared";
 
 const filterOptions = {
   tourType: ["All", "Private", "Group"],
-  deposit: ["All", "Paid", "Pending", "Overdue"],
-  status: ["All", "Upcoming", "Canceled", "Refunded", "On Trip", "Completed"],
+  paymentStatus: ["All", "Paid", "Pending", "Overdue"],
+  status: ["All", "Upcoming", "On Trip", "Completed", "Cancelled", "Refunded"],
   source: ["All", "Website", "Agent"],
 };
 
@@ -32,7 +32,7 @@ interface TripsPanelProps {
 export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooking }: TripsPanelProps) {
   const defaultFilters = {
     tourType: "All",
-    deposit: "All",
+    paymentStatus: "All",
     status: "All",
     source: "All",
   };
@@ -51,9 +51,24 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
     };
     if (searchQuery) params.search = searchQuery;
     if (appliedFilters.tourType !== "All") params.tour_type = appliedFilters.tourType.toLowerCase();
-    if (appliedFilters.deposit !== "All") params.payment_status = appliedFilters.deposit.toLowerCase().replace(" ", "_");
-    if (appliedFilters.status !== "All") params.operational_status = appliedFilters.status.toLowerCase().replace(" ", "_");
-    if (appliedFilters.source !== "All") params.source = appliedFilters.source.toLowerCase();
+    if (appliedFilters.paymentStatus !== "All") {
+      // Map display label to backend value
+      const payMap: Record<string, string> = { Paid: "paid", Pending: "pending", Overdue: "overdue" };
+      params.remaining_payment_status = payMap[appliedFilters.paymentStatus] ?? appliedFilters.paymentStatus.toLowerCase();
+    }
+    if (appliedFilters.status !== "All") {
+      const statusMap: Record<string, string> = {
+        Upcoming: "upcoming",
+        "On Trip": "on_trip",
+        Completed: "completed",
+        Cancelled: "cancelled",
+        Refunded: "cancelled",
+      };
+      params.operational_status = statusMap[appliedFilters.status] ?? appliedFilters.status.toLowerCase().replace(" ", "_");
+    }
+    if (appliedFilters.source !== "All") {
+      params.source = appliedFilters.source === "Agent" ? "admin" : "website";
+    }
     return params;
   }, [appliedFilters, searchQuery, pageIndex, pageSize]);
 
@@ -88,7 +103,7 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
   const filterFields = (
     [
       ["tourType", "Tour Type", filterOptions.tourType],
-      ["deposit", "Deposit", filterOptions.deposit],
+      ["paymentStatus", "Payment Status", filterOptions.paymentStatus],
       ["status", "Status", filterOptions.status],
       ["source", "Source", filterOptions.source],
     ] as const
@@ -103,23 +118,7 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
   const [reassignModalOpen, setReassignModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any>(null);
 
-  if (!isLoading && totalCount === 0 && (searchQuery || Object.values(appliedFilters).some(v => v !== "All"))) {
-    return (
-      <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
-    );
-  }
 
-  if (totalCount === 0 && !isLoading) {
-    return (
-      <DashboardEmptyState
-        title="No Trips Found"
-        subtitle="Trips bookings will appear here once they are added."
-        actionLabel="New Booking"
-        onAction={onNewBooking}
-        imageSrc="/images/dashboard/empty.png"
-      />
-    );
-  }
 
   return (
     <>
@@ -131,7 +130,18 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
         showExport
         toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
       >
-        <DataTable
+        {!isLoading && totalCount === 0 && (searchQuery || Object.values(appliedFilters).some(v => v !== "All")) ? (
+          <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
+        ) : !isLoading && totalCount === 0 ? (
+          <DashboardEmptyState
+            title="No Trips Found"
+            subtitle="Trips bookings will appear here once they are added."
+            actionLabel="New Booking"
+            onAction={onNewBooking}
+            imageSrc="/images/dashboard/empty.png"
+          />
+        ) : (
+          <DataTable
           data={tripsData}
           columns={tripsColumns}
           getRowId={(row) => String(row.id)}
@@ -160,6 +170,7 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
           defaultPageSize={10}
           isLoading={isLoading}
         />
+        )}
       </TablePanel>
 
       <ReassignModal

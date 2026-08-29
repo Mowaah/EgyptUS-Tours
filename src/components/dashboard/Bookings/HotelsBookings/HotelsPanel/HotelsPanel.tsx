@@ -17,8 +17,8 @@ import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyStat
 import { ReassignModal } from "@/components/dashboard/shared";
 
 const filterOptions = {
-  deposit: ["All", "Paid", "Pending", "Overdue"],
-  status: ["All", "Upcoming", "Canceled", "Refunded", "On Trip", "Completed"],
+  paymentStatus: ["All", "Paid", "Pending", "Overdue"],
+  status: ["All", "Upcoming", "In Stay", "Completed", "Cancelled"],
   source: ["All", "Website", "Agent"],
 };
 
@@ -30,7 +30,7 @@ interface HotelsPanelProps {
 
 export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBooking }: HotelsPanelProps) {
   const defaultFilters = {
-    deposit: "All",
+    paymentStatus: "All",
     status: "All",
     source: "All",
   };
@@ -48,9 +48,22 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
       page_size: pageSize,
     };
     if (searchQuery) params.search = searchQuery;
-    if (appliedFilters.deposit !== "All") params.payment_status = appliedFilters.deposit.toLowerCase().replace(" ", "_");
-    if (appliedFilters.status !== "All") params.operational_status = appliedFilters.status.toLowerCase().replace(" ", "_");
-    if (appliedFilters.source !== "All") params.source = appliedFilters.source.toLowerCase();
+    if (appliedFilters.paymentStatus !== "All") {
+      const payMap: Record<string, string> = { Paid: "paid", Pending: "pending", Overdue: "overdue" };
+      params.remaining_payment_status = payMap[appliedFilters.paymentStatus] ?? appliedFilters.paymentStatus.toLowerCase();
+    }
+    if (appliedFilters.status !== "All") {
+      const statusMap: Record<string, string> = {
+        Upcoming: "upcoming",
+        "In Stay": "in_stay",
+        Completed: "completed",
+        Cancelled: "cancelled",
+      };
+      params.operational_status = statusMap[appliedFilters.status] ?? appliedFilters.status.toLowerCase().replace(" ", "_");
+    }
+    if (appliedFilters.source !== "All") {
+      params.source = appliedFilters.source === "Agent" ? "admin" : "website";
+    }
     return params;
   }, [appliedFilters, searchQuery, pageIndex, pageSize]);
 
@@ -84,7 +97,7 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
 
   const filterFields = (
     [
-      ["deposit", "Deposit", filterOptions.deposit],
+      ["paymentStatus", "Payment Status", filterOptions.paymentStatus],
       ["status", "Status", filterOptions.status],
       ["source", "Source", filterOptions.source],
     ] as const
@@ -99,23 +112,7 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
   const [reassignModalOpen, setReassignModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any>(null);
 
-  if (!isLoading && totalCount === 0 && (searchQuery || Object.values(appliedFilters).some(v => v !== "All"))) {
-    return (
-      <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
-    );
-  }
 
-  if (!isLoading && totalCount === 0) {
-    return (
-      <DashboardEmptyState
-        title="No Bookings Found"
-        subtitle="Hotels bookings will appear here once they are added."
-        actionLabel="New Booking"
-        onAction={onNewBooking}
-        imageSrc="/images/dashboard/empty.png"
-      />
-    );
-  }
 
   return (
     <>
@@ -127,7 +124,18 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
         showExport
         toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
       >
-        <DataTable
+        {!isLoading && totalCount === 0 && (searchQuery || Object.values(appliedFilters).some(v => v !== "All")) ? (
+          <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
+        ) : !isLoading && totalCount === 0 ? (
+          <DashboardEmptyState
+            title="No Bookings Found"
+            subtitle="Hotels bookings will appear here once they are added."
+            actionLabel="New Booking"
+            onAction={onNewBooking}
+            imageSrc="/images/dashboard/empty.png"
+          />
+        ) : (
+          <DataTable
           data={hotelsData}
           columns={hotelsColumns}
           getRowId={(row) => String(row.id)}
@@ -158,6 +166,7 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
           defaultPageSize={10}
           isLoading={isLoading}
         />
+        )}
       </TablePanel>
 
       <ReassignModal

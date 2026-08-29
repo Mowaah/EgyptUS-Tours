@@ -30,14 +30,14 @@ interface TripDetailPageProps {
   testimonials?: TestimonialData[];
 }
 
-const TRIP_TABS = [
+const BASE_TRIP_TABS = [
   { id: "overview", label: "Overview" },
   { id: "included", label: "What's Included" },
   { id: "excluded", label: "What's Not Included" },
-  { id: "traveler-photos", label: "Taken by Travelers" },
+  { id: "traveler-photos", label: "Taken by Travelers", requiresPhotos: true },
   { id: "prices-accommodation", label: "Prices & Accommodation" },
   { id: "luxury-accommodations", label: "Luxury Accommodations" },
-  { id: "dates-availability", label: "Dates & Availability" },
+  { id: "dates-availability", label: "Dates & Availability", requiresAvailability: true },
   { id: "itinerary", label: "Day-by-Day Itinerary" },
   { id: "traveler-reviews", label: "Traveler Reviews" },
   { id: "more-trips", label: "More Inspiring Trips" },
@@ -49,6 +49,15 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
     kind: "trip",
     initialFavorite: trip.isFavorite ?? false,
   });
+
+  const hasPhotos = (trip.travelerPhotos ?? []).length > 0;
+  const hasAvailability = (trip.availability ?? []).length > 0;
+
+  const TRIP_TABS = BASE_TRIP_TABS.filter((tab) => {
+    if ((tab as any).requiresPhotos && !hasPhotos) return false;
+    if ((tab as any).requiresAvailability && !hasAvailability) return false;
+    return true;
+  }).map(({ id, label }) => ({ id, label }));
 
   const handleShare = async () => {
     try {

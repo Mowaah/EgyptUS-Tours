@@ -16,8 +16,9 @@ import type { TransportationBookingRow } from "../types";
 import { getPillStyle } from "../TransportationPanel/transportationColumns";
 import ActionNoteModal, { ActionNoteModalConfig } from "@/components/dashboard/LeadsInquiries/ActionNoteModal/ActionNoteModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
-import { RefundModal, RefundSummary } from "@/components/dashboard/shared";
+import { RefundModal } from "@/components/dashboard/shared";
 import type { RefundData } from "@/components/dashboard/shared/RefundSummary/RefundSummary";
+import { calculateRefundSummary } from "@/utils/cancellationPolicy";
 
 interface ViewTransportationProps {
   id: string;
@@ -51,6 +52,32 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
   const isRefunded = payload?.operational_status === "refunded";
   const isCancelled = payload?.operational_status === "cancelled";
   const displayId = payload?.booking_code || `BK-${String(id).padStart(6, "0")}`;
+
+  const refundSummary = React.useMemo(() => {
+    if (!payload) return undefined;
+    
+    let total = Number(payload.payment_overview?.total || 0);
+    if (total === 0) {
+      const pTotal = payload.total_price || payload.total_amount;
+      if (pTotal !== undefined) {
+        total = Number(pTotal);
+      } else if (payload.price_details?.items?.length) {
+        total = payload.price_details.items.reduce((acc: number, item: any) => acc + Number(item.price || item.amount || item.line_total || 0), 0);
+      }
+    }
+    
+    let totalPaid = Number(payload.payment_overview?.total_paid || 0);
+    if (totalPaid === 0) {
+      let paid = Number(payload.amount_paid || payload.paid_amount || payload.total_paid || 0);
+      if (paid === 0 && payload.payments?.length) {
+        paid = payload.payments.reduce((acc: number, p: any) => acc + Number(p.amount || 0), 0);
+      }
+      totalPaid = paid;
+    }
+    
+    const travelDate = payload.booking?.pickup_date || payload.booking?.start_date || new Date().toISOString();
+    return calculateRefundSummary(total, totalPaid, travelDate);
+  }, [payload]);
 
   const customPills = payload ? (
     <div className={styles.customPills}>
@@ -181,6 +208,7 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
       <RefundModal
         open={isRefundModalOpen}
         onClose={() => setIsRefundModalOpen(false)}
+        refundSummary={refundSummary}
         onSubmit={async (data) => {
           console.log("Refunding payment with data:", data);
           setIsRefundModalOpen(false);

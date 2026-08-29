@@ -6,13 +6,16 @@ import DashboardField from "@/components/dashboard/shared/DashboardField/Dashboa
 import { UploadDropzone } from "@/components/dashboard/FormFields/UploadDropzone";
 import styles from "./RefundModal.module.scss";
 
+import { RefundSummary } from "@/utils/cancellationPolicy";
+
 interface RefundModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: any) => void;
+  onSubmit: (data: { reference: string; notes: string; file: File }) => void;
+  refundSummary?: RefundSummary;
 }
 
-export default function RefundModal({ open, onClose, onSubmit }: RefundModalProps) {
+export default function RefundModal({ open, onClose, onSubmit, refundSummary }: RefundModalProps) {
   const [reference, setReference] = useState("");
   const [notes, setNotes] = useState("");
   const [file, setFile] = useState<File | undefined>();
@@ -59,27 +62,27 @@ export default function RefundModal({ open, onClose, onSubmit }: RefundModalProp
           <div className={styles.summarySection}>
             <div className={styles.summaryRow}>
               <span className={styles.summaryLabel}>Package Total</span>
-              <span className={styles.summaryValue}>£2,500</span>
+              <span className={styles.summaryValue}>£{refundSummary?.package_total?.toLocaleString() ?? "0"}</span>
             </div>
             <div className={styles.summaryRow}>
               <span className={styles.summaryLabel}>Days Before Travel</span>
-              <span className={styles.summaryValue}>20 Days</span>
+              <span className={styles.summaryValue}>{refundSummary?.days_before_travel ?? "0"} Days</span>
             </div>
             <div className={styles.summaryRow}>
               <span className={styles.summaryLabel}>Cancellation Policy Applied</span>
-              <span className={styles.summaryValue}>29-15 days before service</span>
+              <span className={styles.summaryValue}>{refundSummary?.policy_applied ?? "N/A"}</span>
             </div>
             <div className={styles.summaryRow}>
               <span className={styles.summaryLabel}>Deduction</span>
-              <span className={styles.summaryValue}>40%</span>
+              <span className={styles.summaryValue}>{refundSummary?.deduction_percentage ?? "0"}%</span>
             </div>
             <div className={styles.summaryRow}>
               <span className={styles.summaryLabel}>Deduction Amount</span>
-              <span className={styles.summaryValue}>£1,000</span>
+              <span className={styles.summaryValue}>£{refundSummary?.deduction_amount?.toLocaleString() ?? "0"}</span>
             </div>
             <div className={styles.summaryRow}>
               <span className={styles.summaryLabel}>Refund Amount</span>
-              <span className={styles.refundAmountValue}>£1,500</span>
+              <span className={styles.refundAmountValue}>£{refundSummary?.refund_amount?.toLocaleString() ?? "0"}</span>
             </div>
           </div>
 

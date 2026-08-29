@@ -19,13 +19,16 @@ const CANCELLATION_REASONS = [
 
 
 
+import { RefundSummary } from "@/utils/cancellationPolicy";
+
 export interface CancelBookingModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: any) => void;
+  refundSummary?: RefundSummary;
 }
 
-export default function CancelBookingModal({ open, onClose, onSubmit }: CancelBookingModalProps) {
+export default function CancelBookingModal({ open, onClose, onSubmit, refundSummary }: CancelBookingModalProps) {
   const [reason, setReason] = useState("");
   const [detailedReason, setDetailedReason] = useState("");
   const [accountName, setAccountName] = useState("");
@@ -130,24 +133,24 @@ export default function CancelBookingModal({ open, onClose, onSubmit }: CancelBo
             <div className={styles.summaryCard}>
               <div className={styles.summaryRow}>
                 <span className={styles.summaryLabel}>Package Total</span>
-                <span className={styles.summaryValue}>£2,500</span>
+                <span className={styles.summaryValue}>£{refundSummary?.package_total?.toLocaleString() ?? "0"}</span>
               </div>
               <div className={styles.summaryRow}>
                 <span className={styles.summaryLabel}>Cancellation Window</span>
-                <span className={styles.summaryValue}>29–15 days before service</span>
+                <span className={styles.summaryValue}>{refundSummary?.policy_applied ?? "N/A"}</span>
               </div>
               <div className={styles.summaryRow}>
                 <span className={styles.summaryLabel}>Deduction Rate</span>
-                <span className={styles.summaryValue}>40%</span>
+                <span className={styles.summaryValue}>{refundSummary?.deduction_percentage ?? "0"}%</span>
               </div>
               <div className={styles.summaryRow}>
                 <span className={styles.summaryLabel}>Deduction Amount</span>
-                <span className={styles.summaryValue}>£1,000</span>
+                <span className={styles.summaryValue}>£{refundSummary?.deduction_amount?.toLocaleString() ?? "0"}</span>
               </div>
               <div className={styles.summaryRow}>
                 <span className={styles.summaryLabel}>Estimated Refund</span>
                 <div className={styles.estimatedRefund}>
-                  <span style={{ marginLeft: "4px" }}>£1,500</span>
+                  <span style={{ marginLeft: "4px" }}>£{refundSummary?.refund_amount?.toLocaleString() ?? "0"}</span>
                 </div>
               </div>
             </div>

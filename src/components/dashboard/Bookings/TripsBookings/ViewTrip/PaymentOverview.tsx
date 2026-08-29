@@ -33,12 +33,29 @@ export default function PaymentOverview({ overview, payload }: PaymentOverviewPr
         paid = calcTotal;
       } else if (paid === 0 && isPartiallyPaid) {
         paid = calcTotal * 0.3;
+      } else if (paid === 0 && payload?.payment_summary?.paid_amount) {
+        paid = Number(payload?.payment_summary?.paid_amount);
       }
       
       totalPaid = paid;
       totalDue = calcTotal - paid;
     }
+    // Also use payment_summary if total wasn't 0 but totalPaid is 0
+    if (totalPaid === 0 && payload?.payment_summary?.paid_amount) {
+      totalPaid = Number(payload?.payment_summary?.paid_amount);
+      totalDue = total - totalPaid;
+    }
   }
+
+  // Final fallback: if totalPaid is still 0, but we have a payments array, sum it up
+  if (totalPaid === 0 && payload?.payments && Array.isArray(payload.payments)) {
+    const sum = payload.payments.reduce((acc: number, p: any) => acc + Number(p.amount || 0), 0);
+    if (sum > 0) {
+      totalPaid = sum;
+      totalDue = total - sum;
+    }
+  }
+
   return (
     <div className={styles.card}>
       <div className={styles.cardTitle}>

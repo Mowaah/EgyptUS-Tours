@@ -19,8 +19,8 @@ import { ReassignModal } from "@/components/dashboard/shared";
 const filterOptions = {
   vehicleClass: ["All", "Mercedes V-Class", "Toyota Coaster", "Bus (50 Seats)", "Hyundai H1"],
   tripType: ["All", "One Way", "Round Trip"],
-  deposit: ["All", "Paid", "Pending", "Overdue"],
-  status: ["All", "Upcoming", "Canceled", "Refunded", "On Trip", "Completed"],
+  paymentStatus: ["All", "Paid", "Pending", "Overdue"],
+  status: ["All", "Upcoming", "In Transit", "Completed", "Cancelled"],
   source: ["All", "Website", "Agent"],
 };
 
@@ -34,7 +34,7 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
   const defaultFilters = {
     vehicleClass: "All",
     tripType: "All",
-    deposit: "All",
+    paymentStatus: "All",
     status: "All",
     source: "All",
   };
@@ -52,11 +52,27 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
       page_size: pageSize,
     };
     if (searchQuery) params.search = searchQuery;
-    if (appliedFilters.vehicleClass !== "All") params.vehicle_class = appliedFilters.vehicleClass.toLowerCase().replace(" ", "_");
-    if (appliedFilters.tripType !== "All") params.trip_type = appliedFilters.tripType.toLowerCase().replace(" ", "_");
-    if (appliedFilters.deposit !== "All") params.payment_status = appliedFilters.deposit.toLowerCase().replace(" ", "_");
-    if (appliedFilters.status !== "All") params.operational_status = appliedFilters.status.toLowerCase().replace(" ", "_");
-    if (appliedFilters.source !== "All") params.source = appliedFilters.source.toLowerCase();
+    if (appliedFilters.vehicleClass !== "All") params.vehicle_class = appliedFilters.vehicleClass;
+    if (appliedFilters.tripType !== "All") {
+      const tripTypeMap: Record<string, string> = { "One Way": "one_way", "Round Trip": "round_trip" };
+      params.trip_type = tripTypeMap[appliedFilters.tripType] ?? appliedFilters.tripType.toLowerCase().replace(" ", "_");
+    }
+    if (appliedFilters.paymentStatus !== "All") {
+      const payMap: Record<string, string> = { Paid: "paid", Pending: "pending", Overdue: "overdue" };
+      params.remaining_payment_status = payMap[appliedFilters.paymentStatus] ?? appliedFilters.paymentStatus.toLowerCase();
+    }
+    if (appliedFilters.status !== "All") {
+      const statusMap: Record<string, string> = {
+        Upcoming: "upcoming",
+        "In Transit": "in_transit",
+        Completed: "completed",
+        Cancelled: "cancelled",
+      };
+      params.operational_status = statusMap[appliedFilters.status] ?? appliedFilters.status.toLowerCase().replace(" ", "_");
+    }
+    if (appliedFilters.source !== "All") {
+      params.source = appliedFilters.source === "Agent" ? "admin" : "website";
+    }
     return params;
   }, [appliedFilters, searchQuery, pageIndex, pageSize]);
 
@@ -88,7 +104,7 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
   const filterFields = [
     { id: "vehicleClass", label: "Vehicle Class", options: filterOptions.vehicleClass },
     { id: "tripType", label: "Trip Type", options: filterOptions.tripType },
-    { id: "deposit", label: "Deposit", options: filterOptions.deposit },
+    { id: "paymentStatus", label: "Payment Status", options: filterOptions.paymentStatus },
     { id: "status", label: "Status", options: filterOptions.status },
     { id: "source", label: "Source", options: filterOptions.source },
   ].map(({ id, label, options }) => ({
@@ -102,23 +118,7 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
   const [reassignModalOpen, setReassignModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any>(null);
 
-  if (!isLoading && totalCount === 0 && (searchQuery || Object.values(appliedFilters).some(v => v !== "All"))) {
-    return (
-      <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
-    );
-  }
 
-  if (totalCount === 0 && !isLoading) {
-    return (
-      <DashboardEmptyState
-        title="No Bookings Found"
-        subtitle="Transportation bookings will appear here once they are added."
-        actionLabel="New Booking"
-        onAction={onNewBooking}
-        imageSrc="/images/dashboard/empty.png"
-      />
-    );
-  }
 
   return (
     <>
@@ -130,7 +130,18 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
         showExport
         toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
       >
-        <DataTable
+        {!isLoading && totalCount === 0 && (searchQuery || Object.values(appliedFilters).some(v => v !== "All")) ? (
+          <DashboardSearchEmptyState onClearSearch={onClearSearch || resetFilters} />
+        ) : !isLoading && totalCount === 0 ? (
+          <DashboardEmptyState
+            title="No Bookings Found"
+            subtitle="Transportation bookings will appear here once they are added."
+            actionLabel="New Booking"
+            onAction={onNewBooking}
+            imageSrc="/images/dashboard/empty.png"
+          />
+        ) : (
+          <DataTable
           data={transportationData}
           columns={transportationColumns}
           getRowId={(row) => String(row.id)}
@@ -161,6 +172,7 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
           defaultPageSize={10}
           isLoading={isLoading}
         />
+        )}
       </TablePanel>
 
       <ReassignModal

@@ -16,6 +16,8 @@ import {
 import TransportBookingSummary from "@/components/website/BookTransportationPage/BookingSummary/BookingSummary";
 import { getProfileBookingDetail, payRemainingBookingBalance } from "@/lib/api";
 import { COUNTRIES } from "@/data/countries";
+import { calculateRefundSummary } from "@/utils/cancellationPolicy";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import styles from "./ProfileBookingDetailsPage.module.scss";
 
 const getCountryName = (code: string) => {
@@ -73,6 +75,7 @@ export default function ProfileBookingDetailsPage() {
 
   const [bookingDetail, setBookingDetail] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { formatCurrency } = useCurrency();
 
   useEffect(() => {
     if (id) {
@@ -143,7 +146,18 @@ export default function ProfileBookingDetailsPage() {
   const paidAmount = parseFloat(payment.paid_amount || "0");
   const remainingAmount = parseFloat(payment.remaining_amount || "0") || (totalAmount - paidAmount);
   const paymentUrl = payment.payment_url || null;
-  const currencySymbol = (payment.currency_code || bData.trip?.currency_code || "£").replace("EGP", "£");
+
+  // Calculate final payment due date (30 days before start date, or fallback to backend provided date)
+  let paymentDueDate = "March 15, 2026";
+  if (payment.due_date) {
+    paymentDueDate = formatDate(payment.due_date);
+  } else if (bData.check_in_date || bData.start_date) {
+    const startD = new Date(bData.check_in_date || bData.start_date);
+    if (!isNaN(startD.getTime())) {
+      startD.setDate(startD.getDate() - 30);
+      paymentDueDate = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" }).format(startD);
+    }
+  }
 
   const depositAmount = paidAmount || totalAmount * 0.3;
   const hotelTotalRooms = safeFormData.rooms.single + safeFormData.rooms.double + safeFormData.rooms.triple;
@@ -152,6 +166,12 @@ export default function ProfileBookingDetailsPage() {
   const hotelTotalAmount = totalAmount;
   const hotelVatAmount = 0;
   const hotelDepositAmount = depositAmount;
+
+  const refundSummary = calculateRefundSummary(
+    totalAmount,
+    paidAmount,
+    bData.check_in_date || bData.start_date || bData.pickup_date || new Date().toISOString()
+  );
 
   const handlePayRemaining = async () => {
     if (!id || isPaying) return;
@@ -177,11 +197,22 @@ export default function ProfileBookingDetailsPage() {
     }
   };
 
-  const hotelRoomsList = [
-    safeFormData.rooms.single > 0 ? `${safeFormData.rooms.single} × Single Room` : null,
-    safeFormData.rooms.double > 0 ? `${safeFormData.rooms.double} × Double Room` : null,
-    safeFormData.rooms.triple > 0 ? `${safeFormData.rooms.triple} × Triple Room` : null,
-  ].filter((room): room is string => Boolean(room));
+  const hotelRoomsList = (() => {
+    if (bData.room_selections && Array.isArray(bData.room_selections) && bData.room_selections.length > 0) {
+      return bData.room_selections.map((sel: any) => {
+        const typeName = (sel.room_type || sel.type || "Room").charAt(0).toUpperCase() + (sel.room_type || sel.type || "Room").slice(1);
+        const roomTitle = typeName.toLowerCase().endsWith("room") ? typeName : `${typeName} Room`;
+        const view = sel.view_label || sel.view || "Garden View";
+        const qty = sel.quantity || sel.count || 1;
+        return `${qty} × ${roomTitle} - ${view}`;
+      });
+    }
+    return [
+      safeFormData.rooms.single > 0 ? `${safeFormData.rooms.single} × Single Room - Garden View` : null,
+      safeFormData.rooms.double > 0 ? `${safeFormData.rooms.double} × Double Room - Garden View` : null,
+      safeFormData.rooms.triple > 0 ? `${safeFormData.rooms.triple} × Triple Room - Garden View` : null,
+    ].filter((room): room is string => Boolean(room));
+  })();
 
   const sections: BookingDetailsSection[] = isTransport
     ? [
@@ -370,7 +401,7 @@ export default function ProfileBookingDetailsPage() {
                   <span className={styles.warningDot}>
                     <Image src="/images/info.svg" alt="" width={12} height={12} className={styles.warningDotIcon} />
                   </span>
-                  Final payment due by March 15, 2026 to keep your booking
+                  Final payment due by {paymentDueDate} to keep your booking
                 </div>
               )}
 
@@ -411,7 +442,7 @@ export default function ProfileBookingDetailsPage() {
                         onClick={handlePayRemaining}
                         disabled={isPaying}
                       >
-                        <span>{isPaying ? "Generating payment link..." : `Pay remaining ${currencySymbol}${remainingAmount.toLocaleString()}`}</span>
+                        <span>{isPaying ? "Generating payment link..." : `Pay remaining ${formatCurrency(remainingAmount)}`}</span>
                         {!isPaying && <Image src="/images/money-send.svg" alt="" width={24} height={24} aria-hidden />}
                       </button>
                     </>
@@ -471,6 +502,7 @@ export default function ProfileBookingDetailsPage() {
       <CancelBookingModal
         open={showCancelModal}
         onClose={() => setShowCancelModal(false)}
+        refundSummary={refundSummary}
         onSubmit={(data) => {
           console.log("Cancelling booking with data:", data);
           setShowCancelModal(false);

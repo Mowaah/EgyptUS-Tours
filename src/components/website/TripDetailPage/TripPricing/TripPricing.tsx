@@ -86,7 +86,7 @@ export default function TripPricing({ trip }: TripPricingProps) {
                     </div>
                     <p className={styles.tierPrice}>{formatCurrency(tier.price)}</p>
                   </div>
-                  <p className={styles.tierLabel}>{tier.label}</p>
+                  <p className={styles.tierLabel}>Per Person in {tier.label}</p>
                 </div>
               ))}
             </div>

@@ -38,13 +38,39 @@ export default function StepBookingSummary({
     ? formData.specialRequests.split(",").map((s) => s.trim()).filter(Boolean)
     : [];
 
-  const rooms = Object.entries(formData.rooms || {})
-    .filter(([_, count]) => (count as number) > 0)
-    .map(([key, count]) => {
-      const typeName = key.charAt(0).toUpperCase() + key.slice(1);
+  const rooms = (() => {
+    const roomGroupsMap: Record<string, { count: number; name: string; view: string }> = {};
+    const roomEntries = Object.entries(formData.rooms || {}).filter(([_, count]) => (count as number) > 0);
+
+    roomEntries.forEach(([type, count]) => {
+      const totalCount = count as number;
+      const typeName = type.charAt(0).toUpperCase() + type.slice(1);
       const roomTitle = typeName.toLowerCase().endsWith("room") ? typeName : `${typeName} Room`;
-      return `${count} × ${roomTitle}`;
+      const customizations = formData.roomCustomizations?.[type] || [];
+
+      for (let i = 0; i < totalCount; i++) {
+        const opt = customizations[i] || "garden";
+        let viewLabel = "Garden View";
+        if (opt.toLowerCase().includes("pool")) viewLabel = "Pool View";
+        else if (opt.toLowerCase().includes("sea")) viewLabel = "Sea View";
+        else if (opt && !opt.toLowerCase().includes("garden")) {
+          viewLabel = opt.toLowerCase().includes("view") ? opt : `${opt.charAt(0).toUpperCase() + opt.slice(1)} View`;
+        }
+
+        const groupKey = `${type}_${viewLabel}`;
+        if (!roomGroupsMap[groupKey]) {
+          roomGroupsMap[groupKey] = {
+            count: 0,
+            name: roomTitle,
+            view: viewLabel,
+          };
+        }
+        roomGroupsMap[groupKey].count += 1;
+      }
     });
+
+    return Object.values(roomGroupsMap).map((g) => `${g.count} × ${g.name} - ${g.view}`);
+  })();
 
   const formattedDuration = (() => {
     if (!trip.duration) return "N/A";

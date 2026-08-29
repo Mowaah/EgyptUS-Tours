@@ -15,9 +15,19 @@ export interface Milestone {
 interface ActivityTimelineProps {
   title?: string;
   milestones: Milestone[];
+  reverseOrder?: boolean;
 }
 
-export default function ActivityTimeline({ title = "Activity Timeline", milestones }: ActivityTimelineProps) {
+export default function ActivityTimeline({ 
+  title = "Activity Timeline", 
+  milestones,
+  reverseOrder = true,
+}: ActivityTimelineProps) {
+  const displayedMilestones = React.useMemo(() => {
+    if (!milestones || milestones.length === 0) return [];
+    return reverseOrder ? [...milestones].reverse() : milestones;
+  }, [milestones, reverseOrder]);
+
   return (
     <div className={styles.card}>
       <div className={styles.cardTitle}>
@@ -35,7 +45,7 @@ export default function ActivityTimeline({ title = "Activity Timeline", mileston
 
       <div className={styles.timeline}>
         <div className={styles.timelineLine} />
-        {milestones.map((milestone) => (
+        {displayedMilestones.map((milestone) => (
           <div 
             key={milestone.id} 
             className={`${styles.milestone} ${milestone.status === "pending" ? styles.milestonePending : ""}`}
