@@ -13,6 +13,7 @@ export default function CustomersPage() {
       
       
         <DashboardNavbar 
+          searchQuery={searchQuery}
           onSearchChange={setSearchQuery} 
           hidePrimaryAction
         />

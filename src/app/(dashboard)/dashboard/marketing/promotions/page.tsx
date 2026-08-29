@@ -52,6 +52,7 @@ export default function PromotionsPage() {
       
       
         <DashboardNavbar
+          searchQuery={searchQuery}
           onSearchChange={handleSearch}
           onPrimaryAction={handleAction}
         />

@@ -11,6 +11,7 @@ import {
 import { useLeads, useAssignLead, useExportLeads } from "@/hooks/useLeads";
 import { inquiriesColumns, leadRowActions } from "./inquiriesColumns";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import { ReassignModal } from "@/components/dashboard/shared";
 import { useAdminUsers } from "@/hooks/useAdminUsers";
@@ -184,7 +185,13 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
               onAction={onAddLead}
               imageSrc="/images/dashboard/empty.png"
             />
-          ) : undefined
+          ) : !searchQuery && Object.values(appliedFilters).some((v) => v !== "All") ? (
+              <DashboardFilterEmptyState
+                onClearFilters={onClearSearch || resetFilters}
+                title="No Results Found"
+                subtitle="No results match the selected filters."
+              />
+            ) : undefined
         }
       />
       

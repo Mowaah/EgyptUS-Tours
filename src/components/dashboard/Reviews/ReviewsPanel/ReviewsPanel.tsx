@@ -13,6 +13,7 @@ import AddTestimonialModal from "./AddTestimonialModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import { useReviewsPanel } from "@/hooks/useReviewsPanel";
 import { replyToAdminUserReview, updateAdminTestimonial, updateAdminUserReview, deleteAdminTestimonial, deleteAdminUserReview } from "@/services/admin/adminReviewsService";
@@ -178,22 +179,7 @@ export function ReviewsPanel({
     );
   }
 
-  // We rely on the backend to filter. If data is empty and we have a search query, show search empty state.
-  if (data.length === 0 && searchQuery) {
-    return (
-      <DashboardSearchEmptyState onClearSearch={resetFilters} />
-    );
-  }
 
-  if (data.length === 0) {
-    return (
-      <DashboardEmptyState
-        title={emptyStateTitle || "No Reviews & Testimonials Yet"}
-        subtitle={emptyStateSubtitle || "There are no Reviews & Testimonials available at the moment."}
-        imageSrc="/images/dashboard/empty.png"
-      />
-    );
-  }
 
   const handleExportClick = () => {
     if (!data || data.length === 0) return;
@@ -270,7 +256,23 @@ export function ReviewsPanel({
           onPageChange={(p) => setPage(p + 1)}
           onPageSizeChange={setPageSize}
           defaultPageSize={10}
-        isLoading={loading}
+          isLoading={loading}
+          onClearSearch={resetFilters}
+          emptyState={
+            !searchQuery && Object.values(appliedFilters).every((v) => v === "All") ? (
+              <DashboardEmptyState
+                title={title === "Admin Testimonials" ? "No Testimonials Found" : "No Reviews Found"}
+                subtitle={title === "Admin Testimonials" ? "Testimonials will appear here once added." : "Reviews will appear here once submitted."}
+                imageSrc="/images/dashboard/empty.png"
+              />
+            ) : !searchQuery && Object.values(appliedFilters).some((v) => v !== "All") ? (
+              <DashboardFilterEmptyState
+                onClearFilters={resetFilters}
+                title="No Results Found"
+                subtitle="No results match the selected filters."
+              />
+            ) : undefined
+          }
         />
     </TablePanel>
 

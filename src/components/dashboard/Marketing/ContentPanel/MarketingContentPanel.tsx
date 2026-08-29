@@ -8,6 +8,7 @@ import {
 } from "@/components/dashboard/TablePanel";
 import { DashboardConfirmationModal } from "@/components/dashboard/shared";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import { useRouter, usePathname } from "next/navigation";
 import { exportAdminBlogsCSV, exportAdminArticlesCSV } from "@/services/admin/adminMarketingService";
@@ -114,22 +115,7 @@ export function MarketingContentPanel({
   const itemName = contentType === "articles" ? "Article" : "Blog Post";
   const pluralName = contentType === "articles" ? "Articles" : "Blog Posts";
 
-  if (!loading && data.length === 0 && !searchQuery && !categoryFilter && !statusFilter) {
-    return (
-      <DashboardEmptyState
-        title={`No ${pluralName} Yet`}
-        subtitle={`There are no ${pluralName.toLowerCase()} available at the moment.`}
-        actionLabel={`Create Your First ${itemName}`}
-        onAction={() => router.push(`/dashboard/marketing/${contentType}/create`)}
-      />
-    );
-  }
 
-  if (!loading && data.length === 0 && (searchQuery || categoryFilter || statusFilter)) {
-    return (
-      <DashboardSearchEmptyState onClearSearch={resetFilters} />
-    );
-  }
 
   return (
     <>
@@ -161,6 +147,24 @@ export function MarketingContentPanel({
           onPageSizeChange={setPageSize}
           defaultPageSize={10}
           isLoading={loading}
+          onClearSearch={resetFilters}
+          emptyState={
+            !searchQuery && !categoryFilter && !statusFilter ? (
+              <DashboardEmptyState
+                title={`No ${pluralName} Yet`}
+                subtitle={`There are no ${pluralName.toLowerCase()} available at the moment.`}
+                actionLabel={`Create Your First ${itemName}`}
+                onAction={() => router.push(`/dashboard/marketing/${contentType}/create`)}
+                imageSrc="/images/dashboard/empty.png"
+              />
+            ) : !searchQuery && (categoryFilter || statusFilter) ? (
+              <DashboardFilterEmptyState
+                onClearFilters={resetFilters}
+                title="No Results Found"
+                subtitle="No results match the selected filters."
+              />
+            ) : undefined
+          }
         />
       </TablePanel>
 

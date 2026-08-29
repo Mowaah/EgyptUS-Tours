@@ -12,6 +12,7 @@ import { useCatalogVehicles, useVehicleCategories } from "@/hooks/useCatalogVehi
 import { archiveCatalogVehicle, deleteCatalogVehicle, updateCatalogVehicle } from "@/services/admin/adminCatalogVehiclesService";
 import { transportationColumns, transportationRowActions } from "./transportationColumns";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
@@ -155,7 +156,13 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
               onAction={() => router.push("/dashboard/catalog/transportation/new")}
               imageSrc="/images/dashboard/empty.png"
             />
-          ) : undefined
+          ) : !searchQuery && Object.values(appliedFilters).some((v) => v !== "All") ? (
+              <DashboardFilterEmptyState
+                onClearFilters={onClearSearch || resetFilters}
+                title="No Results Found"
+                subtitle="No results match the selected filters."
+              />
+            ) : undefined
         }
       />
       <DashboardConfirmationModal

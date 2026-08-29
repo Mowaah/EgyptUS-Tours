@@ -12,6 +12,7 @@ import { getHotelBookings, reassignBooking, sendHotelBookingReminder } from "@/s
 import { getAdminUsers } from "@/services/admin/adminUsersService";
 import { hotelsColumns, hotelsRowActions } from "./hotelsColumns";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import { triggerToast } from "@/components/dashboard/shared/GlobalToastContainer/GlobalToastContainer";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import { ReassignModal } from "@/components/dashboard/shared";
@@ -163,6 +164,12 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
                 actionLabel="New Booking"
                 onAction={onNewBooking}
                 imageSrc="/images/dashboard/empty.png"
+              />
+            ) : !searchQuery && Object.values(appliedFilters).some((v) => v !== "All") ? (
+              <DashboardFilterEmptyState
+                onClearFilters={onClearSearch || resetFilters}
+                title="No Results Found"
+                subtitle="No results match the selected filters."
               />
             ) : undefined
           }

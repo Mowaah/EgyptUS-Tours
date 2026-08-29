@@ -11,6 +11,7 @@ export interface DashboardEmptyStateProps {
   onAction?: () => void;
   imageSrc?: string;
   actionIconSrc?: string;
+  hideActionIcon?: boolean;
 }
 
 export default function DashboardEmptyState({
@@ -20,6 +21,7 @@ export default function DashboardEmptyState({
   onAction,
   imageSrc = "/images/dashboard/empty.png",
   actionIconSrc,
+  hideActionIcon = false,
 }: DashboardEmptyStateProps) {
   return (
     <div className={styles.container}>
@@ -36,16 +38,18 @@ export default function DashboardEmptyState({
         {actionLabel && onAction && (
           <button type="button" className={`${styles.actionButton} ${actionIconSrc ? styles.actionButtonSecondary : ''}`} onClick={onAction}>
             <span className={actionIconSrc ? styles.actionTextSecondary : styles.actionText}>{actionLabel}</span>
-            <span className={styles.actionIcon}>
-              {actionIconSrc ? (
-                <Image src={actionIconSrc} alt="" width={24} height={24} aria-hidden />
-              ) : (
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="12" cy="12" r="9" stroke="white" strokeWidth="1.5"/>
-                  <path d="M12 8V16M8 12H16" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
-              )}
-            </span>
+            {!hideActionIcon && (
+              <span className={styles.actionIcon}>
+                {actionIconSrc ? (
+                  <Image src={actionIconSrc} alt="" width={24} height={24} aria-hidden />
+                ) : (
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="9" stroke="white" strokeWidth="1.5"/>
+                    <path d="M12 8V16M8 12H16" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                )}
+              </span>
+            )}
           </button>
         )}
       </div>

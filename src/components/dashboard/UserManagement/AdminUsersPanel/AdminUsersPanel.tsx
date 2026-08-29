@@ -6,11 +6,12 @@ import { DataTable } from "@/components/dashboard/DataTable";
 import {
   TablePanel,
   TablePanelFilterBar,
-  TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
 import type { AdminUserRow, AdminRoleRow } from "../types";
 import { createAdminUserRowActions, adminUsersColumns } from "./adminUsersColumns";
 import { exportAdminUsers, getAdminUsers } from "@/services/admin/adminUsersService";
+import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 
 interface AdminUsersPanelProps {
   roles: AdminRoleRow[];
@@ -134,6 +135,22 @@ export default function AdminUsersPanel({
         onPageSizeChange={setPageSize}
         defaultPageSize={10}
         isLoading={isLoading}
+        onClearSearch={resetFilters}
+        emptyState={
+          !normalizedSearchQuery && appliedFilters.role === "All" && appliedFilters.state === "All" ? (
+            <DashboardEmptyState
+              title="No Users Found"
+              subtitle="System users will appear here once they are created."
+              imageSrc="/images/dashboard/empty.png"
+            />
+          ) : appliedFilters.role !== "All" || appliedFilters.state !== "All" ? (
+            <DashboardFilterEmptyState
+              onClearFilters={resetFilters}
+              title="No Users Found"
+              subtitle="No users match the selected filters."
+            />
+          ) : undefined
+        }
       />
     </TablePanel>
   );

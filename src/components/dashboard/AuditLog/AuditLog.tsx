@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import { DataTable } from "@/components/dashboard/DataTable";
 import type { DataTableColumn } from "@/components/dashboard/DataTable";
 import {
   TablePanel,
   TablePanelFilterBar,
-  TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
 import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";
+import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import useSWR from "swr";
 import { fetchAuditLogs, deleteAuditLog, exportAuditLogs } from "@/services/admin/adminAuditLogService";
 import styles from "./AuditLog.module.scss";
@@ -62,8 +63,8 @@ const AuditValueRender = ({ value, otherValue, isAfter }: { value: any, otherVal
     const isLong = strVal.length > 80;
     const displayString = isLong ? strVal.slice(0, 80) + "..." : strVal;
     return (
-      <span 
-        style={{ overflowWrap: "anywhere", wordBreak: "break-word" }} 
+      <span
+        style={{ overflowWrap: "anywhere", wordBreak: "break-word" }}
         title={isLong ? strVal : undefined}
       >
         {displayString}
@@ -77,8 +78,8 @@ const AuditValueRender = ({ value, otherValue, isAfter }: { value: any, otherVal
   if (otherValue && typeof otherValue === "object") {
     const beforeObj = isAfter ? otherValue : value;
     const afterObj = isAfter ? value : otherValue;
-    const changedKeys = Object.keys(afterObj).filter(k => 
-      JSON.stringify(beforeObj[k]) !== JSON.stringify(afterObj[k]) && 
+    const changedKeys = Object.keys(afterObj).filter(k =>
+      JSON.stringify(beforeObj[k]) !== JSON.stringify(afterObj[k]) &&
       !["last_activity_at", "updated_at", "created_at"].includes(k)
     );
     if (changedKeys.length === 1) {
@@ -122,7 +123,7 @@ const AuditValueRender = ({ value, otherValue, isAfter }: { value: any, otherVal
     const statusLower = String(displayVal).toLowerCase();
     const isActive = statusLower === "active" || statusLower === "approved" || statusLower === "true";
     const isInactive = statusLower === "inactive" || statusLower === "blocked" || statusLower === "rejected" || statusLower === "false";
-    
+
     if (isAfter && isActive) {
       return (
         <span className={`${styles.pill} ${styles.stateActive}`}>
@@ -184,7 +185,7 @@ const AuditValueRender = ({ value, otherValue, isAfter }: { value: any, otherVal
   const displayString = isLong ? formattedVal.slice(0, 80) + "..." : formattedVal;
 
   return (
-    <span 
+    <span
       style={{ color: "#64748b", overflowWrap: "anywhere", wordBreak: "break-word" }}
       title={isLong ? formattedVal : undefined}
     >
@@ -193,12 +194,15 @@ const AuditValueRender = ({ value, otherValue, isAfter }: { value: any, otherVal
   );
 };
 
-export default function AuditLog() {
+interface AuditLogProps {
+  searchQuery?: string;
+  onClearSearch?: () => void;
+}
+
+export default function AuditLog({ searchQuery = "", onClearSearch }: AuditLogProps) {
   const defaultFilters = { module: "All", dateRange: "All", action: "All" };
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [appliedSearchQuery, setAppliedSearchQuery] = useState("");
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
 
@@ -220,9 +224,9 @@ export default function AuditLog() {
       params.action = actionSlugMap[appliedFilters.action] || appliedFilters.action.toLowerCase();
     }
     // Date range requires calculating date_from and date_to if we want to support it properly
-    if (appliedSearchQuery) params.search = appliedSearchQuery;
+    if (searchQuery) params.search = searchQuery;
     return params;
-  }, [appliedFilters, appliedSearchQuery, pageIndex, pageSize]);
+  }, [appliedFilters, searchQuery, pageIndex, pageSize]);
 
   const { data, mutate, isLoading } = useSWR(["/audit-log", queryParams], () => fetchAuditLogs(queryParams));
   const logs = data?.results || [];
@@ -233,14 +237,12 @@ export default function AuditLog() {
   const resetFilters = () => {
     setFilters(defaultFilters);
     setAppliedFilters(defaultFilters);
-    setSearchQuery("");
-    setAppliedSearchQuery("");
     setPageIndex(0);
+    if (onClearSearch) onClearSearch();
   };
 
   const applyFilters = () => {
     setAppliedFilters(filters);
-    setAppliedSearchQuery(searchQuery);
     setPageIndex(0);
   };
 
@@ -317,7 +319,7 @@ export default function AuditLog() {
     },
   ];
 
-  const rowActions = (_row: any) => [
+  const rowActions = () => [
     {
       label: "Delete Log",
       variant: "danger" as const,
@@ -389,7 +391,23 @@ export default function AuditLog() {
           onPageChange={setPageIndex}
           onPageSizeChange={setPageSize}
           defaultPageSize={10}
-        isLoading={isLoading}
+          isLoading={isLoading}
+          onClearSearch={resetFilters}
+          emptyState={
+            !searchQuery && appliedFilters.module === "All" && appliedFilters.action === "All" ? (
+              <DashboardEmptyState
+                title="No Audit Logs Found"
+                subtitle="System audit logs will appear here when actions are recorded."
+                imageSrc="/images/dashboard/empty.png"
+              />
+            ) : appliedFilters.module !== "All" || appliedFilters.action !== "All" ? (
+              <DashboardFilterEmptyState
+                onClearFilters={resetFilters}
+                title="No Audit Log Yet"
+                subtitle={`No audit logs match the selected ${appliedFilters.module !== "All" ? 'module' : 'action'}.`}
+              />
+            ) : undefined
+          }
         />
       </TablePanel>
 

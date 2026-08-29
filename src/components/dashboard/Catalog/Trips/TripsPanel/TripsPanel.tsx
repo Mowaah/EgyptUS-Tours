@@ -10,7 +10,7 @@ import {
 } from "@/components/dashboard/TablePanel";
 import { catalogTripsColumns, catalogTripsRowActions } from "./catalogTripsColumns";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
-import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import { useCatalogTrips, useCatalogFilters } from "@/hooks/useCatalogTrips";
@@ -189,6 +189,12 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
               actionLabel="Add New Trip"
               onAction={() => router.push("/dashboard/catalog/trips/new")}
               imageSrc="/images/dashboard/empty.png"
+            />
+          ) : !searchQuery && Object.values(appliedFilters).some((v) => v !== "All") ? (
+            <DashboardFilterEmptyState
+              onClearFilters={onClearSearch || resetFilters}
+              title="No Results Found"
+              subtitle="No results match the selected filters."
             />
           ) : undefined
         }

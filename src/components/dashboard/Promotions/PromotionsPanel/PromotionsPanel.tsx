@@ -11,7 +11,7 @@ import {
 } from "@/components/dashboard/TablePanel";
 import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";;
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
-import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import { promotionsColumns, usePromotionRowActions } from "./promotionsColumns";
 import { getAdminPromotions, AdminPromotionList, updateAdminPromotion, deleteAdminPromotion } from "@/services/admin/adminMarketingService";
 import type { PromotionRow } from "../types";
@@ -44,7 +44,7 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
   const promotions: PromotionRow[] = useMemo(() => {
     const data = res?.results || (res as any) || [];
     if (!Array.isArray(data)) return [];
-    
+
     return data.map((p: AdminPromotionList) => ({
       id: String(p.id),
       offerId: p.offer_number || `PRO-${p.id}`,
@@ -96,7 +96,7 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
 
   const filteredPromotions = useMemo(() => {
     return promotions.filter((promotion) => {
-      if (searchQuery && !promotion.title.toLowerCase().includes(searchQuery.toLowerCase()) && !promotion.offerId.toLowerCase().includes(searchQuery.toLowerCase())) {
+      if (searchQuery && !(promotion.title || "").toLowerCase().includes(searchQuery.toLowerCase()) && !(promotion.offerId || "").toLowerCase().includes(searchQuery.toLowerCase())) {
         return false;
       }
       if (appliedFilters.appliesTo !== "All" && promotion.appliesTo !== appliedFilters.appliesTo) return false;
@@ -107,10 +107,10 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
 
   const handleExport = () => {
     if (!filteredPromotions.length) return;
-    
+
     const headers = ["Offer ID", "Title", "Value", "Applies To", "Valid From", "Valid To", "Status"];
     const csvRows = [headers.join(",")];
-    
+
     filteredPromotions.forEach(row => {
       const rowData = [
         `"${row.offerId}"`,
@@ -123,11 +123,11 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
       ];
       csvRows.push(rowData.join(","));
     });
-    
+
     const csvString = csvRows.join("\n");
     const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
-    
+
     const link = document.createElement("a");
     link.href = url;
     link.setAttribute("download", `promotions_export_${new Date().toISOString().split('T')[0]}.csv`);
@@ -179,7 +179,7 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
         data={filteredPromotions}
         columns={promotionsColumns}
         getRowId={(row) => row.id}
-        
+
         pageSizeOptions={[5, 10, 15]}
         defaultPageSize={10}
         isLoading={loading}
@@ -192,6 +192,12 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
               actionLabel="Create Your First Promotion"
               imageSrc="/images/dashboard/empty.png"
               onAction={() => router.push("/dashboard/marketing/promotions/create")}
+            />
+          ) : !searchQuery && (appliedFilters.appliesTo !== "All" || appliedFilters.status !== "All" || appliedFilters.validFrom !== "All") ? (
+            <DashboardFilterEmptyState
+              onClearFilters={resetFilters}
+              title="No Results Found"
+              subtitle="No results match the selected filters."
             />
           ) : undefined
         }

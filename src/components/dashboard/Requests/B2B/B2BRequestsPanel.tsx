@@ -6,6 +6,7 @@ import {
   TablePanelFilterBar,
 } from "@/components/dashboard/TablePanel";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { b2bColumns, B2BApiItem } from "./b2bColumns";
 import { getB2BRequests } from "@/services/admin/adminRequestsService";
@@ -113,7 +114,13 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
               subtitle="B2B requests will appear here once users start submitting them"
               imageSrc="/images/dashboard/empty.png"
             />
-          ) : undefined
+          ) : !searchQuery && (appliedSourceFilter || appliedStatusFilter) ? (
+              <DashboardFilterEmptyState
+                onClearFilters={handleClean}
+                title="No Results Found"
+                subtitle="No results match the selected filters."
+              />
+            ) : undefined
         }
       />
     </TablePanel>

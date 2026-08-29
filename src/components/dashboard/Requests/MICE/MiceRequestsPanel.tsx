@@ -6,6 +6,7 @@ import {
   TablePanelFilterBar,
 } from "@/components/dashboard/TablePanel";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { miceColumns } from "./miceColumns";
 import { getMiceRequests } from "@/services/admin/adminRequestsService";
@@ -112,7 +113,13 @@ export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPane
               subtitle="MICE requests will appear here once users start submitting them"
               imageSrc="/images/dashboard/empty.png"
             />
-          ) : undefined
+          ) : !searchQuery && (appliedSourceFilter || appliedStatusFilter) ? (
+              <DashboardFilterEmptyState
+                onClearFilters={handleClean}
+                title="No Results Found"
+                subtitle="No results match the selected filters."
+              />
+            ) : undefined
         }
       />
     </TablePanel>

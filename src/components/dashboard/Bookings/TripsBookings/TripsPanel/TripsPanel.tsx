@@ -12,6 +12,7 @@ import { getTripBookings, reassignBooking, sendTripBookingReminder } from "@/ser
 import { getAdminUsers } from "@/services/admin/adminUsersService";
 import { tripsColumns, tripsRowActions } from "./tripsColumns";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import { triggerToast } from "@/components/dashboard/shared/GlobalToastContainer/GlobalToastContainer";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import { ReassignModal } from "@/components/dashboard/shared";
@@ -167,6 +168,12 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
                 actionLabel="New Booking"
                 onAction={onNewBooking}
                 imageSrc="/images/dashboard/empty.png"
+              />
+            ) : !searchQuery && Object.values(appliedFilters).some((v) => v !== "All") ? (
+              <DashboardFilterEmptyState
+                onClearFilters={onClearSearch || resetFilters}
+                title="No Trips Found"
+                subtitle="No trips match the selected filters."
               />
             ) : undefined
           }

@@ -6,9 +6,9 @@ import { DataTable } from "@/components/dashboard/DataTable";
 import {
   TablePanel,
   TablePanelFilterBar,
-  TablePanelHeaderButton,
 } from "@/components/dashboard/TablePanel";
-import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
+import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import { customersColumns, customerRowActions } from "./customersColumns";
 import EditCustomerModal from "./EditCustomerModal/EditCustomerModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
@@ -116,16 +116,8 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
       ariaLabel="Customers table"
       title="Customers"
       iconSrc="/images/dashboard/sidebar/user-management.svg"
-      headerActions={
-        <>
-          <TablePanelHeaderButton iconSrc="/images/dashboard/filter.svg">
-            Filters
-          </TablePanelHeaderButton>
-          <TablePanelHeaderButton iconSrc="/images/dashboard/export.svg">
-            Export Data
-          </TablePanelHeaderButton>
-        </>
-      }
+      showFilters
+      showExport
       toolbar={<TablePanelFilterBar fields={filterFields} onClean={resetFilters} onApply={applyFilters} />}
     >
       <DataTable
@@ -142,6 +134,21 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
         defaultPageSize={10}
         isLoading={isLoading}
         onClearSearch={resetFilters}
+        emptyState={
+          !searchQuery && Object.values(appliedFilters).every((v) => v === "All") ? (
+            <DashboardEmptyState
+              title="No Customers Found"
+              subtitle="Customers will appear here once they register or are added."
+              imageSrc="/images/dashboard/empty.png"
+            />
+          ) : !searchQuery && Object.values(appliedFilters).some((v) => v !== "All") ? (
+            <DashboardFilterEmptyState
+              onClearFilters={resetFilters}
+              title="No Results Found"
+              subtitle="No results match the selected filters."
+            />
+          ) : undefined
+        }
       />
       
       {selectedRow && (
