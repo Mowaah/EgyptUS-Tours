@@ -19,6 +19,7 @@ interface WizardLayoutProps {
   children: ReactNode;
   lastUpdateDate?: string;
   publishLabel?: string;
+  isLoading?: boolean;
 }
 
 export default function WizardLayout({
@@ -31,6 +32,7 @@ export default function WizardLayout({
   children,
   lastUpdateDate = "6/6/2026",
   publishLabel = "Publish",
+  isLoading = false,
 }: WizardLayoutProps) {
   const isLastStep = currentStep === steps.length - 1;
 
@@ -62,7 +64,7 @@ export default function WizardLayout({
               <Image src="/images/dashboard/previous.svg" alt="Previous" width={20} height={20} />
               <span>Previous</span>
             </button>
-            <button type="button" className={styles.nextButton} onClick={onNext}>
+            <button type="button" className={styles.nextButton} onClick={onNext} disabled={isLoading}>
               <span>{isLastStep ? publishLabel : "Next"}</span>
               {!isLastStep && <Image src="/images/dashboard/next.svg" alt="Next" width={20} height={20} />}
             </button>

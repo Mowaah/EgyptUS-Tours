@@ -821,6 +821,7 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange }: { tripId?:
           onPrevious={handlePrevious}
           onStepClick={handleStepClick}
           publishLabel="Publish Trip"
+          isLoading={isSaving}
         >
           {renderStep()}
         </WizardLayout>
