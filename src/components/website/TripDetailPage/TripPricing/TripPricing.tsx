@@ -12,18 +12,25 @@ interface TripPricingProps {
 
 export default function TripPricing({ trip }: TripPricingProps) {
   const { formatCurrency } = useCurrency();
-  const [pricingType, setPricingType] = useState<"private" | "group">("private");
   const allPricing = trip.pricing ?? [];
+  const hasValidTiers = (col: any) => col.tiers && col.tiers.some((t: any) => (t.price || 0) > 0);
 
-  // Filter pricing by tourType matching the selected tab
+  const hasPrivate = allPricing.some((col) => col.tourType?.toLowerCase() === "private" && hasValidTiers(col));
+  const hasGroup = allPricing.some((col) => col.tourType?.toLowerCase() === "group" && hasValidTiers(col));
+
+  const [pricingType, setPricingType] = useState<"private" | "group">(hasPrivate ? "private" : "group");
+
+  // Filter pricing by tourType matching the selected tab and only include valid columns
   const matchingPricing = allPricing.filter(
-    (col) => col.tourType?.toLowerCase() === pricingType
+    (col) => col.tourType?.toLowerCase() === pricingType && hasValidTiers(col)
   );
+
+  const validAllPricing = allPricing.filter(hasValidTiers);
 
   const displayPricing = matchingPricing.length > 0
     ? matchingPricing
-    : allPricing.length > 0
-    ? allPricing
+    : validAllPricing.length > 0
+    ? validAllPricing
     : [];
 
   if (!displayPricing.length) return null;
@@ -48,22 +55,24 @@ export default function TripPricing({ trip }: TripPricingProps) {
           </p>
         </div>
 
-        <div className={styles.toggleWrapper}>
-          <button
-            type="button"
-            className={`${styles.toggleBtn} ${pricingType === "private" ? styles.toggleBtnActive : ""}`}
-            onClick={() => setPricingType("private")}
-          >
-            Private Tour
-          </button>
-          <button
-            type="button"
-            className={`${styles.toggleBtn} ${pricingType === "group" ? styles.toggleBtnActive : ""}`}
-            onClick={() => setPricingType("group")}
-          >
-            Group Tour
-          </button>
-        </div>
+        {hasPrivate && hasGroup && (
+          <div className={styles.toggleWrapper}>
+            <button
+              type="button"
+              className={`${styles.toggleBtn} ${pricingType === "private" ? styles.toggleBtnActive : ""}`}
+              onClick={() => setPricingType("private")}
+            >
+              Private Tour
+            </button>
+            <button
+              type="button"
+              className={`${styles.toggleBtn} ${pricingType === "group" ? styles.toggleBtnActive : ""}`}
+              onClick={() => setPricingType("group")}
+            >
+              Group Tour
+            </button>
+          </div>
+        )}
 
         <div className={styles.grid}>
           {displayPricing.map((col, ci) => (
