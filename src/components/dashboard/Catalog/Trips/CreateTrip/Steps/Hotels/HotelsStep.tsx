@@ -5,6 +5,7 @@ import Image from "next/image";
 import { IncludedHotelCard } from "@/components/shared";
 import { FilterSelect } from "@/components/dashboard/TablePanel/FilterSelect";
 import { getCatalogHotels } from "@/services/admin/adminCatalogTripsService";
+import { useCatalogHotelLocations } from "@/hooks/useCatalogHotels";
 import styles from "./HotelsStep.module.scss";
 
 type HotelOption = {
@@ -25,6 +26,7 @@ type HotelRecord = {
   name?: string;
   title?: string;
   description?: string;
+  image_url?: string;
   hero_image_url?: string;
   hero_image?: string;
   image?: string;
@@ -49,6 +51,11 @@ type HotelRecord = {
     title?: string;
     description?: string;
   };
+  media_items?: {
+    kind?: string;
+    image_url?: string;
+    image?: string;
+  }[];
 };
 
 function unpackList(payload: unknown): HotelRecord[] {
@@ -64,13 +71,16 @@ function unpackList(payload: unknown): HotelRecord[] {
 function mapHotelOption(hotel: HotelRecord): HotelOption {
   const translation = hotel.translations?.en || hotel.translation || {};
 
+  const heroMedia = hotel.media_items?.find((m) => m.kind === "hero");
+  const extractedImage = hotel.image_url || hotel.hero_image_url || hotel.hero_image || hotel.image || heroMedia?.image_url || heroMedia?.image;
+
   return {
     id: String(hotel.id),
     slug: String(hotel.slug || hotel.id),
     name: hotel.name || translation.name || translation.title || "Untitled hotel",
     location: hotel.location?.name || hotel.location_name || hotel.city || "Egypt",
     description: hotel.description || translation.description || "",
-    image: hotel.hero_image_url || hotel.hero_image || hotel.image || "/images/hotels/hotel1.jpg",
+    image: extractedImage || "/images/hotels/hotel1.jpg",
     rating: Number(hotel.rating || hotel.average_rating || 0),
     reviewCount: Number(hotel.review_count || hotel.reviews_count || 0),
     amenities: hotel.amenities || hotel.facilities || [],
@@ -79,15 +89,31 @@ function mapHotelOption(hotel: HotelRecord): HotelOption {
 
 export function HotelsStep() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [appliedSearchQuery, setAppliedSearchQuery] = useState("");
   const [location, setLocation] = useState("All");
+  const [appliedLocation, setAppliedLocation] = useState("All");
   const [hotels, setHotels] = useState<HotelOption[]>([]);
+  const { locations } = useCatalogHotelLocations();
+  
+  const locationOptions = [
+    "All",
+    ...Array.from(
+      new Set(
+        (locations as { name?: string }[])
+          .map((l) => l.name)
+          .filter((name): name is string => Boolean(name))
+      )
+    ),
+  ];
 
   useEffect(() => {
     let ignore = false;
 
     getCatalogHotels({ page_size: 100 })
       .then((payload) => {
-        if (!ignore) setHotels(unpackList(payload).map(mapHotelOption));
+        if (!ignore) {
+          setHotels(unpackList(payload).map(mapHotelOption));
+        }
       })
       .catch(() => {
         if (!ignore) setHotels([]);
@@ -125,14 +151,34 @@ export function HotelsStep() {
           id="hotels-location"
           label="Location"
           value={location}
-          options={["All", "Luxor, Egypt", "Aswan, Egypt", "Cairo, Egypt"]}
+          options={locationOptions}
           onChange={setLocation}
         />
       </div>
       
       <div className={styles.actionsGroup}>
-        <button type="button" className={styles.cleanBtn}>Clean</button>
-        <button type="button" className={styles.applyBtn}>Apply</button>
+        <button 
+          type="button" 
+          className={styles.cleanBtn} 
+          onClick={() => {
+            setLocation("All");
+            setAppliedLocation("All");
+            setSearchQuery("");
+            setAppliedSearchQuery("");
+          }}
+        >
+          Clean
+        </button>
+        <button 
+          type="button" 
+          className={styles.applyBtn}
+          onClick={() => {
+            setAppliedLocation(location);
+            setAppliedSearchQuery(searchQuery);
+          }}
+        >
+          Apply
+        </button>
       </div>
     </div>
   );
@@ -172,8 +218,8 @@ export function HotelsStep() {
             const selectedHotels: string[] = (field.value || []).map((id: unknown) => String(id));
             
             const filteredHotels = hotels.filter((hotel) => {
-              const matchesSearch = !searchQuery.trim() || `${hotel.name} ${hotel.location}`.toLowerCase().includes(searchQuery.toLowerCase());
-              const matchesLocation = location === "All" || hotel.location === location;
+              const matchesSearch = !appliedSearchQuery.trim() || `${hotel.name} ${hotel.location}`.toLowerCase().includes(appliedSearchQuery.toLowerCase());
+              const matchesLocation = appliedLocation === "All" || hotel.location === appliedLocation || hotel.location.includes(appliedLocation);
               return matchesSearch && matchesLocation;
             });
 
