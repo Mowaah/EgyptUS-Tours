@@ -222,6 +222,7 @@ export default function PlanYourTripPage() {
           {currentStep === 4 && (
             <StepReview
               tripData={tripData}
+              availableDestinations={availableDestinations}
               isSubmitting={isSubmitting}
               submitError={submitError}
               onPrevious={handlePrevious}

@@ -1,10 +1,11 @@
 import { BookingStepFooter, BookingDetailsSections } from "@/components/shared";
 import pageStyles from "../../PlanYourTripPage.module.scss";
-import type { TripData } from "../../planYourTripTypes";
+import type { TripData, PlanDestination } from "../../planYourTripTypes";
 import { getNationalityName } from "@/utils/nationality";
 
 interface StepReviewProps {
   tripData: TripData;
+  availableDestinations?: PlanDestination[];
   isSubmitting?: boolean;
   submitError?: string | null;
   onPrevious: () => void;
@@ -49,6 +50,7 @@ const formatHotelCategory = (cat: string) => {
 
 export default function StepReview({
   tripData,
+  availableDestinations,
   isSubmitting,
   submitError,
   onPrevious,
@@ -57,7 +59,13 @@ export default function StepReview({
   const { travelerInfo, preferences, destinations } = tripData;
 
   const destinationLabel = destinations
-    .map((id) => typeof id === 'string' ? id.charAt(0).toUpperCase() + id.slice(1) : String(id))
+    .map((id) => {
+      if (availableDestinations) {
+        const dest = availableDestinations.find(d => String(d.id) === String(id));
+        if (dest) return dest.name;
+      }
+      return typeof id === 'string' ? id.charAt(0).toUpperCase() + id.slice(1) : String(id);
+    })
     .join(", ");
 
   const travelersParts = [];

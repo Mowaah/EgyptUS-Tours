@@ -24,17 +24,45 @@ export default function RefundPaymentModal({ open, onClose, onSubmit, refundSumm
   const [transactionRef, setTransactionRef] = useState("");
   const [notes, setNotes] = useState("");
 
+  const [transactionRefError, setTransactionRefError] = useState("");
+  const [fileError, setFileError] = useState("");
+  const [generalError, setGeneralError] = useState("");
+
   useEffect(() => {
     if (open) {
       setFile(undefined);
       setTransactionRef("");
       setNotes("");
+      setTransactionRefError("");
+      setFileError("");
+      setGeneralError("");
     }
   }, [open]);
 
   if (!open) return null;
 
+  const parsedRefundAmount = refundSummary?.refund_amount ? parseFloat(refundSummary.refund_amount) : 0;
+  const isRefundable = parsedRefundAmount > 0;
+
   const handleSubmit = () => {
+    let hasError = false;
+
+    if (transactionRef.trim() === "") {
+      setTransactionRefError("Transaction reference is required.");
+      hasError = true;
+    } else {
+      setTransactionRefError("");
+    }
+
+    if (!file) {
+      setFileError("Refund receipt is required.");
+      hasError = true;
+    } else {
+      setFileError("");
+    }
+
+    if (hasError) return;
+
     onSubmit({
       transaction_reference: transactionRef,
       notes,
@@ -88,43 +116,56 @@ export default function RefundPaymentModal({ open, onClose, onSubmit, refundSumm
 
           </div>
 
-          <DashboardField
-            label="Transaction Reference"
-            variant="modal"
-            required
-            id="txn-ref"
-            placeholder="Enter transaction/reference number"
-            value={transactionRef}
-            onChange={(e) => setTransactionRef(e.target.value)}
-          />
+          {isRefundable && (
+            <>
+              <DashboardField
+                label="Transaction Reference"
+                variant="modal"
+                required
+                id="txn-ref"
+                placeholder="Enter transaction/reference number"
+                value={transactionRef}
+                onChange={(e) => {
+                  setTransactionRef(e.target.value);
+                  if (e.target.value.trim() !== "") setTransactionRefError("");
+                }}
+                error={transactionRefError}
+              />
 
-          <div className={styles.fieldGroup} style={{ marginTop: "16px" }}>
-            <label className={styles.fieldLabel}>Upload Refund Receipt <span style={{ color: "#EF4444" }}>*</span></label>
-            <UploadDropzone
-              value={file}
-              onFileSelect={(f) => setFile(f ?? undefined)}
-              accept="application/pdf, image/png, image/jpeg"
-              title="Click to upload a PDF File or PNG"
-              subtitle="up to 10MB"
-            />
-          </div>
+              <div className={styles.fieldGroup} style={{ marginTop: "16px" }}>
+                <label className={styles.fieldLabel}>Upload Refund Receipt <span style={{ color: "#EF4444" }}>*</span></label>
+                <UploadDropzone
+                  value={file}
+                  onFileSelect={(f) => {
+                    setFile(f ?? undefined);
+                    if (f) setFileError("");
+                  }}
+                  accept="application/pdf, image/png, image/jpeg"
+                  title="Click to upload a PDF File or PNG"
+                  subtitle="up to 10MB"
+                  error={fileError}
+                />
+              </div>
 
-          <DashboardField
-            label="Notes"
-            control="textarea"
-            variant="modal"
-            id="notes"
-            placeholder="Add any additional notes or important details related to this refund here."
-            rows={4}
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-          />
+              <DashboardField
+                label="Notes"
+                control="textarea"
+                variant="modal"
+                id="notes"
+                placeholder="Add any additional notes or important details related to this refund here."
+                rows={4}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+              />
+            </>
+          )}
         </div>
         <ModalFooter
           secondaryLabel="Cancel"
           primaryLabel="Confirm Refund"
           secondaryOnClick={onClose}
           primaryOnClick={handleSubmit}
+          primaryDisabled={!isRefundable}
         />
       </div>
     </div>
