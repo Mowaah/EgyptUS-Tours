@@ -103,7 +103,7 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
 
   const [formData, setFormData] = useState<BookingData>(INITIAL_BOOKING_DATA);
 
-  // Calculate total based on room prices per night * nights (no base trip rate)
+  // Calculate total based on room prices (price is already for the full trip duration)
   const nights = trip.duration?.nights || 1;
   const baseSeason = trip.seasonPricing?.[0] || { single: 0, double: 0, triple: 0 };
   const poolSurcharge = trip.additionalRooms?.poolView || 0;
@@ -123,7 +123,7 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
       return rAcc + (basePrice + addon);
     }, 0);
 
-    return acc + roomSum * nights;
+    return acc + roomSum;
   }, 0);
   
   let depositAmount = totalAmount * 0.3;
