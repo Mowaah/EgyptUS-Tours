@@ -12,7 +12,6 @@ import {
 import {
   HOTEL_CATEGORY_OPTIONS,
   ROOM_TYPE_OPTIONS,
-  TRIP_CATEGORY_OPTIONS,
   DURATION_OPTIONS,
   BUDGET_OPTIONS,
   ACTIVITIES_OPTIONS,
@@ -49,6 +48,7 @@ export default function StepPreferences({
   onTripDetailsChange,
   onPrevious,
   onContinue,
+  availableCategories = [],
 }: {
   preferences: Preferences;
   onSetPreferences: (patch: Partial<Preferences>) => void;
@@ -56,6 +56,7 @@ export default function StepPreferences({
   onTripDetailsChange: (val: string) => void;
   onPrevious: () => void;
   onContinue: () => void;
+  availableCategories?: string[];
 }) {
   const [showErrors, setShowErrors] = useState(false);
 
@@ -68,7 +69,6 @@ export default function StepPreferences({
       preferences.hotelCategory !== "" &&
       preferences.roomType.length > 0 &&
       preferences.transportation !== "" &&
-      preferences.experiences.length > 0 &&
       preferences.contactMethod !== "";
 
     if (isValid) {
@@ -95,7 +95,7 @@ export default function StepPreferences({
           >
             <MultiSelectDropdown
               id="pti-trip-category-trigger"
-              options={TRIP_CATEGORY_OPTIONS.map(opt => ({ label: opt, value: opt }))}
+              options={availableCategories.map(opt => ({ label: opt, value: opt }))}
               value={preferences.tripCategory}
               onChange={(val) => onSetPreferences({ tripCategory: val })}
               placeholder="Select Trip Category"
@@ -221,8 +221,6 @@ export default function StepPreferences({
           <FormField
             id="pti-experience-trigger"
             label="Additional Experiences"
-            required
-            error={showErrors && preferences.experiences.length === 0 ? "This field is required" : undefined}
           >
             <MultiSelectDropdown
               id="pti-experience-trigger"
@@ -231,7 +229,6 @@ export default function StepPreferences({
               onChange={(val) => onSetPreferences({ experiences: val })}
               placeholder="Select Experiences"
               checkboxStyle="checkbox"
-              error={showErrors && preferences.experiences.length === 0}
             />
           </FormField>
 

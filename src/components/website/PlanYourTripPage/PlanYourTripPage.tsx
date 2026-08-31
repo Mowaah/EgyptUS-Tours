@@ -14,7 +14,7 @@ import StepDestination from "./steps/Destination/StepDestination";
 import StepTravelerInfo from "./steps/TravelerInfo/StepTravelerInfo";
 import StepPreferences from "./steps/Preferences/StepPreferences";
 import StepReview from "./steps/Review/StepReview";
-import { getDestinations } from "@/lib/api";
+import { getDestinations, getCategories } from "@/lib/api";
 
 const initialTripData: TripData = {
   destinations: [],
@@ -49,26 +49,35 @@ export default function PlanYourTripPage() {
   const [showModal, setShowModal] = useState(false);
   const [tripData, setTripData] = useState<TripData>(initialTripData);
   const [availableDestinations, setAvailableDestinations] = useState<PlanDestination[]>([]);
+  const [availableCategories, setAvailableCategories] = useState<string[]>([]);
 
   useEffect(() => {
-    async function fetchDestinations() {
+    async function fetchData() {
       try {
-        const data = await getDestinations();
-        if (data?.results) {
-          const apiDests: PlanDestination[] = data.results.map((d: any) => ({
+        const [destData, catData] = await Promise.all([
+          getDestinations(),
+          getCategories()
+        ]);
+        
+        if (destData?.results) {
+          const apiDests: PlanDestination[] = destData.results.map((d: any) => ({
             id: d.id,
             name: d.name,
             region: d.region_display || "Africa",
             image: d.image || ""
           }));
-          
           setAvailableDestinations(apiDests);
         }
+
+        if (catData?.results) {
+          const apiCats: string[] = catData.results.map((c: any) => c.name);
+          setAvailableCategories(apiCats);
+        }
       } catch (err) {
-        console.error("Failed to fetch destinations", err);
+        console.error("Failed to fetch data", err);
       }
     }
-    fetchDestinations();
+    fetchData();
   }, []);
 
   const stepIndicatorRef = useRef<HTMLDivElement | null>(null);
@@ -216,6 +225,7 @@ export default function PlanYourTripPage() {
               onTripDetailsChange={(val) => handleTravelerChange("tripDetails", val)}
               onPrevious={handlePrevious}
               onContinue={handleContinue}
+              availableCategories={availableCategories}
             />
           )}
 

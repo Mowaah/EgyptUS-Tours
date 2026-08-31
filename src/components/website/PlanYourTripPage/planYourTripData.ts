@@ -23,7 +23,8 @@ export const HOTEL_CATEGORY_OPTIONS: HotelCategoryOption[] = [
 
 export const ROOM_TYPE_OPTIONS = [
   "Standard Room",
-  "Nile View",
+  "Deluxe Room",
+  "Premium Room",
   "Suite",
   "I don't need hotel",
 ] as const;
@@ -36,14 +37,6 @@ export const EXPERIENCE_OPTIONS = [
   "Romantic Dinner",
 ] as const;
 
-export const TRIP_CATEGORY_OPTIONS = [
-  "Honeymoon",
-  "Multi-Country Tour",
-  "Luxury Tour",
-  "Desert Adventure",
-  "Historical Tour",
-] as const;
-
 export const DURATION_OPTIONS = [
   "1-3 Days",
   "4-6 Days",
@@ -54,10 +47,10 @@ export const DURATION_OPTIONS = [
 ] as const;
 
 export const BUDGET_OPTIONS = [
-  "£500 - £1,000",
-  "£1,000 - £3,000",
-  "£3,000 - £5,000",
-  "£5,000+",
+  "$500 - $1,000",
+  "$1,000 - $3,000",
+  "$3,000 - $5,000",
+  "$5,000+",
   "Flexible",
 ] as const;
 

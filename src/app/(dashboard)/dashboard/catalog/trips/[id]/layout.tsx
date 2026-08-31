@@ -36,10 +36,12 @@ const BLOCKER_MESSAGES: Record<string, string> = {
 function formatBlockers(err: unknown): string {
   const data = (err as { response?: { data?: { message?: string; detail?: string } } })?.response?.data;
   const message = data?.message || data?.detail || "";
-  const hasBlockers = Object.keys(BLOCKER_MESSAGES).some((code) => message.includes(code));
-  if (hasBlockers) {
-    return "Some required fields are missing. Please fill in all required information before publishing.";
+  
+  const foundBlockers = Object.keys(BLOCKER_MESSAGES).filter((code) => message.includes(code));
+  if (foundBlockers.length > 0) {
+    return foundBlockers.map(code => BLOCKER_MESSAGES[code]).join(" | ");
   }
+  
   return message || "Failed to publish the trip. Please try again.";
 }
 
@@ -162,17 +164,18 @@ export default function TripLayout({
                   }
                 : isArchived
                   ? {
-                      label: isActionPending ? "Restoring..." : "Restore to Draft",
+                      label: isActionPending ? "Publishing..." : "Publish",
                       icon: "/images/send.svg",
                       onClick: async () => {
                         if (!trip || isActionPending) return;
                         setIsActionPending(true);
                         try {
                           await unpublishCatalogTrip(trip.id);
-                          showBanner("The trip has been restored to draft successfully");
+                          await publishCatalogTrip(trip.id);
+                          showBanner("Trip published successfully!");
                           refetch();
                         } catch (err) {
-                          showBanner(getErrorMessage(err, "Failed to restore the trip. Please try again."), "warning");
+                          showBanner(formatBlockers(err), "warning");
                         } finally {
                           setIsActionPending(false);
                         }

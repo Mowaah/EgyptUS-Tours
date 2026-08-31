@@ -169,8 +169,8 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
         onPageChange={(p) => setPage(p + 1)}
         onPageSizeChange={setPageSize}
         defaultPageSize={10}
-        rowActions={() =>
-          catalogHotelsRowActions((action, r) => {
+        rowActions={(row) =>
+          catalogHotelsRowActions(row, (action, r) => {
             if (action === "View") {
               router.push(`/dashboard/catalog/hotels/${r.id}`);
             } else if (action === "Edit") {

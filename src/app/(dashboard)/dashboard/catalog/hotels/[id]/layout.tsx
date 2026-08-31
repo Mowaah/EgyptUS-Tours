@@ -30,10 +30,12 @@ const BLOCKER_MESSAGES: Record<string, string> = {
 function formatBlockers(err: unknown): string {
   const data = (err as { response?: { data?: { message?: string; detail?: string } } })?.response?.data;
   const message = data?.message || data?.detail || "";
-  const hasBlockers = Object.keys(BLOCKER_MESSAGES).some((code) => message.includes(code));
-  if (hasBlockers) {
-    return "Some required fields are missing. Please fill in all required information before publishing.";
+  
+  const foundBlockers = Object.keys(BLOCKER_MESSAGES).filter((code) => message.includes(code));
+  if (foundBlockers.length > 0) {
+    return foundBlockers.map(code => BLOCKER_MESSAGES[code]).join(" | ");
   }
+  
   return message || "Failed to publish the hotel. Please try again.";
 }
 
@@ -196,17 +198,18 @@ export default function HotelLayout({
                   }
                 : isArchived
                 ? {
-                    label: isActionPending ? "Restoring..." : "Restore to Draft",
+                    label: isActionPending ? "Publishing..." : "Publish",
                     icon: "/images/send.svg",
                     onClick: async () => {
                       if (!hotel || isActionPending) return;
                       setIsActionPending(true);
                       try {
                         await unpublishCatalogHotel(id);
-                        showBanner("The hotel has been restored to draft successfully");
+                        await publishCatalogHotel(id);
+                        showBanner("Hotel published successfully!");
                         refetch();
                       } catch (err) {
-                        showBanner("Failed to restore the hotel. Please try again.", "warning");
+                        showBanner(formatBlockers(err), "warning");
                       } finally {
                         setIsActionPending(false);
                       }
@@ -256,7 +259,7 @@ export default function HotelLayout({
           {children}
         </div>
 
-        <DashboardFooter lastUpdateDate={hotel?.updated_at ? new Date(hotel.updated_at).toLocaleDateString() : "Today"} hideActions className={styles.customFooter} />
+        <DashboardFooter lastUpdateDate={hotel?.updated_at ? new Date(hotel.updated_at).toLocaleDateString() : "N/A"} hideActions className={styles.customFooter} />
 
         <DashboardConfirmationModal
           open={isDeleteModalOpen}

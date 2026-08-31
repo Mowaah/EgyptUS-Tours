@@ -128,17 +128,18 @@ export default function TransportationLayout({
                   }
                 : isArchived
                 ? {
-                    label: isActionPending ? "Restoring..." : "Restore to Draft",
+                    label: isActionPending ? "Publishing..." : "Publish",
                     icon: "/images/send.svg",
                     onClick: async () => {
                       if (!vehicle || isActionPending) return;
                       setIsActionPending(true);
                       try {
                         await unpublishCatalogVehicle(id);
+                        await publishCatalogVehicle(id);
                         await refetch();
-                        showBanner("Vehicle restored to draft.");
+                        showBanner("Vehicle published successfully.");
                       } catch (err: any) {
-                        showBanner(getErrorMessage(err, "Failed to restore vehicle"), "warning");
+                        showBanner(getErrorMessage(err, "Failed to publish vehicle"), "warning");
                       } finally {
                         setIsActionPending(false);
                       }
@@ -187,7 +188,7 @@ export default function TransportationLayout({
           <LanguageTabs active={activeLang} onChange={setActiveLang} variant="white" />
           {children}
         </div>
-        <DashboardFooter lastUpdateDate="6/6/2026" hideActions className={styles.customFooter} />
+        <DashboardFooter lastUpdateDate={vehicle?.updated_at ? new Date(vehicle.updated_at).toLocaleDateString() : "N/A"} hideActions className={styles.customFooter} />
 
         <DashboardConfirmationModal
           open={isArchiveModalOpen}

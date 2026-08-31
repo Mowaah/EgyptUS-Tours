@@ -13,10 +13,12 @@ interface ReopenRequestModalProps {
 
 export default function ReopenRequestModal({ open, onClose, onSubmit }: ReopenRequestModalProps) {
   const [reason, setReason] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!open) return;
     setReason("");
+    setError("");
     
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -35,6 +37,10 @@ export default function ReopenRequestModal({ open, onClose, onSubmit }: ReopenRe
   if (!open) return null;
 
   const handleSubmit = () => {
+    if (!reason.trim()) {
+      setError("This field is required.");
+      return;
+    }
     onSubmit(reason);
     onClose();
   };
@@ -57,7 +63,11 @@ export default function ReopenRequestModal({ open, onClose, onSubmit }: ReopenRe
               variant="modal"
               placeholder="Explain why this request is being reopened..."
               value={reason}
-              onChange={(e) => setReason(e.target.value)}
+              onChange={(e) => {
+                setReason(e.target.value);
+                if (e.target.value.trim()) setError("");
+              }}
+              error={error}
               style={{ minHeight: "160px", resize: "none" }}
             />
           </div>

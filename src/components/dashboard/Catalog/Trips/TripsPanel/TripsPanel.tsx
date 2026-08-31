@@ -166,8 +166,8 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
         onPageChange={(p) => setPage(p + 1)}
         onPageSizeChange={setPageSize}
         defaultPageSize={10}
-        rowActions={() =>
-          catalogTripsRowActions((action, r) => {
+        rowActions={(row) =>
+          catalogTripsRowActions(row, (action, r) => {
             if (action === "View") {
               router.push(`/dashboard/catalog/trips/${r.id}`);
             } else if (action === "Edit") {

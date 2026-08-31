@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DataTable } from "@/components/dashboard/DataTable";
 import {
   TablePanel,
@@ -11,13 +11,12 @@ import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/Dash
 import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import { useRouter, usePathname } from "next/navigation";
-import { exportAdminBlogsCSV, exportAdminArticlesCSV } from "@/services/admin/adminMarketingService";
+import { exportAdminBlogsCSV, exportAdminArticlesCSV, getAdminMarketingCategories } from "@/services/admin/adminMarketingService";
 import { getMarketingColumns, useMarketingRowActions } from "./MarketingColumns";
 import type { MarketingPostRow, ContentType } from "../types";
 import { useMarketingPanel } from "@/hooks/useMarketingPanel";
 
-const filterOptions = {
-  category: ["All", "Destination", "Adventures", "Travel Tips", "Luxury Hotels"],
+const initialFilterOptions = {
   status: ["All", "Published", "Draft", "Scheduled"],
 };
 
@@ -40,6 +39,17 @@ export function MarketingContentPanel({
   const pathname = usePathname();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [categoryOptions, setCategoryOptions] = useState<string[]>(["All"]);
+
+  useEffect(() => {
+    getAdminMarketingCategories()
+      .then((data: any) => {
+        const items = Array.isArray(data) ? data : (data?.results ?? []);
+        const categories = items.map((c: any) => c.name);
+        setCategoryOptions(["All", ...categories]);
+      })
+      .catch(() => { });
+  }, []);
 
   const {
     data,
@@ -100,14 +110,14 @@ export function MarketingContentPanel({
       id: "category",
       label: "Category",
       value: categoryFilter || "All",
-      options: filterOptions.category,
+      options: categoryOptions,
       onChange: (value: string) => setCategoryFilter(value),
     },
     {
       id: "status",
       label: "Status",
       value: statusFilter || "All",
-      options: filterOptions.status,
+      options: initialFilterOptions.status,
       onChange: (value: string) => setStatusFilter(value),
     },
   ];

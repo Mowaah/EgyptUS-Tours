@@ -132,8 +132,8 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
         onPageChange={(p) => setPage(p + 1)}
         onPageSizeChange={setPageSize}
         defaultPageSize={10}
-        rowActions={() =>
-          transportationRowActions((action, r) => {
+        rowActions={(row) =>
+          transportationRowActions(row, (action, r) => {
             if (action === "View") {
               router.push(`/dashboard/catalog/transportation/${r.id}/overview`);
             } else if (action === "Edit") {

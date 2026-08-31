@@ -136,6 +136,11 @@ export async function serverFetch<T>(
 // 3. Application API calls
 // ----------------------------------------------------------------------
 
+export async function getCategories(): Promise<any> {
+  const response = await apiClient.get('/tags/');
+  return response;
+}
+
 export async function getDestinations(): Promise<any> {
   const response = await apiClient.get('/destinations/');
   return response; // Interceptor already unwraps data
