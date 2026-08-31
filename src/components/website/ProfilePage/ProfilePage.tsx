@@ -237,9 +237,9 @@ export default function ProfilePage() {
             };
           };
 
-          setPlanYourTripRequests(planData.map((req: any) => mapRequest(req, "/images/pyramids.jpg")));
-          setEventsRequests(eventsData.map((req: any) => mapRequest(req, "/images/events1.png")));
-          setB2bRequests(b2bData.map((req: any) => mapRequest(req, "/images/contact1.jpg")));
+          setPlanYourTripRequests(planData.map((req: any) => mapRequest({ ...req, type: "plan_your_trip" }, "/images/pyramids.jpg")));
+          setEventsRequests(eventsData.map((req: any) => mapRequest({ ...req, type: "events" }, "/images/events1.png")));
+          setB2bRequests(b2bData.map((req: any) => mapRequest({ ...req, type: "b2b" }, "/images/contact1.jpg")));
         } catch (error) {
           console.error("Failed to fetch requests:", error);
         } finally {
@@ -554,7 +554,7 @@ export default function ProfilePage() {
           emptyTitle = "No custom trip requests yet";
           emptyDesc = "Use our Plan Your Trip planner to build your custom itinerary and get a proposal.";
           emptyBtn = "Plan your trip";
-          emptyHref = "/plan-your-trip";
+          emptyHref = "/booking";
         } else if (requestCategoryIndex === 1) {
           items = eventsRequests;
           emptyIcon = "/images/profile/glyphs/requests.svg";
