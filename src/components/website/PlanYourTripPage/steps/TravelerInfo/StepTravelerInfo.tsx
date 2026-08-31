@@ -37,6 +37,17 @@ export default function StepTravelerInfo({
 }) {
   const [showErrors, setShowErrors] = useState(false);
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const isStartDateInPast = travelerInfo.startDate 
+    ? new Date(travelerInfo.startDate) < today 
+    : false;
+    
+  const isEndDateInPast = travelerInfo.endDate
+    ? new Date(travelerInfo.endDate) < today
+    : false;
+
   const isDateInvalid = travelerInfo.startDate && travelerInfo.endDate 
     ? new Date(travelerInfo.endDate) < new Date(travelerInfo.startDate)
     : false;
@@ -64,6 +75,8 @@ export default function StepTravelerInfo({
       isNationalityFilled &&
       isStartDateFilled &&
       isEndDateFilled &&
+      !isStartDateInPast &&
+      !isEndDateInPast &&
       !isDateInvalid &&
       areAdultsValid;
       
@@ -144,26 +157,28 @@ export default function StepTravelerInfo({
           <FormField 
             label="Start Date" 
             required
-            error={showErrors && !isStartDateFilled ? "This field is required" : undefined}
+            error={showErrors ? (!isStartDateFilled ? "This field is required" : isStartDateInPast ? "Start date cannot be in the past" : undefined) : undefined}
           >
             <CustomDatePicker
               variant="input"
-              className={`${formStyles.input} ${pageStyles.dateInput} ${showErrors && !isStartDateFilled ? formStyles.inputInvalid : ""}`}
+              className={`${formStyles.input} ${pageStyles.dateInput} ${showErrors && (!isStartDateFilled || isStartDateInPast) ? formStyles.inputInvalid : ""}`}
               value={travelerInfo.startDate}
               onChange={(date) => onTravelerChange("startDate", date)}
+              minDate={today}
             />
           </FormField>
 
           <FormField 
             label="End Date" 
             required
-            error={showErrors ? (!isEndDateFilled ? "This field is required" : isDateInvalid ? "End date cannot be before start date" : undefined) : undefined}
+            error={showErrors ? (!isEndDateFilled ? "This field is required" : isEndDateInPast ? "End date cannot be in the past" : isDateInvalid ? "End date cannot be before start date" : undefined) : undefined}
           >
             <CustomDatePicker
               variant="input"
-              className={`${formStyles.input} ${pageStyles.dateInput} ${showErrors && (!isEndDateFilled || isDateInvalid) ? formStyles.inputInvalid : ""}`}
+              className={`${formStyles.input} ${pageStyles.dateInput} ${showErrors && (!isEndDateFilled || isEndDateInPast || isDateInvalid) ? formStyles.inputInvalid : ""}`}
               value={travelerInfo.endDate}
               onChange={(date) => onTravelerChange("endDate", date)}
+              minDate={today}
             />
           </FormField>
 

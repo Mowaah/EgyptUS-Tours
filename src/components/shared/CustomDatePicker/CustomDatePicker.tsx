@@ -15,6 +15,7 @@ interface CustomDatePickerProps {
   selectsRange?: boolean;
   placeholder?: string;
   fixedDurationDays?: number;
+  minDate?: Date;
 }
 
 const WEEKDAYS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -47,7 +48,7 @@ const parseDateString = (val: string) => {
   return null;
 };
 
-export default function CustomDatePicker({ value, onChange, className, dropdownClassName = "", variant = "card", renderTrigger, selectsRange = false, placeholder, fixedDurationDays }: CustomDatePickerProps) {
+export default function CustomDatePicker({ value, onChange, className, dropdownClassName = "", variant = "card", renderTrigger, selectsRange = false, placeholder, fixedDurationDays, minDate }: CustomDatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const initialDate = parseDateString(value) || new Date();
 
@@ -303,10 +304,25 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
                   item.date.getFullYear() === selectedDateObj.getFullYear());
               }
 
+              let isDisabled = false;
+              if (minDate) {
+                const itemDateObj = new Date(item.date);
+                itemDateObj.setHours(0, 0, 0, 0);
+                const minDateObj = new Date(minDate);
+                minDateObj.setHours(0, 0, 0, 0);
+                if (itemDateObj < minDateObj) {
+                  isDisabled = true;
+                }
+              }
+
               return (
                 <button
                   key={idx}
-                  onClick={() => handleDateSelect(item.date)}
+                  onClick={() => {
+                    if (!isDisabled) handleDateSelect(item.date);
+                  }}
+                  disabled={isDisabled}
+                  style={isDisabled ? { opacity: 0.3, cursor: "not-allowed" } : undefined}
                   className={`${styles.dayBtn} ${!item.isCurrentMonth ? styles.dayOutside : ""
                     } ${isSelected ? styles.daySelected : ""}`}
                 >

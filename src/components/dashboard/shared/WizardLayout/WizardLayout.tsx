@@ -30,7 +30,7 @@ export default function WizardLayout({
   onPrevious,
   onStepClick,
   children,
-  lastUpdateDate = "6/6/2026",
+  lastUpdateDate,
   publishLabel = "Publish",
   isLoading = false,
 }: WizardLayoutProps) {

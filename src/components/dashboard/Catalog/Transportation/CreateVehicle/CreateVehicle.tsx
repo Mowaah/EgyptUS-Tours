@@ -309,6 +309,18 @@ export function CreateVehicle({ vehicleId, onDirtyChange, onSavingChange }: { ve
     }
   }, [vehicleData, reset]);
 
+  const lastUpdateDate = React.useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updated = (vehicleData as any)?.updated_at;
+    if (updated) {
+      const dateObj = new Date(updated);
+      if (!Number.isNaN(dateObj.getTime())) {
+        return `${dateObj.getMonth() + 1}/${dateObj.getDate()}/${dateObj.getFullYear()}`;
+      }
+    }
+    return undefined;
+  }, [vehicleData]);
+
   const onSubmit = async (data: CreateVehicleValues, meta: { intent: WizardSubmitIntent }) => {
     try {
       setIsSaving(true);
@@ -392,6 +404,7 @@ const getErrorStepIndex = (errors: any) => {
           onPrevious={handlePrevious}
           onStepClick={handleStepClick}
           publishLabel="Publish Vehicle"
+          lastUpdateDate={lastUpdateDate}
         >
           {renderStep()}
         </WizardLayout>

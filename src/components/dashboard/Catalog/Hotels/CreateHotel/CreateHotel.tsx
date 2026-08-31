@@ -202,6 +202,18 @@ export function CreateHotel({ hotelId, onDirtyChange, onSavingChange }: { hotelI
 
   const { handleSubmit, formState: { isDirty }, reset } = methods;
 
+  const lastUpdateDate = React.useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updated = (hotel as any)?.updated_at;
+    if (updated) {
+      const dateObj = new Date(updated);
+      if (!Number.isNaN(dateObj.getTime())) {
+        return `${dateObj.getMonth() + 1}/${dateObj.getDate()}/${dateObj.getFullYear()}`;
+      }
+    }
+    return undefined;
+  }, [hotel]);
+
   useEffect(() => {
     if (hotelId && hotel) {
       reset(mapHotelToFormValues(hotel));
@@ -446,6 +458,7 @@ const getErrorStepIndex = (errors: any) => {
           onPrevious={handlePrevious}
           onStepClick={handleStepClick}
           publishLabel="Publish Hotel"
+          lastUpdateDate={lastUpdateDate}
         >
           {renderStep()}
         </WizardLayout>

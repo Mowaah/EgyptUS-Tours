@@ -638,6 +638,8 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange }: { tripId?:
   const [savedTripId, setSavedTripId] = useState<string | number | undefined>(tripId);
   const [isSaving, setIsSaving] = useState(false);
 
+  const [lastUpdateDate, setLastUpdateDate] = useState<string | undefined>(undefined);
+
   const methods = useForm<CreateTripValues>({
     resolver: zodResolver(createTripSchema),
     reValidateMode: "onSubmit",
@@ -660,7 +662,15 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange }: { tripId?:
     let ignore = false;
     getCatalogTripDetail(tripId)
       .then((trip) => {
-        if (!ignore) methods.reset(mapTripToFormValues(trip));
+        if (!ignore) {
+          methods.reset(mapTripToFormValues(trip));
+          if (trip?.updated_at) {
+            const dateObj = new Date(trip.updated_at);
+            if (!Number.isNaN(dateObj.getTime())) {
+              setLastUpdateDate(`${dateObj.getMonth() + 1}/${dateObj.getDate()}/${dateObj.getFullYear()}`);
+            }
+          }
+        }
       })
       .catch((error) => {
         if (!ignore) console.error("Failed to load trip:", error);
@@ -822,6 +832,7 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange }: { tripId?:
           onStepClick={handleStepClick}
           publishLabel="Publish Trip"
           isLoading={isSaving}
+          lastUpdateDate={lastUpdateDate}
         >
           {renderStep()}
         </WizardLayout>
