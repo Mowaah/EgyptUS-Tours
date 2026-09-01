@@ -66,9 +66,17 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
     image: tripDetail.image || "/images/pyramids4.jpg",
     images: tripDetail.images?.length ? tripDetail.images : ["/images/pyramids4.jpg"],
     location: (tripDetail.destinations?.length ? tripDetail.destinations.map(d => typeof d === 'string' ? d : (d.name || d.title)).filter(Boolean).join(' · ') : null) || tripDetail.location_text || "Egypt",
-    price: parseFloat(tripDetail.base_price) || 0,
+    price: (() => {
+      const basePrice = parseFloat(tripDetail.base_price) || 0;
+      const discountPerc = tripDetail.discount_value ? parseFloat(tripDetail.discount_value) : 0;
+      return discountPerc > 0 ? basePrice * (1 - discountPerc / 100) : basePrice;
+    })(),
+    originalPrice: tripDetail.discount_value && parseFloat(tripDetail.discount_value) > 0 ? parseFloat(tripDetail.base_price) : undefined,
     currency: tripDetail.currency_code === "USD" ? "$" : tripDetail.currency_code,
     priceLabel: tripDetail.price_label,
+    discountLabel: tripDetail.discount_value ? (tripDetail.discount_title ? `${tripDetail.discount_title} - ${parseFloat(tripDetail.discount_value)}% Off` : `${parseFloat(tripDetail.discount_value)}% Off`) : undefined,
+    discountTitle: tripDetail.discount_title || undefined,
+    discountValue: tripDetail.discount_value ? `${parseFloat(tripDetail.discount_value)}% Off` : undefined,
     duration: tripDetail.duration,
     rating: parseFloat(tripDetail.rating_avg) || 0,
     reviewCount: tripDetail.review_count,
@@ -78,12 +86,18 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
     privatePrice: (() => {
       const privateSeasons = (tripDetail.pricing || []).filter(s => s.tour_type === "private");
       const allPrices = privateSeasons.flatMap(s => (s.tiers || []).map(t => parseFloat(t.price)).filter(p => p > 0));
-      return allPrices.length > 0 ? Math.min(...allPrices) : (tripDetail.private_price ? parseFloat(tripDetail.private_price) : undefined);
+      const minPrice = allPrices.length > 0 ? Math.min(...allPrices) : (tripDetail.private_price ? parseFloat(tripDetail.private_price) : undefined);
+      if (minPrice === undefined) return undefined;
+      const discountPerc = tripDetail.discount_value ? parseFloat(tripDetail.discount_value) : 0;
+      return discountPerc > 0 ? minPrice * (1 - discountPerc / 100) : minPrice;
     })(),
     groupPrice: (() => {
       const groupSeasons = (tripDetail.pricing || []).filter(s => s.tour_type === "group");
       const allPrices = groupSeasons.flatMap(s => (s.tiers || []).map(t => parseFloat(t.price)).filter(p => p > 0));
-      return allPrices.length > 0 ? Math.min(...allPrices) : (tripDetail.group_price ? parseFloat(tripDetail.group_price) : undefined);
+      const minPrice = allPrices.length > 0 ? Math.min(...allPrices) : (tripDetail.group_price ? parseFloat(tripDetail.group_price) : undefined);
+      if (minPrice === undefined) return undefined;
+      const discountPerc = tripDetail.discount_value ? parseFloat(tripDetail.discount_value) : 0;
+      return discountPerc > 0 ? minPrice * (1 - discountPerc / 100) : minPrice;
     })(),
     offersPrivateTour: (tripDetail.pricing || []).some(s => s.tour_type === "private" && (s.tiers || []).length > 0),
     offersGroupTour: (tripDetail.pricing || []).some(s => s.tour_type === "group" && (s.tiers || []).length > 0),
@@ -141,10 +155,15 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
       return {
         tourType,
         season: season.season_label,
-        tiers: (season.tiers || []).map(tier => ({
-          label: tier.label,
-          price: parseFloat(tier.price) || 0,
-        }))
+        tiers: (season.tiers || []).map(tier => {
+          const tierPrice = parseFloat(tier.price) || 0;
+          const discountPerc = tripDetail.discount_value ? parseFloat(tripDetail.discount_value) : 0;
+          const discountedPrice = discountPerc > 0 ? tierPrice * (1 - discountPerc / 100) : tierPrice;
+          return {
+            label: tier.label,
+            price: discountedPrice,
+          };
+        })
       };
     }),
     seasonPricing: (() => {
@@ -159,7 +178,10 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
       return targetSeasons.map(s => {
         const getTierPrice = (key: string) => {
           const tier = (s.tiers || []).find(t => t.label.toLowerCase().includes(key));
-          return tier ? parseFloat(tier.price) : 0;
+          if (!tier) return 0;
+          const tierPrice = parseFloat(tier.price) || 0;
+          const discountPerc = tripDetail.discount_value ? parseFloat(tripDetail.discount_value) : 0;
+          return discountPerc > 0 ? tierPrice * (1 - discountPerc / 100) : tierPrice;
         };
         return {
           label: s.season_label,
@@ -225,14 +247,17 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
         description: t.short_description || t.title,
         image: t.image || "/images/home/hero-bg.png",
         location: (t.destinations?.length ? t.destinations.map(d => typeof d === 'string' ? d : (d.name || d.title)).filter(Boolean).join(' · ') : null) || t.location_text || "Egypt",
-        price: parseFloat(t.base_price) || 0,
+        price: t.discount_value && parseFloat(t.discount_value) > 0 ? (parseFloat(t.base_price) || 0) * (1 - parseFloat(t.discount_value) / 100) : (parseFloat(t.base_price) || 0),
+        originalPrice: t.discount_value && parseFloat(t.discount_value) > 0 ? parseFloat(t.base_price) : undefined,
         currency: t.currency_code === "USD" ? "$" : t.currency_code,
         duration: t.duration,
         rating: parseFloat(t.rating_avg) || 0,
         reviewCount: t.review_count,
         isFavorite: t.is_favorite,
         priceLabel: t.price_label,
-        discountLabel: (t as any).discount_label || undefined,
+        discountLabel: t.discount_value ? (t.discount_title ? `${t.discount_title} - ${parseFloat(t.discount_value)}% Off` : `${parseFloat(t.discount_value)}% Off`) : undefined,
+        discountTitle: (t as any).discount_title || undefined,
+        discountValue: t.discount_value ? `${parseFloat(t.discount_value)}% Off` : undefined,
         tags: t.tags?.map(tag => tag.name) || [],
       }))
   };

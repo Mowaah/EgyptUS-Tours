@@ -179,7 +179,7 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
         data={filteredPromotions}
         columns={promotionsColumns}
         getRowId={(row) => row.id}
-
+        rowActions={rowActions}
         pageSizeOptions={[5, 10, 15]}
         defaultPageSize={10}
         isLoading={loading}

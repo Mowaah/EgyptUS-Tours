@@ -48,7 +48,12 @@ interface HotelsPageSectionProps {
 export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSectionProps) {
   const { formatCurrency } = useCurrency();
 
-  const mappedHotels: Hotel[] = useMemo(() => initialHotels.map((h) => ({
+  const mappedHotels: Hotel[] = useMemo(() => initialHotels.map((h) => {
+    const basePrice = parseFloat(h.price_per_night_egp || h.price_per_night) || 0;
+    const discountPerc = h.discount_value ? parseFloat(h.discount_value) : 0;
+    const discountedPrice = discountPerc > 0 ? basePrice * (1 - discountPerc / 100) : basePrice;
+
+    return {
     id: h.slug,
     name: h.name,
     location: h.location_text || "",
@@ -56,10 +61,14 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
     stars: h.stars,
     rating: parseFloat(h.rating_avg) || 0,
     rooms: h.rooms,
-    pricePerNight: parseFloat(h.price_per_night_egp || h.price_per_night) || 0,
+    pricePerNight: discountedPrice,
+    originalPrice: discountPerc > 0 ? basePrice : undefined,
+    discountTitle: h.discount_title || undefined,
+    discountValue: h.discount_value ? `${parseFloat(h.discount_value)}% Off` : undefined,
     reviews: h.review_count,
     isFavorite: h.is_favorite,
-  })), [initialHotels]);
+  };
+  }), [initialHotels]);
 
   const maxHotelPriceLimit = useMemo(() => {
     if (mappedHotels.length === 0) return 50000;

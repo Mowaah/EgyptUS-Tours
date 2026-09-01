@@ -76,7 +76,7 @@ export default function TablePanel({
         </div>
       )}
 
-      {(isToolbarOpen || alwaysShowToolbar) && toolbar ? <div style={{ marginBottom: "24px" }}>{toolbar}</div> : null}
+      {(isToolbarOpen || alwaysShowToolbar) && toolbar ? <div>{toolbar}</div> : null}
 
       {children}
     </section>

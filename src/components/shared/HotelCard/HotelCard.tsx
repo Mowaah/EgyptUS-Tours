@@ -50,6 +50,14 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
           sizes="(max-width: 768px) 100vw, 50vw"
           className={styles.image}
         />
+        {(hotel.discountTitle || hotel.discountValue) && (
+          <div className={styles.discountBanner}>
+            <span>
+              {hotel.discountTitle && <span>{hotel.discountTitle} &mdash; </span>}
+              <span className={styles.discountValueText}>{hotel.discountValue}</span>
+            </span>
+          </div>
+        )}
         <div className={styles.overlay}>
           <h3 className={styles.name}>{hotel.name}</h3>
           <span className={styles.location}>{hotel.location}</span>
@@ -91,6 +99,9 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
           <div className={styles.price}>
             <span className={styles.priceLabel}>Starting from</span>
             <span className={styles.priceValue}>
+              {hotel.originalPrice && (
+                <span className={styles.originalPrice}>{formatCurrency(hotel.originalPrice)}</span>
+              )}
               {formatCurrency(hotel.pricePerNight)}
               <small>/night</small>
             </span>

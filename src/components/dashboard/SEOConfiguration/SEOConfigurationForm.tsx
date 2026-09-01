@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
-import { DashboardFooter, LocalizedImageUploadSection } from "@/components/dashboard/shared";
+import { DashboardFooter, LocalizedImageUploadSection, DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";
 import { FormSection } from "@/components/dashboard/FormFields";
 import SEOSettingsSection from "@/components/dashboard/shared/SEOSettingsSection/SEOSettingsSection";
 import { seoConfigurationSchema, type SEOConfigurationValues } from "./SEOConfigurationSchema";
@@ -23,6 +23,8 @@ export default function SEOConfigurationForm({ pageKey, onSuccess }: SEOConfigur
   const { data, loading, updateConfig } = useAdminSeo(pageKey);
   const [imageLang, setImageLang] = useState<Language>("English");
   const [seoLang, setSeoLang] = useState<Language>("English");
+  const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false);
+  const [showDiscardBanner, setShowDiscardBanner] = useState(false);
 
   const supportsOgImage = ["home", "mice_events", "b2b"].includes(pageKey);
 
@@ -234,6 +236,30 @@ export default function SEOConfigurationForm({ pageKey, onSuccess }: SEOConfigur
         lastUpdateDate={data?.updated_at ? new Date(data.updated_at).toLocaleDateString() : ""}
         isSubmit={true}
         isSaveDisabled={!isDirty || isSubmitting}
+        isDiscardDisabled={!isDirty || isSubmitting}
+        onDiscard={() => setIsDiscardModalOpen(true)}
+      />
+
+      <DashboardConfirmationModal
+        open={isDiscardModalOpen}
+        variant="activate"
+        onClose={() => {
+          setIsDiscardModalOpen(false);
+          reset();
+          setShowDiscardBanner(true);
+        }}
+        onConfirm={() => setIsDiscardModalOpen(false)}
+        title="Discard Changes?"
+        message="You have unsaved changes. Are you sure you want to discard them?"
+        confirmLabel="Keep Editing"
+        cancelLabel="Discard Changes"
+      />
+
+      <DashboardStatusBanner
+        show={showDiscardBanner}
+        message="Changes discarded successfully"
+        variant="success"
+        onClose={() => setShowDiscardBanner(false)}
       />
     </form>
   );

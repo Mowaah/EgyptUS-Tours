@@ -44,9 +44,12 @@ export default function TripCard({ trip, onFavoriteToggle, className = "" }: Tri
           sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, (max-width: 1279px) 33vw, 400px"
           className={styles.image}
         />
-        {trip.discountLabel && (
+        {(trip.discountTitle || trip.discountValue) && (
           <div className={styles.discountBanner}>
-            <span>{trip.discountLabel}</span>
+            <span>
+              {trip.discountTitle && <span>{trip.discountTitle} &mdash; </span>}
+              <span className={styles.discountValueText}>{trip.discountValue}</span>
+            </span>
           </div>
         )}
         {isAuthenticated && (
@@ -75,6 +78,11 @@ export default function TripCard({ trip, onFavoriteToggle, className = "" }: Tri
               <span className={styles.priceLabel}>{trip.priceLabel}</span>
             )}
             <span className={styles.priceFrom}>From </span>
+            {trip.originalPrice && (
+              <span className={styles.originalPrice}>
+                {formatCurrency(Number(String(trip.originalPrice).replace(/,/g, "")) || 0)}
+              </span>
+            )}
             <span className={styles.priceValue}>
               {formatCurrency(Number(String(trip.price).replace(/,/g, "")) || 0)}
             </span>

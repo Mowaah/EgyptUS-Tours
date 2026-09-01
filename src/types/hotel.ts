@@ -35,6 +35,9 @@ export interface Hotel {
   secondDescription?: string;
   description?: string;
   isFavorite?: boolean;
+  discountValue?: string;
+  discountTitle?: string;
+  originalPrice?: number;
   overview?: {
     sections: { heading: string; body: string }[];
   };

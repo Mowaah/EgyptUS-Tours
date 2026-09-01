@@ -40,6 +40,8 @@ export interface HotelList {
   price_per_night_egp: string | null;
   currency_code: string;
   is_favorite: boolean;
+  discount_value?: string | null;
+  discount_title?: string | null;
 }
 
 export interface HotelDetail extends HotelList {

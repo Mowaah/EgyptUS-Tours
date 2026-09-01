@@ -16,21 +16,31 @@ interface TripsSectionFetcherProps {
 export default async function TripsSectionFetcher({ apiParams, searchParams }: TripsSectionFetcherProps) {
   const tripsData = await getAllTrips(apiParams).catch(() => []);
 
-  const initialTrips: Trip[] = tripsData.map(t => ({
+  const initialTrips: Trip[] = tripsData.map(t => {
+    const basePrice = parseFloat(t.base_price) || 0;
+    const discountPerc = t.discount_value ? parseFloat(t.discount_value) : 0;
+    const discountedPrice = discountPerc > 0 ? basePrice * (1 - discountPerc / 100) : basePrice;
+
+    return {
     id: t.slug,
     title: t.title,
     description: t.short_description || t.title,
     image: t.image || "/images/home/hero-bg.png",
     location: t.location_text || "Egypt",
-    price: parseFloat(t.base_price) || 0,
-    currency: t.currency_code === "USD" ? "£" : t.currency_code,
+    price: discountedPrice,
+    originalPrice: discountPerc > 0 ? basePrice : undefined,
+    currency: t.currency_code === "USD" ? "$" : t.currency_code,
     duration: t.duration,
     rating: parseFloat(t.rating_avg) || 0,
     reviewCount: t.review_count,
     isFavorite: t.is_favorite,
     priceLabel: t.price_label,
+    discountLabel: t.discount_value ? (t.discount_title ? `${t.discount_title} - ${parseFloat(t.discount_value)}% Off` : `${parseFloat(t.discount_value)}% Off`) : undefined,
+    discountTitle: t.discount_title || undefined,
+    discountValue: t.discount_value ? `${parseFloat(t.discount_value)}% Off` : undefined,
     tags: t.tags?.map(tag => tag.name) || [],
-  }));
+  };
+  });
 
   const hasSearch = !!(searchParams?.date || searchParams?.destination || searchParams?.budget || searchParams?.tripType);
 

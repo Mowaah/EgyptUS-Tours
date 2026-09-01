@@ -26,6 +26,9 @@ export interface Trip {
   countries?: number;
   isFavorite?: boolean;
   discountLabel?: string;
+  discountTitle?: string;
+  discountValue?: string;
+  originalPrice?: number;
   offersPrivateTour?: boolean;
   offersGroupTour?: boolean;
 

@@ -19,6 +19,7 @@ export interface PageCopy {
   primaryAction?: { label: string; iconSrc?: string; iconRotation?: number; form?: string; type?: "button" | "submit" | "reset"; hideIcon?: boolean; variant?: "primary" | "secondary" | "tertiary"; disabled?: boolean; loading?: boolean };
   secondaryAction?: { label: string; iconSrc?: string; iconRotation?: number; form?: string; type?: "button" | "submit" | "reset"; hideIcon?: boolean; variant?: "primary" | "secondary" | "tertiary"; disabled?: boolean; loading?: boolean };
   hideFilterButton?: boolean;
+  showStatusFilter?: boolean;
 }
 
 const pageCopyByPath: Record<string, PageCopy> = {
@@ -117,6 +118,7 @@ const pageCopyByPath: Record<string, PageCopy> = {
     breadcrumbTrail: [{ label: "Legal & Help Center" }, { label: "FAQ Management" }],
     searchPlaceholder: "Search FAQs...",
     primaryAction: { label: "Add New FAQ" },
+    showStatusFilter: true,
   },
   "/dashboard/settings/terms-conditions": {
     title: "Terms & Conditions",
@@ -124,6 +126,7 @@ const pageCopyByPath: Record<string, PageCopy> = {
     breadcrumbTrail: [{ label: "Legal & Help Center" }, { label: "Terms & Conditions" }],
     searchPlaceholder: "Search terms...",
     primaryAction: { label: "Add New Terms" },
+    showStatusFilter: true,
   },
   "/dashboard/settings/privacy-policy": {
     title: "Privacy and Policy",
@@ -131,6 +134,7 @@ const pageCopyByPath: Record<string, PageCopy> = {
     breadcrumbTrail: [{ label: "Legal & Help Center" }, { label: "Privacy and Policy" }],
     searchPlaceholder: "Search privacy policies...",
     primaryAction: { label: "Add New Privacy" },
+    showStatusFilter: true,
   },
   "/dashboard/profile": {
     title: "Profile",

@@ -10,6 +10,9 @@ export interface Vehicle {
   description: string;
   rating: number;
   reviews: number;
+  discountValue?: string;
+  discountTitle?: string;
+  originalPrice?: number;
 }
 
 export interface TransportationBookingData {

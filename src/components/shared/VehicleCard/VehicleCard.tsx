@@ -17,6 +17,9 @@ export interface Vehicle {
   rating: number;
   reviews: number;
   price: string;
+  originalPrice?: number;
+  discountTitle?: string;
+  discountValue?: string;
 }
 
 interface VehicleCardProps {
@@ -45,6 +48,14 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
           className={styles.image}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
+        {(vehicle.discountTitle || vehicle.discountValue) && (
+          <div className={styles.discountBanner}>
+            <span>
+              {vehicle.discountTitle && <span>{vehicle.discountTitle} &mdash; </span>}
+              <span className={styles.discountValueText}>{vehicle.discountValue}</span>
+            </span>
+          </div>
+        )}
       </Link>
 
       <div className={`${styles.content} ${isList ? styles.listContent : ""}`}>
@@ -96,7 +107,12 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
           <div className={styles.footer}>
             <div className={styles.priceCol}>
               <span className={styles.priceLabel}>Total Price</span>
-              <span className={styles.priceValue}>{formatCurrency(Number(String(vehicle.price).replace(/,/g, "")) || 0)}</span>
+              <span className={styles.priceValue}>
+                {vehicle.originalPrice && (
+                  <span className={styles.originalPrice}>{formatCurrency(vehicle.originalPrice)}</span>
+                )}
+                {formatCurrency(Number(String(vehicle.price).replace(/,/g, "")) || 0)}
+              </span>
             </div>
             <Button variant="primary" size="sm" href={`/transportation/${vehicle.id}/book`}>
               Book Now

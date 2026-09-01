@@ -22,12 +22,20 @@ export default async function Page() {
     getFaqs()
   ]);
   
-  const vehicles: Vehicle[] = vehiclesData.map(v => ({
+  const vehicles: Vehicle[] = vehiclesData.map(v => {
+    const basePrice = parseFloat(v.price_amount) || 0;
+    const discountPerc = v.discount_value ? parseFloat(v.discount_value) : 0;
+    const discountedPrice = discountPerc > 0 ? basePrice * (1 - discountPerc / 100) : basePrice;
+
+    return {
     id: v.slug,
     title: v.title || v.name,
     type: v.type || v.vehicle_type,
     image: v.image || "/images/sedan.png",
-    price: v.price_amount,
+    price: discountedPrice.toString(),
+    originalPrice: discountPerc > 0 ? basePrice : undefined,
+    discountTitle: v.discount_title || undefined,
+    discountValue: v.discount_value ? `${parseFloat(v.discount_value)}% Off` : undefined,
     passengers: v.passengers,
     luggage: (v.luggage_capacity !== undefined && v.luggage_capacity !== null && v.luggage_capacity > 0)
       ? `${v.luggage_capacity} large suitcase${v.luggage_capacity > 1 ? "s" : ""}`
@@ -45,7 +53,8 @@ export default async function Page() {
     rating: parseFloat(v.rating_avg) || 0,
     reviews: v.review_count,
     features: v.features || [],
-  }));
+  };
+  });
 
   return (
     <Suspense fallback={<div>Loading...</div>}>

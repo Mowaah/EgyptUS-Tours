@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ContentGrid, { type ContentItem } from "@/components/dashboard/ContentGrid/ContentGrid";
@@ -21,6 +22,8 @@ const mapSectionToContentItem = (section: AdminLegalSection): ContentItem => ({
 });
 
 export default function TermsConditionsPage() {
+  const searchParams = useSearchParams();
+  const statusFilter = searchParams.get("status");
   const [searchQuery, setSearchQuery] = useState("");
 
   const {
@@ -49,7 +52,8 @@ export default function TermsConditionsPage() {
   } = useContentManager({
     itemName: "Terms & Conditions",
     fetchData: async () => {
-      const res = await getAdminTermsSections({ limit: 1000, search: searchQuery });
+      const is_active = statusFilter === "Published" ? true : statusFilter === "Unpublished" ? false : undefined;
+      const res = await getAdminTermsSections({ limit: 1000, search: searchQuery, is_active });
       return res.results.map(mapSectionToContentItem);
     },
     createItem: async (translations, published) => {
@@ -73,7 +77,7 @@ export default function TermsConditionsPage() {
     updateStatus: async (id, published) => {
       await updateAdminTermsSection(id, { is_active: published });
     },
-    dependencies: [searchQuery],
+    dependencies: [searchQuery, statusFilter],
   });
 
   return (

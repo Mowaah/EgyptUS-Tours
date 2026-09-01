@@ -117,6 +117,8 @@ export interface TripList {
   is_featured: boolean;
   image: string | null;
   is_favorite: boolean;
+  discount_value?: string | null;
+  discount_title?: string | null;
   availability_enabled?: boolean;
   tags: TripTag[];
 }

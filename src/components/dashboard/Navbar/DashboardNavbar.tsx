@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import NotificationDropdown from "./NotificationDropdown/NotificationDropdown";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import pageCopyByPath, { type BreadcrumbSegment } from "./navbarPageCopy";
@@ -174,17 +174,21 @@ export default function DashboardNavbar({
             </div>
 
             <div className={styles.tools}>
-              {!isFilterHidden && (
-                <button className={styles.filterButton} type="button" aria-label="Filter dashboard results">
-                  <Image
-                    src="/images/dashboard/navbar/filter.svg"
-                    alt=""
-                    width={24}
-                    height={24}
-                    className={styles.actionIcon}
-                    aria-hidden
-                  />
-                </button>
+              {(pageCopy as any).showStatusFilter ? (
+                <StatusFilterDropdown />
+              ) : (
+                !isFilterHidden && (
+                  <button className={styles.filterButton} type="button" aria-label="Filter dashboard results">
+                    <Image
+                      src="/images/dashboard/navbar/filter.svg"
+                      alt=""
+                      width={24}
+                      height={24}
+                      className={styles.actionIcon}
+                      aria-hidden
+                    />
+                  </button>
+                )
               )}
 
               {!isSearchHidden && (
@@ -198,9 +202,9 @@ export default function DashboardNavbar({
                     aria-hidden
                   />
                   <span className={styles.srOnly}>Search dashboard</span>
-                  <input 
-                    type="search" 
-                    placeholder={searchPlaceholderStr} 
+                  <input
+                    type="search"
+                    placeholder={searchPlaceholderStr}
                     value={searchQuery ?? searchParams.get("search") ?? ""}
                     onChange={(e) => handleSearchChange(e.target.value)}
                   />
@@ -229,7 +233,7 @@ export default function DashboardNavbar({
                       style={visibleTertiaryAction.iconRotation ? { transform: `rotate(${visibleTertiaryAction.iconRotation}deg)` } : undefined}
                     />
                   )}
-                  {visibleTertiaryAction.label}
+                  {!visibleTertiaryAction.loading && visibleTertiaryAction.label}
                 </button>
               ) : null}
 
@@ -255,7 +259,7 @@ export default function DashboardNavbar({
                       style={visibleSecondaryAction.iconRotation ? { transform: `rotate(${visibleSecondaryAction.iconRotation}deg)` } : undefined}
                     />
                   )}
-                  {visibleSecondaryAction.label}
+                  {!visibleSecondaryAction.loading && visibleSecondaryAction.label}
                 </button>
               ) : null}
 
@@ -270,7 +274,7 @@ export default function DashboardNavbar({
                   {visiblePrimaryAction.loading && (
                     <span className={styles.loadingSpinner} aria-hidden="true" />
                   )}
-                  {visiblePrimaryAction.label}
+                  {!visiblePrimaryAction.loading && visiblePrimaryAction.label}
                   {!visiblePrimaryAction.loading && !visiblePrimaryAction.hideIcon && (
                     <Image
                       src={visiblePrimaryAction.iconSrc || "/images/dashboard/navbar/add-circle.svg"}
@@ -289,5 +293,99 @@ export default function DashboardNavbar({
         )}
       </div>
     </header>
+  );
+}
+
+function StatusFilterDropdown() {
+  const [isOpen, setIsOpen] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentStatus = searchParams.get("status") || "All";
+  const [selectedStatus, setSelectedStatus] = useState(currentStatus);
+
+  useEffect(() => {
+    setSelectedStatus(currentStatus);
+  }, [currentStatus]);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const handleApply = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (selectedStatus === "All") {
+      params.delete("status");
+    } else {
+      params.set("status", selectedStatus);
+    }
+    router.replace(`${pathname}?${params.toString()}`);
+    setIsOpen(false);
+  };
+
+  const handleClean = () => {
+    setSelectedStatus("All");
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("status");
+    router.replace(`${pathname}?${params.toString()}`);
+    setIsOpen(false);
+  };
+
+  return (
+    <div ref={filterRef} className={styles.filterDropdownContainer}>
+      <button 
+        className={`${styles.filterButton} ${isOpen ? styles.active : ""}`} 
+        type="button" 
+        aria-label="Filter dashboard results" 
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <Image src="/images/dashboard/navbar/filter.svg" alt="" width={24} height={24} className={styles.actionIcon} aria-hidden />
+      </button>
+
+      {isOpen && (
+        <div className={styles.filterDropdown}>
+          <div className={styles.filterHeader}>
+            <div className={styles.filterHeaderIcon}>
+              <Image src="/images/dashboard/navbar/filter.svg" alt="" width={20} height={20} />
+            </div>
+            <div className={styles.filterHeaderTitle}>Filters</div>
+          </div>
+
+          <div className={styles.filterSection}>
+            <span className={styles.filterSectionTitle}>Status</span>
+            <div className={styles.filterPills}>
+              {["Published", "Unpublished"].map((status) => (
+                <div
+                  key={status}
+                  className={`${styles.filterPill} ${selectedStatus === status ? styles.active : ""}`}
+                  onClick={() => setSelectedStatus(selectedStatus === status ? "All" : status)}
+                >
+                  <div className={styles.filterPillRadio}>
+                    {selectedStatus === status && (
+                      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 7.5L6.5 10L11 4.5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </div>
+                  {status}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.filterFooter}>
+            <button type="button" className={styles.btnClean} onClick={handleClean}>Clean</button>
+            <button type="button" className={styles.btnApply} onClick={handleApply}>Apply</button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

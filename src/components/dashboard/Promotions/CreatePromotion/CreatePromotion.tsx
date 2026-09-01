@@ -20,7 +20,7 @@ import { getAdminPromotionById, createAdminPromotion, updateAdminPromotion } fro
 import { apiClient } from "@/lib/api";
 import styles from "./CreatePromotion.module.scss";
 
-export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: string, onDirtyChange?: (isDirty: boolean) => void }) {
+export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange }: { promotionId?: string, onDirtyChange?: (isDirty: boolean) => void, onSubmittingChange?: (isSubmitting: boolean) => void }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const fromList = searchParams?.get("from") === "list";
@@ -219,6 +219,7 @@ export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: 
 
   const onSubmit = async (data: CreatePromotionValues) => {
     try {
+      if (onSubmittingChange) onSubmittingChange(true);
       const formattedStartDate = new Date(data.startDate).toISOString().split('T')[0];
       const formattedEndDate = new Date(data.endDate).toISOString().split('T')[0];
 
@@ -261,6 +262,8 @@ export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: 
       }
     } catch (error) {
       console.error("Failed to save promotion", error);
+    } finally {
+      if (onSubmittingChange) onSubmittingChange(false);
     }
   };
 
@@ -278,20 +281,22 @@ export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: 
         <FormSection title="Offer Details" iconSrc="/images/dashboard/promotions/offer-details.svg">
           <FormSpec>
             <LanguageTabs active={detailsLang} onChange={setDetailsLang} className={styles.whiteTabs} />
-            <DashboardField 
-              label="Title" 
-              placeholder="e.g. Summer Special 20% Off ..." 
-              {...register(`translations.${langMap[detailsLang]}.title`)} 
-              error={errors.translations?.[langMap[detailsLang]]?.title?.message} 
-            />
-            <DashboardField
-              control="textarea"
-              label="Short Description"
-              placeholder="Brief summary shown in listings (max 300 chars)..."
-              maxLength={300}
-              {...register(`translations.${langMap[detailsLang]}.shortDescription`)}
-              error={errors.translations?.[langMap[detailsLang]]?.shortDescription?.message}
-            />
+            <React.Fragment key={detailsLang}>
+              <DashboardField 
+                label="Title" 
+                placeholder="e.g. Summer Special 20% Off ..." 
+                {...register(`translations.${langMap[detailsLang]}.title` as const)} 
+                error={errors.translations?.[langMap[detailsLang]]?.title?.message} 
+              />
+              <DashboardField
+                control="textarea"
+                label="Short Description"
+                placeholder="Brief summary shown in listings (max 300 chars)..."
+                maxLength={300}
+                {...register(`translations.${langMap[detailsLang]}.shortDescription` as const)}
+                error={errors.translations?.[langMap[detailsLang]]?.shortDescription?.message}
+              />
+            </React.Fragment>
           </FormSpec>
         </FormSection>
 
@@ -391,6 +396,7 @@ export function CreatePromotion({ promotionId, onDirtyChange }: { promotionId?: 
                           control="select"
                           multiple={true}
                           label={specificLabel}
+                          value={value || []}
                           onChange={(e: any) => {
                             const newArr = e.target.value;
                             onChange(newArr);

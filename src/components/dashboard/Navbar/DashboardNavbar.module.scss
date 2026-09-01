@@ -173,7 +173,8 @@
   height: 56px;
 
   &:focus-visible,
-  &:active {
+  &:active,
+  &.active {
     border-color: $primary;
     box-shadow: 0px 0px 0px 4px $background-blue-alt, 0px 1px 2px 0px rgba(217, 217, 234, 0.05);
   }
@@ -481,5 +482,202 @@
 
   .searchBox input::placeholder {
     font-size: 0;
+  }
+}
+
+.filterDropdownContainer {
+  position: relative;
+}
+
+.filterDropdown {
+  position: absolute;
+  top: calc(100% + 20px);
+  right: 0;
+  width: 469px;
+  background: $background;
+  box-shadow: 0px 12px 24px rgba(14, 18, 27, 0.06), 0px 1px 2px rgba(14, 18, 27, 0.03);
+  border-radius: 16px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Optional Tail matching Figma (right aligned under button) */
+.filterDropdown::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: 22px;
+  width: 16px;
+  height: 16px;
+  background: $background;
+  border-radius: 3px;
+  transform: rotate(45deg);
+  z-index: -1;
+  box-shadow: -2px -2px 6px rgba(14, 18, 27, 0.04);
+}
+
+.filterHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 16px;
+  gap: 12px;
+  height: 72px;
+  border-radius: 16px 16px 0px 0px;
+}
+
+.filterHeaderIcon {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: #FBFBFD;
+  border-radius: 20px;
+  
+  img {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.filterHeaderTitle {
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: $font-size-lg;
+  line-height: 19px;
+  color: $primary-deep;
+}
+
+.filterSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px 12px 32px;
+  gap: 24px;
+}
+
+.filterSectionTitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: $font-size-base;
+  line-height: 20px;
+  color: $dark;
+}
+
+.filterPills {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.filterPill {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 16px 12px;
+  gap: 8px;
+  width: 214.5px;
+  height: 56px;
+  background: $background;
+  border: 1px solid $border-strong;
+  border-radius: 32px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 400;
+  font-size: $font-size-base;
+  color: $text;
+
+  &.active {
+    background: #FFF0E6;
+    border: 1px solid $secondary;
+  }
+}
+
+.filterPillRadio {
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  background: $background;
+  border: 1.5px solid $border-input;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .active & {
+    background: $secondary;
+    border: 1.5px solid $secondary;
+  }
+}
+
+.filterFooter {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 16px;
+  gap: 8px;
+  height: 78px;
+  border-top: 1px solid #EDEDED;
+}
+
+.btnClean {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 16px;
+  width: 97px;
+  height: 46px;
+  background: $background;
+  border: 1px solid $gray-50-alt;
+  border-radius: 50px;
+  
+  font-family: 'Trip Sans', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: $font-size-base;
+  line-height: 19px;
+  color: $dark;
+  cursor: pointer;
+
+  &:hover {
+    background: $gray-50;
+  }
+}
+
+.btnApply {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 16px;
+  width: 97px;
+  height: 46px;
+  background: $dark;
+  border-radius: 50px;
+  
+  font-family: 'Trip Sans', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: $font-size-base;
+  line-height: 19px;
+  text-align: center;
+  color: $background;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
   }
 }

@@ -36,6 +36,8 @@ export interface VehicleList {
   review_count: number;
   features: string[];
   is_featured: boolean;
+  discount_value?: string | null;
+  discount_title?: string | null;
 }
 
 export interface VehicleAdditionalServicePublic {

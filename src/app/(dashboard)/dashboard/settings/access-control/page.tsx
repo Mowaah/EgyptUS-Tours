@@ -51,7 +51,7 @@ export default function AccessControlPage() {
   return (
     <>
       <DashboardNavbar onPrimaryAction={() => setRoleModalOpen(true)} />
-      
+
       {isLoading ? (
         <div style={{ padding: "2rem", textAlign: "center" }}>Loading access control...</div>
       ) : (

@@ -187,3 +187,51 @@
 .listCard {
   width: 100%;
 }
+.discountBanner {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 2px 8px;
+  gap: 10px;
+
+  position: absolute;
+  left: 0;
+  top: 12px;
+
+  @media (min-width: 640px) {
+    top: 16px;
+  }
+
+  background: $secondary;
+  border-radius: 0px 6px 6px 0px;
+  z-index: 5;
+  max-width: 90%;
+
+  span {
+    font-family: 'Trip Sans', sans-serif;
+    font-weight: 400;
+    font-size: $font-size-2xs;
+    line-height: 15px;
+    display: flex;
+    align-items: center;
+    color: $background;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.discountValueText {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500 !important;
+  margin-left: 2px;
+}
+
+.originalPrice {
+  text-decoration: line-through;
+  color: var(--color-gray-400);
+  margin-right: 8px;
+  font-size: 0.9em;
+  font-weight: 400;
+}

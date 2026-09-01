@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ContentGrid, { type ContentItem } from "@/components/dashboard/ContentGrid/ContentGrid";
@@ -21,6 +22,8 @@ const mapFaqToContentItem = (faq: AdminSiteFaq): ContentItem => ({
 });
 
 export default function FaqManagementPage() {
+  const searchParams = useSearchParams();
+  const statusFilter = searchParams.get("status");
   const [searchQuery, setSearchQuery] = useState("");
 
   const {
@@ -49,7 +52,8 @@ export default function FaqManagementPage() {
   } = useContentManager({
     itemName: "FAQ",
     fetchData: async () => {
-      const res = await getAdminFaqs({ limit: 1000, search: searchQuery });
+      const is_active = statusFilter === "Published" ? true : statusFilter === "Unpublished" ? false : undefined;
+      const res = await getAdminFaqs({ limit: 1000, search: searchQuery, is_active });
       return res.results.map(mapFaqToContentItem);
     },
     createItem: async (translations, published) => {
@@ -73,7 +77,7 @@ export default function FaqManagementPage() {
     updateStatus: async (id, published) => {
       await updateAdminFaq(id, { is_active: published });
     },
-    dependencies: [searchQuery],
+    dependencies: [searchQuery, statusFilter],
   });
 
   return (

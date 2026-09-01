@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ContentGrid, { type ContentItem } from "@/components/dashboard/ContentGrid/ContentGrid";
 import DocumentViewModal from "@/components/dashboard/DocumentViewModal/DocumentViewModal";
@@ -21,6 +22,8 @@ const mapSectionToContentItem = (section: AdminLegalSection): ContentItem => ({
 });
 
 export default function PrivacyPolicyPage() {
+  const searchParams = useSearchParams();
+  const statusFilter = searchParams.get("status");
   const [searchQuery, setSearchQuery] = useState("");
 
   const {
@@ -49,7 +52,8 @@ export default function PrivacyPolicyPage() {
   } = useContentManager({
     itemName: "Privacy Policy",
     fetchData: async () => {
-      const res = await getAdminPrivacySections({ limit: 1000, search: searchQuery });
+      const is_active = statusFilter === "Published" ? true : statusFilter === "Unpublished" ? false : undefined;
+      const res = await getAdminPrivacySections({ limit: 1000, search: searchQuery, is_active });
       return res.results.map(mapSectionToContentItem);
     },
     createItem: async (translations, published) => {
@@ -73,7 +77,7 @@ export default function PrivacyPolicyPage() {
     updateStatus: async (id, published) => {
       await updateAdminPrivacySection(id, { is_active: published });
     },
-    dependencies: [searchQuery],
+    dependencies: [searchQuery, statusFilter],
   });
 
   return (

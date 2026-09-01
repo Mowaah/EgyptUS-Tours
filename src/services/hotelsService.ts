@@ -54,7 +54,16 @@ export function mapHotelDetailToHotel(hotelDetail: HotelDetail): import("@/types
     stars: hotelDetail.stars,
     rating: parseFloat(hotelDetail.rating_avg) || 0,
     rooms: hotelDetail.rooms,
-    pricePerNight: parseHotelPriceEgp(hotelDetail.price_per_night_egp, hotelDetail.price_per_night),
+    pricePerNight: (() => {
+      const basePrice = parseHotelPriceEgp(hotelDetail.price_per_night_egp, hotelDetail.price_per_night);
+      const discountPerc = hotelDetail.discount_value ? parseFloat(hotelDetail.discount_value) : 0;
+      return discountPerc > 0 ? basePrice * (1 - discountPerc / 100) : basePrice;
+    })(),
+    originalPrice: hotelDetail.discount_value && parseFloat(hotelDetail.discount_value) > 0 
+      ? parseHotelPriceEgp(hotelDetail.price_per_night_egp, hotelDetail.price_per_night) 
+      : undefined,
+    discountTitle: hotelDetail.discount_title || undefined,
+    discountValue: hotelDetail.discount_value ? `${parseFloat(hotelDetail.discount_value)}% Off` : undefined,
     reviews: hotelDetail.review_count,
     description: hotelDetail.description,
     secondDescription: hotelDetail.second_description,
