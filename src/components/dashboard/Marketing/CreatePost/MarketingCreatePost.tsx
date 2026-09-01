@@ -18,6 +18,7 @@ import CustomDatePicker from "@/components/shared/CustomDatePicker/CustomDatePic
 import CreateCategoryModal from "./CreateCategoryModal/CreateCategoryModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
+import { LocalizedImageUploadSection } from "@/components/dashboard/shared";
 import { marketingCreatePostSchema, type MarketingCreatePostValues } from "./MarketingCreatePostSchema";
 import SEOSettingsSection from "@/components/dashboard/shared/SEOSettingsSection/SEOSettingsSection";
 import styles from "./MarketingCreatePost.module.scss";
@@ -94,6 +95,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange, onStat
     handleSubmit,
     control,
     reset,
+    setValue,
     getValues,
     formState: { errors, isDirty, dirtyFields },
   } = useForm<MarketingCreatePostValues>({
@@ -120,9 +122,9 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange, onStat
 
   useEffect(() => {
     if (onDirtyChange) {
-      onDirtyChange(isDirty);
+      onDirtyChange(Object.keys(dirtyFields).length > 0);
     }
-  }, [isDirty, onDirtyChange]);
+  }, [dirtyFields, onDirtyChange]);
 
   useEffect(() => {
     async function loadPost() {
@@ -161,12 +163,14 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange, onStat
             status: normalizedStatus,
             thumbnailFile: getFullImageUrl(data.hero_image),
             imageFile: getFullImageUrl(data.featured_image),
-            autoApply: false,
+            autoApply: normalizedStatus.toLowerCase() === "published",
             scheduledDate: data.scheduled_at
               ? new Date(data.scheduled_at).toISOString().split('T')[0]
-              : (data.status?.toLowerCase() === "scheduled" && data.published_at
-                ? new Date(data.published_at).toISOString().split('T')[0]
-                : ""),
+              : (normalizedStatus.toLowerCase() === "published"
+                ? new Date().toISOString().split('T')[0]
+                : (data.status?.toLowerCase() === "scheduled" && data.published_at
+                  ? new Date(data.published_at).toISOString().split('T')[0]
+                  : "")),
             translations: {
               en: buildLang("en"),
               it: buildLang("it"),
@@ -214,21 +218,24 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange, onStat
         }
       }
 
-      let computedStatus = "published";
+      let computedStatus = data.status ? data.status.toLowerCase() : "published";
       const btnTextLower = btnText.toLowerCase();
       if (btnTextLower.includes("draft") || btnTextLower.includes("save draft") || btnTextLower.includes("save as draft")) {
         computedStatus = "draft";
+      } else if (data.autoApply) {
+        computedStatus = "published";
+        formattedScheduledAt = null;
       } else if (btnTextLower === "publish now" || btnTextLower === "publish post") {
         computedStatus = "published";
         formattedScheduledAt = null;
-      } else if (data.scheduledDate) {
+      } else if (data.scheduledDate && computedStatus !== "draft") {
         computedStatus = "scheduled";
       }
 
       const extractLang = (code: "en" | "it" | "es") => {
         const t = data.translations?.[code] || {};
         return {
-          title: t.title || "",
+          title: t.title || (computedStatus === "draft" ? "Untitled Draft" : ""),
           short_description: t.shortDescription || "",
           content: t.content || "",
           meta_title: t.metaTitle || "",
@@ -272,6 +279,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange, onStat
           await updateAdminBlog(postId, payload);
         }
 
+        router.refresh();
         if (fromList) {
           router.push(`/dashboard/marketing/${contentType}?editSaved=true`);
         } else {
@@ -319,46 +327,62 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange, onStat
     }
   };
 
-  return (
-    <form id="create-post-form" className={styles.page} onSubmit={handleSubmit(onSubmit, onError)}>
-      <div className={styles.mainColumn}>
-        <FormSection title="Upload Thumbnail" iconSrc="/images/dashboard/fields/document-upload.svg">
-          <FormSpec>
-            <Controller
-              name="thumbnailFile"
-              control={control}
-              render={({ field }) => (
-                <UploadDropzone onFileSelect={field.onChange} value={field.value} />
-              )}
-            />
-            <LanguageTabs active={thumbnailLang} onChange={setThumbnailLang} className={styles.whiteTabs} />
-            <div className={styles.fieldRow}>
-              <DashboardField key={`thumbnailTitle-${thumbnailLang}`} label="Thumbnail Title" placeholder="Thumbnail Title..." {...register(`translations.${langMap[thumbnailLang]}.thumbnailTitle`)} error={errors.translations?.[langMap[thumbnailLang]]?.thumbnailTitle?.message} />
-              <DashboardField key={`thumbnailAlt-${thumbnailLang}`} label="Thumbnail Alt" placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" {...register(`translations.${langMap[thumbnailLang]}.thumbnailAlt`)} error={errors.translations?.[langMap[thumbnailLang]]?.thumbnailAlt?.message} />
-            </div>
-          </FormSpec>
-        </FormSection>
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const submitter = (e.nativeEvent as SubmitEvent)?.submitter as HTMLButtonElement | undefined;
+    const btnTextLower = (submitter?.innerText || submitter?.textContent || "").toLowerCase();
 
-        <FormSection title="Upload Image" iconSrc="/images/dashboard/fields/document-upload.svg">
-          <FormSpec>
-            <Controller
-              name="imageFile"
-              control={control}
-              render={({ field }) => (
-                <UploadDropzone onFileSelect={field.onChange} value={field.value} />
-              )}
-            />
-            <LanguageTabs active={imageLang} onChange={setImageLang} className={styles.whiteTabs} />
-            <div className={styles.fieldRow}>
-              <DashboardField key={`imageTitle-${imageLang}`} label="Image Title" placeholder="Image Title..." {...register(`translations.${langMap[imageLang]}.imageTitle`)} error={errors.translations?.[langMap[imageLang]]?.imageTitle?.message} />
-              <DashboardField key={`imageAlt-${imageLang}`} label="Image Alt" placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" {...register(`translations.${langMap[imageLang]}.imageAlt`)} error={errors.translations?.[langMap[imageLang]]?.imageAlt?.message} />
-            </div>
-          </FormSpec>
-        </FormSection>
+    const isSavingDraft = btnTextLower.includes("draft") || btnTextLower.includes("save draft") || btnTextLower.includes("save as draft");
+    const isEditingDraft = btnTextLower.includes("save edits") && getValues("status")?.toLowerCase() === "draft";
+
+    if (isSavingDraft || isEditingDraft) {
+      const currentValues = getValues();
+      await onSubmit(currentValues, e as any);
+    } else {
+      await handleSubmit(onSubmit, onError)(e);
+    }
+  };
+
+  return (
+    <form id="create-post-form" className={styles.page} onSubmit={handleFormSubmit}>
+      <div className={styles.mainColumn}>
+        <LocalizedImageUploadSection
+          title="Upload Thumbnail"
+          iconSrc="/images/dashboard/fields/document-upload.svg"
+          fileFieldName="thumbnailFile"
+          titleFieldNameBase="thumbnailTitle"
+          altFieldNameBase="thumbnailAlt"
+          titleLabel="Thumbnail Title"
+          altLabel="Thumbnail Alt"
+          titlePlaceholder="Thumbnail Title..."
+          altPlaceholder="Comma-separated tags (e.g. egypt, travel, cairo)"
+          lang={thumbnailLang}
+          setLang={setThumbnailLang}
+          control={control}
+          register={register}
+          errors={errors}
+        />
+
+        <LocalizedImageUploadSection
+          title="Upload Image"
+          iconSrc="/images/dashboard/fields/document-upload.svg"
+          fileFieldName="imageFile"
+          titleFieldNameBase="imageTitle"
+          altFieldNameBase="imageAlt"
+          titleLabel="Image Title"
+          altLabel="Image Alt"
+          titlePlaceholder="Image Title..."
+          altPlaceholder="Comma-separated tags (e.g. egypt, travel, cairo)"
+          lang={imageLang}
+          setLang={setImageLang}
+          control={control}
+          register={register}
+          errors={errors}
+        />
 
         <FormSection title={`${itemName} Content`} iconSrc="/images/dashboard/fields/blog-content.svg">
           <FormSpec>
-            <LanguageTabs active={contentLang} onChange={setContentLang} className={styles.whiteTabs} />
+            <LanguageTabs active={contentLang} onChange={setContentLang} variant="white" />
             <DashboardField key={`title-${contentLang}`} label="Title" placeholder="e.g. Summer Special 20% Off ..." {...register(`translations.${langMap[contentLang]}.title`)} error={errors.translations?.[langMap[contentLang]]?.title?.message} />
             <DashboardField
               key={`shortDesc-${contentLang}`}
@@ -425,7 +449,12 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange, onStat
                     label="Auto-Apply"
                     description="Feature this post to increase its visibility across the platform"
                     checked={value}
-                    onChange={onChange}
+                    onChange={(checked) => {
+                      onChange(checked);
+                      if (checked) {
+                        setValue("scheduledDate", new Date().toISOString().split('T')[0], { shouldDirty: true });
+                      }
+                    }}
                     ref={ref}
                   />
                 )}
@@ -436,7 +465,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange, onStat
 
         <FormSection title="Details" iconSrc="/images/dashboard/fields/details.svg">
           <FormSpec>
-            <LanguageTabs active={detailsLang} onChange={setDetailsLang} className={styles.whiteTabs} />
+            <LanguageTabs active={detailsLang} onChange={setDetailsLang} variant="white" />
             <Controller
               name="category"
               control={control}

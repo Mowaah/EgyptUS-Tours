@@ -22,17 +22,7 @@ export const marketingCreatePostSchema = z.object({
   imageFile: z.any().optional(),
 
   // Publish Settings
-  scheduledDate: z.string().optional().superRefine((val, ctx) => {
-    if (!val) return;
-    const date = new Date(val);
-    if (isNaN(date.getTime())) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Invalid date" });
-      return;
-    }
-    if (date <= new Date()) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Scheduled date must be in the future" });
-    }
-  }),
+  scheduledDate: z.string().optional(),
   autoApply: z.boolean().optional(),
   status: z.string().optional(),
 
@@ -48,6 +38,27 @@ export const marketingCreatePostSchema = z.object({
     it: localizedFieldsSchema,
     es: localizedFieldsSchema,
   }),
+}).superRefine((data, ctx) => {
+  if (!data.autoApply) {
+    if (!data.scheduledDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["scheduledDate"],
+        message: "Scheduled date is required when auto apply is off",
+      });
+    } else {
+      const date = new Date(data.scheduledDate);
+      if (isNaN(date.getTime())) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["scheduledDate"], message: "Invalid date" });
+      } else {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (date <= today) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["scheduledDate"], message: "Scheduled date must be in the future" });
+        }
+      }
+    }
+  }
 });
 
 export type MarketingCreatePostValues = z.infer<typeof marketingCreatePostSchema>;

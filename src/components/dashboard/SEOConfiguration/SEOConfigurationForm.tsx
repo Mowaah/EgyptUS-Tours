@@ -1,13 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
-import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
-import { DashboardFooter } from "@/components/dashboard/shared";
-import { FormSection, FormSpec, UploadDropzone } from "@/components/dashboard/FormFields";
+import { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
+import { DashboardFooter, LocalizedImageUploadSection } from "@/components/dashboard/shared";
+import { FormSection } from "@/components/dashboard/FormFields";
 import SEOSettingsSection from "@/components/dashboard/shared/SEOSettingsSection/SEOSettingsSection";
 import { seoConfigurationSchema, type SEOConfigurationValues } from "./SEOConfigurationSchema";
 import styles from "./SEOConfiguration.module.scss";
@@ -189,34 +188,23 @@ export default function SEOConfigurationForm({ pageKey, onSuccess }: SEOConfigur
       <div className={styles.formContainer}>
         {supportsOgImage && (
           <div className={styles.column}>
-            <FormSection title="Upload Image" iconSrc="/images/dashboard/fields/document-upload.svg">
-              <FormSpec>
-                <Controller
-                  name="imageFile"
-                  control={control}
-                  render={({ field }) => (
-                    <UploadDropzone onFileSelect={field.onChange} value={field.value || undefined} />
-                  )}
-                />
-                <LanguageTabs active={imageLang} onChange={setImageLang} className={styles.whiteTabs} />
-                <div className={styles.fieldRow}>
-                  <DashboardField
-                    key={`imageTitle-${imageLangKey}`}
-                    label="Image Title"
-                    placeholder="Image Title..."
-                    {...register(`imageTitle.${imageLangKey}`)}
-                    error={(errors.imageTitle as any)?.[imageLangKey]?.message}
-                  />
-                  <DashboardField
-                    key={`imageAlt-${imageLangKey}`}
-                    label="Image Alt"
-                    placeholder="Comma-separated tags (e.g. egypt, travel, cairo)"
-                    {...register(`imageAlt.${imageLangKey}`)}
-                    error={(errors.imageAlt as any)?.[imageLangKey]?.message}
-                  />
-                </div>
-              </FormSpec>
-            </FormSection>
+            <LocalizedImageUploadSection
+              title="Upload Image"
+              iconSrc="/images/dashboard/fields/document-upload.svg"
+              fileFieldName="imageFile"
+              titleFieldNameBase="imageTitle"
+              altFieldNameBase="imageAlt"
+              titleLabel="Image Title"
+              altLabel="Image Alt"
+              titlePlaceholder="Image Title..."
+              altPlaceholder="Comma-separated tags (e.g. egypt, travel, cairo)"
+              lang={imageLang}
+              setLang={setImageLang}
+              control={control}
+              register={register}
+              errors={errors}
+              registerPathFn={(langCode, fieldName) => `${fieldName}.${langCode}`}
+            />
 
             {previewUrl && (
               <FormSection title="Preview" iconSrc="/images/dashboard/fields/eye.svg">

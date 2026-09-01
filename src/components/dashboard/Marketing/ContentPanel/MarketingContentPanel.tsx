@@ -9,7 +9,6 @@ import {
 import { DashboardConfirmationModal } from "@/components/dashboard/shared";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
-import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import { useRouter, usePathname } from "next/navigation";
 import { exportAdminBlogsCSV, exportAdminArticlesCSV, getAdminMarketingCategories } from "@/services/admin/adminMarketingService";
 import { getMarketingColumns, useMarketingRowActions } from "./MarketingColumns";
@@ -129,7 +128,7 @@ export function MarketingContentPanel({
 
   return (
     <>
-      <TablePanel 
+      <TablePanel
         ariaLabel={`${pluralName} list`}
         title={pluralName}
         iconSrc={`/images/dashboard/sidebar/${contentType === "articles" ? "articles" : "blog"}.svg`}

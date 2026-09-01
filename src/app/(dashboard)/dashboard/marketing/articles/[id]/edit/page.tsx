@@ -43,7 +43,16 @@ export default function EditPostPage({ params, searchParams }: { params: Promise
           }
           hideSearch
           hideFilterButton
-          onSecondaryAction={() => router.push(fromList ? `/dashboard/marketing/articles` : `/dashboard/marketing/articles/${unwrappedParams.id}`)} 
+          onSecondaryAction={
+            (postStatus === "Scheduled" || postStatus === "Draft")
+              ? undefined // Save edits is secondary for drafts, let it submit
+              : () => router.push(fromList ? `/dashboard/marketing/articles` : `/dashboard/marketing/articles/${unwrappedParams.id}`)
+          }
+          onTertiaryAction={
+            (postStatus === "Scheduled" || postStatus === "Draft")
+              ? () => router.push(fromList ? `/dashboard/marketing/articles` : `/dashboard/marketing/articles/${unwrappedParams.id}`) // Discard is tertiary for drafts
+              : undefined
+          }
         />
         <Suspense fallback={null}>
           <MarketingCreatePost 

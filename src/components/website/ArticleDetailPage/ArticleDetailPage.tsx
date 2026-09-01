@@ -19,15 +19,9 @@ export interface ArticleContent {
   views: string;
   heroImage: string;
   heroCaption: string;
+  imageAlt?: string;
+  htmlContent?: string;
   intro: string;
-  primaryQuote: string;
-  sections: {
-    h2?: string;
-    h3?: string;
-    paragraphs: string[];
-    quote?: string;
-    quoteVariant?: "blue" | "orange";
-  }[];
   tags: string[];
   faqs?: { question: string; answer: string }[];
   relatedArticles: {
@@ -114,7 +108,7 @@ export default function ArticleDetailPage({ content }: ArticleDetailPageProps) {
             <div className={styles.heroImageWrap}>
               <Image
                 src={content.heroImage}
-                alt={content.title}
+                alt={content.imageAlt || content.title}
                 fill
                 className={styles.heroImage}
                 priority
@@ -133,37 +127,15 @@ export default function ArticleDetailPage({ content }: ArticleDetailPageProps) {
         <div className={styles.bodyInner}>
           {/* Main content column */}
           <article className={styles.contentCol}>
-            {/* Intro paragraph */}
-            <p className={styles.intro}>{content.intro}</p>
-
-            {/* Primary blockquote */}
-            {content.primaryQuote && (
-              <blockquote className={styles.blockquoteBlue}>
-                {content.primaryQuote}
-              </blockquote>
+            {/* Rich HTML Content from Backend */}
+            {content.htmlContent && (
+              <div
+                className={styles.htmlContent}
+                dangerouslySetInnerHTML={{ __html: content.htmlContent }}
+              />
             )}
 
-            {/* Content sections */}
-            {content.sections.map((section, i) => (
-              <div key={i} className={styles.contentSection}>
-                {section.h2 && <h2 className={styles.h2}>{section.h2}</h2>}
-                {section.h3 && <h3 className={styles.h3}>{section.h3}</h3>}
-                {section.paragraphs.map((p, j) => (
-                  <p key={j} className={styles.body}>{p}</p>
-                ))}
-                {section.quote && (
-                  <blockquote
-                    className={
-                      section.quoteVariant === "orange"
-                        ? styles.blockquoteOrange
-                        : styles.blockquoteBlue
-                    }
-                  >
-                    {section.quote}
-                  </blockquote>
-                )}
-              </div>
-            ))}
+
 
           </article>
 

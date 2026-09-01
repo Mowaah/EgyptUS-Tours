@@ -250,6 +250,17 @@ function Toolbar({ editor, showColorPicker }: { editor: Editor; showColorPicker:
 
       <div className={styles.toolbarDivider} />
 
+      {/* Quote */}
+      <div className={styles.toolbarGroup}>
+        <button type="button" onClick={() => editor.chain().focus().toggleBlockquote().run()} className={`${styles.toolbarBtn} ${editor.isActive("blockquote") ? styles.active : ""}`} title="Blockquote">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 11H6V7H10V11ZM10 11H6C6 14.5 8 16 10 17L11 15.5C9.5 15 8 14 8 11H10V11ZM20 11H16V7H20V11ZM20 11H16C16 14.5 18 16 20 17L21 15.5C19.5 15 18 14 18 11H20V11Z"/>
+          </svg>
+        </button>
+      </div>
+
+      <div className={styles.toolbarDivider} />
+
       {/* Links */}
       <div className={styles.toolbarGroup}>
         <button type="button" onClick={setLink} className={`${styles.toolbarBtn} ${editor.isActive("link") ? styles.active : ""}`} title="Link">

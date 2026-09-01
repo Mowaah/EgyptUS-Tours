@@ -61,16 +61,10 @@ export default async function BlogDetailRoute({ params }: BlogDetailRouteProps) 
       readTime: `${blog.read_time_minutes} min`,
       views: `${blog.views_count || 0}`,
       heroImage: blog.hero_image || blog.featured_image || "/images/home/hero-bg.png",
-      heroCaption: blog.hero_caption || "",
+      heroCaption: blog.image_title || "",
+      imageAlt: blog.image_alt || blog.title,
+      htmlContent: blog.content || "",
       intro: blog.intro || blog.excerpt || "",
-      primaryQuote: blog.primary_quote || "",
-      sections: (blog.sections || []).map((s: any) => ({
-        h2: s.h2,
-        h3: s.h3,
-        paragraphs: s.paragraphs || [],
-        quote: s.quote,
-        quoteVariant: s.quote_color === "orange" ? "orange" : "blue"
-      })),
       tags: (blog.detail_tags || []).map((t: any) => t.label),
       faqs: blog.faqs || [],
       relatedArticles: randomBlogs.map((rb) => ({

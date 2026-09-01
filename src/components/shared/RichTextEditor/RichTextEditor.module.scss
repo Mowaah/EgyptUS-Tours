@@ -224,18 +224,74 @@
   min-height: 220px;
   padding: 16px;
   outline: none;
-  font-size: $font-size-lg;
-  line-height: 1.6;
-  color: $gray-700;
+  font-size: $font-size-22;
+  line-height: 1.75;
+  color: #3D4A6B;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 
-  p { margin: 0 0 0.8em; &:last-child { margin-bottom: 0; } }
-  h1 { font-size: $font-size-4xl; font-weight: 700; margin: 0 0 0.5em; }
-  h2 { font-size: $font-size-26; font-weight: 600; margin: 0 0 0.4em; }
-  h3 { font-size: $font-size-19; font-weight: 600; margin: 0 0 0.4em; }
+  p { margin: 0 0 24px; &:last-child { margin-bottom: 0; } }
+  h1 { font-size: $font-size-32; font-weight: 700; color: $dark-navy; margin: 36px 0 20px; line-height: 1.2; }
+  h2 { font-size: $font-size-28; font-weight: 700; color: $dark-navy; margin: 32px 0 16px; line-height: 1.3; }
+  h3 { font-size: $font-size-26; font-weight: 500; color: $dark-navy; margin: 28px 0 12px; line-height: 1.4; }
+  h4, h5, h6 { font-size: $font-size-22; font-weight: 700; color: $dark-navy; margin: 24px 0 12px; line-height: 1.5; }
   ul { list-style-type: disc !important; list-style-position: outside !important; padding-left: 1.5rem !important; margin: 0.5rem 0; }
   ol { list-style-type: decimal !important; list-style-position: outside !important; padding-left: 1.5rem !important; margin: 0.5rem 0; }
   li { margin: 0.2rem 0; display: list-item !important; }
   li > p { margin: 0; display: inline; }
+
+  blockquote {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    background: #F4F7FF;
+    border-right: 3px solid $primary;
+    border-left: none;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-medium;
+    line-height: 1.5;
+    color: $dark;
+    margin: 24px 0;
+    border-radius: 8px 0 0 8px;
+
+    @media (min-width: 768px) {
+      font-size: $font-size-28;
+      padding: 25.5px 28.33px;
+      line-height: 44px;
+      border-radius: 0;
+    }
+
+    &:nth-of-type(even) {
+      background: #FFF0E6;
+      border-right-color: $secondary;
+      color: #BF4D00;
+
+      p {
+        color: #BF4D00;
+      }
+    }
+
+    p {
+      color: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      font-weight: inherit;
+      margin: 0;
+
+      &:first-of-type::before {
+        content: '“';
+      }
+
+      &:last-of-type::after {
+        content: '”';
+      }
+    }
+  }
+
   a { color: $primary; text-decoration: underline; }
 
   /* Placeholder */

@@ -109,7 +109,7 @@ export default function PostDetails({ type, postId, post }: PostDetailsProps) {
           pillVariant={
             post.status.toLowerCase() === "published" ? "green" :
             post.status.toLowerCase() === "scheduled" ? "blue" :
-            "gray"
+            "orange"
           }
           subtitleElements={[
             `Post ID: ${post.id}`,

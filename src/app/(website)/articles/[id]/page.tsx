@@ -61,16 +61,10 @@ export default async function ArticleDetailRoute({ params }: ArticleDetailRouteP
       readTime: `${article.read_time_minutes} min`,
       views: `${article.views_count || 0}`,
       heroImage: article.hero_image || article.featured_image || "/images/home/hero-bg.png",
-      heroCaption: article.hero_caption || "",
+      heroCaption: article.image_title || "",
+      imageAlt: article.image_alt || article.title,
+      htmlContent: article.content || "",
       intro: article.intro || article.excerpt || "",
-      primaryQuote: article.primary_quote || "",
-      sections: (article.sections || []).map((s: any) => ({
-        h2: s.h2,
-        h3: s.h3,
-        paragraphs: s.paragraphs || [],
-        quote: s.quote,
-        quoteVariant: s.quote_color === "orange" ? "orange" : "blue"
-      })),
       tags: (article.detail_tags || []).map((t: any) => t.label),
       faqs: article.faqs || [],
       relatedArticles: randomArticles.map((ra) => ({
