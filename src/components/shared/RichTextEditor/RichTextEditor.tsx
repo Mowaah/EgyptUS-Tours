@@ -273,6 +273,7 @@ function Toolbar({ editor, showColorPicker }: { editor: Editor; showColorPicker:
 
 export default function RichTextEditor({ value, onChange, placeholder = "Start typing...", className = "", showColorPicker = false, error = false }: RichTextEditorProps) {
   const [wordCount, setWordCount] = useState(0);
+  const [, forceUpdate] = useState({});
 
   const editor = useEditor({
     extensions: [
@@ -293,6 +294,9 @@ export default function RichTextEditor({ value, onChange, placeholder = "Start t
       if (onChange) {
         onChange(html, plainText);
       }
+    },
+    onSelectionUpdate() {
+      forceUpdate({});
     },
   });
 
