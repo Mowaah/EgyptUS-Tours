@@ -54,6 +54,15 @@
   }
 }
 
+.statusExpired {
+  background: $background-danger-light;
+  color: #DC2626;
+
+  i {
+    background: #DC2626;
+  }
+}
+
 .appliesTrips {
   background: #E4F2FF;
   color: #1A84FF;

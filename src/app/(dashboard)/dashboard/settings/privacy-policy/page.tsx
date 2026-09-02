@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ContentGrid, { type ContentItem } from "@/components/dashboard/ContentGrid/ContentGrid";
 import DocumentViewModal from "@/components/dashboard/DocumentViewModal/DocumentViewModal";
@@ -23,8 +23,15 @@ const mapSectionToContentItem = (section: AdminLegalSection): ContentItem => ({
 
 export default function PrivacyPolicyPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const statusFilter = searchParams.get("status");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const handleClearFilters = () => {
+    setSearchQuery("");
+    router.push(pathname);
+  };
 
   const {
     contentGridRef,
@@ -92,7 +99,8 @@ export default function PrivacyPolicyPage() {
         <ContentGrid
           ref={contentGridRef}
           searchQuery={searchQuery}
-          onClearSearch={() => setSearchQuery("")}
+          hasFilters={!!searchQuery || (!!statusFilter && statusFilter !== "All")}
+          onClearSearch={handleClearFilters}
           loading={loading}
           title="Privacy Policy"
           ariaLabel="Privacy Policy Content"

@@ -19,6 +19,7 @@ import CreateCategoryModal from "./CreateCategoryModal/CreateCategoryModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { LocalizedImageUploadSection } from "@/components/dashboard/shared";
+import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import { marketingCreatePostSchema, type MarketingCreatePostValues } from "./MarketingCreatePostSchema";
 import SEOSettingsSection from "@/components/dashboard/shared/SEOSettingsSection/SEOSettingsSection";
 import styles from "./MarketingCreatePost.module.scss";
@@ -56,6 +57,8 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange, onStat
   const [authors, setAuthors] = useState<{ label: string; value: string }[]>([]);
   const [showToast, setShowToast] = useState(false);
   const [showPublishModal, setShowPublishModal] = useState(false);
+  const [showDraftModal, setShowDraftModal] = useState(false);
+  const [draftEvent, setDraftEvent] = useState<any>(null);
 
   const langMap: Record<Language, "en" | "it" | "es"> = {
     English: "en",
@@ -97,6 +100,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange, onStat
     reset,
     setValue,
     getValues,
+    trigger,
     formState: { errors, isDirty, dirtyFields },
   } = useForm<MarketingCreatePostValues>({
     resolver: zodResolver(marketingCreatePostSchema),
@@ -235,7 +239,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange, onStat
       const extractLang = (code: "en" | "it" | "es") => {
         const t = data.translations?.[code] || {};
         return {
-          title: t.title || (computedStatus === "draft" ? "Untitled Draft" : ""),
+          title: t.title || "",
           short_description: t.shortDescription || "",
           content: t.content || "",
           meta_title: t.metaTitle || "",
@@ -335,12 +339,35 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange, onStat
     const isSavingDraft = btnTextLower.includes("draft") || btnTextLower.includes("save draft") || btnTextLower.includes("save as draft");
     const isEditingDraft = btnTextLower.includes("save edits") && getValues("status")?.toLowerCase() === "draft";
 
-    if (isSavingDraft || isEditingDraft) {
+    if (isSavingDraft) {
+      const isEnValid = await trigger("translations.en.title");
+      const isItValid = await trigger("translations.it.title");
+      const isEsValid = await trigger("translations.es.title");
+
+      if (isEnValid && isItValid && isEsValid) {
+        setDraftEvent(e);
+        setShowDraftModal(true);
+      } else {
+        const langToSet = !isEnValid ? "English" : !isItValid ? "Italian" : "Spanish";
+        setContentLang(langToSet);
+        
+        setTimeout(() => {
+          const inputName = `translations.${langToSet === "English" ? "en" : langToSet === "Italian" ? "it" : "es"}.title`;
+          document.querySelector(`input[name="${inputName}"]`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 100);
+      }
+    } else if (isEditingDraft) {
       const currentValues = getValues();
       await onSubmit(currentValues, e as any);
     } else {
       await handleSubmit(onSubmit, onError)(e);
     }
+  };
+
+  const confirmSaveDraft = async () => {
+    setShowDraftModal(false);
+    const currentValues = getValues();
+    await onSubmit(currentValues, draftEvent as any);
   };
 
   return (
@@ -492,8 +519,13 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange, onStat
                 type="button"
                 className={styles.createCategoryBtn}
                 onClick={() => setIsCategoryModalOpen(true)}
+                aria-label="Create new category"
               >
-                +
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M8 12H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M12 16V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </button>
             </div>
           </FormSpec>
@@ -581,6 +613,17 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange, onStat
         onDelete={(catValue) => {
           setCategories((prev) => prev.filter((c) => c.value !== catValue));
         }}
+      />
+
+      <DashboardConfirmationModal
+        open={showDraftModal}
+        variant="activate"
+        title={`Save ${itemName} as Draft?`}
+        message={`The ${itemName} will not be published and can be edited or published later.`}
+        cancelLabel="Cancel"
+        confirmLabel="Save as Draft"
+        onClose={() => setShowDraftModal(false)}
+        onConfirm={confirmSaveDraft}
       />
     </form>
   );

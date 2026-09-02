@@ -13,8 +13,8 @@ import {
   ToggleField,
 } from "@/components/dashboard/FormFields";
 import CustomDatePicker from "@/components/shared/CustomDatePicker/CustomDatePicker";
-import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
+import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import { createPromotionSchema, type CreatePromotionValues } from "./CreatePromotionSchema";
 import { getAdminPromotionById, createAdminPromotion, updateAdminPromotion } from "@/services/admin/adminMarketingService";
 import { apiClient } from "@/lib/api";
@@ -26,6 +26,8 @@ export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange
   const fromList = searchParams?.get("from") === "list";
   const [detailsLang, setDetailsLang] = useState<Language>("English");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showDraftModal, setShowDraftModal] = useState(false);
+  const [draftEvent, setDraftEvent] = useState<any>(null);
   const [itemsCache, setItemsCache] = useState<{ [key: string]: any[] }>({
     trips: [{ id: Date.now().toString(), category: "", specificTrip: [] }],
     hotels: [{ id: Date.now().toString(), category: "", specificTrip: [] }],
@@ -41,14 +43,16 @@ export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange
     Italian: "it",
     Spanish: "es",
   };
-  
+
   const {
     register,
     handleSubmit,
     control,
     watch,
     setValue,
+    getValues,
     reset,
+    trigger,
     formState: { errors, isDirty, dirtyFields },
   } = useForm<CreatePromotionValues>({
     resolver: zodResolver(createPromotionSchema),
@@ -101,7 +105,7 @@ export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange
       const fetchPromotion = async () => {
         try {
           const data = await getAdminPromotionById(promotionId);
-          
+
           let formattedStartDate = "";
           let formattedEndDate = "";
           if (data.valid_from) {
@@ -133,10 +137,10 @@ export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange
             appliesToType: data.applies_to === "trip" ? "trips" : data.applies_to === "hotel" ? "hotels" : "transportation",
             appliesToItems: Array.isArray(data.applies_to_rules) && data.applies_to_rules.length > 0
               ? data.applies_to_rules.map((rule: any, i: number) => ({
-                  id: String(i),
-                  category: rule.group_label || "",
-                  specificTrip: (rule.item_ids || []).map((id: number) => String(id)),
-                }))
+                id: String(i),
+                category: rule.group_label || "",
+                specificTrip: (rule.item_ids || []).map((id: number) => String(id)),
+              }))
               : [{ id: Date.now().toString(), category: "", specificTrip: [] }],
             isActive: data.status === "active",
             startDate: formattedStartDate,
@@ -217,14 +221,23 @@ export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange
     categoryOptions = categories.map(c => ({ label: String(c), value: String(c) }));
   }
 
-  const onSubmit = async (data: CreatePromotionValues) => {
+  const onSubmit = async (data: CreatePromotionValues, isDraft: boolean = false) => {
     try {
       if (onSubmittingChange) onSubmittingChange(true);
-      const formattedStartDate = new Date(data.startDate).toISOString().split('T')[0];
-      const formattedEndDate = new Date(data.endDate).toISOString().split('T')[0];
+      let formattedStartDate = null;
+      if (data.startDate) {
+        const d = new Date(data.startDate);
+        if (!Number.isNaN(d.getTime())) formattedStartDate = d.toISOString().split('T')[0];
+      }
+      
+      let formattedEndDate = null;
+      if (data.endDate) {
+        const d = new Date(data.endDate);
+        if (!Number.isNaN(d.getTime())) formattedEndDate = d.toISOString().split('T')[0];
+      }
 
       const payload = {
-        status: data.isActive ? "active" : "inactive",
+        status: isDraft ? "draft" : (data.isActive ? "active" : "inactive"),
         discount_value: data.discountValue,
         applies_to: data.appliesToType === "trips" ? "trip" : data.appliesToType === "hotels" ? "hotel" : "transport",
         valid_from: formattedStartDate,
@@ -275,18 +288,53 @@ export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange
     }
   };
 
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const submitter = (e.nativeEvent as SubmitEvent)?.submitter as HTMLButtonElement | undefined;
+    const btnTextLower = (submitter?.innerText || submitter?.textContent || "").toLowerCase();
+
+    const isSavingDraft = btnTextLower.includes("draft") || btnTextLower.includes("save draft") || btnTextLower.includes("save as draft");
+
+    if (isSavingDraft) {
+      const isEnValid = await trigger("translations.en.title");
+      const isItValid = await trigger("translations.it.title");
+      const isEsValid = await trigger("translations.es.title");
+
+      if (isEnValid && isItValid && isEsValid) {
+        setDraftEvent(e);
+        setShowDraftModal(true);
+      } else {
+        const langToSet = !isEnValid ? "English" : !isItValid ? "Italian" : "Spanish";
+        setDetailsLang(langToSet);
+        
+        setTimeout(() => {
+          const inputName = `translations.${langToSet === "English" ? "en" : langToSet === "Italian" ? "it" : "es"}.title`;
+          document.querySelector(`input[name="${inputName}"]`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 100);
+      }
+    } else {
+      await handleSubmit((data) => onSubmit(data, false), onError)(e);
+    }
+  };
+
+  const confirmSaveDraft = async () => {
+    setShowDraftModal(false);
+    const currentValues = getValues();
+    await onSubmit(currentValues, true);
+  };
+
   return (
-    <form id="create-promotion-form" className={styles.page} onSubmit={handleSubmit(onSubmit, onError)}>
+    <form id="create-promotion-form" className={styles.page} onSubmit={handleFormSubmit}>
       <div className={styles.mainColumn}>
         <FormSection title="Offer Details" iconSrc="/images/dashboard/promotions/offer-details.svg">
           <FormSpec>
             <LanguageTabs active={detailsLang} onChange={setDetailsLang} className={styles.whiteTabs} />
             <React.Fragment key={detailsLang}>
-              <DashboardField 
-                label="Title" 
-                placeholder="e.g. Summer Special 20% Off ..." 
-                {...register(`translations.${langMap[detailsLang]}.title` as const)} 
-                error={errors.translations?.[langMap[detailsLang]]?.title?.message} 
+              <DashboardField
+                label="Title"
+                placeholder="e.g. Summer Special 20% Off ..."
+                {...register(`translations.${langMap[detailsLang]}.title` as const)}
+                error={errors.translations?.[langMap[detailsLang]]?.title?.message}
               />
               <DashboardField
                 control="textarea"
@@ -302,12 +350,12 @@ export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange
 
         <FormSection title="Discount Configuration" iconSrc="/images/dashboard/promotions/discount.svg">
           <FormSpec>
-            <DashboardField 
+            <DashboardField
               type="number"
-              label="Discount Value" 
-              placeholder="% e.g. 20" 
-              {...register("discountValue", { valueAsNumber: true })} 
-              error={errors.discountValue?.message} 
+              label="Discount Value"
+              placeholder="% e.g. 20"
+              {...register("discountValue", { valueAsNumber: true })}
+              error={errors.discountValue?.message}
             />
           </FormSpec>
         </FormSection>
@@ -331,8 +379,8 @@ export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange
               { id: "hotels", label: "Hotels" },
               { id: "transportation", label: "Transportation" },
             ].map((type) => (
-              <div 
-                key={type.id} 
+              <div
+                key={type.id}
                 className={`${styles.pill} ${appliesToType === type.id ? styles.active : ""}`}
                 onClick={() => {
                   if (appliesToType !== type.id) {
@@ -345,7 +393,7 @@ export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange
                 <div className={`${styles.radioCircle} ${appliesToType === type.id ? styles.activeCircle : ""}`}>
                   {appliesToType === type.id && (
                     <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M8.33333 2.5L3.75 7.08333L1.66667 5" stroke="white" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M8.33333 2.5L3.75 7.08333L1.66667 5" stroke="white" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   )}
                 </div>
@@ -357,66 +405,66 @@ export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange
           {appliesToFields.length > 0 && (
             <div className={styles.dynamicList}>
               {appliesToFields.map((field, index) => {
-              const currentCategory = watchedItems[index]?.category;
-              const selectedCategories = watchedItems.map((item, i) => i !== index ? item.category : null).filter(Boolean);
-              const availableCategories = categoryOptions.filter(opt => !selectedCategories.includes(opt.value));
-              
-              const currentTrips = watchedItems[index]?.specificTrip || [];
-              const selectedTrips = watchedItems.flatMap((item, i) => i !== index ? (item.specificTrip || []) : []);
-              const availableTrips = getSpecificOptions(currentCategory).filter(opt => !selectedTrips.includes(opt.value));
+                const currentCategory = watchedItems[index]?.category;
+                const selectedCategories = watchedItems.map((item, i) => i !== index ? item.category : null).filter(Boolean);
+                const availableCategories = categoryOptions.filter(opt => !selectedCategories.includes(opt.value));
 
-              return (
-                <div key={field.id} className={styles.dynamicRow}>
-                  <div className={styles.dynamicFields}>
-                    <Controller
-                      name={`appliesToItems.${index}.category`}
-                      control={control}
-                      render={({ field: { value, onChange } }) => (
-                        <DashboardField
-                          control="select"
-                          label={categoryLabel}
-                          placeholder={categoryPlaceholder}
-                          value={value}
-                          onChange={(e: any) => {
-                            onChange(e.target.value);
-                            setValue(`appliesToItems.${index}.specificTrip`, []);
-                          }}
-                          options={[
-                            { label: categoryPlaceholder, value: "", disabled: true },
-                            ...availableCategories,
-                          ]}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name={`appliesToItems.${index}.specificTrip`}
-                      control={control}
-                      render={({ field: { value, onChange } }) => (
-                        <DashboardField
-                          control="select"
-                          multiple={true}
-                          label={specificLabel}
-                          value={value || []}
-                          onChange={(e: any) => {
-                            const newArr = e.target.value;
-                            onChange(newArr);
-                            setValue(`appliesToItems.${index}.specificTrip`, newArr, { shouldDirty: true, shouldValidate: true });
-                          }}
-                          options={[
-                            { label: specificPlaceholder, value: "", disabled: true },
-                            ...availableTrips,
-                          ]}
-                          error={errors.appliesToItems?.[index]?.specificTrip?.message}
-                        />
-                      )}
-                    />
+                const currentTrips = watchedItems[index]?.specificTrip || [];
+                const selectedTrips = watchedItems.flatMap((item, i) => i !== index ? (item.specificTrip || []) : []);
+                const availableTrips = getSpecificOptions(currentCategory).filter(opt => !selectedTrips.includes(opt.value));
+
+                return (
+                  <div key={field.id} className={styles.dynamicRow}>
+                    <div className={styles.dynamicFields}>
+                      <Controller
+                        name={`appliesToItems.${index}.category`}
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <DashboardField
+                            control="select"
+                            label={categoryLabel}
+                            placeholder={categoryPlaceholder}
+                            value={value}
+                            onChange={(e: any) => {
+                              onChange(e.target.value);
+                              setValue(`appliesToItems.${index}.specificTrip`, []);
+                            }}
+                            options={[
+                              { label: categoryPlaceholder, value: "", disabled: true },
+                              ...availableCategories,
+                            ]}
+                          />
+                        )}
+                      />
+                      <Controller
+                        name={`appliesToItems.${index}.specificTrip`}
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <DashboardField
+                            control="select"
+                            multiple={true}
+                            label={specificLabel}
+                            value={value || []}
+                            onChange={(e: any) => {
+                              const newArr = e.target.value;
+                              onChange(newArr);
+                              setValue(`appliesToItems.${index}.specificTrip`, newArr, { shouldDirty: true, shouldValidate: true });
+                            }}
+                            options={[
+                              { label: specificPlaceholder, value: "", disabled: true },
+                              ...availableTrips,
+                            ]}
+                            error={errors.appliesToItems?.[index]?.specificTrip?.message}
+                          />
+                        )}
+                      />
+                    </div>
+                    <button type="button" className={styles.removeBtn} onClick={() => remove(index)}>
+                      <Image src="/images/dashboard/delete.svg" alt="Remove" width={24} height={24} />
+                    </button>
                   </div>
-                  <button type="button" className={styles.removeBtn} onClick={() => remove(index)}>
-                    <Image src="/images/dashboard/delete.svg" alt="Remove" width={24} height={24} />
-                  </button>
-                </div>
-              );
-            })}
+                );
+              })}
             </div>
           )}
         </div>
@@ -507,6 +555,17 @@ export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange
           onClose={() => setShowSuccessModal(false)}
         />
       )}
+
+      <DashboardConfirmationModal
+        open={showDraftModal}
+        variant="activate"
+        title="Save Promotion as Draft?"
+        message="The Promotion will not be published and can be edited or published later."
+        cancelLabel="Cancel"
+        confirmLabel="Save as Draft"
+        onClose={() => setShowDraftModal(false)}
+        onConfirm={confirmSaveDraft}
+      />
     </form>
   );
 }

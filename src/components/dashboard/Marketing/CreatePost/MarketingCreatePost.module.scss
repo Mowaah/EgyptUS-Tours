@@ -90,7 +90,7 @@
   
   .subtitle {
     font-size: $font-size-xs;
-    color: $gray-400;
+    color: $gray-600;
   }
 }
 
@@ -98,14 +98,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 1rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 100px;
   background: $primary;
-  color: $background;
+  color: white;
   border: none;
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  flex: none;
+  transition: opacity 0.2s ease;
 
   &:hover {
     opacity: 0.9;

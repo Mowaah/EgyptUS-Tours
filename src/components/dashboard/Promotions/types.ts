@@ -6,6 +6,6 @@ export interface PromotionRow {
   appliesTo: "Trips" | "Transportation" | "Hotels";
   validFrom: string;
   validTo: string;
-  status: "Active" | "Inactive" | "Draft";
+  status: "Active" | "Inactive" | "Draft" | "Expired";
   usage: number | string;
 }

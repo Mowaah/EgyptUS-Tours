@@ -45,24 +45,36 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
     const data = res?.results || (res as any) || [];
     if (!Array.isArray(data)) return [];
 
-    return data.map((p: AdminPromotionList) => ({
-      id: String(p.id),
-      offerId: p.offer_number || `PRO-${p.id}`,
-      title: p.title || "Untitled",
-      value: `${p.discount_value}%`,
-      appliesTo: p.applies_to === "trip" ? "Trips" : p.applies_to === "hotel" ? "Hotels" : "Transportation",
-      validFrom: p.valid_from ? new Date(p.valid_from).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "-",
-      validTo: p.valid_to ? new Date(p.valid_to).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "-",
-      status: p.status === "active" ? "Active" : p.status === "draft" ? "Draft" : "Inactive",
-      usage: p.usage_count,
-    }));
+    return data.map((p: AdminPromotionList) => {
+      let derivedStatus: "Active" | "Inactive" | "Draft" | "Expired" = p.status === "active" ? "Active" : p.status === "draft" ? "Draft" : "Inactive";
+      if (derivedStatus !== "Draft" && p.valid_to) {
+        const validToDate = new Date(p.valid_to);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (validToDate < today) {
+          derivedStatus = "Expired";
+        }
+      }
+
+      return {
+        id: String(p.id),
+        offerId: p.offer_number || `PRO-${p.id}`,
+        title: p.title || "Untitled",
+        value: `${p.discount_value}%`,
+        appliesTo: p.applies_to === "trip" ? "Trips" : p.applies_to === "hotel" ? "Hotels" : "Transportation",
+        validFrom: p.valid_from ? new Date(p.valid_from).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }) : "-",
+        validTo: p.valid_to ? new Date(p.valid_to).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }) : "-",
+        status: derivedStatus,
+        usage: p.usage_count,
+      };
+    });
   }, [res]);
 
   const filterOptions = useMemo(() => {
     return {
       appliesTo: ["All", "Trips", "Hotels", "Transportation"],
       validFrom: ["All"],
-      status: ["All", "Active", "Inactive", "Draft"],
+      status: ["All", "Active", "Inactive", "Draft", "Expired"],
     };
   }, []);
 

@@ -5,6 +5,7 @@ import TablePanel from "@/components/dashboard/TablePanel/TablePanel";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import { LanguageTabs, type Language } from "@/components/shared";
 import styles from "./ContentGrid.module.scss";
 
@@ -27,6 +28,7 @@ export interface ContentGridProps {
   emptyStateSubtitle?: string;
   emptyStateActionLabel?: string;
   searchQuery?: string;
+  hasFilters?: boolean;
   onClearSearch?: () => void;
   loading?: boolean;
   onViewItem: (item: ContentItem, index: number) => void;
@@ -50,6 +52,7 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
   emptyStateSubtitle = "Get started by creating your first item.",
   emptyStateActionLabel = "Add New",
   searchQuery,
+  hasFilters,
   onClearSearch,
   loading = false,
   onViewItem,
@@ -116,6 +119,9 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
   if (items.length === 0) {
     if (searchQuery) {
       return <DashboardSearchEmptyState onClearSearch={onClearSearch} />;
+    }
+    if (hasFilters) {
+      return <DashboardFilterEmptyState onClearFilters={onClearSearch || (() => {})} />;
     }
     return (
       <DashboardEmptyState

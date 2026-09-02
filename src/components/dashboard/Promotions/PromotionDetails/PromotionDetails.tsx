@@ -114,9 +114,19 @@ export default function PromotionDetails({ promotionId }: PromotionDetailsProps)
   }
 
   const appliesToTypeDisplay = promotion.applies_to === "trip" ? "Trips" : promotion.applies_to === "hotel" ? "Hotels" : "Transportation";
-  const validFromDisplay = promotion.valid_from ? new Date(promotion.valid_from).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "-";
-  const validToDisplay = promotion.valid_to ? new Date(promotion.valid_to).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "-";
+  const validFromDisplay = promotion.valid_from ? new Date(promotion.valid_from).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }) : "-";
+  const validToDisplay = promotion.valid_to ? new Date(promotion.valid_to).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }) : "-";
   const appliesToRules = Array.isArray(promotion.applies_to_rules) ? promotion.applies_to_rules : [];
+
+  let derivedStatus: "Active" | "Inactive" | "Draft" | "Expired" = promotion.status === "active" ? "Active" : promotion.status === "draft" ? "Draft" : "Inactive";
+  if (derivedStatus !== "Draft" && promotion.valid_to) {
+    const validToDate = new Date(promotion.valid_to);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (validToDate < today) {
+      derivedStatus = "Expired";
+    }
+  }
 
   return (
     <div className={styles.page}>
@@ -132,12 +142,20 @@ export default function PromotionDetails({ promotionId }: PromotionDetailsProps)
       >
         <ProfileHeader
           title={promotion.title || "Untitled"}
-          pillLabel={promotion.status === "active" ? "Active" : promotion.status === "draft" ? "Draft" : "Inactive"}
-          pillVariant={promotion.status === "active" ? "green" : "gray"}
           customPills={
-            <span className={styles.typePill}>
-              {appliesToTypeDisplay}
-            </span>
+            <>
+              <span className={styles.typePill}>
+                {appliesToTypeDisplay}
+              </span>
+              <span className={`${styles.typePill} ${styles.statusPill} ${
+                derivedStatus === "Active" ? styles.statusActive : 
+                derivedStatus === "Expired" ? styles.statusExpired : 
+                styles.statusGray
+              }`}>
+                <i aria-hidden />
+                {derivedStatus}
+              </span>
+            </>
           }
           subtitleElements={[`Promotion ID: ${promotion.offer_number || `PRO-${promotion.id}`}`, validFromDisplay]}
           secondaryAction={{

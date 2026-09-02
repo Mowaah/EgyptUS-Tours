@@ -7,6 +7,7 @@ const statusClass: Record<PromotionRow["status"], string> = {
   Active: styles.statusActive,
   Inactive: styles.statusInactive,
   Draft: styles.statusDraft,
+  Expired: styles.statusExpired,
 };
 
 const appliesToClass: Record<PromotionRow["appliesTo"], string> = {
@@ -83,7 +84,7 @@ export const usePromotionRowActions = (
         variant: "warning" as const,
         onClick: () => onToggleStatus(row)
       });
-    } else {
+    } else if (row.status === "Inactive") {
       actions.push({
         label: "Activate",
         iconSrc: "/images/dashboard/publish.svg",

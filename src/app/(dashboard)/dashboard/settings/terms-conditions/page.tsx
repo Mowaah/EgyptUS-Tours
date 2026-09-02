@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ContentGrid, { type ContentItem } from "@/components/dashboard/ContentGrid/ContentGrid";
@@ -23,8 +23,15 @@ const mapSectionToContentItem = (section: AdminLegalSection): ContentItem => ({
 
 export default function TermsConditionsPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const statusFilter = searchParams.get("status");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const handleClearFilters = () => {
+    setSearchQuery("");
+    router.push(pathname);
+  };
 
   const {
     contentGridRef,
@@ -92,7 +99,8 @@ export default function TermsConditionsPage() {
         <ContentGrid
           ref={contentGridRef}
           searchQuery={searchQuery}
-          onClearSearch={() => setSearchQuery("")}
+          hasFilters={!!searchQuery || (!!statusFilter && statusFilter !== "All")}
+          onClearSearch={handleClearFilters}
           loading={loading}
           title="Terms & Conditions"
           ariaLabel="Terms & Conditions Content"

@@ -66,13 +66,13 @@ export default function ProfileHeader({
         <div className={styles.headerInfo}>
           <div className={styles.titleRow}>
             <h1>{title}</h1>
+            {customPills}
             {pillLabel && (
               <span className={`${styles.pill} ${pillClass}`}>
                 <i aria-hidden />
                 {pillLabel}
               </span>
             )}
-            {customPills}
           </div>
           
           {subtitleElements.length > 0 && (

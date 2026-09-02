@@ -29,6 +29,39 @@
   color: $primary;
 }
 
+.statusPill {
+  gap: 6px;
+  i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+}
+
+.statusActive {
+  background: $status-success-bg;
+  color: #16A34A;
+  i {
+    background: #16A34A;
+  }
+}
+
+.statusGray {
+  background: $gray-50-tailwind;
+  color: $gray-600;
+  i {
+    background: $gray-600;
+  }
+}
+
+.statusExpired {
+  background: $background-danger-light;
+  color: #DC2626;
+  i {
+    background: #DC2626;
+  }
+}
+
 
 /* Main Layout Grid */
 .contentGrid {
