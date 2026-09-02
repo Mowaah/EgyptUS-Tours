@@ -50,10 +50,7 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
         />
         {(vehicle.discountTitle || vehicle.discountValue) && (
           <div className={styles.discountBanner}>
-            <span>
-              {vehicle.discountTitle && <span>{vehicle.discountTitle} &mdash; </span>}
-              <span className={styles.discountValueText}>{vehicle.discountValue}</span>
-            </span>
+            <span>{vehicle.discountTitle || vehicle.discountValue}</span>
           </div>
         )}
       </Link>

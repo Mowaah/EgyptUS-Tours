@@ -46,10 +46,7 @@ export default function TripCard({ trip, onFavoriteToggle, className = "" }: Tri
         />
         {(trip.discountTitle || trip.discountValue) && (
           <div className={styles.discountBanner}>
-            <span>
-              {trip.discountTitle && <span>{trip.discountTitle} &mdash; </span>}
-              <span className={styles.discountValueText}>{trip.discountValue}</span>
-            </span>
+            <span>{trip.discountTitle || trip.discountValue}</span>
           </div>
         )}
         {isAuthenticated && (

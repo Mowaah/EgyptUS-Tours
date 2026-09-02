@@ -52,10 +52,7 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
         />
         {(hotel.discountTitle || hotel.discountValue) && (
           <div className={styles.discountBanner}>
-            <span>
-              {hotel.discountTitle && <span>{hotel.discountTitle} &mdash; </span>}
-              <span className={styles.discountValueText}>{hotel.discountValue}</span>
-            </span>
+            <span>{hotel.discountTitle || hotel.discountValue}</span>
           </div>
         )}
         <div className={styles.overlay}>
