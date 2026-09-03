@@ -12,18 +12,17 @@ interface LatestArticlesProps {
   searchQuery?: string;
   onClearSearch?: () => void;
   initialArticles?: ArticleList[];
-  initialFeatured?: ArticleList[];
 }
 
 export default function LatestArticles({ 
   searchQuery = "", 
   onClearSearch,
   initialArticles = [],
-  initialFeatured = []
 }: LatestArticlesProps) {
   const isSearching = !!searchQuery.trim();
 
-  const featured = initialFeatured.length > 0 ? initialFeatured[0] : null;
+  const featured = initialArticles.length > 0 ? initialArticles[0] : null;
+  const remainingArticles = initialArticles.length > 1 ? initialArticles.slice(1) : [];
   
   // Unified list maps articles to Blog interface for the active search UI grid
   const ALL_ARTICLES: Blog[] = initialArticles.map(a => ({
@@ -111,27 +110,29 @@ export default function LatestArticles({
             )}
 
             {/* Small Articles Grid */}
-            <div className={styles.grid}>
-              {initialArticles.map((article) => (
-                <Link key={article.id} href={`/articles/${article.slug}`} className={styles.smallCard}>
-                  <div className={styles.smallImageWrap}>
-                    <Image
-                      src={article.featured_image || "/images/home/hero-bg.png"}
-                      alt={article.title}
-                      fill
-                      className={styles.image}
-                      style={{ objectFit: "cover" }}
-                    />
-                    <div className={styles.gradientOverlay}></div>
-                  </div>
-                  <div className={styles.smallContent}>
-                    <div className={styles.tagSmall}>{article.category?.name || 'Article'}</div>
-                    <h4 className={styles.smallTitle}>{article.title}</h4>
-                    <p className={styles.metaSmall}>By {article.display_author_name} &bull; {new Date(article.published_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
+            {remainingArticles.length > 0 && (
+              <div className={styles.grid}>
+                {remainingArticles.map((article) => (
+                  <Link key={article.id} href={`/articles/${article.slug}`} className={styles.smallCard}>
+                    <div className={styles.smallImageWrap}>
+                      <Image
+                        src={article.featured_image || "/images/home/hero-bg.png"}
+                        alt={article.title}
+                        fill
+                        className={styles.image}
+                        style={{ objectFit: "cover" }}
+                      />
+                      <div className={styles.gradientOverlay}></div>
+                    </div>
+                    <div className={styles.smallContent}>
+                      <div className={styles.tagSmall}>{article.category?.name || 'Article'}</div>
+                      <h4 className={styles.smallTitle}>{article.title}</h4>
+                      <p className={styles.metaSmall}>By {article.display_author_name} &bull; {new Date(article.published_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </>
         )}
 

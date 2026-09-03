@@ -13,11 +13,10 @@ import { ArticleList } from "@/types/api/articles";
 
 interface ArticlesPageProps {
   initialArticles?: ArticleList[];
-  initialFeatured?: ArticleList[];
   initialFaqs?: FaqData[];
 }
 
-export default function ArticlesPage({ initialArticles = [], initialFeatured = [], initialFaqs = [] }: ArticlesPageProps) {
+export default function ArticlesPage({ initialArticles = [], initialFaqs = [] }: ArticlesPageProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (query: string) => {
@@ -37,7 +36,6 @@ export default function ArticlesPage({ initialArticles = [], initialFeatured = [
           searchQuery={searchQuery} 
           onClearSearch={() => setSearchQuery("")} 
           initialArticles={initialArticles}
-          initialFeatured={initialFeatured}
         />
       </div>
       <FaqSection
