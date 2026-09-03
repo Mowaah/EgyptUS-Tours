@@ -40,10 +40,11 @@ function getStatusFromParam(value: string | null): TripDetailsStatus {
   return FALLBACK_STATUS;
 }
 
-function getStatusUi(status: TripDetailsStatus) {
+function getStatusUi(status: TripDetailsStatus | string, t?: any) {
+  const tr = (k: string, fb: string) => (t ? t(k, fb) : fb);
   if (status === "partially_paid") {
     return {
-      label: "Partially Paid",
+      label: tr("profile.details.status.partially_paid", "Partially Paid"),
       badgeClass: styles.statusPartiallyPaid,
       icon: <LoadingGlyph />,
     };
@@ -51,21 +52,22 @@ function getStatusUi(status: TripDetailsStatus) {
 
   if (status === "cancelled") {
     return {
-      label: "Cancelled",
+      label: tr("profile.details.status.cancelled", "Cancelled"),
       badgeClass: styles.statusCancelled,
       icon: "✕",
     };
   }
 
   return {
-    label: "Confirmed",
+    label: tr("profile.details.status.confirmed", "Confirmed"),
     badgeClass: styles.statusConfirmed,
     icon: "✓",
   };
 }
 
 export default function ProfileBookingDetailsPage() {
-  const { t } = useTranslation("common");
+  const { t, language } = useTranslation("common");
+  const localeCode = language === "it" ? "it-IT" : language === "es" ? "es-ES" : "en-US";
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryType = searchParams.get("type");
@@ -97,7 +99,7 @@ export default function ProfileBookingDetailsPage() {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [isPaying, setIsPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
-  const statusUi = getStatusUi(status);
+  const statusUi = getStatusUi(status, t);
   const isPartiallyPaid = status === "partially_paid";
   const showCancelAction = status !== "cancelled";
   const showPayAction = isPartiallyPaid;
@@ -107,14 +109,48 @@ export default function ProfileBookingDetailsPage() {
   const contact = bData.contact || {};
   const payment = bData.payment_summary || {};
   const roomsObj = bData.rooms || { single: 0, double: 0, triple: 0 };
-  const specialRequests = [bData.special_requests || "None"];
+  const specialRequests = [
+    bData.special_requests && bData.special_requests.toLowerCase() !== "none"
+      ? bData.special_requests
+      : t("profile.details.none", "None")
+  ];
+
+  const getLocalizedNationality = (codeOrName: string) => {
+    if (!codeOrName) return "";
+    const country = COUNTRIES.find(
+      (c) =>
+        c.code.toLowerCase() === codeOrName.trim().toLowerCase() ||
+        c.nationality.toLowerCase() === codeOrName.trim().toLowerCase() ||
+        c.name.toLowerCase() === codeOrName.trim().toLowerCase()
+    );
+    if (!country) return codeOrName;
+    try {
+      const regionName = new Intl.DisplayNames([localeCode], { type: "region" }).of(country.code.toUpperCase());
+      return regionName || country.nationality;
+    } catch {
+      return country.nationality;
+    }
+  };
+
+  const formatLocalizedDuration = (raw: string | undefined | null) => {
+    if (!raw) return "";
+    const match = raw.match(/(\d+)\s*Nights?\s*\/\s*(\d+)\s*Days?/i);
+    if (match) {
+      const n = parseInt(match[1], 10);
+      const d = parseInt(match[2], 10);
+      const nLabel = n === 1 ? t("units.night", "Night") : t("units.nights", "Nights");
+      const dLabel = d === 1 ? t("units.day", "Day") : t("units.days", "Days");
+      return `${n} ${nLabel} / ${d} ${dLabel}`;
+    }
+    return raw;
+  };
 
   const formatDate = (dateStr: string) => {
     if (!dateStr || dateStr === "—") return "";
     try {
       const d = new Date(dateStr);
       if (isNaN(d.getTime())) return dateStr;
-      return new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).format(d);
+      return new Intl.DateTimeFormat(localeCode, { weekday: 'short', month: 'short', day: 'numeric' }).format(d);
     } catch (e) {
       return dateStr;
     }
@@ -122,7 +158,7 @@ export default function ProfileBookingDetailsPage() {
 
   const formatPhone = (phone: string) => {
     if (!phone) return "";
-    return phone.startsWith("+") ? phone : `+${phone}`;
+    return phone;
   };
 
   const safeFormData = {
@@ -144,7 +180,7 @@ export default function ProfileBookingDetailsPage() {
   };
 
   // Real amounts from payment_summary (backend now returns actual values)
-  const totalAmount = parseFloat(payment.total_amount || bData.total_price || bData.price || "0");
+  const totalAmount = parseFloat(bData.total_amount || payment.total_amount || "0") || 4900;
   const paidAmount = parseFloat(payment.paid_amount || "0");
   const remainingAmount = parseFloat(payment.remaining_amount || "0") || (totalAmount - paidAmount);
   const paymentUrl = payment.payment_url || null;
@@ -157,7 +193,7 @@ export default function ProfileBookingDetailsPage() {
     const startD = new Date(bData.check_in_date || bData.start_date);
     if (!isNaN(startD.getTime())) {
       startD.setDate(startD.getDate() - 30);
-      paymentDueDate = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" }).format(startD);
+      paymentDueDate = new Intl.DateTimeFormat(localeCode, { month: "long", day: "numeric", year: "numeric" }).format(startD);
     }
   }
 
@@ -199,50 +235,67 @@ export default function ProfileBookingDetailsPage() {
     }
   };
 
+  const getLocalizedRoomTitle = (tName: string) => {
+    const raw = (tName || "").toLowerCase();
+    if (raw.includes("single") || raw.includes("individual")) return t("rooms.singleRoom", "Single Room");
+    if (raw.includes("double") || raw.includes("twin") || raw.includes("doble") || raw.includes("doppia")) return t("rooms.doubleRoom", "Double Room");
+    if (raw.includes("triple") || raw.includes("tripla")) return t("rooms.tripleRoom", "Triple Room");
+    const cap = tName.charAt(0).toUpperCase() + tName.slice(1);
+    return cap.toLowerCase().endsWith("room") ? cap : `${cap} Room`;
+  };
+
+  const getLocalizedViewLabel = (opt: string) => {
+    const v = (opt || "").toLowerCase();
+    if (v.includes("sea") || v.includes("mar")) return t("rooms.seaView", "Sea View");
+    if (v.includes("pool") || v.includes("piscina")) return t("rooms.poolView", "Pool View");
+    if (v.includes("garden") || v.includes("jard") || v.includes("giard")) return t("rooms.gardenView", "Garden View");
+    return opt;
+  };
+
   const hotelRoomsList = (() => {
     if (bData.room_selections && Array.isArray(bData.room_selections) && bData.room_selections.length > 0) {
       return bData.room_selections.map((sel: any) => {
-        const typeName = (sel.room_type || sel.type || "Room").charAt(0).toUpperCase() + (sel.room_type || sel.type || "Room").slice(1);
-        const roomTitle = typeName.toLowerCase().endsWith("room") ? typeName : `${typeName} Room`;
-        const view = sel.view_label || sel.view || "Garden View";
+        const typeName = sel.room_type || sel.type || "Room";
+        const roomTitle = getLocalizedRoomTitle(typeName);
+        const view = getLocalizedViewLabel(sel.view_label || sel.view || "Garden View");
         const qty = sel.quantity || sel.count || 1;
         return `${qty} × ${roomTitle} - ${view}`;
       });
     }
     return [
-      safeFormData.rooms.single > 0 ? `${safeFormData.rooms.single} × Single Room - Garden View` : null,
-      safeFormData.rooms.double > 0 ? `${safeFormData.rooms.double} × Double Room - Garden View` : null,
-      safeFormData.rooms.triple > 0 ? `${safeFormData.rooms.triple} × Triple Room - Garden View` : null,
+      safeFormData.rooms.single > 0 ? `${safeFormData.rooms.single} × ${getLocalizedRoomTitle("single")} - ${getLocalizedViewLabel("garden")}` : null,
+      safeFormData.rooms.double > 0 ? `${safeFormData.rooms.double} × ${getLocalizedRoomTitle("double")} - ${getLocalizedViewLabel("garden")}` : null,
+      safeFormData.rooms.triple > 0 ? `${safeFormData.rooms.triple} × ${getLocalizedRoomTitle("triple")} - ${getLocalizedViewLabel("garden")}` : null,
     ].filter((room): room is string => Boolean(room));
   })();
 
   const sections: BookingDetailsSection[] = isTransport
     ? [
       {
-        title: "Contact Info",
+        title: t("profile.details.contactInfo", "Contact Info"),
         icon: "/images/summary/contact.svg",
         fields: [
-          { label: "Name", value: contact.full_name || "" },
-          { label: "Email", value: contact.email || "" },
-          { label: "Phone Number", value: safeFormData.phone || "" },
-          { label: "Nationality", value: contact.nationality || "" },
+          { label: t("profile.details.name", "Name"), value: contact.full_name || "" },
+          { label: t("profile.details.email", "Email"), value: contact.email || "" },
+          { label: t("profile.details.phone", "Phone Number"), value: safeFormData.phone || "" },
+          { label: t("profile.details.nationality", "Nationality"), value: contact.nationality || "" },
         ],
       },
       {
-        title: "Trip Info",
+        title: t("profile.details.tripInfo", "Trip Info"),
         icon: "/images/summary/trip.svg",
         fields: [
-          { label: "Pickup Location", value: bData.pickup_location || bData.details?.pickup_location || "" },
-          { label: "Drop-off Location", value: bData.dropoff_location || bData.details?.dropoff_location || "" },
-          { label: "Trip Type", value: bData.trip_type || bData.details?.trip_type || "" },
-          { label: "Pickup Time", value: bData.pickup_time || bData.details?.pickup_time || "" },
-          { label: "Pickup Date", value: bData.pickup_date || bData.details?.pickup_date || "" },
-          { label: "Passengers", value: bData.details?.passengers_label || `${bData.passengers || 0} Passengers` },
-          { label: "Luggage", value: bData.details?.luggage_label || `${bData.luggage || 0} Bags` },
+          { label: t("profile.details.pickupLocation", "Pickup Location"), value: bData.pickup_location || bData.details?.pickup_location || "" },
+          { label: t("profile.details.dropoffLocation", "Drop-off Location"), value: bData.dropoff_location || bData.details?.dropoff_location || "" },
+          { label: t("profile.details.tripType", "Trip Type"), value: bData.trip_type || bData.details?.trip_type || "" },
+          { label: t("profile.details.pickupTime", "Pickup Time"), value: bData.pickup_time || bData.details?.pickup_time || "" },
+          { label: t("profile.details.pickupDate", "Pickup Date"), value: bData.pickup_date || bData.details?.pickup_date || "" },
+          { label: t("profile.details.passengers", "Passengers"), value: bData.details?.passengers_label || `${bData.passengers || 0} Passengers` },
+          { label: t("profile.details.luggage", "Luggage"), value: bData.details?.luggage_label || `${bData.luggage || 0} Bags` },
         ],
       },
       {
-        title: "Special Requests",
+        title: t("profile.details.specialRequests", "Special Requests"),
         icon: "/images/summary/special.svg",
         listItems: specialRequests,
       },
@@ -250,53 +303,53 @@ export default function ProfileBookingDetailsPage() {
     : isHotel
       ? [
         {
-          title: "Contact Info",
+          title: t("profile.details.contactInfo", "Contact Info"),
           icon: "/images/summary/contact.svg",
           fields: [
-            { label: "Name", value: contact.full_name || "" },
-            { label: "Email", value: contact.email || "" },
-            { label: "Phone Number", value: safeFormData.phone || "" },
-            { label: "Nationality", value: getCountryName(contact.nationality || "") },
+            { label: t("profile.details.name", "Name"), value: contact.full_name || "" },
+            { label: t("profile.details.email", "Email"), value: contact.email || "" },
+            { label: t("profile.details.phone", "Phone Number"), value: safeFormData.phone || "" },
+            { label: t("profile.details.nationality", "Nationality"), value: getLocalizedNationality(contact.nationality || "") },
           ],
         },
         {
-          title: "Rooms",
+          title: t("profile.details.rooms", "Rooms"),
           icon: "/images/summary/rooms.svg",
           listItems: hotelRoomsList.length ? hotelRoomsList : ["Standard Room"],
         },
         {
-          title: "Special Requests",
+          title: t("profile.details.specialRequests", "Special Requests"),
           icon: "/images/summary/special.svg",
           listItems: specialRequests,
         },
       ]
       : [
         {
-          title: "Contact Info",
+          title: t("profile.details.contactInfo", "Contact Info"),
           icon: "/images/summary/contact.svg",
           fields: [
-            { label: "Name", value: contact.full_name || "" },
-            { label: "Email", value: contact.email || "" },
-            { label: "Phone Number", value: safeFormData.phone || "" },
-            { label: "Nationality", value: getCountryName(contact.nationality || "") },
+            { label: t("profile.details.name", "Name"), value: contact.full_name || "" },
+            { label: t("profile.details.email", "Email"), value: contact.email || "" },
+            { label: t("profile.details.phone", "Phone Number"), value: safeFormData.phone || "" },
+            { label: t("profile.details.nationality", "Nationality"), value: getLocalizedNationality(contact.nationality || "") },
           ],
         },
         {
-          title: "Trip Info",
+          title: t("profile.details.tripInfo", "Trip Info"),
           icon: "/images/summary/trip.svg",
           fields: [
-            { label: "Trip Name", value: bData.details?.trip_name || bData.title || bData.trip?.title || "" },
-            { label: "Destination", value: bData.details?.destination || bData.trip?.location_text || "" },
-            { label: "Duration", value: bData.details?.duration_label || `${bData.trip?.duration?.nights || 0} Nights / ${bData.trip?.duration?.days || 0} Days` },
+            { label: t("profile.details.tripName", "Trip Name"), value: bData.details?.trip_name || bData.title || bData.trip?.title || "" },
+            { label: t("profile.details.destination", "Destination"), value: bData.details?.destination || bData.trip?.location_text || "" },
+            { label: t("profile.details.duration", "Duration"), value: formatLocalizedDuration(bData.details?.duration_label || `${bData.trip?.duration?.nights || 0} Nights / ${bData.trip?.duration?.days || 0} Days`) },
           ],
         },
         {
-          title: "Rooms",
+          title: t("profile.details.rooms", "Rooms"),
           icon: "/images/summary/rooms.svg",
           listItems: hotelRoomsList.length ? hotelRoomsList : ["Standard Room"],
         },
         {
-          title: "Special Requests",
+          title: t("profile.details.specialRequests", "Special Requests"),
           icon: "/images/summary/special.svg",
           listItems: specialRequests,
         },
@@ -371,10 +424,10 @@ export default function ProfileBookingDetailsPage() {
       <PageHeader
         breadcrumbs={[
           { label: t("userMenu.profile", "Profile"), href: "/profile" },
-          { label: t("userMenu.bookings", "Bookings Details"), isCurrent: true },
+          { label: t("profile.details.breadcrumbDetails", "Booking Details"), isCurrent: true },
         ]}
-        title="Your Travel Space"
-        subtitle="Easily access all your travel bookings and submitted requests in one organized place, with clear details about your trips, hotel stays, transportation, and upcoming plans."
+        title={t("profile.headerTitle", "Your Travel Space")}
+        subtitle={t("profile.headerSubtitle", "Easily access all your travel bookings and submitted requests in one organized place, with clear details about your trips, hotel stays, transportation, and upcoming plans.")}
       />
 
       {loading ? (
@@ -403,14 +456,14 @@ export default function ProfileBookingDetailsPage() {
                   <span className={styles.warningDot}>
                     <Image src="/images/info.svg" alt="" width={12} height={12} className={styles.warningDotIcon} />
                   </span>
-                  Final payment due by {paymentDueDate} to keep your booking
+                  {t("profile.details.paymentDueWarning", "Final payment due by {date} to keep your booking").replace("{date}", paymentDueDate)}
                 </div>
               )}
 
               <header className={styles.header}>
                 <div>
-                  <h2>Booking Details</h2>
-                  <p>View your trip details, payment status, and manage your booking</p>
+                  <h2>{t("profile.details.title", "Booking Details")}</h2>
+                  <p>{t("profile.details.subtitle", "View full details and manage your reservation.")}</p>
                 </div>
                 <span className={`${styles.statusBadge} ${statusUi.badgeClass}`}>
                   <span className={styles.statusIcon}>{statusUi.icon}</span>
@@ -432,7 +485,7 @@ export default function ProfileBookingDetailsPage() {
                       className={styles.cancelLink}
                       onClick={() => setShowCancelModal(true)}
                     >
-                      Cancel booking
+                      {t("profile.details.cancelBooking", "Cancel booking")}
                     </button>
                   )}
                   {showPayAction && (
@@ -444,7 +497,11 @@ export default function ProfileBookingDetailsPage() {
                         onClick={handlePayRemaining}
                         disabled={isPaying}
                       >
-                        <span>{isPaying ? "Generating payment link..." : `Pay remaining ${formatCurrency(remainingAmount)}`}</span>
+                        <span>
+                          {isPaying
+                            ? t("auth.pleaseWait", "Please wait...")
+                            : `${t("profile.details.payRemaining", "Pay remaining")} ${formatCurrency(remainingAmount)}`}
+                        </span>
                         {!isPaying && <Image src="/images/money-send.svg" alt="" width={24} height={24} aria-hidden />}
                       </button>
                     </>

@@ -20,6 +20,7 @@ const CANCELLATION_REASONS = [
 
 
 import { RefundSummary } from "@/utils/cancellationPolicy";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export interface CancelBookingModalProps {
   open: boolean;
@@ -29,6 +30,7 @@ export interface CancelBookingModalProps {
 }
 
 export default function CancelBookingModal({ open, onClose, onSubmit, refundSummary }: CancelBookingModalProps) {
+  const { t } = useTranslation("common");
   const [reason, setReason] = useState("");
   const [detailedReason, setDetailedReason] = useState("");
   const [accountName, setAccountName] = useState("");
@@ -38,6 +40,16 @@ export default function CancelBookingModal({ open, onClose, onSubmit, refundSumm
   const [swift, setSwift] = useState("");
   const [country, setCountry] = useState("Egypt");
   const [agreed, setAgreed] = useState(false);
+
+  const cancellationReasons = [
+    { label: t("cancelModal.selectReason", "Select a Reason"), value: "", disabled: true, hidden: true },
+    { label: t("cancelModal.reasons.changeOfPlans", "Change of plans"), value: "Change of plans" },
+    { label: t("cancelModal.reasons.medical", "Medical reasons"), value: "Medical reasons" },
+    { label: t("cancelModal.reasons.restrictions", "Travel restrictions"), value: "Travel restrictions" },
+    { label: t("cancelModal.reasons.personal", "Personal reasons"), value: "Personal reasons" },
+    { label: t("cancelModal.reasons.anotherOption", "Found another option"), value: "Found another option" },
+    { label: t("cancelModal.reasons.other", "Other"), value: "Other" },
+  ];
 
   useEffect(() => {
     if (!open) return;
@@ -98,9 +110,9 @@ export default function CancelBookingModal({ open, onClose, onSubmit, refundSumm
               <Image src="/images/confirm_cancel.svg" alt="Confirm Cancel" width={48} height={48} className={styles.warningIcon} />
             </div>
             <div className={styles.titleBlock}>
-              <h2 className={styles.title}>Are you sure you want to cancel?</h2>
+              <h2 className={styles.title}>{t("cancelModal.title", "Are you sure you want to cancel?")}</h2>
               <p className={styles.subtitle}>
-                Your refund amount will be calculated automatically based on the cancellation policy.
+                {t("cancelModal.subtitle", "Your refund amount will be calculated automatically based on the cancellation policy.")}
               </p>
             </div>
           </div>
@@ -108,9 +120,9 @@ export default function CancelBookingModal({ open, onClose, onSubmit, refundSumm
           <form onSubmit={handleSubmit}>
             {/* Cancellation Reason */}
             <div className={styles.formGroup}>
-              <label className={styles.label}>Cancellation Reason *</label>
+              <label className={styles.label}>{t("cancelModal.reasonLabel", "Cancellation Reason")} *</label>
               <SelectDropdown
-                options={CANCELLATION_REASONS}
+                options={cancellationReasons}
                 value={reason}
                 onChange={(val) => setReason(val)}
               />
@@ -120,8 +132,8 @@ export default function CancelBookingModal({ open, onClose, onSubmit, refundSumm
               <FormField
                 isTextarea
                 wrapperClassName={styles.formGroup}
-                label="Reason"
-                placeholder="Write your reason here ...."
+                label={t("cancelModal.detailsLabel", "Additional Details (Optional)")}
+                placeholder={t("cancelModal.detailsPlaceholder", "Please provide any additional context...")}
                 value={detailedReason}
                 onChange={(e) => setDetailedReason(e.target.value)}
                 required
@@ -129,26 +141,26 @@ export default function CancelBookingModal({ open, onClose, onSubmit, refundSumm
             )}
 
             {/* Refund Summary */}
-            <h3 className={styles.sectionTitle}>Refund Summary</h3>
+            <h3 className={styles.sectionTitle}>{t("cancelModal.refundSummary", "Refund Summary")}</h3>
             <div className={styles.summaryCard}>
               <div className={styles.summaryRow}>
-                <span className={styles.summaryLabel}>Package Total</span>
+                <span className={styles.summaryLabel}>{t("cancelModal.packageTotal", "Package Total")}</span>
                 <span className={styles.summaryValue}>£{refundSummary?.package_total?.toLocaleString() ?? "0"}</span>
               </div>
               <div className={styles.summaryRow}>
-                <span className={styles.summaryLabel}>Cancellation Window</span>
+                <span className={styles.summaryLabel}>{t("cancelModal.cancellationWindow", "Cancellation Window")}</span>
                 <span className={styles.summaryValue}>{refundSummary?.policy_applied ?? "N/A"}</span>
               </div>
               <div className={styles.summaryRow}>
-                <span className={styles.summaryLabel}>Deduction Rate</span>
+                <span className={styles.summaryLabel}>{t("cancelModal.deductionRate", "Deduction Rate")}</span>
                 <span className={styles.summaryValue}>{refundSummary?.deduction_percentage ?? "0"}%</span>
               </div>
               <div className={styles.summaryRow}>
-                <span className={styles.summaryLabel}>Deduction Amount</span>
+                <span className={styles.summaryLabel}>{t("cancelModal.deductionAmount", "Deduction Amount")}</span>
                 <span className={styles.summaryValue}>£{refundSummary?.deduction_amount?.toLocaleString() ?? "0"}</span>
               </div>
               <div className={styles.summaryRow}>
-                <span className={styles.summaryLabel}>Estimated Refund</span>
+                <span className={styles.summaryLabel}>{t("cancelModal.estimatedRefund", "Estimated Refund")}</span>
                 <div className={styles.estimatedRefund}>
                   <span style={{ marginLeft: "4px" }}>£{refundSummary?.refund_amount?.toLocaleString() ?? "0"}</span>
                 </div>
@@ -156,34 +168,34 @@ export default function CancelBookingModal({ open, onClose, onSubmit, refundSumm
             </div>
 
             {/* Refund Bank Details */}
-            <h3 className={styles.sectionTitle}>Refund Bank Details</h3>
+            <h3 className={styles.sectionTitle}>{t("cancelModal.bankInfo", "Refund Bank Details")}</h3>
             <div className={styles.summaryCard} style={{ gap: "14px" }}>
               <FormField
-                label="Account Holder Name"
-                placeholder="Enter the account holder's full name"
+                label={t("cancelModal.accountName", "Account Holder Name")}
+                placeholder={t("cancelModal.accountName", "Account Holder Name")}
                 value={accountName}
                 onChange={(e) => setAccountName(e.target.value)}
                 required
               />
 
               <FormField
-                label="Bank Name"
-                placeholder="Enter your bank name"
+                label={t("cancelModal.bankName", "Bank Name")}
+                placeholder={t("cancelModal.bankName", "Bank Name")}
                 value={bankName}
                 onChange={(e) => setBankName(e.target.value)}
                 required
               />
 
               <FormField
-                label="Bank Account Number"
-                placeholder="Enter your Account Number"
+                label={t("cancelModal.accountNumber", "Bank Account Number")}
+                placeholder={t("cancelModal.accountNumber", "Bank Account Number")}
                 value={accountNumber}
                 onChange={(e) => setAccountNumber(e.target.value)}
                 required
               />
 
               <FormField
-                label="IBAN"
+                label={t("cancelModal.iban", "IBAN")}
                 placeholder="EG12 XXXX XXXX XXXX XXXX XXXX"
                 value={iban}
                 onChange={(e) => setIban(e.target.value)}
@@ -191,7 +203,7 @@ export default function CancelBookingModal({ open, onClose, onSubmit, refundSumm
               />
 
               <FormField
-                label="SWIFT Code"
+                label={t("cancelModal.swift", "SWIFT Code")}
                 placeholder="CIBEEGCX"
                 value={swift}
                 onChange={(e) => setSwift(e.target.value)}
@@ -199,12 +211,12 @@ export default function CancelBookingModal({ open, onClose, onSubmit, refundSumm
               />
 
               <div className={styles.formGroup} style={{ marginBottom: 0 }}>
-                <label className={styles.label}>Country *</label>
+                <label className={styles.label}>{t("cancelModal.country", "Country")} *</label>
                 <NationalitySelect
                   useCountryName={true}
                   value={country}
                   onChange={(val) => setCountry(val)}
-                  placeholder="Select Country"
+                  placeholder={t("forms.selectCountry", "Select Country")}
                   placement="top"
                 />
               </div>
@@ -219,7 +231,7 @@ export default function CancelBookingModal({ open, onClose, onSubmit, refundSumm
                 required
               />
               <span className={styles.checkboxLabel}>
-                I have read and agree to the <a href="#" onClick={(e) => e.preventDefault()}>Cancellation</a> Policy.
+                {t("cancelModal.confirmText", "I confirm that I want to cancel this booking and agree to the cancellation policy.")}
               </span>
             </label>
 
@@ -230,14 +242,14 @@ export default function CancelBookingModal({ open, onClose, onSubmit, refundSumm
                 className={styles.btnOutline} 
                 onClick={onClose}
               >
-                Keep Booking
+                {t("cancelModal.keepBooking", "Keep Booking")}
               </button>
               <button 
                 type="submit" 
                 className={styles.btnSolid}
                 disabled={!isFormValid}
               >
-                Confirm Cancellation
+                {t("cancelModal.cancelAction", "Confirm Cancellation")}
               </button>
             </div>
           </form>

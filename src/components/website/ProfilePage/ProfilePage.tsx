@@ -21,10 +21,6 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { getFavoriteTrips, getFavoriteHotels, getProfileRequests, getProfileSummary, getProfileBookings, getPaymentReceipt } from "@/lib/api";
 import styles from "./ProfilePage.module.scss";
 
-const profileFavoriteCategoryTabs = ["Trips", "Hotels"];
-const profileBookingCategoryTabs = ["Trips", "Hotels", "Transportation"];
-const profileRequestCategoryTabs = ["Plan Your Trip", "Events (MICE)", "B2B"];
-
 function parseProfileTab(param: string | null): TabType {
   if (param === "favorites" || param === "bookings" || param === "requests") {
     return param;
@@ -97,6 +93,27 @@ export default function ProfilePage() {
   const [favoriteCategoryIndex, setFavoriteCategoryIndex] = useState(0);
   const [bookingCategoryIndex, setBookingCategoryIndex] = useState(0);
   const [requestCategoryIndex, setRequestCategoryIndex] = useState(0);
+
+  const profileFavoriteCategoryTabs = useMemo(
+    () => [t("profile.categories.trips", "Trips"), t("profile.categories.hotels", "Hotels")],
+    [t]
+  );
+  const profileBookingCategoryTabs = useMemo(
+    () => [
+      t("profile.categories.trips", "Trips"),
+      t("profile.categories.hotels", "Hotels"),
+      t("profile.categories.transportation", "Transportation"),
+    ],
+    [t]
+  );
+  const profileRequestCategoryTabs = useMemo(
+    () => [
+      t("profile.categories.planYourTrip", "Plan Your Trip"),
+      t("profile.categories.events", "Events (MICE)"),
+      t("profile.categories.b2b", "B2B"),
+    ],
+    [t]
+  );
 
   const [favoriteTrips, setFavoriteTrips] = useState<Trip[]>([]);
   const [favoriteHotels, setFavoriteHotels] = useState<Hotel[]>([]);
@@ -232,9 +249,9 @@ export default function ProfilePage() {
               imageSrc: req.image || defaultImage,
               tripTitle: req.title || req.event_name || req.company_name || "",
               status: mappedStatus as any,
-              infoMessage: req.info_message || "Proposal expected within 24-48 hrs",
+              infoMessage: req.info_message || t("profile.card.proposalExpected", "Proposal expected within 24-48 hrs"),
               details: mappedDetails as any,
-              primaryLabel: "View Details",
+              primaryLabel: t("buttons.viewDetails", "View Details"),
               primaryHref: `/profile/requests-details?type=${req.type}&id=${req.id}&status=${reqStatus}`,
             };
           };
@@ -250,7 +267,7 @@ export default function ProfilePage() {
       };
       fetchRequests();
     }
-  }, [isAuthenticated, activeTab]);
+  }, [isAuthenticated, activeTab, t]);
 
   useEffect(() => {
     if (isAuthenticated && activeTab === "bookings") {
@@ -304,10 +321,21 @@ export default function ProfilePage() {
             const isPartiallyPaid = statusVal === "partially_paid";
             const isCancelled = statusVal === "cancelled";
 
-            let primaryLabel = "View Details";
+            let primaryLabel = t("buttons.viewDetails", "View Details");
             if (isPartiallyPaid) {
-              primaryLabel = "Complete Payment";
+              primaryLabel = t("profile.card.completePayment", "Complete Payment");
             }
+
+            const payment = bk.payment_summary || {};
+            const totalVal = bk.total_amount ?? payment.total_amount ?? bk.price;
+            const paidVal = bk.paid_amount ?? payment.paid_amount;
+            const remainingVal = bk.remaining_amount ?? payment.remaining_amount;
+
+            const paidNum = paidVal != null ? parseFloat(String(paidVal)) : (isPartiallyPaid ? 0 : undefined);
+            const totalNum = totalVal != null ? parseFloat(String(totalVal)) : undefined;
+            const remainingNum = remainingVal != null
+              ? parseFloat(String(remainingVal))
+              : (isPartiallyPaid ? (totalNum != null && paidNum != null ? totalNum - paidNum : totalNum) : undefined);
 
             return {
               variant: type as any,
@@ -315,9 +343,9 @@ export default function ProfilePage() {
               tripTitle: bk.title || bk.hotel_name || bk.vehicle_name || "",
               status: statusVal,
               timerLabel: bk.timer_label || (isCancelled ? undefined : "In the past"),
-              paidAmount: bk.paid_amount ?? (isPartiallyPaid ? 1470 : undefined),
-              remainingAmount: bk.remaining_amount ?? (isPartiallyPaid ? 3430 : undefined),
-              totalAmount: bk.total_amount ?? (!isPartiallyPaid && !isCancelled ? 4900 : undefined),
+              paidAmount: paidNum,
+              remainingAmount: remainingNum,
+              totalAmount: totalNum,
               cancelledLabel: bk.cancelled_label || (isCancelled ? "Cancelled by You — Apr 1, 2026" : undefined),
               infoMessage: "",
               details: mappedDetails,
@@ -354,9 +382,9 @@ export default function ProfilePage() {
                 iconSrc="/images/profile/glyphs/heart.svg"
                 iconWidth={200}
                 iconHeight={200}
-                title="Your favorite trips list is empty"
-                description="Save trips you're interested in and come back anytime to complete your booking."
-                buttonText="Explore Egypt Tours"
+                title={t("profile.emptyStates.noFavoriteTrips", "Your favorite trips list is empty")}
+                description={t("profile.emptyStates.noFavoriteTripsDesc", "Save trips you're interested in and come back anytime to complete your booking.")}
+                buttonText={t("profile.emptyStates.exploreTrips", "Explore trips")}
                 buttonHref="/egypttours"
               />
             );
@@ -384,9 +412,9 @@ export default function ProfilePage() {
                 iconSrc="/images/profile/glyphs/heart.svg"
                 iconWidth={150}
                 iconHeight={150}
-                title="Your favorite hotels list is empty"
-                description="Save hotels you're interested in and come back anytime to complete your booking."
-                buttonText="Explore Hotels"
+                title={t("profile.emptyStates.noFavoriteHotels", "Your favorite hotels list is empty")}
+                description={t("profile.emptyStates.noFavoriteHotelsDesc", "Save hotels you're interested in and come back anytime to complete your booking.")}
+                buttonText={t("profile.emptyStates.exploreHotels", "Explore hotels")}
                 buttonHref="/hotels"
               />
             );
@@ -425,15 +453,15 @@ export default function ProfilePage() {
               iconSrc="/images/profile-blue2.svg"
               iconWidth={90}
               iconHeight={90}
-              title="Create an Account to View Your Bookings"
-              description="Sign up or log in to access your bookings, requests, and upcoming trips in one place."
-              buttonText="Create Account"
+              title={t("profile.emptyStates.authBookingsTitle", "Create an Account to View Your Bookings")}
+              description={t("profile.emptyStates.authBookingsDesc", "Sign up or log in to access your bookings, requests, and upcoming trips in one place.")}
+              buttonText={t("profile.emptyStates.createAccount", "Create Account")}
               buttonVariant="primary"
               buttonStyle={{ width: "100%", maxWidth: "432px" }}
               onButtonClick={() => setAuthModalState({ isOpen: true, mode: "signup" })}
               footerNode={
                 <p style={{ margin: 0, fontSize: "16px", color: "#9E9E9E", fontFamily: "var(--font-trip-sans)" }}>
-                  Already have an Account ?{" "}
+                  {t("profile.emptyStates.alreadyHaveAccount", "Already have an Account ?")}{" "}
                   <button
                     type="button"
                     onClick={() => setAuthModalState({ isOpen: true, mode: "login" })}
@@ -448,7 +476,7 @@ export default function ProfilePage() {
                       fontFamily: "var(--font-trip-sans)",
                     }}
                   >
-                    Login
+                    {t("profile.emptyStates.login", "Login")}
                   </button>
                 </p>
               }
@@ -459,23 +487,23 @@ export default function ProfilePage() {
         if (bookingCategoryIndex === 0) {
           bookingItems = tripBookings;
           emptyBIcon = "/images/profile/glyphs/trips.svg";
-          emptyBTitle = "No bookings yet";
-          emptyBDesc = "When you book a trip, your itinerary and details will appear here.";
-          emptyBBtn = "Explore Egypt Tours";
+          emptyBTitle = t("profile.emptyStates.noTripBookings", "No bookings yet");
+          emptyBDesc = t("profile.emptyStates.noTripBookingsDesc", "When you book a trip, your itinerary and details will appear here.");
+          emptyBBtn = t("profile.emptyStates.exploreTrips", "Explore trips");
           emptyBHref = "/egypttours";
         } else if (bookingCategoryIndex === 1) {
           bookingItems = hotelBookings;
           emptyBIcon = "/images/profile/glyphs/hotels.svg";
-          emptyBTitle = "No hotel bookings yet";
-          emptyBDesc = "When you book a hotel, your stay details will appear here.";
-          emptyBBtn = "Browse Hotels";
+          emptyBTitle = t("profile.emptyStates.noHotelBookings", "No hotel bookings yet");
+          emptyBDesc = t("profile.emptyStates.noHotelBookingsDesc", "When you book a hotel, your stay details will appear here.");
+          emptyBBtn = t("profile.emptyStates.exploreHotels", "Explore hotels");
           emptyBHref = "/hotels";
         } else {
           bookingItems = transportBookings;
           emptyBIcon = "/images/profile/glyphs/transportations.svg";
-          emptyBTitle = "No transportation bookings yet";
-          emptyBDesc = "When you add transfers or transport, your arrangements will appear here.";
-          emptyBBtn = "Browse Transportation";
+          emptyBTitle = t("profile.emptyStates.noTransportBookings", "No transportation bookings yet");
+          emptyBDesc = t("profile.emptyStates.noTransportBookingsDesc", "When you add transfers or transport, your arrangements will appear here.");
+          emptyBBtn = t("profile.emptyStates.bookTransport", "Book transportation");
           emptyBHref = "/transportation";
         }
 
@@ -519,15 +547,15 @@ export default function ProfilePage() {
               iconSrc="/images/profile-blue.svg"
               iconWidth={90}
               iconHeight={90}
-              title="Create an Account to View Your Requests"
-              description="Sign up or log in to track your trip requests, view their status, and manage your travel inquiries."
-              buttonText="Create Account"
+              title={t("profile.emptyStates.authRequestsTitle", "Create an Account to View Your Requests")}
+              description={t("profile.emptyStates.authRequestsDesc", "Sign up or log in to track your trip requests, view their status, and manage your travel inquiries.")}
+              buttonText={t("profile.emptyStates.createAccount", "Create Account")}
               buttonVariant="primary"
               buttonStyle={{ width: "100%", maxWidth: "432px" }}
               onButtonClick={() => setAuthModalState({ isOpen: true, mode: "signup" })}
               footerNode={
                 <p style={{ margin: 0, fontSize: "16px", color: "#9E9E9E", fontFamily: "var(--font-trip-sans)" }}>
-                  Already have an Account ?{" "}
+                  {t("profile.emptyStates.alreadyHaveAccount", "Already have an Account ?")}{" "}
                   <button
                     type="button"
                     onClick={() => setAuthModalState({ isOpen: true, mode: "login" })}
@@ -542,7 +570,7 @@ export default function ProfilePage() {
                       fontFamily: "var(--font-trip-sans)",
                     }}
                   >
-                    Login
+                    {t("profile.emptyStates.login", "Login")}
                   </button>
                 </p>
               }
@@ -553,23 +581,23 @@ export default function ProfilePage() {
         if (requestCategoryIndex === 0) {
           items = planYourTripRequests;
           emptyIcon = "/images/profile/glyphs/requests.svg";
-          emptyTitle = "No custom trip requests yet";
-          emptyDesc = "Use our Plan Your Trip planner to build your custom itinerary and get a proposal.";
-          emptyBtn = "Plan your trip";
+          emptyTitle = t("profile.emptyStates.noCustomRequests", "No custom trip requests yet");
+          emptyDesc = t("profile.emptyStates.noCustomRequestsDesc", "Use our Plan Your Trip planner to build your custom itinerary and get a proposal.");
+          emptyBtn = t("profile.emptyStates.planYourTrip", "Plan your trip");
           emptyHref = "/booking";
         } else if (requestCategoryIndex === 1) {
           items = eventsRequests;
           emptyIcon = "/images/profile/glyphs/requests.svg";
-          emptyTitle = "No MICE requests yet";
-          emptyDesc = "Create your first event or corporate experience and get a tailored proposal.";
-          emptyBtn = "Request a proposal";
+          emptyTitle = t("profile.emptyStates.noMiceRequests", "No MICE requests yet");
+          emptyDesc = t("profile.emptyStates.noMiceRequestsDesc", "Create your first event or corporate experience and get a tailored proposal.");
+          emptyBtn = t("profile.emptyStates.requestProposal", "Request a proposal");
           emptyHref = "/events/request-proposal";
         } else {
           items = b2bRequests;
           emptyIcon = "/images/profile/glyphs/requests.svg";
-          emptyTitle = "No business requests yet";
-          emptyDesc = "Partner with us to create tailored travel experiences for your company.";
-          emptyBtn = "Request a proposal";
+          emptyTitle = t("profile.emptyStates.noB2bRequests", "No business requests yet");
+          emptyDesc = t("profile.emptyStates.noB2bRequestsDesc", "Partner with us to create tailored travel experiences for your company.");
+          emptyBtn = t("profile.emptyStates.requestProposal", "Request a proposal");
           emptyHref = "/b2b-programs/request-proposal";
         }
 
@@ -603,11 +631,11 @@ export default function ProfilePage() {
   const getTabTitle = () => {
     switch (activeTab) {
       case "favorites":
-        return "My Favorites";
+        return t("profile.tabs.favorites", "My Favorites");
       case "bookings":
-        return "My Bookings";
+        return t("profile.tabs.bookings", "My Bookings");
       case "requests":
-        return "My Requests";
+        return t("profile.tabs.requests", "My Requests");
       default:
         return "";
     }
@@ -617,12 +645,12 @@ export default function ProfilePage() {
     switch (activeTab) {
       case "favorites":
         return favoriteCategoryIndex === 0
-          ? "All your favorite trips in one place"
-          : "All your favorite hotels in one place";
+          ? t("profile.subtitles.favoriteTrips", "All your favorite trips in one place")
+          : t("profile.subtitles.favoriteHotels", "All your favorite hotels in one place");
       case "bookings":
-        return "All your reservations in one place";
+        return t("profile.subtitles.bookings", "All your reservations in one place");
       case "requests":
-        return "Track your trip requests";
+        return t("profile.subtitles.requests", "Track your trip requests");
       default:
         return "";
     }
@@ -635,8 +663,8 @@ export default function ProfilePage() {
         breadcrumbs={[
           { label: t("userMenu.profile", "Profile"), isCurrent: true },
         ]}
-        title="Your Travel Space"
-        subtitle="Easily access all your travel bookings and submitted requests in one organized place, with clear details about your trips, hotel stays, transportation, and upcoming plans."
+        title={t("profile.headerTitle", "Your Travel Space")}
+        subtitle={t("profile.headerSubtitle", "Easily access all your travel bookings and submitted requests in one organized place, with clear details about your trips, hotel stays, transportation, and upcoming plans.")}
       />
 
       <div className={styles.container}>

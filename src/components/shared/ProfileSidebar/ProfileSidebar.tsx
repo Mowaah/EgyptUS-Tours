@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./ProfileSidebar.module.scss";
 
 export interface UserProfile {
@@ -52,6 +53,8 @@ export default function ProfileSidebar({
   onTabChange,
   className = "",
 }: ProfileSidebarProps) {
+  const { t } = useTranslation("common");
+
   return (
     <aside className={`${styles.sidebar} ${className}`}>
       {/* Profile Card */}
@@ -79,7 +82,7 @@ export default function ProfileSidebar({
 
         <div className={styles.emailSection}>
           <div className={styles.emailBox}>
-            <span className={styles.emailLabel}>Email</span>
+            <span className={styles.emailLabel}>{t("profile.sidebar.email", "Email")}</span>
             <span className={styles.emailValue}>{user.email}</span>
           </div>
         </div>
@@ -98,7 +101,7 @@ export default function ProfileSidebar({
               </div>
             </div>
             <div className={styles.statBody}>
-              <span className={styles.statLabel}>Bookings</span>
+              <span className={styles.statLabel}>{t("profile.sidebar.bookings", "Bookings")}</span>
               <span className={styles.statValue}>{user.bookingsCount}</span>
             </div>
           </div>
@@ -115,7 +118,7 @@ export default function ProfileSidebar({
               </div>
             </div>
             <div className={styles.statBody}>
-              <span className={styles.statLabel}>Requests</span>
+              <span className={styles.statLabel}>{t("profile.sidebar.requests", "Requests")}</span>
               <span className={styles.statValue}>{user.requestsCount}</span>
             </div>
           </div>
@@ -129,21 +132,21 @@ export default function ProfileSidebar({
           onClick={() => onTabChange("favorites")}
         >
           <NavGlyph src="/images/heart-outline.svg" active={activeTab === "favorites"} />
-          <span>My Favorites</span>
+          <span>{t("profile.tabs.favorites", "My Favorites")}</span>
         </button>
         <button
           className={`${styles.navItem} ${activeTab === "bookings" ? styles.navItemActive : ""}`}
           onClick={() => onTabChange("bookings")}
         >
           <NavGlyph src="/images/message-2.svg" active={activeTab === "bookings"} />
-          <span>My Bookings</span>
+          <span>{t("profile.tabs.bookings", "My Bookings")}</span>
         </button>
         <button
           className={`${styles.navItem} ${activeTab === "requests" ? styles.navItemActive : ""}`}
           onClick={() => onTabChange("requests")}
         >
           <NavGlyph src="/images/archive-book.svg" active={activeTab === "requests"} />
-          <span>My Requests</span>
+          <span>{t("profile.tabs.requests", "My Requests")}</span>
         </button>
       </div>
     </aside>

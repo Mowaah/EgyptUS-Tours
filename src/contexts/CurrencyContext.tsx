@@ -24,7 +24,7 @@ interface CurrencyContextValue {
   currency: DisplayCurrencyCode;
   setCurrency: (currency: DisplayCurrencyCode) => void;
   rates: CurrencyRates;
-  formatCurrency: (amountEgp: number, options?: Intl.NumberFormatOptions) => string;
+  formatCurrency: (amountEgp: number | string | undefined | null, options?: Intl.NumberFormatOptions) => string;
 }
 
 const STORAGE_KEY = "egyptus_display_currency";
@@ -55,9 +55,10 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const formatCurrency = useCallback(
-    (amountEgp: number, options: Intl.NumberFormatOptions = {}) => {
+    (amountEgp: number | string | undefined | null, options: Intl.NumberFormatOptions = {}) => {
+      const parsed = typeof amountEgp === "number" ? amountEgp : parseFloat(String(amountEgp ?? 0));
       const rate = STATIC_RATES[currency] ?? 1;
-      const value = Number.isFinite(amountEgp) ? amountEgp * rate : 0;
+      const value = Number.isFinite(parsed) ? parsed * rate : 0;
       const fractionDigits = currency === "EGP" ? 0 : 2;
 
       const currencyDef = CURRENCY_OPTIONS.find((c) => c.code === currency) || CURRENCY_OPTIONS[0];
@@ -85,8 +86,9 @@ const defaultCurrencyValue: CurrencyContextValue = {
   currency: "EGP",
   setCurrency: () => {},
   rates: STATIC_RATES,
-  formatCurrency: (amountEgp: number, options?: Intl.NumberFormatOptions) => {
-    const value = Number.isFinite(amountEgp) ? amountEgp : 0;
+  formatCurrency: (amountEgp: number | string | undefined | null, options?: Intl.NumberFormatOptions) => {
+    const parsed = typeof amountEgp === "number" ? amountEgp : parseFloat(String(amountEgp ?? 0));
+    const value = Number.isFinite(parsed) ? parsed : 0;
     const formattedNumber = new Intl.NumberFormat("en-US", {
       style: "decimal",
       minimumFractionDigits: 0,

@@ -9,6 +9,7 @@ import { validateEmail, validatePassword, validateName } from "@/utils/validatio
 import { useAuth } from "@/contexts/AuthContext";
 import { GoogleLogin } from "@react-oauth/google";
 import { loginCustomer, signupCustomer, googleLoginCustomer, resendCustomerEmailVerification } from "@/lib/api";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./AuthModal.module.scss";
 
 export interface AuthModalProps {
@@ -18,6 +19,7 @@ export interface AuthModalProps {
 }
 
 export default function AuthModal({ onClose, onLoginSuccess, initialMode = "login" }: AuthModalProps) {
+  const { t } = useTranslation("common");
   const mounted = useSyncExternalStore(
     subscribeToClientMount,
     getClientSnapshot,
@@ -57,10 +59,10 @@ export default function AuthModal({ onClose, onLoginSuccess, initialMode = "logi
     setGlobalSuccess("");
     try {
       await resendCustomerEmailVerification({ email: unverifiedEmail });
-      setGlobalSuccess("A new verification link has been sent to your email!");
+      setGlobalSuccess(t("auth.verificationSent", "A new verification link has been sent to your email!"));
       setUnverifiedEmail("");
     } catch (err: any) {
-      setGlobalError("Failed to resend verification email. Please try again.");
+      setGlobalError(t("auth.resendFailed", "Failed to resend verification email. Please try again."));
     } finally {
       setIsSubmitting(false);
     }
@@ -147,7 +149,7 @@ export default function AuthModal({ onClose, onLoginSuccess, initialMode = "logi
         onClose();
       }
     } catch (err: any) {
-      setGlobalError(err?.response?.data?.detail || "Google sign-in failed. Please try again.");
+      setGlobalError(err?.response?.data?.detail || t("auth.googleSignInFailed", "Google sign-in failed. Please try again."));
     } finally {
       setIsSubmitting(false);
     }
@@ -158,9 +160,12 @@ export default function AuthModal({ onClose, onLoginSuccess, initialMode = "logi
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <h2 className={styles.title}>
-            {mode === "reset" ? "Reset Password" : (
+            {mode === "reset" ? (
+              t("auth.resetPassword", "Reset Password")
+            ) : (
               <>
-                {mode === "login" ? "Login" : "Signup"} to <span className={styles.brandText}>Egypt Us</span>
+                {mode === "login" ? t("auth.loginTitle", "Login to") : t("auth.signupTitle", "Signup to")}{" "}
+                <span className={styles.brandText}>{t("auth.brandName", "Egypt Us")}</span>
               </>
             )}
           </h2>
@@ -183,7 +188,7 @@ export default function AuthModal({ onClose, onLoginSuccess, initialMode = "logi
                   disabled={isSubmitting}
                   style={{ marginTop: "8px", background: "none", border: "none", color: "var(--primary-color)", fontWeight: "600", cursor: "pointer", fontSize: "14px", textDecoration: "underline" }}
                 >
-                  {isSubmitting ? "Sending..." : "Resend Verification Link"}
+                  {isSubmitting ? t("auth.sending", "Sending...") : t("auth.resendVerification", "Resend Verification Link")}
                 </button>
               )}
             </div>
@@ -191,20 +196,20 @@ export default function AuthModal({ onClose, onLoginSuccess, initialMode = "logi
           {globalSuccess && <div style={{ color: "var(--green-success)", fontSize: "14px", marginBottom: "12px", textAlign: "center" }}>{globalSuccess}</div>}
           {mode === "signup" && (
             <FormField
-              label="Full name"
+              label={t("auth.fullName", "Full name")}
               type="text"
               className={styles.modalInput}
-              placeholder="Enter Your Name"
+              placeholder={t("auth.fullNamePlaceholder", "Enter Your Name")}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           )}
 
           <FormField
-            label="E-mail"
+            label={t("auth.email", "E-mail")}
             type="email"
             className={`${styles.modalInput} ${emailError ? styles.hasError : ""}`}
-            placeholder="Example@Gmail.Com"
+            placeholder={t("auth.emailPlaceholder", "Example@Gmail.Com")}
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -215,12 +220,12 @@ export default function AuthModal({ onClose, onLoginSuccess, initialMode = "logi
 
           {mode !== "reset" && (
             <div className={styles.passwordFieldWrapper}>
-              <FormField label="Password" error={passwordError}>
+              <FormField label={t("auth.password", "Password")} error={passwordError}>
                 <div className={styles.passwordWrapper}>
                   <input
                     type={showPassword ? "text" : "password"}
                     className={`${styles.modalInput} ${passwordError ? styles.hasError : ""}`}
-                    placeholder="************"
+                    placeholder={t("auth.passwordPlaceholder", "************")}
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value);
@@ -237,28 +242,28 @@ export default function AuthModal({ onClose, onLoginSuccess, initialMode = "logi
               </FormField>
               {mode === "login" && (
                 <div className={styles.forgetPasswordWrapper}>
-                  <button className={styles.forgetPassword} type="button" onClick={() => handleModeChange("reset")}>Forget Password ?</button>
+                  <button className={styles.forgetPassword} type="button" onClick={() => handleModeChange("reset")}>{t("auth.forgetPassword", "Forgot Password ?")}</button>
                 </div>
               )}
             </div>
           )}
 
           <button className={styles.loginBtn} onClick={handleLogin} disabled={isSubmitting}>
-            {isSubmitting ? "Please wait..." : mode === "reset" ? "Reset Password" : mode === "login" ? "Login" : "Signup"}
+            {isSubmitting ? t("auth.pleaseWait", "Please wait...") : mode === "reset" ? t("auth.resetPassword", "Reset Password") : mode === "login" ? t("auth.login", "Login") : t("auth.signup", "Signup")}
           </button>
 
           {mode !== "reset" && (
             <>
               <div className={styles.dividerWrapper}>
                 <div className={styles.line} />
-                <span className={styles.orText}>OR</span>
+                <span className={styles.orText}>{t("auth.or", "OR")}</span>
                 <div className={styles.line} />
               </div>
               <div className={styles.googleBtnContainer}>
                 <GoogleLogin
                   onSuccess={handleGoogleSuccess}
                   onError={() => {
-                    setGlobalError("Google sign-in failed. Please try again.");
+                    setGlobalError(t("auth.googleSignInFailed", "Google sign-in failed. Please try again."));
                   }}
                   theme="outline"
                   size="large"
@@ -272,23 +277,16 @@ export default function AuthModal({ onClose, onLoginSuccess, initialMode = "logi
           )}
         </div>
 
-
-
         <div className={styles.footer}>
           {mode === "signup" ? (
             <>
-              <span className={styles.footerText}>Already have an Account ?</span>
-              <button className={styles.signupLink} type="button" onClick={() => handleModeChange("login")}>Login</button>
-            </>
-          ) : mode === "reset" ? (
-            <>
-              <span className={styles.footerText}>Don’t have an Account ?</span>
-              <button className={styles.signupLink} type="button" onClick={() => handleModeChange("signup")}>Sign-up</button>
+              <span className={styles.footerText}>{t("auth.alreadyHaveAccount", "Already have an Account ?")}</span>
+              <button className={styles.signupLink} type="button" onClick={() => handleModeChange("login")}>{t("auth.loginLink", "Login")}</button>
             </>
           ) : (
             <>
-              <span className={styles.footerText}>Don’t have an Account ?</span>
-              <button className={styles.signupLink} type="button" onClick={() => handleModeChange("signup")}>Sign-up</button>
+              <span className={styles.footerText}>{t("auth.dontHaveAccount", "Don’t have an Account ?")}</span>
+              <button className={styles.signupLink} type="button" onClick={() => handleModeChange("signup")}>{t("auth.signUpLink", "Sign-up")}</button>
             </>
           )}
         </div>

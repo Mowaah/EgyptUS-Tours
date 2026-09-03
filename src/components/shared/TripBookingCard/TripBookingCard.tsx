@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import Button from "@/components/shared/Button/Button";
 import { bookingCardIcons } from "@/data/bookingCardIcons";
+import { useTranslation } from "@/hooks/useTranslation";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import styles from "./TripBookingCard.module.scss";
 
 export type TripBookingStatus =
@@ -173,19 +175,82 @@ export default function TripBookingCard(props: TripBookingCardProps) {
     primaryLabel,
     primaryHref = "/egypttours",
   } = props;
+  const { t, language } = useTranslation("common");
+  const { formatCurrency } = useCurrency();
+  const localeCode = language === "it" ? "it-IT" : language === "es" ? "es-ES" : "en-US";
+
   const showTimer = Boolean(timerLabel) && status !== "cancelled";
   const sectionLabel =
     props.variant === "hotel"
-      ? "Hotel Booking"
+      ? t("profile.card.hotelBooking", "Hotel Booking")
       : props.variant === "transport"
-        ? "Transportation Booking"
+        ? t("profile.card.transportBooking", "Transportation Booking")
         : props.variant === "mice" || props.variant === ("events" as any)
-          ? "MICE Event"
+          ? t("profile.card.miceEvent", "MICE Event")
           : props.variant === "b2b"
-            ? "B2B Event"
+            ? t("profile.card.b2bEvent", "B2B Event")
             : props.variant === "plan_your_trip"
-              ? "Plan Your Trip"
-              : "Trip Booking";
+              ? t("profile.categories.planYourTrip", "Plan Your Trip")
+              : t("profile.card.tripBooking", "Trip Booking");
+
+  const localizedTimerLabel = (() => {
+    if (!timerLabel) return "";
+    const low = timerLabel.toLowerCase();
+    if (low === "in the past") return t("profile.card.inThePast", "In the past");
+    if (low === "upcoming") return t("profile.card.upcoming", "Upcoming");
+    return timerLabel;
+  })();
+
+  const formatLocalizedDuration = (raw: string | undefined | null) => {
+    if (!raw) return "";
+    const match = raw.match(/(\d+)\s*Nights?\s*\/\s*(\d+)\s*Days?/i);
+    if (match) {
+      const n = parseInt(match[1], 10);
+      const d = parseInt(match[2], 10);
+      const nLabel = n === 1 ? t("units.night", "Night") : t("units.nights", "Nights");
+      const dLabel = d === 1 ? t("units.day", "Day") : t("units.days", "Days");
+      return `${n} ${nLabel} / ${d} ${dLabel}`;
+    }
+    return raw;
+  };
+
+  const getLocalizedRoomTitle = (tName: string) => {
+    if (!tName) return "";
+    const raw = tName.toLowerCase();
+    if (raw.includes("single")) return t("rooms.singleRoom", "Single Room");
+    if (raw.includes("double") || raw.includes("twin")) return t("rooms.doubleRoom", "Double Room");
+    if (raw.includes("triple")) return t("rooms.tripleRoom", "Triple Room");
+    return tName;
+  };
+
+  const formatLocalizedTravelers = (raw: string | undefined | null) => {
+    if (!raw) return "";
+    return raw.replace(/(\d+)\s*(Adults?|Children|Infants?)/gi, (m, count, word) => {
+      const num = parseInt(count, 10);
+      const w = word.toLowerCase();
+      if (w.startsWith("adult")) {
+        return `${num} ${num === 1 ? t("units.adult", "Adult") : t("units.adults", "Adults")}`;
+      }
+      if (w.startsWith("child")) {
+        return `${num} ${num === 1 ? t("units.child", "Child") : t("units.children", "Children")}`;
+      }
+      if (w.startsWith("infant")) {
+        return `${num} ${num === 1 ? t("units.infant", "Infant") : t("units.infants", "Infants")}`;
+      }
+      return m;
+    });
+  };
+
+  const formatLocalizedDate = (dateStr: string | undefined | null) => {
+    if (!dateStr || dateStr === "—") return "";
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return new Intl.DateTimeFormat(localeCode, { month: "long", day: "numeric", year: "numeric" }).format(d);
+    } catch {
+      return dateStr;
+    }
+  };
 
   return (
     <article className={styles.card}>
@@ -211,26 +276,30 @@ export default function TripBookingCard(props: TripBookingCardProps) {
               {showTimer && (
                 <span className={styles.timerBadge}>
                   {timerLabel !== "In the past" && <span className={styles.timerDot} aria-hidden />}
-                  <span className={styles.timerText}>{timerLabel}</span>
+                  <span className={styles.timerText}>{localizedTimerLabel}</span>
                 </span>
               )}
               {(status === "partially_paid" || status === "proposal_in_progress") && (
                 <span className={styles.statusPartial}>
                   <LoadingGlyph />
                   <span>
-                    {status === "proposal_in_progress" ? "Proposal In progress" : "Partially Paid"}
+                    {status === "proposal_in_progress"
+                      ? t("profile.card.proposalInProgress", "Proposal In progress")
+                      : t("profile.details.status.partially_paid", "Partially Paid")}
                   </span>
                 </span>
               )}
               {(status === "confirmed" || status === "proposal_sent") && (
                 <span className={styles.statusConfirmed}>
-                  ✓ {status === "proposal_sent" ? "Proposal Sent" : "Confirmed"}
+                  ✓ {status === "proposal_sent"
+                    ? t("profile.card.proposalSent", "Proposal Sent")
+                    : t("profile.details.status.confirmed", "Confirmed")}
                 </span>
               )}
               {status === "cancelled" && (
                 <span className={styles.statusCancelled}>
                   <span className={styles.cancelX}>✕</span>
-                  <span>Cancelled</span>
+                  <span>{t("profile.details.status.cancelled", "Cancelled")}</span>
                 </span>
               )}
             </div>
@@ -246,28 +315,28 @@ export default function TripBookingCard(props: TripBookingCardProps) {
             <div className={styles.detailGridHotel}>
               <DetailCell
                 icon={HOTEL_ICONS.nights}
-                label="Check-In"
-                value={props.details.checkIn}
+                label={t("profile.card.checkIn", "Check-In")}
+                value={formatLocalizedDate(props.details.checkIn)}
                 iconSize={16}
               />
               <DetailCell
                 icon={HOTEL_ICONS.nights}
-                label="Check-Out"
-                value={props.details.checkOut}
+                label={t("profile.card.checkOut", "Check-Out")}
+                value={formatLocalizedDate(props.details.checkOut)}
                 iconSize={16}
               />
               <DetailCell
                 icon={TRIP_ICONS.returnDate}
-                label="Nights"
+                label={t("profile.card.nights", "Nights")}
                 value={props.details.nights}
                 iconSize={16}
               />
               <DetailCell
                 icon={HOTEL_ICONS.roomType}
-                label="Room Type"
+                label={t("profile.card.roomType", "Room Type")}
                 value={
                   <span className={styles.roomRow}>
-                    <span>{props.details.roomType}</span>
+                    <span>{getLocalizedRoomTitle(props.details.roomType)}</span>
                     {props.details.roomExtraCount != null &&
                       props.details.roomExtraCount > 0 && (
                         <span className={styles.roomTag}>
@@ -280,14 +349,14 @@ export default function TripBookingCard(props: TripBookingCardProps) {
               />
               <DetailCell
                 icon={HOTEL_ICONS.roomNumber}
-                label="Room Number"
+                label={t("profile.card.roomNumber", "Room Number")}
                 value={props.details.roomNumber}
                 iconSize={16}
               />
               <DetailCell
                 icon={HOTEL_ICONS.guests}
-                label="Guests"
-                value={props.details.guests}
+                label={t("profile.card.guests", "Guests")}
+                value={formatLocalizedTravelers(props.details.guests)}
                 iconSize={16}
               />
             </div>
@@ -295,49 +364,49 @@ export default function TripBookingCard(props: TripBookingCardProps) {
             <div className={styles.detailGrid}>
               <DetailCell
                 icon={TRANSPORT_ICONS.location}
-                label="Pick up Location"
+                label={t("profile.details.pickupLocation", "Pick up Location")}
                 value={props.details.pickupLocation}
                 iconSize={16}
               />
               <DetailCell
                 icon={TRANSPORT_ICONS.location}
-                label="Drop off Location"
+                label={t("profile.details.dropoffLocation", "Drop off Location")}
                 value={props.details.dropoffLocation}
                 iconSize={16}
               />
               <DetailCell
                 icon={TRANSPORT_ICONS.calendar}
-                label="Pickup Date"
-                value={props.details.pickupDate}
+                label={t("profile.details.pickupDate", "Pickup Date")}
+                value={formatLocalizedDate(props.details.pickupDate)}
                 iconSize={16}
               />
               <DetailCell
                 icon={TRANSPORT_ICONS.clock}
-                label="Pickup time"
+                label={t("profile.details.pickupTime", "Pickup time")}
                 value={props.details.pickupTime}
                 iconSize={16}
               />
               <DetailCell
                 icon={TRANSPORT_ICONS.duration}
-                label="Duration"
-                value={props.details.durationLabel}
+                label={t("profile.details.duration", "Duration")}
+                value={formatLocalizedDuration(props.details.durationLabel)}
                 iconSize={16}
               />
               <DetailCell
                 icon={TRANSPORT_ICONS.passengers}
-                label="Passengers"
+                label={t("profile.details.passengers", "Passengers")}
                 value={props.details.passengersLabel}
                 iconSize={16}
               />
               <DetailCell
                 icon={TRANSPORT_ICONS.clock}
-                label="Trip Type"
+                label={t("profile.details.tripType", "Trip Type")}
                 value={props.details.tripType}
                 iconSize={16}
               />
               <DetailCell
                 icon={TRANSPORT_ICONS.luggage}
-                label="Luggage"
+                label={t("profile.details.luggage", "Luggage")}
                 value={props.details.luggageLabel}
                 iconSize={16}
               />
@@ -348,43 +417,43 @@ export default function TripBookingCard(props: TripBookingCardProps) {
               <div className={styles.detailGrid}>
                 <DetailCell
                   icon={MICE_ICONS.organization}
-                  label="Organization"
+                  label={t("profile.card.organization", "Organization")}
                   value={d.organization}
                 />
                 <DetailCell
                   icon={MICE_ICONS.city}
-                  label="Preferred City"
+                  label={t("profile.card.preferredCity", "Preferred City")}
                   value={d.preferredCity}
                 />
                 <DetailCell
                   icon={MICE_ICONS.eventType}
-                  label="Event Type"
+                  label={t("profile.card.eventType", "Event Type")}
                   value={d.eventType}
                 />
                 <DetailCell
                   icon={MICE_ICONS.attendees}
-                  label="Expected Attendees"
+                  label={t("profile.card.expectedAttendees", "Expected Attendees")}
                   value={d.expectedAttendees}
                 />
                 <DetailCell
                   icon={MICE_ICONS.startDate}
-                  label="Start Date"
-                  value={d.startDate}
+                  label={t("profile.card.startDate", "Start Date")}
+                  value={formatLocalizedDate(d.startDate)}
                 />
                 <DetailCell
                   icon={MICE_ICONS.endDate}
-                  label="End Date"
-                  value={d.endDate}
+                  label={t("profile.card.endDate", "End Date")}
+                  value={formatLocalizedDate(d.endDate)}
                 />
                 <DetailCell
                   icon={MICE_ICONS.eventTime}
-                  label="Event time"
+                  label={t("profile.card.eventTime", "Event Time")}
                   value={d.eventTime}
                 />
                 <DetailCell
                   icon={MICE_ICONS.duration}
-                  label="Duration"
-                  value={d.durationLabel}
+                  label={t("profile.details.duration", "Duration")}
+                  value={formatLocalizedDuration(d.durationLabel)}
                 />
               </div>
             );
@@ -392,32 +461,32 @@ export default function TripBookingCard(props: TripBookingCardProps) {
             <div className={styles.detailGridHotel}>
               <DetailCell
                 icon={B2B_ICONS.companyName}
-                label="Company name"
+                label={t("profile.card.companyName", "Company Name")}
                 value={props.details.companyName}
               />
               <DetailCell
                 icon={B2B_ICONS.country}
-                label="Country"
+                label={t("profile.card.country", "Country")}
                 value={props.details.country}
               />
               <DetailCell
                 icon={B2B_ICONS.contactPerson}
-                label="Contact Person"
+                label={t("profile.card.contactPerson", "Contact Person")}
                 value={props.details.contactPerson}
               />
               <DetailCell
                 icon={B2B_ICONS.email}
-                label="Email Address"
+                label={t("profile.details.email", "Email Address")}
                 value={props.details.emailAddress}
               />
               <DetailCell
                 icon={B2B_ICONS.phone}
-                label="Phone Number"
+                label={t("profile.details.phone", "Phone Number")}
                 value={props.details.phoneNumber}
               />
               <DetailCell
                 icon={B2B_ICONS.website}
-                label="Website"
+                label={t("profile.card.website", "Website")}
                 value={props.details.website}
               />
             </div>
@@ -425,33 +494,33 @@ export default function TripBookingCard(props: TripBookingCardProps) {
             <div className={styles.detailGridHotel}>
               <DetailCell
                 icon={bookingCardIcons.trip.destination}
-                label="Destination"
+                label={t("profile.details.destination", "Destination")}
                 value={props.details.destination}
               />
               <DetailCell
                 icon="/images/summary/trip.svg"
-                label="Trip Category"
+                label={t("profile.card.tripCategory", "Trip Category")}
                 value={props.details.tripCategory}
               />
               <DetailCell
                 icon={bookingCardIcons.trip.duration}
-                label="Duration"
-                value={props.details.durationLabel}
+                label={t("profile.details.duration", "Duration")}
+                value={formatLocalizedDuration(props.details.durationLabel)}
               />
               <DetailCell
                 icon={bookingCardIcons.trip.returnDate}
-                label="Travel Dates"
+                label={t("profile.card.travelDates", "Travel Dates")}
                 value={props.details.travelDates}
               />
               <DetailCell
                 icon="/images/profile/booking/budget-orange.svg"
-                label="Budget"
+                label={t("profile.card.budget", "Budget")}
                 value={props.details.budget}
               />
               <DetailCell
                 icon={bookingCardIcons.trip.travelers}
-                label="Travelers"
-                value={props.details.travelersLabel}
+                label={t("profile.card.travelers", "Travelers")}
+                value={formatLocalizedTravelers(props.details.travelersLabel)}
               />
             </div>
           ) : (
@@ -459,40 +528,40 @@ export default function TripBookingCard(props: TripBookingCardProps) {
               <DetailCell
                 icon={TRIP_ICONS.tripName}
                 iconClass={styles.iconBgPlane}
-                label="Trip Name"
+                label={t("profile.details.tripName", "Trip Name")}
                 value={props.details.tripName}
               />
               <DetailCell
                 icon={TRIP_ICONS.destination}
-                label="Destination"
+                label={t("profile.details.destination", "Destination")}
                 value={props.details.destination}
               />
               <DetailCell
                 icon={TRIP_ICONS.returnDate}
-                label="Return"
-                value={props.details.returnDate}
+                label={t("profile.card.return", "Return")}
+                value={formatLocalizedDate(props.details.returnDate)}
               />
               <DetailCell
                 icon={TRIP_ICONS.departureDate}
-                label="Departure"
-                value={props.details.departureDate}
+                label={t("profile.card.departure", "Departure")}
+                value={formatLocalizedDate(props.details.departureDate)}
               />
               <DetailCell
                 icon={TRIP_ICONS.travelType}
-                label="Travel Type"
+                label={t("profile.card.travelType", "Travel Type")}
                 value={props.details.travelType}
               />
               <DetailCell
                 icon={TRIP_ICONS.duration}
-                label="Duration"
-                value={props.details.durationLabel}
+                label={t("profile.details.duration", "Duration")}
+                value={formatLocalizedDuration(props.details.durationLabel)}
               />
               <DetailCell
                 icon={TRIP_ICONS.roomType}
-                label="Room Type"
+                label={t("profile.card.roomType", "Room Type")}
                 value={
                   <span className={styles.roomRow}>
-                    <span>{props.details.roomType}</span>
+                    <span>{getLocalizedRoomTitle(props.details.roomType)}</span>
                     {props.details.roomExtraCount != null &&
                       props.details.roomExtraCount > 0 && (
                         <span className={styles.roomTag}>+{props.details.roomExtraCount}</span>
@@ -502,8 +571,8 @@ export default function TripBookingCard(props: TripBookingCardProps) {
               />
               <DetailCell
                 icon={TRIP_ICONS.travelers}
-                label="Travelers"
-                value={props.details.travelersLabel}
+                label={t("profile.card.travelers", "Travelers")}
+                value={formatLocalizedTravelers(props.details.travelersLabel)}
               />
             </div>
           )}
@@ -516,18 +585,18 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                 paidAmount != null &&
                 remainingAmount != null && (
                   <p className={styles.metaPartial}>
-                    <span className={styles.metaMuted}>Paid {formatUsd(paidAmount)}</span>
+                    <span className={styles.metaMuted}>{t("profile.card.paid", "Paid")} {formatCurrency(paidAmount)}</span>
                     <span className={styles.metaBullet}>•</span>
                     <span className={styles.metaStrong}>
-                      Remaining {formatUsd(remainingAmount)}
+                      {t("profile.card.remaining", "Remaining")} {formatCurrency(remainingAmount)}
                     </span>
                   </p>
                 )}
               {status === "confirmed" && totalAmount != null && (
                 <p className={styles.metaConfirmed}>
-                  <span className={styles.metaMuted}>Fully Paid</span>
+                  <span className={styles.metaMuted}>{t("profile.card.fullyPaid", "Fully Paid")}</span>
                   <span className={styles.metaBullet}>•</span>
-                  <span className={styles.metaPrice}>{formatUsd(totalAmount)}</span>
+                  <span className={styles.metaPrice}>{formatCurrency(totalAmount)}</span>
                 </p>
               )}
               {status === "cancelled" && cancelledLabel && (
@@ -543,7 +612,11 @@ export default function TripBookingCard(props: TripBookingCardProps) {
               href={primaryHref}
               className={styles.cta}
             >
-              {primaryLabel}
+              {primaryLabel === "Complete Payment"
+                ? t("profile.card.completePayment", "Complete Payment")
+                : primaryLabel === "View Details"
+                  ? t("buttons.viewDetails", "View Details")
+                  : primaryLabel}
             </Button>
           </div>
         </footer>

@@ -257,15 +257,15 @@ export default function BookingSidebar({
             <div className={styles.guestsPills}>
               <span className={styles.guestPill}>
                 <Image src="/images/summary/adults.svg" width={16} height={16} alt="" />
-                {formData.adults} {t("sidebar.adults", "Adults")}
+                {formData.adults} {formData.adults === 1 ? t("sidebar.adult", "Adult") : t("sidebar.adults", "Adults")}
               </span>
               <span className={styles.guestPill}>
                 <Image src="/images/summary/children.svg" width={16} height={16} alt="" />
-                {formData.children} {t("sidebar.children", "Children")}
+                {formData.children} {formData.children === 1 ? t("sidebar.child", "Child") : t("sidebar.children", "Children")}
               </span>
               <span className={styles.guestPill}>
                 <Image src="/images/summary/infants.svg" width={16} height={16} alt="" />
-                {formData.infants} {t("sidebar.infants", "Infants")}
+                {formData.infants} {formData.infants === 1 ? t("sidebar.infant", "Infant") : t("sidebar.infants", "Infants")}
               </span>
             </div>
           )}

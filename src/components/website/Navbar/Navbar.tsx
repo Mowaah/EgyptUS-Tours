@@ -465,10 +465,10 @@ export default function Navbar({
         <DashboardConfirmationModal
           open={isLogoutModalOpen}
           variant="logout"
-          title="Logout?"
-          message="You'll need to sign in again to access your bookings, profile, and account information."
-          cancelLabel="Stay Logged In"
-          confirmLabel="Logout"
+          title={t("auth.logoutModal.title", "Logout?")}
+          message={t("auth.logoutModal.message", "You'll need to sign in again to access your bookings, profile, and account information.")}
+          cancelLabel={t("auth.logoutModal.cancel", "Stay Logged In")}
+          confirmLabel={t("auth.logoutModal.confirm", "Logout")}
           onClose={() => setIsLogoutModalOpen(false)}
           onConfirm={() => {
             logout();
