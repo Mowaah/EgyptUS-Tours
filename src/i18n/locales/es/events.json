@@ -1,0 +1,118 @@
+{
+  "header": {
+    "breadcrumb": "MICE y Eventos Corporativos",
+    "title": "Eventos Corporativos y Soluciones MICE Profesionales en Egipto",
+    "subtitle": "Desde reuniones ejecutivas hasta conferencias a gran escala y viajes de incentivo — nos encargamos de todo.",
+    "galleryTitle": "Eventos Corporativos en Egipto"
+  },
+  "overview": {
+    "tabOverview": "Descripción",
+    "tabFeatures": "Servicios",
+    "tabAccessibility": "Accesibilidad",
+    "title": "Descripción",
+    "description": "Egipto ofrece un destino MICE único que combina hospitalidad de primer nivel, espacios versátiles, precios competitivos y miles de años de historia. Desde reuniones ejecutivas y conferencias hasta viajes de incentivo, cenas de gala y experiencias de equipo exclusivas, lo organizamos a su medida.",
+    "statCapacityNumber": "1000",
+    "statCapacityLabel": "Capacidad máxima",
+    "statVenueTypes": "Al Aire Libre u Hoteles",
+    "statVenueLabel": "Espacio expositivo",
+    "statLanguagesNumber": "10+",
+    "statLanguagesLabel": "Idiomas",
+    "featuresTitle": "Características",
+    "featureVenue": "Selección de Espacios",
+    "featureVenueDesc": "El entorno perfecto para su evento",
+    "featurePlanning": "Planificación de Eventos",
+    "featurePlanningDesc": "Desde la idea inicial hasta la ejecución",
+    "featureHotel": "Hotel y Alojamiento",
+    "featureHotelDesc": "Estancias confortables para sus asistentes",
+    "featureTransport": "Transporte",
+    "featureTransportDesc": "Traslados y logística sin contratiempos",
+    "featureBranding": "Identidad del Evento",
+    "featureBrandingDesc": "Haga que su evento sea verdaderamente único",
+    "featureTours": "Tours y Experiencias",
+    "featureToursDesc": "Descubra Egipto más allá del evento",
+    "featureMedia": "Cobertura Mediática",
+    "featureMediaDesc": "Capture cada momento inolvidable",
+    "featureSupport": "Asistencia Sobre el Terreno",
+    "featureSupportDesc": "Un equipo dedicado durante todo el evento",
+    "servicesTitle": "Servicios Integrales para Eventos",
+    "serviceHotelsTitle": "Hoteles",
+    "serviceHotelsDesc": "Alojamientos de 4 y 5 estrellas",
+    "serviceTransportTitle": "Transporte",
+    "serviceTransportDesc": "Servicios de traslado VIP",
+    "serviceExperiencesTitle": "Experiencias",
+    "serviceExperiencesDesc": "Tours culturales y cruceros",
+    "accessTitle": "Ubicación y Accesibilidad",
+    "accessDestinations": "Múltiples Destinos",
+    "accessDestinationsDesc": "El Cairo • Sharm El Sheikh • Lúxor • Alejandría • Y Más",
+    "accessEasy": "Fácil Acceso",
+    "accessEasyDesc": "Vuelos internacionales y domésticos o por tierra en todo Egipto",
+    "accessYearRound": "Eventos Todo el Año",
+    "accessYearRoundDesc": "Planifique su experiencia corporativa en Egipto en cualquier época",
+    "accessHeadsUp": "Recomendación",
+    "accessHeadsUpDesc": "¡Avísenos con 2-3 meses de antelación respecto a la fecha del evento y vuelos!"
+  },
+  "features": {
+    "title": "Lo Que Ofrecemos",
+    "subtitle": "Soluciones de eventos y viajes corporativos diseñadas para inspirar, conectar y rendir.",
+    "card1Title": "Reuniones Ejecutivas",
+    "card1Desc": "Reuniones privadas de alto nivel y retiros estratégicos en entornos exclusivos con soporte técnico integral.",
+    "card2Title": "Experiencias de Incentivo",
+    "card2Desc": "Premie y motive a sus mejores talentos con excursiones únicas, estancias de lujo y accesos históricos exclusivos.",
+    "card3Title": "Eventos Corporativos",
+    "card3Desc": "Planificación y producción completa para cumbres de empresa, convenciones anuales, lanzamientos de producto y cenas de gala.",
+    "card4Title": "Viajes Corporativos",
+    "card4Desc": "Coordinación grupal integral que incluye vuelos, transporte de lujo, traslados VIP y logística sobre el terreno."
+  },
+  "featured": {
+    "sectionTitle": "Trabaje. Conecte. Viva Egipto.",
+    "sectionSubtitle": "Una a su equipo mediante una combinación perfecta de trabajo y experiencias memorables",
+    "eventTitle": "60 Viajeros Estadounidenses",
+    "eventSubtitle": "Experiencia de Viaje Grupal en Egipto y Jerusalén",
+    "highlights": "Puntos Destacados",
+    "pills": {
+      "cairo": "El Cairo, Lúxor y Asuán",
+      "jerusalem": "Exploración de Jerusalén",
+      "hotel": "Alojamiento en Hotel",
+      "flights": "Gestión de Billetes de Avión",
+      "egyptologists": "Egiptólogos Profesionales",
+      "meetings": "Reuniones de Negocios"
+    },
+    "checklist": {
+      "coordination": "Coordinación Grupal Impecable",
+      "businessLeisure": "Negocios y Ocio Perfectamente Combinados",
+      "endToEnd": "Organización Integral del Viaje",
+      "onGround": "Asistencia Continua en el Destino"
+    }
+  },
+  "process": {
+    "title": "Nuestro Proceso de Eventos",
+    "subtitle": "Un enfoque estructurado que garantiza una ejecución impecable",
+    "step1Title": "Consulta Inicial",
+    "step1Desc": "Comprensión de los objetivos y requisitos de su evento",
+    "step2Title": "Propuesta y Planificación",
+    "step2Desc": "Propuesta detallada con opciones de espacios y precios claros",
+    "step3Title": "Montaje y Logística",
+    "step3Desc": "Infraestructura completa del evento y coordinación logística",
+    "step4Title": "Ejecución del Evento",
+    "step4Desc": "Gestión sobre el terreno y asistencia técnica integral",
+    "step5Title": "Informe Post-Evento",
+    "step5Desc": "Informe completo y análisis exhaustivo de valoraciones"
+  },
+  "successStories": {
+    "title": "Eventos Anteriores",
+    "subtitle": "Encuentros memorables y ejecuciones impecables en todo Egipto.",
+    "viewCaseStudy": "Ver Caso de Estudio"
+  },
+  "stats": {
+    "corporateEvents": "Eventos Corporativos",
+    "clientSatisfaction": "Satisfacción de Clientes",
+    "countriesCovered": "Países Cubiertos",
+    "attendeesManaged": "Asistentes Gestionados",
+    "trustedBy": "ELEGIDO POR LAS PRINCIPALES ORGANIZACIONES"
+  },
+  "cta": {
+    "title": "¿Listo para Celebrar un Evento Inolvidable en Egipto?",
+    "subtitle": "Colabore con nuestro equipo de eventos dedicado para diseñar un programa a medida que supere todas las expectativas.",
+    "button": "Solicitar una Propuesta"
+  }
+}

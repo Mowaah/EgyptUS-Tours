@@ -1,0 +1,57 @@
+{
+  "hero": {
+    "breadcrumb": "About Us",
+    "title": "Where Every Journey Becomes a Memory",
+    "subtitle": "We create seamless, personalized travel experiences across Egypt and beyond, backed by local expertise and dedicated service."
+  },
+  "story": {
+    "tabOurStory": "Our Story",
+    "tabVision": "Vision",
+    "tabMission": "Mission",
+    "mainTitleAbout": "About Us",
+    "storyTitle": "Our Story",
+    "storyP1": "Since 2000, Egypt US Tours has been creating unforgettable journeys across Egypt, growing from a passion for Egypt into a trusted travel partner for travelers and organizations worldwide.",
+    "coreTitle": "The Core",
+    "coreP1": "Our strength lies in knowing Egypt from the inside out. We combine local expertise with international standards to create personalized journeys, seamless travel arrangements, and exceptional corporate experiences. From private tours and hotel stays to MICE events and on-ground operations, we take care of the details so our clients can focus on enjoying the experience.",
+    "visionTitle": "Our Vision",
+    "visionP1": "To become a trusted leader in organizing travel experiences inside Egypt and B2B MICE events for companies around the world.",
+    "visionP2": "For travelers, Egypt US Tours aims to be the trusted partner that makes discovering Egypt effortless and memorable.",
+    "visionP3": "For businesses, the ambition is to become the partner that can take an event in Egypt from concept to execution, allowing the client to focus on their guests, achievement, celebration, or business objectives rather than operational details.",
+    "missionTitle": "Our Mission",
+    "missionP1": "Egypt US Tours exists to make experiencing Egypt easier, safer, more personalized, and more memorable.",
+    "missionP2": "The company takes responsibility for the details so travelers and businesses can focus on enjoying Egypt and creating meaningful memories.",
+    "missionP3": "For B2C clients, this means creating fully personalized trips supported by professional guides, team leaders, reservations, transportation, and operational assistance.",
+    "missionP4": "For B2B clients, this means providing an end-to-end MICE solution covering the event concept, branding, logistics, hotels, flights, tours, attendee experiences, media coverage, social media, and event operations."
+  },
+  "features": {
+    "label": "Why Trust US ?",
+    "heading": "30+ Years of Experience in Egypt & Beyond",
+    "description": "Local expertise, trusted service, and seamless experiences from start to finish",
+    "card1Title": "Local Expertise, International Standards",
+    "card1Desc": "Local knowledge with international standards to create seamless, memorable experiences.",
+    "card2Title": "Experience You Can Trust",
+    "card2Desc": "Since 2000, delivering quality experiences with dedication, care, and attention to detail.",
+    "card3Title": "Dedicated Support",
+    "card3Desc": "With you from planning to the final moments, ensuring everything runs smoothly.",
+    "card4Title": "Quality Over Promises",
+    "card4Desc": "We focus on quality, safety, transparency, and follow-up—not empty promises."
+  },
+  "team": {
+    "label": "The Founder",
+    "heading": "Meet the Founder Behind the Experience",
+    "founderName": "Mohamed Abbas",
+    "p1": "With more than 30 years of experience in Egypt's tourism industry, Mr. Mohamed Abbas brings extensive knowledge of Egypt's destinations, history, and travel operations.",
+    "p2": "As a Tourism Manager, Egyptologist, and former tour guide, he combines professional expertise with firsthand experience in creating and managing memorable journeys across Egypt. His deep understanding of the destination and commitment to service have helped shape Egypt Us Tours into a trusted partner for travelers and international tourism professionals.",
+    "p3": "His philosophy is simple: great travel starts with local expertise, careful planning, and genuine hospitality.",
+    "statPersonalized": "Personalized Experiences",
+    "statTravelers": "Travelers Served",
+    "statExperience": "Experience in Egypt Tourism"
+  },
+  "cta": {
+    "headingPart1": "Ready to Start Your",
+    "headingHighlight": "Egyptian",
+    "headingPart2": "Journey?",
+    "description": "Let us create an unforgettable experience tailored to your dreams and goals.",
+    "button": "Explore Egypt Tours"
+  }
+}

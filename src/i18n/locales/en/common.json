@@ -1,0 +1,79 @@
+{
+  "nav": {
+    "home": "Home",
+    "egyptTours": "Egypt Tours",
+    "packages": "Packages",
+    "hotels": "Hotels",
+    "nileCruises": "Nile Cruises",
+    "dayTours": "Day Tours",
+    "transfers": "Transfers",
+    "aboutUs": "About Us",
+    "events": "Events",
+    "b2b": "B2B",
+    "contactUs": "Contact Us",
+    "destinations": "Destinations",
+    "planYourTrip": "Plan Your Trip",
+    "myProfile": "My Profile",
+    "login": "Login",
+    "logout": "Logout",
+    "allDestinations": "All Destinations",
+    "allCategories": "All Categories"
+  },
+  "userMenu": {
+    "guest": "Guest",
+    "profile": "Profile",
+    "favorites": "Favorites",
+    "requests": "Requests",
+    "bookings": "Bookings",
+    "logout": "Log out",
+    "loginSignup": "Login / Sign up"
+  },
+  "sortBy": "Sort by:",
+  "topbar": {
+    "selectLanguage": "Language",
+    "selectCurrency": "Currency"
+  },
+  "footer": {
+    "tagline": "Discover unforgettable travel experiences across Egypt and worldwide, designed with care, comfort, and local expertise.",
+    "followUs": "Follow us",
+    "egyptUs": "Egypt Us",
+    "travelGuides": "Travel Guides",
+    "customerSupport": "Customer Support",
+    "contact": "Contact",
+    "blogs": "Blogs",
+    "articles": "Articles",
+    "termsConditions": "Terms & Conditions",
+    "privacyPolicy": "Privacy & Policy",
+    "faqs": "FAQs",
+    "copyright": "© 2026 All Rights Reserved | Powered by"
+  },
+  "buttons": {
+    "learnMore": "Learn More",
+    "viewDetails": "View Details",
+    "bookNow": "Book Now",
+    "exploreTours": "Explore Tours",
+    "contactUs": "Contact Us",
+    "submit": "Submit",
+    "submitting": "Submitting...",
+    "cancel": "Cancel",
+    "close": "Close",
+    "requestProposal": "Request a Proposal",
+    "getStarted": "Get Started",
+    "seeAll": "See All"
+  },
+  "forms": {
+    "required": "Required",
+    "fullName": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "companyName": "Company Name",
+    "country": "Country",
+    "jobTitle": "Job Title",
+    "notes": "Notes / Special Requests",
+    "message": "Message",
+    "selectCountry": "Select Country",
+    "selectNationality": "Select Your Nationality",
+    "successMessage": "Thank you! Your request has been received.",
+    "errorMessage": "Something went wrong. Please try again."
+  }
+}

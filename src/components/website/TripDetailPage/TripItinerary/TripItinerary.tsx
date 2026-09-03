@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Trip } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./TripItinerary.module.scss";
 
 interface Props { trip: Trip; }
@@ -9,6 +10,7 @@ interface Props { trip: Trip; }
 export default function TripItinerary({ trip }: Props) {
   const days = trip.itinerary ?? [];
   const [active, setActive] = useState(0);
+  const { t } = useTranslation("trips");
   if (!days.length) return null;
 
   const totalValue = days.reduce((sum, d) => sum + (d.value ?? 0), 0);
@@ -18,12 +20,10 @@ export default function TripItinerary({ trip }: Props) {
     <section id="itinerary" className={styles.section}>
       {/* Header */}
       <div className={styles.headerWrap}>
-        <span className={styles.satisfactionPill}>97% Traveler Satisfaction Rate</span>
-        <h2 className={styles.heading}>Day by Day Itinerary</h2>
+        <span className={styles.satisfactionPill}>{t("itinerary.satisfactionRate", "97% Traveler Satisfaction Rate")}</span>
+        <h2 className={styles.heading}>{t("itinerary.heading", "Day by Day Itinerary")}</h2>
         <p className={styles.subtitle}>
-          Experience{" "}
-          <span className={styles.valueHighlight}>${totalValue.toLocaleString()} worth of unforgettable moments</span>{" "}
-          along the legendary Nile River
+          {t("itinerary.subtitle", "Experience {value} worth of unforgettable moments along the legendary Nile River").replace("{value}", `$${totalValue.toLocaleString()}`)}
         </p>
       </div>
 
@@ -58,7 +58,7 @@ export default function TripItinerary({ trip }: Props) {
                       onClick={() => setActive(i)}
                     >
                       <span className={`${styles.dayLabel} ${i <= active ? styles.dayLabelActive : ""}`}>
-                        Day {day.day}
+                        {t("itinerary.day", "Day")} {day.day}
                       </span>
                       <div className={`
                         ${styles.thumbCircle}
@@ -124,10 +124,10 @@ export default function TripItinerary({ trip }: Props) {
                 <Image src={current.image} alt={current.title} fill sizes="600px" className={styles.detailImgInner} />
               )}
               {current.value && (
-                <span className={styles.valueBadge}>${current.value.toLocaleString()} VALUE</span>
+                <span className={styles.valueBadge}>${current.value.toLocaleString()} {t("itinerary.value", "VALUE")}</span>
               )}
               <div className={styles.detailOverlay}>
-                <p className={styles.overlayDay}>Day {current.day}</p>
+                <p className={styles.overlayDay}>{t("itinerary.day", "Day")} {current.day}</p>
                 <p className={styles.overlayTitle}>{current.title}</p>
               </div>
             </div>
@@ -144,7 +144,7 @@ export default function TripItinerary({ trip }: Props) {
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                     </svg>
-                    Today's Highlights
+                    {t("itinerary.todaysHighlights", "Today's Highlights")}
                   </h3>
                   <ul className={styles.highlightsList}>
                     {current.highlights.map((h, hi) => (

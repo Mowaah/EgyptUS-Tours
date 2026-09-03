@@ -235,3 +235,61 @@
   font-weight: $font-weight-medium;
   color: $secondary;
 }
+
+.sectionHeading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.blueDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $primary;
+  flex-shrink: 0;
+}
+
+.sectionTitle {
+  font-size: $font-size-base;
+  font-weight: 600;
+  color: $dark;
+  margin: 0;
+}
+
+.richTextContent {
+  color: $text-heading;
+  font-size: $font-size-base;
+  line-height: 1.6;
+
+  p {
+    margin: 0 0 16px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  ul, ol {
+    margin: 0 0 16px;
+    padding-left: 1.5rem;
+  }
+
+  li {
+    margin-bottom: 8px;
+  }
+
+  strong {
+    color: $dark;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.loadingWrapper,
+.emptyState {
+  padding: 48px 0;
+  text-align: center;
+  color: $text-light;
+  font-size: $font-size-sm;
+}

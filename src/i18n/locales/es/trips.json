@@ -1,0 +1,132 @@
+{
+  "breadcrumb": "Tours de Egipto",
+  "tripDetails": "Detalles del Viaje",
+  "backToEgyptTours": "Volver a Tours de Egipto",
+  "backToHotels": "Volver a Hoteles",
+  "share": "Compartir",
+  "downloadBrochure": "Descargar Folleto",
+  "linkCopied": "¡Enlace copiado al portapapeles!",
+  "noBrochure": "Aún no se ha subido ningún folleto para este viaje.",
+  "pageTitle": "Elige el Viaje Correcto para Tu Aventura en",
+  "egypt": "EGIPTO",
+  "availableTrips": "Viajes Disponibles",
+  "pageSubtitle": "Hacemos que la planificación de viajes sea fácil. Descubre itinerarios seleccionados, compara destinos y reserva viajes diseñados a tu estilo.",
+  "desertTitle": "Encuentra Tu Escapada Perfecta al Desierto en Egipto",
+  "desertSubtitle": "Explora nuestra colección seleccionada de aventuras en el desierto, incluyendo el Desierto Blanco, el Sinaí, los oasis de Egipto y safaris inolvidables.",
+  "searchPlaceholder": "Buscar viajes...",
+  "filters": "Filtros",
+  "showResults": "Mostrar resultados",
+  "resetFilters": "Restablecer Filtros",
+  "noTripsFound": "No se Encontraron Viajes",
+  "sort": {
+    "recommended": "Recomendados",
+    "priceLow": "Precio: De Menor a Mayor",
+    "priceHigh": "Precio: De Mayor a Menor"
+  },
+  "filterGroups": {
+    "duration": "Duración",
+    "specialOffers": "Ofertas Especiales",
+    "priceRange": "Rango de Precio"
+  },
+  "duration": {
+    "any": "Cualquiera",
+    "lessThan10": "Menos de 10 días",
+    "10to15": "10-15 Días",
+    "15to20": "15-20 Días",
+    "moreThan20": "Más de 20 días"
+  },
+  "offers": {
+    "any": "Cualquiera",
+    "christmas": "Ofertas de Navidad y Año Nuevo",
+    "easter": "Ofertas de Semana Santa"
+  },
+  "filterPills": {
+    "date": "Fecha",
+    "destination": "Destino",
+    "budget": "Presupuesto",
+    "tripType": "Tipo de Viaje"
+  },
+  "allTrips": "Todos los Viajes",
+  "tripsFound": "{count} viajes encontrados",
+  "overview": {
+    "heading": "Resumen",
+    "description": "Descripción",
+    "culturalValue": "Valor Cultural",
+    "whoIsItFor": "¿Para quién es este viaje?"
+  },
+  "inclusions": {
+    "heading": "Qué Está Incluido en Tu Plan"
+  },
+  "exclusions": {
+    "heading": "Qué No Está Incluido en Tu Plan"
+  },
+  "travelerPhotos": {
+    "heading": "Tomadas por Viajeros"
+  },
+  "itinerary": {
+    "satisfactionRate": "97% de Satisfacción de Viajeros",
+    "heading": "Itinerario Día a Día",
+    "subtitle": "Vive {value} de momentos inolvidables a lo largo del legendario Nilo",
+    "todaysHighlights": "Los Destacados de Hoy",
+    "day": "Día",
+    "value": "VALOR"
+  },
+  "pricing": {
+    "heading": "Precios y Alojamiento",
+    "subtitle": "Explora precios detallados y opciones de alojamiento adaptadas a tu viaje",
+    "privateTour": "Tour Privado",
+    "groupTour": "Tour en Grupo",
+    "perPersonIn": "Por Persona en {label}"
+  },
+  "accommodations": {
+    "heading": "Tus Alojamientos de Lujo",
+    "subtitle": "Experimenta la hospitalidad egipcia en su máxima expresión con nuestros hoteles de 5 estrellas seleccionados a orillas del Nilo"
+  },
+  "availability": {
+    "heading": "Fechas y Disponibilidad",
+    "subtitle": "Selecciona tu fecha de salida preferida para el viaje de {days} días por {location}",
+    "tripsFound": "{count} Viajes Encontrados",
+    "allMonths": "Todos los Meses",
+    "spotsLeft": "{count} Lugares disponibles",
+    "almostFull": "¡Casi Lleno!",
+    "full": "{pct}% Lleno",
+    "noteLabel": "Nota:",
+    "noteText": "Todas las salidas están garantizadas con un mínimo de 2 viajeros. Tours privados disponibles a petición."
+  },
+  "importantLinks": {
+    "banner": "Por favor asegúrese de revisar los siguientes enlaces",
+    "heading": "Enlaces importantes",
+    "subtitle": "Incluyen información importante sobre nuestras políticas, términos de privacidad, detalles de pago y pautas relacionadas."
+  },
+  "bookingWidget": {
+    "title": "Reserva Tu Tour",
+    "subtitle": "Elige entre una experiencia privada o un tour en grupo adaptado a tus preferencias.",
+    "privateTour": "Tour Privado",
+    "groupTour": "Tour en Grupo",
+    "maximumFlexibility": "Máxima flexibilidad",
+    "upTo12Travelers": "Hasta 12 viajeros",
+    "bookPrivateTour": "Reservar Tour Privado",
+    "bookGroupTour": "Reservar Tour en Grupo",
+    "from": "Desde"
+  },
+  "moreTrips": {
+    "heading": "Más Viajes Inspiradores",
+    "subtitle": "¿No encontraste lo que buscabas? Explora otros paquetes muy valorados y expertamente diseñados",
+    "exploreMore": "Explorar Más"
+  },
+  "tabs": {
+    "overview": "Resumen",
+    "included": "Qué Está Incluido",
+    "excluded": "Qué No Está Incluido",
+    "travelerPhotos": "Tomadas por Viajeros",
+    "pricesAccommodation": "Precios y Alojamiento",
+    "luxuryAccommodations": "Alojamientos de Lujo",
+    "datesAvailability": "Fechas y Disponibilidad",
+    "itinerary": "Itinerario Día a Día",
+    "travelerReviews": "Reseñas de Viajeros",
+    "moreTrips": "Más Viajes Inspiradores"
+  },
+  "reviews": {
+    "heading": "Reseñas de Viajeros"
+  }
+}

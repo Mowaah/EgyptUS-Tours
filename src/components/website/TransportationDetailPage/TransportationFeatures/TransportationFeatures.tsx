@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import { useTranslation } from '@/hooks/useTranslation';
 import styles from './TransportationFeatures.module.scss';
 
 interface TransportationFeaturesProps {
@@ -7,11 +8,12 @@ interface TransportationFeaturesProps {
 }
 
 export default function TransportationFeatures({ features }: TransportationFeaturesProps) {
+  const { t } = useTranslation('transportation');
   if (!features || features.length === 0) return null;
 
   return (
     <section id="features" className={styles.section}>
-      <h2 className={styles.title}>Features & Amenities</h2>
+      <h2 className={styles.title}>{t('features.heading', 'Features & Amenities')}</h2>
       <div className={styles.grid}>
         {features.map((feature, idx) => (
           <div key={idx} className={styles.featureItem}>

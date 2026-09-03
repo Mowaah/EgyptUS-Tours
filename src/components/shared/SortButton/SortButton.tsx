@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import CheckboxDropdown from "@/components/shared/CheckboxDropdown/CheckboxDropdown";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./SortButton.module.scss";
 
 interface SortOption {
@@ -24,6 +25,7 @@ export default function SortButton({
   onChange,
   showLabel = true,
 }: SortButtonProps) {
+  const { t } = useTranslation("common");
   const [selectedValue, setSelectedValue] = useState(defaultValue || options[0]?.value);
 
   const selectedLabel = options.find((o) => o.value === selectedValue)?.label || options[0]?.label;
@@ -35,7 +37,7 @@ export default function SortButton({
 
   return (
     <div className={[styles.sort, !showLabel && styles.compact].filter(Boolean).join(" ")}>
-      {showLabel && <span className={styles.label}>Sort by:</span>}
+      {showLabel && <span className={styles.label}>{t("sortBy", "Sort by:")}</span>}
       <CheckboxDropdown
         options={options}
         value={selectedValue}

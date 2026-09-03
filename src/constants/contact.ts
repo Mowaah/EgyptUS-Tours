@@ -10,7 +10,7 @@ export const CONTACT_INFO: ContactInfoItem[] = [
   },
   {
     type: "Phone",
-    value: "+201526874984",
+    value: "201111400212",
   },
   {
     type: "Email",

@@ -2,18 +2,20 @@
 
 import { useEffect, useRef, useState } from "react";
 import CountUp from "react-countup";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./EventsStats.module.scss";
 
-const STATS = [
-  { end: 120, prefix: "",  suffix: "+",  label: "Corporate Events" },
-  { end: 97,  prefix: "",  suffix: "%",  label: "Client Satisfaction" },
-  { end: 15,  prefix: "+", suffix: "",   label: "Countries Covered" },
-  { end: 10,  prefix: "+", suffix: "K",  label: "Attendees Managed" },
-];
-
 export default function EventsStats() {
+  const { t } = useTranslation("events");
   const ref = useRef<HTMLDivElement>(null);
   const [started, setStarted] = useState(false);
+
+  const stats = [
+    { end: 120, prefix: "",  suffix: "+",  label: t("stats.corporateEvents", "Corporate Events") },
+    { end: 97,  prefix: "",  suffix: "%",  label: t("stats.clientSatisfaction", "Client Satisfaction") },
+    { end: 15,  prefix: "+", suffix: "",   label: t("stats.countriesCovered", "Countries Covered") },
+    { end: 10,  prefix: "+", suffix: "K",  label: t("stats.attendeesManaged", "Attendees Managed") },
+  ];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -33,7 +35,7 @@ export default function EventsStats() {
     <section className={styles.section}>
       <div className={styles.container}>
         <div className={styles.statsGrid} ref={ref}>
-          {STATS.map((stat, idx) => (
+          {stats.map((stat, idx) => (
             <div key={idx} className={styles.statItem}>
               <span className={styles.value}>
                 {started ? (
@@ -53,7 +55,7 @@ export default function EventsStats() {
           ))}
         </div>
 
-        <h4 className={styles.trustTitle}>TRUSTED BY LEADING ORGANIZATIONS</h4>
+        <h4 className={styles.trustTitle}>{t("stats.trustedBy", "TRUSTED BY LEADING ORGANIZATIONS")}</h4>
       </div>
     </section>
   );

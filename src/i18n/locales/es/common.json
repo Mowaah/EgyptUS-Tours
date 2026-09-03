@@ -1,0 +1,79 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "egyptTours": "Tours por Egipto",
+    "packages": "Paquetes",
+    "hotels": "Hoteles",
+    "nileCruises": "Cruceros por el Nilo",
+    "dayTours": "Excursiones de un Día",
+    "transfers": "Traslados",
+    "aboutUs": "Sobre Nosotros",
+    "events": "Eventos",
+    "b2b": "B2B",
+    "contactUs": "Contáctenos",
+    "destinations": "Destinos",
+    "planYourTrip": "Planifique su Viaje",
+    "myProfile": "Mi Perfil",
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "allDestinations": "Todos los Destinos",
+    "allCategories": "Todas las Categorías"
+  },
+  "userMenu": {
+    "guest": "Invitado",
+    "profile": "Perfil",
+    "favorites": "Favoritos",
+    "requests": "Solicitudes",
+    "bookings": "Reservas",
+    "logout": "Cerrar sesión",
+    "loginSignup": "Iniciar sesión / Registrarse"
+  },
+  "sortBy": "Ordenar por:",
+  "topbar": {
+    "selectLanguage": "Idioma",
+    "selectCurrency": "Moneda"
+  },
+  "footer": {
+    "tagline": "Descubra experiencias de viaje inolvidables en Egipto y el mundo entero, diseñadas con cuidado, confort y auténtica experiencia local.",
+    "followUs": "Síganos",
+    "egyptUs": "Egypt Us",
+    "travelGuides": "Guías de Viaje",
+    "customerSupport": "Atención al Cliente",
+    "contact": "Contacto",
+    "blogs": "Blogs",
+    "articles": "Artículos",
+    "termsConditions": "Términos y Condiciones",
+    "privacyPolicy": "Política de Privacidad",
+    "faqs": "Preguntas Frecuentes",
+    "copyright": "© 2026 Todos los Derechos Reservados | Desarrollado por"
+  },
+  "buttons": {
+    "learnMore": "Más Información",
+    "viewDetails": "Ver Detalles",
+    "bookNow": "Reservar Ahora",
+    "exploreTours": "Explorar Tours",
+    "contactUs": "Contáctenos",
+    "submit": "Enviar",
+    "submitting": "Enviando...",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "requestProposal": "Solicitar una Propuesta",
+    "getStarted": "Comenzar",
+    "seeAll": "Ver Todo"
+  },
+  "forms": {
+    "required": "Obligatorio",
+    "fullName": "Nombre Completo",
+    "email": "Correo Electrónico",
+    "phone": "Número de Teléfono",
+    "companyName": "Nombre de la Empresa",
+    "country": "País",
+    "jobTitle": "Cargo / Puesto",
+    "notes": "Notas / Peticiones Especiales",
+    "message": "Mensaje",
+    "selectCountry": "Seleccionar País",
+    "selectNationality": "Selecciona tu Nacionalidad",
+    "successMessage": "¡Gracias! Su solicitud ha sido recibida con éxito.",
+    "errorMessage": "Ocurrió un error. Por favor, inténtelo de nuevo."
+  }
+}

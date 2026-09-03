@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Trip } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./TripExclusions.module.scss";
 
 interface TripExclusionsProps {
@@ -7,10 +8,11 @@ interface TripExclusionsProps {
 }
 
 export default function TripExclusions({ trip }: TripExclusionsProps) {
+  const { t } = useTranslation("trips");
   if (!trip.excluded?.length) return null;
   return (
     <section id="excluded" className={styles.section}>
-      <h2 className={styles.heading}>What's Not Included In Your Plan</h2>
+      <h2 className={styles.heading}>{t("exclusions.heading", "What's Not Included In Your Plan")}</h2>
       <ul className={styles.list}>
         {trip.excluded.map((item, i) => (
           <li key={i} className={styles.item}>

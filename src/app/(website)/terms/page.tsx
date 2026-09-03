@@ -12,17 +12,11 @@ export const revalidate = 60;
 export default async function Page() {
   const termsData = await getTerms();
 
-  const sections: LegalSection[] = termsData.map(t => ({
+  const sections: LegalSection[] = termsData.map((t) => ({
     id: `section-${t.id}`,
     title: t.title,
-    content: t.content || ""
+    content: t.content || "",
   }));
 
-  const finalData = {
-    title: "Terms and conditions",
-    subtitle: "Please read carefully to understand your rights, responsibilities, and the rules of using our services.",
-    sections
-  };
-
-  return <LegalPage data={finalData} />;
+  return <LegalPage type="terms" data={{ sections }} />;
 }

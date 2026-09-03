@@ -18,24 +18,13 @@ import {
   PriceRangeFilter,
 } from "@/components/shared";
 import { useScrollLock } from "@/hooks/useScrollLock";
+import { useTranslation } from "@/hooks/useTranslation";
 import { Trip } from "@/types";
 import styles from "./TripsSection.module.scss";
 
-// Dynamic categories are generated based on the loaded trips
-
-const DURATION_OPTIONS = ["Any", "Less than 10 days", "10-15 Days", "15-20 Days", "More than 20 days"];
-const SPECIAL_OFFERS = [
-  "Any",
-  "Christmas & New Year Offers",
-  "Easter Offers",
-  "Easter Offers",
-];
-
-const SORT_OPTIONS = [
-  { value: "recommended", label: "Recommended" },
-  { value: "price-low", label: "Price: Low to High" },
-  { value: "price-high", label: "Price: High to Low" },
-];
+// Internal filter values — language-independent keys used for filtering logic
+const DURATION_VALUES = ["any", "lessThan10", "10to15", "15to20", "moreThan20"] as const;
+const OFFERS_VALUES = ["any", "christmas", "easter"] as const;
 
 export interface SearchParams {
   date?: string;
@@ -61,10 +50,26 @@ interface FilterPill {
 }
 
 export default function TripsSection({ variant = "home", searchParams, initialTrips = [] }: TripsSectionProps) {
+  const { t: tHome } = useTranslation("home");
+  const { t } = useTranslation("trips");
   const isPage = variant === "page";
   const isSearchResults = isPage && !!searchParams;
 
+  const sortOptions = useMemo(() => [
+    { value: "recommended", label: t("sort.recommended", "Recommended") },
+    { value: "price-low", label: t("sort.priceLow", "Price: Low to High") },
+    { value: "price-high", label: t("sort.priceHigh", "Price: High to Low") },
+  ], [t]);
 
+  const durationOptions = useMemo(() => DURATION_VALUES.map((v) => ({
+    label: t(`duration.${v}`, v),
+    value: v,
+  })), [t]);
+
+  const offersOptions = useMemo(() => OFFERS_VALUES.map((v) => ({
+    label: t(`offers.${v}`, v),
+    value: v,
+  })), [t]);
 
   const [expanded, setExpanded] = useState<{
     duration: boolean;
@@ -78,8 +83,9 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
     priceRange: { min: 0, max: 100000 },
   });
 
-  const [durationFilter, setDurationFilter] = useState(DURATION_OPTIONS[0]);
-  const [offersFilter, setOffersFilter] = useState(SPECIAL_OFFERS[0]);
+  // Filter state uses internal value keys (language-independent)
+  const [durationFilter, setDurationFilter] = useState<string>("any");
+  const [offersFilter, setOffersFilter] = useState<string>("any");
 
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -150,8 +156,8 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
 
   const activeFilterCount = useMemo(() => {
     let n = 0;
-    if (durationFilter !== DURATION_OPTIONS[0]) n += 1;
-    if (offersFilter !== SPECIAL_OFFERS[0]) n += 1;
+    if (durationFilter !== "any") n += 1;
+    if (offersFilter !== "any") n += 1;
     if (expanded.priceRange.min !== 0 || expanded.priceRange.max < maxPriceLimit) n += 1;
     return n;
   }, [durationFilter, offersFilter, expanded.priceRange.min, expanded.priceRange.max, maxPriceLimit]);
@@ -193,13 +199,13 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
   );
 
   // 3. Filter by Duration
-  if (durationFilter !== "Any") {
+  if (durationFilter !== "any") {
     processedTrips = processedTrips.filter((trip) => {
       const days = trip.duration.days;
-      if (durationFilter === "Less than 10 days") return days < 10;
-      if (durationFilter === "10-15 Days") return days >= 10 && days <= 15;
-      if (durationFilter === "15-20 Days") return days >= 15 && days <= 20;
-      if (durationFilter === "More than 20 days") return days > 20;
+      if (durationFilter === "lessThan10") return days < 10;
+      if (durationFilter === "10to15") return days >= 10 && days <= 15;
+      if (durationFilter === "15to20") return days >= 15 && days <= 20;
+      if (durationFilter === "moreThan20") return days > 20;
       return true;
     });
   }
@@ -249,11 +255,11 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
   // Build filter pills from searchParams
   const filterPills: FilterPill[] = [];
   if (searchParams?.date)
-    filterPills.push({ icon: "calendar", label: "Date", value: searchParams.date });
+    filterPills.push({ icon: "calendar", label: t("filterPills.date", "Date"), value: searchParams.date });
   if (searchParams?.budget)
-    filterPills.push({ icon: "budget", label: "Budget", value: searchParams.budget });
+    filterPills.push({ icon: "budget", label: t("filterPills.budget", "Budget"), value: searchParams.budget });
   if (searchParams?.tripType && searchParams.tripType.toLowerCase() !== "desert")
-    filterPills.push({ icon: "trip-type", label: "Trip Type", value: searchParams.tripType });
+    filterPills.push({ icon: "trip-type", label: t("filterPills.tripType", "Trip Type"), value: searchParams.tripType });
 
   return (
     <section className={styles.section}>
@@ -261,25 +267,25 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
       {/* ── Header ── */}
       {isPage ? (
         <PageHeader
-          breadcrumbs={[{ label: "Egypt Tours", isCurrent: true }]}
+          breadcrumbs={[{ label: t("breadcrumb", "Egypt Tours"), isCurrent: true }]}
           title={
             searchParams?.tripType?.toLowerCase() === "desert" ? (
               <>
-                Find Your Perfect <span className={styles.highlight}>Desert</span> Escape in Egypt
+                {t("desertTitle", "Find Your Perfect Desert Escape in Egypt")}
               </>
             ) : (
               <>
-                Choose The Right Trip For Your Adventure In{" "}
+                {t("pageTitle", "Choose The Right Trip For Your Adventure In")}{" "}
                 <span className={styles.highlight}>
-                  {searchParams?.destination ? searchParams.destination.toUpperCase() : "EGYPT"}
+                  {searchParams?.destination ? searchParams.destination.toUpperCase() : t("egypt", "EGYPT")}
                 </span>
               </>
             )
           }
           subtitle={
             searchParams?.tripType?.toLowerCase() === "desert"
-              ? "Browse our curated collection of desert adventures, including the White Desert, Sinai, Egypt's oases, and unforgettable safari experiences."
-              : "We make trip planning easy. Discover handpicked journeys, compare destinations, and book trips crafted around your travel style."
+              ? t("desertSubtitle", "Browse our curated collection of desert adventures, including the White Desert, Sinai, Egypt's oases, and unforgettable safari experiences.")
+              : t("pageSubtitle", "We make trip planning easy. Discover handpicked journeys, compare destinations, and book trips crafted around your travel style.")
           }
           decorationSrc="/images/dotted-line4.svg"
           subtitleMaxWidth="550px"
@@ -288,9 +294,9 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
       ) : (
         <div className={styles.container}>
           <SectionHeader
-            label="Egypt Tours"
-            heading="Choose The Right Trip For You in Egypt & Beyond"
-            description="Discover personalized trips and unforgettable experiences, designed around the way you want to enjoy your next vacation."
+            label={tHome("trips.label", "Egypt Tours")}
+            heading={tHome("trips.heading", "Choose The Right Trip For You in Egypt & Beyond")}
+            description={tHome("trips.description", "Discover personalized trips and unforgettable experiences, designed around the way you want to enjoy your next vacation.")}
             descriptionMaxWidth="680px"
           />
         </div>
@@ -330,12 +336,12 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
         <div className={styles.toolbar}>
           <div>
             {isPage && (
-              <h2 className={styles.availableTripsTitle}>Available Trips</h2>
+              <h2 className={styles.availableTripsTitle}>{t("availableTrips", "Available Trips")}</h2>
             )}
             <span className={styles.countSearch}>
               {isPage
-                ? `${processedTrips.length} Trips found for your route`
-                : `Found ${processedTrips.length} Tours`}
+                ? t("tripsFound", "{count} trips found").replace("{count}", String(processedTrips.length))
+                : t("tripsFound", "{count} trips found").replace("{count}", String(processedTrips.length))}
             </span>
           </div>
 
@@ -343,13 +349,13 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
             <div className={styles.toolbarRight}>
               {isLg && (
                 <SortButton 
-                  options={SORT_OPTIONS} 
+                  options={sortOptions} 
                   defaultValue="recommended" 
                   onChange={(val) => setSortBy(val)} 
                 />
               )}
               <SearchInput
-                placeholder="Search trips, destinations, or keywords…"
+                placeholder={t("searchPlaceholder", "Search trips, destinations, or keywords…")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 variant="toolbar"
@@ -359,7 +365,7 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
             isLg && (
               <div className={styles.toolbarSortHome}>
                 <SortButton 
-                  options={SORT_OPTIONS} 
+                  options={sortOptions} 
                   defaultValue="recommended" 
                   onChange={(val) => setSortBy(val)} 
                 />
@@ -403,7 +409,7 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
                 </svg>
               </span>
               <span className={styles.filtersBtnLabel}>
-                Filters
+                {t("filters", "Filters")}
                 {activeFilterCount > 0 && (
                   <span className={styles.filterBadge} aria-label={`${activeFilterCount} active filters`}>
                     {activeFilterCount}
@@ -413,7 +419,7 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
             </button>
             <div className={styles.filterSortRowSort}>
               <SortButton 
-                options={SORT_OPTIONS} 
+                options={sortOptions} 
                 defaultValue="recommended" 
                 showLabel={false} 
                 onChange={(val) => setSortBy(val)} 
@@ -433,7 +439,7 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
             aria-hidden={!isLg && !filtersOpen ? true : undefined}
           >
             <div className={styles.sidebarMobileHeader}>
-              <h2 className={styles.sidebarMobileTitle}>Filters</h2>
+              <h2 className={styles.sidebarMobileTitle}>{t("filters", "Filters")}</h2>
               <button
                 type="button"
                 className={styles.sidebarCloseBtn}
@@ -448,12 +454,12 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
 
             {/* Duration */}
             <FilterGroup
-              title="Duration"
+              title={t("filterGroups.duration", "Duration")}
               isExpanded={expanded.duration}
               onToggle={() => toggleFilter("duration")}
             >
               <RadioFilterList
-                options={DURATION_OPTIONS}
+                options={durationOptions}
                 name="duration"
                 selectedValue={durationFilter}
                 onChange={setDurationFilter}
@@ -462,12 +468,12 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
 
             {/* Special Offers */}
             <FilterGroup
-              title="Special Offers"
+              title={t("filterGroups.specialOffers", "Special Offers")}
               isExpanded={expanded.offers}
               onToggle={() => toggleFilter("offers")}
             >
               <RadioFilterList
-                options={SPECIAL_OFFERS}
+                options={offersOptions}
                 name="offers"
                 selectedValue={offersFilter}
                 onChange={setOffersFilter}
@@ -476,7 +482,7 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
 
             {/* Price Range */}
             <FilterGroup
-              title="Price Range"
+              title={t("filterGroups.priceRange", "Price Range")}
               isExpanded={expanded.price}
               onToggle={() => toggleFilter("price")}
             >
@@ -500,7 +506,7 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
                 fullWidth
                 onClick={() => setFiltersOpen(false)}
               >
-                Show results
+                {t("showResults", "Show results")}
               </Button>
             </div>
           </aside>

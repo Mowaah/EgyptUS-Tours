@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { SectionHeader } from "@/components/shared";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./FaqSection.module.scss";
 
 export interface FaqItem {
@@ -26,10 +27,11 @@ interface FaqSectionProps {
 
 export default function FaqSection({
   items = [],
-  description = "We've got answers. Find everything you need to know to plan your perfect trip.",
+  description,
   hideHeader = false,
   noPadding = false
 }: FaqSectionProps) {
+  const { t } = useTranslation("faq");
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   if (!items || items.length === 0) {
@@ -43,9 +45,9 @@ export default function FaqSection({
       <div className={styles.container}>
         {!hideHeader && (
           <SectionHeader
-            label="Frequently Asked Questions"
-            heading="Got questions?"
-            description={description}
+            label={t("sectionLabel", "Frequently Asked Questions")}
+            heading={t("sectionHeading", "Got questions?")}
+            description={description || t("sectionDescription", "We've got answers. Find everything you need to know to plan your perfect trip.")}
             align="center"
             maxWidth="500px"
             size="large"

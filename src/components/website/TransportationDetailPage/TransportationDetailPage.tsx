@@ -7,6 +7,7 @@ import TransportationOverview from "./TransportationOverview/TransportationOverv
 import TransportationFeatures from "./TransportationFeatures/TransportationFeatures";
 import TransportationReviews from "./TransportationReviews/TransportationReviews";
 import BookingWidget from "./BookingWidget/BookingWidget";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./TransportationDetailPage.module.scss";
 
 import { VehicleDetail } from "@/types/api";
@@ -15,13 +16,17 @@ interface TransportationDetailPageProps {
   vehicleDetail: VehicleDetail;
 }
 
-const TABS = [
-  { id: "overview", label: "Overview" },
-  { id: "features", label: "Features & Amenities" },
-  { id: "reviews", label: "Traveler Reviews" },
-];
+
 
 export default function TransportationDetailPage({ vehicleDetail }: TransportationDetailPageProps) {
+  const { t } = useTranslation("transportation");
+
+  const TABS = [
+    { id: "overview", label: t("tabs.overview", "Overview") },
+    { id: "features", label: t("tabs.features", "Features & Amenities") },
+    { id: "reviews", label: t("tabs.reviews", "Traveler Reviews") },
+  ];
+
   const vehicle = {
     id: vehicleDetail.slug,
     title: vehicleDetail.title || vehicleDetail.name,
@@ -47,7 +52,7 @@ export default function TransportationDetailPage({ vehicleDetail }: Transportati
       }
     } else {
       navigator.clipboard.writeText(window.location.href);
-      alert("Link copied to clipboard!");
+      alert(t("linkCopied", "Link copied to clipboard!"));
     }
   };
 
@@ -57,10 +62,10 @@ export default function TransportationDetailPage({ vehicleDetail }: Transportati
       <PageHeader
         className={styles.pageHeader}
         breadcrumbs={[
-          { label: "Transportation", href: "/transportation" },
-          { label: "Transportation Details", isCurrent: true },
+          { label: t("breadcrumb", "Transportation"), href: "/transportation" },
+          { label: t("vehicleDetails", "Transportation Details"), isCurrent: true },
         ]}
-        backButton={{ text: "Back To Transportation", href: "/transportation" }}
+        backButton={{ text: t("backToTransportation", "Back To Transportation"), href: "/transportation" }}
         showMobileActions={true}
       />
 
@@ -90,7 +95,7 @@ export default function TransportationDetailPage({ vehicleDetail }: Transportati
                 iconPosition="left"
                 onClick={handleShare}
               >
-                Share
+                {t("share", "Share")}
               </Button>
             </DetailHeroBar>
           </div>

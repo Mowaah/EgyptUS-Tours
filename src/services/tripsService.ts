@@ -41,12 +41,38 @@ export async function getAllTrips(params?: Record<string, string>): Promise<Trip
   }
 }
 
-export async function getTripById(idOrSlug: string): Promise<TripDetail | null> {
+export async function getTripById(idOrSlug: string, relatedTripsData?: TripList[]): Promise<TripDetail | null> {
   try {
     return await serverFetch<TripDetail>(`/trips/${idOrSlug}/`, {
       next: { revalidate: 60 }
     });
   } catch (error: any) {
+    // If slug lookup failed (common with localized/translated slugs like Spanish 'odisea-clasica-por-el-nilo'),
+    // resolve the trip's numeric ID via the trip list and query by ID
+    try {
+      let list = relatedTripsData;
+      if (!list || list.length === 0) {
+        list = await getAllTrips();
+      }
+      let matched = list.find(t => t.slug === idOrSlug || String(t.id) === idOrSlug);
+
+      if (!matched) {
+        for (const lang of ['es', 'it', 'en']) {
+          const langTrips = await getAllTrips({ lang });
+          matched = langTrips.find(t => t.slug === idOrSlug || String(t.id) === idOrSlug);
+          if (matched) break;
+        }
+      }
+
+      if (matched && String(matched.id) !== idOrSlug) {
+        return await serverFetch<TripDetail>(`/trips/${matched.id}/`, {
+          next: { revalidate: 60 }
+        });
+      }
+    } catch (fallbackErr) {
+      console.error(`Fallback ID lookup failed for trip ${idOrSlug}:`, fallbackErr);
+    }
+
     if (error.message?.includes('404')) return null;
     console.error(`Error in getTripById(${idOrSlug}):`, error);
     return null;
@@ -54,7 +80,7 @@ export async function getTripById(idOrSlug: string): Promise<TripDetail | null> 
 }
 
 export async function getFullTripById(idOrSlug: string, relatedTripsData: TripList[] = []): Promise<Trip | null> {
-  const tripDetail = await getTripById(idOrSlug);
+  const tripDetail = await getTripById(idOrSlug, relatedTripsData);
   if (!tripDetail) {
     return null;
   }

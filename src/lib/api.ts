@@ -30,6 +30,11 @@ apiClient.interceptors.request.use(
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
+      const lang = Cookies.get('egyptus_lang') || 'en';
+      config.headers['Accept-Language'] = lang;
+      if (config.method?.toLowerCase() === 'get') {
+        config.params = { lang, ...(config.params || {}) };
+      }
     }
     return config;
   },
@@ -89,18 +94,20 @@ export async function serverFetch<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  // Ensure the endpoint starts with a slash
-  const url = `${BASE_URL}/api/v1${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
-
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
     ...options.headers,
   };
 
+  let lang = 'en';
   if (typeof window === 'undefined') {
     const { cookies } = await import('next/headers');
     const cookieStore = await cookies();
     const token = cookieStore.get('access_token');
+    const langCookie = cookieStore.get('egyptus_lang');
+    if (langCookie?.value) {
+      lang = langCookie.value;
+    }
     if (token) {
       (headers as Record<string, string>)['Authorization'] = `Bearer ${token.value}`;
       // Never cache requests that include user-specific tokens
@@ -108,6 +115,17 @@ export async function serverFetch<T>(
       delete options.next; // Remove any ISR revalidate options
     }
   }
+
+  (headers as Record<string, string>)['Accept-Language'] = lang;
+
+  // Append lang query param if not already present
+  let resolvedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  if (!resolvedEndpoint.includes('lang=')) {
+    const separator = resolvedEndpoint.includes('?') ? '&' : '?';
+    resolvedEndpoint = `${resolvedEndpoint}${separator}lang=${lang}`;
+  }
+
+  const url = `${BASE_URL}/api/v1${resolvedEndpoint}`;
 
   let response = await fetch(url, {
     ...options,

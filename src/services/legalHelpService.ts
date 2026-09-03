@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+import { serverFetch, apiClient } from "@/lib/api";
 
 export interface FaqData {
   id: number;
@@ -14,42 +14,46 @@ export interface LegalSectionData {
   order: number;
 }
 
-async function fetchFromApi(endpoint: string) {
-  const url = new URL(`${API_BASE_URL}/api/v1/${endpoint}`);
-  const res = await fetch(url.toString(), {
-    next: { revalidate: 60 },
-    headers: {
-      'Accept': 'application/json',
-    }
-  });
-  if (!res.ok) {
-    throw new Error(`Failed to fetch ${endpoint}: ${res.statusText}`);
-  }
-  const data = await res.json();
-  return Array.isArray(data) ? data : (data.results || []);
-}
-
-export async function getFaqs(lang: string = "en"): Promise<FaqData[]> {
+export async function getFaqs(lang?: string): Promise<FaqData[]> {
   try {
-    return await fetchFromApi(`faqs/?lang=${lang}`);
+    const endpoint = lang ? `/faqs/?lang=${lang}` : `/faqs/`;
+    if (typeof window !== "undefined") {
+      // apiClient interceptor already unwraps response.data
+      const data = await (apiClient.get(endpoint) as unknown as Promise<any>);
+      return Array.isArray(data) ? data : (data?.results || []);
+    }
+    const data = await serverFetch<any>(endpoint, { next: { revalidate: 60 } });
+    return Array.isArray(data) ? data : (data?.results || []);
   } catch (error) {
     console.error("Failed to fetch FAQs:", error);
     return [];
   }
 }
 
-export async function getTerms(lang: string = "en"): Promise<LegalSectionData[]> {
+export async function getTerms(lang?: string): Promise<LegalSectionData[]> {
   try {
-    return await fetchFromApi(`terms/?lang=${lang}`);
+    const endpoint = lang ? `/terms/?lang=${lang}` : `/terms/`;
+    if (typeof window !== "undefined") {
+      const data = await (apiClient.get(endpoint) as unknown as Promise<any>);
+      return Array.isArray(data) ? data : (data?.results || []);
+    }
+    const data = await serverFetch<any>(endpoint, { next: { revalidate: 60 } });
+    return Array.isArray(data) ? data : (data?.results || []);
   } catch (error) {
     console.error("Failed to fetch Terms:", error);
     return [];
   }
 }
 
-export async function getPrivacy(lang: string = "en"): Promise<LegalSectionData[]> {
+export async function getPrivacy(lang?: string): Promise<LegalSectionData[]> {
   try {
-    return await fetchFromApi(`privacy/?lang=${lang}`);
+    const endpoint = lang ? `/privacy/?lang=${lang}` : `/privacy/`;
+    if (typeof window !== "undefined") {
+      const data = await (apiClient.get(endpoint) as unknown as Promise<any>);
+      return Array.isArray(data) ? data : (data?.results || []);
+    }
+    const data = await serverFetch<any>(endpoint, { next: { revalidate: 60 } });
+    return Array.isArray(data) ? data : (data?.results || []);
   } catch (error) {
     console.error("Failed to fetch Privacy:", error);
     return [];

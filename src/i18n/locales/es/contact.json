@@ -1,0 +1,47 @@
+{
+  "header": {
+    "title": "Póngase en Contacto",
+    "subtitle": "¿Tiene preguntas sobre nuestros tours o necesita ayuda para planificar su itinerario? Estamos aquí para ayudarle."
+  },
+  "info": {
+    "title": "Información de Contacto",
+    "phone": "+20 100 000 0000",
+    "email": "info@egyptus-tours.com",
+    "address": "El Cairo, Egipto",
+    "workingHours": "Lun - Dom: Atención 24/7"
+  },
+  "section": {
+    "label": "Contacto",
+    "headingPart1": "¿No Sabe por Dónde",
+    "headingPart2": "Empezar? Contáctenos",
+    "headingPart3": "y complete el formulario",
+    "description": "Cuéntenos qué está buscando y nuestro equipo le ayudará a diseñar la experiencia perfecta en Egipto. Complete el formulario y empecemos a planificar.",
+    "reviews": "5.0/5 Reseñas",
+    "fullName": "Nombre Completo",
+    "fullNamePlaceholder": "Su nombre completo aquí...",
+    "email": "Correo Electrónico",
+    "emailPlaceholder": "Su correo electrónico aquí...",
+    "message": "Mensaje",
+    "messagePlaceholder": "¿Cómo podemos ayudarle?",
+    "submit": "Enviar",
+    "submitting": "Enviando...",
+    "errNameRequired": "El nombre es obligatorio.",
+    "errEmailRequired": "El correo electrónico es obligatorio.",
+    "errEmailInvalid": "Por favor, introduzca una dirección de correo válida.",
+    "errMessageRequired": "El mensaje es obligatorio.",
+    "successTitle": "¡Mensaje Enviado con Éxito!",
+    "successDesc": "Gracias por ponerse en contacto con nosotros. Un miembro de nuestro equipo de especialistas revisará su consulta y le responderá en un plazo de 24 horas.",
+    "closeModal": "Cerrar"
+  },
+  "form": {
+    "fullName": "Nombre Completo",
+    "email": "Correo Electrónico",
+    "phone": "Número de Teléfono",
+    "subject": "Asunto",
+    "message": "Su Mensaje",
+    "submit": "Enviar Mensaje",
+    "submitting": "Enviando...",
+    "success": "Su mensaje ha sido enviado con éxito. ¡Nos pondremos en contacto con usted en breve!",
+    "error": "Error al enviar el mensaje. Inténtelo de nuevo o contáctenos directamente por correo o teléfono."
+  }
+}

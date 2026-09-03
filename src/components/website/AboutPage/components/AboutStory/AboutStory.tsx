@@ -3,13 +3,18 @@
 import { useState } from "react";
 import Image from "next/image";
 import { CategoryTabs } from "@/components/shared";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./AboutStory.module.scss";
 
-const TABS = ["Our Story", "Vision", "Mission"];
-
 export default function AboutStory() {
+  const { t } = useTranslation("about");
   const [activeTabIdx, setActiveTabIdx] = useState(0);
-  const activeTab = TABS[activeTabIdx];
+
+  const tabs = [
+    t("story.tabOurStory", "Our Story"),
+    t("story.tabVision", "Vision"),
+    t("story.tabMission", "Mission"),
+  ];
 
   return (
     <section className={styles.section}>
@@ -17,7 +22,7 @@ export default function AboutStory() {
         <div className={styles.tabsWrapper}>
           <CategoryTabs 
             className={styles.leftAlignTabs}
-            tabs={TABS} 
+            tabs={tabs} 
             active={activeTabIdx} 
             onTabChange={(tab, idx) => setActiveTabIdx(idx)} 
           />
@@ -25,57 +30,57 @@ export default function AboutStory() {
 
         <div className={styles.contentGrid}>
           <div className={styles.textContent}>
-            {activeTab === "Our Story" && (
+            {activeTabIdx === 0 && (
               <>
-                <h2 className={styles.mainTitle}>About Us</h2>
+                <h2 className={styles.mainTitle}>{t("story.mainTitleAbout", "About Us")}</h2>
                 <div className={styles.paragraphGroup}>
-                  <h3 className={styles.paragraphTitle}>Our Story</h3>
+                  <h3 className={styles.paragraphTitle}>{t("story.storyTitle", "Our Story")}</h3>
                   <div className={styles.paragraphLine}>
-                    Since 2000, Egypt US Tours has been creating unforgettable journeys across Egypt, growing from a passion for Egypt into a trusted travel partner for travelers and organizations worldwide.
+                    {t("story.storyP1", "Since 2000, Egypt US Tours has been creating unforgettable journeys across Egypt, growing from a passion for Egypt into a trusted travel partner for travelers and organizations worldwide.")}
                   </div>
                 </div>
 
                 <div className={styles.paragraphGroup}>
-                  <h3 className={styles.paragraphTitle}>The Core</h3>
+                  <h3 className={styles.paragraphTitle}>{t("story.coreTitle", "The Core")}</h3>
                   <div className={styles.paragraphLine}>
-                    Our strength lies in knowing Egypt from the inside out. We combine local expertise with international standards to create personalized journeys, seamless travel arrangements, and exceptional corporate experiences. From private tours and hotel stays to MICE events and on-ground operations, we take care of the details so our clients can focus on enjoying the experience.
+                    {t("story.coreP1", "Our strength lies in knowing Egypt from the inside out. We combine local expertise with international standards to create personalized journeys, seamless travel arrangements, and exceptional corporate experiences. From private tours and hotel stays to MICE events and on-ground operations, we take care of the details so our clients can focus on enjoying the experience.")}
                   </div>
                 </div>
               </>
             )}
 
-            {activeTab === "Vision" && (
+            {activeTabIdx === 1 && (
               <>
-                <h2 className={styles.mainTitle}>Our Vision</h2>
+                <h2 className={styles.mainTitle}>{t("story.visionTitle", "Our Vision")}</h2>
                 <div className={styles.paragraphLine}>
                   <p>
-                    To become a trusted leader in organizing travel experiences inside Egypt and B2B MICE events for companies around the world.
+                    {t("story.visionP1", "To become a trusted leader in organizing travel experiences inside Egypt and B2B MICE events for companies around the world.")}
                   </p>
                   <p>
-                    For travelers, Egypt US Tours aims to be the trusted partner that makes discovering Egypt effortless and memorable.
+                    {t("story.visionP2", "For travelers, Egypt US Tours aims to be the trusted partner that makes discovering Egypt effortless and memorable.")}
                   </p>
                   <p>
-                    For businesses, the ambition is to become the partner that can take an event in Egypt from concept to execution, allowing the client to focus on their guests, achievement, celebration, or business objectives rather than operational details.
+                    {t("story.visionP3", "For businesses, the ambition is to become the partner that can take an event in Egypt from concept to execution, allowing the client to focus on their guests, achievement, celebration, or business objectives rather than operational details.")}
                   </p>
                 </div>
               </>
             )}
 
-            {activeTab === "Mission" && (
+            {activeTabIdx === 2 && (
               <>
-                <h2 className={styles.mainTitle}>Our Mission</h2>
+                <h2 className={styles.mainTitle}>{t("story.missionTitle", "Our Mission")}</h2>
                 <div className={styles.paragraphLine}>
                   <p>
-                    Egypt US Tours exists to make experiencing Egypt easier, safer, more personalized, and more memorable.
+                    {t("story.missionP1", "Egypt US Tours exists to make experiencing Egypt easier, safer, more personalized, and more memorable.")}
                   </p>
                   <p>
-                    The company takes responsibility for the details so travelers and businesses can focus on enjoying Egypt and creating meaningful memories.
+                    {t("story.missionP2", "The company takes responsibility for the details so travelers and businesses can focus on enjoying Egypt and creating meaningful memories.")}
                   </p>
                   <p>
-                    For B2C clients, this means creating fully personalized trips supported by professional guides, team leaders, reservations, transportation, and operational assistance.
+                    {t("story.missionP3", "For B2C clients, this means creating fully personalized trips supported by professional guides, team leaders, reservations, transportation, and operational assistance.")}
                   </p>
                   <p>
-                    For B2B clients, this means providing an end-to-end MICE solution covering the event concept, branding, logistics, hotels, flights, tours, attendee experiences, media coverage, social media, and event operations.
+                    {t("story.missionP4", "For B2B clients, this means providing an end-to-end MICE solution covering the event concept, branding, logistics, hotels, flights, tours, attendee experiences, media coverage, social media, and event operations.")}
                   </p>
                 </div>
               </>

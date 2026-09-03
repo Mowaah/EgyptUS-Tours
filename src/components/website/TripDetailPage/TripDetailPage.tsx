@@ -24,24 +24,13 @@ import styles from "./TripDetailPage.module.scss";
 
 import { TestimonialData } from "@/services/testimonialsService";
 import { useFavorite } from "@/hooks/useFavorite";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface TripDetailPageProps {
   trip: Trip;
   testimonials?: TestimonialData[];
 }
 
-const BASE_TRIP_TABS = [
-  { id: "overview", label: "Overview" },
-  { id: "included", label: "What's Included" },
-  { id: "excluded", label: "What's Not Included" },
-  { id: "traveler-photos", label: "Taken by Travelers", requiresPhotos: true },
-  { id: "prices-accommodation", label: "Prices & Accommodation" },
-  { id: "luxury-accommodations", label: "Luxury Accommodations" },
-  { id: "dates-availability", label: "Dates & Availability", requiresAvailability: true },
-  { id: "itinerary", label: "Day-by-Day Itinerary" },
-  { id: "traveler-reviews", label: "Traveler Reviews" },
-  { id: "more-trips", label: "More Inspiring Trips" },
-];
 
 export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPageProps) {
   const { isFavorite, isLoading, toggle } = useFavorite({
@@ -49,6 +38,20 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
     kind: "trip",
     initialFavorite: trip.isFavorite ?? false,
   });
+  const { t } = useTranslation("trips");
+
+  const BASE_TRIP_TABS = [
+    { id: "overview", label: t("tabs.overview", "Overview") },
+    { id: "included", label: t("tabs.included", "What's Included") },
+    { id: "excluded", label: t("tabs.excluded", "What's Not Included") },
+    { id: "traveler-photos", label: t("tabs.travelerPhotos", "Taken by Travelers"), requiresPhotos: true },
+    { id: "prices-accommodation", label: t("tabs.pricesAccommodation", "Prices & Accommodation") },
+    { id: "luxury-accommodations", label: t("tabs.luxuryAccommodations", "Luxury Accommodations") },
+    { id: "dates-availability", label: t("tabs.datesAvailability", "Dates & Availability"), requiresAvailability: true },
+    { id: "itinerary", label: t("tabs.itinerary", "Day-by-Day Itinerary") },
+    { id: "traveler-reviews", label: t("tabs.travelerReviews", "Traveler Reviews") },
+    { id: "more-trips", label: t("tabs.moreTrips", "More Inspiring Trips") },
+  ];
 
   const hasPhotos = (trip.travelerPhotos ?? []).length > 0;
   const hasAvailability = (trip.availability ?? []).length > 0;
@@ -68,7 +71,7 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
         });
       } else {
         await navigator.clipboard.writeText(window.location.href);
-        alert("Link copied to clipboard!");
+        alert(t("linkCopied", "Link copied to clipboard!"));
       }
     } catch (error) {
       console.error("Error sharing:", error);
@@ -99,7 +102,7 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
         document.body.removeChild(link);
       }
     } else {
-      alert("No brochure file has been uploaded for this trip yet.");
+      alert(t("noBrochure", "No brochure file has been uploaded for this trip yet."));
     }
   };
 
@@ -108,10 +111,10 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
       <PageHeader
         className={styles.pageHeader}
         breadcrumbs={[
-          { label: "Egypt Tours", href: "/egypttours" },
-          { label: "Trip Details", isCurrent: true },
+          { label: t("breadcrumb", "Egypt Tours"), href: "/egypttours" },
+          { label: t("tripDetails", "Trip Details"), isCurrent: true },
         ]}
-        backButton={{ text: "Back to Egypt Tours", href: "/egypttours" }}
+        backButton={{ text: t("backToEgyptTours", "Back to Egypt Tours"), href: "/egypttours" }}
         showMobileActions={true}
         isFavorite={isFavorite}
         onFavoriteToggle={toggle}
@@ -147,7 +150,7 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
                   iconPosition="left"
                   onClick={handleDownloadBrochure}
                 >
-                  Get the Brochure
+                  {t("downloadBrochure", "Get the Brochure")}
                 </Button>
               }
             >
@@ -159,7 +162,7 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
                 iconPosition="left"
                 onClick={handleDownloadBrochure}
               >
-                Get the Brochure
+                {t("downloadBrochure", "Get the Brochure")}
               </Button>
 
               <Button
@@ -170,7 +173,7 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
                 iconPosition="left"
                 onClick={handleShare}
               >
-                Share
+                {t("share", "Share")}
               </Button>
             </DetailHeroBar>
           </div>

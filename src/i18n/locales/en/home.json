@@ -1,0 +1,154 @@
+{
+  "hero": {
+    "heading": "Experience",
+    "subheadingPart1": "History, culture, and luxury",
+    "subheadingPart2": "all in one trip",
+    "planYourTrip": "Plan your trip"
+  },
+  "search": {
+    "tripsTab": "Trips",
+    "date": "Date",
+    "destination": "Destination",
+    "budget": "Budget",
+    "tripType": "Trip Type",
+    "search": "Search",
+    "tripTypeAll": "All",
+    "tripTypeGroup": "Group Tour",
+    "tripTypePrivate": "Private Tour",
+    "budgetLess1000": "less than 1,000$",
+    "budget1000_2000": "1,000£ - 2,000$",
+    "budget2000_3000": "2,000£ - 3,000$",
+    "budget4000_5000": "4,000£ - 5,000$",
+    "budgetOver5000": "Over 5,000$"
+  },
+  "statsBar": {
+    "totalCustomers": "Total Customers",
+    "yearsExperience": "Years Of Experience",
+    "totalDestinations": "Total Destinations",
+    "averageRating": "Average Rating"
+  },
+  "trips": {
+    "label": "Egypt Tours",
+    "heading": "Choose The Right Trip For You in Egypt & Beyond",
+    "description": "Discover personalized trips and unforgettable experiences, designed around the way you want to enjoy your next vacation.",
+    "filters": "Filters",
+    "showResults": "Show results",
+    "searchPlaceholder": "Search trips, destinations, or keywords…",
+    "sortRecommended": "Recommended",
+    "sortPriceLow": "Price: Low to High",
+    "sortPriceHigh": "Price: High to Low"
+  },
+  "multiCountry": {
+    "label": "Multi country Tours",
+    "headingPart1": "One",
+    "headingPart2": "Journey.",
+    "headingPart3": "Multiple",
+    "headingPart4": "Cultures",
+    "description": "Why choose one destination when your journey can take you across cultures, landscapes, and stories? Our multi-destination tours bring carefully selected experiences together, making every stop part of one seamless, unforgettable adventure.",
+    "exploreTours": "Explore Tours"
+  },
+  "hotels": {
+    "label": "Hotels",
+    "heading": "Find Your Perfect Stay in Egypt",
+    "description": "Make your stay part of the experience. Discover carefully selected hotels across Egypt, from luxury escapes to comfortable stays, and find the right place for the way you travel.",
+    "all": "All",
+    "sortRecommended": "Recommended",
+    "sortPriceLow": "Price: Low to High",
+    "sortPriceHigh": "Price: High to Low",
+    "sortRating": "Rating"
+  },
+  "desert": {
+    "label": "Desert",
+    "heading": "Beyond the Pyramids, Into the Desert",
+    "description": "From authentic desert encounters to refined retreats, discover hidden gems where ancient traditions, breathtaking landscapes, and modern comfort come together.",
+    "westernTitle": "Western Desert",
+    "westernDesc": "Experience the thrill of the Egyptian desert with camel rides and sandboarding adventures.",
+    "sinaiTitle": "Sinai Desert",
+    "sinaiDesc": "Experience the thrill of the Egyptian desert with camel rides and sandboarding adventures.",
+    "oasisTitle": "Oasis Desert",
+    "oasisDesc": "Experience the thrill of the Egyptian desert with camel rides and sandboarding adventures.",
+    "safariTitle": "Safari Trips",
+    "safariDesc": "Experience the thrill of the Egyptian desert with camel rides and sandboarding adventures."
+  },
+  "mice": {
+    "label": "MICE & Corporate Events",
+    "heading": "Make Your Next Event Unforgettable in Egypt",
+    "description": "From high-level meetings and curated incentive experiences to world-class conferences and exhibitions, we handle every detail to create seamless, memorable events in Egypt.",
+    "meetingTitle": "Executive Meetings",
+    "meetingDesc": "Thoughtfully planned meetings in exceptional Egyptian settings.",
+    "incentiveTitle": "Incentive Experiences",
+    "incentiveDesc": "Reward your team with experience that go beyond the ordinary",
+    "eventsTitle": "Corporate Events",
+    "eventsDesc": "From intimate gatherings to large-scale events, managed start to end",
+    "travelTitle": "Corporate Travel",
+    "travelDesc": "Hotels, transportation, flights, tours, and much more",
+    "viewDetails": "View Details"
+  },
+  "ctaBanner": {
+    "heading": "Ready to Make Your Event Exceptional?",
+    "description": "Tell us what you envision, and our MICE team will create a tailored proposal and handle every detail; from concept to execution.",
+    "button": "Request a Proposal"
+  },
+  "statsSection": {
+    "stat1Desc": "Creating memorable travel experiences in Egypt since 2000, backed by decades of experience in the tourism industry.",
+    "stat2Desc": "Travelers have trusted us to experience Egypt with personalized journeys, professional support, and dedicated service.",
+    "stat3Desc": "Personalized experiences designed around your interests, travel style, and the way you want to discover Egypt."
+  },
+  "transportation": {
+    "label": "Transportation",
+    "headingPart1": "Travel Egypt in",
+    "headingPart2": "Comfort",
+    "description": "From private sedans and spacious SUVs to family-friendly vehicles, enjoy comfortable transportation and professional drivers throughout your journey in Egypt.",
+    "pickupDate": "Pickup Date",
+    "searchVehicles": "Search Vehicles"
+  },
+  "b2bSection": {
+    "label": "B2B",
+    "headingPart1": "Global Standards.",
+    "headingPart2": "Local Expertise.",
+    "description": "Partner with Egypt US Tours to deliver seamless travel and event experiences in Egypt. From ground handling and group travel to MICE and tailored programs, we combine local expertise with international standards to take care of every detail.",
+    "partnerWithUs": "Partner With Us",
+    "companyName": "Company Name",
+    "country": "Country",
+    "contactPerson": "Contact Person",
+    "contactPersonPlaceholder": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "website": "Website",
+    "requestDetails": "Request Details",
+    "requestDetailsPlaceholder": "Tell us about your request.",
+    "submit": "Request Proposal",
+    "submitting": "Submitting...",
+    "successTitle": "Your Corporate Proposal Is in Progress",
+    "successDesc": "We've received your request and our team is preparing a tailored response based on your requirements.",
+    "viewRequest": "View Request",
+    "close": "Close"
+  },
+  "desertBanner": {
+    "headingPart1": "Experience the Thrill of",
+    "headingPart2": "Desert Adventures",
+    "description": "Join exciting desert trips and explore the dunes with ease",
+    "exploreMore": "Explore more"
+  },
+  "whyChooseUs": {
+    "label": "Why Choose Us",
+    "heading": "Why Choose Us",
+    "description": "We're more than a tour operator. We're your trusted partner for experiencing Egypt seamlessly, personally, and with confidence.",
+    "aboutUs": "About Us",
+    "card1Title": "Deep Egypt Expertise",
+    "card1Desc": "Years of experience creating meaningful Egyptian experiences.",
+    "card2Title": "100% Customized Journeys",
+    "card2Desc": "Trips tailored to your interests, style, and schedule.",
+    "card3Title": "Seamless Support",
+    "card3Desc": "Support from your first inquiry to your return home.",
+    "card4Title": "Professional Local Teams",
+    "card4Desc": "Expert local teams bringing Egypt to life.",
+    "card5Title": "Quality You Can Trust",
+    "card5Desc": "1,000+ travelers served with quality and care."
+  },
+  "testimonials": {
+    "label": "Testimonial",
+    "heading": "What Travelers Say",
+    "description": "Discover real stories, honest feedback, and memorable moments from our travelers"
+  }
+}

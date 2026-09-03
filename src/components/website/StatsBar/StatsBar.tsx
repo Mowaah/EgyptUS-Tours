@@ -2,18 +2,20 @@
 
 import { useEffect, useRef, useState } from "react";
 import CountUp from "react-countup";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./StatsBar.module.scss";
 
-const STATS = [
-  { end: 10, suffix: "M+", label: "Total Customers" },
-  { end: 9, suffix: "+", label: "Years Of Experience", formattingFn: (n: number) => `0${n}+` },
-  { end: 12, suffix: "K+", label: "Total Destinations" },
-  { end: 4.9, suffix: "", label: "Average Rating", decimals: 1 },
-];
-
 export default function StatsBar() {
+  const { t } = useTranslation("home");
   const ref = useRef<HTMLDivElement>(null);
   const [started, setStarted] = useState(false);
+
+  const stats = [
+    { end: 10, suffix: "M+", label: t("statsBar.totalCustomers", "Total Customers") },
+    { end: 9, suffix: "+", label: t("statsBar.yearsExperience", "Years Of Experience"), formattingFn: (n: number) => `0${n}+` },
+    { end: 12, suffix: "K+", label: t("statsBar.totalDestinations", "Total Destinations") },
+    { end: 4.9, suffix: "", label: t("statsBar.averageRating", "Average Rating"), decimals: 1 },
+  ];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -32,7 +34,7 @@ export default function StatsBar() {
   return (
     <div className={styles.wrapper} ref={ref}>
       <div className={styles.stats}>
-        {STATS.map((stat) => (
+        {stats.map((stat) => (
           <div key={stat.label} className={styles.stat}>
             <span className={styles.value}>
               {started ? (

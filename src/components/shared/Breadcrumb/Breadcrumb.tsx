@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./Breadcrumb.module.scss";
 
 export interface BreadcrumbItem {
@@ -14,6 +17,8 @@ interface BreadcrumbProps {
 }
 
 export default function Breadcrumb({ items, className = "" }: BreadcrumbProps) {
+  const { t } = useTranslation("common");
+
   return (
     <nav className={`${styles.breadcrumb} ${className}`} aria-label="Breadcrumb">
       <ul className={styles.list}>
@@ -21,12 +26,12 @@ export default function Breadcrumb({ items, className = "" }: BreadcrumbProps) {
           <Link href="/" className={styles.link}>
             <Image
               src="/images/home.svg"
-              alt="Home"
+              alt=""
               width={16}
               height={16}
               className={styles.homeIcon}
             />
-            <span>Home</span>
+            <span>{t("nav.home", "Home")}</span>
           </Link>
         </li>
         {items.map((item, index) => (

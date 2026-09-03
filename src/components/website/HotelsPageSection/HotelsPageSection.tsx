@@ -17,6 +17,7 @@ import {
 } from "@/components/shared";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useTranslation } from "@/hooks/useTranslation";
 import { Hotel } from "@/types";
 import { HotelList } from "@/types/api";
 import styles from "./HotelsPageSection.module.scss";
@@ -47,6 +48,7 @@ interface HotelsPageSectionProps {
 
 export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSectionProps) {
   const { formatCurrency } = useCurrency();
+  const { t } = useTranslation("hotels");
 
   const mappedHotels: Hotel[] = useMemo(() => initialHotels.map((h) => {
     const basePrice = parseFloat(h.price_per_night_egp || h.price_per_night) || 0;
@@ -76,10 +78,17 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
     return Math.max(Math.ceil(max / 1000) * 1000, 12000);
   }, [mappedHotels]);
 
+  const sortOptions = useMemo(() => [
+    { value: "recommended", label: t("sort.recommended", "Recommended") },
+    { value: "price-low", label: t("sort.priceLow", "Price: Low to High") },
+    { value: "price-high", label: t("sort.priceHigh", "Price: High to Low") },
+    { value: "rating", label: t("sort.rating", "Rating") },
+  ], [t]);
+
   const dynamicTabs = useMemo(() => {
     const locations = Array.from(new Set(mappedHotels.map((h) => h.location).filter(Boolean)));
-    return ["All Locations", ...locations.sort()];
-  }, [mappedHotels]);
+    return [t("allLocations", "All Locations"), ...locations.sort()];
+  }, [mappedHotels, t]);
 
   const [hotels, setHotels] = useState<Hotel[]>(mappedHotels);
   const [ratingFilter, setRatingFilter] = useState("any");
@@ -181,9 +190,9 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
   return (
     <section className={styles.section}>
       <PageHeader
-        breadcrumbs={[{ label: "Hotels", isCurrent: true }]}
-        title="Find the perfect hotel for your trip"
-        subtitle="We make hotel booking easy. Discover top-rated hotels, compare features and prices, and book a stay tailored to your travel style."
+        breadcrumbs={[{ label: t("breadcrumb", "Hotels"), isCurrent: true }]}
+        title={t("pageTitle", "Find the perfect hotel for your trip")}
+        subtitle={t("pageSubtitle", "We make hotel booking easy. Discover top-rated hotels, compare features and prices, and book a stay tailored to your travel style.")}
         decorationSrc="/images/dotted-line3.svg"
         subtitleMaxWidth="550px"
       />
@@ -191,16 +200,18 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
       <div className={styles.container}>
         <div className={styles.toolbar}>
           <div>
-            <h2 className={styles.availableHotelsTitle}>Available Hotels</h2>
+            <h2 className={styles.availableHotelsTitle}>{t("availableHotels", "Available Hotels")}</h2>
             <span className={styles.countSearch}>
-              {filteredHotels.length} hotel{filteredHotels.length === 1 ? "" : "s"} found
+              {filteredHotels.length === 1
+                ? t("hotelsFound", "{count} hotel found").replace("{count}", String(filteredHotels.length))
+                : t("hotelsPluralFound", "{count} hotels found").replace("{count}", String(filteredHotels.length))}
             </span>
           </div>
 
           <div className={styles.toolbarRight}>
-            {isLg && <SortButton options={SORT_OPTIONS} defaultValue="recommended" onChange={setSortOption} />}
+            {isLg && <SortButton options={sortOptions} defaultValue="recommended" onChange={setSortOption} />}
             <SearchInput
-              placeholder="Search hotels, cities, or countries…"
+              placeholder={t("searchPlaceholder", "Search hotels, cities, or countries…")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               variant="toolbar"
@@ -242,7 +253,7 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
                 </svg>
               </span>
               <span className={styles.filtersBtnLabel}>
-                Filters
+                {t("filters", "Filters")}
                 {activeFilterCount > 0 && (
                   <span className={styles.filterBadge} aria-label={`${activeFilterCount} active filters`}>
                     {activeFilterCount}
@@ -251,7 +262,7 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
               </span>
             </button>
             <div className={styles.filterSortRowSort}>
-              <SortButton options={SORT_OPTIONS} defaultValue="recommended" showLabel={false} onChange={setSortOption} />
+              <SortButton options={sortOptions} defaultValue="recommended" showLabel={false} onChange={setSortOption} />
             </div>
           </div>
         )}
@@ -266,7 +277,7 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
             aria-hidden={!isLg && !filtersOpen ? true : undefined}
           >
             <div className={styles.sidebarMobileHeader}>
-              <h2 className={styles.sidebarMobileTitle}>Filters</h2>
+              <h2 className={styles.sidebarMobileTitle}>{t("filters", "Filters")}</h2>
               <button
                 type="button"
                 className={styles.sidebarCloseBtn}
@@ -280,7 +291,7 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
             </div>
 
             <FilterGroup
-              title="Rating"
+              title={t("filterGroups.rating", "Rating")}
               isExpanded={ratingExpanded}
               onToggle={() => setRatingExpanded((v) => !v)}
             >
@@ -302,7 +313,7 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
                       aria-hidden
                     />
                     {opt.value === "any" ? (
-                      <span>Any</span>
+                      <span>{t("rating.any", "Any")}</span>
                     ) : (
                       <span className={styles.ratingOptionRow}>
                         <StarRating filled={Number(opt.value)} showValue={false} size={14} />
@@ -315,7 +326,7 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
             </FilterGroup>
 
             <FilterGroup
-              title="Price Range"
+              title={t("filterGroups.priceRange", "Price Range")}
               isExpanded={priceExpanded}
               onToggle={() => setPriceExpanded((v) => !v)}
             >
@@ -331,7 +342,7 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
 
             <div className={styles.sidebarMobileFooter}>
               <Button type="button" variant="primary" size="md" fullWidth onClick={() => setFiltersOpen(false)}>
-                Show results
+                {t("showResults", "Show results")}
               </Button>
             </div>
           </aside>

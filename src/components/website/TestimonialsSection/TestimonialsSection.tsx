@@ -2,18 +2,18 @@
 
 import { useState } from "react";
 import { SectionHeader, Pagination, TestimonialCard } from "@/components/shared";
+import { useTranslation } from "@/hooks/useTranslation";
 import type { Testimonial } from "@/components/shared/TestimonialCard/TestimonialCard";
 import type { TestimonialData } from "@/services/testimonialsService";
 import { COUNTRIES } from "@/data/countries";
 import styles from "./TestimonialsSection.module.scss";
-
-
 
 export default function TestimonialsSection({
   initialTestimonials = [],
 }: {
   initialTestimonials?: TestimonialData[];
 }) {
+  const { t } = useTranslation("home");
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.max(1, Math.ceil(initialTestimonials.length / 4) || 15);
 
@@ -33,9 +33,9 @@ export default function TestimonialsSection({
     <section className={styles.section}>
       <div className={styles.container}>
         <SectionHeader
-          label="Testimonial"
-          heading="What Travelers Say"
-          description="Discover real stories, honest feedback, and memorable moments from our travelers"
+          label={t("testimonials.label", "Testimonial")}
+          heading={t("testimonials.heading", "What Travelers Say")}
+          description={t("testimonials.description", "Discover real stories, honest feedback, and memorable moments from our travelers")}
           descriptionMaxWidth="780px"
           size="large"
         />

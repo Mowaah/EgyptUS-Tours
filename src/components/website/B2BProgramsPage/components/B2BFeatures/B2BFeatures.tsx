@@ -1,56 +1,60 @@
+"use client";
+
 import React from "react";
+import Image from "next/image";
 import { FeatureCard } from "@/components/shared";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./B2BFeatures.module.scss";
 
-import Image from "next/image";
-
-const FEATURES = [
-  {
-    title: "Executive Meetings",
-    description: "Thoughtfully planned meetings in exceptional Egyptian settings.",
-    cardBg: "#F8FCFF",
-    borderColor: "#EAF1FD",
-    iconBg: "#EAF6FF",
-    iconSrc: "/images/mice/meetings.svg",
-  },
-  {
-    title: "Incentive Experiences",
-    description: "Reward your team with experience that go beyond the ordinary",
-    cardBg: "rgba(255, 240, 230, 0.22)",
-    borderColor: "#FFF1E8",
-    iconBg: "#FFF0E6",
-    iconSrc: "/images/mice/incentives.svg",
-  },
-  {
-    title: "Corporate Events",
-    description: "From intimate gatherings to large-scale events, managed start to end",
-    cardBg: "rgba(240, 253, 244, 0.28)",
-    borderColor: "#EDFBF3",
-    iconBg: "#F0FDF4",
-    iconSrc: "/images/mice/conferences.svg",
-  },
-  {
-    title: "Corporate Travel",
-    description: "Hotels, transportation, flights, tours, and much more",
-    cardBg: "rgba(223, 234, 251, 0.17)",
-    borderColor: "#EAF1FD",
-    iconBg: "#DFEAFB",
-    iconSrc: "/images/mice/exhibitions.svg",
-  },
-];
-
 export default function B2BFeatures() {
+  const { t } = useTranslation("events");
+
+  const features = [
+    {
+      title: t("features.card1Title", "Executive Meetings"),
+      description: t("features.card1Desc", "Thoughtfully planned meetings in exceptional Egyptian settings."),
+      cardBg: "#F8FCFF",
+      borderColor: "#EAF1FD",
+      iconBg: "#EAF6FF",
+      iconSrc: "/images/mice/meetings.svg",
+    },
+    {
+      title: t("features.card2Title", "Incentive Experiences"),
+      description: t("features.card2Desc", "Reward your team with experience that go beyond the ordinary"),
+      cardBg: "rgba(255, 240, 230, 0.22)",
+      borderColor: "#FFF1E8",
+      iconBg: "#FFF0E6",
+      iconSrc: "/images/mice/incentives.svg",
+    },
+    {
+      title: t("features.card3Title", "Corporate Events"),
+      description: t("features.card3Desc", "From intimate gatherings to large-scale events, managed start to end"),
+      cardBg: "rgba(240, 253, 244, 0.28)",
+      borderColor: "#EDFBF3",
+      iconBg: "#F0FDF4",
+      iconSrc: "/images/mice/conferences.svg",
+    },
+    {
+      title: t("features.card4Title", "Corporate Travel"),
+      description: t("features.card4Desc", "Hotels, transportation, flights, tours, and much more"),
+      cardBg: "rgba(223, 234, 251, 0.17)",
+      borderColor: "#EAF1FD",
+      iconBg: "#DFEAFB",
+      iconSrc: "/images/mice/exhibitions.svg",
+    },
+  ];
+
   return (
     <section id="features" className={styles.section}>
       <div className={styles.header}>
-        <h2 className={styles.title}>What We Offer</h2>
+        <h2 className={styles.title}>{t("features.title", "What We Offer")}</h2>
         <p className={styles.subtitle}>
-          We create customized corporate experiences designed around your goals and priorities.
+          {t("features.subtitle", "We create customized corporate experiences designed around your goals and priorities.")}
         </p>
       </div>
 
       <div className={styles.features}>
-        {FEATURES.map((feature) => (
+        {features.map((feature) => (
           <FeatureCard
             key={feature.title}
             icon={

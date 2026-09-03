@@ -1,6 +1,7 @@
 import { HotelCard, Button } from "@/components/shared";
 import Image from "next/image";
 import { Hotel } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./SimilarHotels.module.scss";
 
 interface SimilarHotelsProps {
@@ -8,14 +9,12 @@ interface SimilarHotelsProps {
 }
 
 export default function SimilarHotels({ similarHotels }: SimilarHotelsProps) {
+  const { t } = useTranslation("hotels");
   return (
     <section id="similar-hotels" className={styles.section}>
       <div className={styles.header}>
         <div className={styles.headerText}>
-          <h2 className={styles.heading}>Similar Hotels</h2>
-          <p className={styles.subtitle}>
-            Love this style? Discover our handpicked selection of similar hotels that share the same vibe, luxury standards, and prime location to ensure you find your perfect match.
-          </p>
+          <h2 className={styles.heading}>{t("similarHotels.heading", "Similar Hotels")}</h2>
         </div>
         <Button
           variant="primary"
@@ -30,7 +29,7 @@ export default function SimilarHotels({ similarHotels }: SimilarHotelsProps) {
             />
           }
         >
-          Explore More
+          {t("similarHotels.exploreMore", "Explore More")}
         </Button>
       </div>
 

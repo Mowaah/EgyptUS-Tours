@@ -3,6 +3,7 @@
 import { TestimonialCard, ReviewGrid } from '@/components/shared';
 import type { Testimonial } from '@/components/shared/TestimonialCard/TestimonialCard';
 import { COUNTRIES } from '@/data/countries';
+import { useTranslation } from '@/hooks/useTranslation';
 import styles from './EventsSuccessStories.module.scss';
 
 import type { TestimonialData } from "@/services/testimonialsService";
@@ -14,19 +15,21 @@ interface EventsSuccessStoriesProps {
 const PAGE_SIZE = 6;
 
 export default function EventsSuccessStories({ testimonials = [] }: EventsSuccessStoriesProps) {
+  const { t } = useTranslation("events");
+
   if (testimonials.length === 0) {
     return null;
   }
 
-  const mappedStories: Testimonial[] = testimonials.map(t => {
-    const countryEntry = COUNTRIES.find(c => c.code.toUpperCase() === (t.country || '').toUpperCase());
+  const mappedStories: Testimonial[] = testimonials.map(item => {
+    const countryEntry = COUNTRIES.find(c => c.code.toUpperCase() === (item.country || '').toUpperCase());
     return {
-      name: t.customer_name,
-      location: countryEntry?.name || t.country || 'Guest',
-      countryCode: (t.country || '').toLowerCase(),
-      rating: t.rating || 5,
-      quote: `"${t.description}"`,
-      videoUrl: t.video_url || '',
+      name: item.customer_name,
+      location: countryEntry?.name || item.country || 'Guest',
+      countryCode: (item.country || '').toLowerCase(),
+      rating: item.rating || 5,
+      quote: `"${item.description}"`,
+      videoUrl: item.video_url || '',
       image: '',
     };
   });
@@ -38,15 +41,15 @@ export default function EventsSuccessStories({ testimonials = [] }: EventsSucces
       </div>
 
       <div className={styles.header}>
-        <h2 className={styles.title}>Past Event Success Stories</h2>
-        <p className={styles.subtitle}>Proven track record with international organizations</p>
+        <h2 className={styles.title}>{t("successStories.title", "Past Event Success Stories")}</h2>
+        <p className={styles.subtitle}>{t("successStories.subtitle", "Proven track record with international organizations")}</p>
       </div>
 
       <ReviewGrid 
         items={mappedStories} 
         pageSize={PAGE_SIZE} 
         gridClassName={styles.grid}
-        renderItem={(t, i) => <TestimonialCard key={i} testimonial={t} />} 
+        renderItem={(item, i) => <TestimonialCard key={i} testimonial={item} />} 
       />
     </section>
   );

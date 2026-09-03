@@ -1,13 +1,18 @@
+"use client";
+
 import FaqSection from "@/components/website/FaqSection/FaqSection";
 import Image from "next/image";
-import styles from "./FaqPage.module.scss";
+import { useTranslation } from "@/hooks/useTranslation";
 import { FaqData } from "@/services/legalHelpService";
+import styles from "./FaqPage.module.scss";
 
 interface Props {
   initialFaqs?: FaqData[];
 }
 
 export default function FaqPage({ initialFaqs }: Props) {
+  const { t } = useTranslation("faq");
+
   return (
     <div className={styles.page}>
       <header className={styles.headerSection}>
@@ -22,9 +27,9 @@ export default function FaqPage({ initialFaqs }: Props) {
           />
         </div>
         <div className={styles.headerInner}>
-          <h1 className={styles.title}>Frequently Asked Questions</h1>
+          <h1 className={styles.title}>{t("pageTitle", "Frequently Asked Questions")}</h1>
           <p className={styles.subtitle}>
-            Find quick answers to common questions about our trips, bookings, and services.
+            {t("pageSubtitle", "Find quick answers to common questions about our trips, bookings, and services.")}
           </p>
         </div>
       </header>

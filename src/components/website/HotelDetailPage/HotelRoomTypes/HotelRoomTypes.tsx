@@ -5,17 +5,30 @@ import Image from "next/image";
 import { Hotel, HotelRoom } from "@/types";
 import { FilterGroup, RadioFilterList, PriceRangeFilter, EmptyState, FilterSidebar } from "@/components/shared";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./HotelRoomTypes.module.scss";
 
 interface HotelRoomTypesProps {
   hotel: Hotel;
 }
 
-const TYPE_OPTIONS = ["All", "Single", "Double Room", "Triple Room"];
-const VIEW_OPTIONS = ["All", "Sea View", "Pool View", "Garden View"];
+const TYPE_CONFIG = [
+  { value: "All", labelKey: "roomTypes.types.all" },
+  { value: "Single", labelKey: "roomTypes.types.single" },
+  { value: "Double Room", labelKey: "roomTypes.types.double" },
+  { value: "Triple Room", labelKey: "roomTypes.types.triple" },
+] as const;
+
+const VIEW_CONFIG = [
+  { value: "All", labelKey: "roomTypes.views.all" },
+  { value: "Sea View", labelKey: "roomTypes.views.sea" },
+  { value: "Pool View", labelKey: "roomTypes.views.pool" },
+  { value: "Garden View", labelKey: "roomTypes.views.garden" },
+] as const;
 
 export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
   const { formatCurrency } = useCurrency();
+  const { t } = useTranslation("hotels");
   const [roomCategory, setRoomCategory] = useState("All");
   const [roomType, setRoomType] = useState("All");
   const [roomView, setRoomView] = useState("All");
@@ -59,12 +72,34 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
     setExpanded(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
+  const categoryOptions = useMemo(() => {
+    const categories = Array.from(new Set(rooms.map(r => r.category).filter(Boolean)));
+    return [
+      { label: t("roomTypes.all", "All"), value: "All" },
+      ...categories.map(c => ({ label: c as string, value: c as string })),
+    ];
+  }, [rooms, t]);
+
+  const typeOptions = useMemo(() => {
+    return TYPE_CONFIG.map(c => ({
+      label: t(c.labelKey as Parameters<typeof t>[0], c.value),
+      value: c.value,
+    }));
+  }, [t]);
+
+  const viewOptions = useMemo(() => {
+    return VIEW_CONFIG.map(c => ({
+      label: t(c.labelKey as Parameters<typeof t>[0], c.value),
+      value: c.value,
+    }));
+  }, [t]);
+
   return (
     <section id="room-types" className={styles.section}>
       <div className={styles.header}>
-        <h2 className={styles.heading}>Room Types</h2>
+        <h2 className={styles.heading}>{t("roomTypes.heading", "Room Types")}</h2>
         <p className={styles.subtitle}>
-          Explore the different room options designed to suit every traveler’s needs, from cozy singles to spacious family suites.
+          {t("roomTypes.subtitle", "Explore the different room options designed to suit every traveler’s needs, from cozy singles to spacious family suites.")}
         </p>
       </div>
 
@@ -79,12 +114,12 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
         >
           {/* Room Category */}
           <FilterGroup
-            title="Room Category"
+            title={t("roomTypes.filterCategory", "Room Category")}
             isExpanded={expanded.category}
             onToggle={() => toggleExpand("category")}
           >
             <RadioFilterList
-              options={["All", ...Array.from(new Set(rooms.map(r => r.category).filter(Boolean))) as string[]]}
+              options={categoryOptions}
               name="roomCategory"
               selectedValue={roomCategory}
               onChange={setRoomCategory}
@@ -93,12 +128,12 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
 
           {/* Type of Room */}
           <FilterGroup
-            title="Type Of Room"
+            title={t("roomTypes.filterType", "Type Of Room")}
             isExpanded={expanded.type}
             onToggle={() => toggleExpand("type")}
           >
             <RadioFilterList
-              options={TYPE_OPTIONS}
+              options={typeOptions}
               name="roomType"
               selectedValue={roomType}
               onChange={setRoomType}
@@ -107,12 +142,12 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
 
           {/* Room View */}
           <FilterGroup
-            title="Room View"
+            title={t("roomTypes.filterView", "Room View")}
             isExpanded={expanded.view}
             onToggle={() => toggleExpand("view")}
           >
             <RadioFilterList
-              options={VIEW_OPTIONS}
+              options={viewOptions}
               name="roomView"
               selectedValue={roomView}
               onChange={setRoomView}
@@ -121,7 +156,7 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
 
           {/* Price Range */}
           <FilterGroup
-            title="Price Range"
+            title={t("roomTypes.filterPrice", "Price Range")}
             isExpanded={expanded.price}
             onToggle={() => toggleExpand("price")}
           >
@@ -144,10 +179,10 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
             ))
           ) : (
             <EmptyState 
-              title="No rooms found"
-              description="Try adjusting your filters to find available rooms."
+              title={t("roomTypes.noRoomsFound", "No rooms found")}
+              description={t("roomTypes.noRoomsDesc", "Try adjusting your filters to find available rooms.")}
               onButtonClick={handleReset}
-              buttonText="Reset all filters"
+              buttonText={t("roomTypes.resetAll", "Reset all filters")}
             />
           )}
         </div>
@@ -158,6 +193,7 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
 
 function RoomCard({ room }: { room: HotelRoom }) {
   const { formatCurrency } = useCurrency();
+  const { t } = useTranslation("hotels");
 
   return (
     <div className={styles.roomCard}>
@@ -170,7 +206,7 @@ function RoomCard({ room }: { room: HotelRoom }) {
 
         {/* Discount badge */}
         {room.discountPercent && (
-          <div className={styles.discountBadge}>{room.discountPercent}% off</div>
+          <div className={styles.discountBadge}>{room.discountPercent}% {t("roomTypes.off", "off")}</div>
         )}
 
         {/* Navigation arrows */}
@@ -194,7 +230,7 @@ function RoomCard({ room }: { room: HotelRoom }) {
 
         {/* Features */}
         <div className={styles.roomDetails}>
-          <h4 className={styles.detailsLabel}>Details</h4>
+          <h4 className={styles.detailsLabel}>{t("roomTypes.details", "Details")}</h4>
           <div className={styles.featurePills}>
             {room.features.map(feat => (
               <span key={feat} className={styles.featurePill}>{feat}</span>
@@ -206,10 +242,10 @@ function RoomCard({ room }: { room: HotelRoom }) {
       {/* ── Price ── */}
       <div className={styles.roomPrice}>
         <div className={styles.priceInfo}>
-          <span className={styles.priceLabel}>Start From</span>
+          <span className={styles.priceLabel}>{t("roomTypes.startFrom", "Start From")}</span>
           <div className={styles.priceValue}>
             <span className={styles.amount}>{formatCurrency(room.pricePerNight)}</span>
-            <span className={styles.per}>Per Night</span>
+            <span className={styles.per}>{t("roomTypes.perNight", "Per Night")}</span>
           </div>
         </div>
       </div>

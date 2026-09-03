@@ -2,9 +2,15 @@ import Image from "next/image";
 import Button from "@/components/shared/Button/Button";
 import SearchBar from "../SearchBar/SearchBar";
 import { getAllDestinations } from "@/services/destinationsService";
+import { cookies } from "next/headers";
+import { getTranslation } from "@/i18n";
+import { SupportedLanguage } from "@/i18n/types";
 import styles from "./HeroSection.module.scss";
 
 export default async function HeroSection() {
+  const cookieStore = await cookies();
+  const lang = (cookieStore.get("egyptus_lang")?.value || "en") as SupportedLanguage;
+
   const destinationsData = await getAllDestinations();
   const destinations = destinationsData
     .filter((d) => {
@@ -31,11 +37,11 @@ export default async function HeroSection() {
 
       <div className={styles.container}>
         <div className={styles.content}>
-          <h1 className={styles.heading}>Experience</h1>
+          <h1 className={styles.heading}>{getTranslation(lang, "home", "hero.heading") || "Experience"}</h1>
           <p className={styles.subheading}>
-            History, culture, and luxury
+            {getTranslation(lang, "home", "hero.subheadingPart1") || "History, culture, and luxury"}
             <br />
-            all in one trip
+            {getTranslation(lang, "home", "hero.subheadingPart2") || "all in one trip"}
           </p>
           <Button
             variant="primary"
@@ -51,7 +57,7 @@ export default async function HeroSection() {
               />
             }
           >
-            Plan your trip
+            {getTranslation(lang, "home", "hero.planYourTrip") || "Plan your trip"}
           </Button>
         </div>
 

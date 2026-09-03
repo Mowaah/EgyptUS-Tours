@@ -1,0 +1,91 @@
+{
+  "hero": {
+    "breadcrumb": "B2B Programs",
+    "title": "Corporate Experiences in Egypt, Designed Around Your Goals",
+    "subtitle": "From executive retreats and incentive trips to conferences, celebrations, and large-scale corporate events, we handle every detail from concept and planning to on-ground operations.",
+    "galleryTitle": "Corporate Travel Experiences"
+  },
+  "overview": {
+    "title": "Overview",
+    "p1": "Our B2B division partners with international travel agencies, tour operators, travel advisors, and tourism companies to create and deliver seamless Egypt tour packages for their clients.",
+    "p2": "We provide tailored B2B Egypt travel packages, including accommodation, domestic flights, transportation, professional guides, sightseeing, Nile cruises, and curated experiences across Egypt."
+  },
+  "features": {
+    "title": "Why Partner With Us",
+    "subtitle": "Designed to empower international agencies with reliable, high-margin travel solutions.",
+    "card1Title": "Dedicated Account Manager",
+    "card1Desc": "Direct single point of contact for seamless communication, quote turnaround, and rapid adjustments.",
+    "card2Title": "Exclusive Wholesale Rates",
+    "card2Desc": "Access preferred B2B contracts with 5-star hotels, luxury Nile cruisers, and private transportation fleets.",
+    "card3Title": "White-Label Ground Handling",
+    "card3Desc": "Your brand identity front and center with branded airport signs, welcome packs, and custom itineraries.",
+    "card4Title": "24/7 In-Country Support",
+    "card4Desc": "Round-the-clock emergency assistance and dedicated operations team ensuring smooth client journeys."
+  },
+  "process": {
+    "title": "From Vision to Experience",
+    "subtitle": "You bring the objective. We build everything around it",
+    "step1Title": "Understand Your Requirement",
+    "step1Desc": "We learn your clients' needs, destinations, and budget.",
+    "step2Title": "Design the Program",
+    "step2Desc": "We create a tailored itinerary with clear pricing.",
+    "step3Title": "Confirm & Arrange",
+    "step3Desc": "We handle hotels, transport, guides, cruises, and more.",
+    "step4Title": "Operate the Trip",
+    "step4Desc": "We coordinate everything and provide on-ground support.",
+    "step5Title": "Deliver the Experience",
+    "step5Desc": "We ensure a smooth journey from start to finish."
+  },
+  "whyUs": {
+    "title": "Why Us",
+    "subtitle": "We Don't Just Organize Events. We Take Ownership of the Experience",
+    "travelersServed": "Travelers Served",
+    "experience": "Experience in Egypt Tourism",
+    "personalized": "Personalized Experiences",
+    "badgeGoals": "Goals to Experience",
+    "badgeCustom": "Custom Egypt Tour Packages",
+    "badgeGroup": "Group Travel Programs",
+    "badgeLuxury": "Luxury Egypt Experience",
+    "badgeMulti": "Multi-Destination Programs",
+    "badgeFit": "FIT & Tailor-Made Travel",
+    "badgeCruise": "Nile Cruise Packages"
+  },
+  "stats": {
+    "title": "Proven Performance",
+    "subtitle": "Delivering excellence at scale across corporate and leisure group programs."
+  },
+  "testimonials": {
+    "title": "What Our Partners Say",
+    "subtitle": "Trusted by leading travel agencies and tour operators worldwide."
+  },
+  "cta": {
+    "titlePart1": "Let's Create an Experience Your",
+    "titlePart2": "Team Will",
+    "titleHighlight": "Remember",
+    "subtitle": "And an event your leadership will be proud of",
+    "button": "Request a Proposal"
+  },
+  "form": {
+    "breadcrumbB2B": "B2B Programs",
+    "breadcrumbProposal": "Corporate Proposal",
+    "pageTitle": "Request a Corporate Proposal",
+    "pageSubtitle": "Share your requirements and we'll create a tailored proposal for your organization.",
+    "backButton": "Back To B2B Programs",
+    "sectionTitle": "Company Information",
+    "sectionSubtitle": "Provide your company details so we can tailor the proposal accordingly",
+    "companyName": "Company Name",
+    "country": "Country",
+    "contactPerson": "Contact Person",
+    "jobTitle": "Job Title",
+    "email": "Work Email Address",
+    "phone": "Phone Number",
+    "website": "Company Website (Optional)",
+    "requestDetails": "Tell us about your trip/event requirements...",
+    "submitButton": "Submit Proposal Request",
+    "submitting": "Submitting...",
+    "successTitle": "Proposal Request Submitted Successfully!",
+    "successRequestId": "Request ID:",
+    "successDesc": "Our corporate team will review your requirements and reach out with a customized proposal within 24 hours.",
+    "backToHome": "Back to Home"
+  }
+}

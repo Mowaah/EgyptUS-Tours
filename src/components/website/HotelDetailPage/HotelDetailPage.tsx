@@ -12,6 +12,7 @@ import SimilarHotels from "./SimilarHotels/SimilarHotels";
 import HotelBookingWidget from "./HotelBookingWidget/HotelBookingWidget";
 import HotelReviews from "./HotelReviews/HotelReviews";
 import { useFavorite } from "@/hooks/useFavorite";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./HotelDetailPage.module.scss";
 
 interface HotelDetailPageProps {
@@ -19,21 +20,24 @@ interface HotelDetailPageProps {
   similarHotels?: Hotel[];
 }
 
-const HOTEL_TABS = [
-  { id: "overview", label: "Overview" },
-  { id: "hotel-facilities", label: "Hotel Facilities" },
-  { id: "location", label: "Location" },
-  { id: "room-types", label: "Room Types" },
-  { id: "reviews", label: "Traveler Reviews" },
-  { id: "similar-hotels", label: "Similar Hotels" },
-];
+
 
 export default function HotelDetailPage({ hotel, similarHotels }: HotelDetailPageProps) {
   const { isFavorite, isLoading, toggle } = useFavorite({
-    slug: hotel.id, // Assuming hotel.id is the slug used for favorites based on HotelCard
+    slug: hotel.id,
     kind: "hotel",
     initialFavorite: hotel.isFavorite ?? false,
   });
+  const { t } = useTranslation("hotels");
+
+  const HOTEL_TABS = [
+    { id: "overview", label: t("tabs.overview", "Overview") },
+    { id: "hotel-facilities", label: t("tabs.facilities", "Hotel Facilities") },
+    { id: "location", label: t("tabs.location", "Location") },
+    { id: "room-types", label: t("tabs.roomTypes", "Room Types") },
+    { id: "reviews", label: t("tabs.reviews", "Traveler Reviews") },
+    { id: "similar-hotels", label: t("tabs.similar", "Similar Hotels") },
+  ];
 
   const handleShare = async () => {
     try {
@@ -44,7 +48,7 @@ export default function HotelDetailPage({ hotel, similarHotels }: HotelDetailPag
         });
       } else {
         await navigator.clipboard.writeText(window.location.href);
-        alert('Link copied to clipboard!');
+        alert(t("linkCopied", "Link copied to clipboard!"));
       }
     } catch (error) {
       console.error('Error sharing:', error);
@@ -56,10 +60,10 @@ export default function HotelDetailPage({ hotel, similarHotels }: HotelDetailPag
       <PageHeader
         className={styles.pageHeader}
         breadcrumbs={[
-          { label: "Hotels", href: "/hotels" },
-          { label: "Hotel Details", isCurrent: true },
+          { label: t("breadcrumb", "Hotels"), href: "/hotels" },
+          { label: t("hotelDetails", "Hotel Details"), isCurrent: true },
         ]}
-        backButton={{ text: "Back To Hotels", href: "/hotels" }}
+        backButton={{ text: t("backToHotels", "Back To Hotels"), href: "/hotels" }}
         showMobileActions={true}
         isFavorite={isFavorite}
         onFavoriteToggle={toggle}
@@ -93,7 +97,7 @@ export default function HotelDetailPage({ hotel, similarHotels }: HotelDetailPag
                 iconPosition="left"
                 onClick={handleShare}
               >
-                Share
+                {t("share", "Share")}
               </Button>
             </DetailHeroBar>
           </div>

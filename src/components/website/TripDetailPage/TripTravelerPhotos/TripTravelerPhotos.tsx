@@ -3,6 +3,7 @@
 import { useState, useRef, UIEvent } from "react";
 import Image from "next/image";
 import { Trip } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./TripTravelerPhotos.module.scss";
 
 interface TripTravelerPhotosProps {
@@ -10,6 +11,7 @@ interface TripTravelerPhotosProps {
 }
 
 export default function TripTravelerPhotos({ trip }: TripTravelerPhotosProps) {
+  const { t } = useTranslation("trips");
   const photos = trip.travelerPhotos ?? [];
   const viewportRef = useRef<HTMLDivElement>(null);
   const [activeDot, setActiveDot] = useState(0);
@@ -49,7 +51,7 @@ export default function TripTravelerPhotos({ trip }: TripTravelerPhotosProps) {
 
   return (
     <section id="traveler-photos" className={styles.section}>
-      <h2 className={styles.heading}>Taken by Travelers</h2>
+      <h2 className={styles.heading}>{t("travelerPhotos.heading", "Taken by Travelers")}</h2>
       
       <div className={styles.carouselWrapper}>
         <div 

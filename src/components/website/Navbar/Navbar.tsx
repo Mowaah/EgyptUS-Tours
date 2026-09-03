@@ -11,17 +11,18 @@ import UserMenu from "./UserMenu";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./Navbar.module.scss";
 
-const NAV_LINKS = [
-  { label: "Home", href: "/" },
-  { label: "Egypt Tours", href: "/egypttours", hasDropdown: true },
-  { label: "Destinations", href: "/egypttours?destination=all", hasDropdown: true },
-  { label: "Hotels", href: "/hotels" },
-  { label: "Transportation", href: "/transportation" },
-  { label: "Events", href: "/events" },
-  { label: "B2B Programs", href: "/b2b-programs" },
-  { label: "About Us", href: "/about" },
+const NAV_CONFIG = [
+  { key: "home", defaultLabel: "Home", href: "/" },
+  { key: "egyptTours", defaultLabel: "Egypt Tours", href: "/egypttours", hasDropdown: true },
+  { key: "destinations", defaultLabel: "Destinations", href: "/egypttours?destination=all", hasDropdown: true },
+  { key: "hotels", defaultLabel: "Hotels", href: "/hotels" },
+  { key: "transfers", defaultLabel: "Transportation", href: "/transportation" },
+  { key: "events", defaultLabel: "Events", href: "/events" },
+  { key: "b2b", defaultLabel: "B2B Programs", href: "/b2b-programs" },
+  { key: "aboutUs", defaultLabel: "About Us", href: "/about" },
 ];
 
 const LIGHT_NAV_PATHS = [
@@ -45,11 +46,7 @@ export interface NavLinkItem {
   href: string;
 }
 
-const MOBILE_USER_LINKS = [
-  { label: "Favorites", href: "/profile?tab=favorites", icon: "/images/heart-outline.svg" },
-  { label: "Requests", href: "/profile?tab=requests", icon: "/images/archive-book.svg" },
-  { label: "Bookings", href: "/profile?tab=bookings", icon: "/images/message-2.svg" },
-];
+
 
 const TRIP_LISTING_SLUGS = new Set(["classic", "christmas", "nile-cruises"]);
 
@@ -70,6 +67,13 @@ export default function Navbar({
   tripLinks = [],
   destinationLinks = []
 }: NavbarProps) {
+  const { t } = useTranslation("common");
+
+  const navLinks = NAV_CONFIG.map((item) => ({
+    ...item,
+    label: t(`nav.${item.key}`, item.defaultLabel),
+  }));
+
   const finalCategoryLinks = categoryLinks.length > 0 ? categoryLinks : tripLinks;
   const finalDestinationLinks = destinationLinks.filter((d) => {
     const label = d.label.trim().toLowerCase();
@@ -91,12 +95,12 @@ export default function Navbar({
   const destinationParam = searchParams?.get("destination");
   const isBookingPage = pathname === "/booking";
 
-  const isLinkActive = (link: { label: string; href: string }) => {
+  const isLinkActive = (link: { key?: string; label: string; href: string }) => {
     const isToursRoute = pathname.startsWith("/egypttours") || pathname.startsWith("/trips");
-    if (link.label === "Destinations") {
+    if (link.key === "destinations" || link.label === "Destinations") {
       return isToursRoute && !!destinationParam && destinationParam !== "";
     }
-    if (link.label === "Egypt Tours" || link.label === "Trips") {
+    if (link.key === "egyptTours" || link.label === "Egypt Tours" || link.label === "Trips") {
       return isToursRoute && (!destinationParam || destinationParam === "");
     }
     return pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
@@ -167,13 +171,13 @@ export default function Navbar({
 
   const planTripButton = (
     <Button variant="primary" size="md" href="/booking" icon={planTripIcon}>
-      Plan your trip
+      {t("nav.planYourTrip", "Plan your trip")}
     </Button>
   );
 
   const planTripButtonMobile = (
     <Button variant="primary" size="md" href="/booking" icon={planTripIcon} fullWidth>
-      Plan your trip
+      {t("nav.planYourTrip", "Plan your trip")}
     </Button>
   );
 
@@ -216,7 +220,7 @@ export default function Navbar({
 
           {/* Desktop links */}
           <ul className={styles.links}>
-            {NAV_LINKS.map((link) => {
+            {navLinks.map((link) => {
               const isActive = isLinkActive(link);
               const isLightBg = shouldShowScrolled || lightNavBackground;
               const useGlass = isActive && !shouldShowScrolled && !lightNavBackground;
@@ -248,7 +252,7 @@ export default function Navbar({
               );
 
               return (
-                <li key={link.label} className={styles.linkItem}>
+                <li key={link.key} className={styles.linkItem}>
                   {useGlass ? (
                     <GlassCard
                       as={Link}
@@ -270,7 +274,7 @@ export default function Navbar({
                     <div className={styles.dropdownWrapper}>
                       <div className={styles.dropdownCard}>
                         <div className={styles.dropdownGrid}>
-                          {(link.label === "Destinations" ? finalDestinationLinks : finalCategoryLinks).map((opt, i) => (
+                          {(link.key === "destinations" ? finalDestinationLinks : finalCategoryLinks).map((opt, i) => (
                             <Link key={i} href={opt.href} className={styles.dropdownOption}>
                               <Image src="/images/➢.svg" alt="" width={15} height={12} className={styles.dropdownIcon} />
                               <span className={styles.dropdownText}>{opt.label}</span>
@@ -336,17 +340,17 @@ export default function Navbar({
 
             <nav className={styles.drawerNav} aria-label="Mobile primary">
               <ul className={styles.drawerLinks}>
-                {NAV_LINKS.map((link) => {
+                {navLinks.map((link) => {
                   const isActive = isLinkActive(link);
-                  const expanded = expandedDropdown === link.label;
+                  const expanded = expandedDropdown === link.key;
                   const subLinks = link.hasDropdown
-                    ? link.label === "Destinations"
+                    ? link.key === "destinations"
                       ? finalDestinationLinks
                       : finalCategoryLinks
                     : [];
 
                   return (
-                    <li key={link.label} className={styles.drawerLinkItem}>
+                    <li key={link.key} className={styles.drawerLinkItem}>
                       <div className={styles.drawerLinkRow}>
                         <Link
                           href={link.href}
@@ -358,7 +362,7 @@ export default function Navbar({
                           <button
                             type="button"
                             className={`${styles.drawerExpand} ${expanded ? styles.drawerExpandOpen : ""}`}
-                            onClick={() => toggleMobileDropdown(link.label)}
+                            onClick={() => toggleMobileDropdown(link.key)}
                             aria-label={`${expanded ? "Collapse" : "Expand"} ${link.label}`}
                             aria-expanded={expanded}
                           >
@@ -396,37 +400,47 @@ export default function Navbar({
                       <span className={styles.drawerUsername}>{user?.full_name || "Profile"}</span>
                     </li>
                     <li className={styles.drawerDivider} />
-                    {MOBILE_USER_LINKS.map((link) => (
-                      <li key={link.href}>
-                        <Link href={link.href} className={styles.drawerUserLink} onClick={() => setMobileOpen(false)}>
-                          <Image src={link.icon} alt="" width={22} height={22} />
-                          <span>{link.label}</span>
-                        </Link>
-                      </li>
-                    ))}
+                    <li>
+                      <Link href="/profile?tab=favorites" className={styles.drawerUserLink} onClick={() => setMobileOpen(false)}>
+                        <Image src="/images/heart-outline.svg" alt="" width={22} height={22} />
+                        <span>{t("userMenu.favorites", "Favorites")}</span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/profile?tab=requests" className={styles.drawerUserLink} onClick={() => setMobileOpen(false)}>
+                        <Image src="/images/archive-book.svg" alt="" width={22} height={22} />
+                        <span>{t("userMenu.requests", "Requests")}</span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/profile?tab=bookings" className={styles.drawerUserLink} onClick={() => setMobileOpen(false)}>
+                        <Image src="/images/message-2.svg" alt="" width={22} height={22} />
+                        <span>{t("userMenu.bookings", "Bookings")}</span>
+                      </Link>
+                    </li>
                     <li>
                       <button className={styles.drawerUserLink} onClick={() => { setMobileOpen(false); setIsLogoutModalOpen(true); }}>
                         <Image src="/images/logout.svg" alt="" width={22} height={22} />
-                        <span>Log out</span>
+                        <span>{t("userMenu.logout", "Log out")}</span>
                       </button>
                     </li>
                   </>
                 ) : (
                   <>
                     <li className={styles.drawerGuestHeader}>
-                      Guest
+                      {t("userMenu.guest", "Guest")}
                     </li>
                     <li>
                       <Link href="/profile?tab=favorites" className={`${styles.drawerUserLink} ${styles.drawerGuestLink}`} onClick={() => setMobileOpen(false)}>
                         <Image src="/images/heart-outline.svg" alt="" width={22} height={22} />
-                        <span>Favorites</span>
+                        <span>{t("userMenu.favorites", "Favorites")}</span>
                       </Link>
                     </li>
                     <li className={styles.drawerDivider} />
                     <li>
                       <button className={`${styles.drawerUserLink} ${styles.drawerGuestLink}`} onClick={() => { setMobileOpen(false); setIsAuthModalOpen(true); }}>
                         <Image src="/images/profile-gray.svg" alt="" width={22} height={22} />
-                        <span>Login / Sign up</span>
+                        <span>{t("userMenu.loginSignup", "Login / Sign up")}</span>
                       </button>
                     </li>
                   </>

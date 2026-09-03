@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, KeyboardEvent } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./NationalitySelect.module.scss";
 import { COUNTRIES } from "@/data/countries";
 
@@ -15,6 +16,7 @@ interface NationalitySelectProps {
 }
 
 export default function NationalitySelect({ value, onChange, error, useCountryName = false, placeholder, variant, placement = "bottom" }: NationalitySelectProps) {
+  const { t } = useTranslation("common");
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -100,7 +102,7 @@ export default function NationalitySelect({ value, onChange, error, useCountryNa
             <span>{useCountryName ? selected.name : (selected.nationality || selected.name)}</span>
           </div>
         ) : (
-          <span className={styles.placeholder}>{placeholder || (useCountryName ? "Select Country" : "Select Your Nationality")}</span>
+          <span className={styles.placeholder}>{placeholder || (useCountryName ? t("forms.selectCountry", "Select Country") : t("forms.selectNationality", "Select Your Nationality"))}</span>
         )}
         <svg className={styles.chevron} width="12" height="8" viewBox="0 0 12 8" fill="none">
           <path d="M1 1.5L6 6.5L11 1.5" stroke="#A3A3A3" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>

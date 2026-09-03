@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Hotel, HotelReview } from "@/types";
 import { ReviewGrid } from "@/components/shared";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./HotelReviews.module.scss";
 
 interface HotelReviewsProps {
@@ -9,12 +10,13 @@ interface HotelReviewsProps {
 
 export default function HotelReviews({ hotel }: HotelReviewsProps) {
   const reviews = hotel.hotelReviews || [];
+  const { t } = useTranslation("hotels");
   
   if (reviews.length === 0) return null;
 
   return (
     <section id="reviews" className={styles.section}>
-      <h2 className={styles.heading}>Traveler Reviews</h2>
+      <h2 className={styles.heading}>{t("reviews.heading", "Traveler Reviews")}</h2>
 
       <ReviewGrid
         items={reviews}

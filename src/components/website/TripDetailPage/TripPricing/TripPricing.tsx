@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Trip } from "@/types";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./TripPricing.module.scss";
 
 interface TripPricingProps {
@@ -12,6 +13,7 @@ interface TripPricingProps {
 
 export default function TripPricing({ trip }: TripPricingProps) {
   const { formatCurrency } = useCurrency();
+  const { t } = useTranslation("trips");
   const allPricing = trip.pricing ?? [];
   const hasValidTiers = (col: any) => col.tiers && col.tiers.some((t: any) => (t.price || 0) > 0);
 
@@ -49,9 +51,9 @@ export default function TripPricing({ trip }: TripPricingProps) {
 
       <div className={styles.inner}>
         <div className={styles.header}>
-          <h2 className={styles.heading}>Prices &amp; Accommodation</h2>
+          <h2 className={styles.heading}>{t("pricing.heading", "Prices & Accommodation")}</h2>
           <p className={styles.subtitle}>
-            Explore detailed pricing and accommodation options tailored to your selected trip
+            {t("pricing.subtitle", "Explore detailed pricing and accommodation options tailored to your selected trip")}
           </p>
         </div>
 
@@ -62,14 +64,14 @@ export default function TripPricing({ trip }: TripPricingProps) {
               className={`${styles.toggleBtn} ${pricingType === "private" ? styles.toggleBtnActive : ""}`}
               onClick={() => setPricingType("private")}
             >
-              Private Tour
+              {t("pricing.privateTour", "Private Tour")}
             </button>
             <button
               type="button"
               className={`${styles.toggleBtn} ${pricingType === "group" ? styles.toggleBtnActive : ""}`}
               onClick={() => setPricingType("group")}
             >
-              Group Tour
+              {t("pricing.groupTour", "Group Tour")}
             </button>
           </div>
         )}
@@ -86,7 +88,9 @@ export default function TripPricing({ trip }: TripPricingProps) {
                     </div>
                     <p className={styles.tierPrice}>{formatCurrency(tier.price)}</p>
                   </div>
-                  <p className={styles.tierLabel}>Per Person in {tier.label}</p>
+                  <p className={styles.tierLabel}>
+                    {t("pricing.perPersonIn", "Per Person in {label}").replace("{label}", tier.label)}
+                  </p>
                 </div>
               ))}
             </div>

@@ -4,16 +4,12 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { CURRENCY_OPTIONS, DisplayCurrencyCode, useCurrency } from "@/contexts/CurrencyContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { SUPPORTED_LANGUAGES } from "@/i18n/types";
 
 import styles from "./TopBar.module.scss";
 
 const HIDE_TOPBAR_PREFIX = "/booking";
-
-const LANGUAGES = [
-  { code: "EN", name: "English", icon: "/images/en.svg" },
-  { code: "IT", name: "Italian", icon: "/images/it.svg" },
-  { code: "ES", name: "Spanish", icon: "/images/es.svg" },
-];
 
 type DropdownOption = {
   code: string;
@@ -106,7 +102,7 @@ function SimpleDropdown({ options, value, onChange, className, type }: SimpleDro
 
 export default function TopBar() {
   const pathname = usePathname();
-  const [activeLang, setActiveLang] = useState(LANGUAGES[0]);
+  const { setLanguage, activeOption: activeLang } = useLanguage();
   const { currency, setCurrency } = useCurrency();
   const activeCurr = CURRENCY_OPTIONS.find((option) => option.code === currency) ?? CURRENCY_OPTIONS[0];
 
@@ -131,11 +127,11 @@ export default function TopBar() {
 
         <div className={styles.settings}>
           <SimpleDropdown
-            options={LANGUAGES}
+            options={SUPPORTED_LANGUAGES}
             value={activeLang}
             onChange={(option) => {
-              const nextLang = LANGUAGES.find((language) => language.code === option.code);
-              if (nextLang) setActiveLang(nextLang);
+              const nextLang = SUPPORTED_LANGUAGES.find((lang) => lang.code === option.code);
+              if (nextLang) setLanguage(nextLang.locale);
             }}
             type="lang"
           />

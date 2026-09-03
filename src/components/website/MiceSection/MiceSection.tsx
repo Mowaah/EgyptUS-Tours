@@ -1,36 +1,10 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { SectionHeader, FeatureCard, Button } from "@/components/shared";
+import { useTranslation } from "@/hooks/useTranslation";
 import Image from "next/image";
 import styles from "./MiceSection.module.scss";
-
-const FEATURES = [
-  {
-    title: "Executive Meetings",
-    description: "Thoughtfully planned meetings in exceptional Egyptian settings.",
-    color: "#2563EB",
-    iconSrc: "/images/mice/meetings.svg",
-  },
-  {
-    title: "Incentive Experiences",
-    description: "Reward your team with experience that go beyond the ordinary",
-    color: "#EF4444",
-    iconSrc: "/images/mice/incentives.svg",
-  },
-  {
-    title: "Corporate Events",
-    description: "From intimate gatherings to large-scale events, managed start to end",
-    color: "#10B981",
-    iconSrc: "/images/mice/conferences.svg",
-  },
-  {
-    title: "Corporate Travel",
-    description: "Hotels, transportation, flights, tours, and much more",
-    color: "#8B5CF6",
-    iconSrc: "/images/mice/exhibitions.svg",
-  },
-];
 
 const GALLERY_IMAGES = [
   "/images/corporate/corporate1.png",
@@ -53,7 +27,35 @@ const SLOT_STYLES: React.CSSProperties[] = [
 ];
 
 export default function MiceSection() {
+  const { t } = useTranslation("home");
   const [active, setActive] = useState(0);
+
+  const features = useMemo(() => [
+    {
+      title: t("mice.meetingTitle", "Executive Meetings"),
+      description: t("mice.meetingDesc", "Thoughtfully planned meetings in exceptional Egyptian settings."),
+      color: "#2563EB",
+      iconSrc: "/images/mice/meetings.svg",
+    },
+    {
+      title: t("mice.incentiveTitle", "Incentive Experiences"),
+      description: t("mice.incentiveDesc", "Reward your team with experience that go beyond the ordinary"),
+      color: "#EF4444",
+      iconSrc: "/images/mice/incentives.svg",
+    },
+    {
+      title: t("mice.eventsTitle", "Corporate Events"),
+      description: t("mice.eventsDesc", "From intimate gatherings to large-scale events, managed start to end"),
+      color: "#10B981",
+      iconSrc: "/images/mice/conferences.svg",
+    },
+    {
+      title: t("mice.travelTitle", "Corporate Travel"),
+      description: t("mice.travelDesc", "Hotels, transportation, flights, tours, and much more"),
+      color: "#8B5CF6",
+      iconSrc: "/images/mice/exhibitions.svg",
+    },
+  ], [t]);
 
   const advance = useCallback(() => setActive((a) => (a + 1) % N), []);
   const retreat = useCallback(() => setActive((a) => (a - 1 + N) % N), []);
@@ -82,14 +84,14 @@ export default function MiceSection() {
     <section className={styles.section}>
       <div className={styles.container}>
         <SectionHeader
-          label="MICE & Corporate Events"
-          heading="Make Your Next Event Unforgettable in Egypt"
-          description="From high-level meetings and curated incentive experiences to world-class conferences and exhibitions, we handle every detail to create seamless, memorable events in Egypt."
+          label={t("mice.label", "MICE & Corporate Events")}
+          heading={t("mice.heading", "Make Your Next Event Unforgettable in Egypt")}
+          description={t("mice.description", "From high-level meetings and curated incentive experiences to world-class conferences and exhibitions, we handle every detail to create seamless, memorable events in Egypt.")}
           descriptionMaxWidth="780px"
         />
 
         <div className={styles.features}>
-          {FEATURES.map((feature) => (
+          {features.map((feature) => (
             <FeatureCard
               key={feature.title}
               icon={
@@ -151,7 +153,7 @@ export default function MiceSection() {
               />
             }
           >
-            View Details
+            {t("mice.viewDetails", "View Details")}
           </Button>
         </div>
       </div>

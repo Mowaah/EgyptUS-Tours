@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { ReviewGrid } from '@/components/shared';
+import { useTranslation } from '@/hooks/useTranslation';
 import styles from './TransportationReviews.module.scss';
 import { VehicleReview } from '@/types/api';
 
@@ -10,11 +11,12 @@ interface TransportationReviewsProps {
 }
 
 export default function TransportationReviews({ reviews }: TransportationReviewsProps) {
+  const { t } = useTranslation('transportation');
   if (!reviews || reviews.length === 0) return null;
 
   return (
     <section id="reviews" className={styles.section}>
-      <h2 className={styles.title}>Travelers' Reviews</h2>
+      <h2 className={styles.title}>{t('reviews.heading', "Travelers' Reviews")}</h2>
       <ReviewGrid 
         items={reviews} 
         pageSize={6} 

@@ -17,7 +17,29 @@ export async function getHotels(params?: Record<string, any>): Promise<HotelPagi
  * Fetch a single hotel by its slug (detail endpoint).
  */
 export async function getHotelBySlug(slug: string): Promise<HotelDetail> {
-  return serverFetch<HotelDetail>(`/hotels/${slug}/`);
+  try {
+    return await serverFetch<HotelDetail>(`/hotels/${slug}/`);
+  } catch (error: any) {
+    if (error.message?.includes('404')) {
+      try {
+        const all = await getAllHotels();
+        let matched = all.find(h => h.slug === slug || String(h.id) === slug);
+        if (!matched) {
+          for (const lang of ['es', 'it', 'en']) {
+            const langHotels = await getHotels({ lang });
+            matched = langHotels.results?.find(h => h.slug === slug || String(h.id) === slug);
+            if (matched) break;
+          }
+        }
+        if (matched && String(matched.id) !== slug) {
+          return await serverFetch<HotelDetail>(`/hotels/${matched.id}/`);
+        }
+      } catch (fallbackErr) {
+        console.error(`Fallback ID lookup failed for hotel ${slug}:`, fallbackErr);
+      }
+    }
+    throw error;
+  }
 }
 
 /**

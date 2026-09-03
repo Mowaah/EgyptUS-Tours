@@ -3,50 +3,88 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-
-import { POLICY_TAB_ORDER, type PolicyId } from "./policyModalTypes";
-import { PolicyModalBody } from "./PolicyModalBody";
+import { useTranslation } from "@/hooks/useTranslation";
+import type { PolicyId } from "./policyModalTypes";
+import { getTerms, getPrivacy, type LegalSectionData } from "@/services/legalHelpService";
 import styles from "./ImportantLinksModal.module.scss";
-
-const POLICY_META: Record<PolicyId, { tabLabel: string; subtitle: string }> = {
-  terms: {
-    tabLabel: "Terms & Conditions",
-    subtitle: "Essential rules and guidelines for using our services and making reservations.",
-  },
-  children: {
-    tabLabel: "Children Policy",
-    subtitle: "Guidelines for accommodating children during your stay or trip.",
-  },
-  booking: {
-    tabLabel: "Booking Policy",
-    subtitle: "Important information about how reservations are confirmed and processed.",
-  },
-  tipping: {
-    tabLabel: "Tipping",
-    subtitle: "What you need to know about tipping customs in Egypt.",
-  },
-  cancellation: {
-    tabLabel: "Cancellation Policy",
-    subtitle: "Review our cancellation rules to avoid any unexpected charges.",
-  },
-};
 
 interface ImportantLinksModalProps {
   open: boolean;
-  initialTab: PolicyId;
+  initialTab?: PolicyId;
   onClose: () => void;
 }
 
-export default function ImportantLinksModal({ open, initialTab, onClose }: ImportantLinksModalProps) {
-  const [activeTab, setActiveTab] = useState<PolicyId>(initialTab);
+/** Flat tab built from a backend section */
+interface LegalTab {
+  key: string; // unique key e.g. "terms-1"
+  label: string;
+  content: string;
+}
+
+export default function ImportantLinksModal({ open, initialTab = "terms", onClose }: ImportantLinksModalProps) {
+  const { t, language } = useTranslation("legal");
+
+  const [tabs, setTabs] = useState<LegalTab[]>([]);
+  const [activeKey, setActiveKey] = useState<string>("");
+  const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
+  // Fetch all sections whenever the modal opens or language changes
   useEffect(() => {
-    if (open) setActiveTab(initialTab);
-  }, [open, initialTab]);
+    if (!open) return;
 
+    let cancelled = false;
+    setLoading(true);
+    setTabs([]);
+    setActiveKey("");
+
+    Promise.all([getTerms(language), getPrivacy(language)])
+      .then(([termsData, privacyData]) => {
+        if (cancelled) return;
+
+        const termsTabs: LegalTab[] = termsData.map((s: LegalSectionData) => ({
+          key: `terms-${s.id}`,
+          label: s.title,
+          content: s.content,
+        }));
+
+        const privacyTabs: LegalTab[] = privacyData.map((s: LegalSectionData) => ({
+          key: `privacy-${s.id}`,
+          label: s.title,
+          content: s.content,
+        }));
+
+        const allTabs = [...termsTabs, ...privacyTabs];
+        setTabs(allTabs);
+
+        // Pick initial active tab based on initialTab hint
+        if (allTabs.length > 0) {
+          if (initialTab === "privacy" || initialTab === "booking" || initialTab === "children") {
+            // Try to open first privacy tab
+            const firstPrivacy = privacyTabs[0];
+            setActiveKey(firstPrivacy ? firstPrivacy.key : allTabs[0].key);
+          } else {
+            // Default: first terms tab
+            const firstTerms = termsTabs[0];
+            setActiveKey(firstTerms ? firstTerms.key : allTabs[0].key);
+          }
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load legal content:", err);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [open, language, initialTab]);
+
+  // Close on Escape
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -56,6 +94,7 @@ export default function ImportantLinksModal({ open, initialTab, onClose }: Impor
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
+  // Lock scroll
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -67,7 +106,7 @@ export default function ImportantLinksModal({ open, initialTab, onClose }: Impor
 
   if (!mounted || !open) return null;
 
-  const meta = POLICY_META[activeTab];
+  const activeTab = tabs.find((t) => t.key === activeKey);
 
   return createPortal(
     <div className={styles.overlay} onClick={onClose} role="presentation">
@@ -78,28 +117,33 @@ export default function ImportantLinksModal({ open, initialTab, onClose }: Impor
         aria-labelledby="policy-modal-title"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className={styles.tabRow} role="tablist" aria-label="Policy sections">
-          {POLICY_TAB_ORDER.map((id) => (
-            <button
-              key={id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === id}
-              id={`policy-tab-${id}`}
-              className={`${styles.tab} ${activeTab === id ? styles.tabActive : ""}`}
-              onClick={() => setActiveTab(id)}
-            >
-              {POLICY_META[id].tabLabel}
-            </button>
-          ))}
-        </div>
+        {/* Tab row — each backend section is a tab */}
+        {!loading && tabs.length > 0 && (
+          <div className={styles.tabRow} role="tablist" aria-label="Legal sections">
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                role="tab"
+                aria-selected={activeKey === tab.key}
+                id={`policy-tab-${tab.key}`}
+                className={`${styles.tab} ${activeKey === tab.key ? styles.tabActive : ""}`}
+                onClick={() => setActiveKey(tab.key)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        )}
 
+        {/* Header — just the active section title, no subtitle */}
         <div className={styles.headerRow}>
           <div className={styles.headerText}>
             <h2 id="policy-modal-title" className={styles.modalTitle}>
-              {meta.tabLabel}
+              {loading
+                ? t("loading", "Loading...")
+                : activeTab?.label ?? t("noContent", "No content available")}
             </h2>
-            <p className={styles.modalSubtitle}>{meta.subtitle}</p>
           </div>
           <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Close dialog">
             <Image src="/images/x-modal.svg" alt="" width={24} height={24} />
@@ -108,8 +152,22 @@ export default function ImportantLinksModal({ open, initialTab, onClose }: Impor
 
         <hr className={styles.divider} />
 
-        <div className={styles.body} role="tabpanel">
-          <PolicyModalBody id={activeTab} />
+        {/* Content */}
+        <div className={styles.body} role="tabpanel" aria-labelledby={`policy-tab-${activeKey}`}>
+          {loading ? (
+            <div className={styles.loadingWrapper}>
+              <p>{t("loading", "Loading...")}</p>
+            </div>
+          ) : !activeTab ? (
+            <div className={styles.emptyState}>
+              <p>{t("noContent", "No content available at the moment.")}</p>
+            </div>
+          ) : (
+            <div
+              className={styles.richTextContent}
+              dangerouslySetInnerHTML={{ __html: activeTab.content }}
+            />
+          )}
         </div>
       </div>
     </div>,

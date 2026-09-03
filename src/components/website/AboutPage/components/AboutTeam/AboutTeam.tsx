@@ -3,30 +3,32 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import CountUp from "react-countup";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./AboutTeam.module.scss";
 
-const STATS = [
-  {
-    end: 100,
-    suffix: "%",
-    desc: "Personalized Experiences",
-  },
-  {
-    end: 1000,
-    suffix: "+",
-    separator: ",",
-    desc: "Travelers Served",
-  },
-  {
-    end: 30,
-    suffix: "+Years",
-    desc: "Experience in Egypt Tourism",
-  },
-];
-
 export default function AboutTeam() {
+  const { t } = useTranslation("about");
   const statsRef = useRef<HTMLDivElement>(null);
   const [started, setStarted] = useState(false);
+
+  const stats = [
+    {
+      end: 100,
+      suffix: "%",
+      desc: t("team.statPersonalized", "Personalized Experiences"),
+    },
+    {
+      end: 1000,
+      suffix: "+",
+      separator: ",",
+      desc: t("team.statTravelers", "Travelers Served"),
+    },
+    {
+      end: 30,
+      suffix: "+Years",
+      desc: t("team.statExperience", "Experience in Egypt Tourism"),
+    },
+  ];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -72,26 +74,26 @@ export default function AboutTeam() {
           <div className={styles.content}>
             <div className={styles.textSection}>
               <div className={styles.textGroup}>
-                <span className={styles.label}>The Founder</span>
-                <h2 className={styles.heading}>Meet the Founder Behind the Experience</h2>
-                <h3 className={styles.founderName}>Mohamed Abbas</h3>
+                <span className={styles.label}>{t("team.label", "The Founder")}</span>
+                <h2 className={styles.heading}>{t("team.heading", "Meet the Founder Behind the Experience")}</h2>
+                <h3 className={styles.founderName}>{t("team.founderName", "Mohamed Abbas")}</h3>
               </div>
 
               <div className={styles.paragraphs}>
                 <p>
-                  With more than <strong>30 years of experience in Egypt&apos;s tourism industry</strong>, Mr. Mohamed Abbas brings extensive knowledge of Egypt&apos;s destinations, history, and travel operations.
+                  {t("team.p1", "With more than 30 years of experience in Egypt's tourism industry, Mr. Mohamed Abbas brings extensive knowledge of Egypt's destinations, history, and travel operations.")}
                 </p>
                 <p>
-                  As a <strong>Tourism Manager, Egyptologist, and former tour guide</strong>, he combines professional expertise with firsthand experience in creating and managing memorable journeys across Egypt. His deep understanding of the destination and commitment to service have helped shape Egypt Us Tours into a trusted partner for travelers and international tourism professionals.
+                  {t("team.p2", "As a Tourism Manager, Egyptologist, and former tour guide, he combines professional expertise with firsthand experience in creating and managing memorable journeys across Egypt. His deep understanding of the destination and commitment to service have helped shape Egypt Us Tours into a trusted partner for travelers and international tourism professionals.")}
                 </p>
                 <p>
-                  His philosophy is simple: <strong>great travel starts with local expertise, careful planning, and genuine hospitality.</strong>
+                  {t("team.p3", "His philosophy is simple: great travel starts with local expertise, careful planning, and genuine hospitality.")}
                 </p>
               </div>
             </div>
 
             <div className={styles.statsRow} ref={statsRef}>
-              {STATS.map((stat, i) => (
+              {stats.map((stat, i) => (
                 <div key={i} className={styles.statItem}>
                   <span className={styles.statValue}>
                     {started ? (

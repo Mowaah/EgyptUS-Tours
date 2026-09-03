@@ -1,38 +1,13 @@
-import Image from "next/image";
-import styles from "./Footer.module.scss";
+"use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { CONTACT_INFO } from "@/constants";
+import { useTranslation } from "@/hooks/useTranslation";
+import styles from "./Footer.module.scss";
 
 type NavLinkItem = { label: string; href?: string; value?: string };
 type NavLinksType = Record<string, NavLinkItem[]>;
-
-const NAV_LINKS: NavLinksType = {
-  "Egypt Us": [
-    { label: "Home", href: "/" },
-    { label: "Egypt Tours", href: "/egypttours" },
-    { label: "Destinations", href: "/egypttours" },
-    { label: "Hotels", href: "/hotels" },
-    { label: "Transportation", href: "/transportation" },
-    { label: "Events", href: "/events" },
-    { label: "B2B Programs", href: "/b2b-programs" },
-    { label: "About Us", href: "/about" },
-    { label: "Contact Us", href: "/contact" },
-  ],
-  "Travel Guides": [
-    { label: "Blogs", href: "/blogs" },
-    { label: "Articles", href: "/articles" },
-  ],
-  "Customer Support": [
-    { label: "Terms & Conditions", href: "/terms" },
-    { label: "Privacy & Policy", href: "/privacy" },
-    { label: "FAQs", href: "/faq" },
-  ],
-  Contact: CONTACT_INFO.map((item) => ({
-    label: `${item.type}:`,
-    value: item.value.trim(),
-  })),
-};
 
 const SOCIALS = [
   {
@@ -68,6 +43,35 @@ const SOCIALS = [
 ];
 
 export default function Footer() {
+  const { t } = useTranslation("common");
+
+  const navLinks: NavLinksType = {
+    [t("footer.egyptUs", "Egypt Us")]: [
+      { label: t("nav.home", "Home"), href: "/" },
+      { label: t("nav.egyptTours", "Egypt Tours"), href: "/egypttours" },
+      { label: t("nav.destinations", "Destinations"), href: "/egypttours" },
+      { label: t("nav.hotels", "Hotels"), href: "/hotels" },
+      { label: t("nav.transfers", "Transportation"), href: "/transportation" },
+      { label: t("nav.events", "Events"), href: "/events" },
+      { label: t("nav.b2b", "B2B Programs"), href: "/b2b-programs" },
+      { label: t("nav.aboutUs", "About Us"), href: "/about" },
+      { label: t("nav.contactUs", "Contact Us"), href: "/contact" },
+    ],
+    [t("footer.travelGuides", "Travel Guides")]: [
+      { label: t("footer.blogs", "Blogs"), href: "/blogs" },
+      { label: t("footer.articles", "Articles"), href: "/articles" },
+    ],
+    [t("footer.customerSupport", "Customer Support")]: [
+      { label: t("footer.termsConditions", "Terms & Conditions"), href: "/terms" },
+      { label: t("footer.privacyPolicy", "Privacy & Policy"), href: "/privacy" },
+      { label: t("footer.faqs", "FAQs"), href: "/faq" },
+    ],
+    [t("footer.contact", "Contact")]: CONTACT_INFO.map((item) => ({
+      label: `${item.type}:`,
+      value: item.value.trim(),
+    })),
+  };
+
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
@@ -77,10 +81,10 @@ export default function Footer() {
               <Image src="/images/logo-blue.svg" alt="Logo" width={150} height={30} className={styles.logo} />
             </Link>
             <p className={styles.tagline}>
-              Discover unforgettable travel experiences across Egypt and worldwide, designed with care, comfort, and local expertise.
+              {t("footer.tagline", "Discover unforgettable travel experiences across Egypt and worldwide, designed with care, comfort, and local expertise.")}
             </p>
             <div className={styles.socialBlock}>
-              <span className={styles.followLabel}>Follow us</span>
+              <span className={styles.followLabel}>{t("footer.followUs", "Follow us")}</span>
               <div className={styles.socials}>
                 {SOCIALS.map((s) => (
                   <a key={s.label} href={s.href} aria-label={s.label} className={styles.socialIcon}>
@@ -92,7 +96,7 @@ export default function Footer() {
           </div>
 
           <div className={styles.linksGrid}>
-            {Object.entries(NAV_LINKS).map(([title, links]) => (
+            {Object.entries(navLinks).map(([title, links]) => (
               <div key={title} className={styles.linkGroup}>
                 <h4 className={styles.linkGroupTitle}>{title}</h4>
                 <ul className={styles.linkList}>
@@ -118,7 +122,7 @@ export default function Footer() {
 
         <div className={styles.divider} />
         <p className={styles.copyright}>
-          © 2026 All Rights Reserved | Powered by{" "}
+          {t("footer.copyright", "© 2026 All Rights Reserved | Powered by")}{" "}
           <a
             href="https://devoraa.com/"
             target="_blank"

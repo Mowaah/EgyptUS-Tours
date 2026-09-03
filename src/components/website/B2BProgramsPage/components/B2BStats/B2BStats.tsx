@@ -3,30 +3,32 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import CountUp from "react-countup";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./B2BStats.module.scss";
 
-const STATS = [
-  { end: 1000, prefix: "+", suffix: "", separator: ",", label: "Travelers Served" },
-  { end: 26,  prefix: "+", suffix: "",  label: "Experience in Egypt Tourism" },
-  { end: 100, prefix: "", suffix: "%",  label: "Personalized Experiences" },
-];
-
-const BADGES_ROW1 = [
-  "Goals to Experience",
-  "Custom Egypt Tour Packages",
-  "Group Travel Programs",
-  "Luxury Egypt Experience",
-];
-
-const BADGES_ROW2 = [
-  "Multi-Destination Programs",
-  "FIT & Tailor-Made Travel",
-  "Nile Cruise Packages",
-];
-
 export default function B2BStats() {
+  const { t } = useTranslation("b2b");
   const ref = useRef<HTMLDivElement>(null);
   const [started, setStarted] = useState(false);
+
+  const stats = [
+    { end: 1000, prefix: "+", suffix: "", separator: ",", label: t("whyUs.travelersServed", "Travelers Served") },
+    { end: 26,  prefix: "+", suffix: "",  label: t("whyUs.experience", "Experience in Egypt Tourism") },
+    { end: 100, prefix: "", suffix: "%",  label: t("whyUs.personalized", "Personalized Experiences") },
+  ];
+
+  const badgesRow1 = [
+    t("whyUs.badgeGoals", "Goals to Experience"),
+    t("whyUs.badgeCustom", "Custom Egypt Tour Packages"),
+    t("whyUs.badgeGroup", "Group Travel Programs"),
+    t("whyUs.badgeLuxury", "Luxury Egypt Experience"),
+  ];
+
+  const badgesRow2 = [
+    t("whyUs.badgeMulti", "Multi-Destination Programs"),
+    t("whyUs.badgeFit", "FIT & Tailor-Made Travel"),
+    t("whyUs.badgeCruise", "Nile Cruise Packages"),
+  ];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -50,15 +52,15 @@ export default function B2BStats() {
       </div>
 
       <div className={styles.header}>
-        <h2 className={styles.title}>Why Us</h2>
+        <h2 className={styles.title}>{t("whyUs.title", "Why Us")}</h2>
         <p className={styles.subtitle}>
-          We Don&apos;t Just Organize Events. We Take Ownership of the Experience
+          {t("whyUs.subtitle", "We Don't Just Organize Events. We Take Ownership of the Experience")}
         </p>
       </div>
 
       <div className={styles.statsWrapper}>
         <div className={styles.statsGrid} ref={ref}>
-          {STATS.map((stat, idx) => (
+          {stats.map((stat, idx) => (
             <div key={idx} className={styles.statItem}>
               <span className={styles.value}>
                 {started ? (
@@ -81,7 +83,7 @@ export default function B2BStats() {
 
         <div className={styles.badgesCard}>
           <div className={styles.badgesRow}>
-            {BADGES_ROW1.map((text, idx) => (
+            {badgesRow1.map((text, idx) => (
               <div key={idx} className={styles.badge}>
                 <div className={styles.iconWrap}>
                   <Image src="/images/star-blue.svg" alt="" width={17} height={16} />
@@ -91,7 +93,7 @@ export default function B2BStats() {
             ))}
           </div>
           <div className={styles.badgesRow}>
-            {BADGES_ROW2.map((text, idx) => (
+            {badgesRow2.map((text, idx) => (
               <div key={idx} className={styles.badge}>
                 <div className={styles.iconWrap}>
                   <Image src="/images/star-blue.svg" alt="" width={17} height={16} />

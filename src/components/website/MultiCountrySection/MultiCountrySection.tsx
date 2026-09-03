@@ -1,28 +1,31 @@
+"use client";
+
 import { Button, SectionHeader, TripCard } from "@/components/shared";
+import { useTranslation } from "@/hooks/useTranslation";
 import { Trip } from "@/types";
 import Image from "next/image";
 import styles from "./MultiCountrySection.module.scss";
-
-
 
 interface MultiCountrySectionProps {
   initialTrips?: Trip[];
 }
 
 export default function MultiCountrySection({ initialTrips = [] }: MultiCountrySectionProps) {
+  const { t } = useTranslation("home");
+
   return (
     <section className={styles.section}>
       <div className={styles.container}>
         <div className={styles.top}>
           <div className={styles.left}>
             <SectionHeader
-              label="Multi country Tours"
+              label={t("multiCountry.label", "Multi country Tours")}
               heading={
                 <>
-                  One <br className={styles.desktopBreak} />
-                  Journey. <br className={styles.desktopBreak} />
-                  Multiple <br className={styles.desktopBreak} />
-                  Cultures
+                  {t("multiCountry.headingPart1", "One")} <br className={styles.desktopBreak} />
+                  {t("multiCountry.headingPart2", "Journey.")} <br className={styles.desktopBreak} />
+                  {t("multiCountry.headingPart3", "Multiple")} <br className={styles.desktopBreak} />
+                  {t("multiCountry.headingPart4", "Cultures")}
                 </>
               }
               align="left"
@@ -32,7 +35,7 @@ export default function MultiCountrySection({ initialTrips = [] }: MultiCountryS
 
           <div className={styles.right}>
             <p className={styles.description}>
-              Why choose one destination when your journey can take you across cultures, landscapes, and stories? Our multi-destination tours bring carefully selected experiences together, making every stop part of one seamless, unforgettable adventure.
+              {t("multiCountry.description", "Why choose one destination when your journey can take you across cultures, landscapes, and stories? Our multi-destination tours bring carefully selected experiences together, making every stop part of one seamless, unforgettable adventure.")}
             </p>
             <Button
               variant="outline"
@@ -48,7 +51,7 @@ export default function MultiCountrySection({ initialTrips = [] }: MultiCountryS
                 />
               }
             >
-              Explore Tours
+              {t("multiCountry.exploreTours", "Explore Tours")}
             </Button>
           </div>
 

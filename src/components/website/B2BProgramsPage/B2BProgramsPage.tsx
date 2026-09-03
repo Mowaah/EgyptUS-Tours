@@ -1,3 +1,5 @@
+"use client";
+
 import { PageHeader, DetailGallery } from "@/components/shared";
 import B2BOverview from "./components/B2BOverview/B2BOverview";
 import B2BBookingWidget from "./components/B2BBookingWidget/B2BBookingWidget";
@@ -7,6 +9,7 @@ import B2BStats from "./components/B2BStats/B2BStats";
 import B2BTestimonials from "./components/B2BTestimonials/B2BTestimonials";
 // import B2BCaseStudy from "./components/B2BCaseStudy/B2BCaseStudy";
 import B2BCTA from "./components/B2BCTA/B2BCTA";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./B2BProgramsPage.module.scss";
 
 const GALLERY_IMAGES = [
@@ -24,15 +27,17 @@ interface B2BProgramsPageProps {
 }
 
 export default function B2BProgramsPage({ testimonials }: B2BProgramsPageProps) {
+  const { t } = useTranslation("b2b");
+
   return (
     <div className={styles.page}>
       <PageHeader
         className={styles.pageHeader}
         breadcrumbs={[
-          { label: "B2B Programs", isCurrent: true },
+          { label: t("hero.breadcrumb", "B2B Programs"), isCurrent: true },
         ]}
-        title="Corporate Experiences in Egypt, Designed Around Your Goals"
-        subtitle="From executive retreats and incentive trips to conferences, celebrations, and large-scale corporate events, we handle every detail from concept and planning to on-ground operations."
+        title={t("hero.title", "Corporate Experiences in Egypt, Designed Around Your Goals")}
+        subtitle={t("hero.subtitle", "From executive retreats and incentive trips to conferences, celebrations, and large-scale corporate events, we handle every detail from concept and planning to on-ground operations.")}
         decorationSrc="/images/dotted-line3.svg"
         titleMaxWidth="950px"
         subtitleMaxWidth="900px"
@@ -40,7 +45,7 @@ export default function B2BProgramsPage({ testimonials }: B2BProgramsPageProps) 
 
       <div className={styles.heroSection}>
         <div className={styles.galleryWrap}>
-          <DetailGallery images={GALLERY_IMAGES} title="Corporate Travel Experiences" />
+          <DetailGallery images={GALLERY_IMAGES} title={t("hero.galleryTitle", "Corporate Travel Experiences")} />
         </div>
       </div>
 

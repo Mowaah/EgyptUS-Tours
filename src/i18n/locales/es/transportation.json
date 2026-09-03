@@ -1,0 +1,70 @@
+{
+  "breadcrumb": "Transporte",
+  "vehicleDetails": "Detalles de Transporte",
+  "backToTransportation": "Volver al Transporte",
+  "share": "Compartir",
+  "linkCopied": "¡Enlace copiado al portapapeles!",
+  "pageTitle": "Viaja con Comodidad",
+  "searchResults": "Resultados de Búsqueda",
+  "pageSubtitle": "Elige el vehículo perfecto para cada trayecto — desde paseos por la ciudad hasta traslados de lujo.",
+  "features": {
+    "heading": "Características y Servicios",
+    "fullyInsured": "Totalmente Asegurado",
+    "fullyInsuredDesc": "Todos los vehículos están completamente asegurados para tu seguridad",
+    "expertDrivers": "Conductores Expertos",
+    "expertDriversDesc": "Chóferes profesionales con conocimiento local",
+    "service247": "Servicio 24/7",
+    "service247Desc": "Disponible las 24 horas para tu comodidad",
+    "topRated": "Mejor Valorado",
+    "topRatedDesc": "4.9+ de valoración media de clientes satisfechos"
+  },
+  "searchSummary": {
+    "date": "Fecha",
+    "anyDate": "Cualquier Fecha",
+    "vehicle": "Vehículo",
+    "allVehicles": "Todos los Vehículos"
+  },
+  "toolbar": {
+    "availableVehicles": "Vehículos Disponibles",
+    "vehiclesFoundForRoute": "{count} vehículos encontrados para tu ruta",
+    "vehiclesFound": "{count} Vehículos Encontrados",
+    "searchPlaceholder": "Buscar vehículos..."
+  },
+  "sort": {
+    "recommended": "Recomendados",
+    "priceLow": "Precio: De Menor a Mayor",
+    "priceHigh": "Precio: De Mayor a Menor"
+  },
+  "tabs": {
+    "overview": "Resumen",
+    "features": "Características y Servicios",
+    "reviews": "Reseñas de Viajeros"
+  },
+  "overview": {
+    "heading": "Resumen",
+    "noOverview": "No hay resumen disponible.",
+    "spaciousTrunk": "Maletero espacioso",
+    "comfortableSeating": "Asientos cómodos",
+    "estimatedDuration": "Duración estimada",
+    "fullDay": "Día Completo",
+    "oneHour": "1 hora",
+    "hours": "{count} horas",
+    "hoursRange": "{min}-{max} horas",
+    "standard": "Estándar",
+    "suitcaseSingular": "{count} maleta grande",
+    "suitcasePlural": "{count} maletas grandes",
+    "passengerSingular": "{count} Pasajero",
+    "passengerPlural": "{count} Pasajeros"
+  },
+  "bookingWidget": {
+    "title": "Reservar Este Vehículo",
+    "subtitle": "Personaliza tu viaje por Egipto con facilidad",
+    "basePrice": "Precio Base",
+    "startFrom": "Desde",
+    "perDay": "Por Día",
+    "bookNow": "Reservar Ahora"
+  },
+  "reviews": {
+    "heading": "Reseñas de Viajeros"
+  }
+}

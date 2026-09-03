@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Trip } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 import ImportantLinksModal from "./ImportantLinksModal";
 import { getPolicyIdFromLink } from "./getPolicyIdFromLink";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function TripImportantLinks({ trip }: Props) {
+  const { t } = useTranslation("trips");
   const links = trip.importantLinks ?? [];
   const [modalOpen, setModalOpen] = useState(false);
   const [initialTab, setInitialTab] = useState<PolicyId>("terms");
@@ -30,12 +32,12 @@ export default function TripImportantLinks({ trip }: Props) {
       <section id="more-adventures" className={styles.section}>
         <div className={styles.banner}>
           <Image src="/images/caution-yellow.svg" alt="Important" width={20} height={20} />
-          <span>Please make sure to review the following links</span>
+          <span>{t("importantLinks.banner", "Please make sure to review the following links")}</span>
         </div>
 
-        <h2 className={styles.heading}>Important links</h2>
+        <h2 className={styles.heading}>{t("importantLinks.heading", "Important links")}</h2>
         <p className={styles.subtitle}>
-          They include important information about our policies, privacy terms, payment details, and related guidelines.
+          {t("importantLinks.subtitle", "They include important information about our policies, privacy terms, payment details, and related guidelines.")}
         </p>
 
         <div className={styles.pills}>

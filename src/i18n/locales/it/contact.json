@@ -1,0 +1,47 @@
+{
+  "header": {
+    "title": "Mettiti in Contatto",
+    "subtitle": "Hai domande sui nostri tour o desideri assistenza per pianificare il tuo itinerario? Siamo qui per aiutarti."
+  },
+  "info": {
+    "title": "Informazioni di Contatto",
+    "phone": "+20 100 000 0000",
+    "email": "info@egyptus-tours.com",
+    "address": "Il Cairo, Egitto",
+    "workingHours": "Lun - Dom: Assistenza 24/7"
+  },
+  "section": {
+    "label": "Contatto",
+    "headingPart1": "Non Sai da Dove",
+    "headingPart2": "Iniziare? Contattaci",
+    "headingPart3": "e compila il modulo",
+    "description": "Raccontaci cosa desideri, e il nostro team ti aiuterà a creare l'esperienza perfetta in Egitto. Compila il modulo e iniziamo a pianificare.",
+    "reviews": "5.0/5 Recensioni",
+    "fullName": "Nome e Cognome",
+    "fullNamePlaceholder": "Nome e cognome qui...",
+    "email": "Email",
+    "emailPlaceholder": "La tua email qui...",
+    "message": "Messaggio",
+    "messagePlaceholder": "Come possiamo aiutarti?",
+    "submit": "Invia",
+    "submitting": "Invio in corso...",
+    "errNameRequired": "Il nome è obbligatorio.",
+    "errEmailRequired": "L'email è obbligatoria.",
+    "errEmailInvalid": "Inserisci un indirizzo email valido.",
+    "errMessageRequired": "Il messaggio è obbligatorio.",
+    "successTitle": "Messaggio Inviato con Successo!",
+    "successDesc": "Grazie per averci contattato. Un membro del nostro team di specialisti esaminerà la tua richiesta e ti risponderà entro 24 ore.",
+    "closeModal": "Chiudi"
+  },
+  "form": {
+    "fullName": "Nome e Cognome",
+    "email": "Indirizzo Email",
+    "phone": "Numero di Telefono",
+    "subject": "Oggetto",
+    "message": "Il Tuo Messaggio",
+    "submit": "Invia Messaggio",
+    "submitting": "Invio in corso...",
+    "success": "Il tuo messaggio è stato inviato con successo. Ti contatteremo a breve!",
+    "error": "Invio del messaggio non riuscito. Riprova o contattaci direttamente via email o telefono."
+  }
+}

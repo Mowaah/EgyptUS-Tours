@@ -5,7 +5,9 @@ import ChatBot from "@/components/website/ChatBot/ChatBot";
 import { getEgyptTripCategories } from "@/services/categoriesService";
 import { getAllDestinations } from "@/services/destinationsService";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
-
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import { normalizeLanguage, LANGUAGE_COOKIE_KEY } from "@/i18n";
+import { cookies } from "next/headers";
 import { Suspense } from "react";
 
 export default async function WebsiteLayout({
@@ -13,6 +15,10 @@ export default async function WebsiteLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = await cookies();
+  const langCookie = cookieStore.get(LANGUAGE_COOKIE_KEY)?.value;
+  const initialLanguage = normalizeLanguage(langCookie);
+
   const [categoriesData, destinationsData] = await Promise.all([
     getEgyptTripCategories(),
     getAllDestinations(),
@@ -35,14 +41,16 @@ export default async function WebsiteLayout({
     }));
 
   return (
-    <CurrencyProvider>
-      <TopBar />
-      <Suspense fallback={null}>
-        <Navbar categoryLinks={categoryLinks} destinationLinks={destinationLinks} />
-      </Suspense>
-      <main>{children}</main>
-      <ChatBot />
-      <Footer />
-    </CurrencyProvider>
+    <LanguageProvider initialLanguage={initialLanguage}>
+      <CurrencyProvider>
+        <TopBar />
+        <Suspense fallback={null}>
+          <Navbar categoryLinks={categoryLinks} destinationLinks={destinationLinks} />
+        </Suspense>
+        <main>{children}</main>
+        <ChatBot />
+        <Footer />
+      </CurrencyProvider>
+    </LanguageProvider>
   );
 }

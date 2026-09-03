@@ -1,5 +1,6 @@
 import { Hotel } from "@/types";
 import Image from "next/image";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./HotelLocation.module.scss";
 
 interface HotelLocationProps {
@@ -7,9 +8,11 @@ interface HotelLocationProps {
 }
 
 export default function HotelLocation({ hotel }: HotelLocationProps) {
+  const { t } = useTranslation("hotels");
+
   return (
     <section id="location" className={styles.section}>
-      <h2 className={styles.heading}>Location</h2>
+      <h2 className={styles.heading}>{t("location.heading", "Location")}</h2>
 
       <div className={styles.addressBar}>
         <Image src="/images/location-orange.svg" alt="" width={24} height={24} />
@@ -31,7 +34,7 @@ export default function HotelLocation({ hotel }: HotelLocationProps) {
           />
         ) : (
           <div className={styles.mapPlaceholder}>
-            <p>Map not available</p>
+            <p>{t("location.mapNotAvailable", "Map not available")}</p>
           </div>
         )}
 

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { GlassCard } from "@/components/shared";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./UserMenu.module.scss";
 
 interface UserMenuProps {
@@ -17,6 +18,7 @@ interface UserMenuProps {
 }
 
 export default function UserMenu({ scrolled, lightNavBackground, isLoggedIn, userName, setIsLoggedIn, openAuthModal, onLogoutClick }: UserMenuProps) {
+  const { t } = useTranslation("common");
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -77,7 +79,7 @@ export default function UserMenu({ scrolled, lightNavBackground, isLoggedIn, use
               <div className={styles.avatarWrapper}>
                 <Image src="/images/profile-orange.svg" alt="" width={22} height={22} className={styles.avatarIcon} />
               </div>
-              <span className={styles.username}>{userName || "Profile"}</span>
+              <span className={styles.username}>{userName || t("userMenu.profile", "Profile")}</span>
             </Link>
 
             <div className={styles.divider} />
@@ -85,33 +87,33 @@ export default function UserMenu({ scrolled, lightNavBackground, isLoggedIn, use
             <div className={styles.menuLinks}>
               <Link href="/profile?tab=favorites" className={styles.menuItem} onClick={() => setIsOpen(false)}>
                 <Image src="/images/heart-outline.svg" alt="" width={24} height={24} className={styles.menuIcon} />
-                <span>Favorites</span>
+                <span>{t("userMenu.favorites", "Favorites")}</span>
               </Link>
               <Link href="/profile?tab=requests" className={styles.menuItem} onClick={() => setIsOpen(false)}>
                 <Image src="/images/archive-book.svg" alt="" width={24} height={24} className={styles.menuIcon} />
-                <span>Requests</span>
+                <span>{t("userMenu.requests", "Requests")}</span>
               </Link>
               <Link href="/profile?tab=bookings" className={styles.menuItem} onClick={() => setIsOpen(false)}>
                 <Image src="/images/message-2.svg" alt="" width={24} height={24} className={styles.menuIcon} />
-                <span>Bookings</span>
+                <span>{t("userMenu.bookings", "Bookings")}</span>
               </Link>
             </div>
 
             <div className={styles.divider} />
 
             <button className={`${styles.menuItem} ${styles.logoutBtn}`} onClick={() => { setIsOpen(false); onLogoutClick(); }}>
-              <span>Log out</span>
+              <span>{t("userMenu.logout", "Log out")}</span>
               <Image src="/images/logout.svg" alt="" width={24} height={24} className={styles.logoutIcon} />
             </button>
           </>
         ) : (
           <>
-            <div className={styles.guestHeader}>Guest</div>
+            <div className={styles.guestHeader}>{t("userMenu.guest", "Guest")}</div>
 
             <div className={styles.menuLinks}>
               <Link href="/profile?tab=favorites" className={styles.menuItem} onClick={() => setIsOpen(false)}>
                 <Image src="/images/heart-outline.svg" alt="" width={24} height={24} className={styles.menuIcon} />
-                <span>Favorites</span>
+                <span>{t("userMenu.favorites", "Favorites")}</span>
               </Link>
             </div>
 
@@ -119,7 +121,7 @@ export default function UserMenu({ scrolled, lightNavBackground, isLoggedIn, use
 
             <button className={styles.menuItem} onClick={() => { setIsOpen(false); openAuthModal(); }}>
               <Image src="/images/profile-gray.svg" alt="" width={24} height={24} className={styles.menuIcon} />
-              <span>Login / Sign up</span>
+              <span>{t("userMenu.loginSignup", "Login / Sign up")}</span>
             </button>
           </>
         )}

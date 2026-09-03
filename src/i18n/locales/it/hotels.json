@@ -1,0 +1,93 @@
+{
+  "breadcrumb": "Hotel",
+  "hotelDetails": "Dettagli Hotel",
+  "backToHotels": "Torna agli Hotel",
+  "share": "Condividi",
+  "linkCopied": "Link copiato negli appunti!",
+  "pageTitle": "Trova l'hotel perfetto per il tuo viaggio",
+  "pageSubtitle": "Rendiamo la prenotazione degli hotel semplice. Scopri hotel top rated, confronta caratteristiche e prezzi, e prenota un soggiorno su misura.",
+  "availableHotels": "Hotel Disponibili",
+  "hotelsFound": "{count} hotel trovato",
+  "hotelsPluralFound": "{count} hotel trovati",
+  "searchPlaceholder": "Cerca hotel, città o paesi…",
+  "allLocations": "Tutte le Posizioni",
+  "filters": "Filtri",
+  "resetFilters": "Reimposta Filtri",
+  "showResults": "Mostra risultati",
+  "sort": {
+    "recommended": "Consigliati",
+    "priceLow": "Prezzo: Dal Basso all'Alto",
+    "priceHigh": "Prezzo: Dal Alto al Basso",
+    "rating": "Valutazione"
+  },
+  "filterGroups": {
+    "rating": "Valutazione",
+    "priceRange": "Fascia di Prezzo"
+  },
+  "rating": {
+    "any": "Qualsiasi"
+  },
+  "tabs": {
+    "overview": "Panoramica",
+    "facilities": "Strutture dell'Hotel",
+    "location": "Posizione",
+    "roomTypes": "Tipi di Camera",
+    "reviews": "Recensioni dei Viaggiatori",
+    "similar": "Hotel Simili"
+  },
+  "overview": {
+    "heading": "Panoramica",
+    "primeLocation": "Posizione Strategica e Accessibilità",
+    "luxuryExperience": "Lusso ed Esperienza degli Ospiti"
+  },
+  "facilities": {
+    "heading": "Strutture dell'Hotel"
+  },
+  "location": {
+    "heading": "Posizione",
+    "mapNotAvailable": "Mappa non disponibile"
+  },
+  "roomTypes": {
+    "heading": "Tipi di Camera",
+    "subtitle": "Esplora le diverse opzioni di camere progettate per soddisfare le esigenze di ogni viaggiatore, da singole accoglienti a spaziose suite familiari.",
+    "filterCategory": "Categoria Camera",
+    "filterType": "Tipo di Camera",
+    "filterView": "Vista Camera",
+    "filterPrice": "Fascia di Prezzo",
+    "all": "Tutti",
+    "types": {
+      "all": "Tutti",
+      "single": "Singola",
+      "double": "Camera Doppia",
+      "triple": "Camera Tripla"
+    },
+    "views": {
+      "all": "Tutti",
+      "sea": "Vista Mare",
+      "pool": "Vista Piscina",
+      "garden": "Vista Giardino"
+    },
+    "details": "Dettagli",
+    "startFrom": "A Partire Da",
+    "perNight": "Per Notte",
+    "off": "di sconto",
+    "noRoomsFound": "Nessuna camera trovata",
+    "noRoomsDesc": "Prova a modificare i filtri per trovare camere disponibili.",
+    "resetAll": "Reimposta tutti i filtri"
+  },
+  "bookingWidget": {
+    "title": "Pianifica il Tuo Soggiorno",
+    "subtitle": "Scegli le date di check-in e check-out e seleziona il numero di camere.",
+    "startFrom": "A Partire Da",
+    "perNight": "Per Notte",
+    "checkRoomsAndDates": "Verifica Camere e Date",
+    "cancellationPolicy": "Cancellazione gratuita fino a 24 ore prima"
+  },
+  "similarHotels": {
+    "heading": "Hotel Simili",
+    "exploreMore": "Esplora di Più"
+  },
+  "reviews": {
+    "heading": "Recensioni dei Viaggiatori"
+  }
+}

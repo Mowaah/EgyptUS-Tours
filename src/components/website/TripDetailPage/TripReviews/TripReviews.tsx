@@ -2,6 +2,7 @@
 
 import { TestimonialCard, ReviewGrid } from "@/components/shared";
 import type { Testimonial } from "@/components/shared/TestimonialCard/TestimonialCard";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./TripReviews.module.scss";
 
 interface TripReviewsProps {
@@ -9,13 +10,14 @@ interface TripReviewsProps {
 }
 
 export default function TripReviews({ reviews = [] }: TripReviewsProps) {
+  const { t } = useTranslation("trips");
   if (!reviews || reviews.length === 0) {
     return null;
   }
 
   return (
     <section id="traveler-reviews" className={styles.section}>
-      <h2 className={styles.heading}>Traveler Reviews</h2>
+      <h2 className={styles.heading}>{t("reviews.heading", "Traveler Reviews")}</h2>
       <ReviewGrid 
         items={reviews} 
         pageSize={8} 

@@ -1,0 +1,93 @@
+{
+  "breadcrumb": "Hoteles",
+  "hotelDetails": "Detalles del Hotel",
+  "backToHotels": "Volver a Hoteles",
+  "share": "Compartir",
+  "linkCopied": "¡Enlace copiado al portapapeles!",
+  "pageTitle": "Encuentra el hotel perfecto para tu viaje",
+  "pageSubtitle": "Hacemos que la reserva de hoteles sea fácil. Descubre hoteles mejor valorados, compara características y precios, y reserva una estadía a tu medida.",
+  "availableHotels": "Hoteles Disponibles",
+  "hotelsFound": "{count} hotel encontrado",
+  "hotelsPluralFound": "{count} hoteles encontrados",
+  "searchPlaceholder": "Buscar hoteles, ciudades o países…",
+  "allLocations": "Todas las Ubicaciones",
+  "filters": "Filtros",
+  "resetFilters": "Restablecer Filtros",
+  "showResults": "Mostrar resultados",
+  "sort": {
+    "recommended": "Recomendados",
+    "priceLow": "Precio: De Menor a Mayor",
+    "priceHigh": "Precio: De Mayor a Menor",
+    "rating": "Valoración"
+  },
+  "filterGroups": {
+    "rating": "Valoración",
+    "priceRange": "Rango de Precio"
+  },
+  "rating": {
+    "any": "Cualquiera"
+  },
+  "tabs": {
+    "overview": "Resumen",
+    "facilities": "Instalaciones del Hotel",
+    "location": "Ubicación",
+    "roomTypes": "Tipos de Habitación",
+    "reviews": "Reseñas de Viajeros",
+    "similar": "Hoteles Similares"
+  },
+  "overview": {
+    "heading": "Resumen",
+    "primeLocation": "Ubicación Privilegiada y Accesibilidad",
+    "luxuryExperience": "Lujo y Experiencia del Huésped"
+  },
+  "facilities": {
+    "heading": "Instalaciones del Hotel"
+  },
+  "location": {
+    "heading": "Ubicación",
+    "mapNotAvailable": "Mapa no disponible"
+  },
+  "roomTypes": {
+    "heading": "Tipos de Habitación",
+    "subtitle": "Explora las diferentes opciones de habitaciones diseñadas para adaptarse a las necesidades de cada viajero, desde acogedoras individuales hasta amplias suites familiares.",
+    "filterCategory": "Categoría de Habitación",
+    "filterType": "Tipo de Habitación",
+    "filterView": "Vista de Habitación",
+    "filterPrice": "Rango de Precio",
+    "all": "Todos",
+    "types": {
+      "all": "Todos",
+      "single": "Individual",
+      "double": "Habitación Doble",
+      "triple": "Habitación Triple"
+    },
+    "views": {
+      "all": "Todos",
+      "sea": "Vista al Mar",
+      "pool": "Vista a la Piscina",
+      "garden": "Vista al Jardín"
+    },
+    "details": "Detalles",
+    "startFrom": "Desde",
+    "perNight": "Por Noche",
+    "off": "de descuento",
+    "noRoomsFound": "No se encontraron habitaciones",
+    "noRoomsDesc": "Intenta ajustar tus filtros para encontrar habitaciones disponibles.",
+    "resetAll": "Restablecer todos los filtros"
+  },
+  "bookingWidget": {
+    "title": "Planifica Tu Estadía",
+    "subtitle": "Elige tus fechas de entrada y salida y selecciona el número de habitaciones.",
+    "startFrom": "Desde",
+    "perNight": "Por Noche",
+    "checkRoomsAndDates": "Ver Habitaciones y Fechas",
+    "cancellationPolicy": "Cancelación gratuita hasta 24 horas antes"
+  },
+  "similarHotels": {
+    "heading": "Hoteles Similares",
+    "exploreMore": "Explorar Más"
+  },
+  "reviews": {
+    "heading": "Reseñas de Viajeros"
+  }
+}

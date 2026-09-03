@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Trip } from "@/types";
 import { SortButton } from "@/components/shared";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./TripAvailability.module.scss";
 
 interface Props {
@@ -22,6 +23,7 @@ const ALL_MONTHS = [
 ];
 
 export default function TripAvailability({ trip }: Props) {
+  const { t } = useTranslation("trips");
   const slots = trip.availability ?? [];
   const [selectedMonth, setSelectedMonth] = useState("all");
   
@@ -60,17 +62,20 @@ export default function TripAvailability({ trip }: Props) {
 
   return (
     <section id="dates-availability" className={styles.section}>
-      <h2 className={styles.heading}>Dates &amp; Availability</h2>
+      <h2 className={styles.heading}>{t("availability.heading", "Dates & Availability")}</h2>
       <p className={styles.subtitle}>
-        Select your preferred departure date for the {trip.duration.days}-day{" "}
-        {trip.location} journey
+        {t("availability.subtitle", "Select your preferred departure date for the {days}-day {location} journey")
+          .replace("{days}", String(trip.duration.days))
+          .replace("{location}", trip.location)}
       </p>
 
       <div className={styles.toolbar}>
-        <span className={styles.count}>{filteredSlots.length} Trips Found</span>
+        <span className={styles.count}>
+          {t("availability.tripsFound", "{count} Trips Found").replace("{count}", String(filteredSlots.length))}
+        </span>
         <SortButton
           options={[
-            { value: "all", label: "All Months" },
+            { value: "all", label: t("availability.allMonths", "All Months") },
             ...ALL_MONTHS.map(month => ({ value: month.toLowerCase(), label: month }))
           ]}
           defaultValue={selectedMonth}
@@ -89,7 +94,7 @@ export default function TripAvailability({ trip }: Props) {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                {slot.spotsLeft} Spots left
+                {t("availability.spotsLeft", "{count} Spots left").replace("{count}", String(slot.spotsLeft))}
               </div>
               {slot.spotsLeft <= 4 ? (
                 <div className={`${styles.statusText} ${styles[color + "Text"]}`}>
@@ -97,11 +102,11 @@ export default function TripAvailability({ trip }: Props) {
                     <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.8" />
                     <path d="M12 8v4M12 16h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                   </svg>
-                  Almost Full!
+                  {t("availability.almostFull", "Almost Full!")}
                 </div>
               ) : (
                 <p className={`${styles.statusText} ${styles[color + "Text"]}`}>
-                  {pct}% Full
+                  {t("availability.full", "{pct}% Full").replace("{pct}", String(pct))}
                 </p>
               )}
             </div>
@@ -110,7 +115,7 @@ export default function TripAvailability({ trip }: Props) {
       </div>
 
       <div className={styles.note}>
-        <strong>Note:</strong> All departures are guaranteed with a minimum of 2 travelers. Private tours available upon request.
+        <strong>{t("availability.noteLabel", "Note:")}</strong> {t("availability.noteText", "All departures are guaranteed with a minimum of 2 travelers. Private tours available upon request.")}
       </div>
     </section>
   );

@@ -14,6 +14,7 @@ import {
 } from "@/components/shared";
 import SortButton from "@/components/shared/SortButton/SortButton";
 import FaqSection from "@/components/website/FaqSection/FaqSection";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./TransportationPage.module.scss";
 
 import { FaqData } from "@/services/legalHelpService";
@@ -32,34 +33,25 @@ const SORT_OPTIONS = [
   { value: "price_desc", label: "Price: High to Low" },
 ];
 
-const FEATURES = [
-  {
-    icon: "/images/secure.svg",
-    title: "Fully Insured",
-    desc: "All vehicles are comprehensively insured for your safety"
-  },
-  {
-    icon: "/images/profile2.svg",
-    title: "Expert Drivers",
-    desc: "Professional chauffeurs with local knowledge"
-  },
-  {
-    icon: "/images/clock-blue.svg",
-    title: "24/7 Service",
-    desc: "Available round the clock for your convenience"
-  },
-  {
-    icon: "/images/star-yellow2.svg",
-    title: "Top Rated",
-    desc: "4.9+ average rating from satisfied customers"
-  }
+const FEATURE_KEYS = [
+  { icon: "/images/secure.svg", titleKey: "features.fullyInsured", descKey: "features.fullyInsuredDesc" },
+  { icon: "/images/profile2.svg", titleKey: "features.expertDrivers", descKey: "features.expertDriversDesc" },
+  { icon: "/images/clock-blue.svg", titleKey: "features.service247", descKey: "features.service247Desc" },
+  { icon: "/images/star-yellow2.svg", titleKey: "features.topRated", descKey: "features.topRatedDesc" },
 ];
 
 export default function TransportationPage({ vehicles, faqs }: TransportationPageProps) {
   const searchParams = useSearchParams();
+  const { t } = useTranslation("transportation");
   const searchVehicle = searchParams.get("vehicle");
   const searchDate = searchParams.get("date");
   const isSearchResults = !!(searchVehicle || searchDate);
+
+  const sortOptions = [
+    { value: "recommended", label: t("sort.recommended", "Recommended") },
+    { value: "price_asc", label: t("sort.priceLow", "Price: Low to High") },
+    { value: "price_desc", label: t("sort.priceHigh", "Price: High to Low") },
+  ];
 
   const [activeTab, setActiveTab] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -152,10 +144,10 @@ export default function TransportationPage({ vehicles, faqs }: TransportationPag
     <div className={styles.page}>
       <PageHeader
         breadcrumbs={[
-          { label: "Transportation", isCurrent: true }
+          { label: t("breadcrumb", "Transportation"), isCurrent: true }
         ]}
-        title={isSearchResults ? "Search Results" : "Travel in Comfort"}
-        subtitle="Choose the perfect vehicle for every journey — from city rides to luxury transfers."
+        title={isSearchResults ? t("searchResults", "Search Results") : t("pageTitle", "Travel in Comfort")}
+        subtitle={t("pageSubtitle", "Choose the perfect vehicle for every journey — from city rides to luxury transfers.")}
         decorationSrc="/images/dotted-line3.svg"
       />
       <div className={styles.container}>
@@ -165,14 +157,14 @@ export default function TransportationPage({ vehicles, faqs }: TransportationPag
             <div className={styles.summaryItem}>
               <Image src="/images/calendar-orange.svg" alt="" width={20} height={20} />
               <div className={styles.summaryText}>
-                <span className={styles.summaryLabel}>Date</span>
-                <span className={styles.summaryValue}>{searchDate || "Any Date"}</span>
+                <span className={styles.summaryLabel}>{t("searchSummary.date", "Date")}</span>
+                <span className={styles.summaryValue}>{searchDate || t("searchSummary.anyDate", "Any Date")}</span>
               </div>
             </div>
             <div className={styles.summaryItem}>
               <Image src="/images/car-orange.svg" alt="" width={20} height={20} />
               <div className={styles.summaryText}>
-                <span className={styles.summaryLabel}>Vehicle</span>
+                <span className={styles.summaryLabel}>{t("searchSummary.vehicle", "Vehicle")}</span>
                 <span className={styles.summaryValue}>{getVehicleName(searchVehicle)}</span>
               </div>
             </div>
@@ -182,12 +174,14 @@ export default function TransportationPage({ vehicles, faqs }: TransportationPag
         <div className={styles.toolbar}>
           {isSearchResults ? (
             <div className={styles.toolbarTitle}>
-              <h2 className={styles.availableVehicles}>Available Vehicles</h2>
-              <span className={styles.vehiclesCount}>{filteredVehicles.length} vehicles found for your route</span>
+              <h2 className={styles.availableVehicles}>{t("toolbar.availableVehicles", "Available Vehicles")}</h2>
+              <span className={styles.vehiclesCount}>
+                {t("toolbar.vehiclesFoundForRoute", "{count} vehicles found for your route").replace("{count}", String(filteredVehicles.length))}
+              </span>
             </div>
           ) : (
             <h2 className={styles.resultsCount}>
-              {filteredVehicles.length} Vehicles Founded
+              {t("toolbar.vehiclesFound", "{count} Vehicles Found").replace("{count}", String(filteredVehicles.length))}
             </h2>
           )}
 
@@ -195,7 +189,7 @@ export default function TransportationPage({ vehicles, faqs }: TransportationPag
             {isLg && (
               <div className={styles.sortWrap}>
                 <SortButton
-                  options={SORT_OPTIONS}
+                  options={sortOptions}
                   defaultValue={sortOption}
                   onChange={setSortOption}
                 />
@@ -204,7 +198,7 @@ export default function TransportationPage({ vehicles, faqs }: TransportationPag
             <SearchInput
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search vehicles, transport option..."
+              placeholder={t("toolbar.searchPlaceholder", "Search vehicles...")}
               variant="toolbar"
             />
           </div>
@@ -225,7 +219,7 @@ export default function TransportationPage({ vehicles, faqs }: TransportationPag
           <div className={styles.filterSortRow}>
             <div className={styles.filterSortRowSort}>
               <SortButton
-                options={SORT_OPTIONS}
+                options={sortOptions}
                 defaultValue={sortOption}
                 onChange={setSortOption}
                 showLabel={false}
@@ -268,13 +262,13 @@ export default function TransportationPage({ vehicles, faqs }: TransportationPag
 
         <div className={styles.featuresWrap}>
           <div className={styles.featuresGrid}>
-            {FEATURES.map((feat, idx) => (
+            {FEATURE_KEYS.map((feat, idx) => (
               <div key={idx} className={styles.featureItem}>
                 <div className={styles.featureIconWrap} style={{ background: idx === 0 ? "#EBF3FE" : idx === 1 ? "#FEF1E8" : idx === 2 ? "#EBF3FE" : "#FEF1E8" }}>
-                  <Image src={feat.icon} alt={feat.title} width={32} height={32} />
+                  <Image src={feat.icon} alt="" width={32} height={32} />
                 </div>
-                <h4 className={styles.featureTitle}>{feat.title}</h4>
-                <p className={styles.featureDesc}>{feat.desc}</p>
+                <h4 className={styles.featureTitle}>{t(feat.titleKey as Parameters<typeof t>[0], feat.titleKey)}</h4>
+                <p className={styles.featureDesc}>{t(feat.descKey as Parameters<typeof t>[0], feat.descKey)}</p>
               </div>
             ))}
           </div>

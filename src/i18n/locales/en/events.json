@@ -1,0 +1,118 @@
+{
+  "header": {
+    "breadcrumb": "MICE & Corporate Events",
+    "title": "Professional Corporate Events & MICE Solutions in Egypt",
+    "subtitle": "From executive meetings to large-scale conferences and incentive retreats — we handle everything.",
+    "galleryTitle": "Corporate Events in Egypt"
+  },
+  "overview": {
+    "tabOverview": "Overview",
+    "tabFeatures": "Features",
+    "tabAccessibility": "Accessibility",
+    "title": "Overview",
+    "description": "Egypt offers a unique MICE destination combining world-class hospitality, diverse venues, competitive value, and thousands of years of history. From executive meetings and conferences to incentive trips, gala dinners, and unique team experiences we can organize it for you.",
+    "statCapacityNumber": "1000",
+    "statCapacityLabel": "Max capacity",
+    "statVenueTypes": "Open Air or Hotels",
+    "statVenueLabel": "Exhibition space",
+    "statLanguagesNumber": "10+",
+    "statLanguagesLabel": "Languages",
+    "featuresTitle": "Features",
+    "featureVenue": "Venue Selection",
+    "featureVenueDesc": "The right setting for your event",
+    "featurePlanning": "Event Planning",
+    "featurePlanningDesc": "From concept to execution",
+    "featureHotel": "Hotel & Accommodation",
+    "featureHotelDesc": "Comfortable stays for your attendees",
+    "featureTransport": "Transportation",
+    "featureTransportDesc": "Seamless transfers and logistics",
+    "featureBranding": "Event Branding",
+    "featureBrandingDesc": "Make your event uniquely yours",
+    "featureTours": "Tours & Experiences",
+    "featureToursDesc": "Discover Egypt beyond the event",
+    "featureMedia": "Media Coverage",
+    "featureMediaDesc": "Capture every important moment",
+    "featureSupport": "On-Site Support",
+    "featureSupportDesc": "A dedicated team throughout the event",
+    "servicesTitle": "Integrated Event Services",
+    "serviceHotelsTitle": "Hotels",
+    "serviceHotelsDesc": "4 & 5 star accommodations",
+    "serviceTransportTitle": "Transportation",
+    "serviceTransportDesc": "VIP transfer services",
+    "serviceExperiencesTitle": "Experiences",
+    "serviceExperiencesDesc": "Cultural tours & cruises",
+    "accessTitle": "Location & Accessibility",
+    "accessDestinations": "Multiple Destinations",
+    "accessDestinationsDesc": "Cairo • Sharm El Sheikh • Luxor • Alexandria • And More",
+    "accessEasy": "Easy to Reach",
+    "accessEasyDesc": "International and domestic flights or by land across Egypt",
+    "accessYearRound": "Year-Round Events",
+    "accessYearRoundDesc": "Plan your corporate experience in Egypt any time of year",
+    "accessHeadsUp": "Heads up",
+    "accessHeadsUpDesc": "Let us know 2-3 months prior your event date and flights!"
+  },
+  "features": {
+    "title": "What We Offer",
+    "subtitle": "Tailored corporate event and travel solutions designed to inspire, connect, and perform.",
+    "card1Title": "Executive Meetings",
+    "card1Desc": "Private, high-level corporate meetings and strategy retreats hosted in premium settings with full technical support.",
+    "card2Title": "Incentive Experiences",
+    "card2Desc": "Reward and energize top performers with unique excursions, luxury stays, and private historical access.",
+    "card3Title": "Corporate Events",
+    "card3Desc": "End-to-end planning and production for company summits, annual gatherings, product launches, and gala dinners.",
+    "card4Title": "Corporate Travel",
+    "card4Desc": "Comprehensive group coordination including flights, luxury transportation, VIP transfers, and on-ground logistics."
+  },
+  "featured": {
+    "sectionTitle": "Work. Connect. Experience Egypt.",
+    "sectionSubtitle": "Bring your team together through a seamless blend of business & team experiences",
+    "eventTitle": "60 American Travelers",
+    "eventSubtitle": "Egypt & Jerusalem Group Travel Experience",
+    "highlights": "Highlights",
+    "pills": {
+      "cairo": "Cairo, Luxor & Aswan",
+      "jerusalem": "Jerusalem Exploration",
+      "hotel": "Hotel Accommodation",
+      "flights": "Flight Ticket Arrangements",
+      "egyptologists": "Professional Egyptologists",
+      "meetings": "Business Meetings"
+    },
+    "checklist": {
+      "coordination": "Seamless Group Coordination",
+      "businessLeisure": "Business & Leisure Successfully Combined",
+      "endToEnd": "End-to-End Travel Arrangements",
+      "onGround": "Smooth On-Ground Support"
+    }
+  },
+  "process": {
+    "title": "Our Events' Process",
+    "subtitle": "Structured approach ensuring flawless execution",
+    "step1Title": "Consultation",
+    "step1Desc": "Understanding your event objectives and requirements",
+    "step2Title": "Proposal & Planning",
+    "step2Desc": "Detailed proposal with venue options and pricing",
+    "step3Title": "Venue & Logistics Setup",
+    "step3Desc": "Complete event infrastructure and coordination",
+    "step4Title": "Event Execution",
+    "step4Desc": "On-site management and technical support",
+    "step5Title": "Post-Event Reporting",
+    "step5Desc": "Comprehensive reporting and feedback analysis"
+  },
+  "successStories": {
+    "title": "Past Events",
+    "subtitle": "Inspiring gatherings and flawless executions across Egypt.",
+    "viewCaseStudy": "View Case Study"
+  },
+  "stats": {
+    "corporateEvents": "Corporate Events",
+    "clientSatisfaction": "Client Satisfaction",
+    "countriesCovered": "Countries Covered",
+    "attendeesManaged": "Attendees Managed",
+    "trustedBy": "TRUSTED BY LEADING ORGANIZATIONS"
+  },
+  "cta": {
+    "title": "Ready to Host an Unforgettable Event in Egypt?",
+    "subtitle": "Partner with our dedicated events team to design a bespoke program that exceeds expectations.",
+    "button": "Request a Proposal"
+  }
+}

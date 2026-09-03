@@ -1,0 +1,118 @@
+{
+  "header": {
+    "breadcrumb": "MICE ed Eventi Aziendali",
+    "title": "Eventi Aziendali e Soluzioni MICE Professionali in Egitto",
+    "subtitle": "Dai meeting dirigenziali a conferenze su larga scala e viaggi incentive — pensiamo a tutto noi.",
+    "galleryTitle": "Eventi Aziendali in Egitto"
+  },
+  "overview": {
+    "tabOverview": "Panoramica",
+    "tabFeatures": "Servizi",
+    "tabAccessibility": "Accessibilità",
+    "title": "Panoramica",
+    "description": "L'Egitto offre una destinazione MICE unica che unisce ospitalità di livello mondiale, location diversificate, convenienza competitiva e millenni di storia. Da riunioni e conferenze esecutive a viaggi incentive, cene di gala ed esperienze di team building esclusive, organizziamo tutto su misura per te.",
+    "statCapacityNumber": "1000",
+    "statCapacityLabel": "Capacità massima",
+    "statVenueTypes": "All'aperto o in Hotel",
+    "statVenueLabel": "Spazio espositivo",
+    "statLanguagesNumber": "10+",
+    "statLanguagesLabel": "Lingue",
+    "featuresTitle": "Caratteristiche",
+    "featureVenue": "Selezione Location",
+    "featureVenueDesc": "L'ambiente ideale per il tuo evento",
+    "featurePlanning": "Pianificazione Eventi",
+    "featurePlanningDesc": "Dall'idea iniziale alla realizzazione",
+    "featureHotel": "Hotel e Alloggi",
+    "featureHotelDesc": "Soggiorni confortevoli per i tuoi partecipanti",
+    "featureTransport": "Trasporti",
+    "featureTransportDesc": "Transfer e logistica impeccabili",
+    "featureBranding": "Branding dell'Evento",
+    "featureBrandingDesc": "Rendi il tuo evento unico e memorabile",
+    "featureTours": "Tour ed Esperienze",
+    "featureToursDesc": "Scopri l'Egitto oltre l'evento",
+    "featureMedia": "Copertura Mediatica",
+    "featureMediaDesc": "Cattura ogni momento importante",
+    "featureSupport": "Assistenza in Loco",
+    "featureSupportDesc": "Un team dedicato durante tutto l'evento",
+    "servicesTitle": "Servizi per Eventi Integrati",
+    "serviceHotelsTitle": "Hotel",
+    "serviceHotelsDesc": "Alloggi a 4 e 5 stelle",
+    "serviceTransportTitle": "Trasporti",
+    "serviceTransportDesc": "Servizi di transfer VIP",
+    "serviceExperiencesTitle": "Esperienze",
+    "serviceExperiencesDesc": "Tour culturali e crociere",
+    "accessTitle": "Posizione e Accessibilità",
+    "accessDestinations": "Molteplici Destinazioni",
+    "accessDestinationsDesc": "Il Cairo • Sharm El Sheikh • Luxor • Alessandria • E Altro",
+    "accessEasy": "Facile da Raggiungere",
+    "accessEasyDesc": "Voli internazionali e domestici o collegamenti via terra in tutto l'Egitto",
+    "accessYearRound": "Eventi Tutto l'Anno",
+    "accessYearRoundDesc": "Pianifica la tua esperienza aziendale in Egitto in qualsiasi stagione",
+    "accessHeadsUp": "Promemoria",
+    "accessHeadsUpDesc": "Avvisaci 2-3 mesi prima della data dell'evento e dei voli!"
+  },
+  "features": {
+    "title": "Cosa Offriamo",
+    "subtitle": "Soluzioni su misura per eventi aziendali e viaggi corporate per ispirare, connettere e ottenere risultati.",
+    "card1Title": "Meeting Dirigenziali",
+    "card1Desc": "Incontri privati di alto livello e ritiri strategici in contesti esclusivi con supporto tecnico completo.",
+    "card2Title": "Esperienze Incentive",
+    "card2Desc": "Premia e motiva i migliori talenti con escursioni uniche, soggiorni di lusso e accessi storici riservati.",
+    "card3Title": "Eventi Aziendali",
+    "card3Desc": "Pianificazione e produzione completa per summit aziendali, incontri annuali, lanci di prodotto e cene di gala.",
+    "card4Title": "Viaggi Corporate",
+    "card4Desc": "Coordinamento completo di gruppi comprendente voli, trasporti di lusso, transfer VIP e logistica a terra."
+  },
+  "featured": {
+    "sectionTitle": "Lavora. Connetti. Vivi l'Egitto.",
+    "sectionSubtitle": "Unisci il tuo team attraverso una perfetta combinazione di lavoro ed esperienze condivise",
+    "eventTitle": "60 Viaggiatori Americani",
+    "eventSubtitle": "Esperienza di Viaggio di Gruppo in Egitto e Gerusalemme",
+    "highlights": "Punti di Forza",
+    "pills": {
+      "cairo": "Il Cairo, Luxor e Assuan",
+      "jerusalem": "Esplorazione di Gerusalemme",
+      "hotel": "Alloggio in Hotel",
+      "flights": "Prenotazione Biglietti Aerei",
+      "egyptologists": "Egittologi Professionisti",
+      "meetings": "Incontri di Lavoro"
+    },
+    "checklist": {
+      "coordination": "Coordinamento di Gruppo Impeccabile",
+      "businessLeisure": "Lavoro e Tempo Libero Perfettamente Combinati",
+      "endToEnd": "Organizzazione del Viaggio Completa",
+      "onGround": "Assistenza Continua sul Posto"
+    }
+  },
+  "process": {
+    "title": "Il Nostro Processo per gli Eventi",
+    "subtitle": "Un approccio strutturato che garantisce un'esecuzione impeccabile",
+    "step1Title": "Consulenza Iniziale",
+    "step1Desc": "Comprensione degli obiettivi e dei requisiti del tuo evento",
+    "step2Title": "Proposta e Pianificazione",
+    "step2Desc": "Proposta dettagliata con opzioni di location e preventivo trasparente",
+    "step3Title": "Allestimento e Logistica",
+    "step3Desc": "Infrastruttura completa dell'evento e coordinamento logistico",
+    "step4Title": "Esecuzione dell'Evento",
+    "step4Desc": "Gestione in loco e assistenza tecnica continuativa",
+    "step5Title": "Reportistica Post-Evento",
+    "step5Desc": "Report completo e analisi dettagliata del feedback"
+  },
+  "successStories": {
+    "title": "Eventi Passati",
+    "subtitle": "Incontri memorabili ed esecuzioni impeccabili in tutto l'Egitto.",
+    "viewCaseStudy": "Vedi Caso Studio"
+  },
+  "stats": {
+    "corporateEvents": "Eventi Aziendali",
+    "clientSatisfaction": "Soddisfazione Clienti",
+    "countriesCovered": "Paesi Coinvolti",
+    "attendeesManaged": "Partecipanti Gestiti",
+    "trustedBy": "SCELTO DALLE PRINCIPALI ORGANIZZAZIONI"
+  },
+  "cta": {
+    "title": "Pronto a Organizzare un Evento Indimenticabile in Egitto?",
+    "subtitle": "Collabora con il nostro team dedicato agli eventi per creare un programma su misura che superi ogni aspettativa.",
+    "button": "Richiedi una Proposta"
+  }
+}

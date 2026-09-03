@@ -4,10 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FormField, PhoneInput, NationalitySelect, SuccessModal, PageHeader, Button } from "@/components/shared";
 import { submitB2BProposal, extractApiError, extractFieldErrors } from "@/lib/api";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./B2BRequestProposalPage.module.scss";
 
 export default function B2BRequestProposalPage() {
   const router = useRouter();
+  const { t } = useTranslation("b2b");
   const [showModal, setShowModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -86,12 +88,12 @@ export default function B2BRequestProposalPage() {
     <div className={styles.page}>
       <PageHeader
         breadcrumbs={[
-          { label: "B2B Programs", href: "/b2b-programs" },
-          { label: "Corporate Proposal", isCurrent: true },
+          { label: t("form.breadcrumbB2B", "B2B Programs"), href: "/b2b-programs" },
+          { label: t("form.breadcrumbProposal", "Corporate Proposal"), isCurrent: true },
         ]}
-        title="Request a Corporate Proposal"
-        subtitle="Share your requirements and we'll create a tailored proposal for your organization."
-        backButton={{ text: "Back To B2B Programs", href: "/b2b-programs" }}
+        title={t("form.pageTitle", "Request a Corporate Proposal")}
+        subtitle={t("form.pageSubtitle", "Share your requirements and we'll create a tailored proposal for your organization.")}
+        backButton={{ text: t("form.backButton", "Back To B2B Programs"), href: "/b2b-programs" }}
         decorationSrc="/images/dotted-line3.svg"
       />
 
@@ -99,8 +101,8 @@ export default function B2BRequestProposalPage() {
         <div className={styles.content}>
           <div className={styles.formCard}>
             <div className={styles.formHeader}>
-              <h2 className={styles.formTitle}>Company Information</h2>
-              <p className={styles.formSubtitle}>Provide your company details so we can tailor the proposal accordingly</p>
+              <h2 className={styles.formTitle}>{t("form.sectionTitle", "Company Information")}</h2>
+              <p className={styles.formSubtitle}>{t("form.sectionSubtitle", "Provide your company details so we can tailor the proposal accordingly")}</p>
             </div>
 
             <form onSubmit={handleSubmit} className={styles.form}>
@@ -109,16 +111,16 @@ export default function B2BRequestProposalPage() {
                   id="companyName"
                   name="organization"
                   autoComplete="organization"
-                  label="Company Name"
+                  label={t("form.companyName", "Company Name")}
                   required
                   type="text"
-                  placeholder="Enter your company name"
+                  placeholder={t("form.companyName", "Enter your company name")}
                   value={formData.companyName}
                   onChange={(e) => handleChange("companyName", e.target.value)}
                   error={errors.companyName || errors.company_name}
                 />
 
-                <FormField label="Country" required error={errors.country}>
+                <FormField label={t("form.country", "Country")} required error={errors.country}>
                   <NationalitySelect
                     useCountryName={true}
                     value={formData.country}
@@ -130,10 +132,10 @@ export default function B2BRequestProposalPage() {
                   id="contactPerson"
                   name="name"
                   autoComplete="name"
-                  label="Contact Person"
+                  label={t("form.contactPerson", "Contact Person")}
                   required
                   type="text"
-                  placeholder="Example@Gmail.Com"
+                  placeholder="John Doe"
                   value={formData.contactPerson}
                   onChange={(e) => handleChange("contactPerson", e.target.value)}
                   error={errors.contactPerson || errors.contact_person}
@@ -143,7 +145,7 @@ export default function B2BRequestProposalPage() {
                   id="jobTitle"
                   name="organization-title"
                   autoComplete="organization-title"
-                  label="Your Job Title"
+                  label={t("form.jobTitle", "Job Title")}
                   required
                   type="text"
                   placeholder="Enter your position within the company"
@@ -156,7 +158,7 @@ export default function B2BRequestProposalPage() {
                   id="email"
                   name="email"
                   autoComplete="email"
-                  label="Email Address"
+                  label={t("form.email", "Work Email Address")}
                   required
                   type="email"
                   placeholder="youremail@company.com"
@@ -167,7 +169,7 @@ export default function B2BRequestProposalPage() {
 
                 <FormField
                   id="b2bPhone"
-                  label="Phone Number"
+                  label={t("form.phone", "Phone Number")}
                   required
                   error={errors.phone}
                 >
@@ -186,7 +188,7 @@ export default function B2BRequestProposalPage() {
                     id="website"
                     name="url"
                     autoComplete="url"
-                    label="Website"
+                    label={t("form.website", "Company Website (Optional)")}
                     type="text"
                     placeholder="www.egyptustours.com"
                     value={formData.website}
@@ -198,10 +200,10 @@ export default function B2BRequestProposalPage() {
                 <div className={styles.textareaField}>
                   <FormField
                     id="requestDetails"
-                    label="Request Details"
+                    label={t("form.requestDetails", "Tell us about your trip/event requirements...")}
                     required
                     isTextarea={true}
-                    placeholder="Tell us about your request."
+                    placeholder={t("form.requestDetails", "Tell us about your request.")}
                     value={formData.requestDetails}
                     onChange={(e: any) => handleChange("requestDetails", e.target.value)}
                     error={errors.requestDetails || errors.request_details}
@@ -223,7 +225,7 @@ export default function B2BRequestProposalPage() {
               )}
 
               <Button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
-                {isSubmitting ? "Submitting..." : "Request Corporate Proposal"}
+                {isSubmitting ? t("form.submitting", "Submitting...") : t("form.submitButton", "Request Corporate Proposal")}
               </Button>
             </form>
           </div>
@@ -232,16 +234,16 @@ export default function B2BRequestProposalPage() {
 
       {showModal && (
         <SuccessModal
-          title="Your Corporate Proposal Is in Progress"
-          message="We've received your request and our team is preparing a tailored response based on your requirements."
-          primaryButtonText="View Request"
-          buttonText="Back to Home"
+          title={t("form.successTitle", "Your Corporate Proposal Is in Progress")}
+          message={t("form.successDesc", "We've received your request and our team is preparing a tailored response based on your requirements.")}
+          primaryButtonText={t("form.viewRequest", "View Request")}
+          buttonText={t("form.backToHome", "Back to Home")}
           onPrimaryClick={() => router.push("/profile?tab=requests")}
           onClose={handleReset}
           metadata={[
-            { label: "Reference Number", value: `#B2B-${submittedId || "042918"}` },
-            { label: "Company", value: formData.companyName || "AUS Enterprise" },
-            { label: "Contact Person", value: formData.contactPerson || "John Doe" },
+            { label: t("form.successRequestId", "Reference Number"), value: `#B2B-${submittedId || "042918"}` },
+            { label: t("form.companyName", "Company"), value: formData.companyName || "AUS Enterprise" },
+            { label: t("form.contactPerson", "Contact Person"), value: formData.contactPerson || "John Doe" },
           ]}
         />
       )}

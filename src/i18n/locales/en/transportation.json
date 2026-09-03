@@ -1,0 +1,70 @@
+{
+  "breadcrumb": "Transportation",
+  "vehicleDetails": "Transportation Details",
+  "backToTransportation": "Back To Transportation",
+  "share": "Share",
+  "linkCopied": "Link copied to clipboard!",
+  "pageTitle": "Travel in Comfort",
+  "searchResults": "Search Results",
+  "pageSubtitle": "Choose the perfect vehicle for every journey — from city rides to luxury transfers.",
+  "features": {
+    "heading": "Features & Amenities",
+    "fullyInsured": "Fully Insured",
+    "fullyInsuredDesc": "All vehicles are comprehensively insured for your safety",
+    "expertDrivers": "Expert Drivers",
+    "expertDriversDesc": "Professional chauffeurs with local knowledge",
+    "service247": "24/7 Service",
+    "service247Desc": "Available round the clock for your convenience",
+    "topRated": "Top Rated",
+    "topRatedDesc": "4.9+ average rating from satisfied customers"
+  },
+  "searchSummary": {
+    "date": "Date",
+    "anyDate": "Any Date",
+    "vehicle": "Vehicle",
+    "allVehicles": "All Vehicles"
+  },
+  "toolbar": {
+    "availableVehicles": "Available Vehicles",
+    "vehiclesFoundForRoute": "{count} vehicles found for your route",
+    "vehiclesFound": "{count} Vehicles Found",
+    "searchPlaceholder": "Search vehicles..."
+  },
+  "sort": {
+    "recommended": "Recommended",
+    "priceLow": "Price: Low to High",
+    "priceHigh": "Price: High to Low"
+  },
+  "tabs": {
+    "overview": "Overview",
+    "features": "Features & Amenities",
+    "reviews": "Traveler Reviews"
+  },
+  "overview": {
+    "heading": "Overview",
+    "noOverview": "No overview available.",
+    "spaciousTrunk": "Spacious trunk area",
+    "comfortableSeating": "Comfortable seating",
+    "estimatedDuration": "Estimated duration",
+    "fullDay": "Full Day",
+    "oneHour": "1 hour",
+    "hours": "{count} hours",
+    "hoursRange": "{min}-{max} hours",
+    "standard": "Standard",
+    "suitcaseSingular": "{count} large suitcase",
+    "suitcasePlural": "{count} large suitcases",
+    "passengerSingular": "{count} Passenger",
+    "passengerPlural": "{count} Passengers"
+  },
+  "bookingWidget": {
+    "title": "Book This Vehicle",
+    "subtitle": "Customize your journey across Egypt with ease",
+    "basePrice": "Base Price",
+    "startFrom": "Start From",
+    "perDay": "Per Day",
+    "bookNow": "Book Now"
+  },
+  "reviews": {
+    "heading": "Traveler Reviews"
+  }
+}

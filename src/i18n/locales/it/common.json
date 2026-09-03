@@ -1,0 +1,79 @@
+{
+  "nav": {
+    "home": "Home",
+    "egyptTours": "Tour Egitto",
+    "packages": "Pacchetti",
+    "hotels": "Hotel",
+    "nileCruises": "Crociere sul Nilo",
+    "dayTours": "Escursioni Giornaliere",
+    "transfers": "Trasferimenti",
+    "aboutUs": "Chi Siamo",
+    "events": "Eventi",
+    "b2b": "B2B",
+    "contactUs": "Contattaci",
+    "destinations": "Destinazioni",
+    "planYourTrip": "Pianifica il Viaggio",
+    "myProfile": "Il Mio Profilo",
+    "login": "Accedi",
+    "logout": "Disconnetti",
+    "allDestinations": "Tutte le Destinazioni",
+    "allCategories": "Tutte le Categorie"
+  },
+  "userMenu": {
+    "guest": "Ospite",
+    "profile": "Profilo",
+    "favorites": "Preferiti",
+    "requests": "Richieste",
+    "bookings": "Prenotazioni",
+    "logout": "Esci",
+    "loginSignup": "Accedi / Registrati"
+  },
+  "sortBy": "Ordina per:",
+  "topbar": {
+    "selectLanguage": "Lingua",
+    "selectCurrency": "Valuta"
+  },
+  "footer": {
+    "tagline": "Vivi esperienze di viaggio indimenticabili in Egitto e nel mondo, create con cura, comfort e autentica esperienza locale.",
+    "followUs": "Seguici",
+    "egyptUs": "Egypt Us",
+    "travelGuides": "Guide di Viaggio",
+    "customerSupport": "Assistenza Clienti",
+    "contact": "Contatti",
+    "blogs": "Blog",
+    "articles": "Articoli",
+    "termsConditions": "Termini e Condizioni",
+    "privacyPolicy": "Informativa sulla Privacy",
+    "faqs": "Domande Frequenti",
+    "copyright": "© 2026 Tutti i Diritti Riservati | Realizzato da"
+  },
+  "buttons": {
+    "learnMore": "Scopri di Più",
+    "viewDetails": "Visualizza Dettagli",
+    "bookNow": "Prenota Ora",
+    "exploreTours": "Esplora i Tour",
+    "contactUs": "Contattaci",
+    "submit": "Invia",
+    "submitting": "Invio in corso...",
+    "cancel": "Annulla",
+    "close": "Chiudi",
+    "requestProposal": "Richiedi una Proposta",
+    "getStarted": "Inizia Ora",
+    "seeAll": "Vedi Tutti"
+  },
+  "forms": {
+    "required": "Obbligatorio",
+    "fullName": "Nome e Cognome",
+    "email": "Indirizzo Email",
+    "phone": "Numero di Telefono",
+    "companyName": "Nome Azienda",
+    "country": "Paese",
+    "jobTitle": "Ruolo Aziendale",
+    "notes": "Note / Richieste Particolari",
+    "message": "Messaggio",
+    "selectCountry": "Seleziona Paese",
+    "selectNationality": "Seleziona Nazionalità",
+    "successMessage": "Grazie! La tua richiesta è stata ricevuta.",
+    "errorMessage": "Si è verificato un errore. Per favore riprova."
+  }
+}

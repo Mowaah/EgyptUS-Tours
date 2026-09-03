@@ -1,0 +1,47 @@
+{
+  "header": {
+    "title": "Get In Touch",
+    "subtitle": "Have questions about our tours or need assistance planning your itinerary? We are here to help."
+  },
+  "info": {
+    "title": "Contact Information",
+    "phone": "+20 100 000 0000",
+    "email": "info@egyptus-tours.com",
+    "address": "Cairo, Egypt",
+    "workingHours": "Mon - Sun: 24/7 Support"
+  },
+  "section": {
+    "label": "Contact",
+    "headingPart1": "Not Sure Where to",
+    "headingPart2": "Start? Contact us",
+    "headingPart3": "and fill out the form",
+    "description": "Tell us what you're looking for, and our team will help you create the right Egypt experience. Fill out the form and let's start planning.",
+    "reviews": "5.0/5 Reviews",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "Full name here...",
+    "email": "Email",
+    "emailPlaceholder": "Your email here...",
+    "message": "Message",
+    "messagePlaceholder": "How we can help you?",
+    "submit": "Send",
+    "submitting": "Sending...",
+    "errNameRequired": "Name is required.",
+    "errEmailRequired": "Email is required.",
+    "errEmailInvalid": "Please enter a valid email address.",
+    "errMessageRequired": "Message is required.",
+    "successTitle": "Message Sent Successfully!",
+    "successDesc": "Thank you for reaching out. A member of our travel specialist team will review your inquiry and get back to you within 24 hours.",
+    "closeModal": "Close"
+  },
+  "form": {
+    "fullName": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "subject": "Subject",
+    "message": "Your Message",
+    "submit": "Send Message",
+    "submitting": "Sending...",
+    "success": "Your message has been sent successfully. We will contact you shortly!",
+    "error": "Failed to send message. Please try again or reach out directly via email or phone."
+  }
+}

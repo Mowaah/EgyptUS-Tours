@@ -1,0 +1,93 @@
+{
+  "breadcrumb": "Hotels",
+  "hotelDetails": "Hotel Details",
+  "backToHotels": "Back To Hotels",
+  "share": "Share",
+  "linkCopied": "Link copied to clipboard!",
+  "pageTitle": "Find the perfect hotel for your trip",
+  "pageSubtitle": "We make hotel booking easy. Discover top-rated hotels, compare features and prices, and book a stay tailored to your travel style.",
+  "availableHotels": "Available Hotels",
+  "hotelsFound": "{count} hotel found",
+  "hotelsPluralFound": "{count} hotels found",
+  "searchPlaceholder": "Search hotels, cities, or countries…",
+  "allLocations": "All Locations",
+  "filters": "Filters",
+  "resetFilters": "Reset Filters",
+  "showResults": "Show results",
+  "sort": {
+    "recommended": "Recommended",
+    "priceLow": "Price: Low to High",
+    "priceHigh": "Price: High to Low",
+    "rating": "Rating"
+  },
+  "filterGroups": {
+    "rating": "Rating",
+    "priceRange": "Price Range"
+  },
+  "rating": {
+    "any": "Any"
+  },
+  "tabs": {
+    "overview": "Overview",
+    "facilities": "Hotel Facilities",
+    "location": "Location",
+    "roomTypes": "Room Types",
+    "reviews": "Traveler Reviews",
+    "similar": "Similar Hotels"
+  },
+  "overview": {
+    "heading": "Overview",
+    "primeLocation": "Prime Location & Accessibility",
+    "luxuryExperience": "Luxury & Guest Experience"
+  },
+  "facilities": {
+    "heading": "Hotel Facilities"
+  },
+  "location": {
+    "heading": "Location",
+    "mapNotAvailable": "Map not available"
+  },
+  "roomTypes": {
+    "heading": "Room Types",
+    "subtitle": "Explore the different room options designed to suit every traveler’s needs, from cozy singles to spacious family suites.",
+    "filterCategory": "Room Category",
+    "filterType": "Type Of Room",
+    "filterView": "Room View",
+    "filterPrice": "Price Range",
+    "all": "All",
+    "types": {
+      "all": "All",
+      "single": "Single",
+      "double": "Double Room",
+      "triple": "Triple Room"
+    },
+    "views": {
+      "all": "All",
+      "sea": "Sea View",
+      "pool": "Pool View",
+      "garden": "Garden View"
+    },
+    "details": "Details",
+    "startFrom": "Start From",
+    "perNight": "Per Night",
+    "off": "off",
+    "noRoomsFound": "No rooms found",
+    "noRoomsDesc": "Try adjusting your filters to find available rooms.",
+    "resetAll": "Reset all filters"
+  },
+  "bookingWidget": {
+    "title": "Plan Your Stay",
+    "subtitle": "Choose your check-in and check-out dates and select the number of rooms.",
+    "startFrom": "Start From",
+    "perNight": "Per Night",
+    "checkRoomsAndDates": "Check Rooms & Dates",
+    "cancellationPolicy": "Free cancellation up to 24 hours before"
+  },
+  "similarHotels": {
+    "heading": "Similar Hotels",
+    "exploreMore": "Explore More"
+  },
+  "reviews": {
+    "heading": "Traveler Reviews"
+  }
+}

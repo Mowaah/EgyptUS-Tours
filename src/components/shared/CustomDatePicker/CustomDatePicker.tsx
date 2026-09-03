@@ -184,13 +184,13 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
     });
   }
 
-  const formattedMonthYear = viewDate.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+  const formattedMonthYear = viewDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
   const formattedPickup = (() => {
     if (!selectedDateObj || Number.isNaN(selectedDateObj.getTime())) return { main: placeholder || "Select date", year: "" };
 
     return {
-      main: selectedDateObj.toLocaleDateString(undefined, {
+      main: selectedDateObj.toLocaleDateString("en-US", {
         weekday: "short",
         day: "2-digit",
         month: "short",
@@ -266,10 +266,10 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
           className={`${styles.trigger} ${isOpen ? styles.triggerActive : ""} ${className || ""}`}
           onClick={() => setIsOpen(!isOpen)}
         >
-          <div className={styles.dateValue}>
-            <span className={styles.dateMain}>{formattedPickup.main}</span>
+          <div className={styles.dateValue} suppressHydrationWarning>
+            <span className={styles.dateMain} suppressHydrationWarning>{formattedPickup.main}</span>
             {formattedPickup.year ? (
-              <span className={styles.dateYear}>{formattedPickup.year}</span>
+              <span className={styles.dateYear} suppressHydrationWarning>{formattedPickup.year}</span>
             ) : null}
           </div>
         </button>

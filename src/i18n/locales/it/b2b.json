@@ -1,0 +1,91 @@
+{
+  "hero": {
+    "breadcrumb": "Programmi B2B",
+    "title": "Esperienze Aziendali in Egitto, Progettate Intorno ai Tuoi Obiettivi",
+    "subtitle": "Dai ritiri dirigenziali e viaggi incentive a conferenze, celebrazioni ed eventi aziendali su larga scala, curiamo ogni dettaglio dall'ideazione alle operazioni sul posto.",
+    "galleryTitle": "Esperienze di Viaggio Corporate"
+  },
+  "overview": {
+    "title": "Panoramica",
+    "p1": "La nostra divisione B2B collabora con agenzie di viaggio internazionali, tour operator, consulenti di viaggio e aziende turistiche per creare e fornire pacchetti di viaggio impeccabili in Egitto per i loro clienti.",
+    "p2": "Forniamo pacchetti di viaggio B2B personalizzati per l'Egitto, comprendenti alloggi, voli interni, trasporti, guide professionali, visite guidate, crociere sul Nilo ed esperienze curate in tutto l'Egitto."
+  },
+  "features": {
+    "title": "Perché Collaborare con Noi",
+    "subtitle": "Studiato per potenziare le agenzie internazionali con soluzioni di viaggio affidabili e ad alto rendimento.",
+    "card1Title": "Account Manager Dedicato",
+    "card1Desc": "Un unico punto di contatto diretto per comunicazioni rapide, preventivi tempestivi e modifiche immediate.",
+    "card2Title": "Tariffe Wholesale Esclusive",
+    "card2Desc": "Accesso a contratti B2B privilegiati con hotel 5 stelle, navi da crociera di lusso sul Nilo e veicoli privati.",
+    "card3Title": "Operatività White-Label",
+    "card3Desc": "La tua identità di brand in primo piano con cartelli personalizzati in aeroporto, welcome pack e itinerari brandizzati.",
+    "card4Title": "Supporto 24/7 in Loco",
+    "card4Desc": "Assistenza d'emergenza continuativa e team operativo dedicato per assicurare viaggi sereni ai tuoi clienti."
+  },
+  "process": {
+    "title": "Dalla Visione all'Esperienza",
+    "subtitle": "Tu porti l'obiettivo. Noi costruiamo tutto intorno ad esso",
+    "step1Title": "Comprensione delle Esigenze",
+    "step1Desc": "Approfondiamo i desideri dei tuoi clienti, destinazioni e budget.",
+    "step2Title": "Progettazione del Programma",
+    "step2Desc": "Creiamo un itinerario su misura con prezzi trasparenti.",
+    "step3Title": "Conferma e Prenotazione",
+    "step3Desc": "Gestiamo hotel, trasporti, guide, crociere e molto altro.",
+    "step4Title": "Gestione Operativa del Viaggio",
+    "step4Desc": "Coordiniamo ogni fase offrendo assistenza continua in loco.",
+    "step5Title": "Consegna dell'Esperienza",
+    "step5Desc": "Garantiamo un viaggio impeccabile dall'inizio alla fine."
+  },
+  "whyUs": {
+    "title": "Perché Noi",
+    "subtitle": "Non ci limitiamo a organizzare eventi. Ci prendiamo cura dell'intera esperienza",
+    "travelersServed": "Viaggiatori Serviti",
+    "experience": "Esperienza nel Turismo in Egitto",
+    "personalized": "Esperienze Personalizzate",
+    "badgeGoals": "Dagli Obiettivi all'Esperienza",
+    "badgeCustom": "Pacchetti Tour su Misura in Egitto",
+    "badgeGroup": "Programmi di Viaggio di Gruppo",
+    "badgeLuxury": "Esperienza Luxury in Egitto",
+    "badgeMulti": "Programmi Multi-Destinazione",
+    "badgeFit": "Viaggi FIT e su Misura",
+    "badgeCruise": "Pacchetti Crociere sul Nilo"
+  },
+  "stats": {
+    "title": "Risultati Concreti",
+    "subtitle": "Eccellenza dimostrata nella gestione di programmi corporate e gruppi leisure su larga scala."
+  },
+  "testimonials": {
+    "title": "Cosa Dicono i Nostri Partner",
+    "subtitle": "La fiducia delle principali agenzie di viaggio e tour operator di tutto il mondo."
+  },
+  "cta": {
+    "titlePart1": "Creiamo un'Esperienza Che il Tuo",
+    "titlePart2": "Team Potrà",
+    "titleHighlight": "Ricordare",
+    "subtitle": "E un evento di cui la tua leadership sarà orgogliosa",
+    "button": "Richiedi una Proposta"
+  },
+  "form": {
+    "breadcrumbB2B": "Programmi B2B",
+    "breadcrumbProposal": "Proposta Corporate",
+    "pageTitle": "Richiedi una Proposta Aziendale",
+    "pageSubtitle": "Condividi le tue esigenze e creeremo una proposta su misura per la tua organizzazione.",
+    "backButton": "Torna ai Programmi B2B",
+    "sectionTitle": "Informazioni sull'Azienda",
+    "sectionSubtitle": "Fornisci i dati aziendali per permetterci di personalizzare la proposta al meglio",
+    "companyName": "Nome Azienda",
+    "country": "Paese",
+    "contactPerson": "Referente",
+    "jobTitle": "Ruolo / Posizione",
+    "email": "Email di Lavoro",
+    "phone": "Numero di Telefono",
+    "website": "Sito Web Aziendale (Opzionale)",
+    "requestDetails": "Raccontaci le tue esigenze di viaggio o evento...",
+    "submitButton": "Invia Richiesta di Proposta",
+    "submitting": "Invio in corso...",
+    "successTitle": "Richiesta di Proposta Inviata con Successo!",
+    "successRequestId": "ID Richiesta:",
+    "successDesc": "Il nostro team corporate esaminerà i dettagli e ti ricontatterà con una proposta personalizzata entro 24 ore.",
+    "backToHome": "Torna alla Home"
+  }
+}

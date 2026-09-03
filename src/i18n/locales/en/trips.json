@@ -1,0 +1,132 @@
+{
+  "breadcrumb": "Egypt Tours",
+  "tripDetails": "Trip Details",
+  "backToEgyptTours": "Back to Egypt Tours",
+  "backToHotels": "Back To Hotels",
+  "share": "Share",
+  "downloadBrochure": "Download Brochure",
+  "linkCopied": "Link copied to clipboard!",
+  "noBrochure": "No brochure file has been uploaded for this trip yet.",
+  "pageTitle": "Choose The Right Trip For Your Adventure In",
+  "egypt": "EGYPT",
+  "availableTrips": "Available Trips",
+  "pageSubtitle": "We make trip planning easy. Discover handpicked journeys, compare destinations, and book trips crafted around your travel style.",
+  "desertTitle": "Find Your Perfect Desert Escape in Egypt",
+  "desertSubtitle": "Browse our curated collection of desert adventures, including the White Desert, Sinai, Egypt's oases, and unforgettable safari experiences.",
+  "searchPlaceholder": "Search trips...",
+  "filters": "Filters",
+  "showResults": "Show results",
+  "resetFilters": "Reset Filters",
+  "noTripsFound": "No Trips Found",
+  "sort": {
+    "recommended": "Recommended",
+    "priceLow": "Price: Low to High",
+    "priceHigh": "Price: High to Low"
+  },
+  "filterGroups": {
+    "duration": "Duration",
+    "specialOffers": "Special Offers",
+    "priceRange": "Price Range"
+  },
+  "duration": {
+    "any": "Any",
+    "lessThan10": "Less than 10 days",
+    "10to15": "10-15 Days",
+    "15to20": "15-20 Days",
+    "moreThan20": "More than 20 days"
+  },
+  "offers": {
+    "any": "Any",
+    "christmas": "Christmas & New Year Offers",
+    "easter": "Easter Offers"
+  },
+  "filterPills": {
+    "date": "Date",
+    "destination": "Destination",
+    "budget": "Budget",
+    "tripType": "Trip Type"
+  },
+  "allTrips": "All Trips",
+  "tripsFound": "{count} trips found",
+  "overview": {
+    "heading": "Overview",
+    "description": "Description",
+    "culturalValue": "Cultural Value",
+    "whoIsItFor": "Who is this trip for?"
+  },
+  "inclusions": {
+    "heading": "What's Included In Your Plan"
+  },
+  "exclusions": {
+    "heading": "What's Not Included In Your Plan"
+  },
+  "travelerPhotos": {
+    "heading": "Taken by Travelers"
+  },
+  "itinerary": {
+    "satisfactionRate": "97% Traveler Satisfaction Rate",
+    "heading": "Day by Day Itinerary",
+    "subtitle": "Experience {value} worth of unforgettable moments along the legendary Nile River",
+    "todaysHighlights": "Today's Highlights",
+    "day": "Day",
+    "value": "VALUE"
+  },
+  "pricing": {
+    "heading": "Prices & Accommodation",
+    "subtitle": "Explore detailed pricing and accommodation options tailored to your selected trip",
+    "privateTour": "Private Tour",
+    "groupTour": "Group Tour",
+    "perPersonIn": "Per Person in {label}"
+  },
+  "accommodations": {
+    "heading": "Your Luxury Accommodations",
+    "subtitle": "Experience Egyptian hospitality at its finest with our carefully selected 5-star hotels along the Nile"
+  },
+  "availability": {
+    "heading": "Dates & Availability",
+    "subtitle": "Select your preferred departure date for the {days}-day {location} journey",
+    "tripsFound": "{count} Trips Found",
+    "allMonths": "All Months",
+    "spotsLeft": "{count} Spots left",
+    "almostFull": "Almost Full!",
+    "full": "{pct}% Full",
+    "noteLabel": "Note:",
+    "noteText": "All departures are guaranteed with a minimum of 2 travelers. Private tours available upon request."
+  },
+  "importantLinks": {
+    "banner": "Please make sure to review the following links",
+    "heading": "Important links",
+    "subtitle": "They include important information about our policies, privacy terms, payment details, and related guidelines."
+  },
+  "bookingWidget": {
+    "title": "Book Your Tour",
+    "subtitle": "Choose between a private experience or a group tour tailored to your preference.",
+    "privateTour": "Private Tour",
+    "groupTour": "Group Tour",
+    "maximumFlexibility": "Maximum flexibility",
+    "upTo12Travelers": "Up to 12 travelers",
+    "bookPrivateTour": "Book Private Tour",
+    "bookGroupTour": "Book Group Tour",
+    "from": "From"
+  },
+  "moreTrips": {
+    "heading": "More Inspiring Trips",
+    "subtitle": "Didn't find what you were looking for? Explore other highly-rated, expertly-crafted packages perfect for your next trips",
+    "exploreMore": "Explore More"
+  },
+  "tabs": {
+    "overview": "Overview",
+    "included": "What's Included",
+    "excluded": "What's Not Included",
+    "travelerPhotos": "Taken by Travelers",
+    "pricesAccommodation": "Prices & Accommodation",
+    "luxuryAccommodations": "Luxury Accommodations",
+    "datesAvailability": "Dates & Availability",
+    "itinerary": "Day-by-Day Itinerary",
+    "travelerReviews": "Traveler Reviews",
+    "moreTrips": "More Inspiring Trips"
+  },
+  "reviews": {
+    "heading": "Traveler Reviews"
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "hero": {
+    "heading": "Vivi",
+    "subheadingPart1": "Storia, cultura e lusso",
+    "subheadingPart2": "tutto in un unico viaggio",
+    "planYourTrip": "Pianifica il tuo viaggio"
+  },
+  "search": {
+    "tripsTab": "Viaggi",
+    "date": "Data",
+    "destination": "Destinazione",
+    "budget": "Budget",
+    "tripType": "Tipo di Viaggio",
+    "search": "Cerca",
+    "tripTypeAll": "Tutti",
+    "tripTypeGroup": "Tour di Gruppo",
+    "tripTypePrivate": "Tour Privato",
+    "budgetLess1000": "meno di 1.000$",
+    "budget1000_2000": "1.000£ - 2.000$",
+    "budget2000_3000": "2.000£ - 3.000$",
+    "budget4000_5000": "4.000£ - 5.000$",
+    "budgetOver5000": "Oltre 5.000$"
+  },
+  "statsBar": {
+    "totalCustomers": "Clienti Totali",
+    "yearsExperience": "Anni di Esperienza",
+    "totalDestinations": "Destinazioni Totali",
+    "averageRating": "Valutazione Media"
+  },
+  "trips": {
+    "label": "Tour in Egitto",
+    "heading": "Scegli il Viaggio Perfetto per Te in Egitto e Oltre",
+    "description": "Scopri viaggi personalizzati ed esperienze indimenticabili, creati su misura per farti vivere al meglio la tua prossima vacanza.",
+    "filters": "Filtri",
+    "showResults": "Mostra risultati",
+    "searchPlaceholder": "Cerca viaggi, destinazioni o parole chiave…",
+    "sortRecommended": "Consigliati",
+    "sortPriceLow": "Prezzo: dal più basso",
+    "sortPriceHigh": "Prezzo: dal più alto"
+  },
+  "multiCountry": {
+    "label": "Tour Multi-Paese",
+    "headingPart1": "Un Solo",
+    "headingPart2": "Viaggio.",
+    "headingPart3": "Molteplici",
+    "headingPart4": "Culture",
+    "description": "Perché scegliere una sola destinazione quando il tuo itinerario può farti attraversare culture, paesaggi e storie millenarie? I nostri tour combinati uniscono esperienze selezionate, rendendo ogni tappa parte di un'avventura straordinaria.",
+    "exploreTours": "Esplora i Tour"
+  },
+  "hotels": {
+    "label": "Hotel",
+    "heading": "Trova il Tuo Soggiorno Perfetto in Egitto",
+    "description": "Rendi il tuo soggiorno parte integrante dell'esperienza. Scopri hotel accuratamente selezionati in tutto l'Egitto, dai rifugi di lusso ai soggiorni più confortevoli.",
+    "all": "Tutti",
+    "sortRecommended": "Consigliati",
+    "sortPriceLow": "Prezzo: dal più basso",
+    "sortPriceHigh": "Prezzo: dal più alto",
+    "sortRating": "Valutazione"
+  },
+  "desert": {
+    "label": "Deserto",
+    "heading": "Oltre le Piramidi, nel Cuore del Deserto",
+    "description": "Da autentici incontri nel deserto a ritiri esclusivi, scopri gemme nascoste dove antiche tradizioni, panorami mozzafiato e comfort moderno si fondono.",
+    "westernTitle": "Deserto Occidentale",
+    "westernDesc": "Vivi l'emozione del deserto egiziano con escursioni a dorso di cammello e avventure di sandboarding.",
+    "sinaiTitle": "Deserto del Sinai",
+    "sinaiDesc": "Vivi l'emozione del deserto egiziano con escursioni a dorso di cammello e avventure di sandboarding.",
+    "oasisTitle": "Oasi del Deserto",
+    "oasisDesc": "Vivi l'emozione del deserto egiziano con escursioni a dorso di cammello e avventure di sandboarding.",
+    "safariTitle": "Viaggi Safari",
+    "safariDesc": "Vivi l'emozione del deserto egiziano con escursioni a dorso di cammello e avventure di sandboarding."
+  },
+  "mice": {
+    "label": "MICE ed Eventi Aziendali",
+    "heading": "Rendi Indimenticabile il Tuo Prossimo Evento in Egitto",
+    "description": "Da meeting direzionali ed esperienze incentive esclusive a conferenze ed esposizioni internazionali, curiamo ogni dettaglio per eventi perfetti in Egitto.",
+    "meetingTitle": "Meeting Esecutivi",
+    "meetingDesc": "Riunioni accuratamente pianificate in contesti egiziani di eccezionale bellezza.",
+    "incentiveTitle": "Esperienze Incentive",
+    "incentiveDesc": "Premia il tuo team con esperienze uniche che vanno ben oltre l'ordinario.",
+    "eventsTitle": "Eventi Aziendali",
+    "eventsDesc": "Dagli incontri intimi ai grandi eventi aziendali, gestiti dall'inizio alla fine.",
+    "travelTitle": "Viaggi Corporate",
+    "travelDesc": "Hotel, trasporti, voli, tour guidati e molto altro.",
+    "viewDetails": "Visualizza Dettagli"
+  },
+  "ctaBanner": {
+    "heading": "Pronto a Rendere Straordinario il Tuo Evento?",
+    "description": "Condividi la tua visione: il nostro team MICE realizzerà una proposta su misura gestendo ogni fase, dall'idea all'esecuzione.",
+    "button": "Richiedi una Proposta"
+  },
+  "statsSection": {
+    "stat1Desc": "Creiamo esperienze di viaggio indimenticabili in Egitto dal 2000, forti di decenni di esperienza nel turismo.",
+    "stat2Desc": "I viaggiatori si affidano a noi per scoprire l'Egitto con itinerari su misura, supporto professionale e servizio dedicato.",
+    "stat3Desc": "Esperienze personalizzate create attorno ai tuoi interessi, al tuo stile di viaggio e al tuo modo di vivere l'Egitto."
+  },
+  "transportation": {
+    "label": "Trasporti",
+    "headingPart1": "Viaggia in Egitto nel",
+    "headingPart2": "Massimo Comfort",
+    "description": "Da berline private e spaziosi SUV a veicoli per famiglie, goditi trasferimenti confortevoli e autisti professionali durante tutto il soggiorno.",
+    "pickupDate": "Data di Ritiro",
+    "searchVehicles": "Cerca Veicoli"
+  },
+  "b2bSection": {
+    "label": "B2B",
+    "headingPart1": "Standard Globali.",
+    "headingPart2": "Competenza Locale.",
+    "description": "Collabora con Egypt US Tours per offrire esperienze di viaggio ed eventi impeccabili in Egitto. Dalla gestione a terra ai viaggi di gruppo, dagli eventi MICE ai programmi su misura.",
+    "partnerWithUs": "Diventa Partner",
+    "companyName": "Nome Azienda",
+    "country": "Paese",
+    "contactPerson": "Referente",
+    "contactPersonPlaceholder": "Nome Completo",
+    "email": "Indirizzo Email",
+    "phone": "Numero di Telefono",
+    "website": "Sito Web",
+    "requestDetails": "Dettagli Richiesta",
+    "requestDetailsPlaceholder": "Descrivi i dettagli della tua richiesta...",
+    "submit": "Richiedi Proposta",
+    "submitting": "Invio in corso...",
+    "successTitle": "La Tua Proposta Aziendale È in Lavorazione",
+    "successDesc": "Abbiamo ricevuto la tua richiesta e il nostro team sta preparando una risposta su misura per le tue esigenze.",
+    "viewRequest": "Visualizza Richiesta",
+    "close": "Chiudi"
+  },
+  "desertBanner": {
+    "headingPart1": "Vivi l'Emozione delle",
+    "headingPart2": "Avventure nel Deserto",
+    "description": "Partecipa a splendide escursioni nel deserto ed esplora le dune dorate con facilità.",
+    "exploreMore": "Esplora di più"
+  },
+  "whyChooseUs": {
+    "label": "Perché Sceglierci",
+    "heading": "Perché Scegliere Noi",
+    "description": "Siamo più di un tour operator. Siamo il tuo partner di fiducia per vivere l'Egitto con serenità, autenticità e sicurezza.",
+    "aboutUs": "Chi Siamo",
+    "card1Title": "Profonda Conoscenza Locale",
+    "card1Desc": "Anni di esperienza diretta nel creare viaggi ricchi di significato.",
+    "card2Title": "Viaggi 100% Personalizzati",
+    "card2Desc": "Itinerari studiati su misura per i tuoi interessi, stile e tempi.",
+    "card3Title": "Assistenza Continua",
+    "card3Desc": "Supporto costante dalla prima richiesta fino al rientro a casa.",
+    "card4Title": "Team Locali Esperti",
+    "card4Desc": "Professionisti del territorio che danno vita alla magia dell'Egitto.",
+    "card5Title": "Qualità su Cui Contare",
+    "card5Desc": "Oltre 1.000 viaggiatori seguiti con la massima cura e dedizione."
+  },
+  "testimonials": {
+    "label": "Testimonianze",
+    "heading": "Cosa Dicono i Viaggiatori",
+    "description": "Scopri storie autentiche, opinioni sincere e momenti indimenticabili dei nostri ospiti"
+  }
+}

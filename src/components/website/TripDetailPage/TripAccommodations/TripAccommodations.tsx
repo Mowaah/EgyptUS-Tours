@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Trip, TripHotel } from "@/types";
 import { IncludedHotelCard } from "@/components/shared";
+import { useTranslation } from "@/hooks/useTranslation";
 import HotelModal from "./HotelModal";
 import styles from "./TripAccommodations.module.scss";
 
@@ -26,15 +27,16 @@ const getAmenityIcon = (amenity: string) => {
 export default function TripAccommodations({ trip }: TripAccommodationsProps) {
   const hotels = trip.hotels ?? [];
   const [selectedHotel, setSelectedHotel] = useState<TripHotel | null>(null);
+  const { t } = useTranslation("trips");
 
   if (!hotels.length) return null;
 
   return (
     <section id="luxury-accommodations" className={styles.section}>
       <div className={styles.header}>
-        <h2 className={styles.heading}>Your Luxury Accommodations</h2>
+        <h2 className={styles.heading}>{t("accommodations.heading", "Your Luxury Accommodations")}</h2>
         <p className={styles.subtitle}>
-          Experience Egyptian hospitality at its finest with our carefully selected 5-star hotels along the Nile
+          {t("accommodations.subtitle", "Experience Egyptian hospitality at its finest with our carefully selected 5-star hotels along the Nile")}
         </p>
       </div>
 

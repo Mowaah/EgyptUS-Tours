@@ -1,0 +1,57 @@
+{
+  "hero": {
+    "breadcrumb": "Chi Siamo",
+    "title": "Dove Ogni Viaggio Diventa un Ricordo Indelebile",
+    "subtitle": "Creiamo esperienze di viaggio personalizzate e senza pensieri in tutto l'Egitto e oltre, sostenute da competenza locale e servizio dedicato."
+  },
+  "story": {
+    "tabOurStory": "La Nostra Storia",
+    "tabVision": "Visione",
+    "tabMission": "Missione",
+    "mainTitleAbout": "Chi Siamo",
+    "storyTitle": "La Nostra Storia",
+    "storyP1": "Dal 2000, Egypt US Tours realizza viaggi indimenticabili in Egitto, crescendo dalla passione per la nostra terra fino a diventare un partner di viaggio fidato per viaggiatori e aziende di tutto il mondo.",
+    "coreTitle": "Il Nostro Cuore",
+    "coreP1": "La nostra forza sta nel conoscere l'Egitto dall'interno. Uniamo profonda conoscenza locale e standard internazionali per creare viaggi personalizzati, logistica impeccabile ed eccezionali eventi corporate. Dai tour privati ai soggiorni in hotel, dagli eventi MICE all'assistenza sul posto, curiamo ogni dettaglio affinché i nostri ospiti possano concentrarsi solo sulle emozioni del viaggio.",
+    "visionTitle": "La Nostra Visione",
+    "visionP1": "Diventare il punto di riferimento più affidabile per esperienze di viaggio in Egitto ed eventi MICE B2B per aziende a livello globale.",
+    "visionP2": "Per i viaggiatori, Egypt US Tours punta a essere il partner ideale che rende la scoperta dell'Egitto semplice, autentica e memorabile.",
+    "visionP3": "Per le aziende, l'ambizione è essere il partner capace di trasformare un evento in Egitto dall'idea alla perfetta realizzazione, lasciando che il cliente si concentri sui propri ospiti, traguardi e obiettivi di business senza doversi preoccupare degli aspetti operativi.",
+    "missionTitle": "La Nostra Missione",
+    "missionP1": "Egypt US Tours esiste per rendere l'esperienza dell'Egitto più semplice, sicura, personalizzata e memorabile.",
+    "missionP2": "Ci assumiamo la piena responsabilità di ogni dettaglio operativo, così che viaggiatori e aziende possano vivere appieno la magia dell'Egitto creando ricordi autentici.",
+    "missionP3": "Per i viaggiatori individuali, questo significa viaggi su misura guidati da egittologi professionisti, coordinatori esperti, prenotazioni alberghiere, trasporti e costante assistenza in loco.",
+    "missionP4": "Per i clienti B2B, offriamo una soluzione MICE end-to-end che include ideazione dell'evento, branding, logistica, hotel, voli, escursioni, esperienze per i partecipanti, copertura mediatica e gestione operativa."
+  },
+  "features": {
+    "label": "Perché Scegliere Noi ?",
+    "heading": "Oltre 30 Anni di Esperienza in Egitto e Oltre",
+    "description": "Esperienza locale, servizio affidabile ed esecuzione impeccabile dall'inizio alla fine",
+    "card1Title": "Esperienza Locale, Standard Internazionali",
+    "card1Desc": "Autentica conoscenza del territorio unita a rigorosi standard internazionali per viaggi fluidi e memorabili.",
+    "card2Title": "Un'Esperienza di Cui Fidarsi",
+    "card2Desc": "Dal 2000 garantiamo servizi di massima qualità con dedizione, cura e attenzione minuziosa a ogni particolare.",
+    "card3Title": "Assistenza Dedicata",
+    "card3Desc": "Al tuo fianco dalla fase di pianificazione fino agli ultimi momenti, assicurando che tutto proceda senza intoppi.",
+    "card4Title": "Qualità Reale, Non Semplici Promesse",
+    "card4Desc": "Puntiamo su qualità tangibile, sicurezza, massima trasparenza e costante follow-up, senza compromessi."
+  },
+  "team": {
+    "label": "Il Fondatore",
+    "heading": "Incontra il Fondatore Dietro l'Esperienza",
+    "founderName": "Mohamed Abbas",
+    "p1": "Con oltre 30 anni di esperienza nel settore turistico egiziano, Mohamed Abbas porta una straordinaria conoscenza delle destinazioni, della storia e delle dinamiche operative dell'Egitto.",
+    "p2": "Come Tourism Manager, Egittologo ed ex guida turistica, combina competenze manageriali con esperienza diretta sul campo nell'ideare e gestire viaggi indimenticabili. La sua profonda dedizione ha reso Egypt Us Tours un partner stimato sia dai viaggiatori che dai professionisti del turismo internazionale.",
+    "p3": "La sua filosofia è semplice: un grande viaggio nasce da autentica competenza locale, pianificazione accurata e calorosa ospitalità.",
+    "statPersonalized": "Esperienze Personalizzate",
+    "statTravelers": "Viaggiatori Serviti",
+    "statExperience": "Anni di Esperienza nel Turismo Egiziano"
+  },
+  "cta": {
+    "headingPart1": "Pronto a Iniziare il Tuo Viaggio in",
+    "headingHighlight": "Egitto",
+    "headingPart2": "?",
+    "description": "Lascia che creiamo un'esperienza indimenticabile su misura per i tuoi sogni e desideri.",
+    "button": "Esplora i Tour in Egitto"
+  }
+}

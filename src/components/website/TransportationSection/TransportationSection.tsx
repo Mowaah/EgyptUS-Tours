@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { SectionHeader, Button, CustomDatePicker } from "@/components/shared";
+import { useTranslation } from "@/hooks/useTranslation";
 import Image from "next/image";
 import styles from "./TransportationSection.module.scss";
 
@@ -25,6 +26,7 @@ const getTodayString = () => {
 };
 
 export default function TransportationSection({ initialVehicles = [] }: TransportationSectionProps) {
+  const { t } = useTranslation("home");
   const router = useRouter();
   const [vehicles] = useState<VehicleData[]>(initialVehicles);
   const [selected, setSelected] = useState(vehicles[0]?.id || "sedan");
@@ -45,15 +47,15 @@ export default function TransportationSection({ initialVehicles = [] }: Transpor
         <div className={styles.grid}>
           <div className={styles.left}>
             <SectionHeader
-              label="Transportation"
+              label={t("transportation.label", "Transportation")}
               heading={
                 <>
-                  Travel Egypt in
+                  {t("transportation.headingPart1", "Travel Egypt in")}
                   <br />
-                  Comfort
+                  {t("transportation.headingPart2", "Comfort")}
                 </>
               }
-              description="From private sedans and spacious SUVs to family-friendly vehicles, enjoy comfortable transportation and professional drivers throughout your journey in Egypt."
+              description={t("transportation.description", "From private sedans and spacious SUVs to family-friendly vehicles, enjoy comfortable transportation and professional drivers throughout your journey in Egypt.")}
               align="left"
               headingClassName={styles.largeHeading}
               headingMaxWidth="400px"
@@ -70,7 +72,7 @@ export default function TransportationSection({ initialVehicles = [] }: Transpor
                 />
               }
             >
-              Explore More
+              {t("common:buttons.exploreTours", "Explore More")}
             </Button>
           </div>
 
@@ -97,7 +99,7 @@ export default function TransportationSection({ initialVehicles = [] }: Transpor
 
               <p className={styles.cardLabel}>
                 <Image src="/images/calendar.svg" alt="" width={16} height={16} />
-                Pickup Date
+                {t("transportation.pickupDate", "Pickup Date")}
               </p>
               <CustomDatePicker value={pickupDate} onChange={setPickupDate} placeholder="Any Date" />
 
@@ -115,7 +117,7 @@ export default function TransportationSection({ initialVehicles = [] }: Transpor
                   />
                 }
               >
-                Search Vehicle
+                {t("transportation.searchVehicles", "Search Vehicles")}
               </Button>
             </div>
           </div>
