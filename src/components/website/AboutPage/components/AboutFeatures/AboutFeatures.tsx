@@ -4,56 +4,25 @@ import styles from "./AboutFeatures.module.scss";
 
 const FEATURES = [
   {
-    title: "Local Expertise, Global Standards",
-    description: "We combine deep Egyptian knowledge with international best practices to deliver world-class experiences",
+    title: "Local Expertise, International Standards",
+    description: "Local knowledge with international standards to create seamless, memorable experiences.",
     iconSrc: "/images/whytrustus/blue-earth.svg",
   },
   {
-    title: "Proven Track Record",
-    description: "500+ successful events for Fortune 500 companies, government agencies, and leading organizations",
-    iconSrc: "/images/whytrustus/blue-check.svg",
+    title: "Experience You Can Trust",
+    description: "Since 2000, delivering quality experiences with dedication, care, and attention to detail.",
+    iconSrc: "/images/whytrustus/star.svg",
   },
   {
-    title: "24/7 Dedicated Support",
-    description: "Our team is available around the clock to ensure your event runs smoothly from start to finish",
-    iconSrc: "/images/whytrustus/blue-check.svg",
-  },
-  {
-    title: "Continuous Innovation",
-    description: "We stay ahead of industry trends to offer cutting-edge solutions and unforgettable experiences",
-    iconSrc: "/images/whytrustus/chart-arrow.svg",
-  },
-];
-
-const BADGES = [
-  {
-    title: "Licensed & Certified",
-    desc: "compliant with Egyptian tourism regulations",
-    iconSrc: "/images/whytrustus/green-check.svg",
-    color: "#00C950",
-    bg: "#F9FFFB"
-  },
-  {
-    title: "Award-Winning",
-    desc: "Recognized for excellence in service",
-    iconSrc: "/images/whytrustus/award.svg",
-    color: "#FF6600",
-    bg: "#FFFBF8"
-  },
-  {
-    title: "Secure & Insured",
-    desc: "Comprehensive insurance coverage",
+    title: "Dedicated Support",
+    description: "With you from planning to the final moments, ensuring everything runs smoothly.",
     iconSrc: "/images/whytrustus/shield-security.svg",
-    color: "#2971E6",
-    bg: "#FAFCFF"
   },
   {
-    title: "Expert Team",
-    desc: "Multilingual professionals at your service",
-    iconSrc: "/images/whytrustus/green-profile.svg",
-    color: "#00C950",
-    bg: "linear-gradient(0deg, rgba(223, 255, 230, 0.2), rgba(223, 255, 230, 0.2)), #FFFFFF"
-  }
+    title: "Quality Over Promises",
+    description: "We focus on quality, safety, transparency, and follow-up—not empty promises.",
+    iconSrc: "/images/whytrustus/award.svg",
+  },
 ];
 
 export default function AboutFeatures() {
@@ -67,8 +36,9 @@ export default function AboutFeatures() {
       <div className={styles.container}>
         <SectionHeader
           label="Why Trust US ?"
-          heading="Built on Trust, Proven by Results"
-          description="We've earned the confidence of leading organizations worldwide through consistent excellence, transparency, and dedication to our clients' success."
+          heading="30+ Years of Experience in Egypt & Beyond"
+          description="Local expertise, trusted service, and seamless experiences from start to finish"
+          descriptionMaxWidth="640px"
           align="center"
         />
 
@@ -82,18 +52,6 @@ export default function AboutFeatures() {
                 <h3 className={styles.featureTitle}>{feature.title}</h3>
                 <p className={styles.featureDesc}>{feature.description}</p>
               </div>
-            </div>
-          ))}
-        </div>
-
-        <div className={styles.badgesGrid}>
-          {BADGES.map((badge, idx) => (
-            <div key={idx} className={styles.badgeCard} style={{ background: badge.bg }}>
-              <div className={styles.badgeIcon} style={{ color: badge.color }}>
-                <Image src={badge.iconSrc} alt="" width={32} height={32} />
-              </div>
-              <h4 className={styles.badgeTitle}>{badge.title}</h4>
-              <span className={styles.badgeDesc}>{badge.desc}</span>
             </div>
           ))}
         </div>

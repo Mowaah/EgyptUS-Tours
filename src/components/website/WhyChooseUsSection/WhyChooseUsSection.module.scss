@@ -141,18 +141,21 @@
   width: 100%;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 
   @include sm {
     font-size: $font-size-13;
     -webkit-line-clamp: 4;
+    line-clamp: 4;
   }
 
   @include md {
     font-size: $font-size-15;
     line-height: 1.5;
     -webkit-line-clamp: initial;
+    line-clamp: unset;
     overflow: visible;
     display: block;
     width: 90%;

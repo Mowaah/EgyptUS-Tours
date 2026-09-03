@@ -5,16 +5,16 @@ import B2BFeatures from "./components/B2BFeatures/B2BFeatures";
 import B2BProcess from "./components/B2BProcess/B2BProcess";
 import B2BStats from "./components/B2BStats/B2BStats";
 import B2BTestimonials from "./components/B2BTestimonials/B2BTestimonials";
-import B2BCaseStudy from "./components/B2BCaseStudy/B2BCaseStudy";
+// import B2BCaseStudy from "./components/B2BCaseStudy/B2BCaseStudy";
 import B2BCTA from "./components/B2BCTA/B2BCTA";
 import styles from "./B2BProgramsPage.module.scss";
 
 const GALLERY_IMAGES = [
-  "/images/b2bpage/b2b1.jpg",
-  "/images/b2bpage/b2b2.jpg",
-  "/images/b2bpage/b2b3.jpg",
-  "/images/b2bpage/b2b4.jpg",
-  "/images/b2bpage/b2b5.jpg",
+  "/images/b2bpage/b2b1.png",
+  "/images/b2bpage/b2b2.png",
+  "/images/b2bpage/b2b3.png",
+  "/images/b2bpage/b2b4.png",
+  "/images/b2bpage/b2b5.png",
 ];
 
 import type { TestimonialData } from "@/services/testimonialsService";
@@ -31,8 +31,8 @@ export default function B2BProgramsPage({ testimonials }: B2BProgramsPageProps) 
         breadcrumbs={[
           { label: "B2B Programs", isCurrent: true },
         ]}
-        title="Corporate Travel & Event Experiences Designed for Results"
-        subtitle="From executive retreats to large-scale company events — we handle everything with precision."
+        title="Corporate Experiences in Egypt, Designed Around Your Goals"
+        subtitle="From executive retreats and incentive trips to conferences, celebrations, and large-scale corporate events, we handle every detail from concept and planning to on-ground operations."
         decorationSrc="/images/dotted-line3.svg"
         titleMaxWidth="950px"
         subtitleMaxWidth="900px"
@@ -59,7 +59,7 @@ export default function B2BProgramsPage({ testimonials }: B2BProgramsPageProps) 
       <B2BStats />
       <div className={styles.container}>
         <B2BTestimonials testimonials={testimonials} />
-        <B2BCaseStudy />
+        {/* <B2BCaseStudy /> */}
       </div>
       <B2BCTA />
     </div>

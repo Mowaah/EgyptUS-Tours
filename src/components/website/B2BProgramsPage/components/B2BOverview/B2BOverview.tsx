@@ -7,19 +7,10 @@ export default function B2BOverview() {
         <h2 className={styles.title}>Overview</h2>
         <div className={styles.descriptionWrap}>
           <p className={styles.description}>
-            Our B2B division is dedicated to building long-term partnerships with
-            companies seeking reliable, results-driven corporate event and travel
-            solutions.
+            Our B2B division partners with international travel agencies, tour operators, travel advisors, and tourism companies to create and deliver seamless Egypt tour packages for their clients.
           </p>
           <p className={styles.description}>
-            We work closely with decision-makers, HR leaders, and event managers
-            to deliver seamless MICE experiences â€” from executive meetings and
-            conferences to incentive retreats and large-scale corporate events.
-          </p>
-          <p className={styles.description}>
-            With a structured process, transparent pricing, and full operational
-            support, we position ourselves not just as a service provider, but as
-            a trusted corporate event partner.
+            We provide tailored B2B Egypt travel packages, including accommodation, domestic flights, transportation, professional guides, sightseeing, Nile cruises, and curated experiences across Egypt.
           </p>
         </div>
       </div>

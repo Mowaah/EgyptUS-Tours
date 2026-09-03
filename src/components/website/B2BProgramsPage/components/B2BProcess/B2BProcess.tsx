@@ -3,38 +3,38 @@ import ProcessTimeline from "@/components/shared/ProcessTimeline/ProcessTimeline
 const STEPS = [
   {
     number: "01",
-    title: "Understand Your Objectives",
-    description: "We start by learning about your goals, audience, and expectations.",
+    title: "Understand Your Requirement",
+    description: "We learn your clients' needs, destinations, and budget.",
   },
   {
     number: "02",
-    title: "Design a Tailored Proposal",
-    description: "A custom plan with transparent pricing and clear deliverables.",
+    title: "Design the Program",
+    description: "We create a tailored itinerary with clear pricing.",
   },
   {
     number: "03",
-    title: "Venue & Logistics Setup",
-    description: "Complete event infrastructure and coordination",
+    title: "Confirm & Arrange",
+    description: "We handle hotels, transport, guides, cruises, and more.",
   },
   {
     number: "04",
-    title: "Execute & Coordinate",
-    description: "Seamless logistics, vendor management, and on-site support.",
+    title: "Operate the Trip",
+    description: "We coordinate everything and provide on-ground support.",
   },
   {
     number: "05",
-    title: "Measurable Experience",
-    description: "Post-event reporting and feedback to ensure continuous improvement.",
+    title: "Deliver the Experience",
+    description: "We ensure a smooth journey from start to finish.",
   },
 ];
 
 export default function B2BProcess() {
   return (
     <ProcessTimeline
-      title="Our Proven Corporate Process"
-      subtitle="A systematic approach that ensures every corporate event exceeds expectations."
+      title="From Vision to Experience"
+      subtitle="You bring the objective. We build everything around it"
       steps={STEPS}
-      sectionPadding="normal"
+      sectionPadding="compact"
     />
   );
 }

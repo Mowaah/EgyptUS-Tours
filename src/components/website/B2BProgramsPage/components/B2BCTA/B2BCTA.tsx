@@ -9,10 +9,10 @@ export default function B2BCTA() {
       <div className={styles.container}>
         <div className={styles.content}>
           <h2 className={styles.title}>
-            Let's Build a Corporate Experience Your Team Will{' '}
+            Let&apos;s Create an Experience Your<br /> Team Will{" "}
             <span className={styles.highlight}>Remember</span>
           </h2>
-          <p className={styles.subtitle}>And your leadership will appreciate.</p>
+          <p className={styles.subtitle}>And an event your leadership will be proud of</p>
         </div>
 
         <Link href="/b2b-programs/request-proposal" className={styles.ctaButton}>

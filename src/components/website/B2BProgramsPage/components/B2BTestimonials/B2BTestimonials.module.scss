@@ -38,8 +38,8 @@
 
 .subtitle {
   font-weight: 400;
-  font-size: clamp(0.9375rem, 2vw, 1.25rem);
-  line-height: 1.4;
+  font-size: $font-size-lg;
+  line-height: 1.5;
   color: $text-light;
   margin: 0;
   max-width: 56ch;

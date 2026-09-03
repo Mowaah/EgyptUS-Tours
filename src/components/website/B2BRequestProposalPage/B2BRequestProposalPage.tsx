@@ -32,7 +32,9 @@ export default function B2BRequestProposalPage() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.companyName.trim()) newErrors.companyName = "Company Name is required.";
+    if (!formData.country?.trim()) newErrors.country = "Country is required.";
     if (!formData.contactPerson.trim()) newErrors.contactPerson = "Contact Person is required.";
+    if (!formData.jobTitle?.trim()) newErrors.jobTitle = "Job Title is required.";
     if (!formData.email.trim()) {
       newErrors.email = "Email Address is required.";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
@@ -108,6 +110,7 @@ export default function B2BRequestProposalPage() {
                   name="organization"
                   autoComplete="organization"
                   label="Company Name"
+                  required
                   type="text"
                   placeholder="Enter your company name"
                   value={formData.companyName}
@@ -115,7 +118,7 @@ export default function B2BRequestProposalPage() {
                   error={errors.companyName || errors.company_name}
                 />
 
-                <FormField label="Country" error={errors.country}>
+                <FormField label="Country" required error={errors.country}>
                   <NationalitySelect
                     useCountryName={true}
                     value={formData.country}
@@ -128,6 +131,7 @@ export default function B2BRequestProposalPage() {
                   name="name"
                   autoComplete="name"
                   label="Contact Person"
+                  required
                   type="text"
                   placeholder="Example@Gmail.Com"
                   value={formData.contactPerson}
@@ -140,6 +144,7 @@ export default function B2BRequestProposalPage() {
                   name="organization-title"
                   autoComplete="organization-title"
                   label="Your Job Title"
+                  required
                   type="text"
                   placeholder="Enter your position within the company"
                   value={formData.jobTitle}
@@ -151,7 +156,8 @@ export default function B2BRequestProposalPage() {
                   id="email"
                   name="email"
                   autoComplete="email"
-                  label="Email Adress"
+                  label="Email Address"
+                  required
                   type="email"
                   placeholder="youremail@company.com"
                   value={formData.email}
@@ -159,17 +165,21 @@ export default function B2BRequestProposalPage() {
                   error={errors.email}
                 />
 
-                <div className={styles.field}>
-                  <label className={styles.fieldLabel}>Phone Number</label>
+                <FormField
+                  id="b2bPhone"
+                  label="Phone Number"
+                  required
+                  error={errors.phone}
+                >
                   <PhoneInput
                     id="b2bPhone"
                     name="tel"
                     autoComplete="tel"
                     value={formData.phone}
                     onChange={(val) => handleChange("phone", val)}
-                    error={errors.phone}
+                    hasError={!!errors.phone}
                   />
-                </div>
+                </FormField>
 
                 <div className={styles.fullWidthField}>
                   <FormField
@@ -178,7 +188,7 @@ export default function B2BRequestProposalPage() {
                     autoComplete="url"
                     label="Website"
                     type="text"
-                    placeholder="www.egyptus.com"
+                    placeholder="www.egyptustours.com"
                     value={formData.website}
                     onChange={(e) => handleChange("website", e.target.value)}
                     error={errors.website}
@@ -189,6 +199,7 @@ export default function B2BRequestProposalPage() {
                   <FormField
                     id="requestDetails"
                     label="Request Details"
+                    required
                     isTextarea={true}
                     placeholder="Tell us about your request."
                     value={formData.requestDetails}

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import GlassCard from "@/components/shared/GlassCard/GlassCard";
 import styles from "./DetailGallery.module.scss";
 
 interface DetailGalleryProps {
@@ -34,9 +33,9 @@ export default function DetailGallery({ images, title, rating, reviewCount, desc
           className={styles.mainImg}
           priority
         />
-        <GlassCard className={styles.counter}>
-          {activeIndex + 1} / {images.length}
-        </GlassCard>
+        <div className={styles.counter}>
+          {activeIndex + 1}/{images.length}
+        </div>
         <button className={`${styles.arrow} ${styles.arrowLeft}`} onClick={prev} aria-label="Previous">
           <Image src="/images/arrows/pagination-arrow.svg" alt="Previous" width={16} height={16} />
         </button>

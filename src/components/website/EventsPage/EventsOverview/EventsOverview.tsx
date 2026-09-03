@@ -8,14 +8,14 @@ import styles from './EventsOverview.module.scss';
 type TabId = 'overview' | 'features' | 'accessibility';
 
 const EVENT_FEATURES = [
-  { title: "Free WiFi", desc: "High-speed internet for all attendees" },
-  { title: "Complimentary Refreshments", desc: "Coffee, tea, and snacks provided" },
-  { title: "Climate Control", desc: "Advanced HVAC systems" },
-  { title: "Premium Audio", desc: "Professional sound systems" },
-  { title: "LED Displays", desc: "4K video walls and screens" },
-  { title: "Simultaneous Translation", desc: "12+ languages available" },
-  { title: "24/7 Security", desc: "Professional security staff" },
-  { title: "Valet Parking", desc: "Complimentary parking service" },
+  { title: "Venue Selection", desc: "The right setting for your event" },
+  { title: "Event Planning", desc: "From concept to execution" },
+  { title: "Hotel & Accommodation", desc: "Comfortable stays for your attendees" },
+  { title: "Transportation", desc: "Seamless transfers and logistics" },
+  { title: "Event Branding", desc: "Make your event uniquely yours" },
+  { title: "Tours & Experiences", desc: "Discover Egypt beyond the event" },
+  { title: "Media Coverage", desc: "Capture every important moment" },
+  { title: "On-Site Support", desc: "A dedicated team throughout the event" },
 ];
 
 export default function EventsOverview() {
@@ -46,15 +46,7 @@ export default function EventsOverview() {
                 <h2 className={styles.title}>Overview</h2>
                 <div className={styles.descriptionWrap}>
                   <p className={styles.description}>
-                    Egypt is an ideal destination for MICE events, offering a unique combination of strategic location,
-                    competitive pricing, and rich cultural experiences. As a gateway between Africa, Asia, and
-                    Europe, Egypt provides excellent international connectivity and world-class conference facilities.
-                  </p>
-                  <p className={styles.description}>
-                    Our professional event management teams ensure seamless execution from concept to
-                    completion, while the country's iconic historical backdrop creates memorable experiences for
-                    delegates. With USD-friendly pricing and luxury 5-star accommodations, Egypt delivers outstanding
-                    value for international corporate events.
+                    Egypt offers a unique MICE destination combining world-class hospitality, diverse venues, competitive value, and thousands of years of history. From executive meetings and conferences to incentive trips, gala dinners, and unique team experiences we can organize it for you.
                   </p>
                 </div>
 
@@ -63,7 +55,7 @@ export default function EventsOverview() {
                     <div className={styles.iconWrap}>
                       <Image src="/images/mice/meetings.svg" alt="" width={32} height={32} />
                     </div>
-                    <p className={styles.statValue}>2,500</p>
+                    <p className={styles.statValue}>1000</p>
                     <p className={styles.statLabel}>Max capacity</p>
                   </div>
 
@@ -71,7 +63,7 @@ export default function EventsOverview() {
                     <div className={styles.iconWrap}>
                       <Image src="/images/exhibition.svg" alt="" width={32} height={32} />
                     </div>
-                    <p className={styles.statValue}>5,000m²</p>
+                    <p className={styles.statValue}>Open Air or Hotels</p>
                     <p className={styles.statLabel}>Exhibition space</p>
                   </div>
 
@@ -79,7 +71,7 @@ export default function EventsOverview() {
                     <div className={styles.iconWrap}>
                       <Image src="/images/languages.svg" alt="" width={32} height={32} />
                     </div>
-                    <p className={styles.statValue}>12+</p>
+                    <p className={styles.statValue}>10+</p>
                     <p className={styles.statLabel}>Languages</p>
                   </div>
                 </div>
@@ -142,8 +134,8 @@ export default function EventsOverview() {
                       <Image src="/images/locations.svg" alt="Location" width={24} height={24} />
                     </div>
                     <div className={styles.aTextWrap}>
-                      <span className={styles.aTitle}>Primary Locations</span>
-                      <span className={styles.aDesc}>Cairo • Sharm El Sheikh • Luxor • Alexandria</span>
+                      <span className={styles.aTitle}>Multiple Destinations</span>
+                      <span className={styles.aDesc}>Cairo • Sharm El Sheikh • Luxor • Alexandria • And More</span>
                     </div>
                   </div>
 
@@ -152,8 +144,8 @@ export default function EventsOverview() {
                       <Image src="/images/airplane-blue.svg" alt="Airport" width={24} height={24} />
                     </div>
                     <div className={styles.aTextWrap}>
-                      <span className={styles.aTitle}>Airport Access</span>
-                      <span className={styles.aDesc}>Cairo International Airport (CAI) - Direct flights from 100+ cities</span>
+                      <span className={styles.aTitle}>Easy to Reach</span>
+                      <span className={styles.aDesc}>International and domestic flights or by land across Egypt</span>
                     </div>
                   </div>
 
@@ -162,8 +154,18 @@ export default function EventsOverview() {
                       <Image src="/images/calendar-blue.svg" alt="Calendar" width={24} height={24} />
                     </div>
                     <div className={styles.aTextWrap}>
-                      <span className={styles.aTitle}>Available Dates</span>
-                      <span className={styles.aDesc}>Year-round availability • Peak season: October to April</span>
+                      <span className={styles.aTitle}>Year-Round Events</span>
+                      <span className={styles.aDesc}>Plan your corporate experience in Egypt any time of year</span>
+                    </div>
+                  </div>
+
+                  <div className={styles.accessItem}>
+                    <div className={styles.aIconWrap}>
+                      <Image src="/images/heads-up.png" alt="Heads up" width={24} height={24} />
+                    </div>
+                    <div className={styles.aTextWrap}>
+                      <span className={styles.aTitle}>Heads up</span>
+                      <span className={styles.aDesc}>Let us know 2-3 months prior your event date and flights!</span>
                     </div>
                   </div>
                 </div>

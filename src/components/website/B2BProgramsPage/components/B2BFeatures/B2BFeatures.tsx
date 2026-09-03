@@ -6,16 +6,16 @@ import Image from "next/image";
 
 const FEATURES = [
   {
-    title: "Corporate Retreats",
-    description: "Leadership & strategy-focused escapes.",
+    title: "Executive Meetings",
+    description: "Thoughtfully planned meetings in exceptional Egyptian settings.",
     cardBg: "#F8FCFF",
     borderColor: "#EAF1FD",
     iconBg: "#EAF6FF",
     iconSrc: "/images/mice/meetings.svg",
   },
   {
-    title: "Team Building Programs",
-    description: "Engaging activities that strengthen teams.",
+    title: "Incentive Experiences",
+    description: "Reward your team with experience that go beyond the ordinary",
     cardBg: "rgba(255, 240, 230, 0.22)",
     borderColor: "#FFF1E8",
     iconBg: "#FFF0E6",
@@ -23,15 +23,15 @@ const FEATURES = [
   },
   {
     title: "Corporate Events",
-    description: "Gala dinners, company celebrations, award nights.",
+    description: "From intimate gatherings to large-scale events, managed start to end",
     cardBg: "rgba(240, 253, 244, 0.28)",
     borderColor: "#EDFBF3",
     iconBg: "#F0FDF4",
     iconSrc: "/images/mice/conferences.svg",
   },
   {
-    title: "Incentive Travel",
-    description: "Reward top performers in unforgettable destinations.",
+    title: "Corporate Travel",
+    description: "Hotels, transportation, flights, tours, and much more",
     cardBg: "rgba(223, 234, 251, 0.17)",
     borderColor: "#EAF1FD",
     iconBg: "#DFEAFB",
@@ -45,9 +45,7 @@ export default function B2BFeatures() {
       <div className={styles.header}>
         <h2 className={styles.title}>What We Offer</h2>
         <p className={styles.subtitle}>
-          High-level meetings, curated incentives, and world-class exhibitions tailored
-          <br />
-          for leading organizations.
+          We create customized corporate experiences designed around your goals and priorities.
         </p>
       </div>
 

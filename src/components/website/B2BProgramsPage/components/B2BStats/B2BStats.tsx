@@ -6,22 +6,22 @@ import CountUp from "react-countup";
 import styles from "./B2BStats.module.scss";
 
 const STATS = [
-  { end: 120, prefix: "", suffix: "+", label: "Corporate Events" },
-  { end: 15,  prefix: "+", suffix: "",  label: "Client Satisfaction" },
-  { end: 97,  prefix: "", suffix: "%",  label: "Client Satisfaction Rate" },
+  { end: 1000, prefix: "+", suffix: "", separator: ",", label: "Travelers Served" },
+  { end: 26,  prefix: "+", suffix: "",  label: "Experience in Egypt Tourism" },
+  { end: 100, prefix: "", suffix: "%",  label: "Personalized Experiences" },
 ];
 
 const BADGES_ROW1 = [
-  "Dedicated corporate account manager",
-  "5-Star hotel partnerships",
-  "Exclusive venue access",
-  "Full transportation & logistics",
-  "Transparent contracts",
+  "Goals to Experience",
+  "Custom Egypt Tour Packages",
+  "Group Travel Programs",
+  "Luxury Egypt Experience",
 ];
 
 const BADGES_ROW2 = [
-  "Multilingual team",
-  "24/7 operational support",
+  "Multi-Destination Programs",
+  "FIT & Tailor-Made Travel",
+  "Nile Cruise Packages",
 ];
 
 export default function B2BStats() {
@@ -51,7 +51,9 @@ export default function B2BStats() {
 
       <div className={styles.header}>
         <h2 className={styles.title}>Why Us</h2>
-        <p className={styles.subtitle}>TRUSTED BY LEADING ORGANIZATIONS</p>
+        <p className={styles.subtitle}>
+          We Don&apos;t Just Organize Events. We Take Ownership of the Experience
+        </p>
       </div>
 
       <div className={styles.statsWrapper}>
@@ -65,6 +67,7 @@ export default function B2BStats() {
                     end={stat.end}
                     prefix={stat.prefix}
                     suffix={stat.suffix}
+                    separator={stat.separator || ""}
                     duration={2}
                   />
                 ) : (

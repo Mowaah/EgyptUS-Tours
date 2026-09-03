@@ -14,7 +14,7 @@ interface ProcessTimelineProps {
   title: string;
   subtitle: string;
   steps: ProcessStep[];
-  sectionPadding?: "normal" | "large";
+  sectionPadding?: "none" | "compact" | "normal" | "large";
 }
 
 /** Must match `.lineActive` transition duration in SCSS */

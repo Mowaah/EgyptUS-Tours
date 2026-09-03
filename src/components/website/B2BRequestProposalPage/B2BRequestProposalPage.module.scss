@@ -102,19 +102,6 @@
   }
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.fieldLabel {
-  font-weight: 700;
-  font-size: $font-size-sm;
-  color: $gray-700;
-  margin: 0;
-}
-
 // On mobile full-width fields are truly full-width; on desktop they occupy
 // half the two-column grid to keep the existing visual rhythm.
 .fullWidthField {

@@ -1,157 +1,113 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import CountUp from "react-countup";
 import styles from "./AboutTeam.module.scss";
 
+const STATS = [
+  {
+    end: 100,
+    suffix: "%",
+    desc: "Personalized Experiences",
+  },
+  {
+    end: 1000,
+    suffix: "+",
+    separator: ",",
+    desc: "Travelers Served",
+  },
+  {
+    end: 30,
+    suffix: "+Years",
+    desc: "Experience in Egypt Tourism",
+  },
+];
+
 export default function AboutTeam() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const isScrollingRef = useRef(false);
-
-  const handleScroll = () => {
-    if (isScrollingRef.current) return;
-
-    const el = scrollRef.current;
-    if (el) {
-      const scrollLeft = el.scrollLeft;
-      const children = Array.from(el.children) as HTMLElement[];
-      
-      let closestIndex = 0;
-      let minDistance = Infinity;
-
-      children.forEach((child, i) => {
-        // Calculate distance to center of viewport
-        const childCenter = child.offsetLeft + child.clientWidth / 2;
-        const scrollCenter = scrollLeft + el.clientWidth / 2;
-        const distance = Math.abs(childCenter - scrollCenter);
-        
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestIndex = i;
-        }
-      });
-
-      if (closestIndex !== activeIndex) {
-        setActiveIndex(closestIndex);
-      }
-    }
-  };
-
-  const scrollTo = (index: number) => {
-    const el = scrollRef.current;
-    if (el && el.children[index]) {
-      const child = el.children[index] as HTMLElement;
-      isScrollingRef.current = true;
-      
-      // Cleanly scroll only the horizontal container without affecting the page's vertical scroll
-      const targetLeft = child.offsetLeft + (child.clientWidth / 2) - (el.clientWidth / 2);
-      
-      el.scrollTo({
-        left: targetLeft,
-        behavior: "smooth"
-      });
-      
-      setActiveIndex(index);
-
-      setTimeout(() => {
-        isScrollingRef.current = false;
-      }, 700); 
-    }
-  };
+  const statsRef = useRef<HTMLDivElement>(null);
+  const [started, setStarted] = useState(false);
 
   useEffect(() => {
-    if (isPaused) return;
-    
-    const timer = setTimeout(() => {
-      const nextIndex = (activeIndex + 1) % 3;
-      scrollTo(nextIndex);
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, [activeIndex, isPaused]);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStarted(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    if (statsRef.current) observer.observe(statsRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <section className={styles.section}>
+      <div className={styles.decoration}>
+        <Image
+          src="/images/dotted-line8.svg"
+          alt=""
+          width={222}
+          height={364}
+          className={styles.decorationImg}
+        />
+      </div>
+
       <div className={styles.container}>
         <div className={styles.grid}>
-          {/* Photos side */}
+          {/* Founder Photo */}
           <div className={styles.imagesWrapper}>
-            <div 
-              className={styles.imagesGrid} 
-              ref={scrollRef} 
-              onScroll={handleScroll}
-              onMouseEnter={() => setIsPaused(true)}
-              onMouseLeave={() => setIsPaused(false)}
-              onTouchStart={() => {
-                setIsPaused(true);
-                isScrollingRef.current = false;
-              }}
-              onTouchEnd={() => setIsPaused(false)}
-            >
-              <div className={`${styles.imageWrap} ${styles.img1}`}>
-                <Image src="/images/team/team1.jpg" alt="Team meeting" fill className={styles.image} />
-              </div>
-              <div className={`${styles.imageWrap} ${styles.img2}`}>
-                <Image src="/images/team/team2.jpg" alt="Team posing" fill className={styles.image} />
-              </div>
-              <div className={`${styles.imageWrap} ${styles.img3}`}>
-                <Image src="/images/team/team3.jpg" alt="Team working" fill className={styles.image} />
-              </div>
-            </div>
-            
-            <div className={styles.pagination}>
-              {[0, 1, 2].map((idx) => (
-                <button 
-                  key={idx}
-                  onClick={() => scrollTo(idx)}
-                  className={idx === activeIndex ? styles.dotActive : styles.dot}
-                  aria-label={`Go to slide ${idx + 1}`}
-                />
-              ))}
+            <div className={styles.singleImageWrap}>
+              <Image
+                src="/images/team/founder.png"
+                alt="Mohamed Abbas - Founder"
+                fill
+                className={styles.image}
+              />
             </div>
           </div>
 
           {/* Text side */}
           <div className={styles.content}>
-            <div className={styles.textGroup}>
-              <span className={styles.label}>The Team</span>
-              <h2 className={styles.heading}>Meet the Team Behind the Experience</h2>
+            <div className={styles.textSection}>
+              <div className={styles.textGroup}>
+                <span className={styles.label}>The Founder</span>
+                <h2 className={styles.heading}>Meet the Founder Behind the Experience</h2>
+                <h3 className={styles.founderName}>Mohamed Abbas</h3>
+              </div>
+
+              <div className={styles.paragraphs}>
+                <p>
+                  With more than <strong>30 years of experience in Egypt&apos;s tourism industry</strong>, Mr. Mohamed Abbas brings extensive knowledge of Egypt&apos;s destinations, history, and travel operations.
+                </p>
+                <p>
+                  As a <strong>Tourism Manager, Egyptologist, and former tour guide</strong>, he combines professional expertise with firsthand experience in creating and managing memorable journeys across Egypt. His deep understanding of the destination and commitment to service have helped shape Egypt Us Tours into a trusted partner for travelers and international tourism professionals.
+                </p>
+                <p>
+                  His philosophy is simple: <strong>great travel starts with local expertise, careful planning, and genuine hospitality.</strong>
+                </p>
+              </div>
             </div>
 
-            <div className={styles.paragraphs}>
-              <p>
-                Behind every successful corporate event, executive retreat, and large-scale company program is a team that believes in precision, structure, and accountability.
-              </p>
-              <p>
-                Our team brings together professionals with expertise in corporate travel planning, event management, logistics coordination, venue negotiation, hospitality partnerships, and on-site operations. Each member understands that in the corporate world, details are not optional — they define the outcome.
-              </p>
-            </div>
-
-          </div>
-
-          <div className={styles.statsRow}>
-            <div className={styles.statItem}>
-              <div className={styles.statIconWrap}>
-                <Image src="/images/whytrustus/green-profile.svg" alt="" width={24} height={24} className={styles.statIcon} />
-              </div>
-              <span className={styles.statValue}>100%</span>
-              <span className={styles.statDesc}>Dedicated <br className={styles.mobileBr} /> Corporate Focus</span>
-            </div>
-            <div className={styles.statItem}>
-              <div className={styles.statIconWrap}>
-                <Image src="/images/whytrustus/award.svg" alt="" width={24} height={24} className={styles.statIcon} />
-              </div>
-              <span className={styles.statValue}>15,000+</span>
-              <span className={styles.statDesc}>Attendees <br className={styles.mobileBr} /> Managed</span>
-            </div>
-            <div className={styles.statItem}>
-              <div className={styles.statIconWrap}>
-                <Image src="/images/whytrustus/chart-arrow.svg" alt="" width={24} height={24} className={styles.statIcon} />
-              </div>
-              <span className={styles.statValue}>8+ Years</span>
-              <span className={styles.statDesc}>Industry <br className={styles.mobileBr} /> Experience</span>
+            <div className={styles.statsRow} ref={statsRef}>
+              {STATS.map((stat, i) => (
+                <div key={i} className={styles.statItem}>
+                  <span className={styles.statValue}>
+                    {started ? (
+                      <CountUp
+                        end={stat.end}
+                        suffix={stat.suffix}
+                        separator={stat.separator || ""}
+                        duration={2}
+                      />
+                    ) : (
+                      `0${stat.suffix}`
+                    )}
+                  </span>
+                  <span className={styles.statDesc}>{stat.desc}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>

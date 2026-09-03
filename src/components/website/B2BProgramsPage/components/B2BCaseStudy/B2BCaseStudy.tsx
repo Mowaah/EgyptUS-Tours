@@ -7,7 +7,7 @@ export default function B2BCaseStudy() {
     <section className={styles.section}>
       <div className={styles.header}>
         <h2 className={styles.title}>Case Study Spotlight</h2>
-        <p className={styles.subtitle}>Real results from real corporate events</p>
+        <p className={styles.subtitle}>Let&apos;s Create an Experience Your Team Will Remember</p>
       </div>
 
       <div className={styles.card}>

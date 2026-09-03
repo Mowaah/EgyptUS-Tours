@@ -2,72 +2,73 @@ import React from 'react';
 import Image from 'next/image';
 import styles from './EventsFeatured.module.scss';
 
+const HIGHLIGHT_PILLS = [
+  "Cairo, Luxor & Aswan",
+  "Jerusalem Exploration",
+  "Hotel Accommodation",
+  "Flight Ticket Arrangements",
+  "Professional Egyptologists",
+  "Business Meetings",
+];
+
+const CHECKLIST_ITEMS = [
+  "Seamless Group Coordination",
+  "Business & Leisure Successfully Combined",
+  "End-to-End Travel Arrangements",
+  "Smooth On-Ground Support",
+];
+
 export default function EventsFeatured() {
   return (
     <section className={styles.section}>
       <div className={styles.header}>
-        <h2 className={styles.title}>Work .. Play .. Paradise.</h2>
+        <h2 className={styles.title}>Work. Connect. Experience Egypt.</h2>
         <p className={styles.subtitle}>
-          Elevate your team's productivity with a mix of professional logistics and Red Sea luxury in El Gouna.
+          Bring your team together through a seamless blend of business &amp; team experiences
         </p>
       </div>
 
       <div className={styles.card}>
         <div className={styles.layout}>
-          {/* ── Left: Stacked Images ── */}
-          <div className={styles.imageStack}>
-            <div className={styles.imageLayer3} />
-            <div className={styles.imageLayer2} />
-            <div className={styles.imageLayer1}>
-              <div className={styles.tag}>FEATURED EVENT</div>
-              <div className={styles.imageInfo}>
-                <h4 className={styles.day}>Day 1</h4>
-                <p className={styles.venue}>Beach Gala Dinner</p>
-              </div>
-            </div>
+          {/* ── Left: Single Image ── */}
+          <div className={styles.imageWrap}>
+            <Image
+              src="/images/case-study.png"
+              alt="60 American Travelers"
+              fill
+              sizes="(max-width: 1024px) 100vw, 629px"
+              className={styles.image}
+              priority
+            />
           </div>
 
-          {/* ── Right: Details ── */}
+          {/* ── Right: Details (Frame 20) ── */}
           <div className={styles.details}>
-            <div className={styles.eventHeader}>
-              <h3 className={styles.eventTitle}>Blue Horizon Summit</h3>
-              <p className={styles.eventSubtitle}>60 Executives - Team Building - Desert Experience - Beach Gala Dinner</p>
-            </div>
-
-            <div className={styles.highlights}>
-              <div className={styles.highlightsHeader}>
-                <Image src="/images/star-yellow2.svg" alt="" width={20} height={20} />
-                <span className={styles.highlightsTitle}>Highlights</span>
+            <div className={styles.topContent}>
+              <div className={styles.eventHeader}>
+                <h3 className={styles.eventTitle}>60 American Travelers</h3>
+                <p className={styles.eventSubtitle}>Egypt &amp; Jerusalem Group Travel Experience</p>
               </div>
 
-              <div className={styles.pills}>
-                <div className={styles.pill}>
-                  <Image src="/images/location.svg" alt="" width={20} height={20} />
-                  <span>El Gouna Egypt</span>
+              <div className={styles.highlights}>
+                <div className={styles.highlightsHeader}>
+                  <span className={styles.highlightsTitle}>Highlights</span>
                 </div>
-                <div className={styles.pill}>
-                  <Image src="/images/chart.svg" alt="" width={20} height={20} />
-                  <span>5-Star Resort</span>
-                </div>
-                <div className={styles.pill}>
-                  <Image src="/images/profile-blue.svg" alt="" width={20} height={20} />
-                  <span>60 Executives</span>
-                </div>
-                <div className={styles.pill}>
-                  <Image src="/images/grid-view2.svg" alt="" width={20} height={20} />
-                  <span>3-Day Program</span>
+
+                <div className={styles.pills}>
+                  {HIGHLIGHT_PILLS.map((pill) => (
+                    <div key={pill} className={styles.pill}>
+                      <Image src="/images/star-motion-blue.svg" alt="" width={22} height={22} />
+                      <span>{pill}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
 
             <ul className={styles.checkList}>
-              {[
-                "100% client satisfaction Score",
-                "Seamless Logistics & Coordination",
-                "Delivered Under Budget",
-                "Proximity to venues",
-              ].map((item, idx) => (
-                <li key={idx} className={styles.checkItem}>
+              {CHECKLIST_ITEMS.map((item) => (
+                <li key={item} className={styles.checkItem}>
                   <div className={styles.checkIcon}>
                     <Image src="/images/check-blue.svg" alt="" width={10} height={10} />
                   </div>

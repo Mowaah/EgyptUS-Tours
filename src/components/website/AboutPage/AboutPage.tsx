@@ -13,8 +13,8 @@ export default function AboutPage() {
         breadcrumbs={[
           { label: "About Us", isCurrent: true },
         ]}
-        title="Where Corporate Vision Becomes Experience"
-        subtitle="We transform strategic objectives into seamless travel and event solutions tailored for modern organizations."
+        title="Where Every Journey Becomes a Memory"
+        subtitle="We create seamless, personalized travel experiences across Egypt and beyond, backed by local expertise and dedicated service."
         decorationSrc="/images/dotted-line3.svg"
         titleMaxWidth="950px"
         subtitleMaxWidth="900px"

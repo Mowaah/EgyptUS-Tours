@@ -47,6 +47,7 @@
   @else {
     display: -webkit-box;
     -webkit-line-clamp: $lines;
+    line-clamp: $lines;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }

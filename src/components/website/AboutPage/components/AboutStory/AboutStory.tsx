@@ -31,14 +31,14 @@ export default function AboutStory() {
                 <div className={styles.paragraphGroup}>
                   <h3 className={styles.paragraphTitle}>Our Story</h3>
                   <div className={styles.paragraphLine}>
-                    In 2000, we started with a simple belief: Egypt&apos;s incredible history, culture, and hospitality deserve to be experienced in extraordinary ways. What began as a small team passionate about sharing Egypt&apos;s wonders has grown into a trusted partner for travelers and corporations worldwide.
+                    Since 2000, Egypt US Tours has been creating unforgettable journeys across Egypt, growing from a passion for Egypt into a trusted travel partner for travelers and organizations worldwide.
                   </div>
                 </div>
 
                 <div className={styles.paragraphGroup}>
                   <h3 className={styles.paragraphTitle}>The Core</h3>
                   <div className={styles.paragraphLine}>
-                    Over the past 15 years, we&apos;ve organized over 500 successful events, welcomed thousands of guests, and built lasting relationships with hotels, venues, and service providers across Egypt. Our team combines deep local knowledge with international expertise to deliver seamless, memorable experiences.
+                    Our strength lies in knowing Egypt from the inside out. We combine local expertise with international standards to create personalized journeys, seamless travel arrangements, and exceptional corporate experiences. From private tours and hotel stays to MICE events and on-ground operations, we take care of the details so our clients can focus on enjoying the experience.
                   </div>
                 </div>
               </>
@@ -47,18 +47,16 @@ export default function AboutStory() {
             {activeTab === "Vision" && (
               <>
                 <h2 className={styles.mainTitle}>Our Vision</h2>
-                <div className={styles.paragraphGroup}>
-                  <h3 className={styles.paragraphTitle}>We aim to</h3>
-                  <div className={styles.paragraphLine}>
-                    be the most trusted and innovative travel partner in Egypt, recognized globally for creating transformative experiences that connect people with Egypt&apos;s timeless wonders and modern excellence.
-                  </div>
-                </div>
-
-                <div className={styles.paragraphGroup}>
-                  <h3 className={styles.paragraphTitle}>Beyond Travel</h3>
-                  <div className={styles.paragraphLine}>
-                    We envision a future where every visitor to Egypt experiences not just ancient monuments, but a profound connection with the culture, people, and modern vibrancy that makes Egypt truly extraordinary. Through innovation and dedication, we aim to set new standards for travel excellence.
-                  </div>
+                <div className={styles.paragraphLine}>
+                  <p>
+                    To become a trusted leader in organizing travel experiences inside Egypt and B2B MICE events for companies around the world.
+                  </p>
+                  <p>
+                    For travelers, Egypt US Tours aims to be the trusted partner that makes discovering Egypt effortless and memorable.
+                  </p>
+                  <p>
+                    For businesses, the ambition is to become the partner that can take an event in Egypt from concept to execution, allowing the client to focus on their guests, achievement, celebration, or business objectives rather than operational details.
+                  </p>
                 </div>
               </>
             )}
@@ -66,18 +64,19 @@ export default function AboutStory() {
             {activeTab === "Mission" && (
               <>
                 <h2 className={styles.mainTitle}>Our Mission</h2>
-                <div className={styles.paragraphGroup}>
-                  <h3 className={styles.paragraphTitle}>We aim to</h3>
-                  <div className={styles.paragraphLine}>
-                    To deliver exceptional, personalized travel and event experiences across Egypt through expert planning, genuine hospitality, and unwavering commitment to quality and client satisfaction.
-                  </div>
-                </div>
-
-                <div className={styles.paragraphGroup}>
-                  <h3 className={styles.paragraphTitle}>The Core</h3>
-                  <div className={styles.paragraphLine}>
-                    We are committed to showcasing the best of Egypt while exceeding expectations at every touchpoint. Our mission is to create lasting memories through meticulous attention to detail, cultural authenticity, and world-class service that honors Egypt&apos;s rich heritage.
-                  </div>
+                <div className={styles.paragraphLine}>
+                  <p>
+                    Egypt US Tours exists to make experiencing Egypt easier, safer, more personalized, and more memorable.
+                  </p>
+                  <p>
+                    The company takes responsibility for the details so travelers and businesses can focus on enjoying Egypt and creating meaningful memories.
+                  </p>
+                  <p>
+                    For B2C clients, this means creating fully personalized trips supported by professional guides, team leaders, reservations, transportation, and operational assistance.
+                  </p>
+                  <p>
+                    For B2B clients, this means providing an end-to-end MICE solution covering the event concept, branding, logistics, hotels, flights, tours, attendee experiences, media coverage, social media, and event operations.
+                  </p>
                 </div>
               </>
             )}
@@ -86,8 +85,8 @@ export default function AboutStory() {
 
           <div className={styles.imageContent}>
             <Image
-              src="/images/about-story.jpg"
-              alt="Felucca on the Nile"
+              src="/images/about-story.png"
+              alt="Pyramids with people on camels"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className={styles.image}
