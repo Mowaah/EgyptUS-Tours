@@ -144,6 +144,50 @@
       "emailPlaceholder": "sucorreo@empresa.com",
       "phone": "Número de Teléfono"
     },
+    "options": {
+      "industries": {
+        "technology": "Tecnología",
+        "finance": "Finanzas",
+        "healthcare": "Salud y Medicina",
+        "education": "Educación",
+        "manufacturing": "Manufactura / Industria",
+        "other": "Otro"
+      },
+      "eventTypes": {
+        "conference": "Conferencia",
+        "meeting": "Reunión",
+        "incentive": "Viaje de Incentivo",
+        "exhibition": "Exposición",
+        "retreat": "Retiro Corporativo"
+      },
+      "venueTypes": {
+        "hotel": "Centro de Conferencias de Hotel",
+        "exhibition_hall": "Pabellón de Exposiciones",
+        "historical": "Lugar Histórico",
+        "outdoor": "Espacio al Aire Libre / Resort",
+        "other": "Otro"
+      },
+      "additionalServices": {
+        "hotel": "Alojamiento en Hotel",
+        "transportation": "Transporte",
+        "catering": "Servicios de Catering",
+        "technical": "Soporte Técnico / Audiovisual",
+        "translation": "Traducción / Interpretación",
+        "entertainment": "Programa de Entretenimiento"
+      },
+      "budgetFlexibility": {
+        "flexible": "Flexible",
+        "strict": "Estricto / Fijo",
+        "approximate": "Aproximado"
+      },
+      "hearAboutUs": {
+        "search": "Motor de Búsqueda (Google, Bing)",
+        "social": "Redes Sociales",
+        "referral": "Recomendación de Colega / Socio",
+        "event": "Evento Anterior / Exposición",
+        "other": "Otro"
+      }
+    },
     "eventDetails": {
       "title": "Detalles del Evento",
       "eventType": "Tipo de Evento",

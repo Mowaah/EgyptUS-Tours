@@ -34,6 +34,11 @@ export default function StepRequirements({
     }
   };
 
+  const venueOptions = VENUE_TYPES.map((vt) => ({
+    label: t(`proposal.options.venueTypes.${vt.value}`, vt.label),
+    value: vt.value,
+  }));
+
   return (
     <div className={pageStyles.stepFormCard}>
       <header className={pageStyles.stepFormCardHeader}>
@@ -51,7 +56,7 @@ export default function StepRequirements({
               <SelectDropdown
                 id="req-venue"
                 label={t("proposal.requirements.selectVenueType", "Select Type")}
-                options={[{ label: t("proposal.requirements.selectVenueType", "Select Type"), value: "" }, ...VENUE_TYPES]}
+                options={[{ label: t("proposal.requirements.selectVenueType", "Select Type"), value: "" }, ...venueOptions]}
                 value={data.venueType}
                 onChange={(val) => onChange({ venueType: val })}
                 triggerClassName={pageStyles.formInput}
@@ -66,16 +71,22 @@ export default function StepRequirements({
             <div className={styles.serviceGrid}>
               {ADDITIONAL_SERVICES.map((service) => {
                 const isSelected = data.additionalServices.includes(service.id);
+                const serviceLabel = t(`proposal.options.additionalServices.${service.id}`, service.label);
                 return (
                   <label key={service.id} className={styles.serviceCard}>
-                    <CheckboxIndicator variant="square" size="md" selected={isSelected} />
+                    <CheckboxIndicator
+                      variant="square"
+                      size="md"
+                      selected={isSelected}
+                      aria-hidden
+                    />
                     <input
                       type="checkbox"
                       style={{ position: "absolute", opacity: 0, pointerEvents: "none" }}
                       checked={isSelected}
                       onChange={() => toggleService(service.id)}
                     />
-                    <span className={styles.serviceCardText}>{service.label}</span>
+                    <span className={styles.serviceCardText}>{serviceLabel}</span>
                   </label>
                 );
               })}

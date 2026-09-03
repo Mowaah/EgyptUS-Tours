@@ -23,6 +23,11 @@ export default function StepOrganization({
 }: StepOrganizationProps) {
   const { t } = useTranslation("events");
 
+  const industryOptions = INDUSTRIES.map((ind) => ({
+    label: t(`proposal.options.industries.${ind.value}`, ind.label),
+    value: ind.value,
+  }));
+
   return (
     <div className={pageStyles.stepFormCard}>
       <header className={pageStyles.stepFormCardHeader}>
@@ -51,7 +56,7 @@ export default function StepOrganization({
             <SelectDropdown
               id="org-industry"
               label={t("proposal.organization.selectIndustry", "Select Industry")}
-              options={INDUSTRIES}
+              options={industryOptions}
               value={data.industry}
               onChange={(val) => onChange({ industry: val })}
               triggerClassName={pageStyles.formInput}

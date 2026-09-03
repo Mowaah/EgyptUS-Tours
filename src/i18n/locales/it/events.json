@@ -144,6 +144,50 @@
       "emailPlaceholder": "tuaemail@azienda.com",
       "phone": "Numero di Telefono"
     },
+    "options": {
+      "industries": {
+        "technology": "Tecnologia",
+        "finance": "Finanza",
+        "healthcare": "Sanità e Medicina",
+        "education": "Istruzione",
+        "manufacturing": "Produzione / Industria",
+        "other": "Altro"
+      },
+      "eventTypes": {
+        "conference": "Conferenza",
+        "meeting": "Riunione",
+        "incentive": "Viaggio Incentive",
+        "exhibition": "Fiera / Mostra",
+        "retreat": "Ritiro Aziendale"
+      },
+      "venueTypes": {
+        "hotel": "Centro Congressi Hotel",
+        "exhibition_hall": "Padiglione Fieristico",
+        "historical": "Luogo Storico",
+        "outdoor": "All'aperto / Resort",
+        "other": "Altro"
+      },
+      "additionalServices": {
+        "hotel": "Sistemazione in Hotel",
+        "transportation": "Trasporti",
+        "catering": "Servizi di Catering",
+        "technical": "Supporto Tecnico / AV",
+        "translation": "Traduzione / Interpretariato",
+        "entertainment": "Programma di Intrattenimento"
+      },
+      "budgetFlexibility": {
+        "flexible": "Flessibile",
+        "strict": "Rigoroso / Fisso",
+        "approximate": "Approssimativo"
+      },
+      "hearAboutUs": {
+        "search": "Motore di Ricerca (Google, Bing)",
+        "social": "Social Media",
+        "referral": "Passaparola / Partner",
+        "event": "Evento Precedente / Fiera",
+        "other": "Altro"
+      }
+    },
     "eventDetails": {
       "title": "Dettagli dell'Evento",
       "eventType": "Tipologia di Evento",

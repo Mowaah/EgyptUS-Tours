@@ -102,7 +102,7 @@ export default function StepPersonalInfo({
             <CheckboxIndicator variant="square" size="md" selected={formData.termsAccepted} aria-hidden />
           </div>
           <span className={styles.checkboxLabel}>
-            I have read and agree to the{" "}
+            {t("terms.agreePrefix", "I have read and agree to the")}{" "}
             <button
               type="button"
               className={styles.linkBtn}
@@ -112,9 +112,9 @@ export default function StepPersonalInfo({
                 setShowTermsModal(true);
               }}
             >
-              Terms &amp; Conditions and Cancellation
+              {t("terms.termsAndCancellation", "Terms & Conditions and Cancellation")}
             </button>{" "}
-            Policy.
+            {t("terms.policySuffix", "Policy.")}
           </span>
         </label>
       </div>

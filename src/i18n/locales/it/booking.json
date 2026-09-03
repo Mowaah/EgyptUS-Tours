@@ -285,7 +285,13 @@
       "dropoffLocation": "Destinazione",
       "dropoffLocationPlaceholder": "es. Mena House Hotel, Giza",
       "passengers": "Passeggeri",
+      "passenger": "Passeggero",
       "luggage": "Bagagli",
+      "bag": "Bagaglio",
+      "bags": "Bagagli",
+      "tripType": "Tipologia di Viaggio",
+      "oneWay": "Solo Andata",
+      "roundTrip": "Andata e Ritorno",
       "additionalServices": "Servizi Aggiuntivi",
       "vehicle": "Veicolo"
     },
@@ -342,6 +348,8 @@
     "fromTime": "Dalle 15:00",
     "night": "Notte",
     "nights": "Notti",
+    "day": "Giorno",
+    "days": "Giorni",
     "room": "Camera",
     "adults": "Adulti",
     "children": "Bambini",
@@ -354,6 +362,11 @@
     "remainingNote": "Saldo rimanente del 70% un mese prima del viaggio",
     "hideDetails": "Nascondi Dettagli",
     "viewDetails": "Visualizza Dettagli"
+  },
+  "terms": {
+    "agreePrefix": "Ho letto e accetto i",
+    "termsAndCancellation": "Termini e Condizioni e l'Informativa sulla Cancellazione",
+    "policySuffix": "."
   },
   "errors": {
     "required": "Questo campo è obbligatorio.",

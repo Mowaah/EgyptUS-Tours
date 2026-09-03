@@ -285,7 +285,13 @@
       "dropoffLocation": "Destino",
       "dropoffLocationPlaceholder": "ej. Hotel Mena House, Guiza",
       "passengers": "Pasajeros",
+      "passenger": "Pasajero",
       "luggage": "Equipaje",
+      "bag": "Maleta",
+      "bags": "Maletas",
+      "tripType": "Tipo de Viaje",
+      "oneWay": "Solo Ida",
+      "roundTrip": "Ida y Vuelta",
       "additionalServices": "Servicios Adicionales",
       "vehicle": "Vehículo"
     },
@@ -342,6 +348,8 @@
     "fromTime": "Desde las 15:00",
     "night": "Noche",
     "nights": "Noches",
+    "day": "Día",
+    "days": "Días",
     "room": "Habitación",
     "adults": "Adultos",
     "children": "Niños",
@@ -354,6 +362,11 @@
     "remainingNote": "El 70% restante se paga un mes antes del viaje",
     "hideDetails": "Ocultar Detalles",
     "viewDetails": "Ver Detalles"
+  },
+  "terms": {
+    "agreePrefix": "He leído y acepto los",
+    "termsAndCancellation": "Términos y Condiciones y la Política de Cancelación",
+    "policySuffix": "."
   },
   "errors": {
     "required": "Este campo es obligatorio.",

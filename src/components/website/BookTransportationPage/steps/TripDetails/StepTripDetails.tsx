@@ -29,10 +29,16 @@ function TripTypeSelector({
   value: "One Way" | "Round Trip";
   onChange: (v: "One Way" | "Round Trip") => void;
 }) {
+  const { t } = useTranslation("booking");
+  const options = [
+    { type: "One Way" as const, label: t("transportBooking.rideDetails.oneWay", "One Way") },
+    { type: "Round Trip" as const, label: t("transportBooking.rideDetails.roundTrip", "Round Trip") },
+  ];
+
   return (
-    <FormField label="Trip Type" required>
+    <FormField label={t("transportBooking.rideDetails.tripType", "Trip Type")} required>
       <div className={styles.typeChoices}>
-        {(["One Way", "Round Trip"] as const).map((type) => (
+        {options.map(({ type, label }) => (
           <button
             key={type}
             type="button"
@@ -45,7 +51,7 @@ function TripTypeSelector({
               selected={value === type}
               aria-hidden
             />
-            <span className={styles.typeLabel}>{type}</span>
+            <span className={styles.typeLabel}>{label}</span>
           </button>
         ))}
       </div>
@@ -173,25 +179,31 @@ export default function StepTripDetails({
   const passengerOptions = useMemo(() => {
     return Array.from({ length: maxPassengers }, (_, i) => {
       const val = i + 1;
+      const unit = val === 1
+        ? t("transportBooking.rideDetails.passenger", "Passenger")
+        : t("transportBooking.rideDetails.passengers", "Passengers");
       return {
-        label: `${val} Passenger${val > 1 ? "s" : ""}`,
+        label: `${val} ${unit}`,
         value: val.toString(),
       };
     });
-  }, [maxPassengers]);
+  }, [maxPassengers, t]);
 
   const luggageOptions = useMemo(() => {
     if (maxLuggage === 0) {
-      return [{ label: "0 Bags", value: "0" }];
+      return [{ label: `0 ${t("transportBooking.rideDetails.bags", "Bags")}`, value: "0" }];
     }
     return Array.from({ length: maxLuggage }, (_, i) => {
       const val = i + 1;
+      const unit = val === 1
+        ? t("transportBooking.rideDetails.bag", "Bag")
+        : t("transportBooking.rideDetails.bags", "Bags");
       return {
-        label: `${val} Bag${val > 1 ? "s" : ""}`,
+        label: `${val} ${unit}`,
         value: val.toString(),
       };
     });
-  }, [maxLuggage]);
+  }, [maxLuggage, t]);
 
   useEffect(() => {
     if (formData.passengers > maxPassengers) {

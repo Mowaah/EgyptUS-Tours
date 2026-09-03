@@ -144,6 +144,50 @@
       "emailPlaceholder": "youremail@company.com",
       "phone": "Phone Number"
     },
+    "options": {
+      "industries": {
+        "technology": "Technology",
+        "finance": "Finance",
+        "healthcare": "Healthcare",
+        "education": "Education",
+        "manufacturing": "Manufacturing",
+        "other": "Other"
+      },
+      "eventTypes": {
+        "conference": "Conference",
+        "meeting": "Meeting",
+        "incentive": "Incentive Travel",
+        "exhibition": "Exhibition",
+        "retreat": "Corporate Retreat"
+      },
+      "venueTypes": {
+        "hotel": "Hotel Conference Center",
+        "exhibition_hall": "Dedicated Exhibition Hall",
+        "historical": "Historical Landmark",
+        "outdoor": "Outdoor/Resort Context",
+        "other": "Other"
+      },
+      "additionalServices": {
+        "hotel": "Hotel Accommodation",
+        "transportation": "Transportation",
+        "catering": "Catering Services",
+        "technical": "Technical Support",
+        "translation": "Translation / Interpretation",
+        "entertainment": "Entertainment Program"
+      },
+      "budgetFlexibility": {
+        "flexible": "Flexible",
+        "strict": "Strict / Fixed",
+        "approximate": "Approximate"
+      },
+      "hearAboutUs": {
+        "search": "Search Engine (Google, Bing)",
+        "social": "Social Media",
+        "referral": "Colleague / Partner Referral",
+        "event": "Past Event / Exhibition",
+        "other": "Other"
+      }
+    },
     "eventDetails": {
       "title": "Event Details",
       "eventType": "Event Type",

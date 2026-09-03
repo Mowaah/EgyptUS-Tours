@@ -30,6 +30,16 @@ export default function StepBudget({
 }: StepBudgetProps) {
   const { t } = useTranslation("events");
 
+  const budgetFlexibilityOptions = BUDGET_FLEXIBILITY.map((opt) => ({
+    label: t(`proposal.options.budgetFlexibility.${opt.id}`, opt.label),
+    value: opt.id,
+  }));
+
+  const sourceOptions = SOURCES.map((s) => ({
+    label: t(`proposal.options.hearAboutUs.${s.value}`, s.label),
+    value: s.value,
+  }));
+
   return (
     <div className={pageStyles.stepFormCard}>
       <header className={pageStyles.stepFormCardHeader}>
@@ -57,7 +67,7 @@ export default function StepBudget({
             <SelectDropdown
               id="bud-flex"
               label={t("proposal.budget.budgetFlexibility", "Select Type")}
-              options={BUDGET_FLEXIBILITY.map((opt) => ({ label: opt.label, value: opt.id }))}
+              options={budgetFlexibilityOptions}
               value={data.budgetFlexibility}
               onChange={(val) => onChange({ budgetFlexibility: val })}
               triggerClassName={pageStyles.formInput}
@@ -68,7 +78,7 @@ export default function StepBudget({
             <SelectDropdown
               id="bud-source"
               label={t("proposal.budget.selectSource", "Select Source")}
-              options={[{ label: t("proposal.budget.selectSource", "Select Source"), value: "" }, ...SOURCES]}
+              options={[{ label: t("proposal.budget.selectSource", "Select Source"), value: "" }, ...sourceOptions]}
               value={data.hearAboutUs}
               onChange={(val) => onChange({ hearAboutUs: val })}
               triggerClassName={pageStyles.formInput}

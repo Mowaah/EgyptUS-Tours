@@ -25,6 +25,11 @@ export default function StepEventDetails({
 }: StepEventDetailsProps) {
   const { t } = useTranslation("events");
 
+  const eventTypeOptions = EVENT_TYPES.map((et) => ({
+    label: t(`proposal.options.eventTypes.${et.value}`, et.label),
+    value: et.value,
+  }));
+
   return (
     <div className={pageStyles.stepFormCard}>
       <header className={pageStyles.stepFormCardHeader}>
@@ -41,7 +46,7 @@ export default function StepEventDetails({
             <SelectDropdown
               id="evt-type"
               label={t("proposal.eventDetails.selectEventType", "Select Type")}
-              options={[{ label: t("proposal.eventDetails.selectEventType", "Select Type"), value: "" }, ...EVENT_TYPES]}
+              options={[{ label: t("proposal.eventDetails.selectEventType", "Select Type"), value: "" }, ...eventTypeOptions]}
               value={data.eventType}
               onChange={(val) => onChange({ eventType: val })}
               triggerClassName={pageStyles.formInput}

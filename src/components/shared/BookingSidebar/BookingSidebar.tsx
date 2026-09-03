@@ -94,11 +94,26 @@ export default function BookingSidebar({
         basePrice = baseSeason.double || trip.price || trip.privatePrice || 0;
       }
 
+      const getLocalizedRoomTitle = (tName: string) => {
+        const raw = tName.toLowerCase();
+        if (raw.includes("single")) return t("tripBooking.step1.singleRoom", "Single Room");
+        if (raw.includes("double") || raw.includes("twin")) return t("tripBooking.step1.doubleRoom", "Double Room");
+        if (raw.includes("triple")) return t("tripBooking.step1.tripleRoom", "Triple Room");
+        const cap = tName.charAt(0).toUpperCase() + tName.slice(1);
+        return cap.toLowerCase().endsWith("room") ? cap : `${cap} Room`;
+      };
+
+      const getLocalizedViewLabel = (opt: string) => {
+        const v = opt.toLowerCase();
+        if (v.includes("sea")) return t("hotelBooking.roomDates.views.sea", "Sea View");
+        if (v.includes("pool")) return t("hotelBooking.roomDates.views.pool", "Pool View");
+        if (v.includes("garden")) return t("hotelBooking.roomDates.views.garden", "Garden View");
+        return opt.toLowerCase().includes("view") ? opt : `${opt.charAt(0).toUpperCase() + opt.slice(1)} View`;
+      };
+
       const customizations = formData.roomCustomizations?.[type] || [];
       const totalCount = count as number;
-
-      const typeName = type.charAt(0).toUpperCase() + type.slice(1);
-      const roomTitle = typeName.toLowerCase().endsWith("room") ? typeName : `${typeName} Room`;
+      const roomTitle = getLocalizedRoomTitle(type);
 
       for (let i = 0; i < totalCount; i++) {
         const opt = customizations[i] || "garden";
@@ -106,12 +121,7 @@ export default function BookingSidebar({
         if (opt.toLowerCase().includes("pool")) addon = poolSurcharge;
         if (opt.toLowerCase().includes("sea")) addon = seaSurcharge;
 
-        let viewLabel = "Garden View";
-        if (opt.toLowerCase().includes("pool")) viewLabel = "Pool View";
-        else if (opt.toLowerCase().includes("sea")) viewLabel = "Sea View";
-        else if (opt && !opt.toLowerCase().includes("garden")) {
-          viewLabel = opt.toLowerCase().includes("view") ? opt : `${opt.charAt(0).toUpperCase() + opt.slice(1)} View`;
-        }
+        const viewLabel = getLocalizedViewLabel(opt);
 
         const groupKey = `${type}_${viewLabel}`;
         if (!roomGroupsMap[groupKey]) {
@@ -281,10 +291,17 @@ export default function BookingSidebar({
 
                   const name = type.toLowerCase().includes("room") ? type.charAt(0).toUpperCase() + type.slice(1) : `${type.charAt(0).toUpperCase() + type.slice(1)} Room`;
                   const price = room.pricePerNight * nights;
+                  const viewTitle = (() => {
+                    const v = (room.view || "").toLowerCase();
+                    if (v.includes("sea")) return t("hotelBooking.roomDates.views.sea", "Sea View");
+                    if (v.includes("pool")) return t("hotelBooking.roomDates.views.pool", "Pool View");
+                    if (v.includes("garden")) return t("hotelBooking.roomDates.views.garden", "Garden View");
+                    return room.view;
+                  })();
 
                   rows.push(
                     <div key={`${type}-${i}`} className={styles.priceRow}>
-                      <span>1 × {name} - {room.view} ({nights} {nights === 1 ? t("sidebar.night", "Night") : t("sidebar.nights", "Nights")})</span>
+                      <span>1 × {name} - {viewTitle} ({nights} {nights === 1 ? t("sidebar.night", "Night") : t("sidebar.nights", "Nights")})</span>
                       <strong>{formatMoney(price)}</strong>
                     </div>
                   );
