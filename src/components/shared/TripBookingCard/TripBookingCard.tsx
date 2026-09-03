@@ -171,7 +171,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
     cancelledLabel,
     infoMessage,
     primaryLabel,
-    primaryHref = "/trips",
+    primaryHref = "/egypttours",
   } = props;
   const showTimer = Boolean(timerLabel) && status !== "cancelled";
   const sectionLabel =

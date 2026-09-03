@@ -11,8 +11,8 @@ interface CtaBannerProps {
 }
 
 export default function CtaBanner({
-  heading = "Ready to Plan Your Next Corporate Event?",
-  description = "Our expert team is ready to create a customized proposal for your organization's unique requirements.",
+  heading = "Ready to Make Your Event Exceptional?",
+  description = "Tell us what you envision, and our MICE team will create a tailored proposal and handle every detail; from concept to execution.",
   buttonText = "Request a Proposal",
   buttonHref = "/events/request-proposal",
   buttonIcon,

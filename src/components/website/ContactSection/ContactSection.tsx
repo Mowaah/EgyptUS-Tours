@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button, SuccessModal, FormField } from "@/components/shared";
 import { submitContactInquiry, extractApiError } from "@/lib/api";
+import { isValidEmail } from "@/utils/validators";
 import Image from "next/image";
 import styles from "./ContactSection.module.scss";
 
@@ -18,14 +19,25 @@ export default function ContactSection() {
   const [message, setMessage] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const isEmailInvalid = email.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleSubmit = async () => {
-    if (!fullName.trim() || !email.trim() || !message.trim() || isEmailInvalid) {
-      setSubmitError("Please fill out all required fields with a valid email address.");
+    const errs: Record<string, string> = {};
+
+    if (!fullName.trim()) errs.name = "Name is required.";
+    if (!email.trim()) {
+      errs.email = "Email is required.";
+    } else if (!isValidEmail(email)) {
+      errs.email = "Please enter a valid email address.";
+    }
+    if (!message.trim()) errs.message = "Message is required.";
+
+    setErrors(errs);
+    if (Object.keys(errs).length > 0) {
       return;
     }
+
     try {
       setIsSubmitting(true);
       setSubmitError(null);
@@ -38,6 +50,7 @@ export default function ContactSection() {
       setFullName("");
       setEmail("");
       setMessage("");
+      setErrors({});
     } catch (err: any) {
       console.error("Failed to submit contact inquiry:", err);
       setSubmitError(extractApiError(err, "Something went wrong sending your message. Please try again."));
@@ -58,10 +71,10 @@ export default function ContactSection() {
               <span className={styles.label}>Contact</span>
             </div>
             <h2 className={styles.heading}>
-              Still not sure where to start? Contact us and fill out the form.
+              Not Sure Where to <br /> Start? Contact us <br /> and fill out the form
             </h2>
             <p className={styles.description}>
-              Contact us and fill out the form, let us know what you need.
+              Tell us what you&apos;re looking for, and our team will help you create the <br /> right Egypt experience. Fill out the form and let&apos;s start planning.
             </p>
             <div className={styles.social}>
               <div className={styles.avatars}>
@@ -89,7 +102,11 @@ export default function ContactSection() {
               type="text"
               placeholder="Full name here..."
               value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              onChange={(e) => {
+                setFullName(e.target.value);
+                if (errors.name) setErrors((prev) => ({ ...prev, name: "" }));
+              }}
+              error={errors.name}
               required
             />
 
@@ -101,8 +118,11 @@ export default function ContactSection() {
               type="email"
               placeholder="Your email here..."
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              error={isEmailInvalid ? "Please enter a valid email address." : undefined}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
+              }}
+              error={errors.email}
               required
             />
 
@@ -114,7 +134,11 @@ export default function ContactSection() {
               placeholder="How we can help you?"
               rows={5}
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={(e) => {
+                setMessage(e.target.value);
+                if (errors.message) setErrors((prev) => ({ ...prev, message: "" }));
+              }}
+              error={errors.message}
               required
             />
 

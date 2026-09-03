@@ -8,7 +8,7 @@ import BlogsSectionFetcher from "@/components/website/BlogsSection/BlogsSectionF
 export async function generateMetadata(): Promise<Metadata> {
   return generateSeoMetadata({
     pageKey: "trips",
-    fallbackTitle: "Trips | Egypt-Us",
+    fallbackTitle: "Egypt Tours | Egypt-Us",
     fallbackDescription: "Browse our handpicked collection of Egypt tours. Filter by duration, special offers, and price range to find your perfect adventure.",
   });
 }
@@ -30,9 +30,13 @@ export default async function TripsPage({ searchParams }: TripsPageProps) {
 
   const apiParams: Record<string, string> = {};
   if (params.destination && params.destination.toLowerCase() !== "all") {
-    apiParams.search = params.destination;
-  } else if (params.tripType && params.tripType.toLowerCase() !== "desert") {
-    apiParams.category = params.tripType;
+    apiParams.destination = params.destination;
+  } else if (!params.destination) {
+    apiParams.destination = "egypt";
+  }
+
+  if (params.tripType && params.tripType.toLowerCase() !== "desert") {
+    apiParams.tag = params.tripType;
   }
 
 

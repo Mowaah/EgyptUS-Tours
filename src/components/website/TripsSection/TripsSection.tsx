@@ -86,32 +86,8 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [sortBy, setSortBy] = useState("recommended");
   const DESERT_CATEGORIES = ["Western Desert", "Sinai Desert", "Oasis Desert", "Safari Trips"];
-
-  // Read category directly from URL so it reacts instantly to client-side navigation
-  const urlSearchParams = useSearchParams();
-  const urlCategory = urlSearchParams.get("category");
-  const categoryFromUrl = useMemo(() => {
-    if (!urlCategory) return 0;
-    const idx = DESERT_CATEGORIES.indexOf(urlCategory);
-    return idx >= 0 ? idx : 0;
-  }, [urlCategory]);
-
-  const [activeCategoryIndex, setActiveCategoryIndex] = useState(categoryFromUrl);
-
-  // Sync whenever the URL's category param changes (e.g. navigating between desert cards)
-  useEffect(() => {
-    setActiveCategoryIndex(categoryFromUrl);
-  }, [categoryFromUrl]);
-  
   const PAGE_SIZE = 6;
   const [trips, setTrips] = useState<Trip[]>(initialTrips);
-
-  const maxPriceLimit = useMemo(() => {
-    const src = trips.length > 0 ? trips : initialTrips;
-    if (src.length === 0) return 50000;
-    const max = Math.max(...src.map((t) => t.price || 0));
-    return Math.max(Math.ceil(max / 1000) * 1000, 12000);
-  }, [trips, initialTrips]);
 
   const dynamicCategories = useMemo(() => {
     const cats = new Set<string>();
@@ -125,6 +101,36 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
     
     return ["All Trips", ...Array.from(cats)];
   }, [trips, searchParams?.tripType]);
+
+  // Read category directly from URL so it reacts instantly to client-side navigation
+  const urlSearchParams = useSearchParams();
+  const urlCategory = urlSearchParams.get("category");
+  const categoryFromUrl = useMemo(() => {
+    if (!urlCategory) return 0;
+    const catLower = urlCategory.toLowerCase().trim();
+    const idx = dynamicCategories.findIndex(
+      (c) => c.toLowerCase().trim() === catLower || c.toLowerCase().replace(/\s+/g, "-") === catLower
+    );
+    if (idx >= 0) return idx;
+    const desertIdx = DESERT_CATEGORIES.findIndex(
+      (c) => c.toLowerCase().trim() === catLower || c.toLowerCase().replace(/\s+/g, "-") === catLower
+    );
+    return desertIdx >= 0 ? desertIdx : 0;
+  }, [urlCategory, dynamicCategories]);
+
+  const [activeCategoryIndex, setActiveCategoryIndex] = useState(categoryFromUrl);
+
+  // Sync whenever the URL's category param changes (e.g. navigating between categories in navbar)
+  useEffect(() => {
+    setActiveCategoryIndex(categoryFromUrl);
+  }, [categoryFromUrl]);
+
+  const maxPriceLimit = useMemo(() => {
+    const src = trips.length > 0 ? trips : initialTrips;
+    if (src.length === 0) return 50000;
+    const max = Math.max(...src.map((t) => t.price || 0));
+    return Math.max(Math.ceil(max / 1000) * 1000, 12000);
+  }, [trips, initialTrips]);
 
   useEffect(() => {
     setTrips(initialTrips);
@@ -212,7 +218,7 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
       if (selectedCategory === "Safari Trips") {
         return trip.tags?.some(tag => tag.toLowerCase().includes("safari"));
       }
-      return trip.tags?.includes(selectedCategory);
+      return trip.tags?.some(tag => tag.toLowerCase() === selectedCategory.toLowerCase());
     });
   }
 
@@ -255,7 +261,7 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
       {/* ── Header ── */}
       {isPage ? (
         <PageHeader
-          breadcrumbs={[{ label: "Trips", isCurrent: true }]}
+          breadcrumbs={[{ label: "Egypt Tours", isCurrent: true }]}
           title={
             searchParams?.tripType?.toLowerCase() === "desert" ? (
               <>
@@ -282,10 +288,10 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
       ) : (
         <div className={styles.container}>
           <SectionHeader
-            label="Trips"
-            heading="Choose The Right Trip For Your Adventure"
-            description="We make trip planning easy. Discover handpicked journeys, compare destinations, and book trips crafted around your travel style."
-            descriptionMaxWidth="600px"
+            label="Egypt Tours"
+            heading="Choose The Right Trip For You in Egypt & Beyond"
+            description="Discover personalized trips and unforgettable experiences, designed around the way you want to enjoy your next vacation."
+            descriptionMaxWidth="680px"
           />
         </div>
       )}

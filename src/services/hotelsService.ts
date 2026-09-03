@@ -104,8 +104,7 @@ export async function getFullHotelBySlug(slug: string): Promise<import("@/types"
     const detail = await getHotelBySlug(slug);
     if (!detail) return null;
     return mapHotelDetailToHotel(detail);
-  } catch (error) {
-    console.error("Error fetching hotel detail:", error);
+  } catch {
     return null;
   }
 }

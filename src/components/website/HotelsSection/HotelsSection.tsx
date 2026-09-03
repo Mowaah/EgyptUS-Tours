@@ -72,9 +72,9 @@ export default function HotelsSection({ initialHotels = [] }: { initialHotels?: 
       <div className={styles.container}>
         <SectionHeader
           label="Hotels"
-          heading="Find the perfect hotel for your trip"
-          description="We make hotel booking easy. Discover top-rated hotels, compare features and prices, and book a stay tailored to your travel style."
-          descriptionMaxWidth="500px"
+          heading="Find Your Perfect Stay in Egypt"
+          description="Make your stay part of the experience. Discover carefully selected hotels across Egypt, from luxury escapes to comfortable stays, and find the right place for the way you travel."
+          descriptionMaxWidth="740px"
         />
 
         <div className={styles.tabsRow}>

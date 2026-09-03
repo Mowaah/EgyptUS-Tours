@@ -38,13 +38,17 @@ export default function SearchBar({ destinations = [] }: SearchBarProps) {
     if (budget) params.append("budget", budget);
     if (tripType) params.append("tripType", tripType);
     
-    router.push(`/trips?${params.toString()}`);
+    router.push(`/egypttours?${params.toString()}`);
   };
 
   const renderTrigger = (icon: string, label: string, value: string, isOpen: boolean, setIsOpen: (o: boolean) => void) => (
-    <button className={styles.filter} onClick={() => setIsOpen(!isOpen)}>
+    <button
+      type="button"
+      className={`${styles.filter} ${isOpen ? styles.filterActive : ""}`}
+      onClick={() => setIsOpen(!isOpen)}
+    >
       <span className={styles.icon}>
-        <Image src={`/images/search/${icon}.svg`} alt="" width={18} height={18} />
+        <Image src={`/images/search/${icon}.svg`} alt="" width={20} height={20} />
       </span>
       <span className={`${styles.label} ${value ? styles.labelTruncated : ""}`}>{value || label}</span>
       <Image src="/images/arrows/arrow-down2-white.svg" alt="" width={12} height={12} className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ""}`} />
@@ -56,7 +60,7 @@ export default function SearchBar({ destinations = [] }: SearchBarProps) {
       <div className={styles.tabs}>
         <button className={`${styles.tab} ${styles.active}`}>
           <Image src="/images/search/trips.svg" alt="" width={22.5} height={19.5} />
-          <span>trips</span>
+          <span>Trips</span>
         </button>
       </div>
 

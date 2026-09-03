@@ -78,11 +78,19 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
     const updatePosition = () => {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      const calendarHeight = 360;
+
+      const shouldOpenUp = spaceBelow < calendarHeight && spaceAbove > spaceBelow;
+      const left = Math.max(12, Math.min(rect.left, window.innerWidth - 332));
+
       setDropdownStyle({
         position: "fixed",
-        top: rect.bottom + 8,
-        left: rect.left,
-        zIndex: 1300,
+        left,
+        top: shouldOpenUp ? "auto" : rect.bottom + 8,
+        bottom: shouldOpenUp ? window.innerHeight - rect.top + 8 : "auto",
+        zIndex: 9999,
       });
     };
     updatePosition();

@@ -108,10 +108,10 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
       <PageHeader
         className={styles.pageHeader}
         breadcrumbs={[
-          { label: "Trips", href: "/trips" },
+          { label: "Egypt Tours", href: "/egypttours" },
           { label: "Trip Details", isCurrent: true },
         ]}
-        backButton={{ text: "Back to Trips", href: "/trips" }}
+        backButton={{ text: "Back to Egypt Tours", href: "/egypttours" }}
         showMobileActions={true}
         isFavorite={isFavorite}
         onFavoriteToggle={toggle}

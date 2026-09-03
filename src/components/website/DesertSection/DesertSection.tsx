@@ -34,9 +34,9 @@ export default function DesertSection() {
       <div className={styles.container}>
         <SectionHeader
           label="Desert"
-          heading="Reveal Egypt's Desert"
-          description="Journey into the heart of the Egyptian wilderness with unmatched elegance. From nomadic festivals to luxury desert retreats, we provide the ultimate VIP passage to Egypt's most hidden gems"
-          descriptionMaxWidth="830px"
+          heading="Beyond the Pyramids, Into the Desert"
+          description="From authentic desert encounters to refined retreats, discover hidden gems where ancient traditions, breathtaking landscapes, and modern comfort come together."
+          descriptionMaxWidth="750px"
         />
 
         <div className={styles.cardsWrapper}>
@@ -47,7 +47,7 @@ export default function DesertSection() {
                 title={desert.title}
                 description={desert.description}
                 image={desert.image}
-                href={`/trips?tripType=desert&category=${encodeURIComponent(desert.title)}`}
+                href={`/egypttours?tripType=desert&category=${encodeURIComponent(desert.title)}`}
               />
             ))}
           </div>

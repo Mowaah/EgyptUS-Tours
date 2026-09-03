@@ -354,8 +354,8 @@ export default function ProfilePage() {
                 iconHeight={200}
                 title="Your favorite trips list is empty"
                 description="Save trips you're interested in and come back anytime to complete your booking."
-                buttonText="Explore Trips"
-                buttonHref="/trips"
+                buttonText="Explore Egypt Tours"
+                buttonHref="/egypttours"
               />
             );
           }
@@ -459,8 +459,8 @@ export default function ProfilePage() {
           emptyBIcon = "/images/profile/glyphs/trips.svg";
           emptyBTitle = "No bookings yet";
           emptyBDesc = "When you book a trip, your itinerary and details will appear here.";
-          emptyBBtn = "Explore Trips";
-          emptyBHref = "/trips";
+          emptyBBtn = "Explore Egypt Tours";
+          emptyBHref = "/egypttours";
         } else if (bookingCategoryIndex === 1) {
           bookingItems = hotelBookings;
           emptyBIcon = "/images/profile/glyphs/hotels.svg";

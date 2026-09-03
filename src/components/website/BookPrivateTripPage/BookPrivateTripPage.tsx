@@ -307,7 +307,7 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
   const handleCloseModal = () => {
     setShowSuccessModal(false);
     clearBookingInfo();
-    router.push("/trips");
+    router.push("/egypttours");
   };
 
   const handlePrimaryModal = () => {
@@ -320,13 +320,13 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
     <div className={planPageStyles.page}>
       <PageHeader
         breadcrumbs={[
-          { label: "Trips", href: "/trips" },
-          { label: "Trip Details", href: `/trips/${trip.id}` },
+          { label: "Egypt Tours", href: "/egypttours" },
+          { label: "Trip Details", href: `/egypttours/${trip.id}` },
           { label: "Booking", isCurrent: true },
         ]}
         title={trip.title}
         subtitle="Provide your details to customize and secure your reservation."
-        backButton={{ text: "Back To Trip Details", href: `/trips/${trip.id}` }}
+        backButton={{ text: "Back To Trip Details", href: `/egypttours/${trip.id}` }}
         decorationSrc="/images/dotted-line3.svg"
       />
 

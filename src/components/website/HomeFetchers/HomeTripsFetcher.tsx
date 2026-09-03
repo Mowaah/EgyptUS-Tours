@@ -29,13 +29,26 @@ export default async function HomeTripsFetcher() {
       discountLabel: t.discount_value ? (t.discount_title ? `${t.discount_title} - ${parseFloat(t.discount_value)}% Off` : `${parseFloat(t.discount_value)}% Off`) : undefined,
       discountTitle: t.discount_title || undefined,
       discountValue: t.discount_value ? `${parseFloat(t.discount_value)}% Off` : undefined,
+      destinations: (t.destinations as any) || [],
       tags: t.tags?.map((tag) => tag.name) || [],
     };
     });
 
+    const egyptTrips = initialTrips.filter((t) => {
+      const hasEgypt = (
+        (Array.isArray(t.destinations) && t.destinations.some((d: any) => {
+          const slug = (typeof d === "string" ? d : d.slug || "").toLowerCase();
+          const name = (typeof d === "string" ? d : d.name || "").toLowerCase();
+          return slug === "egypt" || name.includes("egypt");
+        })) ||
+        (t.location || "").toLowerCase().includes("egypt")
+      );
+      return hasEgypt;
+    });
+
     return (
       <>
-        <TripsSection initialTrips={initialTrips} />
+        <TripsSection initialTrips={egyptTrips} />
         <MultiCountrySection initialTrips={initialTrips.filter(t => t.tags?.some(tag => tag.toLowerCase().includes("multi country"))).slice(0, 6)} />
       </>
     );
@@ -44,3 +57,4 @@ export default async function HomeTripsFetcher() {
     return null;
   }
 }
+

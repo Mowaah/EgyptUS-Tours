@@ -4,34 +4,37 @@ import styles from "./WhyChooseUsSection.module.scss";
 
 const FEATURES = [
   {
-    title: "Local Experts",
-    description: "Born and raised Egyptians who know every hidden gem",
+    title: "Deep Egypt Expertise",
+    description: "Years of experience creating meaningful Egyptian experiences.",
     color: "#10B981", // $success
     icon: <Image src="/images/whychooseus/location.svg" alt="" width={24} height={24} />,
   },
   {
-    title: "Flexible Custom Trips",
-    description: "Design your dream journey with our personalized planning",
+    title: "100% Costumed Journeys",
+    description: "Trips tailored to your interests, style, and schedule.",
     color: "#FF6600", // $secondary
     icon: <Image src="/images/whychooseus/airplane.svg" alt="" width={24} height={24} />,
   },
   {
-    title: "24/7 Support",
-    description: "Round-the-clock assistance wherever your adventure takes you",
+    title: "Seamless Support",
+    description: "Support from your first inquiry to your return home.",
     color: "#FF6600", // $secondary
     icon: <Image src="/images/whychooseus/headphone.svg" alt="" width={24} height={24} />,
   },
   {
-    title: "Multi-language Guides",
-    description: "Expert guides fluent in 15+ languages, ensuring smooth communication.",
-    color: "#2563EB", // $info
-    icon: <Image src="/images/whychooseus/language-circle.svg" alt="" width={24} height={24} />,
+    title: "Professional Local Teams",
+    description: "Expert local teams bringing Egypt to life.",
+    color: "#1F55AD",
+    bgColor: "#EAF6FF",
+    icon: <Image src="/images/whychooseus/team.svg" alt="" width={24} height={24} />,
   },
   {
-    title: "Trusted by Thousands",
-    description: "4.9/5 rating from 10,000+ happy travelers",
-    color: "#15366E", // $primary-dark
-    icon: <Image src="/images/whychooseus/star.svg" alt="" width={24} height={24} />,
+    title: "Quality You Can Trust",
+    description: "1,000+ travelers served with quality and care.",
+    color: "#19448A",
+    bgColor: "#DFEAFB",
+    border: "1px solid #FFFFFF",
+    icon: <Image src="/images/whychooseus/quality.svg" alt="" width={24} height={24} />,
   },
 ];
 
@@ -44,9 +47,9 @@ export default function WhyChooseUsSection() {
             <SectionHeader
               label="Why Choose Us"
               heading="Why Choose Us"
-              description="We're not just tour operators we're your gateway to authentic Egyptian experiences"
+              description="We're more than a tour operator. We're your trusted partner for experiencing Egypt seamlessly, personally, and with confidence."
               align="left"
-              descriptionMaxWidth="300px"
+              descriptionMaxWidth="360px"
               showLabel={false}
             />
             <Button
@@ -65,7 +68,8 @@ export default function WhyChooseUsSection() {
               key={f.title}
               className={styles.card}
               style={{
-                backgroundColor: `${f.color}15`,
+                backgroundColor: f.bgColor || `${f.color}15`,
+                border: f.border,
               }}
             >
               <div

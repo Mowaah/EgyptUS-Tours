@@ -19,10 +19,10 @@ export default function MultiCountrySection({ initialTrips = [] }: MultiCountryS
               label="Multi country Tours"
               heading={
                 <>
-                  Bridge <br className={styles.desktopBreak} />
-                  Cultures In A <br className={styles.desktopBreak} />
-                  Single <br className={styles.desktopBreak} />
-                  Journey
+                  One <br className={styles.desktopBreak} />
+                  Journey. <br className={styles.desktopBreak} />
+                  Multiple <br className={styles.desktopBreak} />
+                  Cultures
                 </>
               }
               align="left"
@@ -32,12 +32,12 @@ export default function MultiCountrySection({ initialTrips = [] }: MultiCountryS
 
           <div className={styles.right}>
             <p className={styles.description}>
-              Discover the world&apos;s most captivating wonders through thoughtfully woven multi-destination tours. We combine local expertise with international standards to connect you deeply with the people, history, and unique beauty of each location on your map
+              Why choose one destination when your journey can take you across cultures, landscapes, and stories? Our multi-destination tours bring carefully selected experiences together, making every stop part of one seamless, unforgettable adventure.
             </p>
             <Button
               variant="outline"
               size="lg"
-              href="/trips"
+              href="/egypttours"
               icon={
                 <Image
                   src="/images/arrows/arrow-right-blue.svg"

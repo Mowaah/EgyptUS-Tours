@@ -63,7 +63,7 @@ export default function TripBookingWidget({ trip }: TripBookingWidgetProps) {
 
           <div className={styles.actions}>
             {trip.offersPrivateTour !== false && (
-              <Link href={`/trips/${trip.id}/book-private`} className={styles.cta}>
+              <Link href={`/egypttours/${trip.id}/book-private`} className={styles.cta}>
                 <Button
                   variant="secondary"
                   fullWidth
@@ -75,7 +75,7 @@ export default function TripBookingWidget({ trip }: TripBookingWidgetProps) {
               </Link>
             )}
             {trip.offersGroupTour !== false && (
-              <Link href={`/trips/${trip.id}/book-group`} className={styles.cta}>
+              <Link href={`/egypttours/${trip.id}/book-group`} className={styles.cta}>
                 <Button
                   variant="secondary-outline"
                   fullWidth
@@ -91,7 +91,7 @@ export default function TripBookingWidget({ trip }: TripBookingWidgetProps) {
 
         {trip.offersPrivateTour !== false && (
           <Link
-            href={`/trips/${trip.id}/book-private`}
+            href={`/egypttours/${trip.id}/book-private`}
             className={`${styles.mobileBtn} ${styles.mobileBtnFilled}`}
           >
             <span>{mobileLabel(privatePrice, "Book Private Tour")}</span>
@@ -100,7 +100,7 @@ export default function TripBookingWidget({ trip }: TripBookingWidgetProps) {
         )}
         {trip.offersGroupTour !== false && (
           <Link
-            href={`/trips/${trip.id}/book-group`}
+            href={`/egypttours/${trip.id}/book-group`}
             className={`${styles.mobileBtn} ${styles.mobileBtnOutline}`}
           >
             <span>{mobileLabel(groupPrice, "Book Group Tour")}</span>

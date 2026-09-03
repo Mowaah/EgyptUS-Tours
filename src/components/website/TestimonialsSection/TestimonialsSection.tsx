@@ -35,8 +35,8 @@ export default function TestimonialsSection({
         <SectionHeader
           label="Testimonial"
           heading="What Travelers Say"
-          description="Don't just take our word for it—hear from those who've experienced the magic"
-          descriptionMaxWidth="600px"
+          description="Discover real stories, honest feedback, and memorable moments from our travelers"
+          descriptionMaxWidth="780px"
           size="large"
         />
 

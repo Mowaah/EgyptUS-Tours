@@ -7,37 +7,37 @@ import styles from "./MiceSection.module.scss";
 
 const FEATURES = [
   {
-    title: "Meetings",
-    description: "Executive boardrooms and strategic gatherings",
+    title: "Executive Meetings",
+    description: "Thoughtfully planned meetings in exceptional Egyptian settings.",
     color: "#2563EB",
     iconSrc: "/images/mice/meetings.svg",
   },
   {
-    title: "Incentives",
-    description: "Luxury reward trips and curated team experiences",
+    title: "Incentive Experiences",
+    description: "Reward your team with experience that go beyond the ordinary",
     color: "#EF4444",
     iconSrc: "/images/mice/incentives.svg",
   },
   {
-    title: "Conferences",
-    description: "Large-scale conferences with full technical support",
+    title: "Corporate Events",
+    description: "From intimate gatherings to large-scale events, managed start to end",
     color: "#10B981",
     iconSrc: "/images/mice/conferences.svg",
   },
   {
-    title: "Exhibitions",
-    description: "Professional exhibition spaces and event management",
+    title: "Corporate Travel",
+    description: "Hotels, transportation, flights, tours, and much more",
     color: "#8B5CF6",
     iconSrc: "/images/mice/exhibitions.svg",
   },
 ];
 
 const GALLERY_IMAGES = [
-  "/images/corporate/corporate1.jpg",
-  "/images/corporate/corporate2.jpg",
-  "/images/corporate/corporate3.jpg",
+  "/images/corporate/corporate1.png",
+  "/images/corporate/corporate2.png",
+  "/images/corporate/corporate3.png",
   "/images/corporate/corporate4.jpg",
-  "/images/corporate/corporate5.jpg",
+  "/images/corporate/corporate5.png",
 ];
 
 const N = GALLERY_IMAGES.length; // always 5
@@ -83,8 +83,9 @@ export default function MiceSection() {
       <div className={styles.container}>
         <SectionHeader
           label="MICE & Corporate Events"
-          heading="Host World-Class Business Events in Egypt"
-          description="High-level meetings, curated incentives, and world-class exhibitions tailored for leading organizations."
+          heading="Make Your Next Event Unforgettable in Egypt"
+          description="From high-level meetings and curated incentive experiences to world-class conferences and exhibitions, we handle every detail to create seamless, memorable events in Egypt."
+          descriptionMaxWidth="780px"
         />
 
         <div className={styles.features}>
@@ -113,8 +114,6 @@ export default function MiceSection() {
             onTouchEnd={handleTouchEnd}
           >
             {GALLERY_IMAGES.map((src, i) => {
-              // Which fan slot does image i sit in?
-              // Slot 2 = center; active image → slot 2
               const slot = (i - active + 2 + N) % N;
               const isCenter = slot === 2;
 

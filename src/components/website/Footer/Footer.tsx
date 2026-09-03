@@ -9,8 +9,8 @@ type NavLinksType = Record<string, NavLinkItem[]>;
 const NAV_LINKS: NavLinksType = {
   "Egypt Us": [
     { label: "Home", href: "/" },
-    { label: "Trips", href: "/trips" },
-    { label: "Destinations", href: "/trips" },
+    { label: "Egypt Tours", href: "/egypttours" },
+    { label: "Destinations", href: "/egypttours" },
     { label: "Hotels", href: "/hotels" },
     { label: "Transportation", href: "/transportation" },
     { label: "Events", href: "/events" },

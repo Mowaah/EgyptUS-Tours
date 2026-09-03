@@ -17,7 +17,7 @@ interface TripCardProps {
 }
 
 export default function TripCard({ trip, onFavoriteToggle, className = "" }: TripCardProps) {
-  const tripDetailsHref = `/trips/${trip.id}`;
+  const tripDetailsHref = `/egypttours/${trip.id}`;
   const { isAuthenticated } = useAuth();
   const { formatCurrency } = useCurrency();
   const { isFavorite, isLoading, toggle } = useFavorite({

@@ -2,7 +2,7 @@ import TopBar from "@/components/website/TopBar/TopBar";
 import Navbar from "@/components/website/Navbar/Navbar";
 import Footer from "@/components/website/Footer/Footer";
 import ChatBot from "@/components/website/ChatBot/ChatBot";
-import { getAllTrips } from "@/services/tripsService";
+import { getEgyptTripCategories } from "@/services/categoriesService";
 import { getAllDestinations } from "@/services/destinationsService";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 
@@ -13,26 +13,32 @@ export default async function WebsiteLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [tripsData, destinationsData] = await Promise.all([
-    getAllTrips(),
+  const [categoriesData, destinationsData] = await Promise.all([
+    getEgyptTripCategories(),
     getAllDestinations(),
   ]);
 
-  const tripLinks = tripsData.slice(0, 12).map((t) => ({
-    label: t.title,
-    href: `/trips/${t.slug}`,
+  const categoryLinks = categoriesData.map((c) => ({
+    label: c.name,
+    href: `/egypttours?category=${c.slug || c.name.toLowerCase().replace(/\s+/g, "-")}`,
   }));
 
-  const destinationLinks = destinationsData.map((d) => ({
-    label: d.name,
-    href: `/trips?destination=${d.name}`, // passing the name to the search bar/filter
-  }));
+  const destinationLinks = destinationsData
+    .filter((d) => {
+      const name = d.name.trim().toLowerCase();
+      const slug = (d.slug || "").trim().toLowerCase();
+      return slug !== "egypt" && !name.includes("egypt");
+    })
+    .map((d) => ({
+      label: d.name,
+      href: `/egypttours?destination=${d.slug || d.name.toLowerCase().replace(/\s+/g, "-")}`,
+    }));
 
   return (
     <CurrencyProvider>
       <TopBar />
       <Suspense fallback={null}>
-        <Navbar tripLinks={tripLinks} destinationLinks={destinationLinks} />
+        <Navbar categoryLinks={categoryLinks} destinationLinks={destinationLinks} />
       </Suspense>
       <main>{children}</main>
       <ChatBot />

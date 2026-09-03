@@ -6,10 +6,16 @@ import styles from "./HeroSection.module.scss";
 
 export default async function HeroSection() {
   const destinationsData = await getAllDestinations();
-  const destinations = destinationsData.map(d => ({
-    label: d.name,
-    value: d.name,
-  }));
+  const destinations = destinationsData
+    .filter((d) => {
+      const name = d.name.trim().toLowerCase();
+      const slug = (d.slug || "").trim().toLowerCase();
+      return slug !== "egypt" && !name.includes("egypt");
+    })
+    .map(d => ({
+      label: d.name,
+      value: d.name,
+    }));
 
   return (
     <section className={styles.hero}>
@@ -27,7 +33,7 @@ export default async function HeroSection() {
         <div className={styles.content}>
           <h1 className={styles.heading}>Experience</h1>
           <p className={styles.subheading}>
-            History, culture, and adventure
+            History, culture, and luxury
             <br />
             all in one trip
           </p>

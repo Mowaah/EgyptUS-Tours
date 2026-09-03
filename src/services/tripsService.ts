@@ -215,8 +215,8 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
               };
             }
           }
-        } catch (err) {
-          console.error("Error fetching full hotel detail:", err);
+        } catch {
+          // Gracefully fallback to link.hotel
         }
         return {
           slug: link.hotel.slug,

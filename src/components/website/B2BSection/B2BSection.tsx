@@ -98,7 +98,13 @@ export default function B2BSection() {
           <div className={styles.topLeft}>
             <SectionHeader
               label="B2B"
-              heading="Global Partners, Local Experts"
+              heading={
+                <>
+                  Global Standards.
+                  <br />
+                  Local Expertise.
+                </>
+              }
               align="left"
               headingMaxWidth="400px"
               headingClassName={styles.largeHeading}
@@ -107,10 +113,7 @@ export default function B2BSection() {
 
           <div className={styles.topRight}>
             <p className={styles.topDescription}>
-              Unlock Egypt for your clients. We offer seamless ground handling and
-              curated travel management for universities and corporate partners,
-              ensuring world-class service and authentic cultural immersion for
-              every group
+              Partner with Egypt US Tours to deliver seamless travel and event experiences in Egypt. From ground handling and group travel to MICE and tailored programs, we combine local expertise with international standards to take care of every detail.
             </p>
             <Button
               variant="outline"

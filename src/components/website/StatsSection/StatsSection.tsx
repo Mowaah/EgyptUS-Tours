@@ -6,22 +6,23 @@ import styles from "./StatsSection.module.scss";
 
 const STATS = [
   {
-    end: 73,
-    suffix: "K+",
+    end: 25,
+    suffix: "+ Years",
     description:
-      "Join the millions who trust us for their travel plans. Our platform has successfully handled over 1 million bookings.",
+      "Creating memorable travel experiences in Egypt since 2000, backed by decades of experience in the tourism industry.",
   },
   {
-    end: 99,
+    end: 1000,
+    suffix: "+",
+    separator: ",",
+    description:
+      "Travelers have trusted us to experience Egypt with personalized journeys, professional support, and dedicated service.",
+  },
+  {
+    end: 100,
     suffix: "%",
     description:
-      "Our customers love us! With a 96% satisfaction rate, we pride ourselves on providing exceptional service.",
-  },
-  {
-    end: 1200,
-    suffix: "",
-    description:
-      "Explore the world with us! We offer travel packages to over 200 destinations, giving you a wide range of options!",
+      "Personalized experiences designed around your interests, travel style, and the way you want to discover Egypt.",
   },
 ];
 
@@ -50,7 +51,12 @@ export default function StatsSection() {
           <div key={i} className={styles.stat}>
             <span className={styles.value}>
               {started ? (
-                <CountUp end={stat.end} suffix={stat.suffix} duration={2} />
+                <CountUp
+                  end={stat.end}
+                  suffix={stat.suffix}
+                  separator={stat.separator || ""}
+                  duration={2}
+                />
               ) : (
                 `0${stat.suffix}`
               )}

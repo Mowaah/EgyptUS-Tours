@@ -22,7 +22,7 @@ export default function DesertBannerSection() {
         </p>
         <Button
           variant="secondary"
-          href="/trips?tripType=desert"
+          href="/egypttours?tripType=desert"
           className={styles.ctaButton}
           icon={
             <Image src="/images/arrows/arrow-right.svg" alt="" width={16} height={16} />

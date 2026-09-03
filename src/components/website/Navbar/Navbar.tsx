@@ -15,8 +15,8 @@ import styles from "./Navbar.module.scss";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
-  { label: "Trips", href: "/trips", hasDropdown: true },
-  { label: "Destinations", href: "/trips?destination=all", hasDropdown: true },
+  { label: "Egypt Tours", href: "/egypttours", hasDropdown: true },
+  { label: "Destinations", href: "/egypttours?destination=all", hasDropdown: true },
   { label: "Hotels", href: "/hotels" },
   { label: "Transportation", href: "/transportation" },
   { label: "Events", href: "/events" },
@@ -54,19 +54,27 @@ const MOBILE_USER_LINKS = [
 const TRIP_LISTING_SLUGS = new Set(["classic", "christmas", "nile-cruises"]);
 
 function isTripDetailPage(pathname: string): boolean {
-  const match = pathname.match(/^\/trips\/([^/]+)$/);
+  const match = pathname.match(/^\/(?:trips|egypttours)\/([^/]+)$/);
   if (!match) return false;
   return !TRIP_LISTING_SLUGS.has(match[1]);
 }
 
 interface NavbarProps {
+  categoryLinks?: NavLinkItem[];
   tripLinks?: NavLinkItem[];
   destinationLinks?: NavLinkItem[];
 }
 
-export default function Navbar({ tripLinks = [], destinationLinks = [] }: NavbarProps) {
-  const finalTripLinks = tripLinks;
-  const finalDestinationLinks = destinationLinks;
+export default function Navbar({
+  categoryLinks = [],
+  tripLinks = [],
+  destinationLinks = []
+}: NavbarProps) {
+  const finalCategoryLinks = categoryLinks.length > 0 ? categoryLinks : tripLinks;
+  const finalDestinationLinks = destinationLinks.filter((d) => {
+    const label = d.label.trim().toLowerCase();
+    return label !== "egypt" && !label.includes("egypt");
+  });
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -84,11 +92,12 @@ export default function Navbar({ tripLinks = [], destinationLinks = [] }: Navbar
   const isBookingPage = pathname === "/booking";
 
   const isLinkActive = (link: { label: string; href: string }) => {
+    const isToursRoute = pathname.startsWith("/egypttours") || pathname.startsWith("/trips");
     if (link.label === "Destinations") {
-      return pathname.startsWith("/trips") && !!destinationParam && destinationParam !== "";
+      return isToursRoute && !!destinationParam && destinationParam !== "";
     }
-    if (link.label === "Trips") {
-      return pathname.startsWith("/trips") && (!destinationParam || destinationParam === "");
+    if (link.label === "Egypt Tours" || link.label === "Trips") {
+      return isToursRoute && (!destinationParam || destinationParam === "");
     }
     return pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
   };
@@ -261,7 +270,7 @@ export default function Navbar({ tripLinks = [], destinationLinks = [] }: Navbar
                     <div className={styles.dropdownWrapper}>
                       <div className={styles.dropdownCard}>
                         <div className={styles.dropdownGrid}>
-                          {(link.label === "Destinations" ? finalDestinationLinks : finalTripLinks).map((opt, i) => (
+                          {(link.label === "Destinations" ? finalDestinationLinks : finalCategoryLinks).map((opt, i) => (
                             <Link key={i} href={opt.href} className={styles.dropdownOption}>
                               <Image src="/images/➢.svg" alt="" width={15} height={12} className={styles.dropdownIcon} />
                               <span className={styles.dropdownText}>{opt.label}</span>
@@ -333,7 +342,7 @@ export default function Navbar({ tripLinks = [], destinationLinks = [] }: Navbar
                   const subLinks = link.hasDropdown
                     ? link.label === "Destinations"
                       ? finalDestinationLinks
-                      : finalTripLinks
+                      : finalCategoryLinks
                     : [];
 
                   return (

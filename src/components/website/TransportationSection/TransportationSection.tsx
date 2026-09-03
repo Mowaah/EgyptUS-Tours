@@ -1,12 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { SectionHeader, Button, CustomDatePicker } from "@/components/shared";
 import Image from "next/image";
 import styles from "./TransportationSection.module.scss";
-
-
 
 interface VehicleData {
   id: string;
@@ -18,11 +16,23 @@ interface TransportationSectionProps {
   initialVehicles?: VehicleData[];
 }
 
+const getTodayString = () => {
+  const today = new Date();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+  const yyyy = today.getFullYear();
+  return `${mm}/${dd}/${yyyy}`;
+};
+
 export default function TransportationSection({ initialVehicles = [] }: TransportationSectionProps) {
   const router = useRouter();
   const [vehicles] = useState<VehicleData[]>(initialVehicles);
   const [selected, setSelected] = useState(vehicles[0]?.id || "sedan");
-  const [pickupDate, setPickupDate] = useState("");
+  const [pickupDate, setPickupDate] = useState(getTodayString);
+
+  useEffect(() => {
+    setPickupDate(getTodayString());
+  }, []);
 
   const handleSearch = () => {
     // Basic date formatting/passthrough for demo purposes
@@ -36,8 +46,14 @@ export default function TransportationSection({ initialVehicles = [] }: Transpor
           <div className={styles.left}>
             <SectionHeader
               label="Transportation"
-              heading="Choose The Right Fleet For Your Trip"
-              description="Choose from Sedans, SUVs, and family-friendly cars. Comfortable rides and professional drivers ready for any trip."
+              heading={
+                <>
+                  Travel Egypt in
+                  <br />
+                  Comfort
+                </>
+              }
+              description="From private sedans and spacious SUVs to family-friendly vehicles, enjoy comfortable transportation and professional drivers throughout your journey in Egypt."
               align="left"
               headingClassName={styles.largeHeading}
               headingMaxWidth="400px"

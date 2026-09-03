@@ -111,7 +111,7 @@ function PaymentResultContent() {
         
         router.replace(`/profile?booking_success=true&booking_id=${bookingIdParam}${extraParams}`);
       } else {
-        router.replace("/trips");
+        router.replace("/egypttours");
       }
     }
   }, [router, searchParams]);

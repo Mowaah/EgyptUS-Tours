@@ -38,6 +38,7 @@ export interface Trip {
   rating?: number;
   reviewCount?: number;
   tags?: string[];
+  destinations?: Array<{ id?: number; name?: string; slug?: string }>;
   privatePrice?: number;
   groupPrice?: number;
 

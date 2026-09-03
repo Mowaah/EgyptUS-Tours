@@ -159,7 +159,8 @@
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  gap: 10px;
   padding: 12px 14px;
   color: $white;
   cursor: pointer;
@@ -172,6 +173,10 @@
     background: $glass-nav-fill;
   }
 
+  &.filterActive {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
   @include sm {
     // Inset hover so rounded backgrounds don't bleed into the center dividers
     width: calc(100% - 4px);
@@ -182,7 +187,7 @@
     // Figma: inner row height 57px (outer pill 66px = 4px pad + 57px + 4px pad + ~1px)
     width: 100%;
     margin: 0;
-    padding: 0 24px;
+    padding: 0 18px;
     height: 57px;
     border-radius: 9999px;
 
@@ -196,6 +201,7 @@
   color: $white;
   display: flex;
   align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
@@ -203,8 +209,7 @@
   font-size: $font-size-lg;
   font-weight: $font-weight-medium;
   letter-spacing: 0.01em;
-  color: $gray-tailwind-300;
-  margin-right: auto;
+  color: $white;
   white-space: nowrap;
   flex-shrink: 0;
 }

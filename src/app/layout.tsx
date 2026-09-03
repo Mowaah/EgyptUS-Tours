@@ -8,7 +8,7 @@ import "./globals.scss";
 
 export const metadata: Metadata = {
   title: "Egypt-Us",
-  description: "History, culture, and adventure all in one trip",
+  description: "History, culture, and luxury all in one trip",
 };
 
 export default function RootLayout({
