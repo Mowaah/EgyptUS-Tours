@@ -2,29 +2,30 @@ import React from "react";
 import Image from "next/image";
 import { PageHeader } from "@/components/shared";
 import ContactSection from "@/components/website/ContactSection/ContactSection";
+import { CONTACT_INFO } from "@/constants";
 import styles from "./ContactPage.module.scss";
 
+const CONTACT_METADATA: Record<string, { subtitle: string; icon: string }> = {
+  Address: {
+    subtitle: "Egypt — 11371",
+    icon: "/images/location-blue.svg",
+  },
+  Phone: {
+    subtitle: "Sun - Thu, 9am - 6pm",
+    icon: "/images/phone.svg",
+  },
+  Email: {
+    subtitle: "We reply within 24 hours",
+    icon: "/images/email.svg",
+  },
+};
+
 export default function ContactPage() {
-  const contactInfo = [
-    {
-      type: "Address",
-      value: "643 Hadayk October, Giza",
-      subtitle: "Egypt — 11371",
-      icon: "/images/location-blue.svg",
-    },
-    {
-      type: "Phone",
-      value: "+201111400212",
-      subtitle: "Sun - Thu, 9am - 6pm",
-      icon: "/images/phone.svg",
-    },
-    {
-      type: "Email",
-      value: "info@egyptustours.com",
-      subtitle: "We reply within 24 hours",
-      icon: "/images/email.svg",
-    },
-  ];
+  const contactInfo = CONTACT_INFO.map((item) => ({
+    ...item,
+    subtitle: CONTACT_METADATA[item.type]?.subtitle || "",
+    icon: CONTACT_METADATA[item.type]?.icon || "/images/location-blue.svg",
+  }));
 
   return (
     <div className={styles.page}>

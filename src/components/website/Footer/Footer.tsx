@@ -2,6 +2,7 @@ import Image from "next/image";
 import styles from "./Footer.module.scss";
 
 import Link from "next/link";
+import { CONTACT_INFO } from "@/constants";
 
 type NavLinkItem = { label: string; href?: string; value?: string };
 type NavLinksType = Record<string, NavLinkItem[]>;
@@ -27,11 +28,10 @@ const NAV_LINKS: NavLinksType = {
     { label: "Privacy & Policy", href: "/privacy" },
     { label: "FAQs", href: "/faq" },
   ],
-  Contact: [
-    { label: "Phone:", value: "+201111400212" },
-    { label: "Email:", value: "info@egyptustours.com" },
-    { label: "Address:", value: "643 Hadayk October, Giza" },
-  ],
+  Contact: CONTACT_INFO.map((item) => ({
+    label: `${item.type}:`,
+    value: item.value.trim(),
+  })),
 };
 
 const SOCIALS = [
