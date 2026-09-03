@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Vehicle, TransportationBookingData } from "@/types";
 import useSWR from "swr";
 import { apiClient } from "@/lib/api";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./BookingSummary.module.scss";
 
 const fetcher = (url: string) => apiClient.get(url).then((res: any) => res.results || res);
@@ -16,6 +17,7 @@ interface BookingSummaryProps {
 
 export default function BookingSummary({ vehicle, formData }: BookingSummaryProps) {
   const [expanded, setExpanded] = useState(false);
+  const { t } = useTranslation("booking");
 
   const { data: vehicleDetailsData } = useSWR(vehicle.id ? `/vehicles/${vehicle.id}/` : null, fetcher);
   const additionalServices = vehicleDetailsData?.additional_services || [];
@@ -94,7 +96,7 @@ export default function BookingSummary({ vehicle, formData }: BookingSummaryProp
           </button>
           <div className={styles.inner}>
             <div className={styles.header}>
-              <h2 className={styles.title}>Booking Summary</h2>
+              <h2 className={styles.title}>{t("sidebar.bookingSummary", "Booking Summary")}</h2>
               <div className={styles.ratingBox}>
                 <div className={styles.starIcon}>
                   <Image src="/images/star-yellow3.svg" alt="" width={18} height={18} />
@@ -114,7 +116,7 @@ export default function BookingSummary({ vehicle, formData }: BookingSummaryProp
 
                   <div className={styles.priceTable}>
                     <div className={styles.priceRow}>
-                      <span className={styles.priceLabel}>Base Price</span>
+                      <span className={styles.priceLabel}>{t("sidebar.basePrice", "Base Price")}</span>
                       <span className={styles.priceValue}>${basePrice.toFixed(2)}</span>
                     </div>
                     {selectedServices.map((s: any) => (
@@ -128,23 +130,27 @@ export default function BookingSummary({ vehicle, formData }: BookingSummaryProp
               </div>
 
               <div className={styles.totalRow}>
-                <span className={styles.totalLabel}>Total</span>
+                <span className={styles.totalLabel}>{t("sidebar.total", "Total")}</span>
                 <span className={styles.totalAmount}>${total.toFixed(2)}</span>
               </div>
 
               <div className={styles.depositBox}>
                 <div className={styles.depositRow}>
-                  <span className={styles.depositLabel}>Pay now {deposit === total ? "(Full amount)" : "(30% deposit)"}</span>
+                  <span className={styles.depositLabel}>{t("sidebar.payNow", "Pay now")} {deposit === total ? t("sidebar.fullAmount", "(Full amount)") : t("sidebar.deposit30", "(30% deposit)")}</span>
                   <span className={styles.depositAmount}>${deposit.toFixed(2)}</span>
                 </div>
                 <div className={styles.remainingRow}>
-                  <span className={styles.remainingNote}>Remaining 70% due one month before your trip</span>
+                  <span className={styles.remainingNote}>{t("sidebar.remainingNote", "Remaining 70% due one month before your trip")}</span>
                   <span className={styles.remainingVal}>${remaining.toFixed(2)}</span>
                 </div>
               </div>
 
               <div className={styles.trustBadges}>
-                {["Free cancellation", "24/7 support", "Secure Payment"].map((text) => (
+                {[
+                  t("sidebar.freeCancellation", "Free cancellation"),
+                  t("sidebar.support247", "24/7 support"),
+                  t("sidebar.securePayment", "Secure Payment"),
+                ].map((text) => (
                   <div key={text} className={styles.badge}>
                     <div className={styles.badgeIcon}>
                       <Image src="/images/check-green.svg" alt="" width={16} height={16} />

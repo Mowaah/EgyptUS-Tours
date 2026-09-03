@@ -37,6 +37,7 @@ export type TranslationNamespace =
   | "hotels"
   | "transportation"
   | "faq"
-  | "legal";
+  | "legal"
+  | "booking";
 
 export type TranslationDictionary = Record<string, any>;

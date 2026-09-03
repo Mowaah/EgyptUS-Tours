@@ -1,4 +1,5 @@
 import { PageHeader, SearchContainer } from "@/components/shared";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface BlogHeroProps {
   searchQuery?: string;
@@ -6,9 +7,11 @@ interface BlogHeroProps {
 }
 
 export default function BlogHero({ searchQuery, onSearch }: BlogHeroProps) {
+  const { t } = useTranslation("common");
+
   return (
     <PageHeader
-      breadcrumbs={[{ label: "Blogs", isCurrent: true }]}
+      breadcrumbs={[{ label: t("footer.blogs", "Blogs"), isCurrent: true }]}
       title="Your Gateway to Egypt"
       subtitle="Explore the heart of every destination. Our blog brings you closer to the people, places, and experiences that make traveling through Egypt truly unforgettable"
       subtitleMaxWidth="800px"

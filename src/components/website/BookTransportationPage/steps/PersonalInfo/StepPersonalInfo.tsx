@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { TransportationBookingData, Vehicle } from "@/types";
-import { 
-  FormField, 
-  PhoneInput, 
-  CheckboxIndicator, 
+import {
+  FormField,
+  PhoneInput,
+  CheckboxIndicator,
   NationalitySelect,
   BookingStepFooter
 } from "@/components/shared";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./StepPersonalInfo.module.scss";
 import ImportantLinksModal from "@/components/website/TripDetailPage/TripImportantLinks/ImportantLinksModal";
 
@@ -24,12 +25,13 @@ export default function StepPersonalInfo({
   formData, onChange, onPrevious, onContinue, errors = {},
 }: StepPersonalInfoProps) {
   const [showTermsModal, setShowTermsModal] = useState(false);
+  const { t } = useTranslation("booking");
 
   return (
     <div className={styles.stepCard}>
       <div className={styles.header}>
-        <h2 className={styles.title}>Personal Information</h2>
-        <p className={styles.subtitle}>Fill in your details to proceed with your booking securely.</p>
+        <h2 className={styles.title}>{t("transportBooking.contactDetails.title", "Passenger Contact Information")}</h2>
+        <p className={styles.subtitle}>{t("transportBooking.contactDetails.subtitle", "We will use this information to send booking confirmations and ride updates.")}</p>
       </div>
 
       <div className={styles.formSection}>
@@ -38,8 +40,8 @@ export default function StepPersonalInfo({
             id="trans-name"
             name="name"
             autoComplete="name"
-            label="Enter your Name"
-            placeholder="John Doe"
+            label={t("transportBooking.contactDetails.name", "Full Name")}
+            placeholder={t("transportBooking.contactDetails.namePlaceholder", "John Doe")}
             value={formData.name}
             onChange={(e) => onChange({ name: e.target.value })}
             required
@@ -49,8 +51,8 @@ export default function StepPersonalInfo({
             id="trans-email"
             name="email"
             autoComplete="email"
-            label="Enter your E-mail"
-            placeholder="Example@Gmail.Com"
+            label={t("transportBooking.contactDetails.email", "Email Address")}
+            placeholder={t("transportBooking.contactDetails.emailPlaceholder", "example@gmail.com")}
             value={formData.email}
             onChange={(e) => onChange({ email: e.target.value })}
             required
@@ -59,7 +61,7 @@ export default function StepPersonalInfo({
         </div>
 
         <div className={styles.twoColumn}>
-          <FormField label="Enter your Phone Number" required error={errors.phone}>
+          <FormField label={t("transportBooking.contactDetails.phone", "Phone Number")} required error={errors.phone}>
             <PhoneInput
               id="trans-phone"
               name="tel"
@@ -69,8 +71,8 @@ export default function StepPersonalInfo({
               hasError={!!errors.phone}
             />
           </FormField>
-          <FormField label="Select Your Nationality" required error={errors.nationality}>
-            <NationalitySelect 
+          <FormField label={t("transportBooking.contactDetails.nationality", "Select Your Nationality")} required error={errors.nationality}>
+            <NationalitySelect
               value={formData.nationality}
               onChange={(val) => onChange({ nationality: val })}
               error={!!errors.nationality}
@@ -80,9 +82,9 @@ export default function StepPersonalInfo({
 
         <div className={styles.row}>
           <FormField
-            label="Special Requests (Optional)"
+            label={t("transportBooking.contactDetails.notes", "Special Instructions for Driver (Optional)")}
             isTextarea
-            placeholder="Any special requirements or requests for your trip..."
+            placeholder={t("transportBooking.contactDetails.notesPlaceholder", "Any extra stops, infant seats needed, or landmark hints...")}
             value={formData.specialRequests}
             onChange={(e) => onChange({ specialRequests: e.target.value })}
             rows={4}
@@ -110,7 +112,7 @@ export default function StepPersonalInfo({
                 setShowTermsModal(true);
               }}
             >
-              Terms & Conditions and Cancellation
+              Terms &amp; Conditions and Cancellation
             </button>{" "}
             Policy.
           </span>
@@ -120,7 +122,7 @@ export default function StepPersonalInfo({
       <BookingStepFooter
         onPrevious={onPrevious}
         onContinue={onContinue}
-        continueLabel="Continue To Payment"
+        continueLabel={t("transportBooking.contactDetails.continueToPayment", "Continue To Payment")}
         continueDisabled={!formData.termsAccepted}
         showMoneyIcon
       />

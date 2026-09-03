@@ -1,4 +1,5 @@
 import { PageHeader, SearchContainer } from "@/components/shared";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface ArticlesHeroProps {
   searchQuery?: string;
@@ -6,9 +7,11 @@ interface ArticlesHeroProps {
 }
 
 export default function ArticlesHero({ searchQuery, onSearch }: ArticlesHeroProps) {
+  const { t } = useTranslation("common");
+
   return (
     <PageHeader
-      breadcrumbs={[{ label: "Articles", isCurrent: true }]}
+      breadcrumbs={[{ label: t("footer.articles", "Articles"), isCurrent: true }]}
       title="Your Gateway to Egypt"
       subtitle="Explore the heart of every destination. Our blog brings you closer to the people, places, and experiences that make traveling through Egypt truly unforgettable"
       subtitleMaxWidth="800px"

@@ -1,12 +1,13 @@
 {
   "nav": {
-    "home": "Home",
+    "home": "Inizio",
     "egyptTours": "Tour Egitto",
     "packages": "Pacchetti",
     "hotels": "Hotel",
     "nileCruises": "Crociere sul Nilo",
     "dayTours": "Escursioni Giornaliere",
-    "transfers": "Trasferimenti",
+    "transfers": "Trasporti",
+    "transportation": "Trasporti",
     "aboutUs": "Chi Siamo",
     "events": "Eventi",
     "b2b": "B2B",
@@ -59,7 +60,10 @@
     "close": "Chiudi",
     "requestProposal": "Richiedi una Proposta",
     "getStarted": "Inizia Ora",
-    "seeAll": "Vedi Tutti"
+    "seeAll": "Vedi Tutti",
+    "continue": "Continua",
+    "previous": "Precedente",
+    "back": "Indietro"
   },
   "forms": {
     "required": "Obbligatorio",
@@ -75,5 +79,37 @@
     "selectNationality": "Seleziona Nazionalità",
     "successMessage": "Grazie! La tua richiesta è stata ricevuta.",
     "errorMessage": "Si è verificato un errore. Per favore riprova."
+  },
+  "units": {
+    "from": "Da",
+    "startingFrom": "A partire da",
+    "perNight": "/notte",
+    "perNightFull": "a notte",
+    "perPerson": "a persona",
+    "day": "giorno",
+    "days": "giorni",
+    "night": "notte",
+    "nights": "notti",
+    "hour": "ora",
+    "hours": "ore",
+    "country": "paese",
+    "countries": "paesi",
+    "room": "Camera",
+    "rooms": "Camere",
+    "seat": "posto",
+    "seats": "posti",
+    "passengers": "Passeggeri",
+    "luggage": "Bagagli",
+    "duration": "Durata",
+    "totalPrice": "Prezzo totale",
+    "largeSuitcase": "{count} valigia grande",
+    "largeSuitcases": "{count} valigie grandi",
+    "starLuxuryHotel": "Hotel di lusso a {stars} stelle",
+    "viewTrip": "Visualizza viaggio",
+    "bookNow": "Prenota ora"
+  },
+  "breadcrumb": {
+    "home": "Inizio",
+    "ariaLabel": "Percorso di navigazione"
   }
 }

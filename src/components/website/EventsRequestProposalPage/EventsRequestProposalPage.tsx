@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { submitEventProposal, extractApiError } from "@/lib/api";
+import { useTranslation } from "@/hooks/useTranslation";
 
 import styles from "./EventsRequestProposalPage.module.scss";
-import { STEPS } from "./eventsRequestProposalData";
 import type { EventProposalData, EventStep } from "./eventsRequestProposalTypes";
 import { SuccessModal, PageHeader, StepIndicator } from "@/components/shared";
 
@@ -48,6 +48,7 @@ const initialData: EventProposalData = {
 
 export default function EventsRequestProposalPage() {
   const router = useRouter();
+  const { t } = useTranslation("events");
   const [currentStep, setCurrentStep] = useState<EventStep>(1);
   const [showModal, setShowModal] = useState(false);
   const stepIndicatorRef = useRef<HTMLDivElement | null>(null);
@@ -56,6 +57,13 @@ export default function EventsRequestProposalPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submittedId, setSubmittedId] = useState<string | number>("");
+
+  const steps = [
+    { number: 1, label: t("proposal.steps.organization", "Organization") },
+    { number: 2, label: t("proposal.steps.eventDetails", "Event Details") },
+    { number: 3, label: t("proposal.steps.requirements", "Requirements") },
+    { number: 4, label: t("proposal.steps.budget", "Budget & Submit") },
+  ];
 
   const updateOrganization = (patch: Partial<EventProposalData["organization"]>) => {
     setProposalData((prev) => ({
@@ -91,18 +99,18 @@ export default function EventsRequestProposalPage() {
     if (currentStep === 1) {
       const org = proposalData.organization;
       const newErrors: Record<string, string> = {};
-      if (!org.name.trim()) newErrors.name = "Organization Name is required.";
-      if (!org.contactPerson.trim()) newErrors.contactPerson = "Contact Person is required.";
+      if (!org.name.trim()) newErrors.name = t("proposal.errors.orgName", "Organization Name is required.");
+      if (!org.contactPerson.trim()) newErrors.contactPerson = t("proposal.errors.contactPerson", "Contact Person is required.");
       if (!org.email.trim()) {
-        newErrors.email = "Email Address is required.";
+        newErrors.email = t("proposal.errors.emailRequired", "Work Email is required.");
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(org.email.trim())) {
-        newErrors.email = "Please enter a valid email address.";
+        newErrors.email = t("proposal.errors.emailInvalid", "Please enter a valid email address.");
       }
       const phoneDigits = org.phone.replace(/\D/g, "");
       if (!org.phone.trim() || phoneDigits.length === 0) {
-        newErrors.phone = "Phone Number is required.";
+        newErrors.phone = t("proposal.errors.phoneRequired", "Phone Number is required.");
       } else if (phoneDigits.length < 10) {
-        newErrors.phone = "Please enter a valid phone number with country code.";
+        newErrors.phone = t("proposal.errors.phoneInvalid", "Please enter a valid phone number with country code.");
       }
       if (Object.keys(newErrors).length > 0) {
         setFieldErrors(newErrors);
@@ -114,12 +122,12 @@ export default function EventsRequestProposalPage() {
     if (currentStep === 2) {
       const evt = proposalData.eventDetails;
       const newErrors: Record<string, string> = {};
-      if (!evt.eventType) newErrors.eventType = "Event Type is required.";
-      if (!evt.eventName.trim()) newErrors.eventName = "Event Name is required.";
-      if (!evt.expectedAttendees) newErrors.expectedAttendees = "Expected Attendees is required.";
-      if (!evt.preferredCity) newErrors.preferredCity = "Preferred City is required.";
-      if (!evt.startDate) newErrors.startDate = "Start Date is required.";
-      if (!evt.endDate) newErrors.endDate = "End Date is required.";
+      if (!evt.eventType) newErrors.eventType = t("proposal.errors.eventType", "Event Type is required.");
+      if (!evt.eventName.trim()) newErrors.eventName = t("proposal.errors.eventName", "Event Name is required.");
+      if (!evt.expectedAttendees) newErrors.expectedAttendees = t("proposal.errors.expectedAttendees", "Expected Attendees is required.");
+      if (!evt.preferredCity) newErrors.preferredCity = t("proposal.errors.preferredCity", "Preferred City is required.");
+      if (!evt.startDate) newErrors.startDate = t("proposal.errors.startDate", "Start Date is required.");
+      if (!evt.endDate) newErrors.endDate = t("proposal.errors.endDate", "End Date is required.");
       if (Object.keys(newErrors).length > 0) {
         setFieldErrors(newErrors);
         return;
@@ -130,7 +138,7 @@ export default function EventsRequestProposalPage() {
     if (currentStep === 3) {
       const req = proposalData.requirements;
       const newErrors: Record<string, string> = {};
-      if (!req.venueType) newErrors.venueType = "Venue Type is required.";
+      if (!req.venueType) newErrors.venueType = t("proposal.errors.venueType", "Preferred Venue Type is required.");
       if (Object.keys(newErrors).length > 0) {
         setFieldErrors(newErrors);
         return;
@@ -141,18 +149,20 @@ export default function EventsRequestProposalPage() {
     if (currentStep === 4) {
       const bud = proposalData.budget;
       const newErrors: Record<string, string> = {};
-      if (!bud.estimatedBudget) newErrors.estimatedBudget = "Estimated Budget is required.";
-      if (!bud.budgetFlexibility) newErrors.budgetFlexibility = "Budget Flexibility is required.";
+      if (!bud.estimatedBudget) newErrors.estimatedBudget = t("proposal.errors.estimatedBudget", "Estimated Budget is required.");
+      if (!bud.budgetFlexibility) newErrors.budgetFlexibility = t("proposal.errors.budgetFlexibility", "Budget Flexibility is required.");
       if (Object.keys(newErrors).length > 0) {
         setFieldErrors(newErrors);
         return;
       }
       setFieldErrors({});
     }
+
     if (currentStep < 4) {
       setCurrentStep((s) => (s + 1) as EventStep);
       return;
     }
+
     try {
       setIsSubmitting(true);
       const res = await submitEventProposal(proposalData);
@@ -164,18 +174,22 @@ export default function EventsRequestProposalPage() {
       setShowModal(true);
     } catch (err: any) {
       console.error("Failed to submit event proposal:", err);
-      setSubmitError(extractApiError(err));
+      const msg = extractApiError(err, "Failed to submit proposal. Please try again.");
+      setSubmitError(msg);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handlePrevious = () => {
-    setCurrentStep((s) => (s > 1 ? s - 1 : 1) as EventStep);
+    if (currentStep > 1) {
+      setCurrentStep((s) => (s - 1) as EventStep);
+    }
   };
 
   const handleReset = () => {
     setShowModal(false);
+    setProposalData(initialData);
     setCurrentStep(1);
     router.push("/");
   };
@@ -188,18 +202,18 @@ export default function EventsRequestProposalPage() {
     <div className={styles.page}>
       <PageHeader
         breadcrumbs={[
-          { label: "MICE & Corporate Events", href: "/events" },
-          { label: "Requesting Proposal", isCurrent: true },
+          { label: t("proposal.breadcrumb", "MICE & Corporate Events"), href: "/events" },
+          { label: t("proposal.breadcrumbProposal", "Corporate Proposal"), isCurrent: true },
         ]}
-        title="Create Your Event Details"
-        subtitle="Professional meetings, conferences, incentives, and exhibitions tailored for impactful business experiences."
-        backButton={{ text: "Back To Home", href: "/" }}
+        title={t("proposal.title", "Request a Custom Proposal")}
+        subtitle={t("proposal.subtitle", "Share your requirements and we'll design a tailored corporate event or MICE solution.")}
+        backButton={{ text: t("proposal.backButton", "Back To Events"), href: "/events" }}
         decorationSrc="/images/dotted-line3.svg"
         subtitleMaxWidth="750px"
       />
 
       <div ref={stepIndicatorRef}>
-        <StepIndicator steps={STEPS} currentStep={currentStep} />
+        <StepIndicator steps={steps} currentStep={currentStep} />
       </div>
 
       <main className={styles.mainContent}>
@@ -250,17 +264,17 @@ export default function EventsRequestProposalPage() {
 
       {showModal && (
         <SuccessModal
-          title="Proposal Request Submitted!"
-          message="Thank you for your interest. Our MICE team will review your requirements and contact you within 24 hours."
-          primaryButtonText="View Request"
-          buttonText="Back to Home"
+          title={t("proposal.success.title", "Your Proposal Request Has Been Received!")}
+          message={t("proposal.success.message", "Thank you for reaching out. Our corporate events specialist will review your request and provide a detailed proposal within 24 hours.")}
+          primaryButtonText={t("proposal.success.viewRequest", "View Request")}
+          buttonText={t("proposal.success.backToHome", "Back to Home")}
           onPrimaryClick={() => router.push("/profile?tab=requests")}
           onClose={handleReset}
           metadata={[
-            { label: "Reference Number", value: `#MICE-${submittedId || "059208"}` },
-            { label: "Organization", value: proposalData.organization.name || "AUS Agency" },
-            { label: "Event Type", value: proposalData.eventDetails.eventType || "Incentive" },
-            { label: "Expected Attendees", value: proposalData.eventDetails.expectedAttendees || "101-250" },
+            { label: t("proposal.success.referenceNumber", "Reference Number"), value: `#MICE-${submittedId || "059208"}` },
+            { label: t("proposal.organization.name", "Organization"), value: proposalData.organization.name || "AUS Agency" },
+            { label: t("proposal.eventDetails.eventType", "Event Type"), value: proposalData.eventDetails.eventType || "Incentive" },
+            { label: t("proposal.eventDetails.expectedAttendees", "Expected Attendees"), value: proposalData.eventDetails.expectedAttendees || "101-250" },
           ]}
         />
       )}

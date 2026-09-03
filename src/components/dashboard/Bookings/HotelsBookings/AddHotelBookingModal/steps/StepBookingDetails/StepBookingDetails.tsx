@@ -137,7 +137,6 @@ export default function StepBookingDetails({ formData, onChange, errors = {} }: 
         .join(' ');
 
       const viewLabel = baseRoom.view_label || baseRoom.view || "Standard View";
-      const displayTitle = `${finalTitle} - ${viewLabel}`;
 
       let capacity = 2;
       const lowerType = typeKey.toLowerCase();
@@ -148,7 +147,7 @@ export default function StepBookingDetails({ formData, onChange, errors = {} }: 
 
       return {
         key: typeKey.toLowerCase(),
-        title: displayTitle,
+        title: finalTitle,
         subtitle: `${capacity} person${capacity > 1 ? "s" : ""}`,
         displayPrice: `£${Math.round(basePrice).toLocaleString()}`,
         priceUnit: "/ night",

@@ -20,7 +20,7 @@ export default function Breadcrumb({ items, className = "" }: BreadcrumbProps) {
   const { t } = useTranslation("common");
 
   return (
-    <nav className={`${styles.breadcrumb} ${className}`} aria-label="Breadcrumb">
+    <nav className={`${styles.breadcrumb} ${className}`} aria-label={t("breadcrumb.ariaLabel", "Breadcrumb")}>
       <ul className={styles.list}>
         <li className={styles.item}>
           <Link href="/" className={styles.link}>
@@ -31,7 +31,7 @@ export default function Breadcrumb({ items, className = "" }: BreadcrumbProps) {
               height={16}
               className={styles.homeIcon}
             />
-            <span>{t("nav.home", "Home")}</span>
+            <span>{t("breadcrumb.home", t("nav.home", "Home"))}</span>
           </Link>
         </li>
         {items.map((item, index) => (

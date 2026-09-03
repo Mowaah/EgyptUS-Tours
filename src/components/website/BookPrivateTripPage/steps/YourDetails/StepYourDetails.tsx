@@ -22,6 +22,7 @@ import { BookingData } from "../../BookPrivateTripPage";
 import { Trip } from "@/types";
 import { isValidEmail, isValidPhone } from "@/utils/validators";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface StepYourDetailsProps {
   trip: Trip;
@@ -33,6 +34,7 @@ interface StepYourDetailsProps {
 
 export default function StepYourDetails({ trip, formData, onChange, onContinue, isGroupTrip }: StepYourDetailsProps) {
   const { formatCurrency } = useCurrency();
+  const { t } = useTranslation("booking");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Extract rooms directly from trip season pricing instead of hotel
@@ -54,10 +56,10 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
     if (baseSeason.single > 0) {
       groups.push({
         key: "single",
-        title: "Single Room",
-        subtitle: "1 person",
+        title: t("tripBooking.step1.singleRoom", "Single Room"),
+        subtitle: `1 ${t("hotelBooking.roomDates.person", "person")}`,
         displayPrice: formatCurrency(baseSeason.single),
-        priceUnit: "/ night",
+        priceUnit: `/ ${t("sidebar.night", "night")}`,
         defaultOptionValue: "garden",
         options,
       });
@@ -65,10 +67,10 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
     if (baseSeason.double > 0) {
       groups.push({
         key: "double",
-        title: "Double Room",
-        subtitle: "2 persons",
+        title: t("tripBooking.step1.doubleRoom", "Double Room"),
+        subtitle: `2 ${t("hotelBooking.roomDates.people", "persons")}`,
         displayPrice: formatCurrency(baseSeason.double),
-        priceUnit: "/ night",
+        priceUnit: `/ ${t("sidebar.night", "night")}`,
         defaultOptionValue: "garden",
         options,
       });
@@ -76,16 +78,16 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
     if (baseSeason.triple > 0) {
       groups.push({
         key: "triple",
-        title: "Triple Room",
-        subtitle: "3 persons",
+        title: t("tripBooking.step1.tripleRoom", "Triple Room"),
+        subtitle: `3 ${t("hotelBooking.roomDates.people", "persons")}`,
         displayPrice: formatCurrency(baseSeason.triple),
-        priceUnit: "/ night",
+        priceUnit: `/ ${t("sidebar.night", "night")}`,
         defaultOptionValue: "garden",
         options,
       });
     }
     return groups;
-  }, [trip, formatCurrency]);
+  }, [trip, formatCurrency, t]);
 
   const hasFixedAvailability = Boolean(
     trip?.availability && trip.availability.length > 0
@@ -98,74 +100,81 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
     const monthGroups = Array.from(
       new Set(
         allSlots.map((slot: any) => {
-          const parts = slot.dates.split(" - ");
-          const dStr = parts[0] ? parts[0].trim() : slot.dates;
-          const d = new Date(dStr);
-          if (isNaN(d.getTime())) return "Unknown";
-          const m = d.toLocaleString("default", { month: "long" });
-          const y = d.getFullYear();
-          return `${m} ${y}`;
-        })
+          const firstDate = (slot.dates || "").split(" - ")[0];
+          const d = new Date(firstDate);
+          if (isNaN(d.getTime())) return null;
+          return d.toLocaleString("default", { month: "long", year: "numeric" });
+        }).filter(Boolean)
       )
-    ).filter((m) => m !== "Unknown");
+    ) as string[];
 
     return monthGroups.map((m) => ({ label: m, value: m }));
   }, [allSlots, isFixedDates]);
 
-  const effectiveMonth = formData.departureMonth || (DEPARTURE_MONTHS.length > 0 ? DEPARTURE_MONTHS[0].value : "");
-
-  const availableSlots = useMemo(() => {
-    if (!effectiveMonth) return [];
-    return allSlots.filter((slot: any) => {
-      const parts = slot.dates.split(" - ");
-      const dStr = parts[0] ? parts[0].trim() : slot.dates;
-      const d = new Date(dStr);
-      if (isNaN(d.getTime())) return false;
-      const m = d.toLocaleString("default", { month: "long" });
-      const y = d.getFullYear();
-      return `${m} ${y}` === effectiveMonth;
-    });
-  }, [allSlots, effectiveMonth]);
+  const defaultMonth = DEPARTURE_MONTHS[0]?.value || "";
+  const effectiveMonth = formData.departureMonth || defaultMonth;
 
   useEffect(() => {
-    if (isFixedDates && DEPARTURE_MONTHS.length > 0) {
-      const isValid = DEPARTURE_MONTHS.some((m) => m.value === formData.departureMonth);
-      if (!formData.departureMonth || !isValid) {
-        onChange({ departureMonth: DEPARTURE_MONTHS[0].value, departureDateId: "" });
+    if (isFixedDates && !formData.departureMonth && defaultMonth) {
+      onChange({ departureMonth: defaultMonth });
+    }
+  }, [isFixedDates, formData.departureMonth, defaultMonth, onChange]);
+
+  const availableSlots = useMemo(() => {
+    if (!isFixedDates) return [];
+    return allSlots.filter((slot: any) => {
+      const firstDate = (slot.dates || "").split(" - ")[0];
+      const d = new Date(firstDate);
+      if (isNaN(d.getTime())) return true;
+      const monthStr = d.toLocaleString("default", { month: "long", year: "numeric" });
+      return monthStr === effectiveMonth;
+    });
+  }, [allSlots, effectiveMonth, isFixedDates]);
+
+  useEffect(() => {
+    if (isFixedDates && availableSlots.length > 0) {
+      const isValidCurrentId = availableSlots.some((slot: any) => slot.id?.toString() === formData.departureDateId || slot.dates === formData.departureDateId);
+      if (!isValidCurrentId) {
+        const first = availableSlots[0];
+        onChange({
+          departureDateId: first.id?.toString() || first.dates,
+          startDate: (first.dates || "").split(" - ")[0]?.trim() || "",
+          endDate: (first.dates || "").split(" - ")[1]?.trim() || "",
+        });
       }
     }
-  }, [isFixedDates, formData.departureMonth, DEPARTURE_MONTHS, onChange]);
+  }, [isFixedDates, availableSlots, formData.departureDateId, onChange]);
 
   const handleNext = () => {
-    let newErrors: Record<string, string> = {};
-    if (!formData.name?.trim()) newErrors.name = "Name is required.";
+    const newErrors: Record<string, string> = {};
+    if (!formData.name?.trim()) newErrors.name = t("errors.nameRequired", "Name is required.");
     if (!formData.email?.trim()) {
-      newErrors.email = "Email is required.";
+      newErrors.email = t("errors.emailRequired", "Email is required.");
     } else if (!isValidEmail(formData.email)) {
-      newErrors.email = "Please enter a valid email address.";
+      newErrors.email = t("errors.emailInvalid", "Please enter a valid email address.");
     }
 
     const phoneDigits = (formData.phone || "").replace(/^(\+\d+\s*)/, "").replace(/\D/g, "");
     if (!formData.phone?.trim() || phoneDigits.length === 0) {
-      newErrors.phone = "Phone number is required.";
+      newErrors.phone = t("errors.phoneRequired", "Phone number is required.");
     } else if (!isValidPhone(formData.phone)) {
-      newErrors.phone = "The phone number entered is not valid.";
+      newErrors.phone = t("errors.phoneInvalid", "The phone number entered is not valid.");
     }
 
-    if (!formData.nationality?.trim()) newErrors.nationality = "Nationality is required.";
+    if (!formData.nationality?.trim()) newErrors.nationality = t("errors.nationalityRequired", "Nationality is required.");
     
     if (isFixedDates) {
       if (!formData.departureDateId) {
-        newErrors.departureDateId = "Please choose a departure date.";
+        newErrors.departureDateId = t("tripBooking.step1.chooseDepartureError", "Please choose a departure date.");
       }
     } else {
       if (!formData.startDate) {
-        newErrors.startDate = "Start date is required.";
+        newErrors.startDate = t("errors.startDateRequired", "Start date is required.");
       }
     }
 
     if (!formData.adults || formData.adults < 1) {
-      newErrors.adults = "At least 1 adult is required.";
+      newErrors.adults = t("planYourTrip.travelerInfo.adultsRequired", "At least 1 adult is required.");
     }
 
     let totalCapacity = 0;
@@ -182,9 +191,9 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
     });
 
     if (totalRoomCount === 0) {
-      newErrors.rooms = "Please select at least one room.";
+      newErrors.rooms = t("hotelBooking.roomDates.roomsRequired", "Please select at least one room.");
     } else if (formData.adults > totalCapacity) {
-      newErrors.rooms = `Selected rooms only accommodate ${totalCapacity} adults, but ${formData.adults} adults are booked.`;
+      newErrors.rooms = `${t("hotelBooking.roomDates.roomCapacityExceeded", "Selected rooms only accommodate")} ${totalCapacity} ${t("hotelBooking.roomDates.adults", "adults")}, ${t("hotelBooking.roomDates.butSelected", "but")} ${formData.adults} ${t("hotelBooking.roomDates.adultsSelected", "adults are booked")}.`;
     }
 
     setErrors(newErrors);
@@ -241,8 +250,8 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
     <div className={planPage.stepFormCard}>
       <header className={planPage.stepFormCardHeader}>
         <div className={planPage.formHeaderColumn}>
-          <h2 className={planPage.formTitle}>Enter Your Information</h2>
-          <p className={planPage.formSubtitle}>Complete the form below to move to booking confirmation.</p>
+          <h2 className={planPage.formTitle}>{t("tripBooking.step1.title", "Enter Your Information")}</h2>
+          <p className={planPage.formSubtitle}>{t("tripBooking.step1.subtitle", "Complete the form below to move to booking confirmation.")}</p>
         </div>
       </header>
 
@@ -252,10 +261,10 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
             id="pti-name"
             name="name"
             autoComplete="name"
-            label="Enter your Name"
+            label={t("tripBooking.step2.fullName", "Enter your Name")}
             className={planPage.formInput}
             type="text"
-            placeholder="John Doe"
+            placeholder={t("tripBooking.step2.namePlaceholder", "John Doe")}
             value={formData.name}
             onChange={(e) => onChange({ name: e.target.value })}
             required
@@ -266,10 +275,10 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
             id="pti-email"
             name="email"
             autoComplete="email"
-            label="Enter your E-mail"
+            label={t("tripBooking.step2.email", "Enter your E-mail")}
             className={planPage.formInput}
             type="email"
-            placeholder="example@gmail.com"
+            placeholder={t("tripBooking.step2.emailPlaceholder", "example@gmail.com")}
             value={formData.email}
             onChange={(e) => onChange({ email: e.target.value })}
             required
@@ -278,7 +287,7 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
 
           <FormField
             id="pti-phone"
-            label="Phone Number"
+            label={t("tripBooking.step2.phone", "Phone Number")}
             required
             error={errors.phone}
           >
@@ -292,7 +301,7 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
             />
           </FormField>
 
-          <FormField label="Select Your Nationality" required error={errors.nationality}>
+          <FormField label={t("tripBooking.step2.nationality", "Select Your Nationality")} required error={errors.nationality}>
             <NationalitySelect
               value={formData.nationality}
               onChange={(val) => onChange({ nationality: val })}
@@ -305,7 +314,7 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
               <div className={stepStyles.groupSection}>
                 <FormField
                   id="pti-group-departure-month"
-                  label="Select Month"
+                  label={t("tripBooking.step1.selectMonth", "Select Month")}
                   required
                 >
                   <div className={stepStyles.monthSelectDropdownWrapper}>
@@ -324,7 +333,7 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
                   </div>
                 </FormField>
 
-                <FormField label="Choose Departure Date" required error={errors.departureDateId}>
+                <FormField label={t("tripBooking.step1.chooseDepartureDate", "Choose Departure Date")} required error={errors.departureDateId}>
                   <div className={stepStyles.departureGrid}>
                     {(() => {
                       const formatDateRange = (datesStr: string) => {
@@ -373,7 +382,7 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
             </div>
           ) : (
             <>
-              <FormField label="Start Date" required error={errors.startDate}>
+              <FormField label={t("tripBooking.step1.startDate", "Start Date")} required error={errors.startDate}>
                 <CustomDatePicker
                   variant="input"
                   className={`${formStyles.input} ${planPage.dateInput} ${errors.startDate ? formStyles.inputInvalid : ""}`}
@@ -390,7 +399,7 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
                 />
               </FormField>
 
-              <FormField label="End Date" required>
+              <FormField label={t("tripBooking.step1.endDate", "End Date")} required>
                 <div style={{ pointerEvents: "none", opacity: 0.7 }}>
                   <CustomDatePicker
                     variant="input"
@@ -409,9 +418,9 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
         <div className={planPage.formGrid}>
           {(["adults", "children", "infants"] as const).map((type) => {
             const meta = {
-              adults: { title: "No of Adults", hint: "( +12 years )" },
-              children: { title: "No of Children", hint: "( 2 to 11 years )" },
-              infants: { title: "No of Infants", hint: "( 0 to 2 years )" },
+              adults: { title: t("planYourTrip.travelerInfo.adults", "No of Adults"), hint: t("planYourTrip.travelerInfo.adultsHint", "( +12 years )") },
+              children: { title: t("planYourTrip.travelerInfo.children", "No of Children"), hint: t("planYourTrip.travelerInfo.childrenHint", "( 2 to 11 years )") },
+              infants: { title: t("planYourTrip.travelerInfo.infants", "No of Infants"), hint: t("planYourTrip.travelerInfo.infantsHint", "( 0 to 2 years )") },
             };
             return (
               <div key={type} className={planPage.formGroup}>
@@ -445,20 +454,20 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
           onCountChange={handleCountChange}
           onCustomizationChange={handleCustomizationChange}
           error={errors.rooms}
-          emptyMessage="No rooms found for this trip."
+          emptyMessage={t("hotelBooking.roomDates.noRooms", "No rooms found for this trip.")}
         />
 
         <hr className={stepStyles.divider} aria-hidden="true" />
 
         <div className={planPage.formGroupFull}>
-          <h3 className={stepStyles.sectionTitle}>Special Requests (Optional)</h3>
+          <h3 className={stepStyles.sectionTitle}>{t("hotelBooking.personalInfo.specialRequests", "Special Requests (Optional)")}</h3>
           <FormField
             id="pti-details"
             label=""
             isTextarea
             wrapperClassName={planPage.formGroupFull}
             className={travelerStyles.formTextarea}
-            placeholder="Any special requirements or requests for your trip..."
+            placeholder={t("hotelBooking.personalInfo.specialRequestsPlaceholder", "Any special requirements or requests for your trip...")}
             value={formData.specialRequests}
             onChange={(e) => onChange({ specialRequests: e.target.value })}
             rows={4}
@@ -468,7 +477,6 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
 
       <BookingStepFooter
         onContinue={handleNext}
-        continueLabel="Continue"
       />
     </div>
   );

@@ -1,7 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import Button from "../Button/Button";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./VehicleCard.module.scss";
 
 export interface Vehicle {
@@ -26,16 +29,29 @@ interface VehicleCardProps {
   vehicle: Vehicle;
   view?: "grid" | "list";
 }
+
 export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps) {
+  const { t } = useTranslation("common");
   const { formatCurrency } = useCurrency();
   const isList = view === "list";
   const vehicleDetailsHref = `/transportation/${vehicle.id}`;
 
   const formatDuration = (val?: string) => {
     if (!val) return "";
-    const clean = val.replace(/^(\d+)-\1$/, "£1");
-    if (clean.toLowerCase().includes("hour")) return clean;
-    return `${clean} ${clean === "1" ? "hour" : "hours"}`;
+    const clean = val.replace(/^(\d+)-\1$/, "$1");
+    return `${clean} ${clean === "1" ? t("units.hour", "hour") : t("units.hours", "hours")}`;
+  };
+
+  const formatLuggage = (luggage: string) => {
+    if (!luggage) return "";
+    const match = luggage.match(/^(\d+)\s*large suitcase/i);
+    if (match) {
+      const count = parseInt(match[1], 10);
+      return count === 1
+        ? t("units.largeSuitcase", "{count} large suitcase").replace("{count}", "1")
+        : t("units.largeSuitcases", "{count} large suitcases").replace("{count}", String(count));
+    }
+    return luggage;
   };
 
   return (
@@ -73,19 +89,20 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
           </div>
         </Link>
 
-
         <div className={`${styles.specs} ${isList ? styles.listSpecs : ""}`}>
           <div className={styles.specItem}>
-            <span className={styles.specLabel}>Passengers</span>
-            <span className={styles.specValue}>{vehicle.passengers} seats</span>
+            <span className={styles.specLabel}>{t("units.passengers", "Passengers")}</span>
+            <span className={styles.specValue}>
+              {vehicle.passengers} {vehicle.passengers === 1 ? t("units.seat", "seat") : t("units.seats", "seats")}
+            </span>
           </div>
           <div className={styles.specItem}>
-            <span className={styles.specLabel}>Luggage</span>
-            <span className={styles.specValue}>{vehicle.luggage}</span>
+            <span className={styles.specLabel}>{t("units.luggage", "Luggage")}</span>
+            <span className={styles.specValue}>{formatLuggage(vehicle.luggage)}</span>
           </div>
           {vehicle.durationHours && (
             <div className={styles.specItem}>
-              <span className={styles.specLabel}>Duration</span>
+              <span className={styles.specLabel}>{t("units.duration", "Duration")}</span>
               <span className={styles.specValue}>{formatDuration(vehicle.durationHours)}</span>
             </div>
           )}
@@ -103,7 +120,7 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
         <div className={`${styles.footerWrapper} ${isList ? styles.listFooterWrapper : ""}`}>
           <div className={styles.footer}>
             <div className={styles.priceCol}>
-              <span className={styles.priceLabel}>Total Price</span>
+              <span className={styles.priceLabel}>{t("units.totalPrice", "Total Price")}</span>
               <span className={styles.priceValue}>
                 {vehicle.originalPrice && (
                   <span className={styles.originalPrice}>{formatCurrency(vehicle.originalPrice)}</span>
@@ -112,7 +129,7 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
               </span>
             </div>
             <Button variant="primary" size="sm" href={`/transportation/${vehicle.id}/book`}>
-              Book Now
+              {t("units.bookNow", "Book Now")}
             </Button>
           </div>
         </div>

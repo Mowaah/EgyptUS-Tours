@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import Image from "next/image";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./BookingStepFooter.module.scss";
 
 type BookingStepFooterProps = {
@@ -21,33 +22,35 @@ function cx(...classes: Array<string | undefined | false>) {
 export default function BookingStepFooter({
   onContinue,
   onPrevious,
-  continueLabel = "Continue",
-  previousLabel = "Previous",
+  continueLabel,
+  previousLabel,
   continueDisabled = false,
   showMoneyIcon = false,
   footerClassName,
 }: BookingStepFooterProps) {
-  return (
-    <>
-      <div className={cx(styles.footer, footerClassName)}>
-        {onPrevious && (
-          <button className={styles.prevBtn} onClick={onPrevious} type="button">
-            {previousLabel}
-          </button>
-        )}
+  const { t } = useTranslation("common");
+  const resolvedContinue = continueLabel ?? t("buttons.continue", "Continue");
+  const resolvedPrevious = previousLabel ?? t("buttons.previous", "Previous");
 
-        <button
-          className={cx(styles.confirmBtn, !onPrevious && styles.confirmBtnFullWidth)}
-          onClick={onContinue}
-          type="button"
-          disabled={continueDisabled}
-        >
-          {continueLabel}
-          {showMoneyIcon && (
-            <Image src="/images/money-send.svg" width={20} height={20} alt="" />
-          )}
+  return (
+    <div className={cx(styles.footer, footerClassName)}>
+      {onPrevious && (
+        <button className={styles.prevBtn} onClick={onPrevious} type="button">
+          {resolvedPrevious}
         </button>
-      </div>
-    </>
+      )}
+
+      <button
+        className={cx(styles.confirmBtn, !onPrevious && styles.confirmBtnFullWidth)}
+        onClick={onContinue}
+        type="button"
+        disabled={continueDisabled}
+      >
+        {resolvedContinue}
+        {showMoneyIcon && (
+          <Image src="/images/money-send.svg" width={20} height={20} alt="" />
+        )}
+      </button>
+    </div>
   );
 }

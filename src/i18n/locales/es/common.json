@@ -6,7 +6,8 @@
     "hotels": "Hoteles",
     "nileCruises": "Cruceros por el Nilo",
     "dayTours": "Excursiones de un Día",
-    "transfers": "Traslados",
+    "transfers": "Transporte",
+    "transportation": "Transporte",
     "aboutUs": "Sobre Nosotros",
     "events": "Eventos",
     "b2b": "B2B",
@@ -59,7 +60,10 @@
     "close": "Cerrar",
     "requestProposal": "Solicitar una Propuesta",
     "getStarted": "Comenzar",
-    "seeAll": "Ver Todo"
+    "seeAll": "Ver Todo",
+    "continue": "Continuar",
+    "previous": "Anterior",
+    "back": "Volver"
   },
   "forms": {
     "required": "Obligatorio",
@@ -75,5 +79,37 @@
     "selectNationality": "Selecciona tu Nacionalidad",
     "successMessage": "¡Gracias! Su solicitud ha sido recibida con éxito.",
     "errorMessage": "Ocurrió un error. Por favor, inténtelo de nuevo."
+  },
+  "units": {
+    "from": "Desde",
+    "startingFrom": "A partir de",
+    "perNight": "/noche",
+    "perNightFull": "por noche",
+    "perPerson": "por persona",
+    "day": "día",
+    "days": "días",
+    "night": "noche",
+    "nights": "noches",
+    "hour": "hora",
+    "hours": "horas",
+    "country": "país",
+    "countries": "países",
+    "room": "Habitación",
+    "rooms": "Habitaciones",
+    "seat": "asiento",
+    "seats": "asientos",
+    "passengers": "Pasajeros",
+    "luggage": "Equipaje",
+    "duration": "Duración",
+    "totalPrice": "Precio total",
+    "largeSuitcase": "{count} maleta grande",
+    "largeSuitcases": "{count} maletas grandes",
+    "starLuxuryHotel": "Hotel de lujo de {stars} estrellas",
+    "viewTrip": "Ver viaje",
+    "bookNow": "Reservar ahora"
+  },
+  "breadcrumb": {
+    "home": "Inicio",
+    "ariaLabel": "Miga de pan"
   }
 }

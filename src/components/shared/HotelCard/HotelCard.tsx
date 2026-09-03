@@ -9,6 +9,7 @@ import { StarRating } from "@/components/shared";
 import { useFavorite } from "@/hooks/useFavorite";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./HotelCard.module.scss";
 
 interface HotelCardProps {
@@ -21,6 +22,7 @@ interface HotelCardProps {
 }
 
 export default function HotelCard({ hotel, view = "grid", imageHeight, onFavoriteToggle }: HotelCardProps) {
+  const { t } = useTranslation("common");
   const isList = view === "list";
   const hotelDetailsHref = `/hotels/${hotel.id}`;
   const { isAuthenticated } = useAuth();
@@ -74,7 +76,7 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
       <div className={`${styles.content} ${isList ? styles.listContent : ""}`}>
         <div className={styles.ratingRow}>
           <span className={styles.starLabel}>
-            {hotel.stars}-Star Luxury Hotel
+            {t("units.starLuxuryHotel", "{stars}-Star Luxury Hotel").replace("{stars}", String(hotel.stars))}
           </span>
           <StarRating filled={hotel.stars} value={hotel.stars} className={styles.starRating} />
         </div>
@@ -82,11 +84,11 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
         <div className={styles.stats}>
           <div className={styles.stat}>
             <span className={styles.statValue}>{hotel.rooms}</span>
-            <span className={styles.statLabel}>Rooms</span>
+            <span className={styles.statLabel}>{t("units.rooms", "Rooms")}</span>
           </div>
           <div className={styles.stat}>
             <span className={styles.statValue}>{formatCurrency(hotel.pricePerNight)}</span>
-            <span className={styles.statLabel}>/night</span>
+            <span className={styles.statLabel}>{t("units.perNight", "/night")}</span>
           </div>
         </div>
 
@@ -94,17 +96,17 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
 
         <div className={styles.footer}>
           <div className={styles.price}>
-            <span className={styles.priceLabel}>Starting from</span>
+            <span className={styles.priceLabel}>{t("units.startingFrom", "Starting from")}</span>
             <span className={styles.priceValue}>
               {hotel.originalPrice && (
                 <span className={styles.originalPrice}>{formatCurrency(hotel.originalPrice)}</span>
               )}
               {formatCurrency(hotel.pricePerNight)}
-              <small>/night</small>
+              <small>{t("units.perNight", "/night")}</small>
             </span>
           </div>
           <Button variant="primary" size="sm" href={`/hotels/${hotel.id}/book`}>
-            Book Now
+            {t("units.bookNow", "Book Now")}
           </Button>
         </div>
       </div>

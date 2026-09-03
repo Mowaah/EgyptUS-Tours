@@ -106,10 +106,17 @@ export function LanguageProvider({ children, initialLanguage }: LanguageProvider
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
 
+const defaultContextValue: LanguageContextValue = {
+  language: DEFAULT_LANGUAGE,
+  activeOption: SUPPORTED_LANGUAGES[0],
+  setLanguage: () => {},
+  t: (namespace: TranslationNamespace, key: string, params?: Record<string, string | number>) => {
+    return getTranslation(DEFAULT_LANGUAGE, namespace, key, params);
+  },
+  dir: "ltr",
+};
+
 export function useLanguage() {
   const ctx = useContext(LanguageContext);
-  if (!ctx) {
-    throw new Error("useLanguage must be used inside LanguageProvider");
-  }
-  return ctx;
+  return ctx || defaultContextValue;
 }

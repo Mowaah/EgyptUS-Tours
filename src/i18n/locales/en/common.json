@@ -6,7 +6,8 @@
     "hotels": "Hotels",
     "nileCruises": "Nile Cruises",
     "dayTours": "Day Tours",
-    "transfers": "Transfers",
+    "transfers": "Transportation",
+    "transportation": "Transportation",
     "aboutUs": "About Us",
     "events": "Events",
     "b2b": "B2B",
@@ -59,7 +60,10 @@
     "close": "Close",
     "requestProposal": "Request a Proposal",
     "getStarted": "Get Started",
-    "seeAll": "See All"
+    "seeAll": "See All",
+    "continue": "Continue",
+    "previous": "Previous",
+    "back": "Back"
   },
   "forms": {
     "required": "Required",
@@ -75,5 +79,37 @@
     "selectNationality": "Select Your Nationality",
     "successMessage": "Thank you! Your request has been received.",
     "errorMessage": "Something went wrong. Please try again."
+  },
+  "units": {
+    "from": "From",
+    "startingFrom": "Starting from",
+    "perNight": "/night",
+    "perNightFull": "per night",
+    "perPerson": "per person",
+    "day": "day",
+    "days": "days",
+    "night": "night",
+    "nights": "nights",
+    "hour": "hour",
+    "hours": "hours",
+    "country": "country",
+    "countries": "countries",
+    "room": "Room",
+    "rooms": "Rooms",
+    "seat": "seat",
+    "seats": "seats",
+    "passengers": "Passengers",
+    "luggage": "Luggage",
+    "duration": "Duration",
+    "totalPrice": "Total Price",
+    "largeSuitcase": "{count} large suitcase",
+    "largeSuitcases": "{count} large suitcases",
+    "starLuxuryHotel": "{stars}-Star Luxury Hotel",
+    "viewTrip": "View Trip",
+    "bookNow": "Book Now"
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "ariaLabel": "Breadcrumb"
   }
 }

@@ -114,5 +114,92 @@
     "title": "¿Listo para Celebrar un Evento Inolvidable en Egipto?",
     "subtitle": "Colabore con nuestro equipo de eventos dedicado para diseñar un programa a medida que supere todas las expectativas.",
     "button": "Solicitar una Propuesta"
+  },
+  "proposal": {
+    "breadcrumb": "MICE y Eventos",
+    "breadcrumbProposal": "Propuesta Corporativa",
+    "title": "Solicitar una Propuesta Personalizada",
+    "subtitle": "Comparta sus requisitos y diseñaremos un evento corporativo o solución MICE a medida.",
+    "backButton": "Volver a Eventos",
+    "steps": {
+      "organization": "Empresa",
+      "eventDetails": "Detalles del Evento",
+      "requirements": "Requisitos",
+      "budget": "Presupuesto y Envío"
+    },
+    "organization": {
+      "title": "Información de la Empresa",
+      "name": "Nombre de la Empresa",
+      "namePlaceholder": "Nombre de la Empresa u Organización",
+      "industry": "Sector",
+      "selectIndustry": "Seleccionar Sector",
+      "country": "País",
+      "website": "Sitio Web de la Empresa (Opcional)",
+      "websitePlaceholder": "www.suempresa.com",
+      "contactPerson": "Persona de Contacto",
+      "contactPersonPlaceholder": "Nombre Completo",
+      "jobTitle": "Cargo / Puesto",
+      "jobTitlePlaceholder": "Su puesto / función",
+      "email": "Correo Electrónico Laboral",
+      "emailPlaceholder": "sucorreo@empresa.com",
+      "phone": "Número de Teléfono"
+    },
+    "eventDetails": {
+      "title": "Detalles del Evento",
+      "eventType": "Tipo de Evento",
+      "selectEventType": "Seleccionar Tipo de Evento",
+      "eventName": "Nombre del Evento",
+      "eventNamePlaceholder": "ej. Cumbre Anual de Liderazgo",
+      "expectedAttendees": "Asistentes Previstos",
+      "selectAttendees": "Seleccionar Rango de Asistentes",
+      "preferredCity": "Ciudad Preferida",
+      "selectCity": "Seleccionar Ciudad Preferida",
+      "startDate": "Fecha de Inicio",
+      "endDate": "Fecha de Fin",
+      "description": "Descripción del Evento",
+      "descriptionPlaceholder": "Breve resumen de los objetivos del evento y programa previsto..."
+    },
+    "requirements": {
+      "title": "Requisitos del Evento",
+      "venueType": "Tipo de Sede Preferida",
+      "selectVenueType": "Seleccionar Sede Preferida",
+      "additionalServices": "Servicios Adicionales Necesarios",
+      "additionalRequirements": "Peticiones Especiales y Requisitos",
+      "additionalRequirementsPlaceholder": "Montajes específicos, necesidades dietéticas, protocolos VIP o equipos audiovisuales..."
+    },
+    "budget": {
+      "title": "Presupuesto y Envío",
+      "estimatedBudget": "Presupuesto Estimado (Total)",
+      "selectBudget": "Seleccionar Rango de Presupuesto",
+      "budgetFlexibility": "Flexibilidad Presupuestaria",
+      "hearAboutUs": "¿Cómo nos conoció?",
+      "selectSource": "Seleccionar Fuente",
+      "submitButton": "Enviar Propuesta de Evento",
+      "submitting": "Enviando..."
+    },
+    "success": {
+      "title": "¡Su Solicitud de Propuesta Ha Sido Recibida!",
+      "message": "Gracias por contactarnos. Nuestro equipo de eventos corporativos revisará su solicitud y le enviará una propuesta detallada en 24 horas.",
+      "referenceNumber": "Número de Referencia",
+      "viewRequest": "Ver Solicitud",
+      "backToHome": "Volver al Inicio"
+    },
+    "errors": {
+      "orgName": "El nombre de la empresa es obligatorio.",
+      "contactPerson": "La persona de contacto es obligatoria.",
+      "emailRequired": "El correo laboral es obligatorio.",
+      "emailInvalid": "Por favor introduzca un correo electrónico válido.",
+      "phoneRequired": "El número de teléfono es obligatorio.",
+      "phoneInvalid": "Por favor introduzca un número de teléfono válido con prefijo.",
+      "eventType": "El tipo de evento es obligatorio.",
+      "eventName": "El nombre del evento es obligatorio.",
+      "expectedAttendees": "El número de asistentes es obligatorio.",
+      "preferredCity": "La ciudad preferida es obligatoria.",
+      "startDate": "La fecha de inicio es obligatoria.",
+      "endDate": "La fecha de fin es obligatoria.",
+      "venueType": "El tipo de sede es obligatorio.",
+      "estimatedBudget": "El presupuesto estimado es obligatorio.",
+      "budgetFlexibility": "La flexibilidad presupuestaria es obligatoria."
+    }
   }
 }

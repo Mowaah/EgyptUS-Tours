@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Trip, Hotel } from "@/types";
 import { BookingData } from "@/types";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./BookingSidebar.module.scss";
 
 interface BookingSidebarProps {
@@ -44,6 +45,7 @@ export default function BookingSidebar({
   // On desktop this state is ignored (CSS always shows the details).
   const [expanded, setExpanded] = useState(false);
   const { formatCurrency } = useCurrency();
+  const { t } = useTranslation("booking");
 
   const finalTotal = totalAmount + vatAmount;
   const remainingAmount = finalTotal - depositAmount;
@@ -54,8 +56,8 @@ export default function BookingSidebar({
   const title = isHotel ? hotel!.name : trip!.title;
   const rating = isHotel ? (hotel?.rating ?? 0) : (trip?.rating ?? 0);
 
-  const startLabel = isHotel ? "Check-in" : "Start Date";
-  const endLabel = isHotel ? "Check-Out" : "End Date";
+  const startLabel = isHotel ? t("sidebar.checkIn", "Check-in") : t("sidebar.startDate", "Start Date");
+  const endLabel = isHotel ? t("sidebar.checkOut", "Check-Out") : t("sidebar.endDate", "End Date");
 
   const shortStart = formatShortDate(formData.startDate, "Start");
   const shortEnd = formatShortDate(formData.endDate, "End");
@@ -162,16 +164,16 @@ export default function BookingSidebar({
             <div className={styles.compactMiddleRow}>
               <span>{shortStart} - {shortEnd}</span>
               <span className={styles.compactDot}>·</span>
-              <span>{compactGuests} Guests</span>
+              <span>{compactGuests} {t("sidebar.guests", "Guests")}</span>
             </div>
 
             <div className={styles.compactBottomRow}>
               <div className={styles.compactTotal}>
-                <span className={styles.compactTotalLabel}>Total:</span>
+                <span className={styles.compactTotalLabel}>{t("sidebar.total", "Total")}:</span>
                 <span className={styles.compactTotalValue}>{formatMoney(finalTotal)}</span>
               </div>
               <span className={styles.compactExpandText}>
-                {expanded ? "Hide Details" : "View Details"}
+                {expanded ? t("sidebar.hideDetails", "Hide Details") : t("sidebar.viewDetails", "View Details")}
               </span>
             </div>
           </div>
@@ -197,7 +199,7 @@ export default function BookingSidebar({
           </div>
 
           {/* Your Stay */}
-          <div className={styles.sidebarSectionLabel}>Your Stay</div>
+          <div className={styles.sidebarSectionLabel}>{t("sidebar.yourStay", "Your Stay")}</div>
           <div className={styles.datesRow}>
             <div className={styles.dateBlock}>
               <div className={styles.dateHeader}>
@@ -208,7 +210,7 @@ export default function BookingSidebar({
               </div>
               <div className={styles.dateTextBlock}>
                 <strong className={styles.dateValue}>{formData.startDate || "Sun, Mar 15"}</strong>
-                <small className={styles.dateTime}>From 15:00</small>
+                <small className={styles.dateTime}>{t("sidebar.fromTime", "From 15:00")}</small>
               </div>
             </div>
             <div className={styles.dateBlock}>
@@ -220,7 +222,7 @@ export default function BookingSidebar({
               </div>
               <div className={styles.dateTextBlock}>
                 <strong className={styles.dateValue}>{formData.endDate || "Sun, Mar 15"}</strong>
-                <small className={styles.dateTime}>From 15:00</small>
+                <small className={styles.dateTime}>{t("sidebar.fromTime", "From 15:00")}</small>
               </div>
             </div>
           </div>
@@ -230,30 +232,30 @@ export default function BookingSidebar({
             <div className={styles.guestsPills}>
               <span className={styles.guestPill}>
                 <Image src="/images/night.svg" width={16} height={16} alt="" />
-                {nights} Night
+                {nights} {nights === 1 ? t("sidebar.night", "Night") : t("sidebar.nights", "Nights")}
               </span>
               <span className={styles.guestPill}>
                 <Image src="/images/room.svg" width={16} height={16} alt="" />
-                {totalRooms} Room
+                {totalRooms} {t("sidebar.room", "Room")}
               </span>
               <span className={styles.guestPill}>
                 <Image src="/images/summary/adults.svg" width={16} height={16} alt="" />
-                {totalGuests} Guests
+                {totalGuests} {t("sidebar.guests", "Guests")}
               </span>
             </div>
           ) : (
             <div className={styles.guestsPills}>
               <span className={styles.guestPill}>
                 <Image src="/images/summary/adults.svg" width={16} height={16} alt="" />
-                {formData.adults} Adults
+                {formData.adults} {t("sidebar.adults", "Adults")}
               </span>
               <span className={styles.guestPill}>
                 <Image src="/images/summary/children.svg" width={16} height={16} alt="" />
-                {formData.children} Children
+                {formData.children} {t("sidebar.children", "Children")}
               </span>
               <span className={styles.guestPill}>
                 <Image src="/images/summary/infants.svg" width={16} height={16} alt="" />
-                {formData.infants} Infants
+                {formData.infants} {t("sidebar.infants", "Infants")}
               </span>
             </div>
           )}
@@ -261,7 +263,7 @@ export default function BookingSidebar({
           <div className={styles.divider} />
 
           {/* Price Details */}
-          <div className={styles.sidebarSectionLabel}>Price Details</div>
+          <div className={styles.sidebarSectionLabel}>{t("sidebar.priceDetails", "Price Details")}</div>
           <div className={styles.priceRows}>
             {isHotel ? (
               Object.entries(formData.rooms || {}).map(([type, count]) => {
@@ -282,7 +284,7 @@ export default function BookingSidebar({
 
                   rows.push(
                     <div key={`${type}-${i}`} className={styles.priceRow}>
-                      <span>1 × {name} - {room.view} ({nights} {nights === 1 ? 'Night' : 'Nights'})</span>
+                      <span>1 × {name} - {room.view} ({nights} {nights === 1 ? t("sidebar.night", "Night") : t("sidebar.nights", "Nights")})</span>
                       <strong>{formatMoney(price)}</strong>
                     </div>
                   );
@@ -298,13 +300,13 @@ export default function BookingSidebar({
               ))
             ) : (
               <div className={styles.priceRow}>
-                 <span>Trip Package</span>
+                 <span>{t("sidebar.tripPackage", "Trip Package")}</span>
                  <strong>{formatMoney(totalAmount)}</strong>
               </div>
             )}
             {isHotel && vatAmount > 0 && (
               <div className={styles.priceRow}>
-                <span>VAT</span>
+                <span>{t("sidebar.vat", "VAT")}</span>
                 <strong>{formatMoney(vatAmount)}</strong>
               </div>
             )}
@@ -313,7 +315,7 @@ export default function BookingSidebar({
           <div className={styles.dividerSolid} />
 
           <div className={styles.totalRow}>
-            <span className={styles.totalLabel}>Total</span>
+            <span className={styles.totalLabel}>{t("sidebar.total", "Total")}</span>
             <span className={styles.totalValue}>{formatMoney(finalTotal)}</span>
           </div>
 
@@ -321,19 +323,23 @@ export default function BookingSidebar({
           <div className={styles.depositCard}>
             <div className={styles.depositTopRow}>
               <span className={styles.depositLabel}>
-                Pay now {depositAmount === finalTotal ? "(Full amount)" : "(30% deposit)"}
+                {t("sidebar.payNow", "Pay now")} {depositAmount === finalTotal ? t("sidebar.fullAmount", "(Full amount)") : t("sidebar.deposit30", "(30% deposit)")}
               </span>
               <span className={styles.depositAmount}>{formatMoney(depositAmount)}</span>
             </div>
             <div className={styles.depositBottomRow}>
-              <span className={styles.depositNote}>Remaining 70% due one month before your trip</span>
+              <span className={styles.depositNote}>{t("sidebar.remainingNote", "Remaining 70% due one month before your trip")}</span>
               <span className={styles.remainingAmount}>{formatMoney(remainingAmount)}</span>
             </div>
           </div>
 
           {/* Features */}
           <div className={styles.featuresList}>
-            {["Free cancellation", "24/7 support", "Secure Payment"].map((f) => (
+            {[
+              t("sidebar.freeCancellation", "Free cancellation"),
+              t("sidebar.support247", "24/7 support"),
+              t("sidebar.securePayment", "Secure Payment"),
+            ].map((f) => (
               <div key={f} className={styles.featureItem}>
                 <Image src="/images/summary/checkmark-green.svg" width={16} height={16} alt="" />
                 {f}

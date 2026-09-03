@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
-
-import { CheckboxIndicator } from "@/components/shared";
+import { useTranslation } from "@/hooks/useTranslation";
+import { CheckboxIndicator, BookingStepFooter } from "@/components/shared";
 
 import sharedStyles from "../../PlanYourTripPage.module.scss";
 import type { PlanDestination } from "../../planYourTripTypes";
@@ -21,13 +20,14 @@ export default function StepDestination({
   onContinue: () => void;
   continueDisabled: boolean;
 }) {
+  const { t } = useTranslation("booking");
   return (
     <div className={sharedStyles.stepFormCard}>
       <header className={sharedStyles.stepFormCardHeader}>
         <div className={sharedStyles.formHeaderColumn}>
-          <h2 className={sharedStyles.formTitle}>Destination</h2>
+          <h2 className={sharedStyles.formTitle}>{t("planYourTrip.destination.title", "Where would you like to travel?")}</h2>
           <p className={sharedStyles.formSubtitle}>
-            Feel free to choose more than one destination.
+            {t("planYourTrip.destination.subtitle", "Select one or more destinations to include in your custom trip.")}
           </p>
         </div>
       </header>
@@ -36,12 +36,14 @@ export default function StepDestination({
         <div className={styles.destinationCards}>
           {destinations.map((destination) => {
             const selected = selectedDestinationIds.includes(destination.id);
+
             return (
               <button
                 key={destination.id}
                 type="button"
                 className={`${styles.destinationCard} ${selected ? styles.destinationCardSelected : ""}`}
                 onClick={() => onToggleDestination(destination.id)}
+                aria-pressed={selected}
               >
                 <div className={styles.destinationImageWrapper}>
                   <img src={destination.image || undefined} alt={destination.name} />
@@ -60,20 +62,10 @@ export default function StepDestination({
         </div>
       </div>
 
-      <hr className={sharedStyles.stepFormCardDivider} aria-hidden="true" />
-
-      <div className={sharedStyles.stepFormCardFooter}>
-        <div className={sharedStyles.formActions}>
-          <button
-            className={sharedStyles.continueButton}
-            onClick={onContinue}
-            disabled={continueDisabled}
-            type="button"
-          >
-            Continue
-          </button>
-        </div>
-      </div>
+      <BookingStepFooter
+        onContinue={onContinue}
+        continueDisabled={continueDisabled}
+      />
     </div>
   );
 }

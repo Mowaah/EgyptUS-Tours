@@ -2,6 +2,7 @@
 
 import { CounterPill, SelectDropdown } from "@/components/shared";
 import Image from "next/image";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./RoomSelector.module.scss";
 
 export interface RoomOption {
@@ -57,6 +58,7 @@ export default function RoomSelector({
   title,
   hideTitle,
 }: RoomSelectorProps) {
+  const { t } = useTranslation("booking");
   let globalRoomIndex = 1;
 
   return (
@@ -64,7 +66,7 @@ export default function RoomSelector({
       {!hideTitle && (
         <div className={styles.titleRow}>
           <h3 className={styles.sectionTitle}>
-            {title || "Type of Room"}
+            {title || t("hotelBooking.roomDates.typeOfRoom", "Type of Room")}
             {required && <span className={styles.required}> *</span>}
           </h3>
         </div>
@@ -122,7 +124,7 @@ export default function RoomSelector({
         return (
           <div key={`custom-${room.key}`} className={styles.customRoomsSection}>
             <h4 className={styles.subSectionTitle}>
-              Customize {pluralTitle} ({count} selected)
+              {t("hotelBooking.roomDates.customize", "Customize")} {pluralTitle} ({count} {t("hotelBooking.roomDates.selected", "selected")})
             </h4>
             <div className={styles.customRoomsGrid}>
               {Array.from({ length: count }).map((_, i) => {
@@ -130,7 +132,7 @@ export default function RoomSelector({
                 const customKey = `${room.key}-${i}`;
                 return (
                   <div key={customKey} className={styles.customRoomField}>
-                    <label>Room {currentRoomNumber}</label>
+                    <label>{t("hotelBooking.roomDates.room", "Room")} {currentRoomNumber}</label>
                     <SelectDropdown
                       id={`${room.key}-option-${i}`}
                       options={room.options}

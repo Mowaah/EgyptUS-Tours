@@ -74,18 +74,36 @@
     "sectionTitle": "Informazioni sull'Azienda",
     "sectionSubtitle": "Fornisci i dati aziendali per permetterci di personalizzare la proposta al meglio",
     "companyName": "Nome Azienda",
+    "companyNamePlaceholder": "Inserisci il nome dell'azienda",
     "country": "Paese",
     "contactPerson": "Referente",
+    "contactPersonPlaceholder": "Nome e Cognome",
     "jobTitle": "Ruolo / Posizione",
+    "jobTitlePlaceholder": "Il tuo ruolo all'interno dell'azienda",
     "email": "Email di Lavoro",
+    "emailPlaceholder": "tuaemail@azienda.com",
     "phone": "Numero di Telefono",
     "website": "Sito Web Aziendale (Opzionale)",
+    "websitePlaceholder": "www.tuaazienda.it",
     "requestDetails": "Raccontaci le tue esigenze di viaggio o evento...",
+    "requestDetailsPlaceholder": "Descrivi la richiesta, il numero stimato di partecipanti, le destinazioni...",
     "submitButton": "Invia Richiesta di Proposta",
     "submitting": "Invio in corso...",
     "successTitle": "Richiesta di Proposta Inviata con Successo!",
     "successRequestId": "ID Richiesta:",
     "successDesc": "Il nostro team corporate esaminerà i dettagli e ti ricontatterà con una proposta personalizzata entro 24 ore.",
-    "backToHome": "Torna alla Home"
+    "viewRequest": "Visualizza Richiesta",
+    "backToHome": "Torna alla Home",
+    "errors": {
+      "companyName": "Il nome dell'azienda è obbligatorio.",
+      "country": "Il paese è obbligatorio.",
+      "contactPerson": "La persona di riferimento è obbligatoria.",
+      "jobTitle": "Il ruolo aziendale è obbligatorio.",
+      "emailRequired": "L'email di lavoro è obbligatoria.",
+      "emailInvalid": "Inserisci un indirizzo email valido.",
+      "phoneRequired": "Il numero di telefono è obbligatorio.",
+      "phoneInvalid": "Il numero di telefono inserito non è valido.",
+      "requestDetails": "I dettagli della richiesta sono obbligatori."
+    }
   }
 }

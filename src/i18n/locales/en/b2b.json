@@ -74,18 +74,36 @@
     "sectionTitle": "Company Information",
     "sectionSubtitle": "Provide your company details so we can tailor the proposal accordingly",
     "companyName": "Company Name",
+    "companyNamePlaceholder": "Enter your company name",
     "country": "Country",
     "contactPerson": "Contact Person",
+    "contactPersonPlaceholder": "Full Name",
     "jobTitle": "Job Title",
+    "jobTitlePlaceholder": "Enter your position within the company",
     "email": "Work Email Address",
+    "emailPlaceholder": "youremail@company.com",
     "phone": "Phone Number",
     "website": "Company Website (Optional)",
+    "websitePlaceholder": "www.yourcompany.com",
     "requestDetails": "Tell us about your trip/event requirements...",
+    "requestDetailsPlaceholder": "Tell us about your request, expected numbers, destinations...",
     "submitButton": "Submit Proposal Request",
     "submitting": "Submitting...",
     "successTitle": "Proposal Request Submitted Successfully!",
     "successRequestId": "Request ID:",
     "successDesc": "Our corporate team will review your requirements and reach out with a customized proposal within 24 hours.",
-    "backToHome": "Back to Home"
+    "viewRequest": "View Request",
+    "backToHome": "Back to Home",
+    "errors": {
+      "companyName": "Company Name is required.",
+      "country": "Country is required.",
+      "contactPerson": "Contact Person is required.",
+      "jobTitle": "Job Title is required.",
+      "emailRequired": "Work Email Address is required.",
+      "emailInvalid": "Please enter a valid email address.",
+      "phoneRequired": "Phone Number is required.",
+      "phoneInvalid": "The phone number entered is not valid.",
+      "requestDetails": "Request Details is required."
+    }
   }
 }

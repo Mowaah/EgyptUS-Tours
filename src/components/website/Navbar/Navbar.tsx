@@ -19,7 +19,7 @@ const NAV_CONFIG = [
   { key: "egyptTours", defaultLabel: "Egypt Tours", href: "/egypttours", hasDropdown: true },
   { key: "destinations", defaultLabel: "Destinations", href: "/egypttours?destination=all", hasDropdown: true },
   { key: "hotels", defaultLabel: "Hotels", href: "/hotels" },
-  { key: "transfers", defaultLabel: "Transportation", href: "/transportation" },
+  { key: "transportation", defaultLabel: "Transportation", href: "/transportation" },
   { key: "events", defaultLabel: "Events", href: "/events" },
   { key: "b2b", defaultLabel: "B2B Programs", href: "/b2b-programs" },
   { key: "aboutUs", defaultLabel: "About Us", href: "/about" },

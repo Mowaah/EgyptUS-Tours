@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { BookingStepFooter, FormField, CustomDatePicker, NationalitySelect, CounterPill, PhoneInput } from "@/components/shared";
 import { isValidEmail, isValidPhone } from "@/utils/validators";
+import { useTranslation } from "@/hooks/useTranslation";
 
 import pageStyles from "../../PlanYourTripPage.module.scss";
 import styles from "./StepTravelerInfo.module.scss";
@@ -35,20 +36,21 @@ export default function StepTravelerInfo({
   onPrevious: () => void;
   onContinue: () => void;
 }) {
+  const { t } = useTranslation("booking");
   const [showErrors, setShowErrors] = useState(false);
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const isStartDateInPast = travelerInfo.startDate 
-    ? new Date(travelerInfo.startDate) < today 
+  const isStartDateInPast = travelerInfo.startDate
+    ? new Date(travelerInfo.startDate) < today
     : false;
-    
+
   const isEndDateInPast = travelerInfo.endDate
     ? new Date(travelerInfo.endDate) < today
     : false;
 
-  const isDateInvalid = travelerInfo.startDate && travelerInfo.endDate 
+  const isDateInvalid = travelerInfo.startDate && travelerInfo.endDate
     ? new Date(travelerInfo.endDate) < new Date(travelerInfo.startDate)
     : false;
 
@@ -66,7 +68,7 @@ export default function StepTravelerInfo({
 
   const handleContinueClick = () => {
     setShowErrors(true);
-    const isValid = 
+    const isValid =
       isNameFilled &&
       isEmailFilled &&
       emailValid &&
@@ -79,19 +81,25 @@ export default function StepTravelerInfo({
       !isEndDateInPast &&
       !isDateInvalid &&
       areAdultsValid;
-      
+
     if (isValid) {
       onContinue();
     }
   };
 
+  const counters = [
+    { type: "adults" as const, title: t("planYourTrip.travelerInfo.adults", "No of Adults"), hint: t("planYourTrip.travelerInfo.adultsHint", "( +12 years )") },
+    { type: "children" as const, title: t("planYourTrip.travelerInfo.children", "No of Children"), hint: t("planYourTrip.travelerInfo.childrenHint", "( 2 to 11 years )") },
+    { type: "infants" as const, title: t("planYourTrip.travelerInfo.infants", "No of Infants"), hint: t("planYourTrip.travelerInfo.infantsHint", "( 0 to 2 years )") },
+  ];
+
   return (
     <div className={pageStyles.stepFormCard}>
       <header className={pageStyles.stepFormCardHeader}>
         <div className={pageStyles.formHeaderColumn}>
-          <h2 className={pageStyles.formTitle}>Traveler Information</h2>
+          <h2 className={pageStyles.formTitle}>{t("planYourTrip.travelerInfo.title", "Traveler Information")}</h2>
           <p className={pageStyles.formSubtitle}>
-            Please provide your personal details so we can tailor your journey perfectly.
+            {t("planYourTrip.travelerInfo.subtitle", "Please provide your personal details so we can tailor your journey perfectly.")}
           </p>
         </div>
       </header>
@@ -102,37 +110,37 @@ export default function StepTravelerInfo({
             id="pti-name"
             name="name"
             autoComplete="name"
-            label="Enter your Name"
+            label={t("planYourTrip.travelerInfo.name", "Enter your Name")}
             className={pageStyles.formInput}
             type="text"
-            placeholder="John Doe"
+            placeholder={t("planYourTrip.travelerInfo.namePlaceholder", "John Doe")}
             value={travelerInfo.name}
             onChange={(e) => onTravelerChange("name", e.target.value)}
             required
-            error={showErrors && !isNameFilled ? "This field is required" : undefined}
+            error={showErrors && !isNameFilled ? t("errors.required", "This field is required") : undefined}
           />
 
           <FormField
             id="pti-email"
             name="email"
             autoComplete="email"
-            label="Enter your E-mail"
+            label={t("planYourTrip.travelerInfo.email", "Enter your E-mail")}
             className={pageStyles.formInput}
             type="email"
-            placeholder="example@gmail.com"
+            placeholder={t("planYourTrip.travelerInfo.emailPlaceholder", "example@gmail.com")}
             value={travelerInfo.email}
             onChange={(e) => onTravelerChange("email", e.target.value)}
             required
-            error={showErrors ? (!isEmailFilled ? "This field is required" : !emailValid ? "Please enter a valid email address" : undefined) : undefined}
+            error={showErrors ? (!isEmailFilled ? t("errors.required", "This field is required") : !emailValid ? t("errors.emailInvalid", "Please enter a valid email address") : undefined) : undefined}
           />
 
           <FormField
             id="pti-phone"
-            label="Phone Number"
+            label={t("planYourTrip.travelerInfo.phone", "Phone Number")}
             required
-            error={showErrors ? (!isPhoneFilled ? "This field is required" : !phoneValid ? "Please enter a valid phone number" : undefined) : undefined}
+            error={showErrors ? (!isPhoneFilled ? t("errors.required", "This field is required") : !phoneValid ? t("errors.phoneInvalid", "Please enter a valid phone number") : undefined) : undefined}
           >
-            <PhoneInput 
+            <PhoneInput
               id="pti-phone"
               name="tel"
               autoComplete="tel"
@@ -142,10 +150,10 @@ export default function StepTravelerInfo({
             />
           </FormField>
 
-          <FormField 
-            label="Select Your Nationality" 
+          <FormField
+            label={t("planYourTrip.travelerInfo.nationality", "Select Your Nationality")}
             required
-            error={showErrors && !isNationalityFilled ? "This field is required" : undefined}
+            error={showErrors && !isNationalityFilled ? t("errors.required", "This field is required") : undefined}
           >
             <NationalitySelect
               value={travelerInfo.nationality}
@@ -154,10 +162,10 @@ export default function StepTravelerInfo({
             />
           </FormField>
 
-          <FormField 
-            label="Start Date" 
+          <FormField
+            label={t("planYourTrip.travelerInfo.startDate", "Start Date")}
             required
-            error={showErrors ? (!isStartDateFilled ? "This field is required" : isStartDateInPast ? "Start date cannot be in the past" : undefined) : undefined}
+            error={showErrors ? (!isStartDateFilled ? t("errors.required", "This field is required") : isStartDateInPast ? t("planYourTrip.travelerInfo.startDatePast", "Start date cannot be in the past") : undefined) : undefined}
           >
             <CustomDatePicker
               variant="input"
@@ -168,10 +176,10 @@ export default function StepTravelerInfo({
             />
           </FormField>
 
-          <FormField 
-            label="End Date" 
+          <FormField
+            label={t("planYourTrip.travelerInfo.endDate", "End Date")}
             required
-            error={showErrors ? (!isEndDateFilled ? "This field is required" : isEndDateInPast ? "End date cannot be in the past" : isDateInvalid ? "End date cannot be before start date" : undefined) : undefined}
+            error={showErrors ? (!isEndDateFilled ? t("errors.required", "This field is required") : isEndDateInPast ? t("planYourTrip.travelerInfo.endDatePast", "End date cannot be in the past") : isDateInvalid ? t("planYourTrip.travelerInfo.endDateBeforeStart", "End date cannot be before start date") : undefined) : undefined}
           >
             <CustomDatePicker
               variant="input"
@@ -182,39 +190,31 @@ export default function StepTravelerInfo({
             />
           </FormField>
 
-          {(["adults", "children", "infants"] as const).map((type) => {
-            const meta = {
-              adults: { title: "No of Adults", hint: "( +12 years )" },
-              children: { title: "No of Children", hint: "( 2 to 11 years )" },
-              infants: { title: "No of Infants", hint: "( 0 to 2 years )" },
-            };
-            return (
-              <div key={type} className={pageStyles.formGroup}>
-                <CounterPill
-                  label={meta[type].title}
-                  subLabel={meta[type].hint}
-                  value={travelerInfo[type]}
-                  onIncrease={() => onNumberChange(type, true)}
-                  onDecrease={() => onNumberChange(type, false)}
-                  required={type === "adults"}
-                  error={type === "adults" && showErrors && !areAdultsValid}
-                />
-                {type === "adults" && showErrors && !areAdultsValid && (
-                  <div className={formStyles.errorMessage} style={{ marginTop: '4px' }}>
-                    <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
-                    <span>At least 1 adult is required</span>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          {counters.map(({ type, title, hint }) => (
+            <div key={type} className={pageStyles.formGroup}>
+              <CounterPill
+                label={title}
+                subLabel={hint}
+                value={travelerInfo[type]}
+                onIncrease={() => onNumberChange(type, true)}
+                onDecrease={() => onNumberChange(type, false)}
+                required={type === "adults"}
+                error={type === "adults" && showErrors && !areAdultsValid}
+              />
+              {type === "adults" && showErrors && !areAdultsValid && (
+                <div className={formStyles.errorMessage} style={{ marginTop: "4px" }}>
+                  <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+                  <span>{t("planYourTrip.travelerInfo.adultsRequired", "At least 1 adult is required")}</span>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
 
       <BookingStepFooter
         onPrevious={onPrevious}
         onContinue={handleContinueClick}
-        continueLabel="Continue"
       />
     </div>
   );

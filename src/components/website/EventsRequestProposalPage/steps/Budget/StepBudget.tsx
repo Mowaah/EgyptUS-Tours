@@ -4,10 +4,10 @@ import Image from "next/image";
 import { BookingStepFooter, FormField } from "@/components/shared";
 import SelectDropdown from "@/components/shared/SelectDropdown/SelectDropdown";
 import pageStyles from "../../EventsRequestProposalPage.module.scss";
-import formStyles from "@/components/shared/FormField/FormField.module.scss";
 import styles from "./StepBudget.module.scss";
 import type { EventProposalData } from "../../eventsRequestProposalTypes";
 import { BUDGET_RANGES, BUDGET_FLEXIBILITY, SOURCES } from "../../eventsRequestProposalData";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface StepBudgetProps {
   data: EventProposalData["budget"];
@@ -28,43 +28,47 @@ export default function StepBudget({
   submitError,
   errors = {},
 }: StepBudgetProps) {
+  const { t } = useTranslation("events");
+
   return (
     <div className={pageStyles.stepFormCard}>
       <header className={pageStyles.stepFormCardHeader}>
         <div className={pageStyles.formHeaderColumn}>
-          <h2 className={pageStyles.formTitle}>Budget Information</h2>
+          <h2 className={pageStyles.formTitle}>
+            {t("proposal.budget.title", "Budget & Submission")}
+          </h2>
         </div>
       </header>
 
       <div className={pageStyles.stepFormCardScroll}>
         <div className={pageStyles.formGrid}>
-          <FormField label="Estimated Budget In USD" required error={errors.estimatedBudget}>
+          <FormField label={t("proposal.budget.estimatedBudget", "Estimated Budget")} required error={errors.estimatedBudget}>
             <SelectDropdown
               id="bud-est"
-              label="Select Type"
-              options={[{ label: "Select Type", value: "" }, ...BUDGET_RANGES]}
+              label={t("proposal.budget.selectBudget", "Select Type")}
+              options={[{ label: t("proposal.budget.selectBudget", "Select Type"), value: "" }, ...BUDGET_RANGES]}
               value={data.estimatedBudget}
               onChange={(val) => onChange({ estimatedBudget: val })}
               triggerClassName={pageStyles.formInput}
             />
           </FormField>
 
-          <FormField label="Budget Flexibility" required error={errors.budgetFlexibility}>
+          <FormField label={t("proposal.budget.budgetFlexibility", "Budget Flexibility")} required error={errors.budgetFlexibility}>
             <SelectDropdown
               id="bud-flex"
-              label="Select Type"
-              options={BUDGET_FLEXIBILITY.map(opt => ({ label: opt.label, value: opt.id }))}
+              label={t("proposal.budget.budgetFlexibility", "Select Type")}
+              options={BUDGET_FLEXIBILITY.map((opt) => ({ label: opt.label, value: opt.id }))}
               value={data.budgetFlexibility}
               onChange={(val) => onChange({ budgetFlexibility: val })}
               triggerClassName={pageStyles.formInput}
             />
           </FormField>
 
-          <FormField label="How did you hear about us?">
+          <FormField label={t("proposal.budget.hearAboutUs", "How did you hear about us?")}>
             <SelectDropdown
               id="bud-source"
-              label="Select Source"
-              options={[{ label: "Select Source", value: "" }, ...SOURCES]}
+              label={t("proposal.budget.selectSource", "Select Source")}
+              options={[{ label: t("proposal.budget.selectSource", "Select Source"), value: "" }, ...SOURCES]}
               value={data.hearAboutUs}
               onChange={(val) => onChange({ hearAboutUs: val })}
               triggerClassName={pageStyles.formInput}
@@ -73,22 +77,17 @@ export default function StepBudget({
 
           <div className={`${pageStyles.formGroupFull} ${styles.infoBoxWrapper}`}>
             <div className={styles.infoBox}>
-              <h3 className={styles.infoBoxTitle}>What Happens Next?</h3>
+              <h3 className={styles.infoBoxTitle}>{t("process.title", "What Happens Next?")}</h3>
               <ul className={styles.infoList}>
                 {[
-                  "Our MICE specialists will review your requirements within 24 hours",
-                  "We'll schedule a consultation call to discuss your event in detail",
-                  "Receive a comprehensive proposal with venue options, pricing, and timeline",
-                  "Dedicated account manager assigned to your project"
+                  t("process.step1Desc", "Our MICE specialists will review your requirements within 24 hours"),
+                  t("process.step2Desc", "We'll schedule a consultation call to discuss your event in detail"),
+                  t("process.step3Desc", "Receive a comprehensive proposal with venue options, pricing, and timeline"),
+                  t("process.step4Desc", "Dedicated account manager assigned to your project"),
                 ].map((text, i) => (
                   <li key={i} className={styles.infoListItem}>
                     <div className={styles.infoListIcon}>
-                      <Image
-                        src="/images/check-blue.svg"
-                        alt=""
-                        width={10}
-                        height={10}
-                      />
+                      <Image src="/images/check-blue.svg" alt="" width={10} height={10} />
                     </div>
                     <span>{text}</span>
                   </li>
@@ -108,7 +107,7 @@ export default function StepBudget({
       <BookingStepFooter
         onPrevious={onPrevious}
         onContinue={onContinue}
-        continueLabel={isSubmitting ? "Submitting..." : "Submit Request"}
+        continueLabel={isSubmitting ? t("proposal.budget.submitting", "Submitting...") : t("proposal.budget.submitButton", "Submit Request")}
         continueDisabled={isSubmitting}
       />
     </div>

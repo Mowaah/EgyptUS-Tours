@@ -51,7 +51,7 @@ export default function Footer() {
       { label: t("nav.egyptTours", "Egypt Tours"), href: "/egypttours" },
       { label: t("nav.destinations", "Destinations"), href: "/egypttours" },
       { label: t("nav.hotels", "Hotels"), href: "/hotels" },
-      { label: t("nav.transfers", "Transportation"), href: "/transportation" },
+      { label: t("nav.transportation", "Transportation"), href: "/transportation" },
       { label: t("nav.events", "Events"), href: "/events" },
       { label: t("nav.b2b", "B2B Programs"), href: "/b2b-programs" },
       { label: t("nav.aboutUs", "About Us"), href: "/about" },

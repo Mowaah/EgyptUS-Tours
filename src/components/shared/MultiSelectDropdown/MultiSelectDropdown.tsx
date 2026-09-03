@@ -57,26 +57,32 @@ export default function MultiSelectDropdown({
               <span className={baseStyles.placeholder}>{placeholder}</span>
             ) : isOpen ? (
               <div className={styles.chipList}>
-                {value.map((item) => (
-                  <span key={item} className={styles.chip}>
-                    <span className={styles.chipLabel}>{item}</span>
-                    <button
-                      type="button"
-                      className={styles.chipClear}
-                      aria-label={`Remove ${item}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onChange(value.filter((x) => x !== item));
-                      }}
-                    >
-                      <Image src="/images/x-close.svg" alt="" width={10} height={10} />
-                    </button>
-                  </span>
-                ))}
+                {value.map((item) => {
+                  const opt = options.find((o) => o.value === item);
+                  const displayLabel = opt ? opt.label : item;
+                  return (
+                    <span key={item} className={styles.chip}>
+                      <span className={styles.chipLabel}>{displayLabel}</span>
+                      <button
+                        type="button"
+                        className={styles.chipClear}
+                        aria-label={`Remove ${displayLabel}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onChange(value.filter((x) => x !== item));
+                        }}
+                      >
+                        <Image src="/images/x-close.svg" alt="" width={10} height={10} />
+                      </button>
+                    </span>
+                  );
+                })}
               </div>
             ) : (
               <div className={styles.summary}>
-                <span className={styles.summaryText}>{value[0]}</span>
+                <span className={styles.summaryText}>
+                  {options.find((o) => o.value === value[0])?.label || value[0]}
+                </span>
                 {value.length > 1 && (
                   <span className={styles.moreBadge}>+{value.length - 1}</span>
                 )}

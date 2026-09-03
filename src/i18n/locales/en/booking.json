@@ -1,0 +1,373 @@
+{
+  "planYourTrip": {
+    "pageTitle": "Plan Your Custom Trip",
+    "pageSubtitle": "Tell us about your dream trip to Egypt and our specialists will create a custom itinerary for you.",
+    "breadcrumb": "Plan Your Trip",
+    "steps": {
+      "destination": "Destination",
+      "preferences": "Preferences",
+      "travelerInfo": "Traveler Info",
+      "review": "Review"
+    },
+    "destination": {
+      "title": "Destination",
+      "subtitle": "Feel free to choose more than one destination.",
+      "searchPlaceholder": "Search destinations...",
+      "selectAll": "Select All",
+      "clearAll": "Clear All",
+      "selectedCount": "{count} destinations selected"
+    },
+    "preferences": {
+      "title": "Trip Details & Preferences",
+      "subtitle": "Select your travel options to help us plan your trip.",
+      "tripCategory": "Trip category",
+      "selectTripCategory": "Select Trip Category",
+      "duration": "Number of Days",
+      "selectDuration": "Select Duration",
+      "budget": "Budget",
+      "selectBudget": "Select Budget",
+      "hotelCategory": "Preferred hotel category",
+      "selectHotelCategory": "Select hotel category",
+      "roomType": "Ideal room type",
+      "selectRoomType": "Select room types",
+      "transportation": "Transportation Preferences",
+      "selectTransportation": "Select Transportation",
+      "experiences": "Additional Experiences",
+      "selectExperiences": "Select Experiences",
+      "activities": "Activities",
+      "selectActivities": "Select Activities",
+      "contactMethod": "Preferred Contact Method",
+      "selectContactMethod": "Select Contact Method",
+      "specialRequests": "Special Requests",
+      "specialRequestsPlaceholder": "Honeymoon room setup, vegetarian meals, airport fast-track assistance, etc."
+    },
+    "options": {
+      "duration": {
+        "1-3 Days": "1-3 Days",
+        "4-6 Days": "4-6 Days",
+        "7-10 Days": "7-10 Days",
+        "11-14 Days": "11-14 Days",
+        "15+ Days": "15+ Days",
+        "Flexible": "Flexible"
+      },
+      "budget": {
+        "$500 - $1,000": "$500 - $1,000",
+        "$1,000 - $3,000": "$1,000 - $3,000",
+        "$3,000 - $5,000": "$3,000 - $5,000",
+        "$5,000+": "$5,000+",
+        "Flexible": "Flexible"
+      },
+      "hotelCategory": {
+        "Luxury Boutique": "Luxury Boutique",
+        "I don't need hotel": "I don't need hotel"
+      },
+      "roomType": {
+        "Standard Room": "Standard Room",
+        "Deluxe Room": "Deluxe Room",
+        "Premium Room": "Premium Room",
+        "Suite": "Suite",
+        "I don't need hotel": "I don't need hotel"
+      },
+      "transport": {
+        "Shared Transport": "Shared Transport",
+        "Private Transport": "Private Transport",
+        "VIP Luxury Car": "VIP Luxury Car",
+        "Airport Transfer Only": "Airport Transfer Only",
+        "I don't need transport": "I don't need transport"
+      },
+      "experiences": {
+        "Private Tour Guide": "Private Tour Guide",
+        "Photographer": "Photographer",
+        "Luxury Yacht": "Luxury Yacht",
+        "Honeymoon Setup": "Honeymoon Setup",
+        "Romantic Dinner": "Romantic Dinner"
+      },
+      "activities": {
+        "Shopping": "Shopping",
+        "Food Tours": "Food Tours",
+        "Diving": "Diving",
+        "Hiking": "Hiking",
+        "Snorkeling": "Snorkeling",
+        "Snorkeling & Diving": "Snorkeling & Diving"
+      },
+      "contactMethod": {
+        "WhatsApp": "WhatsApp",
+        "Email": "Email",
+        "Phone Call": "Phone Call"
+      }
+    },
+    "travelerInfo": {
+      "title": "Traveler Information",
+      "subtitle": "Please provide your personal details so we can tailor your journey perfectly.",
+      "name": "Enter your Name",
+      "namePlaceholder": "John Doe",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "John Doe",
+      "email": "Enter your E-mail",
+      "emailPlaceholder": "example@gmail.com",
+      "phone": "Phone Number",
+      "nationality": "Select Your Nationality",
+      "tripDates": "Trip Dates",
+      "startDate": "Start Date",
+      "startDatePast": "Start date cannot be in the past",
+      "endDate": "End Date",
+      "endDatePast": "End date cannot be in the past",
+      "endDateBeforeStart": "End date cannot be before start date",
+      "travelers": "Travelers",
+      "adults": "No of Adults",
+      "adultsHint": "( +12 years )",
+      "adultsRequired": "At least 1 adult is required",
+      "children": "No of Children",
+      "childrenHint": "( 2 to 11 years )",
+      "infants": "No of Infants",
+      "infantsHint": "( 0 to 2 years )",
+      "tripDetails": "Tell us more about your trip (Optional)",
+      "tripDetailsPlaceholder": "Describe any special requests, interests, dietary needs, or places you must visit..."
+    },
+    "review": {
+      "title": "Review Your Trip Request",
+      "subtitle": "Please verify your selected destinations and travel preferences before submitting.",
+      "selectedDestinations": "Selected Destinations",
+      "travelPreferences": "Travel Preferences",
+      "travelerDetails": "Traveler Details",
+      "submitButton": "Submit Trip Request",
+      "submitting": "Submitting..."
+    },
+    "success": {
+      "title": "Your Custom Trip Request Has Been Sent!",
+      "message": "We have received your trip inquiry. One of our destination specialists will craft a customized itinerary and contact you within 24 hours.",
+      "referenceNumber": "Reference Number",
+      "viewRequest": "View Request",
+      "backToHome": "Back to Home"
+    }
+  },
+  "hotelBooking": {
+    "pageTitle": "Book",
+    "breadcrumb": "Booking",
+    "breadcrumbHotels": "Hotels",
+    "breadcrumbDetails": "Hotel Details",
+    "pageSubtitle": "Enter your details to complete your hotel booking easily and securely",
+    "backToHotelDetails": "Back To Hotel Details",
+    "steps": {
+      "roomDates": "Room & Dates",
+      "personalInfo": "Personal Info",
+      "payment": "Payment"
+    },
+    "roomDates": {
+      "title": "Find the Perfect Room for Your Stay",
+      "subtitle": "Select your dates, number of guests, and room preferences to find the best option for your stay.",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "checkInRequired": "Check-in date is required.",
+      "checkOutRequired": "Check-out date is required.",
+      "checkInPast": "Check-in date cannot be in the past.",
+      "checkOutBeforeCheckIn": "Check-out date must be after check-in date.",
+      "adultsRequired": "At least 1 adult is required.",
+      "roomsRequired": "Please select at least one room.",
+      "roomCapacityExceeded": "Selected rooms only accommodate",
+      "adult": "adult",
+      "adults": "adults",
+      "butSelected": "but",
+      "adultsSelected": "adults are selected",
+      "typeOfRoom": "Type of Room",
+      "noRooms": "No rooms available for this hotel.",
+      "person": "person",
+      "people": "people",
+      "customize": "Customize",
+      "selected": "selected",
+      "room": "Room",
+      "specialRequests": "Special Requests (Optional)",
+      "specialRequestsPlaceholder": "Any special requirements or requests for your trip...",
+      "included": "Included",
+      "views": {
+        "sea": "Sea View",
+        "pool": "Pool View",
+        "garden": "Garden View"
+      }
+    },
+    "personalInfo": {
+      "title": "Personal Information",
+      "subtitle": "Fill in your details to proceed with your booking securely.",
+      "name": "Enter your Name",
+      "namePlaceholder": "John Doe",
+      "email": "Enter your E-mail",
+      "emailPlaceholder": "example@gmail.com",
+      "phone": "Enter your Phone Number",
+      "nationality": "Select Your Nationality",
+      "termsAlert": "Please accept the Terms and Conditions and Privacy Policy to continue.",
+      "startingCheckout": "Starting Checkout...",
+      "continueToPayment": "Continue To Payment",
+      "specialRequests": "Special Requests (Optional)",
+      "specialRequestsPlaceholder": "Any special requirements or requests for your trip..."
+    },
+    "success": {
+      "title": "Booking Confirmed!",
+      "message": "Your hotel reservation has been successfully booked. Confirmation details have been sent to your email.",
+      "reference": "Booking Reference",
+      "hotel": "Hotel",
+      "viewBookings": "View My Bookings",
+      "backToHotels": "Back to Hotels"
+    }
+  },
+  "tripBooking": {
+    "groupTitle": "Group Tour",
+    "privateTitle": "Private Tour",
+    "breadcrumb": "Booking",
+    "breadcrumbTours": "Egypt Tours",
+    "breadcrumbDetails": "Trip Details",
+    "pageSubtitle": "Provide your details to customize and secure your reservation.",
+    "backToTripDetails": "Back To Trip Details",
+    "steps": {
+      "dates": "Your Details",
+      "summary": "Booking Summary",
+      "payment": "Payment"
+    },
+    "step1": {
+      "title": "Enter Your Information",
+      "subtitle": "Complete the form below to move to booking confirmation.",
+      "singleRoom": "Single Room",
+      "doubleRoom": "Double Room",
+      "tripleRoom": "Triple Room",
+      "selectMonth": "Select Month",
+      "chooseDepartureDate": "Choose Departure Date",
+      "chooseDepartureError": "Please choose a departure date.",
+      "startDate": "Start Date",
+      "endDate": "End Date"
+    },
+    "step2": {
+      "fullName": "Enter your Name",
+      "namePlaceholder": "John Doe",
+      "email": "Enter your E-mail",
+      "emailPlaceholder": "example@gmail.com",
+      "phone": "Phone Number",
+      "nationality": "Select Your Nationality"
+    },
+    "step3": {
+      "title": "Review & Confirm Your Booking",
+      "subtitle": "Please review your trip details carefully before confirming your reservation.",
+      "contactInfo": "Contact Info",
+      "tripInfo": "Trip Info",
+      "connectingPaymob": "Connecting to Paymob...",
+      "continueToPayment": "Continue To Payment"
+    },
+    "success": {
+      "title": "Booking Confirmed!",
+      "message": "Your trip reservation has been successfully booked. Confirmation details have been sent to your email.",
+      "reference": "Booking Reference",
+      "tripName": "Trip Name",
+      "travelType": "Travel Type",
+      "date": "Date",
+      "viewBookings": "View My Bookings",
+      "backToTrips": "Back to Trips"
+    }
+  },
+  "transportBooking": {
+    "pageTitle": "Your Car Awaits",
+    "pageSubtitle": "Enter your details to complete your car booking easily and securely",
+    "breadcrumb": "Booking",
+    "breadcrumbTransport": "Transportation",
+    "breadcrumbDetails": "Details",
+    "backToTransport": "Back To Transportation",
+    "steps": {
+      "rideDetails": "Trip Details",
+      "contactDetails": "Personal Info",
+      "payment": "Payment"
+    },
+    "rideDetails": {
+      "title": "Transfer & Schedule Details",
+      "subtitle": "Enter your trip details including pickup, drop-off, and timing to proceed with your booking.",
+      "pickupDate": "Pickup Date",
+      "pickupTime": "Pickup Time",
+      "pickupLocation": "Pickup Location",
+      "pickupLocationPlaceholder": "e.g. Cairo Airport Terminal 3, or Hotel Name",
+      "dropoffLocation": "Drop-off Location",
+      "dropoffLocationPlaceholder": "e.g. Mena House Hotel, Giza",
+      "passengers": "Passengers",
+      "luggage": "Luggage",
+      "additionalServices": "Additional Services",
+      "vehicle": "Vehicle"
+    },
+    "contactDetails": {
+      "title": "Passenger Contact Information",
+      "subtitle": "We will use this information to send booking confirmations and ride updates.",
+      "name": "Full Name",
+      "namePlaceholder": "John Doe",
+      "email": "Email Address",
+      "emailPlaceholder": "example@gmail.com",
+      "phone": "Phone Number",
+      "nationality": "Select Your Nationality",
+      "notes": "Special Instructions for Driver (Optional)",
+      "notesPlaceholder": "Any extra stops, infant seats needed, or landmark hints...",
+      "continueToPayment": "Continue To Payment"
+    },
+    "success": {
+      "title": "Booking Confirmed!",
+      "message": "Your vehicle has been successfully booked. Confirmation details have been sent to your email.",
+      "viewBooking": "View Booking",
+      "backToHome": "Back to Home"
+    }
+  },
+  "sidebar": {
+    "bookingSummary": "Booking Summary",
+    "checkIn": "Check-in",
+    "checkOut": "Check-Out",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "duration": "Duration",
+    "destination": "Destination",
+    "guests": "Guests",
+    "travelers": "Travelers",
+    "rooms": "Rooms",
+    "pickup": "Pickup",
+    "dropoff": "Drop-off",
+    "pickupDate": "Pickup Date",
+    "time": "Time",
+    "basePrice": "Base Price",
+    "extras": "Selected Extras",
+    "vat": "VAT",
+    "totalPrice": "Total Price",
+    "totalPaid": "Total Paid",
+    "total": "Total",
+    "depositRequired": "Deposit Required",
+    "remainingBalance": "Remaining Balance",
+    "needHelp": "Need Help?",
+    "contactSupport": "Our travel specialists are here to assist you 24/7.",
+    "supportPhone": "Call Support",
+    "freeCancellation": "Free cancellation",
+    "support247": "24/7 support",
+    "securePayment": "Secure Payment",
+    "yourStay": "Your Stay",
+    "fromTime": "From 15:00",
+    "night": "Night",
+    "nights": "Nights",
+    "room": "Room",
+    "adults": "Adults",
+    "children": "Children",
+    "infants": "Infants",
+    "priceDetails": "Price Details",
+    "tripPackage": "Trip Package",
+    "payNow": "Pay now",
+    "fullAmount": "(Full amount)",
+    "deposit30": "(30% deposit)",
+    "remainingNote": "Remaining 70% due one month before your trip",
+    "hideDetails": "Hide Details",
+    "viewDetails": "View Details"
+  },
+  "errors": {
+    "required": "This field is required.",
+    "nameRequired": "Full Name is required.",
+    "emailRequired": "Email Address is required.",
+    "emailInvalid": "Please enter a valid email address.",
+    "phoneRequired": "Phone Number is required.",
+    "phoneInvalid": "Please enter a valid phone number with country code.",
+    "nationalityRequired": "Please select your nationality.",
+    "datesRequired": "Please select your dates.",
+    "startDateRequired": "Start date is required.",
+    "endDateRequired": "End date is required.",
+    "destinationRequired": "Please select at least one destination.",
+    "pickupLocationRequired": "Pickup location is required.",
+    "dropoffLocationRequired": "Drop-off location is required.",
+    "pickupDateRequired": "Pickup date is required.",
+    "pickupTimeRequired": "Pickup time is required."
+  }
+}

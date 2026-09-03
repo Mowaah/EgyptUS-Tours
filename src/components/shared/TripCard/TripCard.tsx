@@ -8,6 +8,7 @@ import FavoriteButton from "../FavoriteButton/FavoriteButton";
 import { useFavorite } from "@/hooks/useFavorite";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./TripCard.module.scss";
 
 interface TripCardProps {
@@ -17,6 +18,7 @@ interface TripCardProps {
 }
 
 export default function TripCard({ trip, onFavoriteToggle, className = "" }: TripCardProps) {
+  const { t } = useTranslation("common");
   const tripDetailsHref = `/egypttours/${trip.id}`;
   const { isAuthenticated } = useAuth();
   const { formatCurrency } = useCurrency();
@@ -74,7 +76,7 @@ export default function TripCard({ trip, onFavoriteToggle, className = "" }: Tri
             {trip.priceLabel && (
               <span className={styles.priceLabel}>{trip.priceLabel}</span>
             )}
-            <span className={styles.priceFrom}>From </span>
+            <span className={styles.priceFrom}>{t("units.from", "From")} </span>
             {trip.originalPrice && (
               <span className={styles.originalPrice}>
                 {formatCurrency(Number(String(trip.originalPrice).replace(/,/g, "")) || 0)}
@@ -83,7 +85,7 @@ export default function TripCard({ trip, onFavoriteToggle, className = "" }: Tri
             <span className={styles.priceValue}>
               {formatCurrency(Number(String(trip.price).replace(/,/g, "")) || 0)}
             </span>
-            <span className={styles.pricePer}>per night</span>
+            <span className={styles.pricePer}>{t("units.perNightFull", "per night")}</span>
           </div>
           <div className={styles.details}>
             <span>
@@ -93,18 +95,18 @@ export default function TripCard({ trip, onFavoriteToggle, className = "" }: Tri
                 width={14}
                 height={14}
               />
-              {trip.duration.days} days
-              {trip.duration.nights > 0 && ` - ${trip.duration.nights} nights`}
+              {trip.duration.days} {trip.duration.days === 1 ? t("units.day", "day") : t("units.days", "days")}
+              {trip.duration.nights > 0 && ` - ${trip.duration.nights} ${trip.duration.nights === 1 ? t("units.night", "night") : t("units.nights", "nights")}`}
             </span>
             {trip.countries && trip.countries > 1 && (
-              <span> · {trip.countries} countries</span>
+              <span> · {trip.countries} {trip.countries === 1 ? t("units.country", "country") : t("units.countries", "countries")}</span>
             )}
           </div>
         </div>
       </div>
 
       <Button variant="primary" fullWidth className={styles.viewTripBtn} href={tripDetailsHref}>
-        View Trip
+        {t("units.viewTrip", "View Trip")}
       </Button>
     </div>
   );

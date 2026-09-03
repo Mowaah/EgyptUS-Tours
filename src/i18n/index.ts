@@ -12,6 +12,7 @@ import enHotels from "./locales/en/hotels.json";
 import enTransportation from "./locales/en/transportation.json";
 import enFaq from "./locales/en/faq.json";
 import enLegal from "./locales/en/legal.json";
+import enBooking from "./locales/en/booking.json";
 
 // Italian dictionaries
 import itCommon from "./locales/it/common.json";
@@ -25,6 +26,7 @@ import itHotels from "./locales/it/hotels.json";
 import itTransportation from "./locales/it/transportation.json";
 import itFaq from "./locales/it/faq.json";
 import itLegal from "./locales/it/legal.json";
+import itBooking from "./locales/it/booking.json";
 
 // Spanish dictionaries
 import esCommon from "./locales/es/common.json";
@@ -38,6 +40,7 @@ import esHotels from "./locales/es/hotels.json";
 import esTransportation from "./locales/es/transportation.json";
 import esFaq from "./locales/es/faq.json";
 import esLegal from "./locales/es/legal.json";
+import esBooking from "./locales/es/booking.json";
 
 export * from "./types";
 
@@ -54,6 +57,7 @@ const DICTIONARIES: Record<SupportedLanguage, Record<TranslationNamespace, Recor
     transportation: enTransportation,
     faq: enFaq,
     legal: enLegal,
+    booking: enBooking,
   },
   it: {
     common: itCommon,
@@ -67,6 +71,7 @@ const DICTIONARIES: Record<SupportedLanguage, Record<TranslationNamespace, Recor
     transportation: itTransportation,
     faq: itFaq,
     legal: itLegal,
+    booking: itBooking,
   },
   es: {
     common: esCommon,
@@ -80,6 +85,7 @@ const DICTIONARIES: Record<SupportedLanguage, Record<TranslationNamespace, Recor
     transportation: esTransportation,
     faq: esFaq,
     legal: esLegal,
+    booking: esBooking,
   },
 };
 

@@ -15,6 +15,7 @@ import StepTravelerInfo from "./steps/TravelerInfo/StepTravelerInfo";
 import StepPreferences from "./steps/Preferences/StepPreferences";
 import StepReview from "./steps/Review/StepReview";
 import { getDestinations, getCategories } from "@/lib/api";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const initialTripData: TripData = {
   destinations: [],
@@ -180,19 +181,28 @@ export default function PlanYourTripPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentStep]);
 
+  const { t } = useTranslation("booking");
+
+  const steps = [
+    { number: 1, label: t("planYourTrip.steps.destination", "Destination") },
+    { number: 2, label: t("planYourTrip.steps.travelerInfo", "Traveler Info") },
+    { number: 3, label: t("planYourTrip.steps.preferences", "Preferences") },
+    { number: 4, label: t("planYourTrip.steps.review", "Review") },
+  ];
+
   return (
     <div className={styles.page}>
       <PageHeader
-        breadcrumbs={[{ label: "Plan Your Trip", isCurrent: true }]}
-        title="Plan Your Perfect Trip"
-        subtitle="Fill out the form below and our team will craft a personalized travel experience tailored just for you."
-        backButton={{ text: "Back To Home", href: "/" }}
+        breadcrumbs={[{ label: t("planYourTrip.breadcrumb", "Plan Your Trip"), isCurrent: true }]}
+        title={t("planYourTrip.pageTitle", "Plan Your Perfect Trip")}
+        subtitle={t("planYourTrip.pageSubtitle", "Fill out the form below and our team will craft a personalized travel experience tailored just for you.")}
+        backButton={{ text: t("planYourTrip.success.backToHome", "Back To Home"), href: "/" }}
         decorationSrc="/images/dotted-line3.svg"
         subtitleMaxWidth="750px"
       />
 
       <div ref={stepIndicatorRef}>
-        <StepIndicator steps={STEPS} currentStep={currentStep} wrapLabels={true} />
+        <StepIndicator steps={steps} currentStep={currentStep} wrapLabels={true} />
       </div>
 
       <main className={styles.mainContent}>
@@ -244,9 +254,10 @@ export default function PlanYourTripPage() {
 
       {showModal && (
         <SuccessModal
-          title="Your Custom Trip Request Has Been Received!"
-          message="Thank you for designing your journey with us. Our travel specialists are reviewing your preferences and will contact you within 24 hours."
-          primaryButtonText="View Request Details"
+          title={t("planYourTrip.success.title", "Your Custom Trip Request Has Been Received!")}
+          message={t("planYourTrip.success.message", "Thank you for designing your journey with us. Our travel specialists are reviewing your preferences and will contact you within 24 hours.")}
+          primaryButtonText={t("planYourTrip.success.viewRequest", "View Request Details")}
+          buttonText={t("planYourTrip.success.backToHome", "Back to Home")}
           onPrimaryClick={() => router.push("/profile?tab=requests")}
           onClose={() => router.push("/")}
         />

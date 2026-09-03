@@ -10,6 +10,7 @@ import {
   type TripBookingStatus,
 } from "@/components/shared";
 import { COUNTRIES } from "@/data/countries";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./ProfileRequestDetailsPage.module.scss";
 
 const getCountryName = (code: string) => {
@@ -46,6 +47,7 @@ function getStatus(value: string | null): RequestStatus {
 }
 
 export default function ProfileRequestDetailsPage() {
+  const { t } = useTranslation("common");
   const searchParams = useSearchParams();
   const requestId = searchParams.get("id");
   const requestType = searchParams.get("type") || "events";
@@ -198,8 +200,8 @@ export default function ProfileRequestDetailsPage() {
     <div className={styles.page}>
       <PageHeader
         breadcrumbs={[
-          { label: "Profile", href: "/profile?tab=requests" },
-          { label: "Requests Details", isCurrent: true },
+          { label: t("userMenu.profile", "Profile"), href: "/profile?tab=requests" },
+          { label: t("userMenu.requests", "Requests Details"), isCurrent: true },
         ]}
         title="Your Travel Space"
         subtitle="Easily access all your travel bookings and submitted requests in one organized place, with clear details about your trips, hotel stays, transportation, and upcoming plans."

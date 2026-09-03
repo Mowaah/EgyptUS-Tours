@@ -8,6 +8,7 @@ import { PageHeader, StepIndicator, SuccessModal } from "@/components/shared";
 import { BASE_URL, extractApiError, submitHotelBooking } from "@/lib/api";
 import { formatPhoneE164 } from "@/utils/validators";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useTranslation } from "@/hooks/useTranslation";
 
 import planPageStyles from "../PlanYourTripPage/PlanYourTripPage.module.scss";
 
@@ -303,22 +304,30 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
     router.push("/profile");
   };
 
+  const { t } = useTranslation("booking");
+
+  const steps = [
+    { number: 1, label: t("hotelBooking.steps.roomDates", "Room & Dates") },
+    { number: 2, label: t("hotelBooking.steps.personalInfo", "Personal Info") },
+    { number: 3, label: t("hotelBooking.steps.payment", "Payment") },
+  ];
+
   return (
     <div className={planPageStyles.page}>
       <PageHeader
         breadcrumbs={[
-          { label: "Hotels", href: "/hotels" },
-          { label: "Hotel Details", href: `/hotels/${hotel.id}` },
-          { label: "Booking", isCurrent: true },
+          { label: t("hotelBooking.breadcrumbHotels", "Hotels"), href: "/hotels" },
+          { label: t("hotelBooking.breadcrumbDetails", "Hotel Details"), href: `/hotels/${hotel.id}` },
+          { label: t("hotelBooking.breadcrumb", "Booking"), isCurrent: true },
         ]}
-        title={`Book ${hotel.name}`}
-        subtitle="Enter your details to complete your hotel booking easily and securely"
-        backButton={{ text: "Back To Hotel Details", href: `/hotels/${hotel.id}` }}
+        title={`${t("hotelBooking.pageTitle", "Book")} ${hotel.name}`}
+        subtitle={t("hotelBooking.pageSubtitle", "Enter your details to complete your hotel booking easily and securely")}
+        backButton={{ text: t("hotelBooking.backToHotelDetails", "Back To Hotel Details"), href: `/hotels/${hotel.id}` }}
         decorationSrc="/images/dotted-line3.svg"
       />
 
       <div ref={stepIndicatorRef}>
-        <StepIndicator steps={STEPS} currentStep={currentStep} />
+        <StepIndicator steps={steps} currentStep={currentStep} />
       </div>
 
       <main className={planPageStyles.mainContent}>
@@ -337,19 +346,19 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
 
       {showSuccessModal && (
         <SuccessModal
-          title="Booking Confirmed!"
-          message="Your hotel reservation has been successfully booked. Confirmation details have been sent to your email."
-          primaryButtonText="View My Bookings"
-          buttonText="Back to Hotels"
+          title={t("hotelBooking.success.title", "Booking Confirmed!")}
+          message={t("hotelBooking.success.message", "Your hotel reservation has been successfully booked. Confirmation details have been sent to your email.")}
+          primaryButtonText={t("hotelBooking.success.viewBookings", "View My Bookings")}
+          buttonText={t("hotelBooking.success.backToHotels", "Back to Hotels")}
           onPrimaryClick={handlePrimaryModal}
           onClose={handleCloseModal}
           metadata={[
-            { label: "Booking Reference", value: `BK-${String(confirmedBooking?.id || "1024").padStart(6, "0")}` },
-            { label: "Hotel", value: confirmedBooking?.hotelName || hotel.name },
-            { label: "Check-in", value: confirmedBooking?.startDate || formData.startDate || "—" },
-            { label: "Check-out", value: confirmedBooking?.endDate || formData.endDate || "—" },
-            { label: "Total Price", value: confirmedBooking?.totalAmount ? formatCurrency(Number(confirmedBooking.totalAmount)) : formatCurrency(totalAmount), valueColor: "#FF6600" },
-            { label: "Paid Now", value: confirmedBooking?.depositAmount ? formatCurrency(Number(confirmedBooking.depositAmount)) : formatCurrency(depositAmount), valueColor: "#FF6600" },
+            { label: t("hotelBooking.success.reference", "Booking Reference"), value: `BK-${String(confirmedBooking?.id || "1024").padStart(6, "0")}` },
+            { label: t("hotelBooking.success.hotel", "Hotel"), value: confirmedBooking?.hotelName || hotel.name },
+            { label: t("sidebar.checkIn", "Check-in"), value: confirmedBooking?.startDate || formData.startDate || "—" },
+            { label: t("sidebar.checkOut", "Check-out"), value: confirmedBooking?.endDate || formData.endDate || "—" },
+            { label: t("sidebar.totalPrice", "Total Price"), value: confirmedBooking?.totalAmount ? formatCurrency(Number(confirmedBooking.totalAmount)) : formatCurrency(totalAmount), valueColor: "#FF6600" },
+            { label: t("sidebar.payNow", "Paid Now"), value: confirmedBooking?.depositAmount ? formatCurrency(Number(confirmedBooking.depositAmount)) : formatCurrency(depositAmount), valueColor: "#FF6600" },
           ]}
         />
       )}

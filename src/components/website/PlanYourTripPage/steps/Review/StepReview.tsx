@@ -1,7 +1,10 @@
+"use client";
+
 import { BookingStepFooter, BookingDetailsSections } from "@/components/shared";
 import pageStyles from "../../PlanYourTripPage.module.scss";
 import type { TripData, PlanDestination } from "../../planYourTripTypes";
 import { getNationalityName } from "@/utils/nationality";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface StepReviewProps {
   tripData: TripData;
@@ -56,6 +59,7 @@ export default function StepReview({
   onPrevious,
   onContinue,
 }: StepReviewProps) {
+  const { t } = useTranslation("booking");
   const { travelerInfo, preferences, destinations } = tripData;
 
   const destinationLabel = destinations
@@ -70,54 +74,54 @@ export default function StepReview({
 
   const travelersParts = [];
   if (travelerInfo.adults > 0) {
-    travelersParts.push(`${travelerInfo.adults} ${travelerInfo.adults === 1 ? 'Adult' : 'Adults'}`);
+    travelersParts.push(`${travelerInfo.adults} ${travelerInfo.adults === 1 ? t("sidebar.adults", "Adult") : t("sidebar.adults", "Adults")}`);
   }
   if (travelerInfo.children > 0) {
-    travelersParts.push(`${travelerInfo.children} ${travelerInfo.children === 1 ? 'Child' : 'Children'}`);
+    travelersParts.push(`${travelerInfo.children} ${travelerInfo.children === 1 ? t("sidebar.children", "Child") : t("sidebar.children", "Children")}`);
   }
   if (travelerInfo.infants > 0) {
-    travelersParts.push(`${travelerInfo.infants} ${travelerInfo.infants === 1 ? 'Infant' : 'Infants'}`);
+    travelersParts.push(`${travelerInfo.infants} ${travelerInfo.infants === 1 ? t("sidebar.infants", "Infant") : t("sidebar.infants", "Infants")}`);
   }
   const travelersValue = travelersParts.join(" • ") || "None";
 
   const sections = [
     {
-      title: "Destination",
+      title: t("planYourTrip.destination.title", "Destination"),
       icon: "/images/summary/trip.svg",
       fields: [
-        { label: "Selected Destinations", value: destinationLabel || "None Selected" },
+        { label: t("planYourTrip.review.selectedDestinations", "Selected Destinations"), value: destinationLabel || "None Selected" },
       ],
       fieldsColumns: 1 as const,
     },
     {
-      title: "Traveler Information",
+      title: t("planYourTrip.travelerInfo.title", "Traveler Information"),
       icon: "/images/summary/contact.svg",
       fields: [
-        { label: "Full Name", value: travelerInfo.name || "N/A" },
-        { label: "Email", value: travelerInfo.email || "N/A" },
-        { label: "Phone Number", value: travelerInfo.phone || "N/A" },
-        { label: "Nationality", value: travelerInfo.nationality ? getNationalityName(travelerInfo.nationality) : "N/A" },
-        { label: "Travel Dates", value: formatTravelDates(travelerInfo.startDate, travelerInfo.endDate) },
-        { label: "Travelers", value: travelersValue },
+        { label: t("planYourTrip.travelerInfo.name", "Full Name"), value: travelerInfo.name || "N/A" },
+        { label: t("planYourTrip.travelerInfo.email", "Email"), value: travelerInfo.email || "N/A" },
+        { label: t("planYourTrip.travelerInfo.phone", "Phone Number"), value: travelerInfo.phone || "N/A" },
+        { label: t("planYourTrip.travelerInfo.nationality", "Nationality"), value: travelerInfo.nationality ? getNationalityName(travelerInfo.nationality) : "N/A" },
+        { label: t("planYourTrip.travelerInfo.tripDates", "Travel Dates"), value: formatTravelDates(travelerInfo.startDate, travelerInfo.endDate) },
+        { label: t("planYourTrip.travelerInfo.travelers", "Travelers"), value: travelersValue },
       ],
       fieldsColumns: 3 as const,
     },
     {
-      title: "Trip Details & Preferences",
+      title: t("planYourTrip.preferences.title", "Trip Details & Preferences"),
       icon: "/images/summary/special.svg",
       fields: [
-        { label: "Trip Category", value: preferences.tripCategory.join(", ") || "None Selected" },
-        { label: "Number of Days", value: preferences.duration || "N/A" },
-        { label: "Budget", value: preferences.budget || "N/A" },
-        { label: "Hotel Category", value: formatHotelCategory(preferences.hotelCategory) || "N/A" },
-        { label: "Room Type", value: preferences.roomType.join(", ") || "None Selected" },
-        { label: "Transportation", value: preferences.transportation || "N/A" },
-        { label: "Additional Experiences", value: preferences.experiences.join(", ") || "None Selected" },
-        { label: "Activities", value: preferences.activities.join(", ") || "None Selected" },
-        { label: "Contact Method", value: preferences.contactMethod || "N/A" },
+        { label: t("planYourTrip.preferences.tripCategory", "Trip Category"), value: preferences.tripCategory.join(", ") || "None Selected" },
+        { label: t("planYourTrip.preferences.duration", "Number of Days"), value: preferences.duration ? t(`planYourTrip.options.duration.${preferences.duration}`, preferences.duration) : "N/A" },
+        { label: t("planYourTrip.preferences.budget", "Budget"), value: preferences.budget ? t(`planYourTrip.options.budget.${preferences.budget}`, preferences.budget) : "N/A" },
+        { label: t("planYourTrip.preferences.hotelCategory", "Hotel Category"), value: formatHotelCategory(preferences.hotelCategory) || "N/A" },
+        { label: t("planYourTrip.preferences.roomType", "Room Type"), value: preferences.roomType.map(r => t(`planYourTrip.options.roomType.${r}`, r)).join(", ") || "None Selected" },
+        { label: t("planYourTrip.preferences.transportation", "Transportation"), value: preferences.transportation ? t(`planYourTrip.options.transport.${preferences.transportation}`, preferences.transportation) : "N/A" },
+        { label: t("planYourTrip.preferences.experiences", "Additional Experiences"), value: preferences.experiences.map(e => t(`planYourTrip.options.experiences.${e}`, e)).join(", ") || "None Selected" },
+        { label: t("planYourTrip.preferences.activities", "Activities"), value: preferences.activities.map(a => t(`planYourTrip.options.activities.${a}`, a)).join(", ") || "None Selected" },
+        { label: t("planYourTrip.preferences.contactMethod", "Contact Method"), value: preferences.contactMethod ? t(`planYourTrip.options.contactMethod.${preferences.contactMethod}`, preferences.contactMethod) : "N/A" },
       ],
       fieldsColumns: 3 as const,
-      descriptionLabel: "Special Requests",
+      descriptionLabel: t("planYourTrip.preferences.specialRequests", "Special Requests"),
       description: travelerInfo.tripDetails || "None provided",
     },
   ];
@@ -126,9 +130,9 @@ export default function StepReview({
     <div className={pageStyles.stepFormCard}>
       <header className={pageStyles.stepFormCardHeader}>
         <div className={pageStyles.formHeaderColumn}>
-          <h2 className={pageStyles.formTitle}>Review & Submit</h2>
+          <h2 className={pageStyles.formTitle}>{t("planYourTrip.review.title", "Review & Submit")}</h2>
           <p className={pageStyles.formSubtitle}>
-            Here's a summary of your personalized trip request.
+            {t("planYourTrip.review.subtitle", "Here's a summary of your personalized trip request.")}
           </p>
         </div>
       </header>
@@ -146,7 +150,7 @@ export default function StepReview({
       <BookingStepFooter
         onPrevious={onPrevious}
         onContinue={onContinue}
-        continueLabel={isSubmitting ? "Submitting..." : "Submit Trip Request"}
+        continueLabel={isSubmitting ? t("planYourTrip.review.submitting", "Submitting...") : t("planYourTrip.review.submitButton", "Submit Trip Request")}
         continueDisabled={isSubmitting}
       />
     </div>

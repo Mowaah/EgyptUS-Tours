@@ -8,6 +8,7 @@ import RightSidebar from "@/components/shared/BookingSidebar/BookingSidebar";
 import { BookingDetailsSections, BookingStepFooter, CheckboxIndicator } from "@/components/shared";
 import ImportantLinksModal from "@/components/website/TripDetailPage/TripImportantLinks/ImportantLinksModal";
 import { getNationalityName } from "@/utils/nationality";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface StepBookingSummaryProps {
   trip: Trip;
@@ -33,6 +34,7 @@ export default function StepBookingSummary({
   isSubmitting = false,
 }: StepBookingSummaryProps) {
   const [showTermsModal, setShowTermsModal] = useState(false);
+  const { t } = useTranslation("booking");
 
   const specialRequestItems = formData.specialRequests
     ? formData.specialRequests.split(",").map((s) => s.trim()).filter(Boolean)
@@ -82,40 +84,40 @@ export default function StepBookingSummary({
   })();
 
   const destination = trip.location || "Egypt";
-  const travelType = isGroupTrip ? "Group" : "Private";
+  const travelType = isGroupTrip ? t("tripBooking.groupTitle", "Group Tour") : t("tripBooking.privateTitle", "Private Tour");
 
   const sections = [
     {
-      title: "Contact Info",
+      title: t("tripBooking.step3.contactInfo", "Contact Info"),
       icon: "/images/summary/contact.svg",
       fields: [
-        { label: "Name", value: formData.name },
-        { label: "Email", value: formData.email },
-        { label: "Phone Number", value: formData.phone },
-        { label: "Nationality", value: getNationalityName(formData.nationality) },
+        { label: t("tripBooking.step2.fullName", "Name"), value: formData.name },
+        { label: t("tripBooking.step2.email", "Email"), value: formData.email },
+        { label: t("tripBooking.step2.phone", "Phone Number"), value: formData.phone },
+        { label: t("tripBooking.step2.nationality", "Nationality"), value: getNationalityName(formData.nationality) },
       ],
     },
     {
-      title: "Trip Info",
+      title: t("tripBooking.step3.tripInfo", "Trip Info"),
       icon: "/images/summary/trip.svg",
       fields: [
-        { label: "Trip Name", value: trip.title },
-        { label: "Destination", value: destination },
-        { label: "Travel Type", value: travelType },
-        { label: "Duration", value: formattedDuration },
+        { label: t("tripBooking.success.tripName", "Trip Name"), value: trip.title },
+        { label: t("sidebar.destination", "Destination"), value: destination },
+        { label: t("tripBooking.success.travelType", "Travel Type"), value: travelType },
+        { label: t("sidebar.duration", "Duration"), value: formattedDuration },
       ],
     },
     ...(rooms.length > 0
       ? [
         {
-          title: "Rooms",
+          title: t("sidebar.rooms", "Rooms"),
           icon: "/images/summary/rooms.svg",
           listItems: rooms,
         },
       ]
       : []),
     {
-      title: "Special Requests",
+      title: t("hotelBooking.personalInfo.specialRequests", "Special Requests"),
       icon: "/images/summary/special.svg",
       listItems: specialRequestItems,
       emptyStateText: "None",
@@ -126,8 +128,8 @@ export default function StepBookingSummary({
     <div className={planPage.stepFormCard}>
       <header className={planPage.stepFormCardHeader}>
         <div className={`${planPage.formHeaderColumn} ${stepStyles.headerCol}`}>
-          <h2 className={planPage.formTitle}>Review & Confirm Your Booking</h2>
-          <p className={`${planPage.formSubtitle} ${stepStyles.subtitle}`}>Please review your trip details carefully before confirming your reservation.</p>
+          <h2 className={planPage.formTitle}>{t("tripBooking.step3.title", "Review & Confirm Your Booking")}</h2>
+          <p className={`${planPage.formSubtitle} ${stepStyles.subtitle}`}>{t("tripBooking.step3.subtitle", "Please review your trip details carefully before confirming your reservation.")}</p>
         </div>
       </header>
 
@@ -162,7 +164,7 @@ export default function StepBookingSummary({
               setShowTermsModal(true);
             }}
           >
-            Terms & Conditions and Cancellation
+            Terms &amp; Conditions and Cancellation
           </button>{" "}
           Policy.
         </span>
@@ -171,7 +173,7 @@ export default function StepBookingSummary({
       <BookingStepFooter
         onPrevious={onPrevious}
         onContinue={onContinue}
-        continueLabel={isSubmitting ? "Connecting to Paymob..." : "Continue To Payment"}
+        continueLabel={isSubmitting ? t("tripBooking.step3.connectingPaymob", "Connecting to Paymob...") : t("tripBooking.step3.continueToPayment", "Continue To Payment")}
         continueDisabled={!formData.termsAccepted || isSubmitting}
         showMoneyIcon
       />

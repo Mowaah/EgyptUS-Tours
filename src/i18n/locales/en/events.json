@@ -114,5 +114,92 @@
     "title": "Ready to Host an Unforgettable Event in Egypt?",
     "subtitle": "Partner with our dedicated events team to design a bespoke program that exceeds expectations.",
     "button": "Request a Proposal"
+  },
+  "proposal": {
+    "breadcrumb": "MICE & Events",
+    "breadcrumbProposal": "Corporate Proposal",
+    "title": "Request a Custom Proposal",
+    "subtitle": "Share your requirements and we'll design a tailored corporate event or MICE solution.",
+    "backButton": "Back To Events",
+    "steps": {
+      "organization": "Organization",
+      "eventDetails": "Event Details",
+      "requirements": "Requirements",
+      "budget": "Budget & Submit"
+    },
+    "organization": {
+      "title": "Organization Information",
+      "name": "Organization Name",
+      "namePlaceholder": "Company or Organization Name",
+      "industry": "Industry",
+      "selectIndustry": "Select Industry",
+      "country": "Country",
+      "website": "Company Website (Optional)",
+      "websitePlaceholder": "www.yourcompany.com",
+      "contactPerson": "Contact Person",
+      "contactPersonPlaceholder": "Full Name",
+      "jobTitle": "Job Title",
+      "jobTitlePlaceholder": "Your Role / Position",
+      "email": "Work Email Address",
+      "emailPlaceholder": "youremail@company.com",
+      "phone": "Phone Number"
+    },
+    "eventDetails": {
+      "title": "Event Details",
+      "eventType": "Event Type",
+      "selectEventType": "Select Event Type",
+      "eventName": "Event Name",
+      "eventNamePlaceholder": "e.g. Annual Leadership Summit",
+      "expectedAttendees": "Expected Attendees",
+      "selectAttendees": "Select Attendee Range",
+      "preferredCity": "Preferred City",
+      "selectCity": "Select Preferred City",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "description": "Event Description",
+      "descriptionPlaceholder": "Brief overview of the event objective and expected program..."
+    },
+    "requirements": {
+      "title": "Event Requirements",
+      "venueType": "Preferred Venue Type",
+      "selectVenueType": "Select Preferred Venue",
+      "additionalServices": "Additional Services Needed",
+      "additionalRequirements": "Special Requests & Requirements",
+      "additionalRequirementsPlaceholder": "Any specific setups, dietary requirements, VIP protocols, or AV needs..."
+    },
+    "budget": {
+      "title": "Budget & Submission",
+      "estimatedBudget": "Estimated Budget (Total)",
+      "selectBudget": "Select Budget Range",
+      "budgetFlexibility": "Budget Flexibility",
+      "hearAboutUs": "How did you hear about us?",
+      "selectSource": "Select Source",
+      "submitButton": "Submit Event Proposal",
+      "submitting": "Submitting..."
+    },
+    "success": {
+      "title": "Your Proposal Request Has Been Received!",
+      "message": "Thank you for reaching out. Our corporate events specialist will review your request and provide a detailed proposal within 24 hours.",
+      "referenceNumber": "Reference Number",
+      "viewRequest": "View Request",
+      "backToHome": "Back to Home"
+    },
+    "errors": {
+      "orgName": "Organization Name is required.",
+      "contactPerson": "Contact Person is required.",
+      "emailRequired": "Work Email is required.",
+      "emailInvalid": "Please enter a valid email address.",
+      "phoneRequired": "Phone Number is required.",
+      "phoneInvalid": "Please enter a valid phone number with country code.",
+      "eventType": "Event Type is required.",
+      "eventName": "Event Name is required.",
+      "expectedAttendees": "Expected Attendees is required.",
+      "preferredCity": "Preferred City is required.",
+      "startDate": "Start Date is required.",
+      "endDate": "End Date is required.",
+      "venueType": "Preferred Venue Type is required.",
+      "estimatedBudget": "Estimated Budget is required.",
+      "budgetFlexibility": "Budget Flexibility is required."
+    }
   }
 }

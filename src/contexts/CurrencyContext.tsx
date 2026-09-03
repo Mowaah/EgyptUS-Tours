@@ -81,10 +81,23 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   return <CurrencyContext.Provider value={value}>{children}</CurrencyContext.Provider>;
 }
 
+const defaultCurrencyValue: CurrencyContextValue = {
+  currency: "EGP",
+  setCurrency: () => {},
+  rates: STATIC_RATES,
+  formatCurrency: (amountEgp: number, options?: Intl.NumberFormatOptions) => {
+    const value = Number.isFinite(amountEgp) ? amountEgp : 0;
+    const formattedNumber = new Intl.NumberFormat("en-US", {
+      style: "decimal",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+      ...options,
+    }).format(value);
+    return `£${formattedNumber}`;
+  },
+};
+
 export function useCurrency() {
   const ctx = useContext(CurrencyContext);
-  if (!ctx) {
-    throw new Error("useCurrency must be used inside CurrencyProvider");
-  }
-  return ctx;
+  return ctx || defaultCurrencyValue;
 }

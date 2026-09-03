@@ -17,6 +17,7 @@ import {
 import type { TabType, TripBookingCardProps } from "@/components/shared";
 import { Trip, Hotel } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "@/hooks/useTranslation";
 import { getFavoriteTrips, getFavoriteHotels, getProfileRequests, getProfileSummary, getProfileBookings, getPaymentReceipt } from "@/lib/api";
 import styles from "./ProfilePage.module.scss";
 
@@ -32,6 +33,7 @@ function parseProfileTab(param: string | null): TabType {
 }
 
 export default function ProfilePage() {
+  const { t } = useTranslation("common");
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -631,7 +633,7 @@ export default function ProfilePage() {
       {/* Header */}
       <PageHeader
         breadcrumbs={[
-          { label: "Profile", isCurrent: true },
+          { label: t("userMenu.profile", "Profile"), isCurrent: true },
         ]}
         title="Your Travel Space"
         subtitle="Easily access all your travel bookings and submitted requests in one organized place, with clear details about your trips, hotel stays, transportation, and upcoming plans."

@@ -8,6 +8,7 @@ import { PageHeader, SuccessModal, StepIndicator } from "@/components/shared";
 import { BASE_URL, extractApiError, submitTripBooking } from "@/lib/api";
 import { formatPhoneE164 } from "@/utils/validators";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useTranslation } from "@/hooks/useTranslation";
 
 import planPageStyles from "../PlanYourTripPage/PlanYourTripPage.module.scss";
 
@@ -316,22 +317,30 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
     router.push("/profile");
   };
 
+  const { t } = useTranslation("booking");
+
+  const steps = [
+    { number: 1, label: t("tripBooking.steps.dates", "Your Details") },
+    { number: 2, label: t("tripBooking.steps.summary", "Booking Summary") },
+    { number: 3, label: t("tripBooking.steps.payment", "Payment") },
+  ];
+
   return (
     <div className={planPageStyles.page}>
       <PageHeader
         breadcrumbs={[
-          { label: "Egypt Tours", href: "/egypttours" },
-          { label: "Trip Details", href: `/egypttours/${trip.id}` },
-          { label: "Booking", isCurrent: true },
+          { label: t("tripBooking.breadcrumbTours", "Egypt Tours"), href: "/egypttours" },
+          { label: t("tripBooking.breadcrumbDetails", "Trip Details"), href: `/egypttours/${trip.id}` },
+          { label: t("tripBooking.breadcrumb", "Booking"), isCurrent: true },
         ]}
         title={trip.title}
-        subtitle="Provide your details to customize and secure your reservation."
-        backButton={{ text: "Back To Trip Details", href: `/egypttours/${trip.id}` }}
+        subtitle={t("tripBooking.pageSubtitle", "Provide your details to customize and secure your reservation.")}
+        backButton={{ text: t("tripBooking.backToTripDetails", "Back To Trip Details"), href: `/egypttours/${trip.id}` }}
         decorationSrc="/images/dotted-line3.svg"
       />
 
       <div ref={stepIndicatorRef}>
-        <StepIndicator steps={STEPS} currentStep={currentStep} />
+        <StepIndicator steps={steps} currentStep={currentStep} />
       </div>
 
       <main className={planPageStyles.mainContent}>
@@ -364,19 +373,19 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
 
       {showSuccessModal && (
         <SuccessModal
-          title="Booking Confirmed!"
-          message="Your trip reservation has been successfully booked. Confirmation details have been sent to your email."
-          primaryButtonText="View My Bookings"
-          buttonText="Back to Trips"
+          title={t("tripBooking.success.title", "Booking Confirmed!")}
+          message={t("tripBooking.success.message", "Your trip reservation has been successfully booked. Confirmation details have been sent to your email.")}
+          primaryButtonText={t("tripBooking.success.viewBookings", "View My Bookings")}
+          buttonText={t("tripBooking.success.backToTrips", "Back to Trips")}
           onPrimaryClick={handlePrimaryModal}
           onClose={handleCloseModal}
           metadata={[
-            { label: "Booking Reference", value: `BK-${String(confirmedBooking?.id || "1024").padStart(6, "0")}` },
-            { label: "Trip Name", value: confirmedBooking?.tripTitle || trip.title },
-            { label: "Travel Type", value: isGroupTrip ? "Group Tour" : "Private Tour" },
-            { label: "Date", value: confirmedBooking?.startDate || formData.startDate || "—" },
-            { label: "Total Price", value: confirmedBooking?.totalAmount ? formatCurrency(Number(confirmedBooking.totalAmount)) : formatCurrency(totalAmount), valueColor: "#FF6600" },
-            { label: "Paid Now", value: confirmedBooking?.depositAmount ? formatCurrency(Number(confirmedBooking.depositAmount)) : formatCurrency(depositAmount), valueColor: "#FF6600" },
+            { label: t("tripBooking.success.reference", "Booking Reference"), value: `BK-${String(confirmedBooking?.id || "1024").padStart(6, "0")}` },
+            { label: t("tripBooking.success.tripName", "Trip Name"), value: confirmedBooking?.tripTitle || trip.title },
+            { label: t("tripBooking.success.travelType", "Travel Type"), value: isGroupTrip ? t("tripBooking.groupTitle", "Group Tour") : t("tripBooking.privateTitle", "Private Tour") },
+            { label: t("tripBooking.success.date", "Date"), value: confirmedBooking?.startDate || formData.startDate || "—" },
+            { label: t("sidebar.totalPrice", "Total Price"), value: confirmedBooking?.totalAmount ? formatCurrency(Number(confirmedBooking.totalAmount)) : formatCurrency(totalAmount), valueColor: "#FF6600" },
+            { label: t("sidebar.payNow", "Paid Now"), value: confirmedBooking?.depositAmount ? formatCurrency(Number(confirmedBooking.depositAmount)) : formatCurrency(depositAmount), valueColor: "#FF6600" },
           ]}
         />
       )}

@@ -141,7 +141,7 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
               isFavorite={isFavorite}
               onFavoriteToggle={toggle}
               location={trip.location || "Egypt"}
-              duration={`${trip.duration.days} days / ${trip.duration.nights} nights`}
+              duration={`${trip.duration.days} ${trip.duration.days === 1 ? t("day", "day") : t("days", "days")}${trip.duration.nights > 0 ? ` / ${trip.duration.nights} ${trip.duration.nights === 1 ? t("night", "night") : t("nights", "nights")}` : ""}`}
               mobileBrochureButton={
                 <Button
                   variant="primary"

@@ -33,22 +33,22 @@ export default function B2BRequestProposalPage() {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
-    if (!formData.companyName.trim()) newErrors.companyName = "Company Name is required.";
-    if (!formData.country?.trim()) newErrors.country = "Country is required.";
-    if (!formData.contactPerson.trim()) newErrors.contactPerson = "Contact Person is required.";
-    if (!formData.jobTitle?.trim()) newErrors.jobTitle = "Job Title is required.";
+    if (!formData.companyName.trim()) newErrors.companyName = t("form.errors.companyName", "Company Name is required.");
+    if (!formData.country?.trim()) newErrors.country = t("form.errors.country", "Country is required.");
+    if (!formData.contactPerson.trim()) newErrors.contactPerson = t("form.errors.contactPerson", "Contact Person is required.");
+    if (!formData.jobTitle?.trim()) newErrors.jobTitle = t("form.errors.jobTitle", "Job Title is required.");
     if (!formData.email.trim()) {
-      newErrors.email = "Email Address is required.";
+      newErrors.email = t("form.errors.emailRequired", "Work Email Address is required.");
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
-      newErrors.email = "Please enter a valid email address.";
+      newErrors.email = t("form.errors.emailInvalid", "Please enter a valid email address.");
     }
     const phoneDigits = formData.phone.replace(/\D/g, "");
     if (!formData.phone.trim() || phoneDigits.length === 0) {
-      newErrors.phone = "Phone Number is required.";
+      newErrors.phone = t("form.errors.phoneRequired", "Phone Number is required.");
     } else if (phoneDigits.length < 10) {
-      newErrors.phone = "The phone number entered is not valid.";
+      newErrors.phone = t("form.errors.phoneInvalid", "The phone number entered is not valid.");
     }
-    if (!formData.requestDetails.trim()) newErrors.requestDetails = "Request Details is required.";
+    if (!formData.requestDetails.trim()) newErrors.requestDetails = t("form.errors.requestDetails", "Request Details is required.");
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -114,7 +114,7 @@ export default function B2BRequestProposalPage() {
                   label={t("form.companyName", "Company Name")}
                   required
                   type="text"
-                  placeholder={t("form.companyName", "Enter your company name")}
+                  placeholder={t("form.companyNamePlaceholder", "Enter your company name")}
                   value={formData.companyName}
                   onChange={(e) => handleChange("companyName", e.target.value)}
                   error={errors.companyName || errors.company_name}
@@ -135,7 +135,7 @@ export default function B2BRequestProposalPage() {
                   label={t("form.contactPerson", "Contact Person")}
                   required
                   type="text"
-                  placeholder="John Doe"
+                  placeholder={t("form.contactPersonPlaceholder", "Full Name")}
                   value={formData.contactPerson}
                   onChange={(e) => handleChange("contactPerson", e.target.value)}
                   error={errors.contactPerson || errors.contact_person}
@@ -148,7 +148,7 @@ export default function B2BRequestProposalPage() {
                   label={t("form.jobTitle", "Job Title")}
                   required
                   type="text"
-                  placeholder="Enter your position within the company"
+                  placeholder={t("form.jobTitlePlaceholder", "Enter your position within the company")}
                   value={formData.jobTitle}
                   onChange={(e) => handleChange("jobTitle", e.target.value)}
                   error={errors.jobTitle || errors.job_title}
@@ -161,7 +161,7 @@ export default function B2BRequestProposalPage() {
                   label={t("form.email", "Work Email Address")}
                   required
                   type="email"
-                  placeholder="youremail@company.com"
+                  placeholder={t("form.emailPlaceholder", "youremail@company.com")}
                   value={formData.email}
                   onChange={(e) => handleChange("email", e.target.value)}
                   error={errors.email}
@@ -190,7 +190,7 @@ export default function B2BRequestProposalPage() {
                     autoComplete="url"
                     label={t("form.website", "Company Website (Optional)")}
                     type="text"
-                    placeholder="www.egyptustours.com"
+                    placeholder={t("form.websitePlaceholder", "www.yourcompany.com")}
                     value={formData.website}
                     onChange={(e) => handleChange("website", e.target.value)}
                     error={errors.website}
@@ -203,7 +203,7 @@ export default function B2BRequestProposalPage() {
                     label={t("form.requestDetails", "Tell us about your trip/event requirements...")}
                     required
                     isTextarea={true}
-                    placeholder={t("form.requestDetails", "Tell us about your request.")}
+                    placeholder={t("form.requestDetailsPlaceholder", "Tell us about your request.")}
                     value={formData.requestDetails}
                     onChange={(e: any) => handleChange("requestDetails", e.target.value)}
                     error={errors.requestDetails || errors.request_details}

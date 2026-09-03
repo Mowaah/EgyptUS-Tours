@@ -7,6 +7,7 @@ import {
   NationalitySelect,
 } from "@/components/shared";
 import { isValidEmail, isValidPhone } from "@/utils/validators";
+import { useTranslation } from "@/hooks/useTranslation";
 import planPage from "../../../PlanYourTripPage/PlanYourTripPage.module.scss";
 import styles from "./StepPersonalInfo.module.scss";
 import { BookingData } from "../../BookHotelPage";
@@ -35,26 +36,27 @@ export default function StepPersonalInfo({
 }: StepPersonalInfoProps) {
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const { t } = useTranslation("booking");
 
   const handleContinue = () => {
     const errs: Record<string, string> = {};
-    if (!formData.name?.trim()) errs.name = "Name is required.";
+    if (!formData.name?.trim()) errs.name = t("errors.nameRequired", "Name is required.");
     if (!formData.email?.trim()) {
-      errs.email = "Email is required.";
+      errs.email = t("errors.emailRequired", "Email is required.");
     } else if (!isValidEmail(formData.email)) {
-      errs.email = "Please enter a valid email address.";
+      errs.email = t("errors.emailInvalid", "Please enter a valid email address.");
     }
 
     const phoneDigits = (formData.phone || "").replace(/^(\+\d+\s*)/, "").replace(/\D/g, "");
     if (!formData.phone?.trim() || phoneDigits.length === 0) {
-      errs.phone = "Phone number is required.";
+      errs.phone = t("errors.phoneRequired", "Phone number is required.");
     } else if (!isValidPhone(formData.phone)) {
-      errs.phone = "The phone number entered is not valid.";
+      errs.phone = t("errors.phoneInvalid", "The phone number entered is not valid.");
     }
 
-    if (!formData.nationality?.trim()) errs.nationality = "Nationality is required.";
+    if (!formData.nationality?.trim()) errs.nationality = t("errors.nationalityRequired", "Nationality is required.");
     if (!formData.termsAccepted) {
-      alert("Please accept the Terms and Conditions and Privacy Policy to continue.");
+      alert(t("hotelBooking.personalInfo.termsAlert", "Please accept the Terms and Conditions and Privacy Policy to continue."));
       return;
     }
 
@@ -71,8 +73,8 @@ export default function StepPersonalInfo({
           <div className={styles.infoCard}>
             <header className={planPage.stepFormCardHeader} style={{ padding: 0, border: 'none', margin: 0 }}>
               <div className={planPage.formHeaderColumn}>
-                <h2 className={planPage.formTitle}>Personal Information</h2>
-                <p className={planPage.formSubtitle}>Fill in your details to proceed with your booking securely.</p>
+                <h2 className={planPage.formTitle}>{t("hotelBooking.personalInfo.title", "Personal Information")}</h2>
+                <p className={planPage.formSubtitle}>{t("hotelBooking.personalInfo.subtitle", "Fill in your details to proceed with your booking securely.")}</p>
               </div>
             </header>
 
@@ -95,11 +97,11 @@ export default function StepPersonalInfo({
                 id="pi-name"
                 name="name"
                 autoComplete="name"
-                label="Enter your Name"
+                label={t("hotelBooking.personalInfo.name", "Enter your Name")}
                 className={planPage.formInput}
                 type="text"
                 required
-                placeholder="John Doe"
+                placeholder={t("hotelBooking.personalInfo.namePlaceholder", "John Doe")}
                 value={formData.name}
                 onChange={(e) => onChange({ name: e.target.value })}
                 error={errors.name}
@@ -108,17 +110,17 @@ export default function StepPersonalInfo({
                 id="pi-email"
                 name="email"
                 autoComplete="email"
-                label="Enter your E-mail"
+                label={t("hotelBooking.personalInfo.email", "Enter your E-mail")}
                 className={planPage.formInput}
                 type="email"
                 required
-                placeholder="Example@Gmail.Com"
+                placeholder={t("hotelBooking.personalInfo.emailPlaceholder", "example@gmail.com")}
                 value={formData.email}
                 onChange={(e) => onChange({ email: e.target.value })}
                 error={errors.email}
               />
               <FormField
-                label="Enter your Phone Number"
+                label={t("hotelBooking.personalInfo.phone", "Enter your Phone Number")}
                 required
                 error={errors.phone}
               >
@@ -133,7 +135,7 @@ export default function StepPersonalInfo({
               </FormField>
 
               <FormField
-                label="Select Your Nationality"
+                label={t("hotelBooking.personalInfo.nationality", "Select Your Nationality")}
                 required
                 error={errors.nationality}
               >
@@ -174,7 +176,7 @@ export default function StepPersonalInfo({
             <BookingStepFooter
               onPrevious={onPrevious}
               onContinue={handleContinue}
-              continueLabel={isSubmitting ? "Starting Checkout..." : "Continue To Payment"}
+              continueLabel={isSubmitting ? t("hotelBooking.personalInfo.startingCheckout", "Starting Checkout...") : t("hotelBooking.personalInfo.continueToPayment", "Continue To Payment")}
               continueDisabled={!formData.termsAccepted || isSubmitting}
               showMoneyIcon
             />

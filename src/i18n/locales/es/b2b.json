@@ -74,18 +74,36 @@
     "sectionTitle": "Información de la Empresa",
     "sectionSubtitle": "Proporcione los datos de su empresa para adaptar la propuesta a sus necesidades",
     "companyName": "Nombre de la Empresa",
+    "companyNamePlaceholder": "Introduzca el nombre de la empresa",
     "country": "País",
     "contactPerson": "Persona de Contacto",
+    "contactPersonPlaceholder": "Nombre Completo",
     "jobTitle": "Cargo / Puesto",
+    "jobTitlePlaceholder": "Su cargo dentro de la empresa",
     "email": "Correo Electrónico de Trabajo",
+    "emailPlaceholder": "sucorreo@empresa.com",
     "phone": "Número de Teléfono",
     "website": "Sitio Web de la Empresa (Opcional)",
+    "websitePlaceholder": "www.suempresa.com",
     "requestDetails": "Cuéntenos sobre sus requisitos para el viaje o evento...",
+    "requestDetailsPlaceholder": "Describa su solicitud, número previsto de personas, destinos...",
     "submitButton": "Enviar Solicitud de Propuesta",
     "submitting": "Enviando...",
     "successTitle": "¡Solicitud de Propuesta Enviada con Éxito!",
     "successRequestId": "ID de Solicitud:",
     "successDesc": "Nuestro equipo corporativo revisará sus requisitos y se pondrá en contacto con una propuesta a medida en un plazo de 24 horas.",
-    "backToHome": "Volver al Inicio"
+    "viewRequest": "Ver Solicitud",
+    "backToHome": "Volver al Inicio",
+    "errors": {
+      "companyName": "El nombre de la empresa es obligatorio.",
+      "country": "El país es obligatorio.",
+      "contactPerson": "La persona de contacto es obligatoria.",
+      "jobTitle": "El cargo es obligatorio.",
+      "emailRequired": "El correo electrónico de trabajo es obligatorio.",
+      "emailInvalid": "Por favor introduzca un correo electrónico válido.",
+      "phoneRequired": "El número de teléfono es obligatorio.",
+      "phoneInvalid": "El número de teléfono introducido no es válido.",
+      "requestDetails": "Los detalles de la solicitud son obligatorios."
+    }
   }
 }

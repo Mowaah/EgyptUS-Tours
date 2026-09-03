@@ -6,6 +6,7 @@ import { TransportationBookingData, Vehicle } from "@/types";
 import useSWR from "swr";
 import { apiClient } from "@/lib/api";
 import { FormField, Button, CustomDatePicker, SelectDropdown, CheckboxIndicator, TimePicker, TimeValue, BookingStepFooter } from "@/components/shared";
+import { useTranslation } from "@/hooks/useTranslation";
 import formStyles from "@/components/shared/FormField/FormField.module.scss";
 import styles from "./StepTripDetails.module.scss";
 
@@ -164,6 +165,7 @@ export default function StepTripDetails({
 }: StepTripDetailsProps) {
   const { data: vehicleDetailsData } = useSWR(`/vehicles/${vehicle.id}/`, fetcher);
   const additionalServices = vehicleDetailsData?.additional_services || [];
+  const { t } = useTranslation("booking");
 
   const maxPassengers = Math.max(1, vehicleDetailsData?.passengers || vehicle.passengers || 1);
   const maxLuggage = Math.max(0, vehicleDetailsData?.luggage_capacity ?? (typeof vehicle.luggage === "number" ? vehicle.luggage : parseInt(vehicle.luggage) || 0));
@@ -204,17 +206,17 @@ export default function StepTripDetails({
     <div className={styles.stepCard}>
       {/* Header */}
       <div className={styles.header}>
-        <h2 className={styles.title}>Trip Details</h2>
+        <h2 className={styles.title}>{t("transportBooking.rideDetails.title", "Transfer & Schedule Details")}</h2>
         <p className={styles.subtitle}>
-          Enter your trip details including pickup, drop-off, and timing to proceed with your booking.
+          {t("transportBooking.rideDetails.subtitle", "Enter your trip details including pickup, drop-off, and timing to proceed with your booking.")}
         </p>
       </div>
 
       <div className={styles.formSection}>
         {/* Pickup & Drop-off */}
         <FormField
-          label="Pickup Location"
-          placeholder="Luxor, Luxor Airport."
+          label={t("transportBooking.rideDetails.pickupLocation", "Pickup Location")}
+          placeholder={t("transportBooking.rideDetails.pickupLocationPlaceholder", "e.g. Cairo Airport Terminal 3, or Hotel Name")}
           value={formData.pickupLocation}
           onChange={(e) => onChange({ pickupLocation: e.target.value })}
           wrapperClassName={styles.formField}
@@ -223,8 +225,8 @@ export default function StepTripDetails({
           error={errors.pickupLocation}
         />
         <FormField
-          label="Drop-off Location"
-          placeholder="Luxor, next to Ahmed Ali st."
+          label={t("transportBooking.rideDetails.dropoffLocation", "Drop-off Location")}
+          placeholder={t("transportBooking.rideDetails.dropoffLocationPlaceholder", "e.g. Mena House Hotel, Giza")}
           value={formData.dropoffLocation}
           onChange={(e) => onChange({ dropoffLocation: e.target.value })}
           wrapperClassName={styles.formField}
@@ -241,7 +243,7 @@ export default function StepTripDetails({
 
         {/* Date & Time */}
         <div className={styles.twoColumn}>
-          <FormField label="Pickup Date" required wrapperClassName={styles.formField} error={errors.pickupDate}>
+          <FormField label={t("transportBooking.rideDetails.pickupDate", "Pickup Date")} required wrapperClassName={styles.formField} error={errors.pickupDate}>
             <div className={styles.inputWithIcon}>
               <div className={styles.inputIcon}>
                 <Image src="/images/calendar-gray.svg" alt="" width={20} height={20} />
@@ -254,7 +256,7 @@ export default function StepTripDetails({
               />
             </div>
           </FormField>
-          <FormField label="Pickup Time" required wrapperClassName={styles.formField} error={errors.pickupTime}>
+          <FormField label={t("transportBooking.rideDetails.pickupTime", "Pickup Time")} required wrapperClassName={styles.formField} error={errors.pickupTime}>
             <TimePickerField
               value={formData.pickupTime}
               onChange={(val) => onChange({ pickupTime: val })}
@@ -265,7 +267,7 @@ export default function StepTripDetails({
 
         {/* Passengers & Luggage */}
         <div className={styles.twoColumn}>
-          <FormField label="Passengers" required wrapperClassName={styles.formField}>
+          <FormField label={t("transportBooking.rideDetails.passengers", "Passengers")} required wrapperClassName={styles.formField}>
             <SelectDropdown
               options={passengerOptions}
               value={formData.passengers.toString()}
@@ -273,7 +275,7 @@ export default function StepTripDetails({
               triggerClassName={styles.selectTrigger}
             />
           </FormField>
-          <FormField label="Luggage" required wrapperClassName={styles.formField}>
+          <FormField label={t("transportBooking.rideDetails.luggage", "Luggage")} required wrapperClassName={styles.formField}>
             <SelectDropdown
               options={luggageOptions}
               value={formData.luggage.toString()}
@@ -285,7 +287,7 @@ export default function StepTripDetails({
 
         {/* Additional Services */}
         <div className={styles.servicesSection}>
-          <label className={styles.label}>Additional Services</label>
+          <label className={styles.label}>{t("transportBooking.rideDetails.additionalServices", "Additional Services")}</label>
           <div className={styles.serviceList}>
             {additionalServices.map((service: any) => {
               const isSelected = formData.additionalServiceIds.includes(service.id);
