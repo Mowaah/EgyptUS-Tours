@@ -27,6 +27,23 @@ export default function B2BRequestProposalPage() {
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    if (
+      errors[field] ||
+      errors[`${field}_name`] ||
+      errors[`${field}_person`] ||
+      errors[`${field}_title`] ||
+      errors[`${field}_details`]
+    ) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        delete next[`${field}_name`];
+        delete next[`${field}_person`];
+        delete next[`${field}_title`];
+        delete next[`${field}_details`];
+        return next;
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -105,7 +122,7 @@ export default function B2BRequestProposalPage() {
               <p className={styles.formSubtitle}>{t("form.sectionSubtitle", "Provide your company details so we can tailor the proposal accordingly")}</p>
             </div>
 
-            <form onSubmit={handleSubmit} className={styles.form}>
+            <form onSubmit={handleSubmit} className={styles.form} noValidate>
               <div className={styles.grid}>
                 <FormField
                   id="companyName"
@@ -125,6 +142,7 @@ export default function B2BRequestProposalPage() {
                     useCountryName={true}
                     value={formData.country}
                     onChange={(val) => handleChange("country", val)}
+                    error={!!errors.country}
                   />
                 </FormField>
 

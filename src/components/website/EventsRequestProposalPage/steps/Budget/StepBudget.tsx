@@ -60,6 +60,7 @@ export default function StepBudget({
               value={data.estimatedBudget}
               onChange={(val) => onChange({ estimatedBudget: val })}
               triggerClassName={pageStyles.formInput}
+              error={!!errors.estimatedBudget}
             />
           </FormField>
 
@@ -71,6 +72,7 @@ export default function StepBudget({
               value={data.budgetFlexibility}
               onChange={(val) => onChange({ budgetFlexibility: val })}
               triggerClassName={pageStyles.formInput}
+              error={!!errors.budgetFlexibility}
             />
           </FormField>
 

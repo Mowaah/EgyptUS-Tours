@@ -50,6 +50,7 @@ export default function StepEventDetails({
               value={data.eventType}
               onChange={(val) => onChange({ eventType: val })}
               triggerClassName={pageStyles.formInput}
+              error={!!errors.eventType}
             />
           </FormField>
 
@@ -73,6 +74,7 @@ export default function StepEventDetails({
               value={data.expectedAttendees}
               onChange={(val) => onChange({ expectedAttendees: val })}
               triggerClassName={pageStyles.formInput}
+              error={!!errors.expectedAttendees}
             />
           </FormField>
 
@@ -84,6 +86,7 @@ export default function StepEventDetails({
               value={data.preferredCity}
               onChange={(val) => onChange({ preferredCity: val })}
               triggerClassName={pageStyles.formInput}
+              error={!!errors.preferredCity}
             />
           </FormField>
 
@@ -93,6 +96,7 @@ export default function StepEventDetails({
               className={`${formStyles.input} ${pageStyles.dateInput}`}
               value={data.startDate}
               onChange={(date) => onChange({ startDate: date })}
+              error={!!errors.startDate}
             />
           </FormField>
 
@@ -102,6 +106,7 @@ export default function StepEventDetails({
               className={`${formStyles.input} ${pageStyles.dateInput}`}
               value={data.endDate}
               onChange={(date) => onChange({ endDate: date })}
+              error={!!errors.endDate}
             />
           </FormField>
 

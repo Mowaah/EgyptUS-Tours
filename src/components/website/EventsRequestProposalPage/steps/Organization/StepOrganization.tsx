@@ -52,7 +52,7 @@ export default function StepOrganization({
             error={errors.name}
           />
 
-          <FormField label={t("proposal.organization.industry", "Industry")} required>
+          <FormField label={t("proposal.organization.industry", "Industry")} required error={errors.industry}>
             <SelectDropdown
               id="org-industry"
               label={t("proposal.organization.selectIndustry", "Select Industry")}
@@ -60,6 +60,7 @@ export default function StepOrganization({
               value={data.industry}
               onChange={(val) => onChange({ industry: val })}
               triggerClassName={pageStyles.formInput}
+              error={!!errors.industry}
             />
           </FormField>
 
@@ -128,14 +129,14 @@ export default function StepOrganization({
             error={errors.email}
           />
 
-          <FormField label={t("proposal.organization.phone", "Phone Number")} required>
+          <FormField label={t("proposal.organization.phone", "Phone Number")} required error={errors.phone}>
             <PhoneInput
               id="org-phone"
               name="tel"
               autoComplete="tel"
               value={data.phone}
               onChange={(val) => onChange({ phone: val })}
-              error={errors.phone}
+              hasError={!!errors.phone}
             />
           </FormField>
         </div>

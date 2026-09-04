@@ -29,6 +29,23 @@ export default function B2BSection() {
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    if (
+      errors[field] ||
+      errors[`${field}_name`] ||
+      errors[`${field}_person`] ||
+      errors[`${field}_title`] ||
+      errors[`${field}_details`]
+    ) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        delete next[`${field}_name`];
+        delete next[`${field}_person`];
+        delete next[`${field}_title`];
+        delete next[`${field}_details`];
+        return next;
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -185,7 +202,7 @@ export default function B2BSection() {
           </div>
 
           <div className={styles.right}>
-            <form className={styles.formCard} onSubmit={handleSubmit}>
+            <form className={styles.formCard} onSubmit={handleSubmit} noValidate>
               <FormField
                 id="homeB2bCompany"
                 name="organization"
@@ -203,6 +220,7 @@ export default function B2BSection() {
                   value={formData.country}
                   onChange={(val) => handleChange("country", val)}
                   useCountryName={true}
+                  error={!!errors.country}
                 />
               </FormField>
 
@@ -230,17 +248,16 @@ export default function B2BSection() {
                 error={errors.email}
               />
 
-              <div className={formStyles.field}>
-                <label className={formStyles.fieldLabel}>{t("b2bSection.phone", "Phone Number")}</label>
+              <FormField label={t("b2bSection.phone", "Phone Number")} error={errors.phone}>
                 <PhoneInput
                   id="homeB2bPhone"
                   name="tel"
                   autoComplete="tel"
                   value={formData.phone}
                   onChange={(val) => handleChange("phone", val)}
-                  error={errors.phone}
+                  hasError={!!errors.phone}
                 />
-              </div>
+              </FormField>
 
               <FormField
                 id="homeB2bWebsite"

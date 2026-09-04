@@ -230,7 +230,10 @@
     },
     "errors": {
       "orgName": "El nombre de la empresa es obligatorio.",
+      "industry": "El sector es obligatorio.",
+      "country": "El país es obligatorio.",
       "contactPerson": "La persona de contacto es obligatoria.",
+      "jobTitle": "El cargo es obligatorio.",
       "emailRequired": "El correo laboral es obligatorio.",
       "emailInvalid": "Por favor introduzca un correo electrónico válido.",
       "phoneRequired": "El número de teléfono es obligatorio.",

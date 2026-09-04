@@ -230,7 +230,10 @@
     },
     "errors": {
       "orgName": "Il nome dell'azienda è obbligatorio.",
+      "industry": "Il settore è obbligatorio.",
+      "country": "Il paese è obbligatorio.",
       "contactPerson": "La persona di contatto è obbligatoria.",
+      "jobTitle": "La qualifica lavorativa è obbligatoria.",
       "emailRequired": "L'email di lavoro è obbligatoria.",
       "emailInvalid": "Inserisci un indirizzo email valido.",
       "phoneRequired": "Il numero di telefono è obbligatorio.",

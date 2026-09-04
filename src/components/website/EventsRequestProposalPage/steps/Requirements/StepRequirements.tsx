@@ -60,6 +60,7 @@ export default function StepRequirements({
                 value={data.venueType}
                 onChange={(val) => onChange({ venueType: val })}
                 triggerClassName={pageStyles.formInput}
+                error={!!errors.venueType}
               />
             </div>
           </FormField>

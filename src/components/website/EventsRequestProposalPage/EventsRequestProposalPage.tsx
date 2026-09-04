@@ -93,6 +93,20 @@ export default function EventsRequestProposalPage() {
     }));
   };
 
+  const clearFieldErrors = (patch: Record<string, any>) => {
+    setFieldErrors((prev) => {
+      const next = { ...prev };
+      let changed = false;
+      Object.keys(patch).forEach((key) => {
+        if (next[key]) {
+          delete next[key];
+          changed = true;
+        }
+      });
+      return changed ? next : prev;
+    });
+  };
+
   const handleContinue = async () => {
     setSubmitError(null);
 
@@ -100,7 +114,10 @@ export default function EventsRequestProposalPage() {
       const org = proposalData.organization;
       const newErrors: Record<string, string> = {};
       if (!org.name.trim()) newErrors.name = t("proposal.errors.orgName", "Organization Name is required.");
+      if (!org.industry) newErrors.industry = t("proposal.errors.industry", "Industry is required.");
+      if (!org.country?.trim()) newErrors.country = t("proposal.errors.country", "Country is required.");
       if (!org.contactPerson.trim()) newErrors.contactPerson = t("proposal.errors.contactPerson", "Contact Person is required.");
+      if (!org.jobTitle?.trim()) newErrors.jobTitle = t("proposal.errors.jobTitle", "Job Title is required.");
       if (!org.email.trim()) {
         newErrors.email = t("proposal.errors.emailRequired", "Work Email is required.");
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(org.email.trim())) {
@@ -221,7 +238,7 @@ export default function EventsRequestProposalPage() {
           {currentStep === 1 && (
             <StepOrganization
               data={proposalData.organization}
-              onChange={(patch) => { updateOrganization(patch); setFieldErrors({}); }}
+              onChange={(patch) => { updateOrganization(patch); clearFieldErrors(patch); }}
               onContinue={handleContinue}
               onPrevious={handlePrevious}
               errors={fieldErrors}
@@ -231,7 +248,7 @@ export default function EventsRequestProposalPage() {
           {currentStep === 2 && (
             <StepEventDetails
               data={proposalData.eventDetails}
-              onChange={(patch) => { updateEventDetails(patch); setFieldErrors({}); }}
+              onChange={(patch) => { updateEventDetails(patch); clearFieldErrors(patch); }}
               onContinue={handleContinue}
               onPrevious={handlePrevious}
               errors={fieldErrors}
@@ -241,7 +258,7 @@ export default function EventsRequestProposalPage() {
           {currentStep === 3 && (
             <StepRequirements
               data={proposalData.requirements}
-              onChange={(patch) => { updateRequirements(patch); setFieldErrors({}); }}
+              onChange={(patch) => { updateRequirements(patch); clearFieldErrors(patch); }}
               onContinue={handleContinue}
               onPrevious={handlePrevious}
               errors={fieldErrors}
@@ -251,7 +268,7 @@ export default function EventsRequestProposalPage() {
           {currentStep === 4 && (
             <StepBudget
               data={proposalData.budget}
-              onChange={(patch) => { updateBudget(patch); setFieldErrors({}); }}
+              onChange={(patch) => { updateBudget(patch); clearFieldErrors(patch); }}
               onContinue={handleContinue}
               onPrevious={handlePrevious}
               isSubmitting={isSubmitting}

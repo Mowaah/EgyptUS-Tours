@@ -2,8 +2,8 @@
 
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { createPortal } from "react-dom";
-import Image from "next/image";
 import styles from "./CustomDatePicker.module.scss";
+import formStyles from "../FormField/FormField.module.scss";
 
 interface CustomDatePickerProps {
   value: string;
@@ -16,6 +16,7 @@ interface CustomDatePickerProps {
   placeholder?: string;
   fixedDurationDays?: number;
   minDate?: Date;
+  error?: boolean;
 }
 
 const WEEKDAYS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -48,7 +49,7 @@ const parseDateString = (val: string) => {
   return null;
 };
 
-export default function CustomDatePicker({ value, onChange, className, dropdownClassName = "", variant = "card", renderTrigger, selectsRange = false, placeholder, fixedDurationDays, minDate }: CustomDatePickerProps) {
+export default function CustomDatePicker({ value, onChange, className, dropdownClassName = "", variant = "card", renderTrigger, selectsRange = false, placeholder, fixedDurationDays, minDate, error }: CustomDatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const initialDate = parseDateString(value) || new Date();
 
@@ -239,7 +240,7 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
             }
           }}
           onClick={() => setIsOpen(true)}
-          className={className}
+          className={`${className || ""} ${error ? formStyles.inputInvalid : ""}`}
           placeholder="MM/DD/YYYY"
         />
       ) : variant === "custom" && renderTrigger ? (

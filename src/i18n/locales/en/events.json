@@ -230,7 +230,10 @@
     },
     "errors": {
       "orgName": "Organization Name is required.",
+      "industry": "Industry is required.",
+      "country": "Country is required.",
       "contactPerson": "Contact Person is required.",
+      "jobTitle": "Job Title is required.",
       "emailRequired": "Work Email is required.",
       "emailInvalid": "Please enter a valid email address.",
       "phoneRequired": "Phone Number is required.",
