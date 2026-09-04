@@ -103,6 +103,14 @@ export default function EventsRequestProposalPage() {
           changed = true;
         }
       });
+      if (patch.startDate !== undefined || patch.endDate !== undefined) {
+        const s = patch.startDate !== undefined ? patch.startDate : proposalData.eventDetails.startDate;
+        const e = patch.endDate !== undefined ? patch.endDate : proposalData.eventDetails.endDate;
+        if (s && e && new Date(e) >= new Date(s) && next.endDate) {
+          delete next.endDate;
+          changed = true;
+        }
+      }
       return changed ? next : prev;
     });
   };
@@ -139,12 +147,28 @@ export default function EventsRequestProposalPage() {
     if (currentStep === 2) {
       const evt = proposalData.eventDetails;
       const newErrors: Record<string, string> = {};
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
       if (!evt.eventType) newErrors.eventType = t("proposal.errors.eventType", "Event Type is required.");
       if (!evt.eventName.trim()) newErrors.eventName = t("proposal.errors.eventName", "Event Name is required.");
       if (!evt.expectedAttendees) newErrors.expectedAttendees = t("proposal.errors.expectedAttendees", "Expected Attendees is required.");
       if (!evt.preferredCity) newErrors.preferredCity = t("proposal.errors.preferredCity", "Preferred City is required.");
-      if (!evt.startDate) newErrors.startDate = t("proposal.errors.startDate", "Start Date is required.");
-      if (!evt.endDate) newErrors.endDate = t("proposal.errors.endDate", "End Date is required.");
+
+      if (!evt.startDate) {
+        newErrors.startDate = t("proposal.errors.startDate", "Start Date is required.");
+      } else if (new Date(evt.startDate) < today) {
+        newErrors.startDate = t("proposal.errors.startDatePast", "Start Date cannot be in the past.");
+      }
+
+      if (!evt.endDate) {
+        newErrors.endDate = t("proposal.errors.endDate", "End Date is required.");
+      } else if (new Date(evt.endDate) < today) {
+        newErrors.endDate = t("proposal.errors.endDatePast", "End Date cannot be in the past.");
+      } else if (evt.startDate && new Date(evt.endDate) < new Date(evt.startDate)) {
+        newErrors.endDate = t("proposal.errors.endDateBeforeStartDate", "End Date cannot be before Start Date.");
+      }
+
       if (Object.keys(newErrors).length > 0) {
         setFieldErrors(newErrors);
         return;

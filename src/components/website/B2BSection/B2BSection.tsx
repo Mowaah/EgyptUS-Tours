@@ -29,20 +29,10 @@ export default function B2BSection() {
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    if (
-      errors[field] ||
-      errors[`${field}_name`] ||
-      errors[`${field}_person`] ||
-      errors[`${field}_title`] ||
-      errors[`${field}_details`]
-    ) {
+    if (errors[field]) {
       setErrors((prev) => {
         const next = { ...prev };
         delete next[field];
-        delete next[`${field}_name`];
-        delete next[`${field}_person`];
-        delete next[`${field}_title`];
-        delete next[`${field}_details`];
         return next;
       });
     }
@@ -85,8 +75,13 @@ export default function B2BSection() {
       setShowModal(true);
     } catch (err: any) {
       console.error("Failed to submit B2B proposal:", err);
-      const fieldErrors = extractFieldErrors(err);
-      if (Object.keys(fieldErrors).length > 0) {
+      const rawErrors = extractFieldErrors(err);
+      if (Object.keys(rawErrors).length > 0) {
+        const fieldErrors: Record<string, string> = {};
+        for (const [k, v] of Object.entries(rawErrors)) {
+          const camelKey = k.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+          fieldErrors[camelKey] = v;
+        }
         setErrors(fieldErrors);
       } else {
         setErrors({ general: extractApiError(err) });
@@ -212,7 +207,7 @@ export default function B2BSection() {
                 placeholder={t("b2bSection.companyName", "Company Name")}
                 value={formData.companyName}
                 onChange={(e) => handleChange("companyName", e.target.value)}
-                error={errors.companyName || errors.company_name}
+                error={errors.companyName}
               />
 
               <FormField label={t("b2bSection.country", "Country")} error={errors.country}>
@@ -233,7 +228,7 @@ export default function B2BSection() {
                 placeholder={t("b2bSection.contactPersonPlaceholder", "Full Name")}
                 value={formData.contactPerson}
                 onChange={(e) => handleChange("contactPerson", e.target.value)}
-                error={errors.contactPerson || errors.contact_person}
+                error={errors.contactPerson}
               />
 
               <FormField
@@ -279,7 +274,7 @@ export default function B2BSection() {
                 rows={4}
                 value={formData.requestDetails}
                 onChange={(e: any) => handleChange("requestDetails", e.target.value)}
-                error={errors.requestDetails || errors.request_details}
+                error={errors.requestDetails}
               />
 
               {errors.general && (

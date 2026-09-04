@@ -243,7 +243,10 @@
       "expectedAttendees": "El número de asistentes es obligatorio.",
       "preferredCity": "La ciudad preferida es obligatoria.",
       "startDate": "La fecha de inicio es obligatoria.",
+      "startDatePast": "La fecha de inicio no puede ser en el pasado.",
       "endDate": "La fecha de fin es obligatoria.",
+      "endDatePast": "La fecha de fin no puede ser en el pasado.",
+      "endDateBeforeStartDate": "La fecha de fin no puede ser anterior a la de inicio.",
       "venueType": "El tipo de sede es obligatorio.",
       "estimatedBudget": "El presupuesto estimado es obligatorio.",
       "budgetFlexibility": "La flexibilidad presupuestaria es obligatoria."

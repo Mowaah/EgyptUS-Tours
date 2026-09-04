@@ -186,7 +186,7 @@ export default function StepTravelerInfo({
               className={`${formStyles.input} ${pageStyles.dateInput} ${showErrors && (!isEndDateFilled || isEndDateInPast || isDateInvalid) ? formStyles.inputInvalid : ""}`}
               value={travelerInfo.endDate}
               onChange={(date) => onTravelerChange("endDate", date)}
-              minDate={today}
+              minDate={travelerInfo.startDate ? new Date(travelerInfo.startDate) : today}
             />
           </FormField>
 

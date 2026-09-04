@@ -243,7 +243,10 @@
       "expectedAttendees": "Expected Attendees is required.",
       "preferredCity": "Preferred City is required.",
       "startDate": "Start Date is required.",
+      "startDatePast": "Start Date cannot be in the past.",
       "endDate": "End Date is required.",
+      "endDatePast": "End Date cannot be in the past.",
+      "endDateBeforeStartDate": "End Date cannot be before Start Date.",
       "venueType": "Preferred Venue Type is required.",
       "estimatedBudget": "Estimated Budget is required.",
       "budgetFlexibility": "Budget Flexibility is required."

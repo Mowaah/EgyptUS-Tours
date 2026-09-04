@@ -30,6 +30,10 @@ export default function StepEventDetails({
     value: et.value,
   }));
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const minEndDate = data.startDate ? new Date(data.startDate) : today;
+
   return (
     <div className={pageStyles.stepFormCard}>
       <header className={pageStyles.stepFormCardHeader}>
@@ -97,6 +101,7 @@ export default function StepEventDetails({
               value={data.startDate}
               onChange={(date) => onChange({ startDate: date })}
               error={!!errors.startDate}
+              minDate={today}
             />
           </FormField>
 
@@ -107,6 +112,7 @@ export default function StepEventDetails({
               value={data.endDate}
               onChange={(date) => onChange({ endDate: date })}
               error={!!errors.endDate}
+              minDate={minEndDate}
             />
           </FormField>
 
