@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { formatPrice } from "@/constants/currency";
 import styles from "./page.module.scss";
 import { useTripDetailContext } from "../layout";
 
@@ -75,12 +76,6 @@ export default function TripPricingPage() {
       </div>
 
       {Object.entries(byTourType).map(([tourType, seasons]) => {
-        const basePrice =
-          tourType === "private"
-            ? trip.private_price
-            : tourType === "group"
-            ? trip.group_price
-            : trip.base_price;
         const tourLabel = tourType === "private" ? "Private Tour" : tourType === "group" ? "Group Tour" : tourType;
         const subtitle = tourType === "private" ? "Maximum flexibility" : tourType === "group" ? "Up to 12 travelers" : "";
 
@@ -92,7 +87,6 @@ export default function TripPricingPage() {
                 <span className={styles.tourTitle}>{tourLabel}</span>
                 {subtitle && <span className={styles.tourSubtitle}>{subtitle}</span>}
               </div>
-              {basePrice && <div className={styles.headerPrice}>£{basePrice}</div>}
             </div>
 
             {/* Seasons Row */}
@@ -106,7 +100,7 @@ export default function TripPricingPage() {
                         <span className={styles.perPerson}>Per Person</span>
                         <span className={styles.roomType}>{tier.label}</span>
                       </div>
-                      <div className={styles.priceValue}>£{tier.price}</div>
+                      <div className={styles.priceValue}>{formatPrice(tier.price)}</div>
                     </div>
                   ))}
                 </div>

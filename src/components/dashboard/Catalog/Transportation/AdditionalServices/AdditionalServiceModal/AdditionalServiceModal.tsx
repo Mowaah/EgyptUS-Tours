@@ -5,6 +5,8 @@ import ModalHeader from "@/components/dashboard/shared/ModalHeader/ModalHeader";
 import ModalFooter from "@/components/dashboard/shared/ModalFooter/ModalFooter";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
+import { DASHBOARD_CURRENCY } from "@/constants/currency";
+import { CurrencyField } from "@/components/dashboard/shared";
 import styles from "./AdditionalServiceModal.module.scss";
 
 interface AdditionalServiceModalProps {
@@ -30,7 +32,7 @@ export default function AdditionalServiceModal({
     Italian: initialName.it || initialName.Italian || "",
     Spanish: initialName.es || initialName.Spanish || "",
   });
-  const [price, setPrice] = useState(initialPrice);
+  const [price, setPrice] = useState(initialPrice || "");
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
   useEffect(() => {
@@ -41,7 +43,7 @@ export default function AdditionalServiceModal({
         Italian: initialName.it || initialName.Italian || "",
         Spanish: initialName.es || initialName.Spanish || "",
       });
-      setPrice(initialPrice);
+      setPrice(initialPrice || "");
       setHasSubmitted(false);
     }
   }, [open, initialName, initialPrice]);
@@ -83,29 +85,15 @@ export default function AdditionalServiceModal({
         es: { name: names.Spanish },
       },
       price,
-      currency_code: "£",
+      currency_code: DASHBOARD_CURRENCY.code,
     });
-  };
-
-  const handleIncrement = () => {
-    const rawVal = price.replace(/[^0-9.]/g, "");
-    const current = parseFloat(rawVal) || 0;
-    setPrice(`${current + 1}£`);
-  };
-
-  const handleDecrement = () => {
-    const rawVal = price.replace(/[^0-9.]/g, "");
-    const current = parseFloat(rawVal) || 0;
-    if (current > 0) {
-      setPrice(`${current - 1}£`);
-    }
   };
 
   const hasChanges = isEdit ? (
     names.English !== (initialName.en || initialName.English || "") ||
     names.Italian !== (initialName.it || initialName.Italian || "") ||
     names.Spanish !== (initialName.es || initialName.Spanish || "") ||
-    price !== initialPrice
+    price !== (initialPrice || "")
   ) : true;
 
   return (
@@ -135,30 +123,13 @@ export default function AdditionalServiceModal({
             error={hasSubmitted && !names[lang].trim() ? `${lang} name is required` : ""}
             variant="modal"
           />
-          <DashboardField
-            label="Price (EGP)"
+          <CurrencyField
+            label={`Price (${DASHBOARD_CURRENCY.code})`}
             id="additional-service-price"
-            placeholder="0£"
+            placeholder="0"
             value={price}
-            onChange={(e) => {
-              const raw = e.target.value.replace(/[^0-9.]/g, "");
-              setPrice(raw ? `${raw}£` : "");
-            }}
+            onChange={setPrice}
             variant="modal"
-            endAdornment={
-              <div className={styles.spinnerWrapper}>
-                <button type="button" onClick={handleIncrement} className={styles.spinnerButton}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="18 15 12 9 6 15"></polyline>
-                  </svg>
-                </button>
-                <button type="button" onClick={handleDecrement} className={styles.spinnerButton}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                </button>
-              </div>
-            }
           />
         </div>
 

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
+import { DASHBOARD_CURRENCY } from "@/constants/currency";
 import styles from "./PaymentStep.module.scss";
 
 export interface PaymentStepProps {
@@ -221,15 +222,15 @@ export default function PaymentStep({
       <div className={styles.summaryBlock}>
         <div className={styles.summaryItem}>
           <span className={styles.summaryLabel}>Package Total</span>
-          <span className={styles.summaryValue}>£{total.toFixed(2)}</span>
+          <span className={styles.summaryValue}>{DASHBOARD_CURRENCY.symbol}{total.toFixed(2)}</span>
         </div>
         <div className={styles.summaryItem}>
           <span className={styles.summaryLabel}>Amount Due Today</span>
-          <span className={styles.summaryValue}>£{amountDue.toFixed(2)}</span>
+          <span className={styles.summaryValue}>{DASHBOARD_CURRENCY.symbol}{amountDue.toFixed(2)}</span>
         </div>
         <div className={styles.summaryItem}>
           <span className={styles.summaryLabel}>Remaining Balance</span>
-          <span className={styles.summaryValue}>£{remainingBalance.toFixed(2)}</span>
+          <span className={styles.summaryValue}>{DASHBOARD_CURRENCY.symbol}{remainingBalance.toFixed(2)}</span>
         </div>
       </div>
 

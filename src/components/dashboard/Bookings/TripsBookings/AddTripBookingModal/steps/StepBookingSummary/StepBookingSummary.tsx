@@ -3,7 +3,7 @@ import Image from "next/image";
 import styles from "./StepBookingSummary.module.scss";
 import { AddTripBookingData } from "../../AddTripBookingModal";
 import { previewTripBooking } from "@/services/admin/adminBookingsService";
-import { getFullHotelBySlug } from "@/services/hotelsService";
+import { DASHBOARD_CURRENCY } from "@/constants/currency";
 import useSWR from "swr";
 
 interface StepBookingSummaryProps {
@@ -179,8 +179,8 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
 
   const formatPrice = (price: number | string) => {
     const num = typeof price === "string" ? parseFloat(price) : price;
-    if (isNaN(num)) return "£0";
-    return `£${num.toLocaleString("en-US", { maximumFractionDigits: 2 })}`;
+    if (isNaN(num)) return `${DASHBOARD_CURRENCY.symbol}0`;
+    return `${DASHBOARD_CURRENCY.symbol}${num.toLocaleString("en-US", { maximumFractionDigits: 2 })}`;
   };
 
   return (
@@ -283,7 +283,7 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
                 </div>
 
                 <div className={styles.totalRow}>
-                  <span className={styles.totalLabel}>Total (EGP)</span>
+                  <span className={styles.totalLabel}>Total ({DASHBOARD_CURRENCY.code})</span>
                   <span className={styles.totalValue}>{formatPrice(total)}</span>
                 </div>
               </>

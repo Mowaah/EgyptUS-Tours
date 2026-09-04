@@ -37,6 +37,11 @@ export default function TransportationDetailPage({ vehicleDetail }: Transportati
       ? vehicleDetail.gallery.map(g => g.image)
       : [vehicleDetail.image || "/images/sedan.png"],
     price: vehicleDetail.price_amount,
+    prices: {
+      usd: vehicleDetail.price_amount ? parseFloat(vehicleDetail.price_amount) : undefined,
+      egp: vehicleDetail.price_amount_egp ? parseFloat(vehicleDetail.price_amount_egp) : undefined,
+      eur: vehicleDetail.price_amount_eur ? parseFloat(vehicleDetail.price_amount_eur) : undefined,
+    },
   };
 
   const handleShare = async () => {
@@ -119,7 +124,7 @@ export default function TransportationDetailPage({ vehicleDetail }: Transportati
           </div>
 
           <div className={styles.bookingSidebar}>
-            <BookingWidget vehicleId={vehicle.id} totalPrice={vehicle.price} />
+            <BookingWidget vehicleId={vehicle.id} totalPrice={vehicle.price} prices={vehicle.prices} />
           </div>
         </div>
       </div>

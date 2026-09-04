@@ -15,7 +15,8 @@ interface CustomDatePickerProps {
   selectsRange?: boolean;
   placeholder?: string;
   fixedDurationDays?: number;
-  minDate?: Date;
+  minDate?: Date | null;
+  allowPastDates?: boolean;
   error?: boolean;
 }
 
@@ -49,11 +50,36 @@ const parseDateString = (val: string) => {
   return null;
 };
 
-export default function CustomDatePicker({ value, onChange, className, dropdownClassName = "", variant = "card", renderTrigger, selectsRange = false, placeholder, fixedDurationDays, minDate, error }: CustomDatePickerProps) {
+export default function CustomDatePicker({
+  value,
+  onChange,
+  className,
+  dropdownClassName = "",
+  variant = "card",
+  renderTrigger,
+  selectsRange = false,
+  placeholder,
+  fixedDurationDays,
+  minDate,
+  allowPastDates = false,
+  error,
+}: CustomDatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const initialDate = parseDateString(value) || new Date();
 
-  // ... rest remains same until the dropdown div renderer
+  // Effective minDate: defaults to start of today unless past dates are explicitly allowed
+  const effectiveMinDate = (() => {
+    if (allowPastDates || minDate === null) return null;
+    if (minDate !== undefined) {
+      const d = new Date(minDate);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+  })();
+
   const [viewDate, setViewDate] = useState(initialDate);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -103,8 +129,15 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
     };
   }, [isOpen]);
 
+  const isPrevMonthDisabled = (() => {
+    if (!effectiveMinDate) return false;
+    const prevMonthEnd = new Date(viewDate.getFullYear(), viewDate.getMonth(), 0, 23, 59, 59, 999);
+    return prevMonthEnd < effectiveMinDate;
+  })();
+
   const handlePrevMonth = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (isPrevMonthDisabled) return;
     setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1));
   };
 
@@ -279,12 +312,22 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
       {isOpen && dropdownStyle && createPortal(
         <div className={`${styles.dropdown} ${dropdownClassName}`} style={dropdownStyle} ref={dropdownRef}>
           <div className={styles.header}>
-
-            <button className={styles.navBtn} onClick={handlePrevMonth}>
+            <button
+              type="button"
+              className={styles.navBtn}
+              onClick={handlePrevMonth}
+              disabled={isPrevMonthDisabled}
+              aria-label="Previous month"
+            >
               <ArrowIcon className={styles.flipIcon} />
             </button>
             <div className={styles.monthYear}>{formattedMonthYear}</div>
-            <button className={styles.navBtn} onClick={handleNextMonth}>
+            <button
+              type="button"
+              className={styles.navBtn}
+              onClick={handleNextMonth}
+              aria-label="Next month"
+            >
               <ArrowIcon />
             </button>
           </div>
@@ -314,12 +357,10 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
               }
 
               let isDisabled = false;
-              if (minDate) {
+              if (effectiveMinDate) {
                 const itemDateObj = new Date(item.date);
                 itemDateObj.setHours(0, 0, 0, 0);
-                const minDateObj = new Date(minDate);
-                minDateObj.setHours(0, 0, 0, 0);
-                if (itemDateObj < minDateObj) {
+                if (itemDateObj < effectiveMinDate) {
                   isDisabled = true;
                 }
               }
@@ -327,13 +368,13 @@ export default function CustomDatePicker({ value, onChange, className, dropdownC
               return (
                 <button
                   key={idx}
+                  type="button"
                   onClick={() => {
                     if (!isDisabled) handleDateSelect(item.date);
                   }}
                   disabled={isDisabled}
-                  style={isDisabled ? { opacity: 0.3, cursor: "not-allowed" } : undefined}
                   className={`${styles.dayBtn} ${!item.isCurrentMonth ? styles.dayOutside : ""
-                    } ${isSelected ? styles.daySelected : ""}`}
+                    } ${isSelected ? styles.daySelected : ""} ${isDisabled ? styles.dayDisabled : ""}`}
                 >
                   {item.day}
                 </button>

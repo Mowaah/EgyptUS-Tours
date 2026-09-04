@@ -1,18 +1,27 @@
+import { MultiCurrencyPrice } from "@/constants/currency";
+
 export interface Vehicle {
   id: string;
   name: string;
+  title?: string;
   type: string;
   image: string;
   gallery?: string[];
   price: string;
+  prices?: MultiCurrencyPrice;
   passengers: number;
-  luggage: number;
+  luggage: number | string;
+  durationHours?: string;
+  features?: string[];
   description: string;
   rating: number;
   reviews: number;
   discountValue?: string;
   discountTitle?: string;
   originalPrice?: number;
+  originalPrices?: MultiCurrencyPrice;
+  pricePerKm?: number;
+  pricePerKmPrices?: MultiCurrencyPrice;
 }
 
 export interface TransportationBookingData {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { Vehicle, TransportationBookingData, INITIAL_TRANSPORT_BOOKING } from "@/types";
@@ -15,19 +15,115 @@ import StepPersonalInfo from "./steps/PersonalInfo/StepPersonalInfo";
 import StepPayment from "./steps/Payment/StepPayment";
 import BookingSummary from "./BookingSummary/BookingSummary";
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+export function resolvePaymentUrl(paymentUrl: string) {
+  const trimmed = paymentUrl.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return new URL(trimmed, BASE_URL).toString();
+}
+
+export interface SavedTransportBookingInfo {
+  id: string | number;
+  vehicleSlug?: string;
+  vehicleName?: string;
+  pickupDate?: string;
+  totalAmount?: number;
+  depositAmount?: number;
+}
+
+export function saveTransportBookingInfo(info: SavedTransportBookingInfo) {
+  try {
+    const data = JSON.stringify({ ...info, timestamp: Date.now() });
+    localStorage.setItem("last_transport_booking", data);
+    sessionStorage.setItem("last_transport_booking", data);
+  } catch (e) {
+    console.error("Failed to save transport booking info", e);
+  }
+}
+
+export function getTransportBookingInfo(): SavedTransportBookingInfo | null {
+  try {
+    const raw = localStorage.getItem("last_transport_booking") || sessionStorage.getItem("last_transport_booking");
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    const savedAt = Number(parsed.timestamp || 0);
+    if (!savedAt || Date.now() - savedAt > 24 * 60 * 60 * 1000) {
+      clearTransportBookingInfo();
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+export function clearTransportBookingInfo() {
+  try {
+    localStorage.removeItem("last_transport_booking");
+    sessionStorage.removeItem("last_transport_booking");
+  } catch {}
+}
+
 interface BookTransportationPageProps {
   vehicle: Vehicle;
 }
 
 export default function BookTransportationPage({ vehicle }: BookTransportationPageProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { formatCurrency } = useCurrency();
   const { t } = useTranslation("booking");
   const [currentStep, setCurrentStep] = useState(1);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [confirmedBooking, setConfirmedBooking] = useState<SavedTransportBookingInfo | null>(null);
   const stepIndicatorRef = useRef<HTMLDivElement | null>(null);
   const [formData, setFormData] = useState<TransportationBookingData>(INITIAL_TRANSPORT_BOOKING);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  // Check for successful payment redirect back to this page
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const isBookingSuccess =
+      urlParams.get("booking_success") === "true" ||
+      urlParams.get("booking_success") === "1" ||
+      searchParams.get("booking_success") === "true" ||
+      searchParams.get("booking_success") === "1";
+
+    const successParam = (urlParams.get("success") || searchParams.get("success") || "").toLowerCase();
+    const pendingParam = (urlParams.get("pending") || searchParams.get("pending") || "").toLowerCase();
+    const isDirectPaymobSuccess =
+      (successParam === "true" || successParam === "1") &&
+      pendingParam !== "true";
+
+    if (isBookingSuccess || isDirectPaymobSuccess) {
+      const savedInfo = getTransportBookingInfo();
+      const rawBookingId =
+        urlParams.get("booking_id") ||
+        searchParams.get("booking_id") ||
+        urlParams.get("id") ||
+        searchParams.get("id") ||
+        savedInfo?.id ||
+        Math.floor(Math.random() * 90000000 + 10000000);
+
+      const bookingId = String(rawBookingId).replace(/[^a-zA-Z0-9-_]/g, "");
+
+      setConfirmedBooking({
+        id: bookingId,
+        vehicleName: savedInfo?.vehicleName || `${vehicle.type} - ${vehicle.name}`,
+        pickupDate: savedInfo?.pickupDate || formData.pickupDate,
+        totalAmount: savedInfo?.totalAmount,
+        depositAmount: savedInfo?.depositAmount,
+      });
+      setShowSuccess(true);
+
+      try {
+        window.history.replaceState({}, "", window.location.pathname);
+      } catch {}
+    }
+  }, [searchParams, vehicle.name, vehicle.type]);
 
   const steps = [
     { number: 1, label: t("transportBooking.steps.rideDetails", "Trip Details") },
@@ -125,14 +221,19 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
           title={t("transportBooking.success.title", "Booking Confirmed!")}
           message={t("transportBooking.success.message", "Your vehicle has been successfully booked. Confirmation details have been sent to your email.")}
           primaryButtonText={t("transportBooking.success.viewBooking", "View Booking")}
-          buttonText={t("transportBooking.success.backToHome", "Back to Home")}
-          onPrimaryClick={() => router.push("/")}
-          onClose={() => router.push("/")}
+          onPrimaryClick={() => {
+            clearTransportBookingInfo();
+            router.push("/profile");
+          }}
+          onClose={() => {
+            clearTransportBookingInfo();
+            router.push("/");
+          }}
           metadata={[
-            { label: t("sidebar.bookingSummary", "Booking Reference"), value: `BK-${String(Math.floor(Math.random() * 90000000 + 10000000)).padStart(6, "0")}` },
-            { label: t("transportBooking.rideDetails.vehicle", "Vehicle"), value: `${vehicle.type} - ${vehicle.name}` },
-            { label: t("transportBooking.rideDetails.pickupDate", "Pickup Date"), value: formData.pickupDate || "2026-01-22" },
-            { label: t("sidebar.totalPrice", "Total Paid"), value: formatCurrency(Number(vehicle.price.replace(/,/g, "")) || 0), valueColor: "#FF6600" },
+            { label: t("sidebar.bookingSummary", "Booking Reference"), value: `BK-${String(confirmedBooking?.id || Math.floor(Math.random() * 90000000 + 10000000)).padStart(6, "0")}` },
+            { label: t("transportBooking.rideDetails.vehicle", "Vehicle"), value: confirmedBooking?.vehicleName || `${vehicle.type} - ${vehicle.name}` },
+            { label: t("transportBooking.rideDetails.pickupDate", "Pickup Date"), value: confirmedBooking?.pickupDate || formData.pickupDate || "—" },
+            { label: t("sidebar.totalPrice", "Total Paid"), value: confirmedBooking?.depositAmount ? formatCurrency(Number(confirmedBooking.depositAmount)) : formatCurrency(vehicle.prices || Number(vehicle.price.replace(/[^0-9.]/g, "")) || 0), valueColor: "#FF6600" },
           ]}
         />
       )}

@@ -87,7 +87,7 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
             <span className={styles.statLabel}>{t("units.rooms", "Rooms")}</span>
           </div>
           <div className={styles.stat}>
-            <span className={styles.statValue}>{formatCurrency(hotel.pricePerNight)}</span>
+            <span className={styles.statValue}>{formatCurrency(hotel.prices || hotel.pricePerNight)}</span>
             <span className={styles.statLabel}>{t("units.perNight", "/night")}</span>
           </div>
         </div>
@@ -99,9 +99,9 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
             <span className={styles.priceLabel}>{t("units.startingFrom", "Starting from")}</span>
             <span className={styles.priceValue}>
               {hotel.originalPrice && (
-                <span className={styles.originalPrice}>{formatCurrency(hotel.originalPrice)}</span>
+                <span className={styles.originalPrice}>{formatCurrency(hotel.originalPrices || hotel.originalPrice)}</span>
               )}
-              {formatCurrency(hotel.pricePerNight)}
+              {formatCurrency(hotel.prices || hotel.pricePerNight)}
               <small>{t("units.perNight", "/night")}</small>
             </span>
           </div>

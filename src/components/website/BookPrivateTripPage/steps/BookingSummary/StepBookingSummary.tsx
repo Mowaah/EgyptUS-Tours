@@ -9,6 +9,7 @@ import { BookingDetailsSections, BookingStepFooter, CheckboxIndicator } from "@/
 import ImportantLinksModal from "@/components/website/TripDetailPage/TripImportantLinks/ImportantLinksModal";
 import { getNationalityName } from "@/utils/nationality";
 import { useTranslation } from "@/hooks/useTranslation";
+import { MultiCurrencyPrice } from "@/constants/currency";
 
 interface StepBookingSummaryProps {
   trip: Trip;
@@ -20,6 +21,8 @@ interface StepBookingSummaryProps {
   depositAmount: number;
   isGroupTrip?: boolean;
   isSubmitting?: boolean;
+  totalPrices?: MultiCurrencyPrice;
+  depositPrices?: MultiCurrencyPrice;
 }
 
 export default function StepBookingSummary({
@@ -32,6 +35,8 @@ export default function StepBookingSummary({
   depositAmount,
   isGroupTrip,
   isSubmitting = false,
+  totalPrices,
+  depositPrices,
 }: StepBookingSummaryProps) {
   const [showTermsModal, setShowTermsModal] = useState(false);
   const { t } = useTranslation("booking");
@@ -159,6 +164,8 @@ export default function StepBookingSummary({
           formData={formData}
           totalAmount={totalAmount}
           depositAmount={depositAmount}
+          totalPrices={totalPrices}
+          depositPrices={depositPrices}
         />
       </div>
 

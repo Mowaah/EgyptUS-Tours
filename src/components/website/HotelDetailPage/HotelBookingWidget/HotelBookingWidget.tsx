@@ -16,7 +16,7 @@ export default function HotelBookingWidget({ hotel }: HotelBookingWidgetProps) {
   const bookHref = `/hotels/${hotel.id}/book`;
   const { formatCurrency } = useCurrency();
   const { t } = useTranslation("hotels");
-  const price = formatCurrency(hotel.pricePerNight);
+  const price = formatCurrency(hotel.prices || hotel.pricePerNight);
 
   return (
     <aside className={styles.sidebar} aria-label="Book this hotel">

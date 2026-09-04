@@ -86,7 +86,7 @@ export default function TripPricing({ trip }: TripPricingProps) {
                     <div className={styles.tierIconWrap}>
                       <Image src="/images/currency.svg" alt="" width={22} height={22} />
                     </div>
-                    <p className={styles.tierPrice}>{formatCurrency(tier.price)}</p>
+                    <p className={styles.tierPrice}>{formatCurrency(tier.prices || tier.price)}</p>
                   </div>
                   <p className={styles.tierLabel}>
                     {t("pricing.perPersonIn", "Per Person in {label}").replace("{label}", tier.label)}

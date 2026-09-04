@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Trip } from "@/types";
 import { BookingData, INITIAL_BOOKING_DATA } from "@/types";
@@ -9,6 +9,7 @@ import { BASE_URL, extractApiError, submitTripBooking } from "@/lib/api";
 import { formatPhoneE164 } from "@/utils/validators";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { MultiCurrencyPrice } from "@/constants/currency";
 
 import planPageStyles from "../PlanYourTripPage/PlanYourTripPage.module.scss";
 
@@ -104,38 +105,78 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
 
   const [formData, setFormData] = useState<BookingData>(INITIAL_BOOKING_DATA);
 
-  // Calculate total based on room prices (price is already for the full trip duration)
+  // Calculate total across all currencies based on room prices (price is already for the full trip duration)
   const nights = trip.duration?.nights || 1;
-  const baseSeason = trip.seasonPricing?.[0] || { single: 0, double: 0, triple: 0 };
-  const poolSurcharge = trip.additionalRooms?.poolView || 0;
-  const seaSurcharge = trip.additionalRooms?.seaView || 0;
+  const baseSeason = trip.seasonPricing?.[0];
+  const addOns = trip.additionalRooms;
 
-  const totalAmount = Object.entries(formData.roomCustomizations || {}).reduce((acc, [type, optionsList]) => {
-    const k = type.toLowerCase();
-    let basePrice = 0;
-    if (k.includes("single")) basePrice = baseSeason.single;
-    else if (k.includes("triple")) basePrice = baseSeason.triple;
-    else basePrice = baseSeason.double;
+  const calculateTotalForCurrency = (curr: "usd" | "egp" | "eur") => {
+    let singlePrice = curr === "egp" ? (baseSeason?.singleEgp || (baseSeason?.singlePrices?.egp ? Number(baseSeason.singlePrices.egp) : 0))
+                    : curr === "eur" ? (baseSeason?.singleEur || (baseSeason?.singlePrices?.eur ? Number(baseSeason.singlePrices.eur) : 0))
+                    : (baseSeason?.single || (baseSeason?.singlePrices?.usd ? Number(baseSeason.singlePrices.usd) : 0));
+    let doublePrice = curr === "egp" ? (baseSeason?.doubleEgp || (baseSeason?.doublePrices?.egp ? Number(baseSeason.doublePrices.egp) : 0))
+                    : curr === "eur" ? (baseSeason?.doubleEur || (baseSeason?.doublePrices?.eur ? Number(baseSeason.doublePrices.eur) : 0))
+                    : (baseSeason?.double || (baseSeason?.doublePrices?.usd ? Number(baseSeason.doublePrices.usd) : 0));
+    let triplePrice = curr === "egp" ? (baseSeason?.tripleEgp || (baseSeason?.triplePrices?.egp ? Number(baseSeason.triplePrices.egp) : 0))
+                    : curr === "eur" ? (baseSeason?.tripleEur || (baseSeason?.triplePrices?.eur ? Number(baseSeason.triplePrices.eur) : 0))
+                    : (baseSeason?.triple || (baseSeason?.triplePrices?.usd ? Number(baseSeason.triplePrices.usd) : 0));
 
-    const roomSum = (optionsList || []).reduce((rAcc, opt) => {
-      let addon = 0;
-      if (opt === "pool") addon = poolSurcharge;
-      if (opt === "sea") addon = seaSurcharge;
-      return rAcc + (basePrice + addon);
+    let poolAddon = curr === "egp" ? (addOns?.poolViewEgp || (addOns?.poolViewPrices?.egp ? Number(addOns.poolViewPrices.egp) : 0))
+                  : curr === "eur" ? (addOns?.poolViewEur || (addOns?.poolViewPrices?.eur ? Number(addOns.poolViewPrices.eur) : 0))
+                  : (addOns?.poolView || (addOns?.poolViewPrices?.usd ? Number(addOns.poolViewPrices.usd) : 0));
+
+    let seaAddon = curr === "egp" ? (addOns?.seaViewEgp || (addOns?.seaViewPrices?.egp ? Number(addOns.seaViewPrices.egp) : 0))
+                 : curr === "eur" ? (addOns?.seaViewEur || (addOns?.seaViewPrices?.eur ? Number(addOns.seaViewPrices.eur) : 0))
+                 : (addOns?.seaView || (addOns?.seaViewPrices?.usd ? Number(addOns.seaViewPrices.usd) : 0));
+
+    return Object.entries(formData.roomCustomizations || {}).reduce((acc, [type, optionsList]) => {
+      const k = type.toLowerCase();
+      let basePrice = doublePrice;
+      let capacity = 2;
+      if (k.includes("single")) {
+        basePrice = singlePrice;
+        capacity = 1;
+      } else if (k.includes("triple")) {
+        basePrice = triplePrice;
+        capacity = 3;
+      }
+
+      const roomSum = (optionsList || []).reduce((rAcc, opt) => {
+        let addon = 0;
+        if (opt === "pool") addon = poolAddon;
+        if (opt === "sea") addon = seaAddon;
+        return rAcc + (basePrice * capacity + addon);
+      }, 0);
+
+      return acc + roomSum;
     }, 0);
+  };
 
-    return acc + roomSum;
-  }, 0);
-  
-  let depositAmount = totalAmount * 0.3;
-  if (formData.startDate) {
+  const totalPrices: MultiCurrencyPrice = useMemo(() => ({
+    usd: calculateTotalForCurrency("usd"),
+    egp: calculateTotalForCurrency("egp"),
+    eur: calculateTotalForCurrency("eur"),
+  }), [formData.roomCustomizations, baseSeason, addOns]);
+
+  const isDepositFull = useMemo(() => {
+    if (!formData.startDate) return false;
     const startDate = new Date(formData.startDate);
     const today = new Date();
     const daysUntil = (startDate.getTime() - today.getTime()) / (1000 * 3600 * 24);
-    if (daysUntil <= 30) {
-      depositAmount = totalAmount;
-    }
-  }
+    return daysUntil <= 30;
+  }, [formData.startDate]);
+
+  const depositPrices: MultiCurrencyPrice = useMemo(() => {
+    const factor = isDepositFull ? 1 : 0.3;
+    return {
+      usd: Number(totalPrices.usd || 0) * factor,
+      egp: Number(totalPrices.egp || 0) * factor,
+      eur: Number(totalPrices.eur || 0) * factor,
+    };
+  }, [totalPrices, isDepositFull]);
+
+  const totalAmount = Number(totalPrices.usd || totalPrices.egp || 0);
+  const depositAmount = Number(depositPrices.usd || depositPrices.egp || 0);
 
   // Check for successful payment redirect back to this page
   useEffect(() => {
@@ -366,6 +407,8 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
               depositAmount={depositAmount}
               isGroupTrip={isGroupTrip}
               isSubmitting={isStartingCheckout}
+              totalPrices={totalPrices}
+              depositPrices={depositPrices}
             />
           )}
         </div>
@@ -384,8 +427,8 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
             { label: t("tripBooking.success.tripName", "Trip Name"), value: confirmedBooking?.tripTitle || trip.title },
             { label: t("tripBooking.success.travelType", "Travel Type"), value: isGroupTrip ? t("tripBooking.groupTitle", "Group Tour") : t("tripBooking.privateTitle", "Private Tour") },
             { label: t("tripBooking.success.date", "Date"), value: confirmedBooking?.startDate || formData.startDate || "—" },
-            { label: t("sidebar.totalPrice", "Total Price"), value: confirmedBooking?.totalAmount ? formatCurrency(Number(confirmedBooking.totalAmount)) : formatCurrency(totalAmount), valueColor: "#FF6600" },
-            { label: t("sidebar.payNow", "Paid Now"), value: confirmedBooking?.depositAmount ? formatCurrency(Number(confirmedBooking.depositAmount)) : formatCurrency(depositAmount), valueColor: "#FF6600" },
+            { label: t("sidebar.totalPrice", "Total Price"), value: confirmedBooking?.totalAmount ? formatCurrency(Number(confirmedBooking.totalAmount)) : formatCurrency(totalPrices), valueColor: "#FF6600" },
+            { label: t("sidebar.payNow", "Paid Now"), value: confirmedBooking?.depositAmount ? formatCurrency(Number(confirmedBooking.depositAmount)) : formatCurrency(depositPrices), valueColor: "#FF6600" },
           ]}
         />
       )}

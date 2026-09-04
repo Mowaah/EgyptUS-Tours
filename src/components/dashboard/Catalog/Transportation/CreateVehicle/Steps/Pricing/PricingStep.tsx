@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { FormSection } from "@/components/dashboard/FormFields";
 import { CurrencyField } from "@/components/dashboard/shared";
+import { DASHBOARD_CURRENCY } from "@/constants/currency";
 import { useVehicleAdditionalServices } from "@/hooks/useCatalogVehicles";
 import { getLocalizedName } from "@/components/dashboard/shared/i18n";
 import { CreateVehicleValues } from "../../CreateVehicleSchema";
@@ -41,14 +42,14 @@ export function PricingStep() {
           <div className={styles.inputContainer}>
             <CurrencyField
               name="basePrice"
-              label="Base Price Per Person (EGP)"
+              label={`Base Price Per Person (${DASHBOARD_CURRENCY.symbol})`}
               control={control}
               error={errors.basePrice?.message}
             />
 
             <CurrencyField
               name="pricePerKm"
-              label="Price per Km (EGP)"
+              label={`Price per Km (${DASHBOARD_CURRENCY.symbol})`}
               control={control}
               error={errors.pricePerKm?.message}
             />
@@ -104,18 +105,18 @@ export function PricingStep() {
           <div className={styles.summaryContainer}>
             <div className={styles.summaryRow}>
               <span className={styles.summaryLabel}>Base Price</span>
-              <span className={styles.summaryValue}>£{numBase}</span>
+              <span className={styles.summaryValue}>{DASHBOARD_CURRENCY.symbol}{numBase}</span>
             </div>
             {selectedServices.map((service: any) => (
               <div key={service.id} className={styles.summaryRow}>
                 <span className={styles.summaryLabel}>{getLocalizedName(service, "English")}</span>
-                <span className={styles.summaryValue}>£{service.price || 0}</span>
+                <span className={styles.summaryValue}>{DASHBOARD_CURRENCY.symbol}{service.price || 0}</span>
               </div>
             ))}
 
             <div className={styles.totalRow}>
               <span className={styles.totalLabel}>Total Price Person</span>
-              <span className={styles.totalValue}>£{total}</span>
+              <span className={styles.totalValue}>{DASHBOARD_CURRENCY.symbol}{total}</span>
             </div>
           </div>
         </FormSection>

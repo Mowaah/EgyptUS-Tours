@@ -33,18 +33,30 @@ export default async function HotelDetailRoutePage({ params }: PageProps) {
       .filter(h => h.slug !== id)
       .sort(() => 0.5 - Math.random())
       .slice(0, 4)
-      .map(h => ({
-        id: h.slug,
-        name: h.name,
-        location: h.location_text || "",
-        image: h.hero_image || "/images/pyramids.jpg",
-        stars: h.stars,
-        rating: parseFloat(h.rating_avg) || 0,
-        rooms: h.rooms,
-        pricePerNight: parseFloat(h.price_per_night) || 0,
-        reviews: h.review_count,
-        isFavorite: h.is_favorite
-      } as Hotel));
+      .map(h => {
+        const baseUsd = parseFloat(h.price_per_night) || 0;
+        const baseEgp = h.price_per_night_egp ? parseFloat(h.price_per_night_egp) : undefined;
+        const baseEur = h.price_per_night_eur ? parseFloat(h.price_per_night_eur) : undefined;
+        return {
+          id: h.slug,
+          name: h.name,
+          location: h.location_text || "",
+          image: h.hero_image || "/images/pyramids.jpg",
+          stars: h.stars,
+          rating: parseFloat(h.rating_avg) || 0,
+          rooms: h.rooms,
+          pricePerNight: baseUsd,
+          pricePerNightEgp: baseEgp,
+          pricePerNightEur: baseEur,
+          prices: {
+            usd: baseUsd,
+            egp: baseEgp,
+            eur: baseEur,
+          },
+          reviews: h.review_count,
+          isFavorite: h.is_favorite,
+        } as Hotel;
+      });
     
     // Map HotelDetail to frontend Hotel type
     const hotel: Hotel = mapHotelDetailToHotel(hotelDetail);

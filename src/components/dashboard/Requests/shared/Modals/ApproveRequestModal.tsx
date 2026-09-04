@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
+import { DASHBOARD_CURRENCY } from "@/constants/currency";
 import rootStyles from "./RequestModals.module.scss";
 import styles from "./ApproveRequestModal.module.scss";
 
@@ -58,12 +59,9 @@ export default function ApproveRequestModal({ open, onClose, onSubmit }: Approve
       payment_plan: paymentPlan === "30% Deposit" ? "deposit" : "full",
       payment_method: paymentMethod.toLowerCase(),
       initial_payment_state: paymentStatus === "Pending" ? "pending" : "paid",
-      approval_notes: approvalNote
+      approval_notes: approvalNote,
+      currency: paymentMethod === "Paymob" ? "egp" : DASHBOARD_CURRENCY.code.toLowerCase(),
     };
-
-    if (paymentMethod === "Paymob") {
-      payload.currency = "egp";
-    }
 
     onSubmit(payload);
     onClose();
@@ -81,6 +79,9 @@ export default function ApproveRequestModal({ open, onClose, onSubmit }: Approve
     </div>
   );
 
+  const costSymbol = paymentMethod === "Paymob" ? "£" : DASHBOARD_CURRENCY.symbol;
+  const costCurrency = paymentMethod === "Paymob" ? "EGP" : DASHBOARD_CURRENCY.code;
+
   return (
     <div className={rootStyles.overlay} onMouseDown={onClose}>
       <div className={rootStyles.modal} style={{ width: "647px" }} onMouseDown={(e) => e.stopPropagation()}>
@@ -93,18 +94,18 @@ export default function ApproveRequestModal({ open, onClose, onSubmit }: Approve
         <div className={styles.modalBody}>
           
           <div className={styles.fieldGroup}>
-            <label className={styles.fieldLabel}>Total Trip Cost</label>
+            <label className={styles.fieldLabel}>Total Trip Cost ({costCurrency})</label>
             <DashboardField
               control="input"
               label=""
               id="total-trip-cost"
               variant="modal"
-              value={totalCost === undefined ? "" : `£${totalCost.toLocaleString()}`}
+              value={totalCost === undefined ? "" : `${costSymbol}${totalCost.toLocaleString()}`}
               onChange={(e: any) => {
                 const val = e.target.value.replace(/[^0-9]/g, "");
                 setTotalCost(val ? parseInt(val, 10) : undefined);
               }}
-              placeholder="£0"
+              placeholder={`${costSymbol}0`}
             />
           </div>
 

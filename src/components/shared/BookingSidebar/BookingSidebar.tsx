@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { Trip, Hotel } from "@/types";
 import { BookingData } from "@/types";
+import { MultiCurrencyPrice } from "@/constants/currency";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./BookingSidebar.module.scss";
@@ -20,6 +21,8 @@ interface BookingSidebarProps {
   vatAmount?: number;
   totalRooms?: number;
   totalGuests?: number;
+  totalPrices?: MultiCurrencyPrice;
+  depositPrices?: MultiCurrencyPrice;
 }
 
 // "2026-03-15" → "Mar 15". Falls back to a neutral placeholder if empty/invalid.
@@ -40,6 +43,8 @@ export default function BookingSidebar({
   vatAmount = 0,
   totalRooms = 0,
   totalGuests = 0,
+  totalPrices,
+  depositPrices,
 }: BookingSidebarProps) {
   // Mobile-only: the full details collapse into a compact summary strip.
   // On desktop this state is ignored (CSS always shows the details).
@@ -48,9 +53,41 @@ export default function BookingSidebar({
   const { t } = useTranslation("booking");
 
   const finalTotal = totalAmount + vatAmount;
-  const remainingAmount = finalTotal - depositAmount;
   const isHotel = !!hotel;
   const formatMoney = formatCurrency;
+
+  const isDepositFull = React.useMemo(() => {
+    if (depositPrices && totalPrices) {
+      return (
+        (depositPrices.usd != null && totalPrices.usd != null && depositPrices.usd === totalPrices.usd) ||
+        (depositPrices.egp != null && totalPrices.egp != null && depositPrices.egp === totalPrices.egp)
+      );
+    }
+    return depositAmount >= finalTotal;
+  }, [depositPrices, totalPrices, depositAmount, finalTotal]);
+
+  const resolvedTotal: MultiCurrencyPrice | number = React.useMemo(() => {
+    if (!totalPrices) return finalTotal;
+    if (vatAmount <= 0) return totalPrices;
+    return {
+      usd: totalPrices.usd != null ? Number(totalPrices.usd) + vatAmount : undefined,
+      egp: totalPrices.egp != null ? Number(totalPrices.egp) + vatAmount : undefined,
+      eur: totalPrices.eur != null ? Number(totalPrices.eur) + vatAmount : undefined,
+    };
+  }, [totalPrices, finalTotal, vatAmount]);
+
+  const resolvedDeposit: MultiCurrencyPrice | number = depositPrices || depositAmount;
+
+  const resolvedRemaining: MultiCurrencyPrice | number = React.useMemo(() => {
+    if (totalPrices && depositPrices) {
+      return {
+        usd: Math.max(0, (Number(totalPrices.usd) || 0) - (Number(depositPrices.usd) || 0)),
+        egp: Math.max(0, (Number(totalPrices.egp) || 0) - (Number(depositPrices.egp) || 0)),
+        eur: Math.max(0, (Number(totalPrices.eur) || 0) - (Number(depositPrices.eur) || 0)),
+      };
+    }
+    return Math.max(0, finalTotal - depositAmount);
+  }, [totalPrices, depositPrices, finalTotal, depositAmount]);
 
   const image = isHotel ? (hotel!.image || "/images/pyramids.jpg") : (trip!.image || "/images/cruise.jpg");
   const title = isHotel ? hotel!.name : trip!.title;
@@ -74,11 +111,14 @@ export default function BookingSidebar({
 
   const tripRoomRows = (() => {
     if (isHotel || !trip) return [];
-    const baseSeason = trip.seasonPricing?.[0] || { single: 0, double: 0, triple: 0 };
+    const baseSeason = trip.seasonPricing?.[0];
     const poolSurcharge = trip.additionalRooms?.poolView || 0;
     const seaSurcharge = trip.additionalRooms?.seaView || 0;
 
-    const roomGroupsMap: Record<string, { count: number; name: string; view: string; unitPrice: number }> = {};
+    const roomGroupsMap: Record<
+      string,
+      { count: number; name: string; view: string; unitPrice: number; unitPrices: MultiCurrencyPrice }
+    > = {};
     const roomEntries = Object.entries(formData.rooms || {}).filter(([_, count]) => (count as number) > 0);
 
     if (roomEntries.length === 0) return [];
@@ -86,12 +126,21 @@ export default function BookingSidebar({
     roomEntries.forEach(([type, count]) => {
       const rawType = type.toLowerCase();
       let basePrice = 0;
+      let unitPrices: MultiCurrencyPrice = { usd: 0, egp: 0 };
+
+      let capacity = 1;
       if (rawType.includes("single")) {
-        basePrice = baseSeason.single || trip.price || trip.privatePrice || 0;
+        basePrice = baseSeason?.single || trip.price || trip.privatePrice || 0;
+        unitPrices = baseSeason?.singlePrices || { usd: basePrice, egp: (baseSeason?.singleEgp || basePrice * 50) };
+        capacity = 1;
       } else if (rawType.includes("triple")) {
-        basePrice = baseSeason.triple || trip.price || trip.privatePrice || 0;
+        basePrice = baseSeason?.triple || trip.price || trip.privatePrice || 0;
+        unitPrices = baseSeason?.triplePrices || { usd: basePrice, egp: (baseSeason?.tripleEgp || basePrice * 50) };
+        capacity = 3;
       } else {
-        basePrice = baseSeason.double || trip.price || trip.privatePrice || 0;
+        basePrice = baseSeason?.double || trip.price || trip.privatePrice || 0;
+        unitPrices = baseSeason?.doublePrices || { usd: basePrice, egp: (baseSeason?.doubleEgp || basePrice * 50) };
+        capacity = 2;
       }
 
       const getLocalizedRoomTitle = (tName: string) => {
@@ -118,8 +167,23 @@ export default function BookingSidebar({
       for (let i = 0; i < totalCount; i++) {
         const opt = customizations[i] || "garden";
         let addon = 0;
-        if (opt.toLowerCase().includes("pool")) addon = poolSurcharge;
-        if (opt.toLowerCase().includes("sea")) addon = seaSurcharge;
+        let addonPrices: MultiCurrencyPrice = { usd: 0, egp: 0 };
+        if (opt.toLowerCase().includes("pool")) {
+          addon = poolSurcharge;
+          addonPrices = {
+            usd: trip.additionalRooms?.poolViewPrices?.usd ? Number(trip.additionalRooms.poolViewPrices.usd) : poolSurcharge,
+            egp: trip.additionalRooms?.poolViewPrices?.egp ? Number(trip.additionalRooms.poolViewPrices.egp) : (trip.additionalRooms?.poolViewEgp || poolSurcharge * 50),
+            eur: trip.additionalRooms?.poolViewPrices?.eur ? Number(trip.additionalRooms.poolViewPrices.eur) : trip.additionalRooms?.poolViewEur,
+          };
+        }
+        if (opt.toLowerCase().includes("sea")) {
+          addon = seaSurcharge;
+          addonPrices = {
+            usd: trip.additionalRooms?.seaViewPrices?.usd ? Number(trip.additionalRooms.seaViewPrices.usd) : seaSurcharge,
+            egp: trip.additionalRooms?.seaViewPrices?.egp ? Number(trip.additionalRooms.seaViewPrices.egp) : (trip.additionalRooms?.seaViewEgp || seaSurcharge * 50),
+            eur: trip.additionalRooms?.seaViewPrices?.eur ? Number(trip.additionalRooms.seaViewPrices.eur) : trip.additionalRooms?.seaViewEur,
+          };
+        }
 
         const viewLabel = getLocalizedViewLabel(opt);
 
@@ -129,7 +193,12 @@ export default function BookingSidebar({
             count: 0,
             name: roomTitle,
             view: viewLabel,
-            unitPrice: basePrice + addon,
+            unitPrice: (basePrice * capacity) + addon,
+            unitPrices: {
+              usd: (Number(unitPrices.usd) || basePrice) * capacity + (Number(addonPrices.usd) || addon),
+              egp: (Number(unitPrices.egp) || basePrice * 50) * capacity + (Number(addonPrices.egp) || addon * 50),
+              eur: (Number(unitPrices.eur) || 0) * capacity + (Number(addonPrices.eur) || 0) || undefined,
+            },
           };
         }
         roomGroupsMap[groupKey].count += 1;
@@ -139,6 +208,11 @@ export default function BookingSidebar({
     return Object.values(roomGroupsMap).map((g) => ({
       label: `${g.count} × ${g.name} - ${g.view}`,
       price: g.unitPrice * g.count,
+      prices: {
+        usd: (Number(g.unitPrices.usd) || g.unitPrice) * g.count,
+        egp: (Number(g.unitPrices.egp) || g.unitPrice * 50) * g.count,
+        eur: g.unitPrices.eur ? Number(g.unitPrices.eur) * g.count : undefined,
+      },
     }));
   })();
 
@@ -180,7 +254,7 @@ export default function BookingSidebar({
             <div className={styles.compactBottomRow}>
               <div className={styles.compactTotal}>
                 <span className={styles.compactTotalLabel}>{t("sidebar.total", "Total")}:</span>
-                <span className={styles.compactTotalValue}>{formatMoney(finalTotal)}</span>
+                <span className={styles.compactTotalValue}>{formatMoney(resolvedTotal)}</span>
               </div>
               <span className={styles.compactExpandText}>
                 {expanded ? t("sidebar.hideDetails", "Hide Details") : t("sidebar.viewDetails", "View Details")}
@@ -290,7 +364,11 @@ export default function BookingSidebar({
                   if (!room) continue;
 
                   const name = type.toLowerCase().includes("room") ? type.charAt(0).toUpperCase() + type.slice(1) : `${type.charAt(0).toUpperCase() + type.slice(1)} Room`;
-                  const price = room.pricePerNight * nights;
+                  const roomPrices: MultiCurrencyPrice = {
+                    usd: (room.prices?.usd != null ? Number(room.prices.usd) : (room.pricePerNight / 50)) * nights,
+                    egp: (room.pricePerNightEgp != null ? room.pricePerNightEgp : (room.prices?.egp != null ? Number(room.prices.egp) : room.pricePerNight)) * nights,
+                    eur: room.pricePerNightEur != null ? room.pricePerNightEur * nights : (room.prices?.eur != null ? Number(room.prices.eur) * nights : undefined),
+                  };
                   const viewTitle = (() => {
                     const v = (room.view || "").toLowerCase();
                     if (v.includes("sea")) return t("hotelBooking.roomDates.views.sea", "Sea View");
@@ -302,7 +380,7 @@ export default function BookingSidebar({
                   rows.push(
                     <div key={`${type}-${i}`} className={styles.priceRow}>
                       <span>1 × {name} - {viewTitle} ({nights} {nights === 1 ? t("sidebar.night", "Night") : t("sidebar.nights", "Nights")})</span>
-                      <strong>{formatMoney(price)}</strong>
+                      <strong>{formatMoney(roomPrices)}</strong>
                     </div>
                   );
                 }
@@ -312,13 +390,13 @@ export default function BookingSidebar({
               tripRoomRows.map((row, idx) => (
                 <div key={`${row.label}-${idx}`} className={styles.priceRow}>
                   <span>{row.label}</span>
-                  <strong>{formatMoney(row.price)}</strong>
+                  <strong>{formatMoney((row as any).prices || row.price)}</strong>
                 </div>
               ))
             ) : (
               <div className={styles.priceRow}>
                  <span>{t("sidebar.tripPackage", "Trip Package")}</span>
-                 <strong>{formatMoney(totalAmount)}</strong>
+                 <strong>{formatMoney(totalPrices || totalAmount)}</strong>
               </div>
             )}
             {isHotel && vatAmount > 0 && (
@@ -333,20 +411,20 @@ export default function BookingSidebar({
 
           <div className={styles.totalRow}>
             <span className={styles.totalLabel}>{t("sidebar.total", "Total")}</span>
-            <span className={styles.totalValue}>{formatMoney(finalTotal)}</span>
+            <span className={styles.totalValue}>{formatMoney(resolvedTotal)}</span>
           </div>
 
           {/* Deposit card */}
           <div className={styles.depositCard}>
             <div className={styles.depositTopRow}>
               <span className={styles.depositLabel}>
-                {t("sidebar.payNow", "Pay now")} {depositAmount === finalTotal ? t("sidebar.fullAmount", "(Full amount)") : t("sidebar.deposit30", "(30% deposit)")}
+                {t("sidebar.payNow", "Pay now")} {isDepositFull ? t("sidebar.fullAmount", "(Full amount)") : t("sidebar.deposit30", "(30% deposit)")}
               </span>
-              <span className={styles.depositAmount}>{formatMoney(depositAmount)}</span>
+              <span className={styles.depositAmount}>{formatMoney(resolvedDeposit)}</span>
             </div>
             <div className={styles.depositBottomRow}>
               <span className={styles.depositNote}>{t("sidebar.remainingNote", "Remaining 70% due one month before your trip")}</span>
-              <span className={styles.remainingAmount}>{formatMoney(remainingAmount)}</span>
+              <span className={styles.remainingAmount}>{formatMoney(resolvedRemaining)}</span>
             </div>
           </div>
 

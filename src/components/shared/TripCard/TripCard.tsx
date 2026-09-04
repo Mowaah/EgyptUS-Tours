@@ -79,11 +79,11 @@ export default function TripCard({ trip, onFavoriteToggle, className = "" }: Tri
             <span className={styles.priceFrom}>{t("units.from", "From")} </span>
             {trip.originalPrice && (
               <span className={styles.originalPrice}>
-                {formatCurrency(Number(String(trip.originalPrice).replace(/,/g, "")) || 0)}
+                {formatCurrency(trip.originalPrices || Number(String(trip.originalPrice).replace(/,/g, "")) || 0)}
               </span>
             )}
             <span className={styles.priceValue}>
-              {formatCurrency(Number(String(trip.price).replace(/,/g, "")) || 0)}
+              {formatCurrency(trip.prices || Number(String(trip.price).replace(/,/g, "")) || 0)}
             </span>
             <span className={styles.pricePer}>{t("units.perNightFull", "per night")}</span>
           </div>

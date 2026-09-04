@@ -5,6 +5,7 @@ import Link from "next/link";
 import Button from "../Button/Button";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { MultiCurrencyPrice } from "@/constants/currency";
 import styles from "./VehicleCard.module.scss";
 
 export interface Vehicle {
@@ -20,7 +21,9 @@ export interface Vehicle {
   rating: number;
   reviews: number;
   price: string;
+  prices?: MultiCurrencyPrice;
   originalPrice?: number;
+  originalPrices?: MultiCurrencyPrice;
   discountTitle?: string;
   discountValue?: string;
 }
@@ -123,9 +126,9 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
               <span className={styles.priceLabel}>{t("units.totalPrice", "Total Price")}</span>
               <span className={styles.priceValue}>
                 {vehicle.originalPrice && (
-                  <span className={styles.originalPrice}>{formatCurrency(vehicle.originalPrice)}</span>
+                  <span className={styles.originalPrice}>{formatCurrency(vehicle.originalPrices || vehicle.originalPrice)}</span>
                 )}
-                {formatCurrency(Number(String(vehicle.price).replace(/,/g, "")) || 0)}
+                {formatCurrency(vehicle.prices || Number(String(vehicle.price).replace(/,/g, "")) || 0)}
               </span>
             </div>
             <Button variant="primary" size="sm" href={`/transportation/${vehicle.id}/book`}>

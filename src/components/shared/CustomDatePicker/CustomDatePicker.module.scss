@@ -93,8 +93,14 @@
   opacity: 0.5;
   transition: opacity $transition-fast;
 
-  &:hover {
+  &:hover:not(:disabled) {
     opacity: 1;
+  }
+
+  &:disabled {
+    opacity: 0.15;
+    cursor: not-allowed;
+    pointer-events: none;
   }
 
   svg {
@@ -177,4 +183,15 @@
 .daySelected {
   background: $secondary;
   color: $white;
+}
+
+.dayDisabled {
+  opacity: 0.25;
+  cursor: not-allowed !important;
+  pointer-events: none;
+  color: $gray-400 !important;
+
+  &:hover {
+    background: transparent !important;
+  }
 }

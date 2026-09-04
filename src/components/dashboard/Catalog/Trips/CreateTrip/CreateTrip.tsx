@@ -18,6 +18,7 @@ import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { WizardLayout } from "@/components/dashboard/shared";
 import { useWizard, WizardStepConfig, WizardSubmitIntent } from "@/hooks/useWizard";
 import { fileToBase64 } from "@/utils/imageUtils";
+import { DASHBOARD_CURRENCY } from "@/constants/currency";
 import {
   createCatalogTrip,
   getCatalogTripDetail,
@@ -498,7 +499,7 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
       pool_view: money(data.pricing?.additionalRooms?.poolView) || null,
     },
     rating_avg: data.starRating ? parseFloat(data.starRating) : null,
-    currency_code: "£",
+    currency_code: DASHBOARD_CURRENCY.code,
     availability_enabled: !!data.datesAvailability?.enabled,
     force_draft: intent !== "publish" && !isEdit,
     inclusions: (data.inclusions || []).map(inc => ({

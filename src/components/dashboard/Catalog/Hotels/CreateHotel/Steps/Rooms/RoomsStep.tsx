@@ -6,10 +6,11 @@ import { MultiUploadDropzone } from "@/components/dashboard/FormFields";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import { getLangKey } from "@/components/dashboard/shared/i18n";
 import { CreateHotelValues } from "../../CreateHotelSchema";
+import { DASHBOARD_CURRENCY } from "@/constants/currency";
 import styles from "./RoomsStep.module.scss";
 import Image from "next/image";
 
-type RoomErrorKey = "category" | "type" | "view" | "pricePerNightEgp";
+type RoomErrorKey = "category" | "type" | "view" | "pricePerNight" | "pricePerNightEgp";
 type RoomFieldErrors = Partial<Record<RoomErrorKey, { message?: string }>>;
 
 function getRoomError(errors: FieldErrors<CreateHotelValues>, index: number, key: RoomErrorKey): string | undefined {
@@ -118,7 +119,6 @@ export function RoomsStep() {
       type: "",
       view: "",
       pricePerNight: "",
-      pricePerNightEgp: "",
       description: { en: "", it: "", es: "" },
       facilities: [],
       photos: [],
@@ -263,14 +263,14 @@ function RoomItem({ field, index, remove }: { field: any, index: number, remove:
             </div>
             <div className={styles.fieldItem}>
               <Controller
-                name={`rooms.${index}.pricePerNightEgp`}
+                name={`rooms.${index}.pricePerNight`}
                 control={control}
                 render={({ fieldState }) => (
                   <CurrencyField 
-                    name={`rooms.${index}.pricePerNightEgp`}
-                    label="Price per Night (EGP)"
+                    name={`rooms.${index}.pricePerNight`}
+                    label={`Price per Night (${DASHBOARD_CURRENCY.symbol})`}
                     control={control}
-                    error={getRoomError(errors, index, "pricePerNightEgp") || fieldState.error?.message}
+                    error={getRoomError(errors, index, "pricePerNight") || fieldState.error?.message}
                   />
                 )}
               />

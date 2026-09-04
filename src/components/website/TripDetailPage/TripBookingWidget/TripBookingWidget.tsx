@@ -16,12 +16,15 @@ export default function TripBookingWidget({ trip }: TripBookingWidgetProps) {
   const { formatCurrency } = useCurrency();
   const { t } = useTranslation("trips");
 
-  function formatPrice(value?: number) {
+  function formatPrice(prices?: any, value?: number) {
+    if (prices && (prices.usd != null || prices.egp != null || prices.eur != null)) {
+      return formatCurrency(prices);
+    }
     return value != null ? formatCurrency(value) : null;
   }
 
-  const privatePrice = formatPrice(trip.privatePrice);
-  const groupPrice = formatPrice(trip.groupPrice);
+  const privatePrice = formatPrice(trip.privatePrices, trip.privatePrice);
+  const groupPrice = formatPrice(trip.groupPrices, trip.groupPrice);
 
   function mobileLabel(price: string | null, action: string) {
     return price ? (
@@ -43,23 +46,23 @@ export default function TripBookingWidget({ trip }: TripBookingWidgetProps) {
           </p>
           <div className={styles.divider} />
 
-          {trip.privatePrice != null && (
+          {(privatePrice != null || trip.privatePrice != null) && (
             <div className={styles.tier}>
               <div>
                 <span className={styles.tierName}>{t("bookingWidget.privateTour", "Private Tour")}</span>
                 <span className={styles.tierHint}>{t("bookingWidget.maximumFlexibility", "Maximum flexibility")}</span>
               </div>
-              <span className={styles.tierPrice}>{formatPrice(trip.privatePrice)}</span>
+              <span className={styles.tierPrice}>{privatePrice}</span>
             </div>
           )}
 
-          {trip.groupPrice != null && (
+          {(groupPrice != null || trip.groupPrice != null) && (
             <div className={styles.tier}>
               <div>
                 <span className={styles.tierName}>{t("bookingWidget.groupTour", "Group Tour")}</span>
                 <span className={styles.tierHint}>{t("bookingWidget.upTo12Travelers", "Up to 12 travelers")}</span>
               </div>
-              <span className={styles.tierPrice}>{formatPrice(trip.groupPrice)}</span>
+              <span className={styles.tierPrice}>{groupPrice}</span>
             </div>
           )}
 

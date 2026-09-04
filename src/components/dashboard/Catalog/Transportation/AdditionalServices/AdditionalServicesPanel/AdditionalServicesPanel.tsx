@@ -7,6 +7,7 @@ import AdditionalServiceCard, { AdditionalService } from "../AdditionalServiceCa
 import TablePagination from "@/components/dashboard/shared/TablePagination/TablePagination";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import styles from "./AdditionalServicesPanel.module.scss";
+import { DASHBOARD_CURRENCY } from "@/constants/currency";
 import { getVehicleAdditionalServices } from "@/services/admin/adminCatalogVehicleAdditionalServicesService";
 import { getLangKey, getLocalizedName } from "@/components/dashboard/shared/i18n";
 
@@ -47,7 +48,7 @@ export default function AdditionalServicesPanel({
           it: it?.name || it?.title || "",
           es: es?.name || es?.title || "",
         },
-        price: `£${r.price_amount || r.price || "0"}`,
+        price: `${DASHBOARD_CURRENCY.symbol}${r.price_amount || r.price || "0"}`,
       };
     });
   }, [data, lang]);

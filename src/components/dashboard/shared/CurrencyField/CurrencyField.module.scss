@@ -1,31 +1,9 @@
 @use "@/styles/variables" as *;
 
-.numberAdornmentContainer {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.numberAdornment {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 2px;
-  color: $gray-400;
-
-  button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: inherit;
-    
-    &:hover {
-      color: $gray-700;
-    }
-  }
+.currencySymbol {
+  font-size: $font-size-lg;
+  font-weight: 400;
+  color: $gray-500;
+  padding-right: 4px;
+  flex-shrink: 0;
 }

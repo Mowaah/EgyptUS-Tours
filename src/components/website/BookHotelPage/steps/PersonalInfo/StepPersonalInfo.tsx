@@ -15,6 +15,8 @@ import { Hotel } from "@/types";
 import BookingSidebar from "@/components/shared/BookingSidebar/BookingSidebar";
 import ImportantLinksModal from "@/components/website/TripDetailPage/TripImportantLinks/ImportantLinksModal";
 
+import { MultiCurrencyPrice } from "@/constants/currency";
+
 interface StepPersonalInfoProps {
   hotel: Hotel;
   formData: BookingData;
@@ -27,12 +29,15 @@ interface StepPersonalInfoProps {
   depositAmount: number;
   totalRooms: number;
   totalGuests: number;
+  totalPrices?: MultiCurrencyPrice;
+  depositPrices?: MultiCurrencyPrice;
 }
 
 export default function StepPersonalInfo({
   hotel, formData, onChange, onPrevious, onContinue,
   isSubmitting,
   totalAmount, vatAmount, depositAmount, totalRooms, totalGuests,
+  totalPrices, depositPrices,
 }: StepPersonalInfoProps) {
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -88,6 +93,8 @@ export default function StepPersonalInfo({
                 depositAmount={depositAmount}
                 totalRooms={totalRooms}
                 totalGuests={totalGuests}
+                totalPrices={totalPrices}
+                depositPrices={depositPrices}
               />
             </div>
 
@@ -199,6 +206,8 @@ export default function StepPersonalInfo({
             depositAmount={depositAmount}
             totalRooms={totalRooms}
             totalGuests={totalGuests}
+            totalPrices={totalPrices}
+            depositPrices={depositPrices}
           />
         </div>
       </div>

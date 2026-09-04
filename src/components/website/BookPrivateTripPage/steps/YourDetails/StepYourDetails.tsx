@@ -39,17 +39,18 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
 
   // Extract rooms directly from trip season pricing instead of hotel
   const roomGroups: RoomGroup[] = useMemo(() => {
-    const baseSeason = trip?.seasonPricing?.[0] || { single: 0, double: 0, triple: 0 };
+    const baseSeason = trip?.seasonPricing?.[0];
+    if (!baseSeason) return [];
     const addOns = trip?.additionalRooms || {};
     
     const options = [
       { label: "Garden View", value: "garden", price: "Included", isFree: true },
     ];
     if (addOns.poolView) {
-      options.push({ label: "Pool View", value: "pool", price: `+${formatCurrency(addOns.poolView)}`, isFree: false });
+      options.push({ label: "Pool View", value: "pool", price: `+${formatCurrency(addOns.poolViewPrices || addOns.poolView)}`, isFree: false });
     }
     if (addOns.seaView) {
-      options.push({ label: "Sea View", value: "sea", price: `+${formatCurrency(addOns.seaView)}`, isFree: false });
+      options.push({ label: "Sea View", value: "sea", price: `+${formatCurrency(addOns.seaViewPrices || addOns.seaView)}`, isFree: false });
     }
 
     const groups: RoomGroup[] = [];
@@ -58,8 +59,8 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
         key: "single",
         title: t("tripBooking.step1.singleRoom", "Single Room"),
         subtitle: `1 ${t("hotelBooking.roomDates.person", "person")}`,
-        displayPrice: formatCurrency(baseSeason.single),
-        priceUnit: `/ ${t("sidebar.night", "night")}`,
+        displayPrice: formatCurrency(baseSeason.singlePrices || baseSeason.single),
+        priceUnit: `/ ${t("hotelBooking.roomDates.person", "person")}`,
         defaultOptionValue: "garden",
         options,
       });
@@ -69,8 +70,8 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
         key: "double",
         title: t("tripBooking.step1.doubleRoom", "Double Room"),
         subtitle: `2 ${t("hotelBooking.roomDates.people", "persons")}`,
-        displayPrice: formatCurrency(baseSeason.double),
-        priceUnit: `/ ${t("sidebar.night", "night")}`,
+        displayPrice: formatCurrency(baseSeason.doublePrices || baseSeason.double),
+        priceUnit: `/ ${t("hotelBooking.roomDates.person", "person")}`,
         defaultOptionValue: "garden",
         options,
       });
@@ -80,8 +81,8 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
         key: "triple",
         title: t("tripBooking.step1.tripleRoom", "Triple Room"),
         subtitle: `3 ${t("hotelBooking.roomDates.people", "persons")}`,
-        displayPrice: formatCurrency(baseSeason.triple),
-        priceUnit: `/ ${t("sidebar.night", "night")}`,
+        displayPrice: formatCurrency(baseSeason.triplePrices || baseSeason.triple),
+        priceUnit: `/ ${t("hotelBooking.roomDates.person", "person")}`,
         defaultOptionValue: "garden",
         options,
       });

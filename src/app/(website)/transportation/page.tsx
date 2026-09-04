@@ -24,18 +24,30 @@ export default async function Page() {
   
   const vehicles: Vehicle[] = vehiclesData.map(v => {
     const basePrice = parseFloat(v.price_amount) || 0;
+    const basePriceEgp = v.price_amount_egp ? parseFloat(v.price_amount_egp) : undefined;
+    const basePriceEur = v.price_amount_eur ? parseFloat(v.price_amount_eur) : undefined;
     const discountPerc = v.discount_value ? parseFloat(v.discount_value) : 0;
     const discountedPrice = discountPerc > 0 ? basePrice * (1 - discountPerc / 100) : basePrice;
 
     return {
-    id: v.slug,
-    title: v.title || v.name,
-    type: v.type || v.vehicle_type,
-    image: v.image || "/images/sedan.png",
-    price: discountedPrice.toString(),
-    originalPrice: discountPerc > 0 ? basePrice : undefined,
-    discountTitle: v.discount_title || undefined,
-    discountValue: v.discount_value ? `${parseFloat(v.discount_value)}% Off` : undefined,
+      id: v.slug,
+      title: v.title || v.name,
+      type: v.type || v.vehicle_type,
+      image: v.image || "/images/sedan.png",
+      price: discountedPrice.toString(),
+      prices: {
+        usd: discountedPrice,
+        egp: basePriceEgp != null ? (discountPerc > 0 ? basePriceEgp * (1 - discountPerc / 100) : basePriceEgp) : undefined,
+        eur: basePriceEur != null ? (discountPerc > 0 ? basePriceEur * (1 - discountPerc / 100) : basePriceEur) : undefined,
+      },
+      originalPrice: discountPerc > 0 ? basePrice : undefined,
+      originalPrices: discountPerc > 0 ? {
+        usd: basePrice,
+        egp: basePriceEgp,
+        eur: basePriceEur,
+      } : undefined,
+      discountTitle: v.discount_title || undefined,
+      discountValue: v.discount_value ? `${parseFloat(v.discount_value)}% Off` : undefined,
     passengers: v.passengers,
     luggage: (v.luggage_capacity !== undefined && v.luggage_capacity !== null && v.luggage_capacity > 0)
       ? `${v.luggage_capacity} large suitcase${v.luggage_capacity > 1 ? "s" : ""}`

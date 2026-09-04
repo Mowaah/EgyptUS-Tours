@@ -1,3 +1,5 @@
+import { MultiCurrencyPrice } from "@/constants/currency";
+
 export interface HotelRoom {
   id: string;
   name: string;
@@ -5,6 +7,9 @@ export interface HotelRoom {
   images: string[];
   features: string[];
   pricePerNight: number;
+  pricePerNightEgp?: number;
+  pricePerNightEur?: number;
+  prices?: MultiCurrencyPrice;
   discountPercent?: number;
   type: string;
   category?: string;
@@ -30,6 +35,9 @@ export interface Hotel {
   rating: number;
   rooms: number;
   pricePerNight: number;
+  pricePerNightEgp?: number;
+  pricePerNightEur?: number;
+  prices?: MultiCurrencyPrice;
   reviews: number;
   subtitle?: string;
   secondDescription?: string;
@@ -38,6 +46,7 @@ export interface Hotel {
   discountValue?: string;
   discountTitle?: string;
   originalPrice?: number;
+  originalPrices?: MultiCurrencyPrice;
   overview?: {
     sections: { heading: string; body: string }[];
   };

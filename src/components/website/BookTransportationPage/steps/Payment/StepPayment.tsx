@@ -3,7 +3,12 @@
 import { PaymentForm } from "@/components/shared";
 import { TransportationBookingData, Vehicle } from "@/types";
 import { submitTransportationBooking } from "@/lib/api";
-import { useState } from "react";
+import { useCurrency } from "@/contexts/CurrencyContext";
+import { MultiCurrencyPrice } from "@/constants/currency";
+import { useTranslation } from "@/hooks/useTranslation";
+import { formatPhoneE164 } from "@/utils/validators";
+import { useState, useMemo } from "react";
+import { saveTransportBookingInfo, resolvePaymentUrl } from "../../BookTransportationPage";
 
 interface StepPaymentProps {
   formData: TransportationBookingData;
@@ -17,15 +22,31 @@ export default function StepPayment({
   formData, onChange, onPrevious, onContinue, vehicle,
 }: StepPaymentProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const numericPrice = parseFloat((vehicle.price ?? "0").replace(/[^0-9.]/g, ""));
-  let depositAmt = numericPrice * 0.3;
-  if (formData.pickupDate) {
+  const { formatCurrency } = useCurrency();
+  const { t } = useTranslation("booking");
+
+  const basePrice = parseFloat((vehicle.price ?? "0").replace(/[^0-9.]/g, "")) || 0;
+
+  const isDepositFull = useMemo(() => {
+    if (!formData.pickupDate) return false;
     const start = new Date(formData.pickupDate);
     const today = new Date();
     const daysUntil = (start.getTime() - today.getTime()) / (1000 * 3600 * 24);
-    if (daysUntil <= 30) depositAmt = numericPrice;
-  }
-  const deposit = depositAmt.toFixed(2);
+    return daysUntil <= 30;
+  }, [formData.pickupDate]);
+
+  const depositFactor = isDepositFull ? 1 : 0.3;
+
+  const depositPrices: MultiCurrencyPrice = useMemo(() => {
+    const usdBase = vehicle.prices?.usd ? Number(vehicle.prices.usd) : basePrice;
+    const egpBase = vehicle.prices?.egp ? Number(vehicle.prices.egp) : basePrice;
+    const eurBase = vehicle.prices?.eur ? Number(vehicle.prices.eur) : basePrice;
+    return {
+      usd: usdBase * depositFactor,
+      egp: egpBase * depositFactor,
+      eur: eurBase * depositFactor,
+    };
+  }, [vehicle.prices, basePrice, depositFactor]);
 
   const handleSubmit = async () => {
     if (!formData.cardNumber || !formData.cardName || !formData.expiry || !formData.cvv) {
@@ -74,15 +95,27 @@ export default function StepPayment({
         luggage: String(formData.luggage),
         additional_service_ids: formData.additionalServiceIds,
         email: formData.email,
-        phone: formData.phone,
+        phone: formatPhoneE164(formData.phone),
         nationality: formData.nationality,
         special_requests: formData.specialRequests,
         terms_accepted: formData.termsAccepted,
       };
 
-      await submitTransportationBooking(payload);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      onContinue();
+      const booking = await submitTransportationBooking(payload);
+      if (booking?.payment_url) {
+        saveTransportBookingInfo({
+          id: booking.id,
+          vehicleSlug: vehicle.id,
+          vehicleName: `${vehicle.type} - ${vehicle.name}`,
+          pickupDate: formData.pickupDate,
+          totalAmount: parseFloat(booking.total_price) || Number(depositPrices.egp) || Number(depositPrices.usd) || 0,
+          depositAmount: parseFloat(booking.deposit_amount) || Number(depositPrices.egp) || Number(depositPrices.usd) || 0,
+        });
+        window.location.assign(resolvePaymentUrl(booking.payment_url));
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        onContinue();
+      }
     } catch (error) {
       console.error("Failed to submit booking", error);
       alert("Something went wrong while confirming your booking. Please try again.");
@@ -95,7 +128,7 @@ export default function StepPayment({
     <PaymentForm
       formData={formData}
       onChange={onChange}
-      confirmLabel={`Confirm & Pay $${deposit} ${depositAmt === numericPrice ? "(Full amount)" : "Deposit"}`}
+      confirmLabel={`${t("payment.confirmAndPay", "Confirm & Pay")} ${formatCurrency(depositPrices)} ${depositFactor === 1 ? t("sidebar.fullAmount", "(Full amount)") : t("sidebar.deposit30", "(30% deposit)")}`}
       onPrevious={onPrevious}
       onConfirm={handleSubmit}
       isLoading={isSubmitting}

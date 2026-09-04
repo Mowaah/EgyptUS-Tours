@@ -57,6 +57,8 @@ export interface TripImportantLink {
 export interface TripSeasonTier {
   label: string;
   price: string;
+  price_egp?: string | null;
+  price_eur?: string | null;
   order: number;
 }
 
@@ -107,6 +109,8 @@ export interface TripList {
   location_text: string;
   destinations?: Array<{ name?: string; title?: string; slug?: string } | string>;
   base_price: string;
+  base_price_egp?: string | null;
+  base_price_eur?: string | null;
   currency_code: string;
   price_label: string;
   duration_days: number;
@@ -126,7 +130,11 @@ export interface TripList {
 export interface TripDetail extends TripList {
   description: string;
   private_price: string | null;
+  private_price_egp?: string | null;
+  private_price_eur?: string | null;
   group_price: string | null;
+  group_price_egp?: string | null;
+  group_price_eur?: string | null;
   overview: TripOverview;
   included: string[];
   excluded: string[];
@@ -136,6 +144,8 @@ export interface TripDetail extends TripList {
   important_links: TripImportantLink[];
   pricing: TripSeasonPricing[];
   additional_rooms?: { sea_view?: string | null; pool_view?: string | null; };
+  additional_rooms_egp?: { sea_view?: string | null; pool_view?: string | null; };
+  additional_rooms_eur?: { sea_view?: string | null; pool_view?: string | null; };
   images: string[];
   traveler_photos: string[];
   hotels: TripHotelLink[];

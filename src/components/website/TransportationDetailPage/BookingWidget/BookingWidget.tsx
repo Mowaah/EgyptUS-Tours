@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/shared";
+import { MultiCurrencyPrice } from "@/constants/currency";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./BookingWidget.module.scss";
@@ -8,12 +9,13 @@ import styles from "./BookingWidget.module.scss";
 interface BookingWidgetProps {
   vehicleId: string;
   totalPrice?: string;
+  prices?: MultiCurrencyPrice;
 }
 
-export default function BookingWidget({ vehicleId, totalPrice = "1299" }: BookingWidgetProps) {
+export default function BookingWidget({ vehicleId, totalPrice = "1299", prices }: BookingWidgetProps) {
   const { formatCurrency } = useCurrency();
   const { t } = useTranslation("transportation");
-  const formattedPrice = formatCurrency(Number(String(totalPrice).replace(/,/g, "")) || 0);
+  const formattedPrice = formatCurrency(prices || Number(String(totalPrice).replace(/,/g, "")) || 0);
   const bookHref = `/transportation/${vehicleId}/book`;
 
   return (

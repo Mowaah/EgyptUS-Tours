@@ -244,7 +244,7 @@ function RoomCard({ room }: { room: HotelRoom }) {
         <div className={styles.priceInfo}>
           <span className={styles.priceLabel}>{t("roomTypes.startFrom", "Start From")}</span>
           <div className={styles.priceValue}>
-            <span className={styles.amount}>{formatCurrency(room.pricePerNight)}</span>
+            <span className={styles.amount}>{formatCurrency(room.prices || room.pricePerNight)}</span>
             <span className={styles.per}>{t("roomTypes.perNight", "Per Night")}</span>
           </div>
         </div>

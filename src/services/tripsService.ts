@@ -97,7 +97,29 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
       const discountPerc = tripDetail.discount_value ? parseFloat(tripDetail.discount_value) : 0;
       return discountPerc > 0 ? basePrice * (1 - discountPerc / 100) : basePrice;
     })(),
+    prices: {
+      usd: (() => {
+        const p = parseFloat(tripDetail.base_price) || 0;
+        const discountPerc = tripDetail.discount_value ? parseFloat(tripDetail.discount_value) : 0;
+        return discountPerc > 0 ? p * (1 - discountPerc / 100) : p;
+      })(),
+      egp: tripDetail.base_price_egp != null ? (() => {
+        const p = parseFloat(tripDetail.base_price_egp) || 0;
+        const discountPerc = tripDetail.discount_value ? parseFloat(tripDetail.discount_value) : 0;
+        return discountPerc > 0 ? p * (1 - discountPerc / 100) : p;
+      })() : undefined,
+      eur: tripDetail.base_price_eur != null ? (() => {
+        const p = parseFloat(tripDetail.base_price_eur) || 0;
+        const discountPerc = tripDetail.discount_value ? parseFloat(tripDetail.discount_value) : 0;
+        return discountPerc > 0 ? p * (1 - discountPerc / 100) : p;
+      })() : undefined,
+    },
     originalPrice: tripDetail.discount_value && parseFloat(tripDetail.discount_value) > 0 ? parseFloat(tripDetail.base_price) : undefined,
+    originalPrices: tripDetail.discount_value && parseFloat(tripDetail.discount_value) > 0 ? {
+      usd: parseFloat(tripDetail.base_price) || 0,
+      egp: tripDetail.base_price_egp != null ? parseFloat(tripDetail.base_price_egp) || 0 : undefined,
+      eur: tripDetail.base_price_eur != null ? parseFloat(tripDetail.base_price_eur) || 0 : undefined,
+    } : undefined,
     currency: tripDetail.currency_code === "USD" ? "$" : tripDetail.currency_code,
     priceLabel: tripDetail.price_label,
     discountLabel: tripDetail.discount_value ? (tripDetail.discount_title ? `${tripDetail.discount_title} - ${parseFloat(tripDetail.discount_value)}% Off` : `${parseFloat(tripDetail.discount_value)}% Off`) : undefined,
@@ -117,6 +139,27 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
       const discountPerc = tripDetail.discount_value ? parseFloat(tripDetail.discount_value) : 0;
       return discountPerc > 0 ? minPrice * (1 - discountPerc / 100) : minPrice;
     })(),
+    privatePrices: (() => {
+      const privateSeasons = (tripDetail.pricing || []).filter(s => s.tour_type === "private");
+      const allTiers = privateSeasons.flatMap(s => (s.tiers || []).filter(t => parseFloat(t.price) > 0));
+      const discountPerc = tripDetail.discount_value ? parseFloat(tripDetail.discount_value) : 0;
+      const factor = discountPerc > 0 ? (1 - discountPerc / 100) : 1;
+
+      if (allTiers.length > 0) {
+        const minTier = allTiers.reduce((min, t) => parseFloat(t.price) < parseFloat(min.price) ? t : min, allTiers[0]);
+        return {
+          usd: parseFloat(minTier.price) * factor,
+          egp: minTier.price_egp != null ? parseFloat(minTier.price_egp) * factor : (parseFloat(minTier.price) * 50 * factor),
+          eur: minTier.price_eur != null ? parseFloat(minTier.price_eur) * factor : undefined,
+        };
+      }
+
+      return {
+        usd: tripDetail.private_price ? parseFloat(tripDetail.private_price) * factor : undefined,
+        egp: tripDetail.private_price_egp ? parseFloat(tripDetail.private_price_egp) * factor : undefined,
+        eur: tripDetail.private_price_eur ? parseFloat(tripDetail.private_price_eur) * factor : undefined,
+      };
+    })(),
     groupPrice: (() => {
       const groupSeasons = (tripDetail.pricing || []).filter(s => s.tour_type === "group");
       const allPrices = groupSeasons.flatMap(s => (s.tiers || []).map(t => parseFloat(t.price)).filter(p => p > 0));
@@ -124,6 +167,27 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
       if (minPrice === undefined) return undefined;
       const discountPerc = tripDetail.discount_value ? parseFloat(tripDetail.discount_value) : 0;
       return discountPerc > 0 ? minPrice * (1 - discountPerc / 100) : minPrice;
+    })(),
+    groupPrices: (() => {
+      const groupSeasons = (tripDetail.pricing || []).filter(s => s.tour_type === "group");
+      const allTiers = groupSeasons.flatMap(s => (s.tiers || []).filter(t => parseFloat(t.price) > 0));
+      const discountPerc = tripDetail.discount_value ? parseFloat(tripDetail.discount_value) : 0;
+      const factor = discountPerc > 0 ? (1 - discountPerc / 100) : 1;
+
+      if (allTiers.length > 0) {
+        const minTier = allTiers.reduce((min, t) => parseFloat(t.price) < parseFloat(min.price) ? t : min, allTiers[0]);
+        return {
+          usd: parseFloat(minTier.price) * factor,
+          egp: minTier.price_egp != null ? parseFloat(minTier.price_egp) * factor : (parseFloat(minTier.price) * 50 * factor),
+          eur: minTier.price_eur != null ? parseFloat(minTier.price_eur) * factor : undefined,
+        };
+      }
+
+      return {
+        usd: tripDetail.group_price ? parseFloat(tripDetail.group_price) * factor : undefined,
+        egp: tripDetail.group_price_egp ? parseFloat(tripDetail.group_price_egp) * factor : undefined,
+        eur: tripDetail.group_price_eur ? parseFloat(tripDetail.group_price_eur) * factor : undefined,
+      };
     })(),
     offersPrivateTour: (tripDetail.pricing || []).some(s => s.tour_type === "private" && (s.tiers || []).length > 0),
     offersGroupTour: (tripDetail.pricing || []).some(s => s.tour_type === "group" && (s.tiers || []).length > 0),
@@ -162,64 +226,98 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
       originalPrice: parseFloat(vip.original_price) || 0,
       discountedPrice: parseFloat(vip.discounted_price) || 0,
       savings: parseFloat(vip.savings_amount) || 0,
-      badge: vip.badge,
+      badge: vip.badge || undefined,
       features: vip.features || [],
+      added: vip.is_added_default,
     })),
     importantLinks: (tripDetail.important_links || []).map(link => ({
       label: link.label,
       href: link.href,
     })),
-    pricing: (tripDetail.pricing || []).map((season, idx) => {
-      let tourType: "private" | "group" = season.tour_type as "private" | "group";
-      if (!tourType) {
-        if (tripDetail.pricing && tripDetail.pricing.length === 2) {
-          tourType = idx === 0 ? "private" : "group";
-        } else {
-          tourType = "group";
-        }
+    pricing: (tripDetail.pricing || []).map(season => {
+      let tourType: "private" | "group" | undefined = undefined;
+      if (season.tour_type === "private" || season.tour_type === "group") {
+        tourType = season.tour_type;
       }
       return {
         tourType,
         season: season.season_label,
         tiers: (season.tiers || []).map(tier => {
           const tierPrice = parseFloat(tier.price) || 0;
+          const tierPriceEgp = tier.price_egp ? parseFloat(tier.price_egp) : 0;
+          const tierPriceEur = tier.price_eur ? parseFloat(tier.price_eur) : 0;
           const discountPerc = tripDetail.discount_value ? parseFloat(tripDetail.discount_value) : 0;
           const discountedPrice = discountPerc > 0 ? tierPrice * (1 - discountPerc / 100) : tierPrice;
           return {
             label: tier.label,
             price: discountedPrice,
+            prices: {
+              usd: discountedPrice,
+              egp: tier.price_egp ? (discountPerc > 0 ? tierPriceEgp * (1 - discountPerc / 100) : tierPriceEgp) : undefined,
+              eur: tier.price_eur ? (discountPerc > 0 ? tierPriceEur * (1 - discountPerc / 100) : tierPriceEur) : undefined,
+            },
           };
         })
       };
     }),
     seasonPricing: (() => {
-      // Create unified season pricing by grabbing the first tourType's seasons (since they share prices conceptually now)
-      // or just all seasons if they aren't split by tour type.
       const seasons = tripDetail.pricing || [];
-      // Prefer private seasons if available, else group, else all
       let targetSeasons = seasons.filter(s => s.tour_type === 'private');
       if (targetSeasons.length === 0) targetSeasons = seasons.filter(s => s.tour_type === 'group');
       if (targetSeasons.length === 0) targetSeasons = seasons;
 
       return targetSeasons.map(s => {
-        const getTierPrice = (key: string) => {
+        const getTierPriceObj = (key: string) => {
           const tier = (s.tiers || []).find(t => t.label.toLowerCase().includes(key));
-          if (!tier) return 0;
+          if (!tier) return { val: 0, valEgp: 0, valEur: 0 };
           const tierPrice = parseFloat(tier.price) || 0;
+          const tierPriceEgp = tier.price_egp ? parseFloat(tier.price_egp) : 0;
+          const tierPriceEur = tier.price_eur ? parseFloat(tier.price_eur) : 0;
           const discountPerc = tripDetail.discount_value ? parseFloat(tripDetail.discount_value) : 0;
-          return discountPerc > 0 ? tierPrice * (1 - discountPerc / 100) : tierPrice;
+          return {
+            val: discountPerc > 0 ? tierPrice * (1 - discountPerc / 100) : tierPrice,
+            valEgp: discountPerc > 0 ? tierPriceEgp * (1 - discountPerc / 100) : tierPriceEgp,
+            valEur: discountPerc > 0 ? tierPriceEur * (1 - discountPerc / 100) : tierPriceEur,
+          };
         };
+        const single = getTierPriceObj('single');
+        const double = getTierPriceObj('double');
+        const triple = getTierPriceObj('triple');
+
         return {
           label: s.season_label,
-          single: getTierPrice('single'),
-          double: getTierPrice('double'),
-          triple: getTierPrice('triple'),
+          single: single.val,
+          double: double.val,
+          triple: triple.val,
+          singleEgp: single.valEgp,
+          doubleEgp: double.valEgp,
+          tripleEgp: triple.valEgp,
+          singleEur: single.valEur,
+          doubleEur: double.valEur,
+          tripleEur: triple.valEur,
+          singlePrices: { usd: single.val, egp: single.valEgp, eur: single.valEur },
+          doublePrices: { usd: double.val, egp: double.valEgp, eur: double.valEur },
+          triplePrices: { usd: triple.val, egp: triple.valEgp, eur: triple.valEur },
         };
       });
     })(),
     additionalRooms: {
       seaView: tripDetail.additional_rooms?.sea_view ? parseFloat(tripDetail.additional_rooms.sea_view) : 0,
       poolView: tripDetail.additional_rooms?.pool_view ? parseFloat(tripDetail.additional_rooms.pool_view) : 0,
+      seaViewEgp: tripDetail.additional_rooms_egp?.sea_view ? parseFloat(tripDetail.additional_rooms_egp.sea_view) : 0,
+      poolViewEgp: tripDetail.additional_rooms_egp?.pool_view ? parseFloat(tripDetail.additional_rooms_egp.pool_view) : 0,
+      seaViewEur: tripDetail.additional_rooms_eur?.sea_view ? parseFloat(tripDetail.additional_rooms_eur.sea_view) : 0,
+      poolViewEur: tripDetail.additional_rooms_eur?.pool_view ? parseFloat(tripDetail.additional_rooms_eur.pool_view) : 0,
+      seaViewPrices: {
+        usd: tripDetail.additional_rooms?.sea_view ? parseFloat(tripDetail.additional_rooms.sea_view) : 0,
+        egp: tripDetail.additional_rooms_egp?.sea_view ? parseFloat(tripDetail.additional_rooms_egp.sea_view) : 0,
+        eur: tripDetail.additional_rooms_eur?.sea_view ? parseFloat(tripDetail.additional_rooms_eur.sea_view) : 0,
+      },
+      poolViewPrices: {
+        usd: tripDetail.additional_rooms?.pool_view ? parseFloat(tripDetail.additional_rooms.pool_view) : 0,
+        egp: tripDetail.additional_rooms_egp?.pool_view ? parseFloat(tripDetail.additional_rooms_egp.pool_view) : 0,
+        eur: tripDetail.additional_rooms_eur?.pool_view ? parseFloat(tripDetail.additional_rooms_eur.pool_view) : 0,
+      },
     },
     travelerPhotos: tripDetail.traveler_photos || [],
     hotels: await Promise.all(
@@ -267,24 +365,40 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
     relatedTrips: relatedTripsData
       .filter(t => t.id !== tripDetail.id)
       .slice(0, 4)
-      .map(t => ({
-        id: t.slug,
-        title: t.title,
-        description: t.short_description || t.title,
-        image: t.image || "/images/home/hero-bg.png",
-        location: (t.destinations?.length ? t.destinations.map(d => typeof d === 'string' ? d : (d.name || d.title)).filter(Boolean).join(' · ') : null) || t.location_text || "Egypt",
-        price: t.discount_value && parseFloat(t.discount_value) > 0 ? (parseFloat(t.base_price) || 0) * (1 - parseFloat(t.discount_value) / 100) : (parseFloat(t.base_price) || 0),
-        originalPrice: t.discount_value && parseFloat(t.discount_value) > 0 ? parseFloat(t.base_price) : undefined,
-        currency: t.currency_code === "USD" ? "$" : t.currency_code,
-        duration: t.duration,
-        rating: parseFloat(t.rating_avg) || 0,
-        reviewCount: t.review_count,
-        isFavorite: t.is_favorite,
-        priceLabel: t.price_label,
-        discountLabel: t.discount_value ? (t.discount_title ? `${t.discount_title} - ${parseFloat(t.discount_value)}% Off` : `${parseFloat(t.discount_value)}% Off`) : undefined,
-        discountTitle: (t as any).discount_title || undefined,
-        discountValue: t.discount_value ? `${parseFloat(t.discount_value)}% Off` : undefined,
-        tags: t.tags?.map(tag => tag.name) || [],
-      }))
+      .map(t => {
+        const discountPerc = t.discount_value ? parseFloat(t.discount_value) : 0;
+        const baseUsd = parseFloat(t.base_price) || 0;
+        const baseEgp = t.base_price_egp != null ? parseFloat(t.base_price_egp) || 0 : undefined;
+        const baseEur = t.base_price_eur != null ? parseFloat(t.base_price_eur) || 0 : undefined;
+        return {
+          id: t.slug,
+          title: t.title,
+          description: t.short_description || t.title,
+          image: t.image || "/images/home/hero-bg.png",
+          location: (t.destinations?.length ? t.destinations.map(d => typeof d === 'string' ? d : (d.name || d.title)).filter(Boolean).join(' · ') : null) || t.location_text || "Egypt",
+          price: discountPerc > 0 ? baseUsd * (1 - discountPerc / 100) : baseUsd,
+          originalPrice: discountPerc > 0 ? baseUsd : undefined,
+          prices: {
+            usd: discountPerc > 0 ? baseUsd * (1 - discountPerc / 100) : baseUsd,
+            egp: baseEgp != null ? (discountPerc > 0 ? baseEgp * (1 - discountPerc / 100) : baseEgp) : undefined,
+            eur: baseEur != null ? (discountPerc > 0 ? baseEur * (1 - discountPerc / 100) : baseEur) : undefined,
+          },
+          originalPrices: discountPerc > 0 ? {
+            usd: baseUsd,
+            egp: baseEgp,
+            eur: baseEur,
+          } : undefined,
+          currency: t.currency_code === "USD" ? "$" : t.currency_code,
+          duration: t.duration,
+          rating: parseFloat(t.rating_avg) || 0,
+          reviewCount: t.review_count,
+          isFavorite: t.is_favorite,
+          priceLabel: t.price_label,
+          discountLabel: t.discount_value ? (t.discount_title ? `${t.discount_title} - ${discountPerc}% Off` : `${discountPerc}% Off`) : undefined,
+          discountTitle: (t as any).discount_title || undefined,
+          discountValue: t.discount_value ? `${discountPerc}% Off` : undefined,
+          tags: t.tags?.map(tag => tag.name) || [],
+        };
+      })
   };
 }

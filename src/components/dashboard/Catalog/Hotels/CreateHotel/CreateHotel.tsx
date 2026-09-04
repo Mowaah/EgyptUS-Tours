@@ -115,8 +115,7 @@ function mapHotelToFormValues(hotel: any): CreateHotelValues {
       category: room.category_label || "",
       type: room.type_label || "",
       view: room.view_label || "",
-      pricePerNight: room.price_per_night_egp || room.price_per_night || "",
-      pricePerNightEgp: room.price_per_night_egp || room.price_per_night || "",
+      pricePerNight: room.price_per_night || "",
       description: {
         en: room.translations?.en?.description || room.description || "",
         it: room.translations?.it?.description || "",
@@ -303,8 +302,7 @@ export function CreateHotel({ hotelId, onDirtyChange, onSavingChange }: { hotelI
             category_label: r.category,
             type_label: r.type,
             view_label: r.view,
-            price_per_night: roomPriceEgp ? parseFloat(roomPriceEgp) : undefined,
-            price_per_night_egp: roomPriceEgp ? parseFloat(roomPriceEgp) : undefined,
+            price_per_night: r.pricePerNight ? parseFloat(String(r.pricePerNight).replace(/[^0-9.]/g, "")) : undefined,
             description: r.description?.en || "", // Fallback
             features: r.facilities,
             images: validImages,

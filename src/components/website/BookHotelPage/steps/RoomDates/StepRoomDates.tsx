@@ -164,6 +164,7 @@ export default function StepRoomDates({ formData, onChange, onContinue, hotel }:
               variant="input"
               className={`${formStyles.input} ${planPage.dateInput} ${errors.endDate ? formStyles.inputInvalid : ""}`}
               value={formData.endDate}
+              minDate={formData.startDate ? new Date(formData.startDate) : undefined}
               onChange={(date) => {
                 onChange({ endDate: date });
                 if (errors.endDate) setErrors((e) => ({ ...e, endDate: "" }));
@@ -237,7 +238,7 @@ export default function StepRoomDates({ formData, onChange, onContinue, hotel }:
                     <span className={styles.roomSub}>{guestsNum} {guestsNum === 1 ? t("hotelBooking.roomDates.person", "person") : t("hotelBooking.roomDates.people", "people")}</span>
                   </div>
                   <div className={styles.priceCol}>
-                    <span className={styles.priceVal}>{formatCurrency(baseRoom.pricePerNight)}</span>
+                    <span className={styles.priceVal}>{formatCurrency(baseRoom.prices || baseRoom.pricePerNight)}</span>
                     <span className={styles.roomSub}>/ {t("sidebar.night", "night")}</span>
                   </div>
                 </label>
@@ -280,10 +281,16 @@ export default function StepRoomDates({ formData, onChange, onContinue, hotel }:
           // Map other views to dropdown options
           const options: SelectOption[] = rooms.map((r) => {
             const isBase = r.id === baseRoom.id;
-            const diff = r.pricePerNight - baseRoom.pricePerNight;
+            const rPrice = r.prices || r.pricePerNight;
+            const bPrice = baseRoom.prices || baseRoom.pricePerNight;
+            const diffUsd = (Number(typeof rPrice === 'object' ? rPrice.usd : rPrice) || 0) - (Number(typeof bPrice === 'object' ? bPrice.usd : bPrice) || 0);
+            const diffEgp = (Number(typeof rPrice === 'object' ? rPrice.egp : rPrice) || 0) - (Number(typeof bPrice === 'object' ? bPrice.egp : bPrice) || 0);
+            const diffEur = (Number(typeof rPrice === 'object' ? rPrice.eur : rPrice) || 0) - (Number(typeof bPrice === 'object' ? bPrice.eur : bPrice) || 0);
+            const diffPrices = { usd: Math.abs(diffUsd), egp: Math.abs(diffEgp), eur: Math.abs(diffEur) };
+            const isDiffPositive = diffUsd >= 0;
             const displayPrice = isBase
               ? includedText
-              : `${diff > 0 ? "+" : "-"}${formatCurrency(Math.abs(diff))}`;
+              : `${isDiffPositive ? "+" : "-"}${formatCurrency(diffPrices)}`;
             const viewTitle = getViewLabel(r.view);
             return {
               label: `${viewTitle}${isBase ? ` (${includedText})` : ""}`,

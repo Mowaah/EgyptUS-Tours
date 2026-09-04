@@ -81,9 +81,33 @@ export function mapHotelDetailToHotel(hotelDetail: HotelDetail): import("@/types
       const discountPerc = hotelDetail.discount_value ? parseFloat(hotelDetail.discount_value) : 0;
       return discountPerc > 0 ? basePrice * (1 - discountPerc / 100) : basePrice;
     })(),
+    pricePerNightEgp: hotelDetail.price_per_night_egp ? parseFloat(hotelDetail.price_per_night_egp) : undefined,
+    pricePerNightEur: hotelDetail.price_per_night_eur ? parseFloat(hotelDetail.price_per_night_eur) : undefined,
+    prices: {
+      usd: (() => {
+        const p = parseFloat(hotelDetail.price_per_night) || 0;
+        const discountPerc = hotelDetail.discount_value ? parseFloat(hotelDetail.discount_value) : 0;
+        return discountPerc > 0 ? p * (1 - discountPerc / 100) : p;
+      })(),
+      egp: hotelDetail.price_per_night_egp != null ? (() => {
+        const p = parseFloat(hotelDetail.price_per_night_egp) || 0;
+        const discountPerc = hotelDetail.discount_value ? parseFloat(hotelDetail.discount_value) : 0;
+        return discountPerc > 0 ? p * (1 - discountPerc / 100) : p;
+      })() : undefined,
+      eur: hotelDetail.price_per_night_eur != null ? (() => {
+        const p = parseFloat(hotelDetail.price_per_night_eur) || 0;
+        const discountPerc = hotelDetail.discount_value ? parseFloat(hotelDetail.discount_value) : 0;
+        return discountPerc > 0 ? p * (1 - discountPerc / 100) : p;
+      })() : undefined,
+    },
     originalPrice: hotelDetail.discount_value && parseFloat(hotelDetail.discount_value) > 0 
       ? parseHotelPriceEgp(hotelDetail.price_per_night_egp, hotelDetail.price_per_night) 
       : undefined,
+    originalPrices: hotelDetail.discount_value && parseFloat(hotelDetail.discount_value) > 0 ? {
+      usd: parseFloat(hotelDetail.price_per_night) || 0,
+      egp: hotelDetail.price_per_night_egp != null ? parseFloat(hotelDetail.price_per_night_egp) || 0 : undefined,
+      eur: hotelDetail.price_per_night_eur != null ? parseFloat(hotelDetail.price_per_night_eur) || 0 : undefined,
+    } : undefined,
     discountTitle: hotelDetail.discount_title || undefined,
     discountValue: hotelDetail.discount_value ? `${parseFloat(hotelDetail.discount_value)}% Off` : undefined,
     reviews: hotelDetail.review_count,
@@ -107,6 +131,13 @@ export function mapHotelDetailToHotel(hotelDetail: HotelDetail): import("@/types
       type: r.type_label || "",
       view: r.view_label || "",
       pricePerNight: parseHotelPriceEgp(r.price_per_night_egp, r.price_per_night),
+      pricePerNightEgp: r.price_per_night_egp ? parseFloat(r.price_per_night_egp) : undefined,
+      pricePerNightEur: r.price_per_night_eur ? parseFloat(r.price_per_night_eur) : undefined,
+      prices: {
+        usd: r.price_per_night ? parseFloat(r.price_per_night) : undefined,
+        egp: r.price_per_night_egp ? parseFloat(r.price_per_night_egp) : undefined,
+        eur: r.price_per_night_eur ? parseFloat(r.price_per_night_eur) : undefined,
+      },
       discountPercent: r.discount_percent,
       features: r.features || [],
       images: (r.images || []).map(img => img.image)

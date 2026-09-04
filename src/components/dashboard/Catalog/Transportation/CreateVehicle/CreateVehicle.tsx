@@ -16,6 +16,7 @@ import { useWizard, WizardStepConfig, WizardSubmitIntent } from "@/hooks/useWiza
 import { createCatalogVehicle, updateCatalogVehicle, publishCatalogVehicle } from "@/services/admin/adminCatalogVehiclesService";
 import { useVehicleCategories, useCatalogVehicleDetail } from "@/hooks/useCatalogVehicles";
 import { fileToBase64 } from "@/utils/imageUtils";
+import { DASHBOARD_CURRENCY } from "@/constants/currency";
 import styles from "./CreateVehicle.module.scss";
 
 const STEPS: WizardStepConfig[] = [
@@ -198,7 +199,7 @@ async function buildPayload(data: CreateVehicleValues, intent: WizardSubmitInten
     luggage_capacity: intValue(data.luggageCapacity) || 0,
     rating_avg: data.starRating ? parseFloat(data.starRating) : null,
     additional_service_ids: data.additionalServices?.map(id => parseInt(id, 10)) || [],
-    currency_code: "£",
+    currency_code: DASHBOARD_CURRENCY.code,
     price_amount: money(data.basePrice) || null,
     price_per_km: money(data.pricePerKm) || null,
     media_items: photos.filter(Boolean),

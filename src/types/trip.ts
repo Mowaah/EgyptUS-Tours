@@ -1,3 +1,5 @@
+import { MultiCurrencyPrice } from "@/constants/currency";
+
 export interface TripHotel {
   slug: string;
   name: string;
@@ -19,6 +21,8 @@ export interface Trip {
   price: number;
   currency: string;
   priceLabel?: string;
+  prices?: MultiCurrencyPrice;
+  originalPrices?: MultiCurrencyPrice;
   duration: {
     days: number;
     nights: number;
@@ -40,7 +44,9 @@ export interface Trip {
   tags?: string[];
   destinations?: Array<{ id?: number; name?: string; slug?: string }>;
   privatePrice?: number;
+  privatePrices?: MultiCurrencyPrice;
   groupPrice?: number;
+  groupPrices?: MultiCurrencyPrice;
 
   overview?: {
     description: string;
@@ -97,6 +103,7 @@ export interface Trip {
     tiers: Array<{
       label: string; // e.g. "Per Single Cabin"
       price: number;
+      prices?: MultiCurrencyPrice;
     }>;
   }>;
 
@@ -105,11 +112,26 @@ export interface Trip {
     single: number;
     double: number;
     triple: number;
+    singleEgp?: number;
+    doubleEgp?: number;
+    tripleEgp?: number;
+    singleEur?: number;
+    doubleEur?: number;
+    tripleEur?: number;
+    singlePrices?: MultiCurrencyPrice;
+    doublePrices?: MultiCurrencyPrice;
+    triplePrices?: MultiCurrencyPrice;
   }>;
 
   additionalRooms?: {
     seaView?: number;
     poolView?: number;
+    seaViewEgp?: number;
+    poolViewEgp?: number;
+    seaViewEur?: number;
+    poolViewEur?: number;
+    seaViewPrices?: MultiCurrencyPrice;
+    poolViewPrices?: MultiCurrencyPrice;
   };
 
   travelerPhotos?: string[];

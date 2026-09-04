@@ -24,6 +24,11 @@ export interface VehicleList {
   image: string | null;
   price: string;
   price_amount: string;
+  price_amount_egp?: string | null;
+  price_amount_eur?: string | null;
+  price_per_km?: string | null;
+  price_per_km_egp?: string | null;
+  price_per_km_eur?: string | null;
   currency_code: string;
   passengers: number;
   luggage: string;
@@ -46,6 +51,7 @@ export interface VehicleAdditionalServicePublic {
   slug: string;
   price: string;
   price_egp?: string | null;
+  price_eur?: string | null;
   currency_code?: string;
 }
 
