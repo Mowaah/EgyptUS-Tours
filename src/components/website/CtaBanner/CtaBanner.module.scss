@@ -2,8 +2,16 @@
 @use "@/styles/mixins" as *;
 
 .section {
-  @include section-padding;
+  padding: 16px 0;
   background: $background;
+
+  @media (min-width: 768px) {
+    padding: 32px 0;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 64px 0;
+  }
 }
 
 .container {

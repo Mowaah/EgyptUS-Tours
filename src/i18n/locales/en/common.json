@@ -212,7 +212,9 @@
       "remaining": "Remaining",
       "fullyPaid": "Fully Paid",
       "completePayment": "Complete Payment",
-      "proposalExpected": "Proposal expected within 24-48 hrs"
+      "proposalExpected": "Proposal expected within 24-48 hrs",
+      "tripInProgress": "Your trip is in progress",
+      "notSpecified": "Not Specified"
     },
     "emptyStates": {
       "authFavoritesTitle": "Create an Account to View Your Favorites",
@@ -251,10 +253,15 @@
       "breadcrumbDetails": "Booking Details",
       "title": "Booking Details",
       "subtitle": "View full details and manage your reservation.",
+      "companyInformation": "Company Information",
+      "corporateRequestTitle": "Your Corporate Request Details",
+      "corporateRequestSubtitle": "Here’s a summary of your submitted request.",
       "contactInfo": "Contact Info",
       "tripInfo": "Trip Info",
       "rooms": "Rooms",
       "specialRequests": "Special Requests",
+      "requestDetails": "Request Details",
+      "jobTitle": "Job Title",
       "name": "Name",
       "email": "Email",
       "phone": "Phone Number",

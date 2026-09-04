@@ -19,6 +19,105 @@ const getCountryName = (code: string) => {
   return country ? country.nationality : code;
 };
 
+const getCountryDisplayName = (val?: string) => {
+  if (!val) return "";
+  const trimmed = val.trim();
+  const country = COUNTRIES.find(
+    (c) => c.code.toLowerCase() === trimmed.toLowerCase() || c.name.toLowerCase() === trimmed.toLowerCase()
+  );
+  return country ? country.name : trimmed;
+};
+
+interface ProfileRequestDetailData {
+  status?: string | null;
+  company_name?: string;
+  country?: string;
+  contact_person?: string;
+  job_title?: string;
+  email?: string;
+  contactEmail?: string;
+  phone?: string;
+  website?: string;
+  request_details?: string;
+  requestDetails?: string;
+  trip_details_text?: string;
+  description?: string;
+  additional_requirements?: string;
+  title?: string;
+  company?: {
+    company_name?: string;
+    name?: string;
+    country?: string;
+    website?: string;
+  };
+  contact?: {
+    full_name?: string;
+    contact_person?: string;
+    name?: string;
+    job_title?: string;
+    email?: string;
+    email_address?: string;
+    phone?: string;
+    phone_number?: string;
+    nationality?: string;
+    country?: string;
+    website?: string;
+  };
+  organization?: {
+    organization_name?: string;
+    industry?: string;
+    country?: string;
+    website?: string;
+  };
+  event?: {
+    event_type?: string;
+    event_name?: string;
+    expected_attendees?: string | number;
+    preferred_city?: string;
+    start_date?: string;
+    end_date?: string;
+    venue_type?: string;
+    additional_services?: string[];
+    estimated_budget_range?: string;
+  };
+  preferences?: {
+    hotel_category?: string;
+    room_type?: string | string[];
+    transportation_type?: string;
+    experiences?: string[];
+  };
+  details?: {
+    destination?: string;
+    trip_category?: string;
+    duration_label?: string;
+    travel_dates?: string;
+    budget?: string;
+    travelers_label?: string;
+    company_name?: string;
+    companyName?: string;
+    country?: string;
+    contact_person?: string;
+    job_title?: string;
+    email?: string;
+    email_address?: string;
+    phone?: string;
+    phone_number?: string;
+    website?: string;
+    request_details?: string;
+  };
+  companyInfo?: {
+    companyName?: string;
+    country?: string;
+    contactPerson?: string;
+    jobTitle?: string;
+    email?: string;
+    phone?: string;
+    website?: string;
+    requestDetails?: string;
+  };
+  applicantName?: string;
+}
+
 type RequestStatus = Extract<TripBookingStatus, "proposal_in_progress" | "proposal_sent" | "confirmed">;
 
 function LoadingGlyph() {
@@ -56,7 +155,7 @@ export default function ProfileRequestDetailsPage() {
   const isB2B = requestType === "b2b";
 
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<ProfileRequestDetailData | null>(null);
 
   useEffect(() => {
     if (requestId && requestType) {
@@ -127,19 +226,91 @@ export default function ProfileRequestDetailsPage() {
       },
     ];
   } else if (data && isB2B) {
+    const companyName =
+      data.company_name ||
+      data.company?.company_name ||
+      data.company?.name ||
+      data.companyInfo?.companyName ||
+      data.details?.company_name ||
+      data.details?.companyName ||
+      data.title ||
+      "";
+
+    const countryRaw =
+      data.country ||
+      data.company?.country ||
+      data.contact?.country ||
+      data.companyInfo?.country ||
+      data.details?.country ||
+      "";
+    const country = getCountryDisplayName(countryRaw);
+
+    const contactPerson =
+      data.contact?.contact_person ||
+      data.contact_person ||
+      data.contact?.name ||
+      data.companyInfo?.contactPerson ||
+      data.applicantName ||
+      data.details?.contact_person ||
+      "";
+
+    const jobTitle =
+      data.contact?.job_title ||
+      data.job_title ||
+      data.companyInfo?.jobTitle ||
+      data.details?.job_title ||
+      "";
+
+    const email =
+      data.contact?.email ||
+      data.contact?.email_address ||
+      data.email ||
+      data.contactEmail ||
+      data.companyInfo?.email ||
+      data.details?.email ||
+      data.details?.email_address ||
+      "";
+
+    const phone =
+      data.contact?.phone ||
+      data.contact?.phone_number ||
+      data.phone ||
+      data.companyInfo?.phone ||
+      data.details?.phone ||
+      data.details?.phone_number ||
+      "";
+
+    const website =
+      data.website ||
+      data.company?.website ||
+      data.contact?.website ||
+      data.companyInfo?.website ||
+      data.details?.website ||
+      "";
+
+    const requestDetails =
+      data.request_details ||
+      data.requestDetails ||
+      data.details?.request_details ||
+      data.companyInfo?.requestDetails ||
+      "";
+
     sections = [
       {
-        title: "Company Information",
-        icon: "/images/profile/detail/organization-info.svg",
+        title: t("profile.details.companyInformation", "Company Information"),
+        icon: "/images/profile/detail/company-info.svg",
         fieldsColumns: 3,
         fields: [
-          { label: "Contact Person", value: data.contact?.contact_person || "" },
-          { label: "Job Title", value: data.contact?.job_title || "" },
-          { label: "Email Address", value: data.contact?.email || "" },
-          { label: "Phone Number", value: data.contact?.phone || "" },
+          { label: t("profile.card.companyName", "Company Name"), value: companyName },
+          { label: t("profile.card.country", "Country"), value: country },
+          { label: t("profile.card.contactPerson", "Contact Person"), value: contactPerson },
+          { label: t("profile.details.jobTitle", "Job Title"), value: jobTitle },
+          { label: t("profile.details.email", "Email Address"), value: email },
+          { label: t("profile.details.phone", "Phone Number"), value: phone },
+          { label: t("profile.card.website", "Website"), value: website },
         ],
-        descriptionLabel: "Request Details",
-        description: data.request_details || "",
+        descriptionLabel: t("profile.details.requestDetails", "Request Details"),
+        description: requestDetails,
       },
     ];
   } else if (data) {
@@ -203,8 +374,8 @@ export default function ProfileRequestDetailsPage() {
           { label: t("userMenu.profile", "Profile"), href: "/profile?tab=requests" },
           { label: t("userMenu.requests", "Requests Details"), isCurrent: true },
         ]}
-        title="Your Travel Space"
-        subtitle="Easily access all your travel bookings and submitted requests in one organized place, with clear details about your trips, hotel stays, transportation, and upcoming plans."
+        title={t("profile.headerTitle", "Your Travel Space")}
+        subtitle={t("profile.headerSubtitle", "Easily access all your travel bookings and submitted requests in one organized place, with clear details about your trips, hotel stays, transportation, and upcoming plans.")}
       />
 
       <div className={styles.container}>
@@ -215,14 +386,14 @@ export default function ProfileRequestDetailsPage() {
                 {isPlanYourTrip
                   ? "Your Custom Trip Request"
                   : isB2B
-                    ? "Your Corporate Request Details"
+                    ? t("profile.details.corporateRequestTitle", "Your Corporate Request Details")
                     : "Your Event Request"}
               </h2>
               <p>
                 {isPlanYourTrip
                   ? "Track your custom trip request, review your travel details, and stay updated on your request status."
                   : isB2B
-                    ? "Here's a summary of your submitted request."
+                    ? t("profile.details.corporateRequestSubtitle", "Here’s a summary of your submitted request.")
                     : "Here are the details of your submitted event and its current status"}
               </p>
             </div>
@@ -230,7 +401,7 @@ export default function ProfileRequestDetailsPage() {
               <span className={styles.statusIcon}>
                 {currentStatus === "proposal_sent" || currentStatus === "confirmed" ? "✓" : <LoadingGlyph />}
               </span>
-              {currentStatus === "proposal_sent" ? "Proposal Sent" : currentStatus === "confirmed" ? "Confirmed" : "Proposal in progress"}
+              {currentStatus === "proposal_sent" ? t("profile.card.proposalSent", "Proposal Sent") : currentStatus === "confirmed" ? t("profile.details.status.confirmed", "Confirmed") : t("profile.card.proposalInProgress", "Proposal in progress")}
             </span>
           </header>
 

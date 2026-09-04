@@ -2,8 +2,16 @@
 @use "@/styles/mixins" as *;
 
 .section {
-  @include section-padding;
+  padding: 48px 0 20px;
   background: $background;
+
+  @media (min-width: 768px) {
+    padding: 56px 0 36px;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 64px 0;
+  }
 }
 
 .container {
@@ -51,7 +59,11 @@
 
 .viewAll {
   text-align: center;
-  margin-top: $spacing-2xl;
+  margin-top: $spacing-lg;
+
+  @media (min-width: 768px) {
+    margin-top: $spacing-2xl;
+  }
 }
 
 .galleryItem {

@@ -204,7 +204,7 @@ export default function ProfilePage() {
             getProfileRequests("b2b"),
           ]);
 
-          const mapRequest = (req: any, defaultImage: string): TripBookingCardProps => {
+          const mapRequest = (req: any): TripBookingCardProps => {
             let mappedDetails = {};
             if (req.type === "plan_your_trip") {
               mappedDetails = {
@@ -246,7 +246,7 @@ export default function ProfilePage() {
 
             return {
               variant: (req.type === "events" ? "mice" : req.type) as any,
-              imageSrc: req.image || defaultImage,
+              showImage: false,
               tripTitle: req.title || req.event_name || req.company_name || "",
               status: mappedStatus as any,
               infoMessage: req.info_message || t("profile.card.proposalExpected", "Proposal expected within 24-48 hrs"),
@@ -256,9 +256,9 @@ export default function ProfilePage() {
             };
           };
 
-          setPlanYourTripRequests(planData.map((req: any) => mapRequest({ ...req, type: "plan_your_trip" }, "/images/pyramids.jpg")));
-          setEventsRequests(eventsData.map((req: any) => mapRequest({ ...req, type: "events" }, "/images/events1.png")));
-          setB2bRequests(b2bData.map((req: any) => mapRequest({ ...req, type: "b2b" }, "/images/contact1.jpg")));
+          setPlanYourTripRequests(planData.map((req: any) => mapRequest({ ...req, type: "plan_your_trip" })));
+          setEventsRequests(eventsData.map((req: any) => mapRequest({ ...req, type: "events" })));
+          setB2bRequests(b2bData.map((req: any) => mapRequest({ ...req, type: "b2b" })));
         } catch (error) {
           console.error("Failed to fetch requests:", error);
         } finally {

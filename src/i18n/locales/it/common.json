@@ -212,7 +212,9 @@
       "remaining": "Rimanente",
       "fullyPaid": "Completamente Pagato",
       "completePayment": "Completa Pagamento",
-      "proposalExpected": "Proposta prevista entro 24-48 ore"
+      "proposalExpected": "Proposta prevista entro 24-48 ore",
+      "tripInProgress": "Il tuo viaggio è in corso",
+      "notSpecified": "Non specificato"
     },
     "emptyStates": {
       "authFavoritesTitle": "Crea un account per vedere i tuoi preferiti",
@@ -251,10 +253,15 @@
       "breadcrumbDetails": "Dettagli Prenotazione",
       "title": "Dettagli della Prenotazione",
       "subtitle": "Visualizza tutti i dettagli e gestisci la tua prenotazione.",
+      "companyInformation": "Informazioni sull'Azienda",
+      "corporateRequestTitle": "Dettagli della Richiesta Aziendale",
+      "corporateRequestSubtitle": "Ecco un riepilogo della richiesta inviata.",
       "contactInfo": "Informazioni di Contatto",
       "tripInfo": "Informazioni sul Viaggio",
       "rooms": "Camere",
       "specialRequests": "Richieste Speciali",
+      "requestDetails": "Dettagli della Richiesta",
+      "jobTitle": "Ruolo / Posizione",
       "name": "Nome",
       "email": "Email",
       "phone": "Numero di Telefono",

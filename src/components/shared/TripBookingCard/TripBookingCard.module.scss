@@ -14,6 +14,29 @@
     align-items: stretch;
     min-height: 323px;
   }
+
+  &.noImage {
+    @media (min-width: 769px) {
+      flex-direction: column;
+      min-height: auto;
+    }
+
+    .body {
+      border-radius: 32px;
+    }
+
+    .cardHeader {
+      @media (min-width: 640px) {
+        padding-right: 24px;
+      }
+    }
+
+    .main {
+      @media (min-width: 640px) {
+        padding-right: 24px;
+      }
+    }
+  }
 }
 
 .imageCol {

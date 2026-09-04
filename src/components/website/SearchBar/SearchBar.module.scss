@@ -159,9 +159,9 @@
   flex: 1;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 12px 14px;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 12px 18px;
   color: $white;
   cursor: pointer;
   transition: background $transition-fast;
@@ -190,6 +190,8 @@
     padding: 0 18px;
     height: 57px;
     border-radius: 9999px;
+    justify-content: center;
+    gap: 10px;
 
     &:hover {
       background: rgba(255, 255, 255, 0.08);
@@ -225,6 +227,11 @@
   transition: transform $transition-fast;
   opacity: 0.8;
   flex-shrink: 0;
+  margin-left: auto;
+
+  @include lg {
+    margin-left: 0;
+  }
 
   &.chevronOpen {
     transform: rotate(180deg);

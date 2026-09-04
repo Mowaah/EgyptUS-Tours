@@ -82,8 +82,9 @@ export interface PlanYourTripRequestDetails {
 }
 
 type BookingCardShared = {
-  imageSrc: string;
+  imageSrc?: string;
   imageAlt?: string;
+  showImage?: boolean;
   /** Trip package title or hotel name */
   tripTitle: string;
   /** Shown in gradient pill; omit when cancelled */
@@ -131,10 +132,6 @@ const TRANSPORT_ICONS = bookingCardIcons.transport;
 const MICE_ICONS = bookingCardIcons.mice;
 const B2B_ICONS = bookingCardIcons.b2b;
 
-function formatUsd(n: number) {
-  return `$${n.toLocaleString("en-US")}`;
-}
-
 function LoadingGlyph() {
   return (
     <span className={styles.loadingGlyph} aria-hidden>
@@ -164,6 +161,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
   const {
     imageSrc,
     imageAlt = "",
+    showImage = true,
     tripTitle,
     timerLabel,
     status,
@@ -179,13 +177,20 @@ export default function TripBookingCard(props: TripBookingCardProps) {
   const { formatCurrency } = useCurrency();
   const localeCode = language === "it" ? "it-IT" : language === "es" ? "es-ES" : "en-US";
 
+  const isRequestVariant =
+    props.variant === "plan_your_trip" ||
+    props.variant === "mice" ||
+    (props.variant as string) === "events" ||
+    props.variant === "b2b";
+  const hasImage = Boolean(imageSrc && showImage && !isRequestVariant);
+
   const showTimer = Boolean(timerLabel) && status !== "cancelled";
   const sectionLabel =
     props.variant === "hotel"
       ? t("profile.card.hotelBooking", "Hotel Booking")
       : props.variant === "transport"
         ? t("profile.card.transportBooking", "Transportation Booking")
-        : props.variant === "mice" || props.variant === ("events" as any)
+        : props.variant === "mice" || (props.variant as string) === "events"
           ? t("profile.card.miceEvent", "MICE Event")
           : props.variant === "b2b"
             ? t("profile.card.b2bEvent", "B2B Event")
@@ -252,18 +257,82 @@ export default function TripBookingCard(props: TripBookingCardProps) {
     }
   };
 
+  const formatLocalizedDateRange = (raw: string | undefined | null) => {
+    if (!raw || raw === "—") return "";
+    const parts = raw.split(/\s*[-–—]\s*|\s+to\s+/i);
+    if (parts.length === 2) {
+      const d1 = new Date(parts[0].trim());
+      const d2 = new Date(parts[1].trim());
+      if (!isNaN(d1.getTime()) && !isNaN(d2.getTime())) {
+        const fmt = new Intl.DateTimeFormat(localeCode, { month: "long", day: "numeric", year: "numeric" });
+        return `${fmt.format(d1)} – ${fmt.format(d2)}`;
+      }
+    }
+    return formatLocalizedDate(raw);
+  };
+
+  const formatLocalizedInfoMessage = (msg: string | undefined | null) => {
+    if (!msg) return "";
+    const clean = msg.replace(/^•\s*/, "").trim();
+    const low = clean.toLowerCase();
+    if (low === "your trip is in progress" || low === "your trip is in progress.") {
+      return t("profile.card.tripInProgress", "Your trip is in progress");
+    }
+    if (low.includes("proposal expected within 24-48 hrs") || low.includes("proposal expected within 24-48")) {
+      return t("profile.card.proposalExpected", "Proposal expected within 24-48 hrs");
+    }
+    if (low === "proposal in progress") {
+      return t("profile.card.proposalInProgress", "Proposal In progress");
+    }
+    if (low === "proposal sent") {
+      return t("profile.card.proposalSent", "Proposal Sent");
+    }
+    return clean;
+  };
+
+  const formatLocalizedBudget = (raw: string | undefined | null) => {
+    if (!raw) return "";
+    if (raw.trim().toLowerCase() === "not specified") {
+      return t("profile.card.notSpecified", "Not Specified");
+    }
+    return raw;
+  };
+
+  const formatLocalizedCategory = (raw: string | undefined | null) => {
+    if (!raw) return "";
+    const low = raw.trim().toLowerCase();
+    if (low.includes("honeymoon")) {
+      return language === "it" ? "Luna di Miele" : language === "es" ? "Luna de Miel" : raw;
+    }
+    if (low.includes("family")) {
+      return language === "it" ? "Famiglia" : language === "es" ? "Familia" : raw;
+    }
+    if (low.includes("adventure")) {
+      return language === "it" ? "Avventura" : language === "es" ? "Aventura" : raw;
+    }
+    if (low.includes("cultural") || low.includes("culture")) {
+      return language === "it" ? "Culturale" : language === "es" ? "Cultural" : raw;
+    }
+    if (low.includes("luxury")) {
+      return language === "it" ? "Lusso" : language === "es" ? "Lujo" : raw;
+    }
+    return raw;
+  };
+
   return (
-    <article className={styles.card}>
-      <div className={styles.imageCol}>
-        <Image
-          src={imageSrc}
-          alt={imageAlt}
-          fill
-          className={styles.image}
-          sizes="(max-width: 768px) 100vw, 263px"
-        />
-        <div className={styles.imageOverlay} aria-hidden />
-      </div>
+    <article className={`${styles.card} ${!hasImage ? styles.noImage : ""}`}>
+      {hasImage && imageSrc && (
+        <div className={styles.imageCol}>
+          <Image
+            src={imageSrc}
+            alt={imageAlt}
+            fill
+            className={styles.image}
+            sizes="(max-width: 768px) 100vw, 263px"
+          />
+          <div className={styles.imageOverlay} aria-hidden />
+        </div>
+      )}
 
       <div className={styles.body}>
         <header className={styles.cardHeader}>
@@ -411,7 +480,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                 iconSize={16}
               />
             </div>
-          ) : props.variant === "mice" || props.variant === ("events" as any) ? (() => {
+          ) : props.variant === "mice" || (props.variant as string) === "events" ? (() => {
             const d = props.details as MiceRequestDetails;
             return (
               <div className={styles.detailGrid}>
@@ -500,7 +569,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
               <DetailCell
                 icon="/images/summary/trip.svg"
                 label={t("profile.card.tripCategory", "Trip Category")}
-                value={props.details.tripCategory}
+                value={formatLocalizedCategory(props.details.tripCategory)}
               />
               <DetailCell
                 icon={bookingCardIcons.trip.duration}
@@ -510,12 +579,12 @@ export default function TripBookingCard(props: TripBookingCardProps) {
               <DetailCell
                 icon={bookingCardIcons.trip.returnDate}
                 label={t("profile.card.travelDates", "Travel Dates")}
-                value={props.details.travelDates}
+                value={formatLocalizedDateRange(props.details.travelDates)}
               />
               <DetailCell
                 icon="/images/profile/booking/budget-orange.svg"
                 label={t("profile.card.budget", "Budget")}
-                value={props.details.budget}
+                value={formatLocalizedBudget(props.details.budget)}
               />
               <DetailCell
                 icon={bookingCardIcons.trip.travelers}
@@ -603,7 +672,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                 <p className={styles.metaCancelled}>{cancelledLabel}</p>
               )}
               {(status === "proposal_in_progress" || status === "proposal_sent") && infoMessage && (
-                <p className={styles.metaInfo}>• {infoMessage}</p>
+                <p className={styles.metaInfo}>• {formatLocalizedInfoMessage(infoMessage)}</p>
               )}
             </div>
             <Button
