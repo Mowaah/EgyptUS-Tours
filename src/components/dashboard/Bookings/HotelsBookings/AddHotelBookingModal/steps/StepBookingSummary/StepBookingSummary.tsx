@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import styles from "./StepBookingSummary.module.scss";
+import { DASHBOARD_CURRENCY, formatPrice } from "@/constants/currency";
 import { AddHotelBookingData } from "../../AddHotelBookingModal";
 import { previewHotelBooking } from "@/services/admin/adminBookingsService";
 
@@ -78,10 +79,18 @@ export default function StepBookingSummary({ formData, onSummaryLoad }: StepBook
   const nights = previewData?.nights || 0;
   
   const discount = previewData?.discount || "0.00";
-  
   const total = previewData?.total_price || "0.00";
-  
   const lineItems = previewData?.line_items || [];
+
+  const formatHotelPrice = (price: number | string) => {
+    let num = typeof price === "string" ? parseFloat(price) : price;
+    if (isNaN(num)) return `${DASHBOARD_CURRENCY.symbol}0`;
+    const isEgpReturned = previewData?.currency === "EGP" || (!previewData?.currency && num >= 10000);
+    if (DASHBOARD_CURRENCY.code === "USD" && isEgpReturned) {
+      num = num / 50;
+    }
+    return formatPrice(num);
+  };
 
   return (
     <div className={styles.container}>
@@ -164,21 +173,21 @@ export default function StepBookingSummary({ formData, onSummaryLoad }: StepBook
                     <span className={styles.priceLabel}>
                       {item.quantity} × {item.type_label} - {item.view_label} ({nights} {nights === 1 ? 'night' : 'nights'})
                     </span>
-                    <span className={styles.priceValue}>£{Number(item.line_total).toLocaleString()}</span>
+                    <span className={styles.priceValue}>{formatHotelPrice(item.line_total)}</span>
                   </div>
                 ))}
                 
                 {parseFloat(discount) > 0 && (
                   <div className={styles.priceRow}>
                     <span className={styles.priceLabel}>Special Discount</span>
-                    <span className={styles.discountValue}>-£{Number(discount).toLocaleString()}</span>
+                    <span className={styles.discountValue}>-{formatHotelPrice(discount)}</span>
                   </div>
                 )}
               </div>
             
               <div className={styles.totalRow}>
-                <span className={styles.totalLabel}>Total</span>
-                <span className={styles.totalValue}>£{Number(total).toLocaleString()}</span>
+                <span className={styles.totalLabel}>Total ({DASHBOARD_CURRENCY.code})</span>
+                <span className={styles.totalValue}>{formatHotelPrice(total)}</span>
               </div>
             </div>
           )}

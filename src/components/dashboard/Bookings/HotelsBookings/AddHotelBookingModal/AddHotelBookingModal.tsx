@@ -19,6 +19,7 @@ import {
   generateHotelPaymentLink,
   getHotelBookingById,
 } from "@/services/admin/adminBookingsService";
+import { DASHBOARD_CURRENCY, formatPrice } from "@/constants/currency";
 
 interface AddHotelBookingModalProps {
   open: boolean;
@@ -129,6 +130,16 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
   if (!open) return null;
 
   const total = previewData ? parseFloat(previewData.total_price) : 0;
+
+  const formatHotelPrice = (price: number | string) => {
+    let num = typeof price === "string" ? parseFloat(price) : price;
+    if (isNaN(num)) return `${DASHBOARD_CURRENCY.symbol}0`;
+    const isEgpReturned = previewData?.currency === "EGP" || (!previewData?.currency && num >= 10000);
+    if (DASHBOARD_CURRENCY.code === "USD" && isEgpReturned) {
+      num = num / 50;
+    }
+    return formatPrice(num);
+  };
 
   const handleNext = async (generateLink: boolean = false) => {
     if (createdBooking) {
@@ -327,7 +338,7 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
             label: "Payment Status", 
             value: <StatusPill label="Paid" variant="green" hideDot /> 
           },
-          { label: "Amount Paid", value: `£${Number(total).toLocaleString()}`, valueColor: "#FF6600" }
+          { label: "Amount Paid", value: formatHotelPrice(total), valueColor: "#FF6600" }
         ]}
       >
         {createdBooking?.payment_url && (

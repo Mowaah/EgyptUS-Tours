@@ -5,6 +5,7 @@ import { SelectDropdown } from "@/components/shared";
 import type { SelectOption } from "@/components/shared";
 import RoomSelector, { RoomGroup } from "@/components/dashboard/shared/RoomSelector/RoomSelector";
 import { getCatalogHotels, getCatalogHotelDetail, getCatalogHotelLocations } from "@/services/admin/adminCatalogHotelsService";
+import { DASHBOARD_CURRENCY, formatPrice } from "@/constants/currency";
 import { AddHotelBookingData } from "../../AddHotelBookingModal";
 import styles from "./StepBookingDetails.module.scss";
 
@@ -87,6 +88,14 @@ export default function StepBookingDetails({ formData, onChange, errors = {} }: 
     return Array.isArray(list) ? list : [];
   }, [hotelDetail]);
 
+  const getRoomPriceVal = (r: any) => {
+    const usd = parseFloat(r.price_per_night || r.pricePerNight || "0");
+    if (usd > 0) return usd;
+    const egp = parseFloat(r.price_per_night_egp || "0");
+    if (egp > 0) return egp / 50;
+    return 0;
+  };
+
   // 4. Map rooms into RoomGroup[] for RoomSelector
   const roomGroups: RoomGroup[] = useMemo(() => {
     if (!rawRooms || rawRooms.length === 0) return [];
@@ -106,23 +115,23 @@ export default function StepBookingDetails({ formData, onChange, errors = {} }: 
       let baseRoom = rooms[0];
       if (rooms.length > 1) {
         baseRoom = rooms.reduce((prev: any, curr: any) => {
-          const prevPrice = parseFloat(prev.price_per_night_egp || prev.price_per_night || prev.pricePerNight || "0");
-          const currPrice = parseFloat(curr.price_per_night_egp || curr.price_per_night || curr.pricePerNight || "0");
+          const prevPrice = getRoomPriceVal(prev);
+          const currPrice = getRoomPriceVal(curr);
           return prevPrice < currPrice ? prev : curr;
         });
       }
 
-      const basePrice = parseFloat(baseRoom.price_per_night_egp || baseRoom.price_per_night || baseRoom.pricePerNight || "0");
+      const basePrice = getRoomPriceVal(baseRoom);
 
       const options = rooms.map((r: any) => {
         const isBase = r.id === baseRoom.id;
-        const rPrice = parseFloat(r.price_per_night_egp || r.price_per_night || r.pricePerNight || "0");
+        const rPrice = getRoomPriceVal(r);
         const diff = rPrice - basePrice;
         const viewName = r.view_label || r.view || "Standard View";
         return {
           label: viewName,
           value: r.id.toString(),
-          price: isBase ? "Included" : (diff > 0 ? `+£${diff.toLocaleString()}` : `-£${Math.abs(diff).toLocaleString()}`),
+          price: isBase ? "Included" : (diff > 0 ? `+${formatPrice(diff)}` : `-${formatPrice(Math.abs(diff))}`),
           isFree: isBase,
         };
       });
@@ -136,8 +145,6 @@ export default function StepBookingDetails({ formData, onChange, errors = {} }: 
         .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
         .join(' ');
 
-      const viewLabel = baseRoom.view_label || baseRoom.view || "Standard View";
-
       let capacity = 2;
       const lowerType = typeKey.toLowerCase();
       if (lowerType.includes("single")) capacity = 1;
@@ -149,7 +156,7 @@ export default function StepBookingDetails({ formData, onChange, errors = {} }: 
         key: typeKey.toLowerCase(),
         title: finalTitle,
         subtitle: `${capacity} person${capacity > 1 ? "s" : ""}`,
-        displayPrice: `£${Math.round(basePrice).toLocaleString()}`,
+        displayPrice: formatPrice(basePrice),
         priceUnit: "/ night",
         options,
         defaultOptionValue: baseRoom.id.toString(),
