@@ -6,9 +6,11 @@ import { getProfileRequestDetail } from "@/lib/api";
 import {
   BookingDetailsSections,
   PageHeader,
+  StatusPill,
   type BookingDetailsSection,
   type TripBookingStatus,
 } from "@/components/shared";
+import { getStatusConfig } from "@/utils/statusUtils";
 import { COUNTRIES } from "@/data/countries";
 import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./ProfileRequestDetailsPage.module.scss";
@@ -30,6 +32,8 @@ const getCountryDisplayName = (val?: string) => {
 
 interface ProfileRequestDetailData {
   status?: string | null;
+  display_status?: string | null;
+  request_status?: string | null;
   company_name?: string;
   country?: string;
   contact_person?: string;
@@ -118,33 +122,6 @@ interface ProfileRequestDetailData {
   applicantName?: string;
 }
 
-type RequestStatus = Extract<TripBookingStatus, "proposal_in_progress" | "proposal_sent" | "confirmed">;
-
-function LoadingGlyph() {
-  return (
-    <span className={styles.loadingGlyph} aria-hidden>
-      <svg className={styles.spinnerSvg} width="14" height="14" viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2" opacity="0.25" />
-        <path
-          fill="none"
-          d="M12 2a10 10 0 0 1 10 10"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-      </svg>
-    </span>
-  );
-}
-
-function getStatus(value: string | null): RequestStatus {
-  if (value === "proposal_sent") return "proposal_sent";
-  if (value === "closed" || value === "converted" || value === "fully_paid" || value === "paid" || value === "confirmed" || value === "approved") {
-    return "confirmed";
-  }
-  return "proposal_in_progress";
-}
-
 export default function ProfileRequestDetailsPage() {
   const { t } = useTranslation("common");
   const searchParams = useSearchParams();
@@ -166,7 +143,8 @@ export default function ProfileRequestDetailsPage() {
     }
   }, [requestId, requestType]);
 
-  const currentStatus = getStatus(data?.status || "proposal_in_progress");
+  const rawStatus = data?.display_status || data?.request_status || data?.status || searchParams.get("status") || "new";
+  const statusConfig = getStatusConfig(rawStatus);
 
   let sections: BookingDetailsSection[] = [];
 
@@ -397,12 +375,14 @@ export default function ProfileRequestDetailsPage() {
                     : "Here are the details of your submitted event and its current status"}
               </p>
             </div>
-            <span className={`${styles.statusBadge} ${currentStatus === "proposal_sent" || currentStatus === "confirmed" ? styles.sent : styles.inProgress}`}>
-              <span className={styles.statusIcon}>
-                {currentStatus === "proposal_sent" || currentStatus === "confirmed" ? "✓" : <LoadingGlyph />}
-              </span>
-              {currentStatus === "proposal_sent" ? t("profile.card.proposalSent", "Proposal Sent") : currentStatus === "confirmed" ? t("profile.details.status.confirmed", "Confirmed") : t("profile.card.proposalInProgress", "Proposal in progress")}
-            </span>
+            <div className={styles.headerBadges}>
+              <StatusPill
+                label={statusConfig.label}
+                variant={statusConfig.variant}
+                iconType={statusConfig.iconType}
+                size="lg"
+              />
+            </div>
           </header>
 
           {loading ? (

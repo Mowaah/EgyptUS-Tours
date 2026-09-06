@@ -85,4 +85,7 @@ export { default as LoadingSpinner } from "./LoadingSpinner/LoadingSpinner";
 export type { LoadingSpinnerProps } from "./LoadingSpinner/LoadingSpinner";
 export { default as FavoriteButton } from "./FavoriteButton/FavoriteButton";
 export type { FavoriteButtonProps } from "./FavoriteButton/FavoriteButton";
+export { default as StatusPill, LoadingGlyph } from "./StatusPill/StatusPill";
+export type { StatusPillVariant, StatusPillSize, StatusPillIconType } from "./StatusPill/StatusPill";
+
 

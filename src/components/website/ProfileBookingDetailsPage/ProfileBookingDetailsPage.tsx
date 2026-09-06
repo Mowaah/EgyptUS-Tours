@@ -27,43 +27,9 @@ const getCountryName = (code: string) => {
   return country ? country.nationality : code;
 };
 
-type TripDetailsStatus = Extract<TripBookingStatus, "confirmed" | "partially_paid" | "cancelled">;
+import { getStatusConfig } from "@/utils/statusUtils";
+import { StatusPill } from "@/components/shared";
 
-
-
-const FALLBACK_STATUS: TripDetailsStatus = "confirmed";
-
-function getStatusFromParam(value: string | null): TripDetailsStatus {
-  if (value === "confirmed" || value === "partially_paid" || value === "cancelled") {
-    return value;
-  }
-  return FALLBACK_STATUS;
-}
-
-function getStatusUi(status: TripDetailsStatus | string, t?: any) {
-  const tr = (k: string, fb: string) => (t ? t(k, fb) : fb);
-  if (status === "partially_paid") {
-    return {
-      label: tr("profile.details.status.partially_paid", "Partially Paid"),
-      badgeClass: styles.statusPartiallyPaid,
-      icon: <LoadingGlyph />,
-    };
-  }
-
-  if (status === "cancelled") {
-    return {
-      label: tr("profile.details.status.cancelled", "Cancelled"),
-      badgeClass: styles.statusCancelled,
-      icon: "✕",
-    };
-  }
-
-  return {
-    label: tr("profile.details.status.confirmed", "Confirmed"),
-    badgeClass: styles.statusConfirmed,
-    icon: "✓",
-  };
-}
 
 export default function ProfileBookingDetailsPage() {
   const { t, language } = useTranslation("common");
@@ -93,19 +59,36 @@ export default function ProfileBookingDetailsPage() {
     }
   }, [id, detailsType]);
 
-  const rawStatus = bookingDetail?.status || searchParams.get("status");
-  const status = getStatusFromParam(rawStatus);
+  const bData = bookingDetail || {};
+  const rawStatus = (bData.request_status || bData.status || searchParams.get("status") || "confirmed").toLowerCase();
+  const opStatus = bData.operational_status?.toLowerCase();
+  const remStatus = bData.remaining_payment_status?.toLowerCase();
+
+  const isCancelled = rawStatus === "cancelled" || rawStatus === "canceled" || opStatus === "cancelled" || opStatus === "canceled";
+  const isRejected = rawStatus === "rejected";
+  const isPartiallyPaid = rawStatus === "partially_paid" || remStatus === "pending" || bData.status === "partially_paid";
+
+  let primaryStatus = rawStatus;
+  if (isCancelled) {
+    primaryStatus = "cancelled";
+  } else if (isRejected) {
+    primaryStatus = "rejected";
+  } else if (opStatus) {
+    primaryStatus = opStatus;
+  }
+
+  const primaryConfig = getStatusConfig(primaryStatus);
+  const secondaryConfig = !isCancelled && !isRejected && remStatus && remStatus !== primaryStatus
+    ? getStatusConfig(remStatus)
+    : null;
+
   const [showSuccess, setShowSuccess] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [isPaying, setIsPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
-  const statusUi = getStatusUi(status, t);
-  const isPartiallyPaid = status === "partially_paid";
-  const showCancelAction = status !== "cancelled";
-  const showPayAction = isPartiallyPaid;
+  const showCancelAction = !isCancelled && !isRejected;
+  const showPayAction = isPartiallyPaid && !isCancelled && !isRejected;
   const showFooter = showCancelAction || showPayAction;
-
-  const bData = bookingDetail || {};
   const contact = bData.contact || {};
   const payment = bData.payment_summary || {};
   const roomsObj = bData.rooms || { single: 0, double: 0, triple: 0 };
@@ -465,10 +448,22 @@ export default function ProfileBookingDetailsPage() {
                   <h2>{t("profile.details.title", "Booking Details")}</h2>
                   <p>{t("profile.details.subtitle", "View full details and manage your reservation.")}</p>
                 </div>
-                <span className={`${styles.statusBadge} ${statusUi.badgeClass}`}>
-                  <span className={styles.statusIcon}>{statusUi.icon}</span>
-                  {statusUi.label}
-                </span>
+                <div className={styles.headerBadges}>
+                  <StatusPill
+                    label={primaryConfig.label}
+                    variant={primaryConfig.variant}
+                    iconType={primaryConfig.iconType}
+                    size="lg"
+                  />
+                  {secondaryConfig && (
+                    <StatusPill
+                      label={secondaryConfig.label}
+                      variant={secondaryConfig.variant}
+                      iconType={secondaryConfig.iconType}
+                      size="lg"
+                    />
+                  )}
+                </div>
               </header>
 
               <div className={styles.content}>

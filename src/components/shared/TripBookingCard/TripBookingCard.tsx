@@ -1,6 +1,9 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Button from "@/components/shared/Button/Button";
+import StatusPill from "@/components/shared/StatusPill/StatusPill";
+import type { StatusPillVariant, StatusPillIconType } from "@/components/shared/StatusPill/StatusPill";
+import { getStatusConfig } from "@/utils/statusUtils";
 import { bookingCardIcons } from "@/data/bookingCardIcons";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useCurrency } from "@/contexts/CurrencyContext";
@@ -10,8 +13,28 @@ export type TripBookingStatus =
   | "partially_paid"
   | "confirmed"
   | "cancelled"
+  | "canceled"
+  | "rejected"
+  | "pending"
+  | "paid"
+  | "fully_paid"
+  | "deposit_paid"
+  | "upcoming"
+  | "on_trip"
+  | "in_stay"
+  | "in_transit"
+  | "completed"
+  | "refunded"
+  | "new"
+  | "in_progress"
   | "proposal_in_progress"
-  | "proposal_sent";
+  | "proposal_ready"
+  | "proposal_sent"
+  | "negotiation"
+  | "approved"
+  | "awaiting_deposit"
+  | "awaiting_payment"
+  | string;
 
 export interface TripBookingDetails {
   tripName: string;
@@ -90,6 +113,11 @@ type BookingCardShared = {
   /** Shown in gradient pill; omit when cancelled */
   timerLabel?: string | null;
   status: TripBookingStatus;
+  statusLabel?: string;
+  statusVariant?: StatusPillVariant;
+  secondaryStatusLabel?: string;
+  secondaryStatusVariant?: StatusPillVariant;
+  secondaryStatusIconType?: StatusPillIconType;
   paidAmount?: number;
   remainingAmount?: number;
   totalAmount?: number;
@@ -132,31 +160,6 @@ const TRANSPORT_ICONS = bookingCardIcons.transport;
 const MICE_ICONS = bookingCardIcons.mice;
 const B2B_ICONS = bookingCardIcons.b2b;
 
-function LoadingGlyph() {
-  return (
-    <span className={styles.loadingGlyph} aria-hidden>
-      <svg className={styles.spinnerSvg} width="14" height="14" viewBox="0 0 24 24" fill="none">
-        <circle
-          cx="12"
-          cy="12"
-          r="10"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          opacity="0.25"
-        />
-        <path
-          fill="none"
-          d="M12 2a10 10 0 0 1 10 10"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-      </svg>
-    </span>
-  );
-}
-
 export default function TripBookingCard(props: TripBookingCardProps) {
   const {
     imageSrc,
@@ -184,7 +187,15 @@ export default function TripBookingCard(props: TripBookingCardProps) {
     props.variant === "b2b";
   const hasImage = Boolean(imageSrc && showImage && !isRequestVariant);
 
-  const showTimer = Boolean(timerLabel) && status !== "cancelled";
+  const isTerminalNegative =
+    status === "cancelled" ||
+    status === "canceled" ||
+    status === "rejected";
+  const showTimer = Boolean(timerLabel) && !isTerminalNegative;
+  const statusConfig = getStatusConfig(status);
+  const primaryStatusLabel = props.statusLabel || statusConfig.label;
+  const primaryStatusVariant = props.statusVariant || statusConfig.variant;
+  const primaryStatusIconType = statusConfig.iconType;
   const sectionLabel =
     props.variant === "hotel"
       ? t("profile.card.hotelBooking", "Hotel Booking")
@@ -348,28 +359,19 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                   <span className={styles.timerText}>{localizedTimerLabel}</span>
                 </span>
               )}
-              {(status === "partially_paid" || status === "proposal_in_progress") && (
-                <span className={styles.statusPartial}>
-                  <LoadingGlyph />
-                  <span>
-                    {status === "proposal_in_progress"
-                      ? t("profile.card.proposalInProgress", "Proposal In progress")
-                      : t("profile.details.status.partially_paid", "Partially Paid")}
-                  </span>
-                </span>
-              )}
-              {(status === "confirmed" || status === "proposal_sent") && (
-                <span className={styles.statusConfirmed}>
-                  ✓ {status === "proposal_sent"
-                    ? t("profile.card.proposalSent", "Proposal Sent")
-                    : t("profile.details.status.confirmed", "Confirmed")}
-                </span>
-              )}
-              {status === "cancelled" && (
-                <span className={styles.statusCancelled}>
-                  <span className={styles.cancelX}>✕</span>
-                  <span>{t("profile.details.status.cancelled", "Cancelled")}</span>
-                </span>
+              <StatusPill
+                label={primaryStatusLabel}
+                variant={primaryStatusVariant}
+                iconType={primaryStatusIconType}
+                size="sm"
+              />
+              {props.secondaryStatusLabel && (
+                <StatusPill
+                  label={props.secondaryStatusLabel}
+                  variant={props.secondaryStatusVariant || "gray"}
+                  iconType={props.secondaryStatusIconType || "dot"}
+                  size="sm"
+                />
               )}
             </div>
           </div>

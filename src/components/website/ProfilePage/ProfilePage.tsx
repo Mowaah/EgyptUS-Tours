@@ -19,6 +19,7 @@ import { Trip, Hotel } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { getFavoriteTrips, getFavoriteHotels, getProfileRequests, getProfileSummary, getProfileBookings, getPaymentReceipt } from "@/lib/api";
+import { getStatusConfig } from "@/utils/statusUtils";
 import styles from "./ProfilePage.module.scss";
 
 function parseProfileTab(param: string | null): TabType {
@@ -237,22 +238,20 @@ export default function ProfilePage() {
               };
             }
 
-            const reqStatus = req.status || "proposal_in_progress";
-            const mappedStatus = ["closed", "converted", "fully_paid", "paid", "confirmed", "approved"].includes(reqStatus)
-              ? "confirmed"
-              : reqStatus === "proposal_sent"
-              ? "proposal_sent"
-              : "proposal_in_progress";
+            const rawStatus = req.display_status || req.request_status || req.status || "new";
+            const statusConfig = getStatusConfig(rawStatus);
 
             return {
               variant: (req.type === "events" ? "mice" : req.type) as any,
               showImage: false,
               tripTitle: req.title || req.event_name || req.company_name || "",
-              status: mappedStatus as any,
+              status: rawStatus as any,
+              statusLabel: statusConfig.label,
+              statusVariant: statusConfig.variant,
               infoMessage: req.info_message || t("profile.card.proposalExpected", "Proposal expected within 24-48 hrs"),
               details: mappedDetails as any,
               primaryLabel: t("buttons.viewDetails", "View Details"),
-              primaryHref: `/profile/requests-details?type=${req.type}&id=${req.id}&status=${reqStatus}`,
+              primaryHref: `/profile/requests-details?type=${req.type}&id=${req.id}&status=${rawStatus}`,
             };
           };
 
@@ -317,12 +316,41 @@ export default function ProfilePage() {
                 luggageLabel: d.luggage_label || (bk.luggage !== undefined ? `${bk.luggage} Bags` : ""),
               };
             }
-            const statusVal = bk.status || "confirmed";
-            const isPartiallyPaid = statusVal === "partially_paid";
-            const isCancelled = statusVal === "cancelled";
+            const reqStatus = (bk.request_status || bk.status || "confirmed").toLowerCase();
+            const opStatus = bk.operational_status?.toLowerCase();
+            const remStatus = bk.remaining_payment_status?.toLowerCase();
+
+            const isCancelled = reqStatus === "cancelled" || reqStatus === "canceled" || opStatus === "cancelled" || opStatus === "canceled";
+            const isRejected = reqStatus === "rejected";
+            const isPartiallyPaid = reqStatus === "partially_paid" || remStatus === "pending" || bk.status === "partially_paid";
+
+            let primaryStatus = reqStatus;
+            if (isCancelled) {
+              primaryStatus = "cancelled";
+            } else if (isRejected) {
+              primaryStatus = "rejected";
+            } else if (opStatus) {
+              primaryStatus = opStatus;
+            }
+
+            const primaryConfig = getStatusConfig(primaryStatus);
+
+            let secondaryStatusLabel: string | undefined = undefined;
+            let secondaryStatusVariant = undefined;
+            let secondaryStatusIconType = undefined;
+
+            if (!isCancelled && !isRejected) {
+              const paymentStatusToUse = remStatus || (isPartiallyPaid ? "partially_paid" : undefined);
+              if (paymentStatusToUse && paymentStatusToUse !== primaryStatus) {
+                const remConfig = getStatusConfig(paymentStatusToUse);
+                secondaryStatusLabel = remConfig.label;
+                secondaryStatusVariant = remConfig.variant;
+                secondaryStatusIconType = remConfig.iconType;
+              }
+            }
 
             let primaryLabel = t("buttons.viewDetails", "View Details");
-            if (isPartiallyPaid) {
+            if (isPartiallyPaid && !isCancelled && !isRejected) {
               primaryLabel = t("profile.card.completePayment", "Complete Payment");
             }
 
@@ -341,8 +369,13 @@ export default function ProfilePage() {
               variant: type as any,
               imageSrc: bk.image || defaultImage,
               tripTitle: bk.title || bk.hotel_name || bk.vehicle_name || "",
-              status: statusVal,
-              timerLabel: bk.timer_label || (isCancelled ? undefined : "In the past"),
+              status: primaryStatus,
+              statusLabel: primaryConfig.label,
+              statusVariant: primaryConfig.variant,
+              secondaryStatusLabel,
+              secondaryStatusVariant,
+              secondaryStatusIconType,
+              timerLabel: bk.timer_label || (isCancelled || isRejected ? undefined : "In the past"),
               paidAmount: paidNum,
               remainingAmount: remainingNum,
               totalAmount: totalNum,
@@ -350,7 +383,7 @@ export default function ProfilePage() {
               infoMessage: "",
               details: mappedDetails,
               primaryLabel,
-              primaryHref: `/profile/bookings-details?type=${type}&id=${bk.id}&status=${statusVal}`,
+              primaryHref: `/profile/bookings-details?type=${type}&id=${bk.id}&status=${primaryStatus}`,
             };
           };
 
