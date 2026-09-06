@@ -446,7 +446,7 @@ export default function RequestDetailsLayout({
                 </>
               ) : status === "Rejected" ? (
                 <button
-                  className={styles.createProposalBtn}
+                  className={`${styles.createProposalBtn} ${styles.reopenBtn}`}
                   type="button"
                   onClick={() => setActiveModalKey("reopen")}
                 >

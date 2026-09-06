@@ -24,11 +24,15 @@ function MediaCard({
   title,
   imageSrc,
   attachmentInfo,
-  imgTitleLabel = "Image Title",
+  imgTitleLabel,
   imgTitleValue,
-  imgAltLabel = "Image Alt",
+  imgAltLabel,
   imgAltValue,
 }: MediaCardItem) {
+  const isThumbnail = title.toLowerCase().includes("thumbnail");
+  const resolvedTitleLabel = imgTitleLabel || (isThumbnail ? "Thumbnail Title" : "Image Title");
+  const resolvedAltLabel = imgAltLabel || (isThumbnail ? "Thumbnail Alt" : "Image Alt");
+
   return (
     <div className={styles.mediaCard}>
       <div className={styles.cardHeader}>
@@ -62,14 +66,14 @@ function MediaCard({
       <div className={styles.infoArea}>
         <div className={styles.fieldsRow}>
           <div className={styles.fieldGroup}>
-            <span className={styles.fieldLabel}>{imgTitleLabel}</span>
+            <span className={styles.fieldLabel}>{resolvedTitleLabel}</span>
             <div className={styles.fieldValue}>
               {imgTitleValue || "-"}
             </div>
           </div>
 
           <div className={styles.fieldGroup}>
-            <span className={styles.fieldLabel}>{imgAltLabel}</span>
+            <span className={styles.fieldLabel}>{resolvedAltLabel}</span>
             <div className={styles.fieldValue}>
               {imgAltValue || "-"}
             </div>

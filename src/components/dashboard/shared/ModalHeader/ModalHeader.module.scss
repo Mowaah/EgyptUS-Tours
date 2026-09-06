@@ -11,24 +11,26 @@
 }
 
 .headerIcon {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border-radius: 50%;
+  width: 48px;
+  height: 48px;
   background: #F2F4F7;
-  color: $gray-500-zinc;
-  width: 64px;
-  height: 64px;
   border: 8px solid $gray-50;
+  border-radius: 28px;
+  box-sizing: border-box;
+
+  img,
+  svg {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+  }
 }
 
 .dangerIcon {
-  background: $background-danger; // $background-danger
-  color: $status-danger-dark; // $status-danger-dark
-  border: 8px solid $background-danger; // Wait, screenshot says border #FFFBFB and background #FFECEC.
-  // Actually, I'll use design tokens. $background-danger-light is $background-danger-light.
-  // I will just use the ones from the screenshot snippet to be exact.
   background: #FFECEC;
   border-color: #FFFBFB;
 }

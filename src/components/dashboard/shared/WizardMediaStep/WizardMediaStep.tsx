@@ -27,6 +27,11 @@ function MediaUploadBlock({
   const [lang, setLang] = useState<Language>("English");
   const { control, register, setValue } = useFormContext();
 
+  const isThumbnail = index === 0 || title.toLowerCase().includes("thumbnail");
+  const titleLabel = isThumbnail ? "Thumbnail Title" : "Image Title";
+  const titlePlaceholder = isThumbnail ? "Thumbnail Title..." : "Image Title...";
+  const altLabel = isThumbnail ? "Thumbnail Alt" : "Image Alt";
+
   let headerAction = null;
   if (onDelete) {
     headerAction = (
@@ -70,8 +75,8 @@ function MediaUploadBlock({
       <FormSpec>
         <LanguageTabs active={lang} onChange={setLang} className={styles.whiteTabs} />
         <div className={styles.fieldRow}>
-          <DashboardField key={`title-${index}-${lang}`} label="Image Title" placeholder="Image Title..." {...register(`photos.${index}.title.${getLangKey(lang)}` as never)} />
-          <DashboardField key={`alt-${index}-${lang}`} label="Image Alt" placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" {...register(`photos.${index}.alt.${getLangKey(lang)}` as never)} />
+          <DashboardField key={`title-${index}-${lang}`} label={titleLabel} placeholder={titlePlaceholder} {...register(`photos.${index}.title.${getLangKey(lang)}` as never)} />
+          <DashboardField key={`alt-${index}-${lang}`} label={altLabel} placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" {...register(`photos.${index}.alt.${getLangKey(lang)}` as never)} />
         </div>
       </FormSpec>
     </FormSection>
@@ -129,8 +134,6 @@ export default function WizardMediaStep() {
           if (index === 0) {
             title = "Upload Thumbnail";
             attachmentLabel = "Attachment [302 x 202]";
-          } else if (index === 1) {
-            title = "Upload Image";
           }
 
           // Show delete button for any cards added beyond default 6 (index >= 6)

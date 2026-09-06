@@ -56,7 +56,7 @@ export default function ProposalFile({ files = [] }: ProposalFileProps) {
 
   return (
     <InfoCard title="Proposal Files" iconSrc="/images/dashboard/requests/proposal-file.svg">
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div className={styles.filesList}>
         {files.map((file, idx) => (
           <div key={idx} className={styles.fileItem}>
             <div className={styles.fileIconWrapper}>

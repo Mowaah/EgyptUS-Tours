@@ -13,19 +13,36 @@ export default function LeadActivityTimeline({ leadId }: ActivityTimelineProps) 
   const milestones: Milestone[] = useMemo(() => {
     if (!events) return [];
     
-    return events.map((event: AdminLeadTimelineEvent) => ({
-      id: event.id.toString(),
-      title: event.activity_type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
-      time: new Date(event.created_at).toLocaleString("en-US", { 
-        month: "short", 
-        day: "numeric", 
-        hour: "numeric", 
-        minute: "numeric", 
-        hour12: true 
-      }),
-      description: event.description || "",
-      status: "completed",
-    }));
+    return events.map((event: AdminLeadTimelineEvent) => {
+      const isReassigned =
+        event.activity_type === "reassigned" ||
+        (event.activity_type === "assigned" && Boolean((event as any).metadata?.previous_assignee_id)) ||
+        event.description?.toLowerCase().startsWith("reassigned to") ||
+        event.description?.toLowerCase().startsWith("batch reassigned to");
+
+      const title = isReassigned
+        ? "Reassigned"
+        : event.activity_type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
+      let description = event.description || "";
+      if (isReassigned && description.startsWith("Assigned to")) {
+        description = description.replace(/^Assigned to/, "Reassigned to");
+      }
+
+      return {
+        id: event.id.toString(),
+        title,
+        time: new Date(event.created_at).toLocaleString("en-US", { 
+          month: "short", 
+          day: "numeric", 
+          hour: "numeric", 
+          minute: "numeric", 
+          hour12: true 
+        }),
+        description,
+        status: "completed",
+      };
+    });
   }, [events]);
 
   if (isLoading) {

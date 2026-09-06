@@ -22,7 +22,7 @@ export default function TransportationMediaPage() {
     const t = heroItem.translations?.[langKey] || heroItem.translations?.en || {};
     cards.push({
       id: heroItem.id || "hero",
-      title: "Upload Thumbnail",
+      title: "Thumbnail",
       imageSrc: heroItem.image_url || "/images/placeholder.jpg",
       attachmentInfo: "Attachment (303 x 202)",
       imgTitleValue: t.title || "-",
@@ -34,7 +34,7 @@ export default function TransportationMediaPage() {
     const t = item.translations?.[langKey] || item.translations?.en || {};
     cards.push({
       id: item.id || `gallery-${index}`,
-      title: `Photo Gallery ${index + 2}`,
+      title: `Photo Gallery ${index + 1}`,
       imageSrc: item.image_url || "/images/placeholder.jpg",
       attachmentInfo: "Attachment (1100 x 552)",
       imgTitleValue: t.title || "-",

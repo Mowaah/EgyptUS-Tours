@@ -35,14 +35,16 @@
 }
 
 .headerIcon {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 4rem;
-  height: 4rem;
-  border: 0.5rem solid $gray-50;
-  border-radius: 50%;
-  background: $gray-50-tailwind;
+  width: 48px;
+  height: 48px;
+  border: 8px solid $gray-50;
+  border-radius: 28px;
+  background: #F2F4F7;
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .headerAsset {

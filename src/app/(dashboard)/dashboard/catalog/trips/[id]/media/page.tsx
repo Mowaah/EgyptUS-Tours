@@ -4,20 +4,6 @@ import React from "react";
 import { useTripDetailContext } from "../layout";
 import { CatalogMediaView, MediaCardItem } from "@/components/dashboard/shared";
 
-interface TripMediaItem {
-  id?: number | string;
-  kind?: string;
-  image_url?: string;
-  caption?: string;
-  translations?: {
-    [key: string]: {
-      alt?: string;
-      title?: string;
-      caption?: string;
-    };
-  };
-}
-
 import { getLangKey } from "@/components/dashboard/shared/i18n";
 
 export default function TripMediaPage() {
@@ -28,40 +14,38 @@ export default function TripMediaPage() {
   }
 
   const langKey = getLangKey(activeLang);
-  const mediaItems: TripMediaItem[] = trip.media_items || [];
-  const heroImageUrl = trip.hero_image_url;
+  const rawMediaItems: any[] = Array.isArray(trip?.media_items) ? trip.media_items : [];
 
-  const cards: MediaCardItem[] = [];
+  const heroMedia =
+    rawMediaItems.find((m) => m?.kind === "hero") ||
+    (trip?.hero_image_url ? { image_url: trip.hero_image_url, kind: "hero" } : null);
+  const galleryMedia = rawMediaItems.filter((m) => m?.kind !== "hero");
 
-  if (heroImageUrl) {
-    cards.push({
-      id: "hero",
-      title: "Hero / Banner Image",
-      imageSrc: heroImageUrl,
-      attachmentInfo: "Attachment (303 x 202)",
-      imgTitleLabel: "Caption / Title",
-      imgTitleValue: trip.title,
-      imgAltLabel: "Image Type",
-      imgAltValue: "Hero Banner",
-    });
-  }
+  const mediaList = [heroMedia, ...galleryMedia].filter(Boolean);
 
-  mediaItems.forEach((item, idx: number) => {
-    const kindLabel = item.kind === "hero" ? "Hero Image" : item.kind === "traveler_photo" ? "Traveler Photo" : `Gallery Photo ${idx + 1}`;
-    const translated = item.translations?.[langKey] || item.translations?.en || {};
-    cards.push({
-      id: item.id || idx,
-      title: kindLabel,
-      imageSrc: item.image_url || "",
-      attachmentInfo: item.kind === "hero" ? "Attachment (303 x 202)" : "Attachment (1100 x 552)",
-      imgTitleValue: translated.title || item.caption || "No title",
-      imgAltValue: translated.alt || item.caption || item.kind || "gallery",
-    });
+  const cards: MediaCardItem[] = mediaList.map((item, index) => {
+    const isHero = index === 0;
+    const mediaTranslations = item?.translations?.[langKey] || item?.translations?.en || {};
+    const title = isHero ? "Thumbnail" : `Photo Gallery ${index}`;
+    const attachmentInfo = isHero ? "Attachment (303 x 202)" : "Attachment (1100 x 552)";
+    const imageSrc = item?.image_url || item?.image || item?.file || "/images/placeholder.jpg";
+    const imgTitleValue = mediaTranslations.title || item?.caption || (isHero ? trip.title : "") || "-";
+    const imgAltValue = mediaTranslations.alt || "-";
+
+    return {
+      id: item?.id || index,
+      title,
+      imageSrc,
+      attachmentInfo,
+      imgTitleValue,
+      imgAltValue,
+    };
   });
 
   return (
     <CatalogMediaView
-      pageTitle="Media & Gallery"
+      pageTitle="Trips Media"
+      headerIconSrc="/images/dashboard/catalog/trips/media.svg"
       mediaItems={cards}
       emptyMessage="No media items or hero images have been uploaded for this trip yet."
     />

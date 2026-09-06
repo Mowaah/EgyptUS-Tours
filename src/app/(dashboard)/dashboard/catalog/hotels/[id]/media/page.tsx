@@ -23,7 +23,7 @@ export default function HotelMediaPage() {
   const cards: MediaCardItem[] = mediaList.map((item, index) => {
     const isHero = index === 0;
     const mediaTranslations = item?.translations?.[langKey] || item?.translations?.en || {};
-    const title = isHero ? "Upload Thumbnail" : index === 1 ? "Upload Image" : `Photo Gallery ${index}`;
+    const title = isHero ? "Thumbnail" : `Photo Gallery ${index}`;
     const attachmentInfo = isHero ? "Attachment (303 x 202)" : "Attachment (1100 x 552)";
     const imageSrc = item?.image_url || item?.image || item?.file || "/images/dashboard/catalog/hotels/roomtype.jpg";
     const imgTitleValue = mediaTranslations.title || item?.caption || "";
@@ -42,6 +42,7 @@ export default function HotelMediaPage() {
   return (
     <CatalogMediaView
       pageTitle="Hotel Media"
+      headerIconSrc="/images/dashboard/catalog/trips/media.svg"
       mediaItems={cards}
       emptyMessage="No media items uploaded for this hotel yet."
     />

@@ -6,6 +6,11 @@ interface TimelineRow {
   description: string;
   created_at: string;
   actor_name?: string;
+  metadata?: {
+    assignee_id?: number | string;
+    previous_assignee_id?: number | string | null;
+    [key: string]: any;
+  };
 }
 
 interface ActivityTimelineWrapperProps {
@@ -17,15 +22,30 @@ export default function ActivityTimelineWrapper({ timelineRows = [] }: ActivityT
     const date = new Date(row.created_at);
     const timeString = `${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}, ${date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`;
     
-    let title = row.activity_type.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+    const isReassigned =
+      row.activity_type === "reassigned" ||
+      (row.activity_type === "assigned" && Boolean(row.metadata?.previous_assignee_id)) ||
+      row.description?.toLowerCase().startsWith("reassigned to") ||
+      row.description?.toLowerCase().startsWith("batch reassigned to");
+
+    const actionLabel = isReassigned
+      ? "Reassigned"
+      : row.activity_type.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+    let title = actionLabel;
     if (row.actor_name) {
       title += ` by ${row.actor_name}`;
+    }
+
+    let description = row.description || "Status updated.";
+    if (isReassigned && description.startsWith("Assigned to")) {
+      description = description.replace(/^Assigned to/, "Reassigned to");
     }
 
     return {
       id: index.toString(),
       title,
-      description: row.description || "Status updated.",
+      description,
       time: timeString,
       status: "completed"
     };
