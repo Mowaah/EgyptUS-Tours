@@ -87,6 +87,7 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
 
   return {
     id: tripDetail.slug,
+    numericId: tripDetail.id,
     title: tripDetail.title,
     description: tripDetail.description || tripDetail.short_description,
     image: tripDetail.image || "/images/pyramids4.jpg",
@@ -372,6 +373,7 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
         const baseEur = t.base_price_eur != null ? parseFloat(t.base_price_eur) || 0 : undefined;
         return {
           id: t.slug,
+          numericId: t.id,
           title: t.title,
           description: t.short_description || t.title,
           image: t.image || "/images/home/hero-bg.png",

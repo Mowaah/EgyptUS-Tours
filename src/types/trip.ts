@@ -14,6 +14,7 @@ export interface TripHotel {
 
 export interface Trip {
   id: string;
+  numericId?: number;
   title: string;
   description: string;
   image: string;

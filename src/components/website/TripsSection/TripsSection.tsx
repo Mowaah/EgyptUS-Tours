@@ -20,11 +20,11 @@ import {
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { useTranslation } from "@/hooks/useTranslation";
 import { Trip } from "@/types";
+import { PublicPromotion, fetchPublicPromotionsClient } from "@/services/promotionsService";
 import styles from "./TripsSection.module.scss";
 
 // Internal filter values — language-independent keys used for filtering logic
 const DURATION_VALUES = ["any", "lessThan10", "10to15", "15to20", "moreThan20"] as const;
-const OFFERS_VALUES = ["any", "christmas", "easter"] as const;
 
 export interface SearchParams {
   date?: string;
@@ -41,6 +41,7 @@ interface TripsSectionProps {
   /** When provided (redirected from SearchBar) renders Search Results mode */
   searchParams?: SearchParams;
   initialTrips?: Trip[];
+  initialPromotions?: PublicPromotion[];
 }
 
 interface FilterPill {
@@ -49,7 +50,12 @@ interface FilterPill {
   value: string;
 }
 
-export default function TripsSection({ variant = "home", searchParams, initialTrips = [] }: TripsSectionProps) {
+export default function TripsSection({
+  variant = "home",
+  searchParams,
+  initialTrips = [],
+  initialPromotions = [],
+}: TripsSectionProps) {
   const { t: tHome } = useTranslation("home");
   const { t } = useTranslation("trips");
   const isPage = variant === "page";
@@ -66,10 +72,37 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
     value: v,
   })), [t]);
 
-  const offersOptions = useMemo(() => OFFERS_VALUES.map((v) => ({
-    label: t(`offers.${v}`, v),
-    value: v,
-  })), [t]);
+  // Read URL params so filters react instantly to query parameters
+  const urlSearchParams = useSearchParams();
+  const urlPromotion = urlSearchParams.get("promotion") || urlSearchParams.get("promotion_id") || urlSearchParams.get("offer");
+
+  const [promotions, setPromotions] = useState<PublicPromotion[]>(initialPromotions);
+
+  // Sync initialPromotions or fetch client-side if not preloaded
+  useEffect(() => {
+    if (initialPromotions && initialPromotions.length > 0) {
+      setPromotions(initialPromotions);
+    } else {
+      fetchPublicPromotionsClient({ applies_to: "trip" }).then((data) => {
+        if (data && data.length > 0) {
+          setPromotions(data);
+        }
+      });
+    }
+  }, [initialPromotions]);
+
+  const offersOptions = useMemo(() => {
+    const options = [
+      { label: t("offers.any", "Any"), value: "any" },
+    ];
+    promotions.forEach((promo) => {
+      options.push({
+        label: promo.title,
+        value: String(promo.id),
+      });
+    });
+    return options;
+  }, [promotions, t]);
 
   const [expanded, setExpanded] = useState<{
     duration: boolean;
@@ -85,7 +118,13 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
 
   // Filter state uses internal value keys (language-independent)
   const [durationFilter, setDurationFilter] = useState<string>("any");
-  const [offersFilter, setOffersFilter] = useState<string>("any");
+  const [offersFilter, setOffersFilter] = useState<string>(() => urlPromotion || "any");
+
+  useEffect(() => {
+    if (urlPromotion) {
+      setOffersFilter(urlPromotion);
+    }
+  }, [urlPromotion]);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -109,7 +148,6 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
   }, [trips, searchParams?.tripType]);
 
   // Read category directly from URL so it reacts instantly to client-side navigation
-  const urlSearchParams = useSearchParams();
   const urlCategory = urlSearchParams.get("category");
   const categoryFromUrl = useMemo(() => {
     if (!urlCategory) return 0;
@@ -186,6 +224,10 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
     return () => window.removeEventListener("keydown", onKey);
   }, [filtersOpen]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [durationFilter, offersFilter, searchQuery, expanded.priceRange.min, expanded.priceRange.max]);
+
   // 1. Filter by Search Query
   let processedTrips = trips.filter(
     (trip) =>
@@ -208,6 +250,23 @@ export default function TripsSection({ variant = "home", searchParams, initialTr
       if (durationFilter === "moreThan20") return days > 20;
       return true;
     });
+  }
+
+  // 3.1. Filter by Special Offers (Promotions)
+  if (offersFilter !== "any") {
+    const selectedPromo = promotions.find((p) => String(p.id) === offersFilter);
+    if (selectedPromo) {
+      processedTrips = processedTrips.filter((trip) => {
+        const tripNumericId = trip.numericId ?? (Number.isFinite(Number(trip.id)) ? Number(trip.id) : undefined);
+        if (tripNumericId !== undefined && selectedPromo.trip_ids.includes(tripNumericId)) {
+          return true;
+        }
+        if (trip.discountTitle && trip.discountTitle.trim().toLowerCase() === selectedPromo.title.trim().toLowerCase()) {
+          return true;
+        }
+        return false;
+      });
+    }
   }
 
   // 4. Sort

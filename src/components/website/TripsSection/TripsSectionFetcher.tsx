@@ -1,5 +1,6 @@
 import TripsSection from "./TripsSection";
 import { getAllTrips } from "@/services/tripsService";
+import { getPublicPromotions } from "@/services/promotionsService";
 import { Trip } from "@/types";
 
 interface TripsSectionFetcherProps {
@@ -14,7 +15,10 @@ interface TripsSectionFetcherProps {
 }
 
 export default async function TripsSectionFetcher({ apiParams, searchParams }: TripsSectionFetcherProps) {
-  const tripsData = await getAllTrips(apiParams).catch(() => []);
+  const [tripsData, promotions] = await Promise.all([
+    getAllTrips(apiParams).catch(() => []),
+    getPublicPromotions({ applies_to: "trip" }).catch(() => []),
+  ]);
 
   const isDestAll = searchParams?.destination?.toLowerCase() === "all";
   const isEgyptPage = !searchParams?.destination || searchParams?.destination?.toLowerCase() === "egypt";
@@ -54,6 +58,7 @@ export default async function TripsSectionFetcher({ apiParams, searchParams }: T
 
     return {
       id: t.slug,
+      numericId: t.id,
       title: t.title,
       description: t.short_description || t.title,
       image: t.image || "/images/home/hero-bg.png",
@@ -97,6 +102,7 @@ export default async function TripsSectionFetcher({ apiParams, searchParams }: T
         category: searchParams?.category,
       } : undefined}
       initialTrips={initialTrips}
+      initialPromotions={promotions}
     />
   );
 }

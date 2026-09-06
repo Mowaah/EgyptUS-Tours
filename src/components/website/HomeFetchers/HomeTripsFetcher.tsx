@@ -1,11 +1,15 @@
 import TripsSection from "@/components/website/TripsSection/TripsSection";
 import MultiCountrySection from "@/components/website/MultiCountrySection/MultiCountrySection";
 import { getAllTrips } from "@/services/tripsService";
+import { getPublicPromotions } from "@/services/promotionsService";
 import { Trip } from "@/types";
 
 export default async function HomeTripsFetcher() {
   try {
-    const tripsData = await getAllTrips();
+    const [tripsData, promotions] = await Promise.all([
+      getAllTrips(),
+      getPublicPromotions({ applies_to: "trip" }).catch(() => []),
+    ]);
 
     const initialTrips: Trip[] = tripsData.map((t) => {
       const basePrice = parseFloat(t.base_price) || 0;
@@ -16,6 +20,7 @@ export default async function HomeTripsFetcher() {
 
       return {
         id: t.slug,
+        numericId: t.id,
         title: t.title,
         description: t.short_description || t.title,
         image: t.image || "/images/home/hero-bg.png",
@@ -60,7 +65,7 @@ export default async function HomeTripsFetcher() {
 
     return (
       <>
-        <TripsSection initialTrips={egyptTrips} />
+        <TripsSection initialTrips={egyptTrips} initialPromotions={promotions} />
         <MultiCountrySection initialTrips={initialTrips.filter(t => t.tags?.some(tag => tag.toLowerCase().includes("multi country"))).slice(0, 6)} />
       </>
     );
