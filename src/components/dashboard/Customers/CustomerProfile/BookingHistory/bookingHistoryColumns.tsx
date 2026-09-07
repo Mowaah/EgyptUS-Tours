@@ -44,7 +44,7 @@ export const bookingHistoryColumns: DataTableColumn<any>[] = [
   {
     id: "bookingId",
     header: "Booking ID",
-    render: (row: any) => <span className={styles.idCell}>{row.id}</span>,
+    render: (row: any) => <span className={styles.idCell}>{row.booking_reference || row.display_id || row.booking_code || row.id}</span>,
   },
   {
     id: "service",

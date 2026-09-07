@@ -1,44 +1,28 @@
-import { useState } from "react";
+"use client";
+
 import {
   TablePanel,
   TablePanelFilterBar,
 } from "@/components/dashboard/TablePanel";
 import { DataTable } from "@/components/dashboard/DataTable";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import { bookingHistoryColumns } from "./bookingHistoryColumns";
-import { useAdminCustomerBookings } from "@/hooks/useCustomers";
+import { useBookingHistoryPanel } from "./useBookingHistoryPanel";
 
 export default function BookingHistoryPanel({ customerId }: { customerId: string }) {
-  const [page, setPage] = useState(1);
-  const { data: pageData, isLoading } = useAdminCustomerBookings(customerId, page);
+  const {
+    data,
+    filteredData,
+    isLoading,
+    hasActiveFilters,
+    filterFields,
+    handleApply,
+    handleClean,
+    handleExport,
+  } = useBookingHistoryPanel(customerId);
 
-  const data = pageData?.results || [];
-
-  const filterFields = [
-    {
-      id: "service",
-      label: "Service",
-      value: "All",
-      options: ["All", "Trips", "Hotels", "Transportation"],
-      onChange: (v: string) => console.log(v),
-    },
-    {
-      id: "date",
-      label: "Date",
-      value: "All",
-      options: ["All", "Last 30 Days"],
-      onChange: (v: string) => console.log(v),
-    },
-    {
-      id: "status",
-      label: "Status",
-      value: "All",
-      options: ["All", "Upcoming", "Completed", "Canceled"],
-      onChange: (v: string) => console.log(v),
-    },
-  ];
-
-  if (!isLoading && data.length === 0) {
+  if (!isLoading && data.length === 0 && !hasActiveFilters) {
     return (
       <DashboardEmptyState
         title="No Bookings Yet"
@@ -54,14 +38,30 @@ export default function BookingHistoryPanel({ customerId }: { customerId: string
       iconSrc="/images/dashboard/reviews/modal/name.svg"
       showFilters
       showExport
-      toolbar={<TablePanelFilterBar fields={filterFields} onClean={() => {}} onApply={() => {}} />}
+      onExportClick={handleExport}
+      toolbar={
+        <TablePanelFilterBar
+          fields={filterFields}
+          onClean={handleClean}
+          onApply={handleApply}
+        />
+      }
     >
       <DataTable
-        data={data}
+        data={filteredData}
         columns={bookingHistoryColumns as any}
-        getRowId={(row: any) => row.id.toString()}
-      isLoading={isLoading}
-        />
+        getRowId={(row: any) => row.id?.toString() || Math.random().toString()}
+        isLoading={isLoading}
+        emptyState={
+          hasActiveFilters ? (
+            <DashboardFilterEmptyState
+              onClearFilters={handleClean}
+              title="No Results Found"
+              subtitle="No bookings match the selected filters."
+            />
+          ) : undefined
+        }
+      />
     </TablePanel>
   );
 }

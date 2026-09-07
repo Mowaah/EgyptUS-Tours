@@ -103,6 +103,10 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
     } else if (action.label === "Edit") {
       setSelectedRow(row);
       setIsEditModalOpen(true);
+    } else if (action.label === "Send Email") {
+      if (row.email) {
+        window.location.href = `mailto:${row.email}`;
+      }
     } else if (action.label === "Block User" || action.label === "Unblock User") {
       setSelectedRow(row);
       setIsBlockModalOpen(true);

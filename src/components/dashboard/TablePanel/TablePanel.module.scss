@@ -195,6 +195,28 @@
   display: flex;
   flex-direction: column;
   padding: 4px 0;
+  max-height: 220px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(102, 107, 109, 0.25) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(102, 107, 109, 0.25);
+    border-radius: 6px;
+
+    &:hover {
+      background-color: rgba(102, 107, 109, 0.4);
+    }
+  }
 }
 
 .filterDropdownItem {

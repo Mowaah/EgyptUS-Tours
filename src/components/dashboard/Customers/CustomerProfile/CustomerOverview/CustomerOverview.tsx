@@ -20,6 +20,9 @@ export default function CustomerOverview({ customerId }: { customerId: string })
 
   // Total spent logic
   const totalSpentUsd = overview.total_spent_by_currency?.USD || 0;
+  const formattedTotalSpent = Math.round(Number(totalSpentUsd || 0)).toLocaleString("en-US", {
+    maximumFractionDigits: 0,
+  });
 
   return (
     <div className={styles.overviewContainer}>
@@ -36,7 +39,7 @@ export default function CustomerOverview({ customerId }: { customerId: string })
 
         <SummaryCard
           label="Total Spent (USD)"
-          value={`$${Number(totalSpentUsd).toFixed(2)}`}
+          value={`$${formattedTotalSpent}`}
           change=""
           trend="up"
           tone="pink"
@@ -54,7 +57,7 @@ export default function CustomerOverview({ customerId }: { customerId: string })
 
         <SummaryCard
           label="Last Activity"
-          value={overview.last_activity_at ? new Date(overview.last_activity_at).toLocaleDateString() : "Never"}
+          value={overview.last_activity_at ? new Date(overview.last_activity_at).getFullYear().toString() : "Never"}
           change=""
           tone="green"
           iconSrc="/images/dashboard/customers/overview/customer.svg"

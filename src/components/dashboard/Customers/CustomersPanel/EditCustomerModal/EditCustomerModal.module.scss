@@ -48,3 +48,17 @@
   gap: 24px;
   width: 100%;
 }
+
+.nationalityWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.inputLabel {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: 1.35;
+  color: $gray-600;
+}

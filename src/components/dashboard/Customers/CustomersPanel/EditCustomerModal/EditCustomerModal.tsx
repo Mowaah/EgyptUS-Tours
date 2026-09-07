@@ -120,8 +120,9 @@ export default function EditCustomerModal({
               disabled={true}
             />
 
-              <div className={styles.nationalityWrapper}>
-                <label className={styles.inputLabel}>Nationality</label>
+            <div className={`${dashboardStyles.field} ${dashboardStyles.modalField}`}>
+              <label className={`${dashboardStyles.label} ${dashboardStyles.modalLabel}`}>Nationality</label>
+              <div style={{ width: "100%" }}>
                 <NationalitySelect
                   value={nationality}
                   onChange={(val) => setNationality(val)}
@@ -129,8 +130,14 @@ export default function EditCustomerModal({
                   variant="modal"
                   useCountryName={false} // Use the 2-letter code as requested by the backend
                 />
-                {errors.nationality && <span className={styles.errorText}>{errors.nationality}</span>}
               </div>
+              {errors.nationality && (
+                <div className={dashboardStyles.errorText} role="alert">
+                  <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+                  <span>{errors.nationality}</span>
+                </div>
+              )}
+            </div>
 
             <DashboardField
               id="customer-status"

@@ -82,7 +82,7 @@ function CustomerProfileContent({ customerId }: CustomerProfileProps) {
           ]}
         >
           <ProfileHeader
-            title={`${customer.full_name} - CUS-${customer.id}`}
+            title={`${customer.full_name} - ${customer.display_id || `CUS-${String(customer.id).padStart(6, "0")}`}`}
             pillLabel={customer.status.charAt(0).toUpperCase() + customer.status.slice(1).toLowerCase()}
             pillVariant={customer.status === "active" ? "green" : customer.status === "blocked" ? "red" : "gray"}
             subtitleElements={[

@@ -23,6 +23,7 @@ interface DashboardFieldBaseProps {
   error?: string;
   endAdornment?: ReactNode;
   variant?: DashboardFieldVariant;
+  disableLabelDim?: boolean;
 }
 
 interface DashboardFieldInputProps
@@ -265,7 +266,7 @@ function ModalSelect({
 
   return (
     <>
-      <label htmlFor={id} className={`${styles.label} ${variant === "modal" ? styles.modalLabel : ""} ${disabled ? styles.labelDisabled : ""}`}>
+      <label htmlFor={id} className={`${styles.label} ${variant === "modal" ? styles.modalLabel : ""} ${disabled && variant !== "modal" ? styles.labelDisabled : ""}`}>
         {label}
       </label>
       <div className={`${styles.control} ${styles.modalSelectWrap}`} ref={ref}>
@@ -334,7 +335,7 @@ export default function DashboardField({
     variant === "modal" ? `${styles.field} ${styles.modalField}` : styles.field;
   const labelClassName = `${
     variant === "modal" ? `${styles.label} ${styles.modalLabel}` : styles.label
-  } ${disabled ? styles.labelDisabled : ""}`;
+  } ${disabled && variant !== "modal" && !(props as any).disableLabelDim ? styles.labelDisabled : ""}`;
   const inputClassName = `${styles.input} ${
     variant === "modal" ? styles.modalInput : ""
   } ${error ? styles.inputError : ""} ${

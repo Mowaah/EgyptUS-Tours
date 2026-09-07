@@ -1,39 +1,28 @@
-import { useState, useMemo } from "react";
+"use client";
+
 import {
   TablePanel,
   TablePanelFilterBar,
 } from "@/components/dashboard/TablePanel";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { customTripsColumns } from "./customTripsColumns";
-import { useAdminCustomerRequests } from "@/hooks/useCustomers";
+import { useCustomTripRequestsPanel } from "./useCustomTripRequestsPanel";
 
 export default function CustomTripRequestsPanel({ customerId }: { customerId: string }) {
-  const [page, setPage] = useState(1);
-  const { data: pageData, isLoading } = useAdminCustomerRequests(customerId, page);
-  const data = pageData?.results || [];
+  const {
+    data,
+    filteredData,
+    isLoading,
+    hasActiveFilters,
+    filterFields,
+    handleApply,
+    handleClean,
+    handleExport,
+  } = useCustomTripRequestsPanel(customerId);
 
-  const filterFields = useMemo(
-    () => [
-      {
-        id: "source",
-        label: "Source",
-        value: "All",
-        options: ["All", "Website", "Agent"],
-        onChange: () => {},
-      },
-      {
-        id: "status",
-        label: "Status",
-        value: "All",
-        options: ["All", "Completed", "In Progress", "On Hold", "Negotiation", "Rejected", "Proposal Sent"],
-        onChange: () => {},
-      },
-    ],
-    []
-  );
-
-  if (!isLoading && data.length === 0) {
+  if (!isLoading && data.length === 0 && !hasActiveFilters) {
     return (
       <DashboardEmptyState
         title="No Custom Trip Requests Yet"
@@ -49,14 +38,30 @@ export default function CustomTripRequestsPanel({ customerId }: { customerId: st
       iconSrc="/images/dashboard/sidebar/plan-your-trip.svg"
       showFilters
       showExport
-      toolbar={<TablePanelFilterBar fields={filterFields} onClean={() => {}} onApply={() => {}} />}
+      onExportClick={handleExport}
+      toolbar={
+        <TablePanelFilterBar
+          fields={filterFields}
+          onClean={handleClean}
+          onApply={handleApply}
+        />
+      }
     >
       <DataTable
-        data={data}
+        data={filteredData}
         columns={customTripsColumns as any}
-        getRowId={(row: any) => row.id.toString()}
-      isLoading={isLoading}
-        />
+        getRowId={(row: any) => row.id?.toString() || Math.random().toString()}
+        isLoading={isLoading}
+        emptyState={
+          hasActiveFilters ? (
+            <DashboardFilterEmptyState
+              onClearFilters={handleClean}
+              title="No Results Found"
+              subtitle="No requests match the selected filters."
+            />
+          ) : undefined
+        }
+      />
     </TablePanel>
   );
 }

@@ -19,7 +19,7 @@ export const customersColumns: DataTableColumn<AdminCustomer>[] = [
     id: "id",
     header: "Customer ID",
     cellClassName: styles.idCell,
-    render: (row) => `CUS-${row.id}`,
+    render: (row) => row.display_id || `CUS-${String(row.id).padStart(6, "0")}`,
   },
   {
     id: "name",
@@ -53,7 +53,7 @@ export const customersColumns: DataTableColumn<AdminCustomer>[] = [
   {
     id: "totalSpent",
     header: "Total Spent",
-    render: (row) => `$${Number(row.total_spent ?? 0).toFixed(2)}`,
+    render: (row) => `$${Math.round(Number(row.total_spent ?? 0)).toLocaleString("en-US")}`,
   },
   {
     id: "lastActivity",
@@ -75,6 +75,16 @@ export const customersColumns: DataTableColumn<AdminCustomer>[] = [
 export const customerRowActions = (onAction?: (action: { label: string }, row: AdminCustomer) => void) => (row: AdminCustomer) => [
   { label: "View", iconSrc: "/images/dashboard/view.svg", onClick: (r: any) => onAction?.({ label: "View" }, r) },
   { label: "Edit", iconSrc: "/images/dashboard/edit.svg", onClick: (r: any) => onAction?.({ label: "Edit" }, r) },
-  { label: "Send Email", iconSrc: "/images/dashboard/send.svg", onClick: (r: any) => onAction?.({ label: "Send Email" }, r) },
+  { 
+    label: "Send Email", 
+    iconSrc: "/images/dashboard/send.svg", 
+    onClick: (r: any) => {
+      if (onAction) {
+        onAction({ label: "Send Email" }, r);
+      } else if (r.email) {
+        window.location.href = `mailto:${r.email}`;
+      }
+    } 
+  },
   { label: row.status === "blocked" ? "Unblock User" : "Block User", iconSrc: "/images/dashboard/block.svg", variant: "danger" as const, onClick: (r: any) => onAction?.({ label: "Block User" }, r) },
 ];

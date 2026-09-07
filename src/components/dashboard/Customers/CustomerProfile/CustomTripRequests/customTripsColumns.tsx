@@ -6,7 +6,7 @@ import styles from "./CustomTripRequestsPanel.module.scss";
 import { getStatusVariant } from "@/components/dashboard/Requests/PlanYourTrip/planYourTripColumns";
 import { useRouter } from "next/navigation";
 
-const formatLabel = (str: string) => {
+export const formatLabel = (str: string) => {
   if (!str) return '';
   if (str === 'awaiting_deposit') return '30% Pending Payment';
   return str.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
@@ -41,23 +41,32 @@ export const customTripsColumns: DataTableColumn<CustomTripItem>[] = [
   {
     id: "pax",
     header: "Pax",
-    render: (row: any) => <span>{`${row.adults || 0}A/${row.children || 0}C/${row.infants || 0}I`}</span>,
+    render: (row: any) => <span>{row.pax_label || `${row.adults || 0}A/${row.children || 0}C/${row.infants || 0}I`}</span>,
   },
   {
     id: "source",
     header: "Source",
     render: (row) => {
-      const isWebsite = row.source?.toLowerCase() === "website";
+      if (!row.source) {
+        return <span>-</span>;
+      }
+
+      const source = row.source.toLowerCase();
+      const isWebsite = source === "website";
+      const isAgent = source === "agent";
+
       return (
-        <div className={`${styles.sourcePill} ${isWebsite ? styles.sourceWebsite : styles.sourceAgent}`}>
-          <span
-            className={styles.sourceIcon}
-            style={{
-              maskImage: `url('/images/dashboard/customers/custom/${isWebsite ? "website" : "agent"}.svg')`,
-              WebkitMaskImage: `url('/images/dashboard/customers/custom/${isWebsite ? "website" : "agent"}.svg')`,
-            }}
-            aria-hidden
-          />
+        <div className={`${styles.sourcePill} ${isWebsite ? styles.sourceWebsite : isAgent ? styles.sourceAgent : ""}`}>
+          {(isWebsite || isAgent) && (
+            <span
+              className={styles.sourceIcon}
+              style={{
+                maskImage: `url('/images/dashboard/customers/custom/${isWebsite ? "website" : "agent"}.svg')`,
+                WebkitMaskImage: `url('/images/dashboard/customers/custom/${isWebsite ? "website" : "agent"}.svg')`,
+              }}
+              aria-hidden
+            />
+          )}
           {formatLabel(row.source)}
         </div>
       );
@@ -76,7 +85,11 @@ export const customTripsColumns: DataTableColumn<CustomTripItem>[] = [
   {
     id: "agent",
     header: "Agent",
-    render: (row: any) => <span className={styles.agentCell}>{row.agent || 'Unassigned'}</span>,
+    render: (row: any) => (
+      <span className={styles.agentCell}>
+        {row.agent || row.assigned_to?.full_name || (typeof row.assigned_to === "string" ? row.assigned_to : null) || "Unassigned"}
+      </span>
+    ),
   },
   {
     id: "actions",
