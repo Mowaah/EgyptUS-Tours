@@ -65,15 +65,7 @@
   border-radius: 16px;
   display: flex;
   flex-direction: column;
-  max-height: 488px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
-  
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  overflow: hidden;
 }
 
 .header {
@@ -123,15 +115,20 @@
   cursor: pointer;
   padding: 0;
   
-  &:hover {
+  &:hover:not(:disabled) {
     opacity: 0.8;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 }
 
 .list {
   display: flex;
   flex-direction: column;
-  padding: 16px 12px;
+  padding: 0 16px 12px;
   gap: 12px;
 }
 
@@ -167,9 +164,9 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   width: 100%;
-  gap: 16px;
+  gap: 12px;
 }
 
 .itemTitle {
@@ -180,6 +177,20 @@
   margin: 0;
 }
 
+.itemHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.itemTime {
+  font-size: $font-size-2xs;
+  line-height: 14px;
+  color: $gray-500;
+  white-space: nowrap;
+}
+
 .unreadDot {
   width: 8px;
   height: 8px;
@@ -187,7 +198,6 @@
   box-shadow: 0px 1.5px 3px rgba(10, 13, 20, 0.03);
   border-radius: 50%;
   flex-shrink: 0;
-  margin-top: 5px;
 }
 
 .itemDesc {
@@ -196,4 +206,110 @@
   line-height: 16px;
   color: $text-muted;
   margin: 0;
+  word-break: break-word;
 }
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  gap: 12px;
+  text-align: center;
+}
+
+.emptyIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: $background-blue-lighter;
+}
+
+.emptyText {
+  font-size: $font-size-sm;
+  font-weight: 500;
+  color: $text-muted;
+  margin: 0;
+}
+
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 12px;
+  gap: 12px;
+}
+
+.skeletonCard {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 8px;
+  width: 100%;
+  border-radius: 24px;
+  background: $gray-50;
+  border: 1px solid $border;
+}
+
+.skeletonLineTitle {
+  width: 60%;
+  height: 14px;
+  border-radius: 4px;
+  background: $gray-200;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeletonLineDesc {
+  width: 85%;
+  height: 12px;
+  border-radius: 4px;
+  background: $gray-100;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px 16px;
+  width: 100%;
+  background: $background;
+}
+
+.viewAllBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 48px;
+  background: $primary;
+  color: $white;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-sm;
+  border-radius: 24px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: $primary-hover;
+  }
+}
+

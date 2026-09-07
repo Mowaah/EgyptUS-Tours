@@ -42,6 +42,13 @@ const pageCopyByPath: Record<string, PageCopy> = {
     subtitle: "Let's review your update for today",
     breadcrumbTrail: [],
   },
+  "/dashboard/notifications": {
+    title: "Notifications",
+    subtitle: "Track real-time updates for bookings, trip requests, payments, and customer activities.",
+    breadcrumbTrail: [{ label: "Notifications" }],
+    searchPlaceholder: "Search notifications...",
+    hideFilterButton: false,
+  },
   "/dashboard/leads": {
     title: "Leads Management",
     subtitle: "Track and manage all incoming customer inquiries.",
