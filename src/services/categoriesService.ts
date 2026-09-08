@@ -11,15 +11,33 @@ export interface CategoryList {
 
 export async function getAllCategories(): Promise<CategoryList[]> {
   try {
-    const data = await serverFetch<PaginatedResponse<CategoryList>>("/tags/?page_size=100", {
-      next: { revalidate: 60 },
-    });
-    return data?.results ?? [];
+    const allResults: CategoryList[] = [];
+    let endpoint = "/tags/?page_size=100";
+
+    while (endpoint) {
+      const data = await serverFetch<PaginatedResponse<CategoryList>>(endpoint, {
+        next: { revalidate: 60 },
+      });
+      if (Array.isArray(data?.results)) {
+        allResults.push(...data.results);
+      }
+
+      if (data?.next && data?.results?.length && allResults.length < (data?.count ?? allResults.length + 1)) {
+        const url = new URL(data.next);
+        endpoint = url.pathname + url.search;
+        endpoint = endpoint.replace('/api/v1', '');
+      } else {
+        break;
+      }
+    }
+
+    return allResults;
   } catch (error) {
     console.error("Error in getAllCategories:", error);
     return [];
   }
 }
+
 
 /**
  * Returns only categories that have published trips with destination Egypt.

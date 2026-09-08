@@ -8,8 +8,13 @@ type QueryParams = Record<string, unknown>;
 type ApiResponse = any;
 
 export async function getDestinations(params?: QueryParams): Promise<ApiResponse> {
+  if (Number(params?.limit) >= 100 || Number(params?.page_size) >= 100) {
+    const all = await getAllDestinations(params);
+    return { count: all.length, results: all };
+  }
   return await adminDataClient.get('/catalog/destinations/', { params });
 }
+
 
 export async function getAllDestinations(params?: QueryParams): Promise<Record<string, unknown>[]> {
   try {

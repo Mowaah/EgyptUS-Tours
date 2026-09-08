@@ -1,6 +1,5 @@
 import { PaginatedResponse } from "@/types/api";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+import { serverFetch } from "@/lib/api";
 
 export interface DestinationList {
   id: number;
@@ -15,25 +14,33 @@ export interface DestinationList {
   children_count: number;
 }
 
-export async function getAllDestinations(): Promise<DestinationList[]> {
+export async function getAllDestinations(params?: Record<string, string>): Promise<DestinationList[]> {
   try {
-    const url = new URL(`${API_BASE_URL}/api/v1/destinations/`);
-    
-    const res = await fetch(url.toString(), {
-      next: { revalidate: 60 },
-      headers: {
-        'Accept': 'application/json',
-      }
-    });
+    const query = new URLSearchParams({ page_size: "100", ...(params || {}) });
+    const allResults: DestinationList[] = [];
+    let endpoint = `/destinations/?${query.toString()}`;
 
-    if (!res.ok) {
-      throw new Error(`Failed to fetch destinations: ${res.statusText}`);
+    while (endpoint) {
+      const data = await serverFetch<PaginatedResponse<DestinationList>>(endpoint, {
+        next: { revalidate: 60 },
+      });
+      if (Array.isArray(data?.results)) {
+        allResults.push(...data.results);
+      }
+
+      if (data?.next && data?.results?.length && allResults.length < (data?.count ?? allResults.length + 1)) {
+        const url = new URL(data.next);
+        endpoint = url.pathname + url.search;
+        endpoint = endpoint.replace('/api/v1', '');
+      } else {
+        break;
+      }
     }
 
-    const data: PaginatedResponse<DestinationList> = await res.json();
-    return data.results;
+    return allResults;
   } catch (error) {
     console.error("Error in getAllDestinations:", error);
     return [];
   }
 }
+

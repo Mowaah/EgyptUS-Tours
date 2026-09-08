@@ -17,7 +17,7 @@ import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import { createPromotionSchema, type CreatePromotionValues } from "./CreatePromotionSchema";
 import { getAdminPromotionById, createAdminPromotion, updateAdminPromotion } from "@/services/admin/adminMarketingService";
-import { apiClient } from "@/lib/api";
+import { apiClient, fetchAllPages } from "@/lib/api";
 import styles from "./CreatePromotion.module.scss";
 
 export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange }: { promotionId?: string, onDirtyChange?: (isDirty: boolean) => void, onSubmittingChange?: (isSubmitting: boolean) => void }) {
@@ -81,14 +81,11 @@ export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const [tripsRes, hotelsRes, transportRes] = await Promise.all([
-          apiClient.get('/trips/?page_size=100'),
-          apiClient.get('/hotels/?page_size=100'),
-          apiClient.get('/vehicles/?page_size=100')
+        const [tripsDataList, hotelsDataList, transportDataList] = await Promise.all([
+          fetchAllPages('/trips/'),
+          fetchAllPages('/hotels/'),
+          fetchAllPages('/vehicles/')
         ]);
-        const tripsDataList = (tripsRes as any).results || (tripsRes as any).data?.results;
-        const hotelsDataList = (hotelsRes as any).results || (hotelsRes as any).data?.results;
-        const transportDataList = (transportRes as any).results || (transportRes as any).data?.results;
 
         if (tripsDataList) setTripsData(tripsDataList);
         if (hotelsDataList) setHotelsData(hotelsDataList);

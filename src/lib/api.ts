@@ -154,15 +154,53 @@ export async function serverFetch<T>(
 // 3. Application API calls
 // ----------------------------------------------------------------------
 
-export async function getCategories(): Promise<any> {
-  const response = await apiClient.get('/tags/');
-  return response;
+export async function fetchAllPages<T = any>(endpoint: string, params?: Record<string, any>): Promise<T[]> {
+  try {
+    let page = 1;
+    const allResults: T[] = [];
+    while (true) {
+      const response: any = await apiClient.get(endpoint, {
+        params: { page_size: 100, ...params, page },
+      });
+      const items = (Array.isArray(response?.results)
+        ? response.results
+        : Array.isArray(response?.data?.results)
+        ? response.data.results
+        : Array.isArray(response?.data)
+        ? response.data
+        : Array.isArray(response)
+        ? response
+        : []) as T[];
+      allResults.push(...items);
+      const total = Number(response?.count ?? response?.data?.count ?? allResults.length);
+      if (!response?.next || items.length === 0 || allResults.length >= total) {
+        break;
+      }
+      page++;
+    }
+    return allResults;
+  } catch (error) {
+    console.error(`Error in fetchAllPages for ${endpoint}:`, error);
+    try {
+      const fallback: any = await apiClient.get(endpoint, { params });
+      return (Array.isArray(fallback?.results) ? fallback.results : Array.isArray(fallback) ? fallback : []) as T[];
+    } catch {
+      return [];
+    }
+  }
 }
 
-export async function getDestinations(): Promise<any> {
-  const response = await apiClient.get('/destinations/');
-  return response; // Interceptor already unwraps data
+export async function getCategories(params?: Record<string, any>): Promise<any> {
+  const allResults = await fetchAllPages('/tags/', params);
+  return { count: allResults.length, results: allResults, next: null, previous: null };
 }
+
+export async function getDestinations(params?: Record<string, any>): Promise<any> {
+  const allResults = await fetchAllPages('/destinations/', params);
+  return { count: allResults.length, results: allResults, next: null, previous: null };
+}
+
+
 
 function formatDateForBackend(dateStr: string) {
   if (!dateStr) return null;

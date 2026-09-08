@@ -46,20 +46,26 @@ export async function getHotelBySlug(slug: string): Promise<HotelDetail> {
  * Fetch all hotels completely by iterating pages if necessary.
  */
 export async function getAllHotels(): Promise<HotelList[]> {
-  const firstPage = await getHotels();
-  const results = [...firstPage.results];
-  const totalPages = Math.ceil(firstPage.count / 10);
-  
-  if (totalPages > 1) {
-    const promises = [];
-    for (let i = 2; i <= totalPages; i++) {
-      promises.push(getHotels({ page: i }));
+  try {
+    const firstPage = await getHotels();
+    const results = [...(firstPage?.results || [])];
+    const pageSize = results.length > 0 ? results.length : 10;
+    const totalPages = Math.ceil((firstPage?.count || results.length) / pageSize);
+    
+    if (totalPages > 1) {
+      const promises = [];
+      for (let i = 2; i <= totalPages; i++) {
+        promises.push(getHotels({ page: i }));
+      }
+      const pages = await Promise.all(promises);
+      pages.forEach(p => results.push(...(p?.results || [])));
     }
-    const pages = await Promise.all(promises);
-    pages.forEach(p => results.push(...p.results));
+    
+    return results;
+  } catch (error) {
+    console.error("Error in getAllHotels:", error);
+    return [];
   }
-  
-  return results;
 }
 
 export function mapHotelDetailToHotel(hotelDetail: HotelDetail): import("@/types").Hotel {

@@ -16,19 +16,49 @@ export interface LegalSectionData {
 
 export async function getFaqs(lang?: string): Promise<FaqData[]> {
   try {
-    const endpoint = lang ? `/faqs/?lang=${lang}` : `/faqs/`;
     if (typeof window !== "undefined") {
-      // apiClient interceptor already unwraps response.data
-      const data = await (apiClient.get(endpoint) as unknown as Promise<any>);
-      return Array.isArray(data) ? data : (data?.results || []);
+      let page = 1;
+      const allResults: FaqData[] = [];
+      while (true) {
+        const data: any = await apiClient.get('/faqs/', {
+          params: { page_size: 100, ...(lang ? { lang } : {}), page },
+        });
+        const items = Array.isArray(data) ? data : (data?.results || []);
+        allResults.push(...items);
+        const count = Number(data?.count ?? allResults.length);
+        if (!data?.next || items.length === 0 || allResults.length >= count) {
+          break;
+        }
+        page++;
+      }
+      return allResults;
     }
-    const data = await serverFetch<any>(endpoint, { next: { revalidate: 60 } });
-    return Array.isArray(data) ? data : (data?.results || []);
+
+    const params = new URLSearchParams({ page_size: "100" });
+    if (lang) params.append("lang", lang);
+    let endpoint = `/faqs/?${params.toString()}`;
+    const allResults: FaqData[] = [];
+
+    while (endpoint) {
+      const data = await serverFetch<any>(endpoint, { next: { revalidate: 60 } });
+      const items = Array.isArray(data) ? data : (data?.results || []);
+      allResults.push(...items);
+
+      if (data?.next && items.length && allResults.length < (data?.count ?? allResults.length + 1)) {
+        const url = new URL(data.next);
+        endpoint = url.pathname + url.search;
+        endpoint = endpoint.replace('/api/v1', '');
+      } else {
+        break;
+      }
+    }
+    return allResults;
   } catch (error) {
     console.error("Failed to fetch FAQs:", error);
     return [];
   }
 }
+
 
 export async function getTerms(lang?: string): Promise<LegalSectionData[]> {
   try {

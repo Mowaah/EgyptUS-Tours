@@ -7,8 +7,50 @@ type CatalogHotelPayload = Record<string, unknown>;
 type ApiResponse = any;
 
 export async function getCatalogHotels(params?: QueryParams): Promise<ApiResponse> {
+  if (Number(params?.limit) >= 100 || Number(params?.page_size) >= 100) {
+    const all = await getAllCatalogHotels(params);
+    return { count: all.length, results: all };
+  }
   return await adminDataClient.get('/catalog/hotels/', { params });
 }
+
+export async function getAllCatalogHotels(params?: QueryParams): Promise<ApiResponse[]> {
+  const firstPage: any = await adminDataClient.get('/catalog/hotels/', { params: { ...params, page: 1 } });
+  if (Array.isArray(firstPage)) return firstPage;
+
+  const results: ApiResponse[] = Array.isArray(firstPage?.results)
+    ? [...firstPage.results]
+    : Array.isArray(firstPage?.data?.results)
+    ? [...firstPage.data.results]
+    : Array.isArray(firstPage?.data)
+    ? [...firstPage.data]
+    : [];
+
+  const count = firstPage?.count ?? firstPage?.data?.count ?? results.length;
+  const pageSize = results.length > 0 ? results.length : 10;
+  const totalPages = Math.ceil(count / pageSize);
+
+  if (totalPages > 1) {
+    const pagePromises: Promise<any>[] = [];
+    for (let p = 2; p <= totalPages; p++) {
+      pagePromises.push(adminDataClient.get('/catalog/hotels/', { params: { ...params, page: p } }));
+    }
+    const subsequentPages = await Promise.all(pagePromises);
+    for (const res of subsequentPages) {
+      const pageResults = Array.isArray(res?.results)
+        ? res.results
+        : Array.isArray(res?.data?.results)
+        ? res.data.results
+        : Array.isArray(res?.data)
+        ? res.data
+        : [];
+      results.push(...pageResults);
+    }
+  }
+
+  return results;
+}
+
 
 export async function getCatalogHotelDetail(id: string | number): Promise<ApiResponse> {
   return await adminDataClient.get(`/catalog/hotels/${id}/`);

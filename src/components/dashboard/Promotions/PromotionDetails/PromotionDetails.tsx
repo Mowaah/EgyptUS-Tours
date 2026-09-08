@@ -8,7 +8,7 @@ import { DashboardConfirmationModal } from "@/components/dashboard/shared";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import { getAdminPromotionById, deleteAdminPromotion, AdminPromotion } from "@/services/admin/adminMarketingService";
-import { apiClient } from "@/lib/api";
+import { apiClient, fetchAllPages } from "@/lib/api";
 import styles from "./PromotionDetails.module.scss";
 
 interface PromotionDetailsProps {
@@ -55,15 +55,11 @@ export default function PromotionDetails({ promotionId }: PromotionDetailsProps)
         setPromotion(data);
 
         // Fetch options data to map IDs to titles
-        const [tripsRes, hotelsRes, transportRes] = await Promise.all([
-          apiClient.get('/trips/?page_size=100'),
-          apiClient.get('/hotels/?page_size=100'),
-          apiClient.get('/vehicles/?page_size=100')
+        const [tripsDataList, hotelsDataList, transportDataList] = await Promise.all([
+          fetchAllPages('/trips/'),
+          fetchAllPages('/hotels/'),
+          fetchAllPages('/vehicles/')
         ]);
-        
-        const tripsDataList = (tripsRes as any).results || (tripsRes as any).data?.results || [];
-        const hotelsDataList = (hotelsRes as any).results || (hotelsRes as any).data?.results || [];
-        const transportDataList = (transportRes as any).results || (transportRes as any).data?.results || [];
         
         setItemsMap({
           trip: tripsDataList.reduce((acc: any, t: any) => ({ ...acc, [t.id]: t.title }), {}),

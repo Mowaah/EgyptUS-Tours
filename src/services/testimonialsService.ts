@@ -1,6 +1,5 @@
 import { PaginatedResponse } from "@/types/api";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+import { serverFetch } from "@/lib/api";
 
 export interface TestimonialData {
   id: number;
@@ -19,31 +18,31 @@ export interface TestimonialData {
 
 export async function getTestimonials(params?: Record<string, string>): Promise<TestimonialData[]> {
   try {
-    const url = new URL(`${API_BASE_URL}/api/v1/testimonials/`);
-    
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value) {
-          url.searchParams.append(key, value);
-        }
+    const query = new URLSearchParams({ page_size: "100", ...(params || {}) });
+    const allResults: TestimonialData[] = [];
+    let endpoint = `/testimonials/?${query.toString()}`;
+
+    while (endpoint) {
+      const data = await serverFetch<PaginatedResponse<TestimonialData>>(endpoint, {
+        next: { revalidate: 60 },
       });
-    }
-
-    const res = await fetch(url.toString(), {
-      next: { revalidate: 60 },
-      headers: {
-        'Accept': 'application/json',
+      if (Array.isArray(data?.results)) {
+        allResults.push(...data.results);
       }
-    });
 
-    if (!res.ok) {
-      throw new Error(`Failed to fetch testimonials: ${res.statusText}`);
+      if (data?.next && data?.results?.length && allResults.length < (data?.count ?? allResults.length + 1)) {
+        const url = new URL(data.next);
+        endpoint = url.pathname + url.search;
+        endpoint = endpoint.replace('/api/v1', '');
+      } else {
+        break;
+      }
     }
 
-    const data: PaginatedResponse<TestimonialData> = await res.json();
-    return data.results || [];
+    return allResults;
   } catch (error) {
     console.error("Error in getTestimonials:", error);
     return [];
   }
 }
+

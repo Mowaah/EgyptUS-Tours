@@ -20,18 +20,24 @@ export async function getVehicleBySlug(slug: string): Promise<VehicleDetail> {
  * Fetch all vehicles completely by iterating pages if necessary.
  */
 export async function getAllVehicles(): Promise<VehicleList[]> {
-  const firstPage = await getVehicles();
-  const results = [...firstPage.results];
-  const totalPages = Math.ceil(firstPage.count / 10);
-  
-  if (totalPages > 1) {
-    const promises = [];
-    for (let i = 2; i <= totalPages; i++) {
-      promises.push(getVehicles({ page: i }));
+  try {
+    const firstPage = await getVehicles();
+    const results = [...(firstPage?.results || [])];
+    const pageSize = results.length > 0 ? results.length : 10;
+    const totalPages = Math.ceil((firstPage?.count || results.length) / pageSize);
+    
+    if (totalPages > 1) {
+      const promises = [];
+      for (let i = 2; i <= totalPages; i++) {
+        promises.push(getVehicles({ page: i }));
+      }
+      const pages = await Promise.all(promises);
+      pages.forEach(p => results.push(...(p?.results || [])));
     }
-    const pages = await Promise.all(promises);
-    pages.forEach(p => results.push(...p.results));
+    
+    return results;
+  } catch (error) {
+    console.error("Error in getAllVehicles:", error);
+    return [];
   }
-  
-  return results;
 }

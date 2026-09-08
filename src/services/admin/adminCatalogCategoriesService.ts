@@ -8,8 +8,13 @@ type ApiResponse = any;
 const TRIP_CATEGORIES_ENDPOINT = '/catalog/trip-categories/';
 
 export async function getCategories(params?: QueryParams): Promise<ApiResponse> {
+  if (Number(params?.limit) >= 100 || Number(params?.page_size) >= 100) {
+    const all = await getAllCategories(params);
+    return { count: all.length, results: all };
+  }
   return await adminDataClient.get(TRIP_CATEGORIES_ENDPOINT, { params });
 }
+
 
 export async function getAllCategories(params?: QueryParams): Promise<ApiResponse[]> {
   const firstPage = await getCategories({ ...params, page: 1 });
