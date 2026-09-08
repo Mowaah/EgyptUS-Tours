@@ -219,7 +219,12 @@ export function calculateTripBookingPrice(
   const childRoomPricing = formData.childRoomPricing || [];
 
   const getTierPrice = (roomType: "single" | "double" | "triple", currency: "usd" | "egp" | "eur"): number => {
-    if (!baseSeason) return 0;
+    if (!baseSeason) {
+      const fallback = trip.price || trip.privatePrice || 0;
+      if (currency === "egp") return fallback * 50;
+      if (currency === "eur") return fallback;
+      return fallback;
+    }
     if (roomType === "single") {
       if (currency === "egp") return baseSeason.singleEgp || (baseSeason.singlePrices?.egp ? Number(baseSeason.singlePrices.egp) : baseSeason.single * 50);
       if (currency === "eur") return baseSeason.singleEur || (baseSeason.singlePrices?.eur ? Number(baseSeason.singlePrices.eur) : baseSeason.single);

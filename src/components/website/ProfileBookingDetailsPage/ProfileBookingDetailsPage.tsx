@@ -16,6 +16,7 @@ import {
 import TransportBookingSummary from "@/components/website/BookTransportationPage/BookingSummary/BookingSummary";
 import { getProfileBookingDetail, payRemainingBookingBalance } from "@/lib/api";
 import { COUNTRIES } from "@/data/countries";
+import { MultiCurrencyPrice } from "@/constants/currency";
 import { calculateRefundSummary } from "@/utils/cancellationPolicy";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -162,14 +163,47 @@ export default function ProfileBookingDetailsPage() {
     },
   };
 
-  // Real amounts from payment_summary (backend now returns actual values)
-  const totalAmount = parseFloat(bData.total_amount || payment.total_amount || "0") || 4900;
-  const paidAmount = parseFloat(payment.paid_amount || "0");
-  const remainingAmount = parseFloat(payment.remaining_amount || "0") || (totalAmount - paidAmount);
+  // Comprehensive amount resolution from all backend structures
+  const rawTotal =
+    bData.total_amount ??
+    bData.total_price ??
+    payment.total_amount ??
+    payment.total_price ??
+    bData.price ??
+    bData.payment_overview?.total_price ??
+    bData.payment_overview?.total_amount ??
+    bData.price_details?.total_amount ??
+    bData.trip?.base_price ??
+    bData.trip?.price ??
+    bData.hotel?.price_per_night ??
+    bData.details?.total_price ??
+    bData.details?.total_amount;
+  const parsedTotal = rawTotal != null ? parseFloat(String(rawTotal)) : NaN;
+  const totalAmount = !isNaN(parsedTotal) && parsedTotal >= 0 ? parsedTotal : 0;
+
+  const rawPaid =
+    payment.paid_amount ??
+    bData.paid_amount ??
+    payment.deposit_amount ??
+    bData.deposit_amount ??
+    bData.payment_overview?.paid_amount ??
+    bData.payment_overview?.deposit_amount;
+  const parsedPaid = rawPaid != null ? parseFloat(String(rawPaid)) : NaN;
+  const paidAmount = !isNaN(parsedPaid) && parsedPaid >= 0 ? parsedPaid : 0;
+
+  const rawRemaining =
+    payment.remaining_amount ??
+    bData.remaining_amount ??
+    bData.payment_overview?.remaining_amount;
+  const parsedRemaining = rawRemaining != null ? parseFloat(String(rawRemaining)) : NaN;
+  const remainingAmount = !isNaN(parsedRemaining) && parsedRemaining >= 0
+    ? parsedRemaining
+    : Math.max(0, totalAmount - paidAmount);
+
   const paymentUrl = payment.payment_url || null;
 
   // Calculate final payment due date (30 days before start date, or fallback to backend provided date)
-  let paymentDueDate = "March 15, 2026";
+  let paymentDueDate = "—";
   if (payment.due_date) {
     paymentDueDate = formatDate(payment.due_date);
   } else if (bData.check_in_date || bData.start_date) {
@@ -180,7 +214,7 @@ export default function ProfileBookingDetailsPage() {
     }
   }
 
-  const depositAmount = paidAmount || totalAmount * 0.3;
+  const depositAmount = paidAmount > 0 ? paidAmount : totalAmount * 0.3;
   const hotelTotalRooms = safeFormData.rooms.single + safeFormData.rooms.double + safeFormData.rooms.triple;
   const hotelTotalGuests = safeFormData.adults + safeFormData.children + safeFormData.infants;
 
@@ -193,6 +227,32 @@ export default function ProfileBookingDetailsPage() {
     paidAmount,
     bData.check_in_date || bData.start_date || bData.pickup_date || new Date().toISOString()
   );
+
+  const currencyCode = (
+    payment.currency_code ||
+    payment.currency ||
+    bData.currency_code ||
+    bData.currency ||
+    bData.payment_overview?.currency ||
+    bData.trip?.currency_code ||
+    bData.hotel?.currency_code ||
+    "USD"
+  ).toUpperCase();
+
+  const isEgp = currencyCode === "EGP";
+  const isEur = currencyCode === "EUR";
+
+  const totalPrices: MultiCurrencyPrice = {
+    usd: isEgp ? totalAmount * 0.02 : isEur ? totalAmount * 1.08 : totalAmount,
+    egp: isEgp ? totalAmount : totalAmount * 50,
+    eur: isEur ? totalAmount : isEgp ? totalAmount * 0.019 : totalAmount * 0.92,
+  };
+
+  const depositPrices: MultiCurrencyPrice = {
+    usd: isEgp ? depositAmount * 0.02 : isEur ? depositAmount * 1.08 : depositAmount,
+    egp: isEgp ? depositAmount : depositAmount * 50,
+    eur: isEur ? depositAmount : isEgp ? depositAmount * 0.019 : depositAmount * 0.92,
+  };
 
   const handlePayRemaining = async () => {
     if (!id || isPaying) return;
@@ -250,6 +310,59 @@ export default function ProfileBookingDetailsPage() {
       safeFormData.rooms.double > 0 ? `${safeFormData.rooms.double} × ${getLocalizedRoomTitle("double")} - ${getLocalizedViewLabel("garden")}` : null,
       safeFormData.rooms.triple > 0 ? `${safeFormData.rooms.triple} × ${getLocalizedRoomTitle("triple")} - ${getLocalizedViewLabel("garden")}` : null,
     ].filter((room): room is string => Boolean(room));
+  })();
+
+  const bookingLineItems = (() => {
+    if (bData.price_details?.items && Array.isArray(bData.price_details.items) && bData.price_details.items.length > 0) {
+      return bData.price_details.items.map((it: any) => {
+        const rawPrice = parseFloat(String(it.price || it.amount || it.line_total || "0"));
+        const price = rawPrice > 0 ? rawPrice : totalAmount / (bData.price_details.items.length || 1);
+        return {
+          label: `${it.quantity ? `${it.quantity} × ` : ""}${it.name || it.room_type || "Room"}${it.view_label ? ` - ${it.view_label}` : ""}`,
+          subtext: it.occupants || (safeFormData.adults ? `${safeFormData.adults} ${safeFormData.adults === 1 ? t("sidebar.adult", "Adult") : t("sidebar.adults", "Adults")}` : undefined),
+          price: isEgp ? { egp: price, usd: price * 0.02 } : isEur ? { eur: price, usd: price * 1.08 } : { usd: price, egp: price * 50 },
+        };
+      });
+    }
+
+    if (bData.room_selections && Array.isArray(bData.room_selections) && bData.room_selections.length > 0) {
+      const totalRoomsCount = bData.room_selections.reduce((acc: number, sel: any) => acc + (sel.quantity || sel.count || 1), 0);
+      return bData.room_selections.map((sel: any) => {
+        const typeName = sel.room_type || sel.type || "Room";
+        const roomTitle = getLocalizedRoomTitle(typeName);
+        const view = getLocalizedViewLabel(sel.view_label || sel.view || "Garden View");
+        const qty = sel.quantity || sel.count || 1;
+        const selPrice = parseFloat(String(sel.price || sel.total_price || sel.amount || sel.line_total || "0"));
+        const price = selPrice > 0 ? selPrice : (totalAmount / (totalRoomsCount || 1)) * qty;
+        return {
+          label: `${qty} × ${roomTitle} - ${view}`,
+          subtext: safeFormData.adults ? `${safeFormData.adults} ${safeFormData.adults === 1 ? t("sidebar.adult", "Adult") : t("sidebar.adults", "Adults")}` : undefined,
+          price: isEgp ? { egp: price, usd: price * 0.02 } : isEur ? { eur: price, usd: price * 1.08 } : { usd: price, egp: price * 50 },
+        };
+      });
+    }
+
+    const roomEntries = Object.entries(safeFormData.rooms || {}).filter(([, count]) => (count as number) > 0);
+    if (roomEntries.length > 0) {
+      const totalRoomsCount = roomEntries.reduce((acc, [, count]) => acc + (count as number), 0);
+      return roomEntries.map(([type, count]) => {
+        const roomTitle = getLocalizedRoomTitle(type);
+        const qty = count as number;
+        const price = (totalAmount / (totalRoomsCount || 1)) * qty;
+        return {
+          label: `${qty} × ${roomTitle} - ${getLocalizedViewLabel("garden")}`,
+          subtext: safeFormData.adults ? `${safeFormData.adults} ${safeFormData.adults === 1 ? t("sidebar.adult", "Adult") : t("sidebar.adults", "Adults")}` : undefined,
+          price: isEgp ? { egp: price, usd: price * 0.02 } : isEur ? { eur: price, usd: price * 1.08 } : { usd: price, egp: price * 50 },
+        };
+      });
+    }
+
+    return [
+      {
+        label: isHotel ? t("sidebar.hotelStay", "Hotel Stay") : t("sidebar.tripPackage", "Trip Package"),
+        price: totalPrices,
+      },
+    ];
   })();
 
   const sections: BookingDetailsSection[] = isTransport
@@ -374,7 +487,7 @@ export default function ProfileBookingDetailsPage() {
         stars: bData.hotel?.stars || 5,
         rating: bData.hotel?.rating_avg || 5.0,
         rooms: bData.hotel?.rooms || 0,
-        pricePerNight: parseFloat(bData.hotel?.price_per_night || "0"),
+        pricePerNight: totalAmount / Math.max(1, hotelTotalRooms),
         reviews: bData.hotel?.review_count || 0
       }}
       formData={safeFormData as any}
@@ -383,6 +496,9 @@ export default function ProfileBookingDetailsPage() {
       depositAmount={hotelDepositAmount}
       totalRooms={hotelTotalRooms}
       totalGuests={hotelTotalGuests}
+      totalPrices={totalPrices}
+      depositPrices={depositPrices}
+      lineItems={bookingLineItems}
     />
   ) : (
     <BookingSidebar
@@ -392,13 +508,16 @@ export default function ProfileBookingDetailsPage() {
         description: bData.details?.travel_type || bData.trip?.short_description || "",
         image: bData.image || bData.trip?.image || "/images/home/hero-bg.png",
         location: bData.details?.destination || bData.trip?.location_text || "",
-        price: parseFloat(bData.total_amount || bData.trip?.base_price || "0"),
-        currency: bData.payment_summary?.currency_code || bData.trip?.currency_code || "£",
+        price: totalAmount,
+        currency: currencyCode,
         duration: { days: 0, nights: 0, label: bData.details?.duration_label } as any
       }}
       formData={safeFormData as any}
       totalAmount={totalAmount}
       depositAmount={depositAmount}
+      totalPrices={totalPrices}
+      depositPrices={depositPrices}
+      lineItems={bookingLineItems}
     />
   );
 
