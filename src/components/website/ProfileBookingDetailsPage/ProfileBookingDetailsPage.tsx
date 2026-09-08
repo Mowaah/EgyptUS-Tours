@@ -461,6 +461,11 @@ export default function ProfileBookingDetailsPage() {
     return `/profile/bookings-details?${params.toString()}`;
   };
 
+  const normalizedTotal = isEgp ? totalAmount * 0.02 : isEur ? totalAmount * 1.08 : totalAmount;
+  const normalizedDeposit = isEgp ? depositAmount * 0.02 : isEur ? depositAmount * 1.08 : depositAmount;
+  const normalizedHotelTotal = isEgp ? hotelTotalAmount * 0.02 : isEur ? hotelTotalAmount * 1.08 : hotelTotalAmount;
+  const normalizedHotelDeposit = isEgp ? hotelDepositAmount * 0.02 : isEur ? hotelDepositAmount * 1.08 : hotelDepositAmount;
+
   const paymentSidebar = isTransport ? (
     <TransportBookingSummary
       vehicle={{
@@ -487,13 +492,13 @@ export default function ProfileBookingDetailsPage() {
         stars: bData.hotel?.stars || 5,
         rating: bData.hotel?.rating_avg || 5.0,
         rooms: bData.hotel?.rooms || 0,
-        pricePerNight: totalAmount / Math.max(1, hotelTotalRooms),
+        pricePerNight: normalizedTotal / Math.max(1, hotelTotalRooms),
         reviews: bData.hotel?.review_count || 0
       }}
       formData={safeFormData as any}
-      totalAmount={hotelTotalAmount + hotelVatAmount}
+      totalAmount={normalizedHotelTotal + hotelVatAmount}
       vatAmount={hotelVatAmount}
-      depositAmount={hotelDepositAmount}
+      depositAmount={normalizedHotelDeposit}
       totalRooms={hotelTotalRooms}
       totalGuests={hotelTotalGuests}
       totalPrices={totalPrices}
@@ -508,13 +513,13 @@ export default function ProfileBookingDetailsPage() {
         description: bData.details?.travel_type || bData.trip?.short_description || "",
         image: bData.image || bData.trip?.image || "/images/home/hero-bg.png",
         location: bData.details?.destination || bData.trip?.location_text || "",
-        price: totalAmount,
+        price: normalizedTotal,
         currency: currencyCode,
         duration: { days: 0, nights: 0, label: bData.details?.duration_label } as any
       }}
       formData={safeFormData as any}
-      totalAmount={totalAmount}
-      depositAmount={depositAmount}
+      totalAmount={normalizedTotal}
+      depositAmount={normalizedDeposit}
       totalPrices={totalPrices}
       depositPrices={depositPrices}
       lineItems={bookingLineItems}

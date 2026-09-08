@@ -58,21 +58,7 @@ const nextConfig: NextConfig = {
       },
     },
   },
-  async redirects() {
-    return [
-      {
-        source: "/trips",
-        destination: "/egypttours",
-        permanent: true,
-      },
-      {
-        source: "/trips/:path*",
-        destination: "/egypttours/:path*",
-        permanent: true,
-      },
-    ];
-  },
-  webpack(config, { dev }) {
+  webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
       use: ["@svgr/webpack"],

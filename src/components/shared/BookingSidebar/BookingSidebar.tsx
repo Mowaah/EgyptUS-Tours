@@ -94,17 +94,25 @@ export default function BookingSidebar({
   }, [pricingSummary]);
 
   const isDepositFull = React.useMemo(() => {
-    if (hasValidPricingSummary && pricingSummary) return pricingSummary.isDepositFull;
     if (depositPrices && totalPrices) {
       return (
         (depositPrices.usd != null && totalPrices.usd != null && Number(depositPrices.usd) >= Number(totalPrices.usd)) ||
         (depositPrices.egp != null && totalPrices.egp != null && Number(depositPrices.egp) >= Number(totalPrices.egp))
       );
     }
+    if (hasValidPricingSummary && pricingSummary) return pricingSummary.isDepositFull;
     return depositAmount >= finalTotal;
-  }, [hasValidPricingSummary, pricingSummary, depositPrices, totalPrices, depositAmount, finalTotal]);
+  }, [depositPrices, totalPrices, hasValidPricingSummary, pricingSummary, depositAmount, finalTotal]);
 
   const resolvedTotal: MultiCurrencyPrice | number = React.useMemo(() => {
+    if (totalPrices) {
+      if (vatAmount <= 0) return totalPrices;
+      return {
+        usd: totalPrices.usd != null ? Number(totalPrices.usd) + vatAmount : undefined,
+        egp: totalPrices.egp != null ? Number(totalPrices.egp) + vatAmount : undefined,
+        eur: totalPrices.eur != null ? Number(totalPrices.eur) + vatAmount : undefined,
+      };
+    }
     if (hasValidPricingSummary && pricingSummary) {
       if (vatAmount <= 0) return pricingSummary.totalPrices;
       return {
@@ -113,22 +121,16 @@ export default function BookingSidebar({
         eur: pricingSummary.totalPrices.eur != null ? Number(pricingSummary.totalPrices.eur) + vatAmount : undefined,
       };
     }
-    if (!totalPrices) return finalTotal;
-    if (vatAmount <= 0) return totalPrices;
-    return {
-      usd: totalPrices.usd != null ? Number(totalPrices.usd) + vatAmount : undefined,
-      egp: totalPrices.egp != null ? Number(totalPrices.egp) + vatAmount : undefined,
-      eur: totalPrices.eur != null ? Number(totalPrices.eur) + vatAmount : undefined,
-    };
-  }, [hasValidPricingSummary, pricingSummary, totalPrices, finalTotal, vatAmount]);
+    return finalTotal;
+  }, [totalPrices, hasValidPricingSummary, pricingSummary, finalTotal, vatAmount]);
 
   const resolvedDeposit: MultiCurrencyPrice | number = React.useMemo(() => {
+    if (depositPrices) return depositPrices;
     if (hasValidPricingSummary && pricingSummary) return pricingSummary.depositPrices;
     return depositPrices || depositAmount;
-  }, [hasValidPricingSummary, pricingSummary, depositPrices, depositAmount]);
+  }, [depositPrices, hasValidPricingSummary, pricingSummary, depositAmount]);
 
   const resolvedRemaining: MultiCurrencyPrice | number = React.useMemo(() => {
-    if (hasValidPricingSummary && pricingSummary) return pricingSummary.remainingPrices;
     if (totalPrices && depositPrices) {
       return {
         usd: Math.max(0, (Number(totalPrices.usd) || 0) - (Number(depositPrices.usd) || 0)),
@@ -136,8 +138,9 @@ export default function BookingSidebar({
         eur: Math.max(0, (Number(totalPrices.eur) || 0) - (Number(depositPrices.eur) || 0)),
       };
     }
+    if (hasValidPricingSummary && pricingSummary) return pricingSummary.remainingPrices;
     return Math.max(0, finalTotal - depositAmount);
-  }, [hasValidPricingSummary, pricingSummary, totalPrices, depositPrices, finalTotal, depositAmount]);
+  }, [totalPrices, depositPrices, hasValidPricingSummary, pricingSummary, finalTotal, depositAmount]);
 
   const image = isHotel ? (hotel!.image || "/images/pyramids.jpg") : (trip!.image || "/images/cruise.jpg");
   const title = isHotel ? hotel!.name : trip!.title;
