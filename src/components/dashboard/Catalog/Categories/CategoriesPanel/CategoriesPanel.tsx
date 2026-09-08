@@ -6,13 +6,19 @@ import useSWR from "swr";
 import CategoryCard, { Category } from "../CategoryCard/CategoryCard";
 import TablePagination from "@/components/dashboard/shared/TablePagination/TablePagination";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
+import { LoadingSpinner } from "@/components/shared";
+import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
+import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import styles from "./CategoriesPanel.module.scss";
-import { getCategories } from "@/services/admin/adminCatalogCategoriesService";
+import { getAllCategories } from "@/services/admin/adminCatalogCategoriesService";
 import { getLangKey, getLocalizedName } from "@/components/dashboard/shared/i18n";
 
 interface CategoriesPanelProps {
+  searchQuery?: string;
+  onClearSearch?: () => void;
   onEditCategory?: (category: Category) => void;
   onDeleteCategory?: (category: Category) => void;
+  onAddCategory?: () => void;
   refreshTrigger?: number;
 }
 
@@ -22,36 +28,41 @@ interface CategoryApiItem {
   name?: string;
   title?: string;
   translations?: {
-    en?: { name?: string; title?: string; };
-    it?: { name?: string; title?: string; };
-    es?: { name?: string; title?: string; };
+    en?: { name?: string; title?: string };
+    it?: { name?: string; title?: string };
+    es?: { name?: string; title?: string };
   };
 }
 
-interface CategoryApiResponse {
-  data?: { results?: CategoryApiItem[] } | CategoryApiItem[];
-  results?: CategoryApiItem[];
-  count?: number;
-}
-
-export default function CategoriesPanel({ onEditCategory, onDeleteCategory, refreshTrigger = 0 }: CategoriesPanelProps) {
+export default function CategoriesPanel({
+  searchQuery = "",
+  onClearSearch,
+  onEditCategory,
+  onDeleteCategory,
+  onAddCategory,
+  refreshTrigger = 0,
+}: CategoriesPanelProps = {}) {
   const [lang, setLang] = useState<Language>("English");
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(12);
-  
+  const [rowsPerPage, setRowsPerPage] = useState(8);
+  const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
+
+  if (prevSearchQuery !== searchQuery) {
+    setPrevSearchQuery(searchQuery);
+    setPage(1);
+  }
+
   const langCode = getLangKey(lang);
 
-  const { data, isLoading: loading } = useSWR<CategoryApiResponse>(
-    ["adminCatalogCategories", page, rowsPerPage, langCode, refreshTrigger],
-    () => getCategories({ page, page_size: rowsPerPage, lang: langCode }),
+  const { data: rawCategories, isLoading: loading } = useSWR(
+    ["adminCatalogAllCategories", langCode, refreshTrigger],
+    () => getAllCategories({ lang: langCode }),
     { keepPreviousData: true }
   );
 
   const categories: Category[] = useMemo(() => {
-    const rawData: CategoryApiItem[] = Array.isArray(data?.data)
-      ? data.data
-      : data?.data?.results ?? data?.results ?? [];
-    
+    const rawData: CategoryApiItem[] = (Array.isArray(rawCategories) ? rawCategories : []) as unknown as CategoryApiItem[];
+
     return rawData.map((c) => {
       const en = c.translations?.en;
       const it = c.translations?.it;
@@ -66,13 +77,28 @@ export default function CategoriesPanel({ onEditCategory, onDeleteCategory, refr
         },
       };
     });
-  }, [data, lang]);
+  }, [rawCategories, lang]);
 
-  const totalCount = data?.count || 0;
+  const filteredCategories = useMemo(() => {
+    if (!searchQuery.trim()) return categories;
+    const q = searchQuery.toLowerCase().trim();
+    return categories.filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) ||
+        Boolean(c.translations?.en?.toLowerCase().includes(q)) ||
+        Boolean(c.translations?.it?.toLowerCase().includes(q)) ||
+        Boolean(c.translations?.es?.toLowerCase().includes(q))
+    );
+  }, [categories, searchQuery]);
 
+  const totalCount = filteredCategories.length;
   const pageCount = Math.max(1, Math.ceil(totalCount / rowsPerPage));
   const safePage = Math.min(page, pageCount);
-  const visibleCategories = categories;
+
+  const startIndex = (safePage - 1) * rowsPerPage;
+  const visibleCategories = useMemo(() => {
+    return filteredCategories.slice(startIndex, startIndex + rowsPerPage);
+  }, [filteredCategories, startIndex, rowsPerPage]);
 
   const handleEdit = (id: string) => {
     const category = categories.find((c) => c.id === id);
@@ -93,22 +119,22 @@ export default function CategoriesPanel({ onEditCategory, onDeleteCategory, refr
       <header className={styles.header}>
         <div className={styles.titleArea}>
           <div className={styles.iconWrapper}>
-            <Image 
-              src="/images/dashboard/catalog/categories.svg" 
-              alt="" 
-              width={20} 
-              height={20} 
+            <Image
+              src="/images/dashboard/catalog/categories.svg"
+              alt=""
+              width={20}
+              height={20}
             />
           </div>
           <h2 className={styles.title}>Trip Categories</h2>
         </div>
-        
-        <button className={styles.exportButton}>
-          <Image 
-            src="/images/dashboard/export.svg" 
-            alt="Export" 
-            width={20} 
-            height={20} 
+
+        <button type="button" className={styles.exportButton}>
+          <Image
+            src="/images/dashboard/export.svg"
+            alt="Export"
+            width={20}
+            height={20}
           />
           Export Data
         </button>
@@ -117,27 +143,33 @@ export default function CategoriesPanel({ onEditCategory, onDeleteCategory, refr
       <LanguageTabs active={lang} onChange={setLang} />
 
       {loading ? (
-        <div style={{ padding: '2rem', textAlign: 'center', color: '#6b7280' }}>Loading categories...</div>
+        <LoadingSpinner label="Loading categories..." />
+      ) : visibleCategories.length === 0 ? (
+        searchQuery.trim() ? (
+          <DashboardSearchEmptyState onClearSearch={onClearSearch} />
+        ) : (
+          <DashboardEmptyState
+            title="No Categories Found"
+            subtitle="Trip categories will appear here once they are added."
+            actionLabel={onAddCategory ? "Add New Category" : undefined}
+            onAction={onAddCategory}
+            imageSrc="/images/dashboard/empty.png"
+          />
+        )
       ) : (
         <div className={styles.grid}>
-          {visibleCategories.length === 0 ? (
-            <div style={{ gridColumn: "1 / -1", textAlign: "center", color: "#6b7280", padding: "2rem" }}>
-              No categories found.
-            </div>
-          ) : (
-            visibleCategories.map((category) => (
-              <CategoryCard 
-                key={category.id} 
-                category={category} 
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            ))
-          )}
+          {visibleCategories.map((category) => (
+            <CategoryCard
+              key={category.id}
+              category={category}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ))}
         </div>
       )}
 
-      {!loading && categories.length > 0 && (
+      {!loading && filteredCategories.length > 0 && (
         <TablePagination
           className={styles.pagination}
           page={safePage}

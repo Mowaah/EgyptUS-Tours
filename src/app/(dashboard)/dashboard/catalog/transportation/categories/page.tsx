@@ -25,6 +25,7 @@ function getMutationErrorMessage(error: unknown, fallback: string) {
 }
 
 export default function TransportationCategoriesPage() {
+  const [searchQuery, setSearchQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | undefined>(undefined);
   
@@ -52,7 +53,7 @@ export default function TransportationCategoriesPage() {
   const handleSaveModal = async (data: { translations: Record<string, { name: string }> }) => {
     try {
       const nameVal = data.translations?.en?.name;
-      const payload: any = { ...data, name: nameVal };
+      const payload: Record<string, unknown> = { ...data, name: nameVal };
       if (editingCategory) {
         await updateVehicleCategory(editingCategory.id, payload);
         setSuccessMessage("The Vehicle Category has been updated successfully");
@@ -99,13 +100,17 @@ export default function TransportationCategoriesPage() {
         subtitle="Manage your vehicle fleet for transfers and tours."
         primaryAction={{ label: "Add New Category" }}
         onPrimaryAction={handleOpenAdd}
-        hideSearch={false}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
       <div className={styles.content}>
         <TransportationTabs />
         <VehicleCategoriesPanel 
+          searchQuery={searchQuery}
+          onClearSearch={() => setSearchQuery("")}
           onEditCategory={handleOpenEdit} 
           onDeleteCategory={setDeletingCategory}
+          onAddCategory={handleOpenAdd}
           refreshTrigger={refreshTrigger}
         />
       </div>

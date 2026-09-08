@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from "swr";
-import { getCatalogHotels, getCatalogHotelDetail, getCatalogHotelLocations } from "@/services/admin/adminCatalogHotelsService";
+import { getCatalogHotels, getCatalogHotelDetail, getAllCatalogHotelLocations } from "@/services/admin/adminCatalogHotelsService";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useCatalogHotels(filters: any) {
@@ -42,13 +42,11 @@ export function useCatalogHotelDetail(id: string | number | undefined) {
 export function useCatalogHotelLocations() {
   const { data: res, isLoading: loading, mutate: refetch } = useSWR(
     "adminCatalogHotelLocations",
-    () => getCatalogHotelLocations({ limit: 1000, page_size: 1000 }),
+    () => getAllCatalogHotelLocations(),
     { keepPreviousData: true }
   );
 
-  const locations = Array.isArray(res?.data) 
-    ? res.data 
-    : res?.data?.results ?? res?.results ?? (Array.isArray(res) ? res : []) ?? [];
+  const locations = Array.isArray(res) ? res : [];
 
   return {
     locations,

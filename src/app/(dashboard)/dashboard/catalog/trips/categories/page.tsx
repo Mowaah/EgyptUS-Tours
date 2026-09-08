@@ -30,6 +30,7 @@ function getMutationErrorMessage(error: unknown, fallback: string) {
 }
 
 export default function CatalogCategoriesPage() {
+  const [searchQuery, setSearchQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | undefined>(undefined);
   
@@ -100,13 +101,17 @@ export default function CatalogCategoriesPage() {
         subtitle="Manage all trip products visible on the website"
         primaryAction={{ label: "Add New Trip Category" }}
         onPrimaryAction={handleOpenAdd}
-        hideSearch={false}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
       <div className={styles.content}>
         <CatalogTabs />
         <CategoriesPanel 
+          searchQuery={searchQuery}
+          onClearSearch={() => setSearchQuery("")}
           onEditCategory={handleOpenEdit} 
           onDeleteCategory={setDeletingCategory}
+          onAddCategory={handleOpenAdd}
           refreshTrigger={refreshTrigger}
         />
       </div>

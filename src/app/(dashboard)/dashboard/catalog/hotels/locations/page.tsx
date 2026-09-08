@@ -14,6 +14,7 @@ import styles from "./page.module.scss";
 import { createCatalogHotelLocation, updateCatalogHotelLocation, deleteCatalogHotelLocation } from "@/services/admin/adminCatalogHotelsService";
 
 export default function CatalogLocationsPage() {
+  const [searchQuery, setSearchQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingLocation, setEditingLocation] = useState<Location | undefined>(undefined);
   
@@ -77,13 +78,17 @@ export default function CatalogLocationsPage() {
         subtitle="Centralize hotel management, pricing references, and accommodation details."
         primaryAction={{ label: "Add New Location", disabled: isSubmitting }}
         onPrimaryAction={handleOpenAdd}
-        hideSearch={false}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
       <div className={styles.content}>
         <HotelsTabs />
         <LocationsPanel 
+          searchQuery={searchQuery}
+          onClearSearch={() => setSearchQuery("")}
           onEditLocation={handleOpenEdit} 
           onDeleteLocation={setDeletingLocation}
+          onAddLocation={handleOpenAdd}
         />
       </div>
 

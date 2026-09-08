@@ -42,6 +42,25 @@ export async function getCategories(params?: QueryParams): Promise<ApiResponse> 
 }
 
 export async function getDestinations(params?: QueryParams): Promise<ApiResponse> {
+  if (Number(params?.limit) >= 100 || Number(params?.page_size) >= 100) {
+    try {
+      let page = 1;
+      const allResults: Record<string, unknown>[] = [];
+      while (true) {
+        const res: Record<string, unknown> = await publicDataClient.get('/destinations/', { params: { ...params, page } });
+        const items = (Array.isArray(res?.results) ? res.results : Array.isArray(res?.data) ? res.data : []) as Record<string, unknown>[];
+        allResults.push(...items);
+        const total = Number(res?.count ?? allResults.length);
+        if (!res?.next || items.length === 0 || allResults.length >= total) {
+          break;
+        }
+        page++;
+      }
+      return { count: allResults.length, results: allResults };
+    } catch {
+      return await publicDataClient.get('/destinations/', { params });
+    }
+  }
   return await publicDataClient.get('/destinations/', { params });
 }
 

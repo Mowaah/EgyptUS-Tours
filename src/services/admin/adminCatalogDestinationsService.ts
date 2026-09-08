@@ -1,11 +1,56 @@
 import { adminDataClient } from '@/lib/adminCoreApi';
+import { apiClient as publicDataClient } from '@/lib/api';
+import { fileToBase64 } from '@/utils/imageUtils';
 
 type QueryParams = Record<string, unknown>;
 // Admin clients are currently untyped across the dashboard service layer.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ApiResponse = any;
 
-import { fileToBase64 } from '@/utils/imageUtils';
+export async function getDestinations(params?: QueryParams): Promise<ApiResponse> {
+  return await adminDataClient.get('/catalog/destinations/', { params });
+}
+
+export async function getAllDestinations(params?: QueryParams): Promise<Record<string, unknown>[]> {
+  try {
+    let page = 1;
+    const allResults: Record<string, unknown>[] = [];
+    while (true) {
+      const res: Record<string, unknown> = await adminDataClient.get('/catalog/destinations/', {
+        params: { ...params, page },
+      });
+      const items = (Array.isArray(res?.results) ? res.results : Array.isArray(res?.data) ? res.data : []) as Record<string, unknown>[];
+      allResults.push(...items);
+      const total = Number(res?.count ?? allResults.length);
+      if (!res?.next || items.length === 0 || allResults.length >= total) {
+        break;
+      }
+      page++;
+    }
+    return allResults;
+  } catch {
+    // If admin endpoint fails or 404s, fall back to public client
+    try {
+      let page = 1;
+      const allResults: Record<string, unknown>[] = [];
+      while (true) {
+        const res: Record<string, unknown> = await publicDataClient.get('/destinations/', {
+          params: { ...params, page },
+        });
+        const items = (Array.isArray(res?.results) ? res.results : Array.isArray(res?.data) ? res.data : []) as Record<string, unknown>[];
+        allResults.push(...items);
+        const total = Number(res?.count ?? allResults.length);
+        if (!res?.next || items.length === 0 || allResults.length >= total) {
+          break;
+        }
+        page++;
+      }
+      return allResults;
+    } catch {
+      return [];
+    }
+  }
+}
 
 async function buildDestinationPayload(data: { translations?: Record<string, { name: string }>; image?: File }) {
   const payload: { translations?: Record<string, { name: string }>; name?: string; image?: string } = {};
@@ -15,10 +60,6 @@ async function buildDestinationPayload(data: { translations?: Record<string, { n
   }
   if (data.image) payload.image = await fileToBase64(data.image);
   return payload;
-}
-
-export async function getDestinations(params?: QueryParams): Promise<ApiResponse> {
-  return await adminDataClient.get('/catalog/destinations/', { params });
 }
 
 export async function createDestination(data: { translations: Record<string, { name: string }>; image?: File }): Promise<ApiResponse> {

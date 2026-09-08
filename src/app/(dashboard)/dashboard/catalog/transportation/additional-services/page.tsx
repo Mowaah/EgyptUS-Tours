@@ -25,6 +25,7 @@ function getMutationErrorMessage(error: unknown, fallback: string) {
 }
 
 export default function TransportationAdditionalServicesPage() {
+  const [searchQuery, setSearchQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<AdditionalService | undefined>(undefined);
   
@@ -99,15 +100,18 @@ export default function TransportationAdditionalServicesPage() {
         subtitle="Manage your vehicle fleet for transfers and tours."
         primaryAction={{ label: "Add New Additional Service" }}
         onPrimaryAction={handleOpenAdd}
-        searchQuery=""
-        onSearchChange={() => {}}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
         searchPlaceholder="Search Additional Service"
       />
       <div className={styles.content}>
         <TransportationTabs />
         <AdditionalServicesPanel 
+          searchQuery={searchQuery}
+          onClearSearch={() => setSearchQuery("")}
           onEditService={handleOpenEdit} 
           onDeleteService={setDeletingService}
+          onAddService={handleOpenAdd}
           refreshTrigger={refreshTrigger}
         />
       </div>

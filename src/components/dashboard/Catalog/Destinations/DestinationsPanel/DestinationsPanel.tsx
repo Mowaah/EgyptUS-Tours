@@ -7,36 +7,75 @@ import { TablePagination } from "@/components/dashboard/shared";
 import DestinationCard, { Destination } from "../DestinationCard/DestinationCard";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import { LoadingSpinner } from "@/components/shared";
+import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
+import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import styles from "./DestinationsPanel.module.scss";
-import { getDestinations } from "@/services/admin/adminCatalogDestinationsService";
+import { getAllDestinations } from "@/services/admin/adminCatalogDestinationsService";
 import { getLangKey, getLocalizedName } from "@/components/dashboard/shared/i18n";
 
 interface DestinationsPanelProps {
+  searchQuery?: string;
+  onClearSearch?: () => void;
   onEditDestination?: (dest: Destination) => void;
   onDeleteDestination?: (dest: Destination) => void;
+  onAddDestination?: () => void;
   refreshTrigger?: number;
 }
 
-export default function DestinationsPanel({ onEditDestination, onDeleteDestination, refreshTrigger = 0 }: DestinationsPanelProps = {}) {
+interface DestinationApiItem {
+  id: string | number;
+  name?: string;
+  title?: string;
+  translations?: {
+    en?: { name?: string; title?: string };
+    it?: { name?: string; title?: string };
+    es?: { name?: string; title?: string };
+  };
+  image?: string | null;
+  image_url?: string | null;
+  photo?: string | null;
+}
+
+export default function DestinationsPanel({
+  searchQuery = "",
+  onClearSearch,
+  onEditDestination,
+  onDeleteDestination,
+  onAddDestination,
+  refreshTrigger = 0,
+}: DestinationsPanelProps = {}) {
   const [lang, setLang] = useState<Language>("English");
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(12);
+  const [rowsPerPage, setRowsPerPage] = useState(8);
+  const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
+
+  if (prevSearchQuery !== searchQuery) {
+    setPrevSearchQuery(searchQuery);
+    setPage(1);
+  }
 
   const langCode = getLangKey(lang);
 
-  const { data, isLoading: loading } = useSWR(
-    ["adminCatalogDestinations", page, rowsPerPage, langCode, refreshTrigger],
-    () => getDestinations({ page, page_size: rowsPerPage, lang: langCode }),
+  const { data: rawDestinations, isLoading: loading } = useSWR(
+    ["adminCatalogAllDestinations", langCode, refreshTrigger],
+    () => getAllDestinations({ lang: langCode }),
     { keepPreviousData: true }
   );
 
   const destinations: Destination[] = useMemo(() => {
-    const results: any[] = data?.results ?? data?.data?.results ?? (Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []);
-    
-    return results.map((d: any) => {
+    const results = (Array.isArray(rawDestinations) ? rawDestinations : []) as unknown as DestinationApiItem[];
+
+    return results.map((d) => {
       const en = d.translations?.en;
       const it = d.translations?.it;
       const es = d.translations?.es;
+      const rawImg = d.image || d.image_url || d.photo;
+      const imageSrc = rawImg
+        ? rawImg.startsWith("http")
+          ? rawImg
+          : `http://127.0.0.1:8000${rawImg.startsWith("/") ? "" : "/"}${rawImg}`
+        : "/images/dashboard/catalog/destinations/egypt.jpg";
+
       return {
         id: String(d.id),
         name: getLocalizedName(d, lang),
@@ -45,16 +84,31 @@ export default function DestinationsPanel({ onEditDestination, onDeleteDestinati
           it: it?.name || it?.title || "",
           es: es?.name || es?.title || "",
         },
-        imageSrc: d.image || d.image_url || d.photo ? (d.image || d.image_url || d.photo).startsWith("http") ? (d.image || d.image_url || d.photo) : `http://127.0.0.1:8000${(d.image || d.image_url || d.photo).startsWith('/') ? '' : '/'}${d.image || d.image_url || d.photo}` : "/images/dashboard/catalog/destinations/egypt.jpg",
+        imageSrc,
       };
     });
-  }, [data, lang]);
+  }, [rawDestinations, lang]);
 
-  const totalCount = data?.count || 0;
+  const filteredDestinations = useMemo(() => {
+    if (!searchQuery.trim()) return destinations;
+    const q = searchQuery.toLowerCase().trim();
+    return destinations.filter(
+      (d) =>
+        d.name.toLowerCase().includes(q) ||
+        Boolean(d.translations?.en?.toLowerCase().includes(q)) ||
+        Boolean(d.translations?.it?.toLowerCase().includes(q)) ||
+        Boolean(d.translations?.es?.toLowerCase().includes(q))
+    );
+  }, [destinations, searchQuery]);
 
+  const totalCount = filteredDestinations.length;
   const pageCount = Math.max(1, Math.ceil(totalCount / rowsPerPage));
   const safePage = Math.min(page, pageCount);
-  const visibleDestinations = destinations;
+
+  const startIndex = (safePage - 1) * rowsPerPage;
+  const visibleDestinations = useMemo(() => {
+    return filteredDestinations.slice(startIndex, startIndex + rowsPerPage);
+  }, [filteredDestinations, startIndex, rowsPerPage]);
 
   const handleEdit = (id: string) => {
     const dest = destinations.find((d) => d.id === id);
@@ -89,26 +143,32 @@ export default function DestinationsPanel({ onEditDestination, onDeleteDestinati
 
       {loading ? (
         <LoadingSpinner label="Loading destinations..." />
+      ) : visibleDestinations.length === 0 ? (
+        searchQuery.trim() ? (
+          <DashboardSearchEmptyState onClearSearch={onClearSearch} />
+        ) : (
+          <DashboardEmptyState
+            title="No Destinations Found"
+            subtitle="Catalog destinations will appear here once they are added."
+            actionLabel={onAddDestination ? "Add New Destination" : undefined}
+            onAction={onAddDestination}
+            imageSrc="/images/dashboard/empty.png"
+          />
+        )
       ) : (
         <div className={styles.grid}>
-          {visibleDestinations.length === 0 ? (
-            <div style={{ gridColumn: "1 / -1", textAlign: "center", color: "#6b7280", padding: "2rem" }}>
-              No destinations found.
-            </div>
-          ) : (
-            visibleDestinations.map((dest) => (
-              <DestinationCard
-                key={dest.id}
-                destination={dest}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            ))
-          )}
+          {visibleDestinations.map((dest) => (
+            <DestinationCard
+              key={dest.id}
+              destination={dest}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ))}
         </div>
       )}
 
-      {!loading && destinations.length > 0 && (
+      {!loading && filteredDestinations.length > 0 && (
         <TablePagination
           className={styles.pagination}
           page={safePage}

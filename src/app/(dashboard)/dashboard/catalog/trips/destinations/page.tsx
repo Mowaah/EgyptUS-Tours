@@ -30,6 +30,7 @@ function getMutationErrorMessage(error: unknown, fallback: string) {
 }
 
 export default function CatalogDestinationsPage() {
+  const [searchQuery, setSearchQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingDest, setEditingDest] = useState<Destination | undefined>(undefined);
 
@@ -102,13 +103,17 @@ export default function CatalogDestinationsPage() {
         subtitle="Manage all trip products visible on the website"
         primaryAction={{ label: "Add New Destination" }}
         onPrimaryAction={handleOpenAdd}
-        hideSearch={false}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
       <div className={styles.content}>
         <CatalogTabs />
         <DestinationsPanel
+          searchQuery={searchQuery}
+          onClearSearch={() => setSearchQuery("")}
           onEditDestination={handleOpenEdit}
           onDeleteDestination={setDeletingDest}
+          onAddDestination={handleOpenAdd}
           refreshTrigger={refreshTrigger}
         />
       </div>
