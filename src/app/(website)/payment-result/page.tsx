@@ -86,9 +86,9 @@ function PaymentResultContent() {
     if (targetType === "trip" && savedTripSlug) {
       const bookPath = isGroupTrip ? "book-group" : "book-private";
       if (success) {
-        router.replace(`/trips/${savedTripSlug}/${bookPath}?booking_success=true&booking_id=${bookingIdParam}`);
+        router.replace(`/egypttours/${savedTripSlug}/${bookPath}?booking_success=true&booking_id=${bookingIdParam}`);
       } else {
-        router.replace(`/trips/${savedTripSlug}/${bookPath}?payment_failed=true`);
+        router.replace(`/egypttours/${savedTripSlug}/${bookPath}?payment_failed=true`);
       }
     } else if (targetType === "hotel" && savedHotelSlug) {
       if (success) {
