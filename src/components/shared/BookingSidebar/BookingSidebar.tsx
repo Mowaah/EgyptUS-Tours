@@ -7,6 +7,7 @@ import { BookingData } from "@/types";
 import { MultiCurrencyPrice } from "@/constants/currency";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { calculateTripBookingPrice, calculateHotelBookingPrice, CHILD_POLICY, normalizeRoomType, resolveApplicableSeason } from "@/utils/bookingPricing";
 import styles from "./BookingSidebar.module.scss";
 
 interface BookingSidebarProps {
@@ -17,6 +18,8 @@ interface BookingSidebarProps {
   // Pass either a trip or a hotel — not both
   trip?: Trip;
   hotel?: Hotel;
+  isGroupTrip?: boolean;
+  isSubmitting?: boolean;
   // Hotel-specific extras
   vatAmount?: number;
   totalRooms?: number;
@@ -45,6 +48,7 @@ export default function BookingSidebar({
   totalGuests = 0,
   totalPrices,
   depositPrices,
+  isGroupTrip,
 }: BookingSidebarProps) {
   // Mobile-only: the full details collapse into a compact summary strip.
   // On desktop this state is ignored (CSS always shows the details).
@@ -56,7 +60,18 @@ export default function BookingSidebar({
   const isHotel = !!hotel;
   const formatMoney = formatCurrency;
 
+  const pricingSummary = React.useMemo(() => {
+    if (hotel) {
+      return calculateHotelBookingPrice(hotel, formData);
+    }
+    if (trip) {
+      return calculateTripBookingPrice(trip, formData, isGroupTrip ? "group" : "private");
+    }
+    return null;
+  }, [hotel, trip, formData, isGroupTrip]);
+
   const isDepositFull = React.useMemo(() => {
+    if (pricingSummary) return pricingSummary.isDepositFull;
     if (depositPrices && totalPrices) {
       return (
         (depositPrices.usd != null && totalPrices.usd != null && depositPrices.usd === totalPrices.usd) ||
@@ -64,9 +79,17 @@ export default function BookingSidebar({
       );
     }
     return depositAmount >= finalTotal;
-  }, [depositPrices, totalPrices, depositAmount, finalTotal]);
+  }, [pricingSummary, depositPrices, totalPrices, depositAmount, finalTotal]);
 
   const resolvedTotal: MultiCurrencyPrice | number = React.useMemo(() => {
+    if (pricingSummary) {
+      if (vatAmount <= 0) return pricingSummary.totalPrices;
+      return {
+        usd: pricingSummary.totalPrices.usd != null ? Number(pricingSummary.totalPrices.usd) + vatAmount : undefined,
+        egp: pricingSummary.totalPrices.egp != null ? Number(pricingSummary.totalPrices.egp) + vatAmount : undefined,
+        eur: pricingSummary.totalPrices.eur != null ? Number(pricingSummary.totalPrices.eur) + vatAmount : undefined,
+      };
+    }
     if (!totalPrices) return finalTotal;
     if (vatAmount <= 0) return totalPrices;
     return {
@@ -74,11 +97,15 @@ export default function BookingSidebar({
       egp: totalPrices.egp != null ? Number(totalPrices.egp) + vatAmount : undefined,
       eur: totalPrices.eur != null ? Number(totalPrices.eur) + vatAmount : undefined,
     };
-  }, [totalPrices, finalTotal, vatAmount]);
+  }, [pricingSummary, totalPrices, finalTotal, vatAmount]);
 
-  const resolvedDeposit: MultiCurrencyPrice | number = depositPrices || depositAmount;
+  const resolvedDeposit: MultiCurrencyPrice | number = React.useMemo(() => {
+    if (pricingSummary) return pricingSummary.depositPrices;
+    return depositPrices || depositAmount;
+  }, [pricingSummary, depositPrices, depositAmount]);
 
   const resolvedRemaining: MultiCurrencyPrice | number = React.useMemo(() => {
+    if (pricingSummary) return pricingSummary.remainingPrices;
     if (totalPrices && depositPrices) {
       return {
         usd: Math.max(0, (Number(totalPrices.usd) || 0) - (Number(depositPrices.usd) || 0)),
@@ -87,7 +114,7 @@ export default function BookingSidebar({
       };
     }
     return Math.max(0, finalTotal - depositAmount);
-  }, [totalPrices, depositPrices, finalTotal, depositAmount]);
+  }, [pricingSummary, totalPrices, depositPrices, finalTotal, depositAmount]);
 
   const image = isHotel ? (hotel!.image || "/images/pyramids.jpg") : (trip!.image || "/images/cruise.jpg");
   const title = isHotel ? hotel!.name : trip!.title;
@@ -111,7 +138,7 @@ export default function BookingSidebar({
 
   const tripRoomRows = (() => {
     if (isHotel || !trip) return [];
-    const baseSeason = trip.seasonPricing?.[0];
+    const baseSeason = resolveApplicableSeason(trip.seasonPricing || [], isGroupTrip ? "group" : "private", formData.startDate) || trip.seasonPricing?.[0];
     const poolSurcharge = trip.additionalRooms?.poolView || 0;
     const seaSurcharge = trip.additionalRooms?.seaView || 0;
 
@@ -119,7 +146,7 @@ export default function BookingSidebar({
       string,
       { count: number; name: string; view: string; unitPrice: number; unitPrices: MultiCurrencyPrice }
     > = {};
-    const roomEntries = Object.entries(formData.rooms || {}).filter(([_, count]) => (count as number) > 0);
+    const roomEntries = Object.entries(formData.rooms || {}).filter(([, count]) => (count as number) > 0);
 
     if (roomEntries.length === 0) return [];
 
@@ -349,12 +376,35 @@ export default function BookingSidebar({
           {/* Price Details */}
           <div className={styles.sidebarSectionLabel}>{t("sidebar.priceDetails", "Price Details")}</div>
           <div className={styles.priceRows}>
-            {isHotel ? (
+            {pricingSummary && pricingSummary.lineItems.length > 0 ? (
+              pricingSummary.lineItems.map((item, idx) => {
+                const adultLabel = `${item.adultCount} ${item.adultCount === 1 ? t("sidebar.adult", "Adult") : t("sidebar.adults", "Adults")}`;
+                const childList = item.children.map((c) => `${c.age} years`).join(", ");
+                const childLabel = item.children.length > 0
+                  ? ` . ${item.children.length} ${item.children.length === 1 ? t("sidebar.child", "Child") : t("sidebar.children", "Children")} (${childList})`
+                  : "";
+                const occupantText = `${adultLabel}${childLabel}`;
+
+                const displayName = item.categoryLabel
+                  ? `${item.quantity} × ${item.roomName} ${item.categoryLabel} - ${item.viewLabel}`
+                  : `${item.quantity} × ${item.roomName} - ${item.viewLabel}`;
+
+                return (
+                  <div key={`${item.roomType}-${item.viewLabel}-${idx}`} className={styles.priceItemWrap}>
+                    <div className={styles.priceRow}>
+                      <span>{displayName}</span>
+                      <strong>{formatMoney(item.lineTotals || item.lineTotal)}</strong>
+                    </div>
+                    <span className={styles.occupantSubtext}>{occupantText}</span>
+                  </div>
+                );
+              })
+            ) : isHotel ? (
               Object.entries(formData.rooms || {}).map(([type, count]) => {
                 if (!count) return null;
                 
                 const roomIds = formData.roomCustomizations?.[type] || [];
-                const hotelRoomsOfType = (hotel!.hotelRooms || []).filter(r => r.type.toLowerCase() === type);
+                const hotelRoomsOfType = (hotel!.hotelRooms || []).filter(r => normalizeRoomType(r.type) === type);
                 const baseRoom = hotelRoomsOfType.sort((a, b) => a.pricePerNight - b.pricePerNight)[0];
 
                 const rows = [];
@@ -378,9 +428,11 @@ export default function BookingSidebar({
                   })();
 
                   rows.push(
-                    <div key={`${type}-${i}`} className={styles.priceRow}>
-                      <span>1 × {name} - {viewTitle} ({nights} {nights === 1 ? t("sidebar.night", "Night") : t("sidebar.nights", "Nights")})</span>
-                      <strong>{formatMoney(roomPrices)}</strong>
+                    <div key={`${type}-${i}`} className={styles.priceItemWrap}>
+                      <div className={styles.priceRow}>
+                        <span>1 × {name} - {viewTitle} ({nights} {nights === 1 ? t("sidebar.night", "Night") : t("sidebar.nights", "Nights")})</span>
+                        <strong>{formatMoney(roomPrices)}</strong>
+                      </div>
                     </div>
                   );
                 }
@@ -390,7 +442,7 @@ export default function BookingSidebar({
               tripRoomRows.map((row, idx) => (
                 <div key={`${row.label}-${idx}`} className={styles.priceRow}>
                   <span>{row.label}</span>
-                  <strong>{formatMoney((row as any).prices || row.price)}</strong>
+                  <strong>{formatMoney(row.prices || row.price)}</strong>
                 </div>
               ))
             ) : (
@@ -399,10 +451,26 @@ export default function BookingSidebar({
                  <strong>{formatMoney(totalPrices || totalAmount)}</strong>
               </div>
             )}
+
+            {/* Special Discount / Promotion */}
+            {pricingSummary && pricingSummary.discountAmount > 0 && (
+              <div className={`${styles.priceRow} ${styles.discount}`}>
+                <span>{pricingSummary.discountTitle || t("sidebar.specialDiscount", "Special Discount")}</span>
+                <strong>-{formatMoney(pricingSummary.discountPrices)}</strong>
+              </div>
+            )}
+
             {isHotel && vatAmount > 0 && (
               <div className={styles.priceRow}>
                 <span>{t("sidebar.vat", "VAT")}</span>
                 <strong>{formatMoney(vatAmount)}</strong>
+              </div>
+            )}
+
+            {/* Child Pricing Policy Banner */}
+            {((formData.children || 0) > 0 || (formData.infants || 0) > 0) && (
+              <div className={styles.childPolicyBanner}>
+                {CHILD_POLICY.bannerText}
               </div>
             )}
           </div>
@@ -431,7 +499,6 @@ export default function BookingSidebar({
           {/* Features */}
           <div className={styles.featuresList}>
             {[
-              t("sidebar.freeCancellation", "Free cancellation"),
               t("sidebar.support247", "24/7 support"),
               t("sidebar.securePayment", "Secure Payment"),
             ].map((f) => (

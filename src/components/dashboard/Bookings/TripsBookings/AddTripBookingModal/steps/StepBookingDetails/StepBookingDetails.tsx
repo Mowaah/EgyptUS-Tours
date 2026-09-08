@@ -145,6 +145,76 @@ export default function StepBookingDetails({ formData, onChange, errors = {}, ha
     list.forEach((val, i) => { flatCustomizations[`${type}-${i}`] = val; });
   }
 
+  const childRoomOptions = useMemo(() => {
+    const opts: Array<{ label: string; value: string }> = [];
+    const rooms = formData.rooms || {};
+
+    const getRoomTitle = (type: "single" | "double" | "triple") => {
+      if (type === "single") return "Single Room";
+      if (type === "triple") return "Triple Room";
+      return "Double Room";
+    };
+
+    const getViewLabel = (opt: string) => {
+      const v = (opt || "").toLowerCase();
+      if (v.includes("sea")) return "Sea View";
+      if (v.includes("pool")) return "Pool View";
+      return "Garden View";
+    };
+
+    (["single", "double", "triple"] as const).forEach((type) => {
+      const count = rooms[type] || 0;
+      if (count <= 0) return;
+      const customizations = formData.roomCustomizations?.[type] || [];
+
+      const seenViews = new Set<string>();
+      for (let i = 0; i < count; i++) {
+        const canonical = getViewLabel(customizations[i] || "garden");
+        if (!seenViews.has(canonical)) {
+          seenViews.add(canonical);
+          opts.push({
+            label: `${getRoomTitle(type)} - ${canonical}`,
+            value: `${type}:${canonical}`,
+          });
+        }
+      }
+    });
+
+    if (opts.length === 0) {
+      opts.push({
+        label: "Double Room - Garden View",
+        value: "double:Garden View",
+      });
+    }
+    return opts;
+  }, [formData.rooms, formData.roomCustomizations]);
+
+  useEffect(() => {
+    if (!formData.children || formData.children <= 0) return;
+    if (childRoomOptions.length === 0) return;
+
+    const validValues = childRoomOptions.map((o) => o.value);
+    const currentPricing = formData.childRoomPricing || [];
+    let changed = false;
+    const nextPricing = Array.from({ length: formData.children }).map((_, i) => {
+      const current = currentPricing[i];
+      if (current && validValues.includes(current)) {
+        return current;
+      }
+      const matchByType = current && childRoomOptions.find((o) => o.value.split(":")[0] === current.split(":")[0]);
+      if (matchByType) {
+        changed = true;
+        return matchByType.value;
+      }
+      changed = true;
+      return validValues[0];
+    });
+
+    if (changed || nextPricing.length !== currentPricing.length) {
+      onChange({ childRoomPricing: nextPricing });
+    }
+  }, [childRoomOptions, formData.children, onChange]);
+
   return (
     <div className={styles.container}>
       {tripDetail && roomGroups.length === 0 && (
@@ -163,6 +233,45 @@ export default function StepBookingDetails({ formData, onChange, errors = {}, ha
           loadingMessage="Loading trip rooms..."
           emptyMessage="No rooms found for this trip."
         />
+      )}
+
+      {formData.children > 0 && roomGroups.length > 0 && (
+        <div className={styles.childPricingSection}>
+          <hr className={styles.divider} aria-hidden="true" />
+          <h3 className={styles.sectionTitle}>
+            Child Room Pricing <span className={styles.requiredStar}>*</span>
+          </h3>
+          <div className={styles.childPricingGrid}>
+            {Array.from({ length: formData.children }).map((_, i) => {
+              const childAge = formData.childrenAges?.[i] != null && formData.childrenAges[i] > 0
+                ? formData.childrenAges[i]
+                : null;
+              const assignedRoom = formData.childRoomPricing?.[i] || childRoomOptions[0]?.value || "double:Garden View";
+              const labelText = childAge ? `Child ${i + 1} - (${childAge} years)` : `Child ${i + 1}`;
+              return (
+                <div key={`child-room-${i}`} className={styles.childPricingItem}>
+                  <label className={styles.childPricingLabel}>{labelText}</label>
+                  <SelectDropdown
+                    id={`child-room-select-${i}`}
+                    options={childRoomOptions}
+                    value={assignedRoom}
+                    onChange={(val) => {
+                      const current = [...(formData.childRoomPricing || [])];
+                      current[i] = val;
+                      onChange({ childRoomPricing: current });
+                    }}
+                  />
+                </div>
+              );
+            })}
+          </div>
+          {errors.childPricing && (
+            <div className={styles.errorText}>
+              <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+              <span>{errors.childPricing}</span>
+            </div>
+          )}
+        </div>
       )}
 
       {isFixedDates && (

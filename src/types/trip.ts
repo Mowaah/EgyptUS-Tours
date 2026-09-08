@@ -101,6 +101,9 @@ export interface Trip {
   pricing?: Array<{
     tourType?: "private" | "group";
     season: string; // e.g. "Sep – May"
+    startDate?: string | null;
+    endDate?: string | null;
+    order?: number;
     tiers: Array<{
       label: string; // e.g. "Per Single Cabin"
       price: number;
@@ -109,6 +112,10 @@ export interface Trip {
   }>;
 
   seasonPricing?: Array<{
+    tourType?: "private" | "group";
+    startDate?: string | null;
+    endDate?: string | null;
+    order?: number;
     label: string;
     single: number;
     double: number;

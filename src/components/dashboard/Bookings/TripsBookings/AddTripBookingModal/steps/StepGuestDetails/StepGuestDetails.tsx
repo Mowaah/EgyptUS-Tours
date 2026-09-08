@@ -1,9 +1,14 @@
-import { CustomDatePicker, CounterPill, NationalitySelect } from "@/components/shared";
+import { CustomDatePicker, CounterPill, NationalitySelect, SelectDropdown } from "@/components/shared";
 import { DashboardField, DashboardPhoneField } from "@/components/dashboard/shared";
 import Image from "next/image";
 import { AddTripBookingData } from "../../AddTripBookingModal";
 
 import styles from "./StepGuestDetails.module.scss";
+
+const CHILD_AGE_OPTIONS = Array.from({ length: 10 }, (_, i) => ({
+  label: `${i + 2} years`,
+  value: String(i + 2),
+}));
 
 interface StepGuestDetailsProps {
   formData: AddTripBookingData;
@@ -143,8 +148,20 @@ export default function StepGuestDetails({ formData, onChange, errors = {}, hasF
             </div>
             <CounterPill
               value={formData.children}
-              onIncrease={() => onChange({ children: formData.children + 1 })}
-              onDecrease={() => onChange({ children: Math.max(0, formData.children - 1) })}
+              onIncrease={() => {
+                const nextCount = formData.children + 1;
+                onChange({
+                  children: nextCount,
+                  childrenAges: [...(formData.childrenAges || []), 0].slice(0, nextCount),
+                });
+              }}
+              onDecrease={() => {
+                const nextCount = Math.max(0, formData.children - 1);
+                onChange({
+                  children: nextCount,
+                  childrenAges: (formData.childrenAges || []).slice(0, nextCount),
+                });
+              }}
             />
           </div>
         </div>
@@ -163,6 +180,47 @@ export default function StepGuestDetails({ formData, onChange, errors = {}, hasF
           </div>
         </div>
       </div>
+
+      {formData.children > 0 && (
+        <div className={styles.childPricingPolicy}>
+          Child pricing: 6-11 yrs 50% · 2-5 yrs 25% · Under 2 free
+        </div>
+      )}
+
+      {formData.children > 0 && (
+        <div className={styles.childAgesGrid}>
+          {Array.from({ length: formData.children }).map((_, i) => {
+            const currentAge = formData.childrenAges?.[i] != null && formData.childrenAges[i] > 0
+              ? String(formData.childrenAges[i])
+              : "";
+            return (
+              <div key={`child-age-${i}`} className={styles.childPricingItem}>
+                <label className={styles.childPricingLabel}>
+                  Child {i + 1} <span className={styles.requiredStar}>*</span>
+                </label>
+                <SelectDropdown
+                  id={`child-age-select-${i}`}
+                  placeholder="Select Age"
+                  options={CHILD_AGE_OPTIONS}
+                  value={currentAge}
+                  onChange={(val) => {
+                    const current = [...(formData.childrenAges || [])];
+                    current[i] = Number(val);
+                    onChange({ childrenAges: current });
+                  }}
+                />
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {errors.childrenAges && (
+        <div className={styles.errorText} role="alert">
+          <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+          <span>{errors.childrenAges}</span>
+        </div>
+      )}
 
       <div className={styles.fullRow}>
         <DashboardField

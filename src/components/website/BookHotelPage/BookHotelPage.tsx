@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Hotel, HotelRoom } from "@/types";
+import { Hotel } from "@/types";
 import { BookingData, INITIAL_BOOKING_DATA } from "@/types";
 import { PageHeader, StepIndicator, SuccessModal } from "@/components/shared";
 import { BASE_URL, extractApiError, submitHotelBooking } from "@/lib/api";
@@ -10,19 +10,12 @@ import { formatPhoneE164 } from "@/utils/validators";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { MultiCurrencyPrice } from "@/constants/currency";
-
+import { calculateHotelBookingPrice } from "@/utils/bookingPricing";
 import planPageStyles from "../PlanYourTripPage/PlanYourTripPage.module.scss";
-
 import StepRoomDates from "./steps/RoomDates/StepRoomDates";
 import StepPersonalInfo from "./steps/PersonalInfo/StepPersonalInfo";
 
 export type { BookingData };
-
-const STEPS = [
-  { number: 1, label: "Room & Dates" },
-  { number: 2, label: "Personal Info" },
-  { number: 3, label: "Payment" },
-];
 
 interface BookHotelPageProps {
   hotel: Hotel;
@@ -178,79 +171,17 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
     setFormData((prev) => ({ ...prev, ...patch }));
   };
 
-  const nights = (() => {
-    if (!formData.startDate || !formData.endDate) return 1;
-    const diff = Math.round(
-      (new Date(formData.endDate).getTime() - new Date(formData.startDate).getTime()) / 86400000
-    );
-    return diff > 0 ? diff : 1;
-  })();
-
   const totalRooms = Object.values(formData.rooms || {}).reduce((acc, count) => acc + (count || 0), 0);
   const totalGuests = formData.adults + formData.children + formData.infants;
-  
-  const calculateHotelTotalForCurrency = (curr: "usd" | "egp" | "eur") => {
-    return Object.entries(formData.rooms || {}).reduce((total, [type, count]) => {
-      if (!count) return total;
-      const roomIds = formData.roomCustomizations?.[type] || [];
-      let typeTotal = 0;
-      
-      const hotelRoomsOfType = (hotel.hotelRooms || []).filter(r => r.type.toLowerCase() === type);
-      const baseRoom = hotelRoomsOfType.sort((a, b) => a.pricePerNight - b.pricePerNight)[0];
-      
-      const getRoomPrice = (r?: HotelRoom) => {
-        if (!r) return 0;
-        if (curr === "egp") return r.pricePerNightEgp || (r.prices?.egp ? Number(r.prices.egp) : r.pricePerNight);
-        if (curr === "eur") return r.pricePerNightEur || (r.prices?.eur ? Number(r.prices.eur) : r.pricePerNight);
-        return r.prices?.usd ? Number(r.prices.usd) : r.pricePerNight;
-      };
 
-      const getHotelDefaultPrice = () => {
-        if (curr === "egp") return hotel.pricePerNightEgp || (hotel.prices?.egp ? Number(hotel.prices.egp) : hotel.pricePerNight);
-        if (curr === "eur") return hotel.pricePerNightEur || (hotel.prices?.eur ? Number(hotel.prices.eur) : hotel.pricePerNight);
-        return hotel.prices?.usd ? Number(hotel.prices.usd) : hotel.pricePerNight;
-      };
+  const pricingSummary = useMemo(() => {
+    return calculateHotelBookingPrice(hotel, formData);
+  }, [hotel, formData]);
 
-      for (let i = 0; i < count; i++) {
-         const roomId = roomIds[i];
-         const room = (hotel.hotelRooms || []).find(r => r.id === roomId);
-         if (room) {
-           typeTotal += getRoomPrice(room);
-         } else if (baseRoom) {
-           typeTotal += getRoomPrice(baseRoom);
-         } else {
-           typeTotal += getHotelDefaultPrice();
-         }
-      }
-      return total + typeTotal;
-    }, 0) * nights;
-  };
-
-  const totalPrices: MultiCurrencyPrice = useMemo(() => ({
-    usd: calculateHotelTotalForCurrency("usd"),
-    egp: calculateHotelTotalForCurrency("egp"),
-    eur: calculateHotelTotalForCurrency("eur"),
-  }), [formData.rooms, formData.roomCustomizations, hotel, nights]);
-
-  const isDepositFull = useMemo(() => {
-    if (!formData.startDate) return false;
-    const startDate = new Date(formData.startDate);
-    const today = new Date();
-    const daysUntil = (startDate.getTime() - today.getTime()) / (1000 * 3600 * 24);
-    return daysUntil <= 30;
-  }, [formData.startDate]);
-
-  const depositPrices: MultiCurrencyPrice = useMemo(() => {
-    const factor = isDepositFull ? 1 : 0.3;
-    return {
-      usd: Number(totalPrices.usd || 0) * factor,
-      egp: Number(totalPrices.egp || 0) * factor,
-      eur: Number(totalPrices.eur || 0) * factor,
-    };
-  }, [totalPrices, isDepositFull]);
-
-  const totalAmount = Number(totalPrices.usd || totalPrices.egp || 0);
-  const depositAmount = Number(depositPrices.usd || depositPrices.egp || 0);
+  const totalPrices: MultiCurrencyPrice = pricingSummary.totalPrices;
+  const depositPrices: MultiCurrencyPrice = pricingSummary.depositPrices;
+  const totalAmount = pricingSummary.total;
+  const depositAmount = pricingSummary.depositAmount;
   const vatAmount = 0;
 
   const handlePrevious = () => {
@@ -278,6 +209,10 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
           triple: formData.rooms?.triple || 0,
         },
         ...(roomSelections?.length ? { room_selections: roomSelections } : {}),
+        children_ages: formData.children > 0 ? (formData.childrenAges || []) : undefined,
+        child_room_pricing: formData.children > 0 ? (formData.childRoomPricing || []) : undefined,
+        room_category: formData.roomCategory,
+        room_view: formData.roomView,
         requested_room_type: "Any",
         special_requests: formData.specialRequests,
         terms_accepted: formData.termsAccepted,
@@ -294,8 +229,8 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
         hotelName: hotel.name,
         startDate: formData.startDate,
         endDate: formData.endDate,
-        totalAmount: parseFloat((booking as any).total_amount || (booking as any).total_price || (booking as any).price_breakdown?.total) || totalAmount,
-        depositAmount: parseFloat((booking as any).deposit_amount || (booking as any).payment?.amount_due) || depositAmount,
+        totalAmount: parseFloat(booking.total_price) || totalAmount,
+        depositAmount: parseFloat(booking.deposit_amount) || depositAmount,
       });
 
       window.location.assign(resolvePaymentUrl(booking.payment_url));

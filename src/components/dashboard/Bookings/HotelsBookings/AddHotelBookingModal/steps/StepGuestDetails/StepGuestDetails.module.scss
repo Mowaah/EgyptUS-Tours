@@ -116,3 +116,40 @@
   line-height: 16px;
   color: #C11515;
 }
+
+.childPricingPolicy {
+  font-size: $font-size-xs;
+  color: $gray-600;
+  background-color: #F4F7FB;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border-left: 3px solid $primary;
+  font-weight: 500;
+}
+
+.childAgesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.childPricingItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.childPricingLabel {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $dark-navy;
+}
+
+.requiredStar {
+  color: #E02D3C;
+}
+

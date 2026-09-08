@@ -4,6 +4,7 @@ import styles from "./StepBookingSummary.module.scss";
 import { AddTripBookingData } from "../../AddTripBookingModal";
 import { previewTripBooking } from "@/services/admin/adminBookingsService";
 import { DASHBOARD_CURRENCY } from "@/constants/currency";
+import { resolveApplicableSeason } from "@/utils/bookingPricing";
 import useSWR from "swr";
 
 interface StepBookingSummaryProps {
@@ -71,7 +72,8 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
 
     const roomSelections: Array<{ room_type: "single" | "double" | "triple"; view_label: string; quantity: number; unit_price: number }> = [];
     if (formData.roomCustomizations) {
-      const baseSeason = tripDetail?.seasonPricing?.[0] || { single: 0, double: 0, triple: 0 };
+      const resolvedSeason = resolveApplicableSeason(tripDetail?.pricing || tripDetail?.seasonPricing, formData.tourType || "private", formData.startDate);
+      const baseSeason = resolvedSeason || tripDetail?.seasonPricing?.[0] || { single: 0, double: 0, triple: 0 };
       const roomMap: Record<string, { room_type: "single" | "double" | "triple"; view_label: string; quantity: number; unit_price: number }> = {};
 
       for (const [type, optionsList] of Object.entries(formData.roomCustomizations)) {
@@ -122,6 +124,8 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
       adults: formData.adults || 1,
       children: formData.children || 0,
       infants: formData.infants || 0,
+      children_ages: formData.children > 0 ? (formData.childrenAges || []) : undefined,
+      child_room_pricing: formData.children > 0 ? (formData.childRoomPricing || []) : undefined,
       start_date: formatDateToYMD(formData.startDate),
       end_date: formatDateToYMD(formData.endDate),
       availability_slot_id: formData.departureDateId ? (parseInt(formData.departureDateId, 10) || null) : null,

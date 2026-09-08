@@ -51,7 +51,12 @@ export default function StepBookingSummary({ formData, onSummaryLoad }: StepBook
       hotel_id: parseInt(formData.specificHotel),
       check_in_date: formatDateToYMD(formData.checkInDate),
       check_out_date: formatDateToYMD(formData.checkOutDate),
-      room_selections
+      adults: formData.adults || 1,
+      children: formData.children || 0,
+      infants: formData.infants || 0,
+      children_ages: formData.children > 0 ? (formData.childrenAges || []) : undefined,
+      child_room_pricing: formData.children > 0 ? (formData.childRoomPricing || []) : undefined,
+      room_selections,
     };
     
     previewHotelBooking(payload).then((res) => {

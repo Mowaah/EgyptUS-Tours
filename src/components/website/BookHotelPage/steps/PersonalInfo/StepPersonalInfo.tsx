@@ -76,7 +76,7 @@ export default function StepPersonalInfo({
       <div className={styles.twoColumnLayout}>
         <div className={styles.leftCol}>
           <div className={styles.infoCard}>
-            <header className={planPage.stepFormCardHeader} style={{ padding: 0, border: 'none', margin: 0 }}>
+            <header className={`${planPage.stepFormCardHeader} ${styles.cleanHeader}`}>
               <div className={planPage.formHeaderColumn}>
                 <h2 className={planPage.formTitle}>{t("hotelBooking.personalInfo.title", "Personal Information")}</h2>
                 <p className={planPage.formSubtitle}>{t("hotelBooking.personalInfo.subtitle", "Fill in your details to proceed with your booking securely.")}</p>

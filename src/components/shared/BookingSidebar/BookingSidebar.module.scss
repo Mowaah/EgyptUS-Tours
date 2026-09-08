@@ -386,8 +386,20 @@
 .priceRows {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 16px;
+}
+
+.priceItemWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.occupantSubtext {
+  font-size: $font-size-xs;
+  color: #8C8C8C;
+  font-weight: $font-weight-normal;
 }
 
 .priceRow {
@@ -395,8 +407,8 @@
   justify-content: space-between;
   align-items: center;
   font-size: $font-size-sm;
-  font-weight: $font-weight-normal;
-  color: $text-lighter;
+  font-weight: $font-weight-medium;
+  color: $dark;
 
   strong {
     font-weight: $font-weight-bold;
@@ -405,8 +417,24 @@
   }
 }
 
+.childPolicyBanner {
+  background: #F0F6FE;
+  color: #1F3A68;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  text-align: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
 .discount {
   color: #009625 !important;
+
+  strong {
+    color: #009625 !important;
+  }
 }
 
 .totalRow {

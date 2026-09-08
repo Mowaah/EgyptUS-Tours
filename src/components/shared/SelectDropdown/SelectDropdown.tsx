@@ -27,6 +27,7 @@ interface SelectDropdownProps<T extends SelectOption = SelectOption> {
   /** Optional override for checkbox style */
   checkboxStyle?: "radio" | "checkbox" | "none";
   error?: boolean;
+  placeholder?: string;
 }
 
 export default function SelectDropdown<T extends SelectOption = SelectOption>({
@@ -40,8 +41,9 @@ export default function SelectDropdown<T extends SelectOption = SelectOption>({
   renderOption,
   checkboxStyle = "radio",
   error,
+  placeholder,
 }: SelectDropdownProps<T>) {
-  const selectedOption = options.find((o) => o.value === value) ?? options[0];
+  const selectedOption = options.find((o) => o.value === value);
 
   return (
     <CheckboxDropdown
@@ -84,8 +86,8 @@ export default function SelectDropdown<T extends SelectOption = SelectOption>({
           {renderValue && value ? (
             renderValue(value)
           ) : (
-            <span className={value ? styles.dropdownValue : styles.placeholder}>
-              {selectedOption?.label}
+            <span className={selectedOption ? styles.dropdownValue : styles.placeholder}>
+              {selectedOption ? selectedOption.label : (placeholder || options[0]?.label || "")}
             </span>
           )}
           <svg

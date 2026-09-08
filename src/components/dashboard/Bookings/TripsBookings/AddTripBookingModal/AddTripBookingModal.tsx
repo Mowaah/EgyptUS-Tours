@@ -18,6 +18,7 @@ import StepBookingSummary from "./steps/StepBookingSummary/StepBookingSummary";
 import PaymentStep from "@/components/dashboard/shared/PaymentStep/PaymentStep";
 import BookingModalContainer from "../../shared/BookingModalContainer/BookingModalContainer";
 import { isValidEmail, isValidPhone } from "@/utils/validators";
+import { ROOM_TYPE_CHILD_CAPACITY } from "@/utils/bookingPricing";
 import { BaseGuestDetails } from "../../shared/types";
 
 interface AddTripBookingModalProps {
@@ -40,6 +41,8 @@ export interface AddTripBookingData extends BaseGuestDetails {
   adults: number;
   children: number;
   infants: number;
+  childrenAges?: number[];
+  childRoomPricing?: string[];
   departureMonth: string;
   departureDateId: string;
   rooms: {
@@ -63,6 +66,8 @@ const INITIAL_DATA: AddTripBookingData = {
   adults: 0,
   children: 0,
   infants: 0,
+  childrenAges: [],
+  childRoomPricing: [],
   specialRequests: "",
   departureMonth: "",
   departureDateId: "",
@@ -186,6 +191,14 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
 
       if (formData.adults === 0) newErrors.adults = "At least one adult is required";
 
+      if (formData.children > 0) {
+        const ages = formData.childrenAges || [];
+        const allAgesSelected = ages.length === formData.children && ages.every(a => a != null && a > 0);
+        if (!allAgesSelected) {
+          newErrors.childrenAges = "Please select ages for all children";
+        }
+      }
+
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         return;
@@ -227,6 +240,35 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
         const totalCapacity = (singleCount * 1) + (doubleCount * 2) + (tripleCount * 3);
         if (formData.adults > totalCapacity) {
           newErrors.rooms = `Selected rooms only accommodate ${totalCapacity} adults, but ${formData.adults} adults are booked.`;
+        }
+      }
+
+      if (formData.children > 0) {
+        const pricing = formData.childRoomPricing || [];
+        if (pricing.length < formData.children || pricing.some(p => !p)) {
+          newErrors.childPricing = "Please assign a room for each child.";
+        } else {
+          const singleAssigned = pricing.filter((r) => r.toLowerCase().includes("single")).length;
+          const doubleAssigned = pricing.filter((r) => r.toLowerCase().includes("double")).length;
+          const tripleAssigned = pricing.filter((r) => r.toLowerCase().includes("triple")).length;
+
+          const singleCount = (formData.roomCustomizations?.single || []).length || (formData.rooms?.single || 0);
+          const doubleCount = (formData.roomCustomizations?.double || []).length || (formData.rooms?.double || 0);
+          const tripleCount = (formData.roomCustomizations?.triple || []).length || (formData.rooms?.triple || 0);
+
+          if (singleAssigned > singleCount * ROOM_TYPE_CHILD_CAPACITY.single) {
+            newErrors.childPricing = singleCount === 0
+              ? "You have children assigned to a Single room, but no Single room is selected."
+              : "Single rooms can only accommodate up to 2 children per room.";
+          } else if (doubleAssigned > doubleCount * ROOM_TYPE_CHILD_CAPACITY.double) {
+            newErrors.childPricing = doubleCount === 0
+              ? "You have children assigned to a Double room, but no Double room is selected."
+              : "Double rooms can only accommodate up to 2 children per room.";
+          } else if (tripleAssigned > tripleCount * ROOM_TYPE_CHILD_CAPACITY.triple) {
+            newErrors.childPricing = tripleCount === 0
+              ? "You have children assigned to a Triple room, but no Triple room is selected."
+              : "Triple rooms can only accommodate up to 1 child per room.";
+          }
         }
       }
 
@@ -310,6 +352,8 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
           adults: formData.adults || 1,
           children: formData.children || 0,
           infants: formData.infants || 0,
+          children_ages: formData.children > 0 ? (formData.childrenAges || []) : undefined,
+          child_room_pricing: formData.children > 0 ? (formData.childRoomPricing || []) : undefined,
           start_date: formatDateToYMD(formData.startDate),
           end_date: formatDateToYMD(formData.endDate),
           availability_slot_id: hasFixedAvailability && formData.departureDateId ? (parseInt(formData.departureDateId, 10) || null) : null,

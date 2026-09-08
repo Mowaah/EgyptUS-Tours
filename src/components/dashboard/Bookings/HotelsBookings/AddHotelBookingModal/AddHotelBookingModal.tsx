@@ -14,6 +14,7 @@ import PaymentStep from "@/components/dashboard/shared/PaymentStep/PaymentStep";
 import BookingModalContainer from "../../shared/BookingModalContainer/BookingModalContainer";
 import { BaseGuestDetails } from "../../shared/types";
 import { isValidEmail, isValidPhone } from "@/utils/validators";
+import { ROOM_TYPE_CHILD_CAPACITY } from "@/utils/bookingPricing";
 import { 
   createHotelBooking,
   generateHotelPaymentLink,
@@ -39,6 +40,8 @@ export interface AddHotelBookingData extends BaseGuestDetails {
   adults: number;
   infants: number;
   children: number;
+  childrenAges?: number[];
+  childRoomPricing?: string[];
   
   // Booking Details
   hotelLocation: string;
@@ -60,6 +63,8 @@ const INITIAL_DATA: AddHotelBookingData = {
   adults: 0,
   infants: 0,
   children: 0,
+  childrenAges: [],
+  childRoomPricing: [],
   specialRequests: "",
   
   hotelLocation: "",
@@ -185,6 +190,14 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
       }
       if (formData.adults === 0) newErrors.adults = "At least one adult is required";
 
+      if (formData.children > 0) {
+        const ages = formData.childrenAges || [];
+        const allAgesSelected = ages.length === formData.children && ages.every(a => a != null && a > 0);
+        if (!allAgesSelected) {
+          newErrors.childrenAges = "Please select ages for all children";
+        }
+      }
+
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         return;
@@ -215,6 +228,52 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
         const totalCapacity = (singleCount * 1) + (doubleCount * 2) + (tripleCount * 3);
         if (formData.adults > totalCapacity) {
           newErrors.rooms = `Selected rooms only accommodate ${totalCapacity} adults, but ${formData.adults} adults are booked.`;
+        }
+      }
+
+      if (formData.children > 0) {
+        const pricing = formData.childRoomPricing || [];
+        if (pricing.length < formData.children || pricing.some(p => !p)) {
+          newErrors.childPricing = "Please assign a room for each child.";
+        } else {
+          const singleAssigned = pricing.filter((r) => r.toLowerCase().includes("single")).length;
+          const doubleAssigned = pricing.filter((r) => r.toLowerCase().includes("double")).length;
+          const tripleAssigned = pricing.filter((r) => r.toLowerCase().includes("triple")).length;
+
+          const getRoomTypeCount = (type: string) => {
+            let total = 0;
+            for (const [key, list] of Object.entries(formData.roomCustomizations || {})) {
+              if (key.toLowerCase().includes(type.toLowerCase())) {
+                total += list.length;
+              }
+            }
+            if (total === 0 && formData.rooms) {
+              for (const [key, count] of Object.entries(formData.rooms)) {
+                if (key.toLowerCase().includes(type.toLowerCase())) {
+                  total += count || 0;
+                }
+              }
+            }
+            return total;
+          };
+
+          const singleCount = getRoomTypeCount("single");
+          const doubleCount = getRoomTypeCount("double");
+          const tripleCount = getRoomTypeCount("triple");
+
+          if (singleAssigned > singleCount * ROOM_TYPE_CHILD_CAPACITY.single) {
+            newErrors.childPricing = singleCount === 0
+              ? "You have children assigned to a Single room, but no Single room is selected."
+              : "Single rooms can only accommodate up to 2 children per room.";
+          } else if (doubleAssigned > doubleCount * ROOM_TYPE_CHILD_CAPACITY.double) {
+            newErrors.childPricing = doubleCount === 0
+              ? "You have children assigned to a Double room, but no Double room is selected."
+              : "Double rooms can only accommodate up to 2 children per room.";
+          } else if (tripleAssigned > tripleCount * ROOM_TYPE_CHILD_CAPACITY.triple) {
+            newErrors.childPricing = tripleCount === 0
+              ? "You have children assigned to a Triple room, but no Triple room is selected."
+              : "Triple rooms can only accommodate up to 1 child per room.";
+          }
         }
       }
 
@@ -265,6 +324,8 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
           adults: formData.adults,
           infants: formData.infants,
           children: formData.children,
+          children_ages: formData.children > 0 ? (formData.childrenAges || []) : undefined,
+          child_room_pricing: formData.children > 0 ? (formData.childRoomPricing || []) : undefined,
           special_requests: formData.specialRequests,
           payment_plan: formData.paymentPlan,
           payment_method: formData.paymentMethod,

@@ -204,3 +204,84 @@
   font-size: $font-size-13;
   color: $gray-500;
 }
+
+.childAgesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 16px;
+  margin-bottom: 8px;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.childPricingSection {
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+.childPricingGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.childPricingItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.childPricingLabel {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $dark-navy;
+}
+
+.calendarSelectValue {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.calendarText {
+  color: rgba(10, 10, 10, 0.5);
+  font-weight: $font-weight-medium;
+}
+
+.noDatesMessage {
+  font-size: $font-size-sm;
+  color: $gray-500;
+}
+
+.disabledWrapper {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.childPricingTitle {
+  margin-bottom: 16px;
+}
+
+.requiredStar {
+  color: $dark-navy;
+}
+
+.errorMarginTop {
+  margin-top: 4px;
+}
+
+.errorMarginTop8 {
+  margin-top: 8px;
+}
+
+.errorMarginAges {
+  margin-top: 4px;
+  margin-bottom: 12px;
+}

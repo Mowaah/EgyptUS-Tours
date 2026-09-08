@@ -6,6 +6,7 @@ import type { SelectOption } from "@/components/shared";
 import RoomSelector, { RoomGroup } from "@/components/dashboard/shared/RoomSelector/RoomSelector";
 import { getCatalogHotels, getCatalogHotelDetail, getCatalogHotelLocations } from "@/services/admin/adminCatalogHotelsService";
 import { DASHBOARD_CURRENCY, formatPrice } from "@/constants/currency";
+import { normalizeRoomType } from "@/utils/bookingPricing";
 import { AddHotelBookingData } from "../../AddHotelBookingModal";
 import styles from "./StepBookingDetails.module.scss";
 
@@ -195,6 +196,67 @@ export default function StepBookingDetails({ formData, onChange, errors = {} }: 
     list.forEach((val, i) => { flatCustomizations[`${type}-${i}`] = val; });
   }
 
+  const childRoomOptions: SelectOption[] = useMemo(() => {
+    const opts: SelectOption[] = [];
+    const customizations = formData.roomCustomizations || {};
+
+    const seen = new Set<string>();
+    for (const [typeKey, roomIds] of Object.entries(customizations)) {
+      for (const idStr of roomIds) {
+        const room = rawRooms.find((r: any) => String(r.id) === String(idStr));
+        const viewName = room?.view_label || room?.view || "Standard View";
+        const cat = (room?.category_label || room?.category || "").trim();
+        const typ = (room?.type_label || room?.type || typeKey).trim();
+        const baseName = cat ? `${cat} ${typ}`.trim() : typ;
+        const formattedTitle = baseName.toLowerCase().endsWith("room") ? baseName : `${baseName} Room`;
+        const finalTitle = formattedTitle
+          .split(" ")
+          .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+          .join(" ");
+
+        const normalizedType = normalizeRoomType(room?.type_label || room?.name || typeKey);
+        const value = `${normalizedType}:${viewName}`;
+        const label = `${finalTitle} - ${viewName}`;
+
+        if (!seen.has(value)) {
+          seen.add(value);
+          opts.push({ label, value });
+        }
+      }
+    }
+
+    if (opts.length === 0) {
+      opts.push({ label: "Double Room - Standard View", value: "double:Standard View" });
+    }
+    return opts;
+  }, [formData.roomCustomizations, rawRooms]);
+
+  useEffect(() => {
+    if (!formData.children || formData.children <= 0) return;
+    if (childRoomOptions.length === 0) return;
+
+    const validValues = childRoomOptions.map((o) => o.value);
+    const currentPricing = formData.childRoomPricing || [];
+    let changed = false;
+    const nextPricing = Array.from({ length: formData.children }).map((_, i) => {
+      const current = currentPricing[i];
+      if (current && validValues.includes(current)) {
+        return current;
+      }
+      const matchByType = current && childRoomOptions.find((o) => normalizeRoomType(o.value) === normalizeRoomType(current));
+      if (matchByType) {
+        changed = true;
+        return matchByType.value;
+      }
+      changed = true;
+      return validValues[0];
+    });
+
+    if (changed || nextPricing.length !== currentPricing.length) {
+      onChange({ childRoomPricing: nextPricing });
+    }
+  }, [childRoomOptions, formData.children, onChange]);
+
   return (
     <div className={styles.container}>
       {/* Hotel & Location Selection Row */}
@@ -245,14 +307,55 @@ export default function StepBookingDetails({ formData, onChange, errors = {} }: 
           Loading hotel rooms...
         </div>
       ) : roomGroups.length > 0 ? (
-        <RoomSelector
-          rooms={roomGroups}
-          counts={flatCounts}
-          customizations={flatCustomizations}
-          onCountChange={handleCountChange}
-          onCustomizationChange={handleCustomizationChange}
-          error={errors.rooms}
-        />
+        <>
+          <RoomSelector
+            rooms={roomGroups}
+            counts={flatCounts}
+            customizations={flatCustomizations}
+            onCountChange={handleCountChange}
+            onCustomizationChange={handleCustomizationChange}
+            error={errors.rooms}
+          />
+
+          {formData.children > 0 && (
+            <div className={styles.childPricingSection}>
+              <hr className={styles.divider} aria-hidden="true" />
+              <h3 className={styles.sectionTitle}>
+                Child Room Pricing <span className={styles.requiredStar}>*</span>
+              </h3>
+              <div className={styles.childPricingGrid}>
+                {Array.from({ length: formData.children }).map((_, i) => {
+                  const childAge = formData.childrenAges?.[i] != null && formData.childrenAges[i] > 0
+                    ? formData.childrenAges[i]
+                    : null;
+                  const assignedRoom = formData.childRoomPricing?.[i] || childRoomOptions[0]?.value || "double:Standard View";
+                  const labelText = childAge ? `Child ${i + 1} - (${childAge} years)` : `Child ${i + 1}`;
+                  return (
+                    <div key={`child-room-${i}`} className={styles.childPricingItem}>
+                      <label className={styles.childPricingLabel}>{labelText}</label>
+                      <SelectDropdown
+                        id={`child-room-select-${i}`}
+                        options={childRoomOptions}
+                        value={assignedRoom}
+                        onChange={(val) => {
+                          const current = [...(formData.childRoomPricing || [])];
+                          current[i] = val;
+                          onChange({ childRoomPricing: current });
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+              {errors.childPricing && (
+                <div className={styles.errorText}>
+                  <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+                  <span>{errors.childPricing}</span>
+                </div>
+              )}
+            </div>
+          )}
+        </>
       ) : selectedHotelId ? (
         <div style={{ padding: "2rem", textAlign: "center", color: "#666" }}>
           No rooms configured for this hotel yet.

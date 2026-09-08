@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import planPage from "../../../PlanYourTripPage/PlanYourTripPage.module.scss";
 import localStyles from "../../BookPrivateTripPage.module.scss";
 import stepStyles from "./StepBookingSummary.module.scss";
@@ -10,6 +10,7 @@ import ImportantLinksModal from "@/components/website/TripDetailPage/TripImporta
 import { getNationalityName } from "@/utils/nationality";
 import { useTranslation } from "@/hooks/useTranslation";
 import { MultiCurrencyPrice } from "@/constants/currency";
+import { calculateTripBookingPrice } from "@/utils/bookingPricing";
 
 interface StepBookingSummaryProps {
   trip: Trip;
@@ -45,50 +46,28 @@ export default function StepBookingSummary({
     ? formData.specialRequests.split(",").map((s) => s.trim()).filter(Boolean)
     : [];
 
-  const getLocalizedRoomTitle = (type: string) => {
-    const raw = type.toLowerCase();
-    if (raw.includes("single")) return t("tripBooking.step1.singleRoom", "Single Room");
-    if (raw.includes("double") || raw.includes("twin")) return t("tripBooking.step1.doubleRoom", "Double Room");
-    if (raw.includes("triple")) return t("tripBooking.step1.tripleRoom", "Triple Room");
-    const typeName = type.charAt(0).toUpperCase() + type.slice(1);
-    return typeName.toLowerCase().endsWith("room") ? typeName : `${typeName} Room`;
-  };
+  const pricingSummary = useMemo(() => {
+    return calculateTripBookingPrice(trip, formData, isGroupTrip ? "group" : "private");
+  }, [trip, formData, isGroupTrip]);
 
-  const getLocalizedViewLabel = (opt: string) => {
-    const v = opt.toLowerCase();
-    if (v.includes("sea")) return t("hotelBooking.roomDates.views.sea", "Sea View");
-    if (v.includes("pool")) return t("hotelBooking.roomDates.views.pool", "Pool View");
-    if (v.includes("garden")) return t("hotelBooking.roomDates.views.garden", "Garden View");
-    return opt.toLowerCase().includes("view") ? opt : `${opt.charAt(0).toUpperCase() + opt.slice(1)} View`;
-  };
+  const roomItems = useMemo(() => {
+    if (!pricingSummary || pricingSummary.lineItems.length === 0) return [];
+    return pricingSummary.lineItems.map((item) => {
+      const adultLabel = `${item.adultCount} ${item.adultCount === 1 ? t("sidebar.adult", "Adult") : t("sidebar.adults", "Adults")}`;
+      const childList = item.children.map((c) => `${c.age} years`).join(", ");
+      const childLabel = item.children.length > 0
+        ? ` . ${item.children.length} ${item.children.length === 1 ? t("sidebar.child", "Child") : t("sidebar.children", "Children")} (${childList})`
+        : "";
+      const occupantText = `${adultLabel}${childLabel}`;
 
-  const rooms = (() => {
-    const roomGroupsMap: Record<string, { count: number; name: string; view: string }> = {};
-    const roomEntries = Object.entries(formData.rooms || {}).filter(([_, count]) => (count as number) > 0);
-
-    roomEntries.forEach(([type, count]) => {
-      const totalCount = count as number;
-      const roomTitle = getLocalizedRoomTitle(type);
-      const customizations = formData.roomCustomizations?.[type] || [];
-
-      for (let i = 0; i < totalCount; i++) {
-        const opt = customizations[i] || "garden";
-        const viewLabel = getLocalizedViewLabel(opt);
-
-        const groupKey = `${type}_${viewLabel}`;
-        if (!roomGroupsMap[groupKey]) {
-          roomGroupsMap[groupKey] = {
-            count: 0,
-            name: roomTitle,
-            view: viewLabel,
-          };
-        }
-        roomGroupsMap[groupKey].count += 1;
-      }
+      return (
+        <span key={`${item.roomType}-${item.viewLabel}`}>
+          <strong>{item.quantity} × {item.roomName} - {item.viewLabel}</strong>{" "}
+          <span className={stepStyles.occupantBreakdown}>{occupantText}</span>
+        </span>
+      );
     });
-
-    return Object.values(roomGroupsMap).map((g) => `${g.count} × ${g.name} - ${g.view}`);
-  })();
+  }, [pricingSummary, t]);
 
   const formattedDuration = (() => {
     if (!trip.duration) return "N/A";
@@ -130,12 +109,12 @@ export default function StepBookingSummary({
         { label: t("sidebar.duration", "Duration"), value: formattedDuration },
       ],
     },
-    ...(rooms.length > 0
+    ...(roomItems.length > 0
       ? [
         {
           title: t("sidebar.rooms", "Rooms"),
           icon: "/images/summary/rooms.svg",
-          listItems: rooms,
+          listItems: roomItems,
         },
       ]
       : []),

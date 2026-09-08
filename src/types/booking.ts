@@ -21,6 +21,11 @@ export interface BookingData {
   departureMonth?: string;
   departureDateId?: string;
   roomCustomizations?: Record<string, string[]>;
+  // Child details and room policy fields
+  childrenAges?: number[];
+  childRoomPricing?: string[];
+  roomCategory?: string;
+  roomView?: string;
 }
 
 export const INITIAL_BOOKING_DATA: BookingData = {
@@ -43,4 +48,8 @@ export const INITIAL_BOOKING_DATA: BookingData = {
   departureMonth: "",
   departureDateId: "",
   roomCustomizations: {},
+  childrenAges: [],
+  childRoomPricing: [],
+  roomCategory: "Standard",
+  roomView: "Garden",
 };

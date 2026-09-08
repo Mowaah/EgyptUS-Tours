@@ -1,7 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
-import useSWR from "swr";
-import { getFullHotelBySlug } from "@/services/hotelsService";
 import RoomSelector, { RoomGroup } from "@/components/dashboard/shared/RoomSelector/RoomSelector";
 import {
   BookingStepFooter,
@@ -23,6 +21,7 @@ import { Trip } from "@/types";
 import { isValidEmail, isValidPhone } from "@/utils/validators";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { getRoomSubtitle, ROOM_TYPE_CHILD_CAPACITY, resolveApplicableSeason, normalizeRoomType } from "@/utils/bookingPricing";
 
 interface StepYourDetailsProps {
   trip: Trip;
@@ -32,6 +31,11 @@ interface StepYourDetailsProps {
   isGroupTrip?: boolean;
 }
 
+const CHILD_AGE_OPTIONS = Array.from({ length: 10 }, (_, i) => ({
+  label: `${i + 2} years`,
+  value: String(i + 2),
+}));
+
 export default function StepYourDetails({ trip, formData, onChange, onContinue, isGroupTrip }: StepYourDetailsProps) {
   const { formatCurrency } = useCurrency();
   const { t } = useTranslation("booking");
@@ -39,12 +43,12 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
 
   // Extract rooms directly from trip season pricing instead of hotel
   const roomGroups: RoomGroup[] = useMemo(() => {
-    const baseSeason = trip?.seasonPricing?.[0];
+    const baseSeason = resolveApplicableSeason(trip?.seasonPricing || [], isGroupTrip ? "group" : "private", formData.startDate) || trip?.seasonPricing?.[0];
     if (!baseSeason) return [];
     const addOns = trip?.additionalRooms || {};
     
     const options = [
-      { label: "Garden View", value: "garden", price: "Included", isFree: true },
+      { label: "Garden View (Included)", value: "garden", price: "Included", isFree: true },
     ];
     if (addOns.poolView) {
       options.push({ label: "Pool View", value: "pool", price: `+${formatCurrency(addOns.poolViewPrices || addOns.poolView)}`, isFree: false });
@@ -57,8 +61,8 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
     if (baseSeason.single > 0) {
       groups.push({
         key: "single",
-        title: t("tripBooking.step1.singleRoom", "Single Room"),
-        subtitle: `1 ${t("hotelBooking.roomDates.person", "person")}`,
+        title: `${t("tripBooking.step1.singleRoom", "Single Room")} - Garden View`,
+        subtitle: getRoomSubtitle("single"),
         displayPrice: formatCurrency(baseSeason.singlePrices || baseSeason.single),
         priceUnit: `/ ${t("hotelBooking.roomDates.person", "person")}`,
         defaultOptionValue: "garden",
@@ -68,8 +72,8 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
     if (baseSeason.double > 0) {
       groups.push({
         key: "double",
-        title: t("tripBooking.step1.doubleRoom", "Double Room"),
-        subtitle: `2 ${t("hotelBooking.roomDates.people", "persons")}`,
+        title: `${t("tripBooking.step1.doubleRoom", "Double Room")} - Garden View`,
+        subtitle: getRoomSubtitle("double"),
         displayPrice: formatCurrency(baseSeason.doublePrices || baseSeason.double),
         priceUnit: `/ ${t("hotelBooking.roomDates.person", "person")}`,
         defaultOptionValue: "garden",
@@ -79,8 +83,8 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
     if (baseSeason.triple > 0) {
       groups.push({
         key: "triple",
-        title: t("tripBooking.step1.tripleRoom", "Triple Room"),
-        subtitle: `3 ${t("hotelBooking.roomDates.people", "persons")}`,
+        title: `${t("tripBooking.step1.tripleRoom", "Triple Room")} - Garden View`,
+        subtitle: getRoomSubtitle("triple"),
         displayPrice: formatCurrency(baseSeason.triplePrices || baseSeason.triple),
         priceUnit: `/ ${t("hotelBooking.roomDates.person", "person")}`,
         defaultOptionValue: "garden",
@@ -88,19 +92,19 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
       });
     }
     return groups;
-  }, [trip, formatCurrency, t]);
+  }, [trip, formatCurrency, t, isGroupTrip, formData.startDate]);
 
   const hasFixedAvailability = Boolean(
     trip?.availability && trip.availability.length > 0
   );
   const isFixedDates = Boolean(isGroupTrip || hasFixedAvailability);
 
-  const allSlots = trip?.availability || [];
+  const allSlots = useMemo(() => trip?.availability || [], [trip?.availability]);
   const DEPARTURE_MONTHS = useMemo(() => {
     if (!isFixedDates) return [];
     const monthGroups = Array.from(
       new Set(
-        allSlots.map((slot: any) => {
+        allSlots.map((slot) => {
           const firstDate = (slot.dates || "").split(" - ")[0];
           const d = new Date(firstDate);
           if (isNaN(d.getTime())) return null;
@@ -123,7 +127,7 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
 
   const availableSlots = useMemo(() => {
     if (!isFixedDates) return [];
-    return allSlots.filter((slot: any) => {
+    return allSlots.filter((slot) => {
       const firstDate = (slot.dates || "").split(" - ")[0];
       const d = new Date(firstDate);
       if (isNaN(d.getTime())) return true;
@@ -134,7 +138,7 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
 
   useEffect(() => {
     if (isFixedDates && availableSlots.length > 0) {
-      const isValidCurrentId = availableSlots.some((slot: any) => slot.id?.toString() === formData.departureDateId || slot.dates === formData.departureDateId);
+      const isValidCurrentId = availableSlots.some((slot) => slot.id?.toString() === formData.departureDateId || slot.dates === formData.departureDateId);
       if (!isValidCurrentId) {
         const first = availableSlots[0];
         onChange({
@@ -197,6 +201,36 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
       newErrors.rooms = `${t("hotelBooking.roomDates.roomCapacityExceeded", "Selected rooms only accommodate")} ${totalCapacity} ${t("hotelBooking.roomDates.adults", "adults")}, ${t("hotelBooking.roomDates.butSelected", "but")} ${formData.adults} ${t("hotelBooking.roomDates.adultsSelected", "adults are booked")}.`;
     }
 
+    if (formData.children > 0) {
+      const ages = formData.childrenAges || [];
+      if (ages.length !== formData.children || ages.some((a) => a == null || a <= 0)) {
+        newErrors.childrenAges = "Please select the age for each child.";
+      }
+
+      const assigned = formData.childRoomPricing || [];
+      const singleAssigned = assigned.filter((r) => r.toLowerCase().includes("single")).length;
+      const doubleAssigned = assigned.filter((r) => r.toLowerCase().includes("double")).length;
+      const tripleAssigned = assigned.filter((r) => r.toLowerCase().includes("triple")).length;
+
+      const singleCount = formData.rooms?.single || 0;
+      const doubleCount = formData.rooms?.double || 0;
+      const tripleCount = formData.rooms?.triple || 0;
+
+      if (singleAssigned > singleCount * ROOM_TYPE_CHILD_CAPACITY.single) {
+        newErrors.childPricing = singleCount === 0
+          ? "You have children assigned to a Single room, but no Single room is selected."
+          : "Single rooms can only accommodate up to 2 children per room.";
+      } else if (doubleAssigned > doubleCount * ROOM_TYPE_CHILD_CAPACITY.double) {
+        newErrors.childPricing = doubleCount === 0
+          ? "You have children assigned to a Double room, but no Double room is selected."
+          : "Double rooms can only accommodate up to 2 children per room.";
+      } else if (tripleAssigned > tripleCount * ROOM_TYPE_CHILD_CAPACITY.triple) {
+        newErrors.childPricing = tripleCount === 0
+          ? "You have children assigned to a Triple room, but no Triple room is selected."
+          : "Triple rooms can only accommodate up to 1 child per room.";
+      }
+    }
+
     setErrors(newErrors);
     if (Object.keys(newErrors).length === 0) {
       onContinue();
@@ -204,9 +238,14 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
   };
 
   const handleCountChange = (key: string, count: number, defaultOption: string) => {
-    const updatedRooms = { ...formData.rooms, [key]: count };
+    const updatedRooms = {
+      single: formData.rooms?.single ?? 0,
+      double: formData.rooms?.double ?? 0,
+      triple: formData.rooms?.triple ?? 0,
+      [key]: count,
+    };
     
-    let updatedCustomizations = { ...formData.roomCustomizations };
+    const updatedCustomizations = { ...formData.roomCustomizations };
     if (!updatedCustomizations[key]) {
       updatedCustomizations[key] = [];
     }
@@ -219,7 +258,7 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
       updatedCustomizations[key] = currentCustomizations.slice(0, count);
     }
     
-    onChange({ rooms: updatedRooms as any, roomCustomizations: updatedCustomizations });
+    onChange({ rooms: updatedRooms, roomCustomizations: updatedCustomizations });
   };
 
   const handleCustomizationChange = (key: string, index: number, value: string) => {
@@ -232,9 +271,131 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
   };
 
   const handleGuestChange = (guestType: "adults" | "children" | "infants", increment: boolean) => {
-    onChange({
-      [guestType]: Math.max(0, formData[guestType] + (increment ? 1 : -1)),
+    if (errors.adults && guestType === "adults") setErrors((e) => ({ ...e, adults: "" }));
+    if (errors.rooms) setErrors((e) => ({ ...e, rooms: "" }));
+    const newCount = Math.max(0, formData[guestType] + (increment ? 1 : -1));
+    const patch: Partial<BookingData> = { [guestType]: newCount };
+
+    if (guestType === "children") {
+      const currentAges = [...(formData.childrenAges || [])];
+      const currentPricing = [...(formData.childRoomPricing || [])];
+      const validRoomTypes: string[] = [];
+      if ((formData.rooms?.single || 0) > 0) validRoomTypes.push("single");
+      if ((formData.rooms?.double || 0) > 0) validRoomTypes.push("double");
+      if ((formData.rooms?.triple || 0) > 0) validRoomTypes.push("triple");
+      const fallbackRoom = validRoomTypes[0] || "double";
+
+      if (newCount > currentAges.length) {
+        for (let i = currentAges.length; i < newCount; i++) {
+          currentAges.push(0);
+          currentPricing.push(fallbackRoom);
+        }
+      } else if (newCount < currentAges.length) {
+        currentAges.length = newCount;
+        currentPricing.length = newCount;
+      }
+      patch.childrenAges = currentAges;
+      patch.childRoomPricing = currentPricing;
+    }
+
+    onChange(patch);
+  };
+
+  const childRoomOptions = useMemo(() => {
+    const opts: Array<{ label: string; value: string }> = [];
+    const rooms = formData.rooms || {};
+
+    const getLocalizedRoomTitle = (type: "single" | "double" | "triple") => {
+      if (type === "single") return t("tripBooking.step1.singleRoom", "Single Room");
+      if (type === "triple") return t("tripBooking.step1.tripleRoom", "Triple Room");
+      return t("tripBooking.step1.doubleRoom", "Double Room");
+    };
+
+    const getViewLabel = (opt: string) => {
+      const v = (opt || "").toLowerCase();
+      if (v.includes("sea")) return t("hotelBooking.roomDates.views.sea", "Sea View");
+      if (v.includes("pool")) return t("hotelBooking.roomDates.views.pool", "Pool View");
+      return t("hotelBooking.roomDates.views.garden", "Garden View");
+    };
+
+    const getCanonicalView = (opt: string) => {
+      const v = (opt || "").toLowerCase();
+      if (v.includes("sea")) return "Sea View";
+      if (v.includes("pool")) return "Pool View";
+      return "Garden View";
+    };
+
+    (["single", "double", "triple"] as const).forEach((type) => {
+      const count = rooms[type] || 0;
+      if (count <= 0) return;
+      const customizations = formData.roomCustomizations?.[type] || [];
+
+      // Collect all distinct views chosen for this room type, preserving order
+      const seenViews = new Set<string>();
+      for (let i = 0; i < count; i++) {
+        const canonical = getCanonicalView(customizations[i] || "garden");
+        if (!seenViews.has(canonical)) {
+          seenViews.add(canonical);
+          const roomTitle = getLocalizedRoomTitle(type);
+          const localizedView = getViewLabel(customizations[i] || "garden");
+          opts.push({
+            label: `${roomTitle} - ${localizedView}`,
+            value: `${type}:${canonical}`,
+          });
+        }
+      }
     });
+
+    if (opts.length === 0) {
+      opts.push({
+        label: `${t("tripBooking.step1.doubleRoom", "Double Room")} - ${t("hotelBooking.roomDates.views.garden", "Garden View")}`,
+        value: "double:Garden View",
+      });
+    }
+    return opts;
+  }, [formData.rooms, formData.roomCustomizations, t]);
+
+  // Auto-sync childRoomPricing whenever selected rooms change
+  useEffect(() => {
+    if (!formData.children || formData.children <= 0) return;
+    if (childRoomOptions.length === 0) return;
+
+    const validValues = childRoomOptions.map((o) => o.value);
+    const currentPricing = formData.childRoomPricing || [];
+    let changed = false;
+    const nextPricing = Array.from({ length: formData.children }).map((_, i) => {
+      const current = currentPricing[i];
+      if (current) {
+        if (validValues.includes(current)) {
+          return current;
+        }
+        const matchingByPrefix = validValues.find(
+          (v) => normalizeRoomType(v) === normalizeRoomType(current)
+        );
+        if (matchingByPrefix) {
+          changed = true;
+          return matchingByPrefix;
+        }
+      }
+      changed = true;
+      return validValues[0];
+    });
+
+    if (changed || nextPricing.length !== currentPricing.length) {
+      onChange({ childRoomPricing: nextPricing });
+    }
+  }, [childRoomOptions, formData.children, onChange]);
+
+  const handleChildAgeChange = (index: number, ageVal: string) => {
+    const current = [...(formData.childrenAges || [])];
+    current[index] = Number(ageVal);
+    onChange({ childrenAges: current });
+  };
+
+  const handleChildRoomChange = (index: number, roomVal: string) => {
+    const current = [...(formData.childRoomPricing || [])];
+    current[index] = roomVal;
+    onChange({ childRoomPricing: current });
   };
 
   const flatCustomizations: Record<string, string> = useMemo(() => {
@@ -325,9 +486,9 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
                       value={effectiveMonth}
                       onChange={(val) => onChange({ departureMonth: val, departureDateId: "" })}
                       renderValue={(val) => (
-                        <span style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <span className={stepStyles.calendarSelectValue}>
                           <Image src="/images/calendar3.svg" alt="" width={20} height={20} />
-                          <span style={{ color: "#0A0A0A80", fontWeight: 500 }}>{val}</span>
+                          <span className={stepStyles.calendarText}>{val}</span>
                         </span>
                       )}
                     />
@@ -354,7 +515,7 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
                         return `${m1} ${d1.getDate()} - ${m2} ${d2.getDate()}, ${d1.getFullYear()}`;
                       };
 
-                      return availableSlots.length > 0 ? availableSlots.map((dep: any) => {
+                      return availableSlots.length > 0 ? availableSlots.map((dep) => {
                         const isSelected = formData.departureDateId === dep.id?.toString();
                         return (
                           <div
@@ -374,7 +535,7 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
                           </div>
                         );
                       }) : (
-                        <p style={{ fontSize: "14px", color: "#666" }}>No departure dates available for this month.</p>
+                        <p className={stepStyles.noDatesMessage}>No departure dates available for this month.</p>
                       );
                     })()}
                   </div>
@@ -401,7 +562,7 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
               </FormField>
 
               <FormField label={t("tripBooking.step1.endDate", "End Date")} required>
-                <div style={{ pointerEvents: "none", opacity: 0.7 }}>
+                <div className={stepStyles.disabledWrapper}>
                   <CustomDatePicker
                     variant="input"
                     className={`${formStyles.input} ${planPage.dateInput}`}
@@ -435,7 +596,7 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
                   error={type === "adults" ? !!errors.adults : undefined}
                 />
                 {type === "adults" && errors.adults && (
-                  <div className={formStyles.errorMessage} style={{ marginTop: "4px" }}>
+                  <div className={`${formStyles.errorMessage} ${stepStyles.errorMarginTop}`}>
                     <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
                     <span>{errors.adults}</span>
                   </div>
@@ -445,18 +606,92 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
           })}
         </div>
 
+        {/* ── Dynamic Child Age Selectors ── */}
+        {formData.children > 0 && (
+          <div className={stepStyles.childAgesGrid}>
+            {Array.from({ length: formData.children }).map((_, i) => {
+              const currentAge = formData.childrenAges?.[i] != null && formData.childrenAges[i] > 0 
+                ? String(formData.childrenAges[i]) 
+                : "";
+              return (
+                <div key={`child-age-${i}`} className={stepStyles.childPricingItem}>
+                  <label className={stepStyles.childPricingLabel}>
+                    Child {i + 1}
+                  </label>
+                  <SelectDropdown
+                    id={`child-age-select-${i}`}
+                    placeholder="Select Age"
+                    options={CHILD_AGE_OPTIONS}
+                    value={currentAge}
+                    onChange={(val) => handleChildAgeChange(i, val)}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        )}
+        {errors.childrenAges && (
+          <div className={`${formStyles.errorMessage} ${stepStyles.errorMarginAges}`}>
+            <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+            <span>{errors.childrenAges}</span>
+          </div>
+        )}
+
         <hr className={stepStyles.divider} aria-hidden="true" />
 
         <RoomSelector
           required
           rooms={roomGroups}
-          counts={formData.rooms as Record<string, number>}
+          counts={formData.rooms}
           customizations={flatCustomizations}
           onCountChange={handleCountChange}
           onCustomizationChange={handleCustomizationChange}
           error={errors.rooms}
           emptyMessage={t("hotelBooking.roomDates.noRooms", "No rooms found for this trip.")}
         />
+
+        {/* ── Child Room Pricing * ── */}
+        {formData.children > 0 && (
+          <div className={stepStyles.childPricingSection}>
+            <hr className={stepStyles.divider} aria-hidden="true" />
+            <h3 className={`${stepStyles.sectionTitle} ${stepStyles.childPricingTitle}`}>
+              Child Room Pricing <span className={stepStyles.requiredStar}>*</span>
+            </h3>
+            <div className={stepStyles.childPricingGrid}>
+              {Array.from({ length: formData.children }).map((_, i) => {
+                const childAge = formData.childrenAges?.[i] != null && formData.childrenAges[i] > 0 
+                  ? formData.childrenAges[i] 
+                  : null;
+                const rawAssigned = formData.childRoomPricing?.[i];
+                const assignedRoom =
+                  childRoomOptions.find((o) => o.value === rawAssigned)?.value ||
+                  childRoomOptions.find((o) => normalizeRoomType(o.value) === normalizeRoomType(rawAssigned))?.value ||
+                  childRoomOptions[0]?.value ||
+                  "double:Garden View";
+                const labelText = childAge ? `Child ${i + 1} - ( ${childAge} years )` : `Child ${i + 1}`;
+                return (
+                  <div key={`child-room-${i}`} className={stepStyles.childPricingItem}>
+                    <label className={stepStyles.childPricingLabel}>
+                      {labelText}
+                    </label>
+                    <SelectDropdown
+                      id={`child-room-select-${i}`}
+                      options={childRoomOptions}
+                      value={assignedRoom}
+                      onChange={(val) => handleChildRoomChange(i, val)}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+            {errors.childPricing && (
+              <div className={`${formStyles.errorMessage} ${stepStyles.errorMarginTop8}`}>
+                <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+                <span>{errors.childPricing}</span>
+              </div>
+            )}
+          </div>
+        )}
 
         <hr className={stepStyles.divider} aria-hidden="true" />
 

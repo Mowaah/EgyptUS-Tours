@@ -134,3 +134,126 @@
     height: 55.98px !important;
   }
 }
+
+.filterSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filterLabel {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $dark;
+}
+
+.emptyRoomsBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #F4F8FE;
+  border: 1px solid $border-card;
+  border-radius: 16px;
+  margin-bottom: 24px;
+}
+
+.emptyRoomsContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.emptyRoomsTitle {
+  margin: 0;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $dark-navy;
+}
+
+.emptyRoomsText {
+  margin: 0;
+  font-size: $font-size-13;
+  color: $text-muted;
+}
+
+.childAgesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 16px;
+  margin-bottom: 8px;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.childPricingSection {
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+.childPricingGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.childPricingItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.childPricingLabel {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $dark;
+}
+
+.guestGrid {
+  margin-top: 16px;
+}
+
+.errorText {
+  color: #C11515;
+  font-size: $font-size-sm;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+
+  &.errorBottom {
+    margin-top: 0;
+    margin-bottom: 12px;
+  }
+
+  &.errorBottomRoom {
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+}
+
+.filterSectionTop {
+  margin-top: 24px;
+}
+
+.requiredStar {
+  color: $dark-navy;
+}
+
+.childPricingTitle {
+  margin-bottom: 16px;
+}

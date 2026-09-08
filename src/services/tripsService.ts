@@ -243,19 +243,20 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
       return {
         tourType,
         season: season.season_label,
+        startDate: season.start_date,
+        endDate: season.end_date,
+        order: season.order,
         tiers: (season.tiers || []).map(tier => {
           const tierPrice = parseFloat(tier.price) || 0;
-          const tierPriceEgp = tier.price_egp ? parseFloat(tier.price_egp) : 0;
-          const tierPriceEur = tier.price_eur ? parseFloat(tier.price_eur) : 0;
-          const discountPerc = tripDetail.discount_value ? parseFloat(tripDetail.discount_value) : 0;
-          const discountedPrice = discountPerc > 0 ? tierPrice * (1 - discountPerc / 100) : tierPrice;
+          const tierPriceEgp = tier.price_egp ? parseFloat(tier.price_egp) : undefined;
+          const tierPriceEur = tier.price_eur ? parseFloat(tier.price_eur) : undefined;
           return {
             label: tier.label,
-            price: discountedPrice,
+            price: tierPrice,
             prices: {
-              usd: discountedPrice,
-              egp: tier.price_egp ? (discountPerc > 0 ? tierPriceEgp * (1 - discountPerc / 100) : tierPriceEgp) : undefined,
-              eur: tier.price_eur ? (discountPerc > 0 ? tierPriceEur * (1 - discountPerc / 100) : tierPriceEur) : undefined,
+              usd: tierPrice,
+              egp: tierPriceEgp,
+              eur: tierPriceEur,
             },
           };
         })
@@ -263,22 +264,22 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
     }),
     seasonPricing: (() => {
       const seasons = tripDetail.pricing || [];
-      let targetSeasons = seasons.filter(s => s.tour_type === 'private');
-      if (targetSeasons.length === 0) targetSeasons = seasons.filter(s => s.tour_type === 'group');
-      if (targetSeasons.length === 0) targetSeasons = seasons;
+      return seasons.map(s => {
+        let tourType: "private" | "group" | undefined = undefined;
+        if (s.tour_type === "private" || s.tour_type === "group") {
+          tourType = s.tour_type;
+        }
 
-      return targetSeasons.map(s => {
         const getTierPriceObj = (key: string) => {
           const tier = (s.tiers || []).find(t => t.label.toLowerCase().includes(key));
           if (!tier) return { val: 0, valEgp: 0, valEur: 0 };
           const tierPrice = parseFloat(tier.price) || 0;
-          const tierPriceEgp = tier.price_egp ? parseFloat(tier.price_egp) : 0;
-          const tierPriceEur = tier.price_eur ? parseFloat(tier.price_eur) : 0;
-          const discountPerc = tripDetail.discount_value ? parseFloat(tripDetail.discount_value) : 0;
+          const tierPriceEgp = tier.price_egp ? parseFloat(tier.price_egp) : tierPrice * 50;
+          const tierPriceEur = tier.price_eur ? parseFloat(tier.price_eur) : tierPrice;
           return {
-            val: discountPerc > 0 ? tierPrice * (1 - discountPerc / 100) : tierPrice,
-            valEgp: discountPerc > 0 ? tierPriceEgp * (1 - discountPerc / 100) : tierPriceEgp,
-            valEur: discountPerc > 0 ? tierPriceEur * (1 - discountPerc / 100) : tierPriceEur,
+            val: tierPrice,
+            valEgp: tierPriceEgp,
+            valEur: tierPriceEur,
           };
         };
         const single = getTierPriceObj('single');
@@ -286,6 +287,10 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
         const triple = getTierPriceObj('triple');
 
         return {
+          tourType,
+          startDate: s.start_date,
+          endDate: s.end_date,
+          order: s.order,
           label: s.season_label,
           single: single.val,
           double: double.val,
