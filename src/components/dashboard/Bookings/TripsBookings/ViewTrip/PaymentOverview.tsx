@@ -56,6 +56,13 @@ export default function PaymentOverview({ overview, payload }: PaymentOverviewPr
     }
   }
 
+  const formatMoney = (amount: number) => {
+    return Number(amount || 0).toLocaleString("en-US", {
+      minimumFractionDigits: Number(amount || 0) % 1 !== 0 ? 2 : 0,
+      maximumFractionDigits: 2,
+    });
+  };
+
   return (
     <div className={styles.card}>
       <div className={styles.cardTitle}>
@@ -70,23 +77,23 @@ export default function PaymentOverview({ overview, payload }: PaymentOverviewPr
       <div className={styles.infoList}>
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Total Package</span>
-          <span className={`${styles.infoValue} ${styles.paymentTotal}`}>${total}</span>
+          <span className={`${styles.infoValue} ${styles.paymentTotal}`}>${formatMoney(total)}</span>
         </div>
         
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Paid Amount</span>
-          <span className={`${styles.infoValue} ${styles.paymentAmount}`}>${totalPaid}</span>
+          <span className={`${styles.infoValue} ${styles.paymentAmount}`}>${formatMoney(totalPaid)}</span>
         </div>
 
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Remaining Balance</span>
-          <span className={`${styles.infoValue} ${styles.paymentAmount}`}>${totalDue}</span>
+          <span className={`${styles.infoValue} ${styles.paymentAmount}`}>${formatMoney(totalDue)}</span>
         </div>
         
         {refunded > 0 && (
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>Refunded Amount</span>
-            <span className={`${styles.infoValue} ${styles.paymentAmount}`} style={{ color: "#E02424" }}>${refunded}</span>
+            <span className={`${styles.infoValue} ${styles.paymentAmount}`} style={{ color: "#E02424" }}>${formatMoney(refunded)}</span>
           </div>
         )}
       </div>

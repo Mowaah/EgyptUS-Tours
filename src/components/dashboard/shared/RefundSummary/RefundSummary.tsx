@@ -47,6 +47,9 @@ export default function RefundSummary({ data }: RefundSummaryProps) {
   const refundAmt = data.refund_amount || "0";
   const ref = data.transaction_reference || data.reference || "N/A";
   
+  const rawCurrency = ((data as any)?.currency || "usd").toLowerCase();
+  const currencySymbol = rawCurrency === "eur" ? "€" : rawCurrency === "gbp" ? "£" : "$";
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -65,7 +68,7 @@ export default function RefundSummary({ data }: RefundSummaryProps) {
 
       <div className={styles.row}>
         <span className={styles.label}>Package Total</span>
-        <span className={styles.value}>£{parseFloat(String(pkgTotal)).toLocaleString()}</span>
+        <span className={styles.value}>{currencySymbol}{parseFloat(String(pkgTotal)).toLocaleString()}</span>
       </div>
 
       <div className={styles.row}>
@@ -85,12 +88,12 @@ export default function RefundSummary({ data }: RefundSummaryProps) {
 
       <div className={styles.row}>
         <span className={styles.label}>Deduction Amount</span>
-        <span className={styles.value}>£{parseFloat(String(deductionAmt)).toLocaleString()}</span>
+        <span className={styles.value}>{currencySymbol}{parseFloat(String(deductionAmt)).toLocaleString()}</span>
       </div>
 
       <div className={styles.row}>
         <span className={styles.label}>Refund Amount</span>
-        <span className={styles.refundAmountPill}>£{parseFloat(String(refundAmt)).toLocaleString()}</span>
+        <span className={styles.refundAmountPill}>{currencySymbol}{parseFloat(String(refundAmt)).toLocaleString()}</span>
       </div>
 
       <div className={styles.row}>

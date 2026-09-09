@@ -17,6 +17,14 @@ export default function GuestDetails({ guest, booking }: GuestDetailsProps) {
   const nationality = guest?.nationality || "";
   const countryCode = resolveCountryCode(nationality);
   const countryName = getNationalityName(nationality);
+  const rawSpecialRequests = booking?.special_requests || guest?.special_requests;
+  const specialRequests =
+    rawSpecialRequests &&
+    typeof rawSpecialRequests === "string" &&
+    rawSpecialRequests.trim() !== "" &&
+    rawSpecialRequests.trim().toLowerCase() !== "none"
+      ? rawSpecialRequests.trim()
+      : "-";
 
   return (
     <div className={`${styles.card} ${styles.firstRowCard}`}>
@@ -27,14 +35,16 @@ export default function GuestDetails({ guest, booking }: GuestDetailsProps) {
           </div>
           Guest Details
         </div>
-        <span className={`${styles.pillBadge} ${booking?.tour_type === "group" ? styles.blue : styles.orange}`}>
-          {booking?.tour_type === "group" ? (
-            <Image src="/images/dashboard/booking/trips/group.svg" alt="" width={16} height={16} />
-          ) : (
-            <Image src="/images/dashboard/booking/trips/private.svg" alt="" width={16} height={16} />
-          )}
-          {booking?.tour_type ? booking.tour_type.charAt(0).toUpperCase() + booking.tour_type.slice(1) : "Private"} Tour
-        </span>
+        {booking?.tour_type && (
+          <span className={`${styles.pillBadge} ${booking.tour_type === "group" ? styles.blue : styles.orange}`}>
+            {booking.tour_type === "group" ? (
+              <Image src="/images/dashboard/booking/trips/group.svg" alt="" width={16} height={16} />
+            ) : (
+              <Image src="/images/dashboard/booking/trips/private.svg" alt="" width={16} height={16} />
+            )}
+            {booking.tour_type.charAt(0).toUpperCase() + booking.tour_type.slice(1)} Tour
+          </span>
+        )}
       </div>
 
       <div className={styles.infoList}>
@@ -67,6 +77,11 @@ export default function GuestDetails({ guest, booking }: GuestDetailsProps) {
               {countryName}
             </span>
           </div>
+        </div>
+
+        <div className={styles.infoRow}>
+          <span className={styles.infoLabel}>Special Request</span>
+          <span className={styles.infoValue}>{specialRequests}</span>
         </div>
       </div>
     </div>

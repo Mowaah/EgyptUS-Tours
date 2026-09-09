@@ -139,7 +139,7 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
           rowActions={(row) => tripsRowActions(async (action, r) => {
             if (action === "View") {
               router.push(`/dashboard/bookings/trips/${r.id}`);
-            } else if (action === "Re-Assign To") {
+            } else if (action === "Re-Assign To" || action === "Assign To" || action === "Assign" || action === "Reassign") {
               setSelectedRow(r);
               setReassignModalOpen(true);
             } else if (action === "Send Email Reminder") {
@@ -182,6 +182,8 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
 
       <ReassignModal
         open={reassignModalOpen}
+        title="Assign To"
+        showReasonField={false}
         agents={realAgents.length > 0 ? realAgents : undefined}
         onClose={() => {
           setReassignModalOpen(false);

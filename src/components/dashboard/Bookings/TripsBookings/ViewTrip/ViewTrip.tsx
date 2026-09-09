@@ -70,6 +70,20 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
       if (paid === 0 && payload.payments?.length) {
         paid = payload.payments.reduce((acc: number, p: any) => acc + Number(p.amount || 0), 0);
       }
+      if (paid === 0 && payload.payment_summary?.paid_amount) {
+        paid = Number(payload.payment_summary.paid_amount);
+      }
+      if (paid === 0) {
+        const rem = payload.remaining_payment_status?.toLowerCase();
+        const payStatus = payload.payment_status?.toLowerCase();
+        if (rem === "paid" || payStatus === "paid" || rem === "completed") {
+          paid = total;
+        } else if (rem === "partially_paid" || payStatus === "partially_paid" || rem === "pending") {
+          paid = total * 0.3;
+        } else {
+          paid = total;
+        }
+      }
       totalPaid = paid;
     }
     
@@ -77,25 +91,54 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
     return calculateRefundSummary(total, totalPaid, travelDate);
   }, [payload]);
 
+  const remainingPaymentLabel = React.useMemo(() => {
+    if (!payload) return "-";
+    const rem = payload.remaining_payment_status?.toLowerCase();
+    if (rem === "paid" || payload.payment_status === "paid") return "Paid";
+    if (rem === "overdue") return "Overdue";
+    if (rem === "refunded") return "Refunded";
+
+    if (rem === "pending" || payload.payment_status === "pending" || payload.payment_status === "partially_paid") {
+      let total = Number(payload.payment_overview?.total || 0);
+      if (total === 0) {
+        total = Number(payload.total_price || payload.total_amount || 0);
+      }
+      let totalPaid = Number(payload.payment_overview?.total_paid || payload.amount_paid || payload.paid_amount || 0);
+      
+      if (total > 0 && totalPaid > 0 && totalPaid < total) {
+        const pct = Math.round(((total - totalPaid) / total) * 100);
+        return `${pct}% Pending`;
+      }
+      if (payload.payment_overview?.remaining_percentage && payload.payment_overview?.remaining_percentage !== "0%") {
+        return `${payload.payment_overview.remaining_percentage} Pending`;
+      }
+      return "70% Pending";
+    }
+
+    return payload.remaining_payment_status
+      ? payload.remaining_payment_status.charAt(0).toUpperCase() + payload.remaining_payment_status.slice(1)
+      : "-";
+  }, [payload]);
+
   const customPills = payload ? (
     <div className={styles.customPills}>
       {!isRefunded && (
         <span className={getTripsPillStyle(payload.remaining_payment_status)}>
           <i aria-hidden></i>
-          {payload.remaining_payment_status ? payload.remaining_payment_status.charAt(0).toUpperCase() + payload.remaining_payment_status.slice(1) : "-"}
+          {remainingPaymentLabel}
         </span>
       )}
       <span className={getTripsPillStyle(payload.operational_status)}>
         <i aria-hidden></i>
         {payload.operational_status ? payload.operational_status.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : "-"}
       </span>
-      <span className={getTripsPillStyle(payload.booking.source)}>
-        {payload.booking.source === "website" ? (
+      <span className={getTripsPillStyle(payload.booking?.source)}>
+        {payload.booking?.source === "website" ? (
           <Image src="/images/dashboard/customers/custom/website.svg" alt="website" width={14} height={14} />
-        ) : (payload.booking.source === "agent" || payload.booking.source === "admin") ? (
+        ) : (payload.booking?.source === "agent" || payload.booking?.source === "admin") ? (
           <Image src="/images/dashboard/customers/custom/agent.svg" alt="agent" width={14} height={14} />
         ) : null}
-        {payload.booking.source ? (payload.booking.source === "admin" ? "Agent" : payload.booking.source.charAt(0).toUpperCase() + payload.booking.source.slice(1)) : "-"}
+        {payload.booking?.source ? (payload.booking?.source === "admin" ? "Agent" : payload.booking.source.charAt(0).toUpperCase() + payload.booking.source.slice(1)) : "-"}
       </span>
     </div>
   ) : null;
@@ -148,6 +191,23 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
     </>
   );
 
+  const customerName = payload?.guest?.full_name || payload?.customer_name || payload?.booking?.full_name || "Trip Booking";
+  const createdAtDate = payload?.created_at || payload?.booking?.created_at;
+  const formattedDate = createdAtDate
+    ? new Date(createdAtDate).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
+    : "-";
+  const formattedTime = createdAtDate
+    ? new Date(createdAtDate).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })
+    : "-";
+
   return (
     <>
       <DashboardNavbar
@@ -158,14 +218,21 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
         ]}
       >
         <ProfileHeader
-          title={payload?.booking?.trip_title || payload?.guest?.full_name || "Trip Booking"}
+          title={customerName}
           customPills={customPills}
-          subtitleElements={[`${displayId}`, payload?.booking?.start_date || "-", "10:30 AM"]}
+          subtitleElements={[`${displayId}`, formattedDate, formattedTime]}
           actionButtons={payload ? actionButtons : null}
         />
       </DashboardNavbar>
 
       <div className={styles.contentWrapper}>
+        <DashboardStatusBanner 
+          message={bannerMessage} 
+          variant={bannerVariant}
+          show={!!bannerMessage} 
+          onClose={() => setBannerMessage("")} 
+          className={styles.toastBanner}
+        />
 
         {isLoading ? (
           <div style={{ padding: "40px", textAlign: "center", color: "#6B7280" }}>Loading booking details...</div>
@@ -174,12 +241,12 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
             <div className={styles.leftColumn}>
               <GuestDetails guest={payload?.guest} booking={payload?.booking} />
               <BookingInformation booking={payload?.booking} />
-              <RoomSelection selections={payload?.booking?.room_selections} />
+              <RoomSelection selections={payload?.booking?.room_selections} booking={payload?.booking} />
               <PaymentOverview overview={payload?.payment_overview} payload={payload} />
             </div>
             
             <div className={styles.rightColumn}>
-              <PriceDetails details={payload?.price_details} overview={payload?.payment_overview} />
+              <PriceDetails details={payload?.price_details} overview={payload?.payment_overview} booking={payload?.booking} />
               <ActivityTimeline events={payload?.events || []} />
             </div>
           </div>
@@ -210,6 +277,7 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
         open={isRefundModalOpen}
         onClose={() => setIsRefundModalOpen(false)}
         refundSummary={refundSummary}
+        currency={payload?.currency || "$"}
         onSubmit={async (data) => {
           try {
             const formData = new FormData();
@@ -229,12 +297,6 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
             setIsRefundModalOpen(false);
           }
         }}
-      />
-      <DashboardStatusBanner 
-        message={bannerMessage} 
-        variant={bannerVariant}
-        show={!!bannerMessage} 
-        onClose={() => setBannerMessage("")} 
       />
     </>
   );

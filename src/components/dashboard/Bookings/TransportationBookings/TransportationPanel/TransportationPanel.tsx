@@ -139,7 +139,7 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
           rowActions={(row) => transportationRowActions(async (action, r) => {
             if (action === "View") {
               router.push(`/dashboard/bookings/transportation/${r.id}`);
-            } else if (action === "Re-Assign To") {
+            } else if (action === "Re-Assign To" || action === "Assign To" || action === "Assign" || action === "Reassign") {
               setSelectedRow(r);
               setReassignModalOpen(true);
             } else if (action === "Send Email Reminder") {
@@ -184,14 +184,16 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
 
       <ReassignModal
         open={reassignModalOpen}
+        title="Assign To"
+        showReasonField={false}
         agents={realAgents.length > 0 ? realAgents : undefined}
         onClose={() => {
           setReassignModalOpen(false);
           setSelectedRow(null);
         }}
-        onConfirm={async (agentId) => {
+        onConfirm={async (agentId, reason) => {
           try {
-            await reassignBooking("transportation", selectedRow.id, agentId);
+            await reassignBooking("transportation", selectedRow.id, agentId, reason);
             setReassignModalOpen(false);
             setSelectedRow(null);
             mutate();

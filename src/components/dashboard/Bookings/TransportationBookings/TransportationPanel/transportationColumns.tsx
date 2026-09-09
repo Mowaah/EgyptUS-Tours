@@ -128,7 +128,7 @@ export const transportationColumns: DataTableColumn<TransportationBookingRow>[] 
 ];
 
 export const transportationRowActions = (onAction: (action: string, row: TransportationBookingRow) => void) => [
-  { label: "View", iconSrc: "/images/dashboard/view.svg", onClick: (row: TransportationBookingRow) => onAction("View", row) },
-  { label: "Re-Assign To", iconSrc: "/images/dashboard/assign.svg", onClick: (row: TransportationBookingRow) => onAction("Re-Assign To", row) },
-  { label: "Send Email Reminder", iconSrc: "/images/dashboard/booking/trips/notification-bing.svg", onClick: (row: TransportationBookingRow) => onAction("Send Email Reminder", row) },
+  { label: "View", iconSrc: "/images/dashboard/view.svg", onClick: (r: TransportationBookingRow) => onAction("View", r) },
+  { label: "Assign To", iconSrc: "/images/dashboard/assign.svg", onClick: (r: TransportationBookingRow) => onAction("Assign To", r) },
+  { label: "Send Email Reminder", iconSrc: "/images/dashboard/booking/trips/notification-bing.svg", onClick: (r: TransportationBookingRow) => onAction("Send Email Reminder", r) },
 ];

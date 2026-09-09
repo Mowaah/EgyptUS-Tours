@@ -34,7 +34,7 @@ export default function ReassignModal({
   onClose,
   onConfirm,
   agents = DEFAULT_AGENTS,
-  title = "Re-Assign To",
+  title = "Assign To",
   subtitle = "Choose an agent to handle this request",
   showReasonField = false,
 }: ReassignModalProps) {
@@ -206,9 +206,9 @@ export default function ReassignModal({
               <DashboardField
                 control="textarea"
                 id="reason-for-reassign"
-                label="Reason for Re-Assign"
+                label={title.toLowerCase().includes("re") ? "Reason for Re-Assign" : "Reason for Assignment"}
                 variant="modal"
-                placeholder="Enter the reason for re-assign this request..."
+                placeholder={title.toLowerCase().includes("re") ? "Enter the reason for re-assign this request..." : "Enter the reason for assigning this request..."}
                 value={reason}
                 onChange={(e) => {
                   setReason(e.target.value);

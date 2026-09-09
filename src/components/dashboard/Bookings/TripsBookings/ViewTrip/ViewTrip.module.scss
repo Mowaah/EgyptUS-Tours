@@ -258,6 +258,7 @@
 .priceDetailsWrapper {
   display: flex;
   gap: 16px;
+  align-items: stretch;
   
   @media (max-width: 1550px) {
     flex-direction: column;
@@ -267,15 +268,16 @@
 .priceImageContainer {
   flex: 41;
   position: relative;
-  border-radius: 18px;
+  border-radius: 20px;
   overflow: hidden;
   min-height: 205px;
+  align-self: stretch;
   
   @media (max-width: 1550px) {
     flex: none;
     width: 100%;
-    height: 160px;
-    min-height: 160px;
+    height: 180px;
+    min-height: 180px;
   }
 }
 
@@ -288,7 +290,8 @@
   background: $gray-50;
   border-radius: 24px;
   padding: 24px;
-  height: 205px;
+  min-height: 205px;
+  height: auto;
 
   @media (max-width: 1550px) {
     flex: none;
@@ -299,9 +302,33 @@
 
 .priceTitleRow {
   display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.priceTitleLink,
+.priceTitleContent {
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 16px;
+  width: 100%;
+  text-decoration: none;
+  color: inherit;
+
+  &:hover .priceTitle {
+    opacity: 0.85;
+  }
+}
+
+.priceTitle {
+  font-size: $font-size-xl;
+  font-weight: 700;
+  color: $dark;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  line-height: 1.3;
 }
 
 .exportButton {
@@ -309,48 +336,58 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   opacity: 0.8;
   transition: opacity 0.2s ease;
+  margin-top: 2px;
   
   &:hover {
     opacity: 1;
   }
 }
 
-.priceTitle {
-  font-size: $font-size-2xl;
-  font-weight: 700;
-  color: $dark;
-  text-decoration: underline;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .priceList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .priceListItem {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.priceItemLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .priceItemName {
   font-size: $font-size-sm;
-  color: $text-lighter;
+  font-weight: 500;
+  color: $gray-700;
+  line-height: 1.3;
+}
+
+.priceItemSubtitle {
+  font-size: $font-size-sm;
+  font-weight: 400;
+  color: #8A99AD;
+  line-height: 1.2;
 }
 
 .priceItemCost {
   font-size: $font-size-sm;
   font-weight: 700;
   color: $dark;
+  white-space: nowrap;
+  line-height: 1.3;
 }
 
 .bookingInfoWrapper {
@@ -374,9 +411,10 @@
 }
 
 .boxTitle {
-  color: #C6C6C6;
+  color: $gray-400;
   font-size: $font-size-sm;
   font-weight: 500;
+  line-height: 17px;
 }
 
 .dateRow {
@@ -447,39 +485,55 @@
 .roomBadge {
   display: inline-flex;
   align-items: center;
-  padding: 8px 12px;
+  height: 50px;
+  padding: 0 16px;
   border-radius: 24px;
   background: $background-blue;
   gap: 8px;
   color: $dark;
+  width: fit-content;
+  min-width: 218px;
+  max-width: 100%;
 }
 
 .roomBadgeText {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 6px;
+  min-width: 0;
 }
 
 .roomBadgeTitle {
-  font-size: $font-size-xs;
+  font-size: $font-size-sm;
   font-weight: 500;
-  line-height: 16px;
+  line-height: 14px;
   letter-spacing: 0.01em;
   color: $dark;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .roomBadgeSubtitle {
-  font-size: $font-size-xs;
+  font-size: $font-size-2xs;
   font-weight: 400;
-  line-height: 16px;
-  letter-spacing: 0.01em;
-  color: $dark;
+  line-height: 13px;
+  color: $gray-blue-400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .roomBadgeList {
   display: flex;
+  flex-direction: row;
+  align-items: center;
   gap: 16px;
   padding: 12px 0;
+  width: 100%;
   flex-wrap: wrap;
 }
 

@@ -4,9 +4,9 @@ import { HotelBookingRow } from "../types";
 import StatusPill from "@/components/shared/StatusPill/StatusPill";
 
 export const hotelsRowActions = (onAction: (action: string, row: HotelBookingRow) => void) => [
-  { label: "View", iconSrc: "/images/dashboard/view.svg", onClick: (row: HotelBookingRow) => onAction("View", row) },
-  { label: "Re-Assign To", iconSrc: "/images/dashboard/assign.svg", onClick: (row: HotelBookingRow) => onAction("Re-Assign To", row) },
-  { label: "Send Email Reminder", iconSrc: "/images/dashboard/booking/trips/notification-bing.svg", onClick: (row: HotelBookingRow) => onAction("Send Email Reminder", row) },
+  { label: "View", iconSrc: "/images/dashboard/view.svg", onClick: (r: HotelBookingRow) => onAction("View", r) },
+  { label: "Assign To", iconSrc: "/images/dashboard/assign.svg", onClick: (r: HotelBookingRow) => onAction("Assign To", r) },
+  { label: "Send Email Reminder", iconSrc: "/images/dashboard/booking/trips/notification-bing.svg", onClick: (r: HotelBookingRow) => onAction("Send Email Reminder", r) },
 ];
 
 const getImageUrl = (path?: string | null) => {

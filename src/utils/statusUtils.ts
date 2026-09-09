@@ -23,6 +23,7 @@ export function formatStatusLabel(rawStatus?: string | null): string {
     case "refund_in_progress":
       return "Refund in Progress";
     case "refunded":
+      return "Refunded";
     case "refund_completed":
       return "Refund Completed";
     case "partially_paid":

@@ -33,7 +33,7 @@ const cancelBookingConfig: ActionNoteModalConfig = {
   isDanger: true,
 };
 
-import { getTransportationBookingById, cancelTransportationBooking, sendTransportationBookingReminder } from "@/services/admin/adminBookingsService";
+import { getTransportationBookingById, cancelTransportationBooking, sendTransportationBookingReminder, refundTransportationBooking } from "@/services/admin/adminBookingsService";
 import useSWR from "swr";
 
 export default function ViewTransportation({ id }: ViewTransportationProps) {
@@ -58,7 +58,12 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
     
     let total = Number(payload.payment_overview?.total || 0);
     if (total === 0) {
-      const pTotal = payload.total_price || payload.total_amount;
+      const pTotal =
+        payload.total_price ||
+        payload.total_amount ||
+        payload.transfer?.total_price ||
+        payload.transfer?.price ||
+        payload.vehicle_card?.base_price;
       if (pTotal !== undefined) {
         total = Number(pTotal);
       } else if (payload.price_details?.items?.length) {
@@ -72,11 +77,59 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
       if (paid === 0 && payload.payments?.length) {
         paid = payload.payments.reduce((acc: number, p: any) => acc + Number(p.amount || 0), 0);
       }
+      if (paid === 0 && payload.payment_summary?.paid_amount) {
+        paid = Number(payload.payment_summary.paid_amount);
+      }
+      if (paid === 0) {
+        const rem = payload.remaining_payment_status?.toLowerCase();
+        const payStatus = payload.payment_status?.toLowerCase();
+        if (rem === "paid" || payStatus === "paid" || rem === "completed") {
+          paid = total;
+        } else if (rem === "partially_paid" || payStatus === "partially_paid" || rem === "pending") {
+          paid = total * 0.3;
+        } else {
+          paid = total;
+        }
+      }
       totalPaid = paid;
     }
     
-    const travelDate = payload.booking?.pickup_date || payload.booking?.start_date || new Date().toISOString();
+    const travelDate =
+      payload.transfer?.pickup_date ||
+      payload.pickup_date ||
+      payload.booking?.pickup_date ||
+      payload.booking?.start_date ||
+      new Date().toISOString();
     return calculateRefundSummary(total, totalPaid, travelDate);
+  }, [payload]);
+
+  const remainingPaymentLabel = React.useMemo(() => {
+    if (!payload) return "-";
+    const rem = payload.remaining_payment_status?.toLowerCase();
+    if (rem === "paid" || payload.payment_status === "paid") return "Paid";
+    if (rem === "overdue") return "Overdue";
+    if (rem === "refunded") return "Refunded";
+
+    if (rem === "pending" || payload.payment_status === "pending" || payload.payment_status === "partially_paid") {
+      let total = Number(payload.payment_overview?.total || 0);
+      if (total === 0) {
+        total = Number(payload.total_price || payload.total_amount || 0);
+      }
+      let totalPaid = Number(payload.payment_overview?.total_paid || payload.amount_paid || payload.paid_amount || 0);
+      
+      if (total > 0 && totalPaid > 0 && totalPaid < total) {
+        const pct = Math.round(((total - totalPaid) / total) * 100);
+        return `${pct}% Pending`;
+      }
+      if (payload.payment_overview?.remaining_percentage && payload.payment_overview?.remaining_percentage !== "0%") {
+        return `${payload.payment_overview.remaining_percentage} Pending`;
+      }
+      return "70% Pending";
+    }
+
+    return payload.remaining_payment_status
+      ? payload.remaining_payment_status.charAt(0).toUpperCase() + payload.remaining_payment_status.slice(1)
+      : "-";
   }, [payload]);
 
   const customPills = payload ? (
@@ -84,7 +137,7 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
       {!isRefunded && (
         <span className={getPillStyle(payload.remaining_payment_status)}>
           <i aria-hidden></i>
-          {payload.remaining_payment_status ? payload.remaining_payment_status.charAt(0).toUpperCase() + payload.remaining_payment_status.slice(1) : "-"}
+          {remainingPaymentLabel}
         </span>
       )}
       <span className={getPillStyle(payload.operational_status)}>
@@ -149,6 +202,48 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
     </>
   );
 
+  const createdAtDate = payload?.created_at || payload?.booking?.created_at || payload?.transfer?.created_at;
+  const formattedDate = createdAtDate
+    ? new Date(createdAtDate).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
+    : "-";
+  const formattedTime = createdAtDate
+    ? new Date(createdAtDate).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })
+    : "-";
+
+  const customerName =
+    payload?.guest?.full_name ||
+    payload?.customer_name ||
+    payload?.transfer?.full_name ||
+    payload?.transfer?.customer_name ||
+    payload?.booking?.full_name ||
+    payload?.full_name ||
+    (payload?.guest?.first_name ? `${payload.guest.first_name} ${payload.guest.last_name || ""}`.trim() : null) ||
+    "Transportation Booking";
+
+  const guestData = React.useMemo(() => {
+    if (!payload) return undefined;
+    return {
+      ...payload,
+      ...payload.transfer,
+      ...(payload.guest || {}),
+      full_name:
+        payload.guest?.full_name ||
+        payload.customer_name ||
+        payload.transfer?.full_name ||
+        payload.transfer?.customer_name ||
+        payload.booking?.full_name ||
+        payload.full_name,
+    };
+  }, [payload]);
+
   return (
     <>
       <DashboardNavbar
@@ -159,26 +254,39 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
         ]}
       >
         <ProfileHeader 
-          title={payload?.transfer?.vehicle_class ? `Sedan \u2013 ${payload.transfer.vehicle_class}` : "Loading..."}
-          subtitleElements={[`#${displayId}`, payload?.transfer?.pickup_date || "-", payload?.transfer?.pickup_time || "10:30 AM"]}
+          title={customerName}
+          subtitleElements={[`${displayId}`, formattedDate, formattedTime]}
           customPills={customPills}
           actionButtons={payload ? actionButtons : null}
         />
       </DashboardNavbar>
       <div className={styles.contentWrapper}>
+        <DashboardStatusBanner 
+          message={bannerMessage} 
+          variant={bannerVariant}
+          show={!!bannerMessage} 
+          onClose={() => setBannerMessage("")} 
+          className={styles.toastBanner}
+        />
 
         {isLoading ? (
           <div style={{ padding: "40px", textAlign: "center", color: "#6B7280" }}>Loading booking details...</div>
         ) : (
           <div className={styles.gridContainer}>
             <div className={styles.leftColumn}>
-              <PassengerInformation guest={payload?.guest} />
+              <PassengerInformation guest={guestData} />
               <TransferDetails transfer={payload?.transfer} />
               <PaymentOverview overview={payload?.payment_overview} payload={payload} />
             </div>
             
             <div className={styles.rightColumn}>
-              <TransportationPriceDetails details={payload?.price_details} overview={payload?.payment_overview} vehicleCard={payload?.vehicle_card} />
+              <TransportationPriceDetails 
+                details={payload?.price_details} 
+                overview={payload?.payment_overview} 
+                vehicleCard={payload?.vehicle_card}
+                transfer={payload?.transfer}
+                payload={payload}
+              />
               <ActivityTimeline events={payload?.events || []} />
             </div>
           </div>
@@ -209,18 +317,26 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
         open={isRefundModalOpen}
         onClose={() => setIsRefundModalOpen(false)}
         refundSummary={refundSummary}
+        currency={payload?.currency || "$"}
         onSubmit={async (data) => {
-          console.log("Refunding payment with data:", data);
-          setIsRefundModalOpen(false);
-          setBannerMessage("The Refunded Payment has been Successfully Done");
-          mutate();
+          try {
+            const formData = new FormData();
+            formData.append("transaction_reference", data.reference);
+            if (data.notes) formData.append("notes", data.notes);
+            if (data.file) formData.append("receipt_file", data.file);
+
+            await refundTransportationBooking(id, formData);
+            setIsRefundModalOpen(false);
+            setBannerVariant("success");
+            setBannerMessage("The Refunded Payment has been Successfully Done");
+            mutate();
+          } catch (err: any) {
+            console.error("Failed to refund transportation booking:", err);
+            setBannerVariant("error");
+            setBannerMessage(err?.response?.data?.message || err?.response?.data?.detail || "Failed to process refund.");
+            setIsRefundModalOpen(false);
+          }
         }}
-      />
-      <DashboardStatusBanner 
-        message={bannerMessage} 
-        variant={bannerVariant}
-        show={!!bannerMessage} 
-        onClose={() => setBannerMessage("")} 
       />
     </>
   );

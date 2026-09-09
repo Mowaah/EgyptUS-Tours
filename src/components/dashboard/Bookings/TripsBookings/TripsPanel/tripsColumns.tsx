@@ -80,7 +80,7 @@ export const tripsColumns: DataTableColumn<TripBookingRow>[] = [
   },
   {
     id: "paymentStatus",
-    header: "Payment",
+    header: "Remaining 70%",
     render: (row) => (
       <span className={getTripsPillStyle(row.remaining_payment_status)}>
         <i aria-hidden />
@@ -137,7 +137,7 @@ export const tripsColumns: DataTableColumn<TripBookingRow>[] = [
 ];
 
 export const tripsRowActions = (onAction?: (action: string, row: TripBookingRow) => void): any[] => [
-  { label: "View", iconSrc: "/images/dashboard/view.svg", onClick: (row: TripBookingRow) => { if (onAction) onAction("View", row); } },
-  { label: "Re-Assign To", iconSrc: "/images/dashboard/assign.svg", onClick: (row: TripBookingRow) => { if (onAction) onAction("Re-Assign To", row); } },
-  { label: "Send Email Reminder", iconSrc: "/images/dashboard/booking/trips/notification-bing.svg", onClick: (row: TripBookingRow) => { if (onAction) onAction("Send Email Reminder", row); } },
+  { label: "View", iconSrc: "/images/dashboard/view.svg", onClick: (r: TripBookingRow) => { if (onAction) onAction("View", r); } },
+  { label: "Assign To", iconSrc: "/images/dashboard/assign.svg", onClick: (r: TripBookingRow) => { if (onAction) onAction("Assign To", r); } },
+  { label: "Send Email Reminder", iconSrc: "/images/dashboard/booking/trips/notification-bing.svg", onClick: (r: TripBookingRow) => { if (onAction) onAction("Send Email Reminder", r); } },
 ];

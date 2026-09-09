@@ -14,7 +14,18 @@ export default function PassengerInformation({ guest }: PassengerInformationProp
   const nationality = guest?.nationality || "";
   const countryCode = resolveCountryCode(nationality);
   const countryName = getNationalityName(nationality);
-  const specialRequests = guest?.special_requests || "None";
+  const rawSpecialRequests =
+    guest?.special_requests ||
+    guest?.special_request ||
+    guest?.transfer?.special_requests ||
+    guest?.booking?.special_requests;
+  const specialRequests =
+    rawSpecialRequests &&
+    typeof rawSpecialRequests === "string" &&
+    rawSpecialRequests.trim() !== "" &&
+    rawSpecialRequests.trim().toLowerCase() !== "none"
+      ? rawSpecialRequests.trim()
+      : "-";
 
   return (
     <div className={styles.card}>

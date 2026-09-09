@@ -13,7 +13,11 @@ export default function PaymentOverview({ overview, payload }: PaymentOverviewPr
   const refunded = Number(overview?.refunded_amount || 0);
 
   if (total === 0 && payload) {
-    const pTotal = payload.total_price || payload.total_amount;
+    const pTotal =
+      payload.total_price ||
+      payload.total_amount ||
+      payload.transfer?.total_price ||
+      payload.transfer?.price;
     let calcTotal = Number(pTotal || 0);
     
     if (calcTotal === 0 && payload.price_details) {
@@ -32,12 +36,39 @@ export default function PaymentOverview({ overview, payload }: PaymentOverviewPr
         paid = calcTotal;
       } else if (paid === 0 && isPartiallyPaid) {
         paid = calcTotal * 0.3;
+      } else if (paid === 0 && payload?.payment_summary?.paid_amount) {
+        paid = Number(payload?.payment_summary?.paid_amount);
       }
       
       totalPaid = paid;
       totalDue = calcTotal - paid;
     }
+    // Also use payment_summary if total wasn't 0 but totalPaid is 0
+    if (totalPaid === 0 && payload?.payment_summary?.paid_amount) {
+      totalPaid = Number(payload?.payment_summary?.paid_amount);
+      totalDue = total - totalPaid;
+    }
   }
+
+  // Final fallback: if totalPaid is still 0, but we have a payments array, sum it up
+  if (totalPaid === 0 && payload?.payments && Array.isArray(payload.payments)) {
+    const sum = payload.payments.reduce((acc: number, p: any) => acc + Number(p.amount || 0), 0);
+    if (sum > 0) {
+      totalPaid = sum;
+      totalDue = total - sum;
+    }
+  }
+
+  const rawCurrency = (payload?.currency || overview?.currency || "usd").toLowerCase();
+  const currencySymbol = rawCurrency === "usd" ? "$" : rawCurrency === "eur" ? "€" : `${rawCurrency.toUpperCase()} `;
+
+  const formatMoney = (amount: number) => {
+    return Number(amount || 0).toLocaleString("en-US", {
+      minimumFractionDigits: Number(amount || 0) % 1 !== 0 ? 2 : 0,
+      maximumFractionDigits: 2,
+    });
+  };
+
   return (
     <div className={styles.card}>
       <div className={styles.cardTitle}>
@@ -52,23 +83,23 @@ export default function PaymentOverview({ overview, payload }: PaymentOverviewPr
       <div className={styles.infoList}>
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Total Package</span>
-          <span className={`${styles.infoValue} ${styles.paymentTotal}`}>${total}</span>
+          <span className={`${styles.infoValue} ${styles.paymentTotal}`}>{currencySymbol}{formatMoney(total)}</span>
         </div>
         
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Paid Amount</span>
-          <span className={`${styles.infoValue} ${styles.paymentAmount}`}>${totalPaid}</span>
+          <span className={`${styles.infoValue} ${styles.paymentAmount}`}>{currencySymbol}{formatMoney(totalPaid)}</span>
         </div>
 
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Remaining Balance</span>
-          <span className={`${styles.infoValue} ${styles.paymentAmount}`}>${totalDue}</span>
+          <span className={`${styles.infoValue} ${styles.paymentAmount}`}>{currencySymbol}{formatMoney(totalDue)}</span>
         </div>
         
         {refunded > 0 && (
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>Refunded Amount</span>
-            <span className={`${styles.infoValue} ${styles.paymentAmount}`} style={{ color: "#E02424" }}>${refunded}</span>
+            <span className={`${styles.infoValue} ${styles.paymentAmount}`} style={{ color: "#E02424" }}>{currencySymbol}{formatMoney(refunded)}</span>
           </div>
         )}
       </div>
