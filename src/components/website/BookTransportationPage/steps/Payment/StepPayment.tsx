@@ -99,6 +99,7 @@ export default function StepPayment({
         nationality: formData.nationality,
         special_requests: formData.specialRequests,
         terms_accepted: formData.termsAccepted,
+        currency: "usd",
       };
 
       const booking = await submitTransportationBooking(payload);

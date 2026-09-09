@@ -350,7 +350,12 @@ export function calculateTripBookingPrice(
 
   const discountPercent = parseDiscountPercent(trip.discountValue || trip.discountLabel);
   const hasDiscount = discountPercent > 0;
-  const discountTitle = trip.discountTitle || trip.discountLabel || (hasDiscount ? "Special Discount" : undefined);
+  const discountTitle =
+    (trip as any)?.promotion?.title ||
+    (trip as any)?.promotion_title ||
+    trip.discountTitle ||
+    trip.discountLabel ||
+    (hasDiscount ? "Special Discount" : undefined);
 
   const discountUsd = hasDiscount ? (subtotalUsd * discountPercent) / 100 : 0;
   const discountEgp = hasDiscount ? (subtotalEgp * discountPercent) / 100 : 0;
@@ -573,7 +578,11 @@ export function calculateHotelBookingPrice(
 
   const discountPercent = parseDiscountPercent(hotel.discountValue);
   const hasDiscount = discountPercent > 0;
-  const discountTitle = hotel.discountTitle || (hasDiscount ? "Special Discount" : undefined);
+  const discountTitle =
+    (hotel as any)?.promotion?.title ||
+    (hotel as any)?.promotion_title ||
+    hotel.discountTitle ||
+    (hasDiscount ? "Special Discount" : undefined);
 
   const discountUsd = hasDiscount ? (subtotalUsd * discountPercent) / 100 : 0;
   const discountEgp = hasDiscount ? (subtotalEgp * discountPercent) / 100 : 0;

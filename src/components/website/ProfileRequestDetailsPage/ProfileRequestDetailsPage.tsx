@@ -87,6 +87,7 @@ interface ProfileRequestDetailData {
   preferences?: {
     hotel_category?: string;
     room_type?: string | string[];
+    room_types?: string[];
     transportation_type?: string;
     experiences?: string[];
   };
@@ -182,17 +183,20 @@ export default function ProfileRequestDetailsPage() {
           { 
             label: "Room Type", 
             value: (() => {
+              const rts = data.preferences?.room_types;
+              if (Array.isArray(rts) && rts.length > 0) return rts.join(", ");
               const rt = data.preferences?.room_type;
               if (Array.isArray(rt)) return rt.join(", ");
               if (typeof rt === "string") {
                 try {
                   const parsed = JSON.parse(rt.replace(/'/g, '"'));
-                  if (Array.isArray(parsed)) return parsed.join(", ");
+                  if (Array.isArray(parsed) && parsed.length > 0) return parsed.join(", ");
                 } catch {
                   // ignore
                 }
+                return rt;
               }
-              return rt || "";
+              return "";
             })()
           },
           { label: "Transportation", value: data.preferences?.transportation_type || "" },
@@ -285,7 +289,7 @@ export default function ProfileRequestDetailsPage() {
           { label: t("profile.details.jobTitle", "Job Title"), value: jobTitle },
           { label: t("profile.details.email", "Email Address"), value: email },
           { label: t("profile.details.phone", "Phone Number"), value: phone },
-          { label: t("profile.card.website", "Website"), value: website },
+          { label: t("profile.card.website", "Website"), value: website.trim() ? website : "-" },
         ],
         descriptionLabel: t("profile.details.requestDetails", "Request Details"),
         description: requestDetails,
@@ -301,7 +305,7 @@ export default function ProfileRequestDetailsPage() {
           { label: "Organization Name", value: data.organization?.organization_name || "" },
           { label: "Industry", value: data.organization?.industry || "" },
           { label: "Country", value: data.organization?.country || "" },
-          { label: "Website", value: data.organization?.website || "" },
+          { label: "Website", value: data.organization?.website?.trim() ? data.organization.website : "-" },
           { label: "Contact Person", value: data.contact?.contact_person || "" },
           { label: "Job Title", value: data.contact?.job_title || "" },
           { label: "Email Address", value: data.contact?.email || "" },

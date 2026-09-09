@@ -182,7 +182,6 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
   const depositPrices: MultiCurrencyPrice = pricingSummary.depositPrices;
   const totalAmount = pricingSummary.total;
   const depositAmount = pricingSummary.depositAmount;
-  const vatAmount = 0;
 
   const handlePrevious = () => {
     if (currentStep > 1) setCurrentStep((s) => s - 1);
@@ -216,6 +215,7 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
         requested_room_type: "Any",
         special_requests: formData.specialRequests,
         terms_accepted: formData.termsAccepted,
+        currency: "usd",
       });
 
       if (!booking.payment_url) {
@@ -253,7 +253,6 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
     onContinue: handleStartCheckout,
     isSubmitting: isStartingCheckout,
     totalAmount,
-    vatAmount,
     depositAmount,
     totalRooms,
     totalGuests,
@@ -326,8 +325,8 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
             { label: t("hotelBooking.success.hotel", "Hotel"), value: confirmedBooking?.hotelName || hotel.name },
             { label: t("sidebar.checkIn", "Check-in"), value: confirmedBooking?.startDate || formData.startDate || "—" },
             { label: t("sidebar.checkOut", "Check-out"), value: confirmedBooking?.endDate || formData.endDate || "—" },
-            { label: t("sidebar.totalPrice", "Total Price"), value: confirmedBooking?.totalAmount ? formatCurrency(Number(confirmedBooking.totalAmount)) : formatCurrency(totalPrices), valueColor: "#FF6600" },
-            { label: t("sidebar.payNow", "Paid Now"), value: confirmedBooking?.depositAmount ? formatCurrency(Number(confirmedBooking.depositAmount)) : formatCurrency(depositPrices), valueColor: "#FF6600" },
+            { label: t("sidebar.totalPrice", "Total Price"), value: confirmedBooking?.totalAmount ? formatCurrency({ usd: Number(confirmedBooking.totalAmount) }) : formatCurrency(totalPrices), valueColor: "#FF6600" },
+            { label: t("sidebar.payNow", "Paid Now"), value: confirmedBooking?.depositAmount ? formatCurrency({ usd: Number(confirmedBooking.depositAmount) }) : formatCurrency(depositPrices), valueColor: "#FF6600" },
           ]}
         />
       )}

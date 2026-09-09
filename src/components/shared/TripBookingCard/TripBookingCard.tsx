@@ -7,6 +7,7 @@ import { getStatusConfig } from "@/utils/statusUtils";
 import { bookingCardIcons } from "@/data/bookingCardIcons";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import type { MultiCurrencyPrice } from "@/constants/currency";
 import styles from "./TripBookingCard.module.scss";
 
 export type TripBookingStatus =
@@ -118,9 +119,10 @@ type BookingCardShared = {
   secondaryStatusLabel?: string;
   secondaryStatusVariant?: StatusPillVariant;
   secondaryStatusIconType?: StatusPillIconType;
-  paidAmount?: number;
-  remainingAmount?: number;
-  totalAmount?: number;
+  paidAmount?: number | MultiCurrencyPrice;
+  remainingAmount?: number | MultiCurrencyPrice;
+  totalAmount?: number | MultiCurrencyPrice;
+  currency?: string;
   cancelledLabel?: string;
   /** Optional neutral footer message for request cards */
   infoMessage?: string;
@@ -171,6 +173,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
     paidAmount,
     remainingAmount,
     totalAmount,
+    currency: cardCurrency,
     cancelledLabel,
     infoMessage,
     primaryLabel,
@@ -179,6 +182,15 @@ export default function TripBookingCard(props: TripBookingCardProps) {
   const { t, language } = useTranslation("common");
   const { formatCurrency } = useCurrency();
   const localeCode = language === "it" ? "it-IT" : language === "es" ? "es-ES" : "en-US";
+
+  const resolveAmount = (amt?: number | MultiCurrencyPrice | null): MultiCurrencyPrice | number | undefined => {
+    if (amt == null) return undefined;
+    if (typeof amt === "object") return amt;
+    const curr = (cardCurrency || "USD").toUpperCase();
+    if (curr === "EGP" || curr === "£") return { egp: amt };
+    if (curr === "EUR" || curr === "€") return { eur: amt };
+    return { usd: amt };
+  };
 
   const isRequestVariant =
     props.variant === "plan_your_trip" ||
@@ -289,6 +301,12 @@ export default function TripBookingCard(props: TripBookingCardProps) {
     if (low === "your trip is in progress" || low === "your trip is in progress.") {
       return t("profile.card.tripInProgress", "Your trip is in progress");
     }
+    if (low === "your stay is in progress" || low === "your stay is in progress.") {
+      return t("profile.card.stayInProgress", "Your stay is in progress");
+    }
+    if (low === "your transit is in progress" || low === "your transit is in progress.") {
+      return t("profile.card.transitInProgress", "Your transit is in progress");
+    }
     if (low.includes("proposal expected within 24-48 hrs") || low.includes("proposal expected within 24-48")) {
       return t("profile.card.proposalExpected", "Proposal expected within 24-48 hrs");
     }
@@ -298,15 +316,113 @@ export default function TripBookingCard(props: TripBookingCardProps) {
     if (low === "proposal sent") {
       return t("profile.card.proposalSent", "Proposal Sent");
     }
+    if (low === "proposal ready") {
+      return t("profile.card.proposalReady", "Proposal Ready");
+    }
+    if (low === "trip completed" || low === "booking completed") {
+      return t("profile.card.tripCompleted", "Trip Completed");
+    }
+    if (low === "stay completed") {
+      return t("profile.card.stayCompleted", "Stay Completed");
+    }
+    if (low === "transit completed" || low === "ride completed") {
+      return t("profile.card.transitCompleted", "Transit Completed");
+    }
+    if (low === "event completed") {
+      return t("profile.card.eventCompleted", "Event Completed");
+    }
+    if (low === "request rejected" || low === "rejected") {
+      return t("profile.card.rejectedByAdmin", "Request Rejected");
+    }
     return clean;
   };
 
+  const footerStatusMessage = (() => {
+    if (infoMessage) return formatLocalizedInfoMessage(infoMessage);
+    const norm = (status || "").toLowerCase().replace(/[-_]/g, " ").trim();
+    if (norm === "in trip" || norm === "on trip") {
+      return props.variant === "hotel"
+        ? t("profile.card.stayInProgress", "Your stay is in progress")
+        : props.variant === "transport"
+          ? t("profile.card.transitInProgress", "Your transit is in progress")
+          : t("profile.card.tripInProgress", "Your trip is in progress");
+    }
+    if (norm === "in stay") {
+      return t("profile.card.stayInProgress", "Your stay is in progress");
+    }
+    if (norm === "in transit") {
+      return t("profile.card.transitInProgress", "Your transit is in progress");
+    }
+    if (norm === "completed") {
+      return props.variant === "hotel"
+        ? t("profile.card.stayCompleted", "Stay Completed")
+        : props.variant === "transport"
+          ? t("profile.card.transitCompleted", "Transit Completed")
+          : props.variant === "mice" || props.variant === "b2b"
+            ? t("profile.card.eventCompleted", "Event Completed")
+            : t("profile.card.tripCompleted", "Trip Completed");
+    }
+    if (norm === "proposal in progress") {
+      return t("profile.card.proposalInProgress", "Proposal In progress");
+    }
+    if (norm === "proposal sent") {
+      return t("profile.card.proposalSent", "Proposal Sent");
+    }
+    if (norm === "proposal ready") {
+      return t("profile.card.proposalReady", "Proposal Ready");
+    }
+    if (norm === "new" || norm === "submitted" || norm === "pending") {
+      return t("profile.card.proposalExpected", "Proposal expected within 24-48 hrs");
+    }
+    if (norm === "awaiting deposit") {
+      return t("profile.card.awaitingDeposit", "30% Pending Payment");
+    }
+    if (norm === "awaiting payment") {
+      return t("profile.card.awaitingPayment", "100% Pending Payment");
+    }
+    if (norm.includes("refund")) {
+      return t("profile.card.refundCompleted", "Refund Completed");
+    }
+    return primaryStatusLabel || t("profile.card.tripBooking", "Trip Booking");
+  })();
+
   const formatLocalizedBudget = (raw: string | undefined | null) => {
     if (!raw) return "";
-    if (raw.trim().toLowerCase() === "not specified") {
+    const trimmed = raw.trim();
+    if (trimmed.toLowerCase() === "not specified") {
       return t("profile.card.notSpecified", "Not Specified");
     }
-    return raw;
+
+    const resolveSymbol = (c?: string) => {
+      const u = (c || cardCurrency || "USD").toUpperCase();
+      if (u === "EUR" || u === "€") return "€";
+      if (u === "GBP" || u === "£") return "£";
+      if (u === "EGP") return "EGP ";
+      return "$";
+    };
+
+    // Case 1: Range like "3000.00-5000.00 usd" or "$3000 - $5000" or "3000 – 5000"
+    const rangeMatch = trimmed.match(/^([$€£])?\s*([\d.,]+)\s*[-–—]\s*([$€£])?\s*([\d.,]+)\s*([a-zA-Z$€£]+)?$/i);
+    if (rangeMatch) {
+      const symbol = resolveSymbol(rangeMatch[1] || rangeMatch[3] || rangeMatch[5]);
+      const minVal = parseFloat(rangeMatch[2].replace(/,/g, ""));
+      const maxVal = parseFloat(rangeMatch[4].replace(/,/g, ""));
+      const fmtMin = isNaN(minVal) ? rangeMatch[2] : minVal.toLocaleString("en-US", { maximumFractionDigits: 0 });
+      const fmtMax = isNaN(maxVal) ? rangeMatch[4] : maxVal.toLocaleString("en-US", { maximumFractionDigits: 0 });
+      return `${symbol}${fmtMin} – ${symbol}${fmtMax}`;
+    }
+
+    // Case 2: "Up to 5000.00 usd" or "From 3000.00 usd" or "5000.00 usd"
+    const singleMatch = trimmed.match(/^(up to|from)?\s*([$€£])?\s*([\d.,]+)\s*([a-zA-Z$€£]+)?$/i);
+    if (singleMatch) {
+      const prefix = singleMatch[1] ? (singleMatch[1].toLowerCase() === "up to" ? "Up to " : "From ") : "";
+      const symbol = resolveSymbol(singleMatch[2] || singleMatch[4]);
+      const val = parseFloat(singleMatch[3].replace(/,/g, ""));
+      const fmtVal = isNaN(val) ? singleMatch[3] : val.toLocaleString("en-US", { maximumFractionDigits: 0 });
+      return `${prefix}${symbol}${fmtVal}`;
+    }
+
+    return trimmed;
   };
 
   const formatLocalizedCategory = (raw: string | undefined | null) => {
@@ -326,6 +442,18 @@ export default function TripBookingCard(props: TripBookingCardProps) {
     }
     if (low.includes("luxury")) {
       return language === "it" ? "Lusso" : language === "es" ? "Lujo" : raw;
+    }
+    return raw;
+  };
+
+  const formatLocalizedTravelType = (raw: string | undefined | null) => {
+    if (!raw) return "";
+    const low = raw.trim().toLowerCase();
+    if (low.includes("group")) {
+      return t("profile.card.group", "Group");
+    }
+    if (low.includes("private") || low === "tour") {
+      return t("profile.card.private", "Private");
     }
     return raw;
   };
@@ -385,13 +513,13 @@ export default function TripBookingCard(props: TripBookingCardProps) {
           {props.variant === "hotel" ? (
             <div className={styles.detailGridHotel}>
               <DetailCell
-                icon={HOTEL_ICONS.nights}
+                icon={HOTEL_ICONS.clock}
                 label={t("profile.card.checkIn", "Check-In")}
                 value={formatLocalizedDate(props.details.checkIn)}
                 iconSize={16}
               />
               <DetailCell
-                icon={HOTEL_ICONS.nights}
+                icon={HOTEL_ICONS.clock}
                 label={t("profile.card.checkOut", "Check-Out")}
                 value={formatLocalizedDate(props.details.checkOut)}
                 iconSize={16}
@@ -558,7 +686,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
               <DetailCell
                 icon={B2B_ICONS.website}
                 label={t("profile.card.website", "Website")}
-                value={props.details.website}
+                value={props.details.website?.trim() ? props.details.website : "-"}
               />
             </div>
           ) : props.variant === "plan_your_trip" ? (
@@ -608,19 +736,19 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                 value={props.details.destination}
               />
               <DetailCell
-                icon={TRIP_ICONS.returnDate}
-                label={t("profile.card.return", "Return")}
-                value={formatLocalizedDate(props.details.returnDate)}
-              />
-              <DetailCell
                 icon={TRIP_ICONS.departureDate}
                 label={t("profile.card.departure", "Departure")}
                 value={formatLocalizedDate(props.details.departureDate)}
               />
               <DetailCell
+                icon={TRIP_ICONS.returnDate}
+                label={t("profile.card.return", "Return")}
+                value={formatLocalizedDate(props.details.returnDate)}
+              />
+              <DetailCell
                 icon={TRIP_ICONS.travelType}
                 label={t("profile.card.travelType", "Travel Type")}
-                value={props.details.travelType}
+                value={formatLocalizedTravelType(props.details.travelType)}
               />
               <DetailCell
                 icon={TRIP_ICONS.duration}
@@ -656,26 +784,35 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                 paidAmount != null &&
                 remainingAmount != null && (
                   <p className={styles.metaPartial}>
-                    <span className={styles.metaMuted}>{t("profile.card.paid", "Paid")} {formatCurrency(paidAmount)}</span>
+                    <span className={styles.metaMuted}>{t("profile.card.paid", "Paid")} {formatCurrency(resolveAmount(paidAmount))}</span>
                     <span className={styles.metaBullet}>•</span>
                     <span className={styles.metaStrong}>
-                      {t("profile.card.remaining", "Remaining")} {formatCurrency(remainingAmount)}
+                      {t("profile.card.remaining", "Remaining")} {formatCurrency(resolveAmount(remainingAmount))}
                     </span>
                   </p>
                 )}
-              {status === "confirmed" && totalAmount != null && (
+              {status !== "partially_paid" && status !== "cancelled" && status !== "rejected" && totalAmount != null && (
                 <p className={styles.metaConfirmed}>
                   <span className={styles.metaMuted}>{t("profile.card.fullyPaid", "Fully Paid")}</span>
                   <span className={styles.metaBullet}>•</span>
-                  <span className={styles.metaPrice}>{formatCurrency(totalAmount)}</span>
+                  <span className={styles.metaPrice}>{formatCurrency(resolveAmount(totalAmount))}</span>
                 </p>
               )}
-              {status === "cancelled" && cancelledLabel && (
-                <p className={styles.metaCancelled}>{cancelledLabel}</p>
+              {status === "cancelled" && (
+                <p className={styles.metaCancelled}>{cancelledLabel || t("profile.card.cancelledByYou", "Cancelled by You — Apr 1, 2026")}</p>
               )}
-              {(status === "proposal_in_progress" || status === "proposal_sent") && infoMessage && (
-                <p className={styles.metaInfo}>• {formatLocalizedInfoMessage(infoMessage)}</p>
+              {status === "rejected" && (
+                <p className={styles.metaCancelled}>{cancelledLabel || t("profile.card.rejectedByAdmin", "Request Rejected")}</p>
               )}
+              {status !== "cancelled" &&
+                status !== "rejected" &&
+                (status !== "partially_paid" || paidAmount == null || remainingAmount == null) &&
+                totalAmount == null && (
+                  <p className={styles.metaInfo}>
+                    <span className={styles.metaBullet}>•</span>{" "}
+                    {footerStatusMessage}
+                  </p>
+                )}
             </div>
             <Button
               variant="primary"

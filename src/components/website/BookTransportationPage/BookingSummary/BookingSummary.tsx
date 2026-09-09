@@ -15,9 +15,10 @@ const fetcher = (url: string) => apiClient.get(url).then((res: any) => res.resul
 interface BookingSummaryProps {
   vehicle: Vehicle;
   formData: TransportationBookingData;
+  isRemainingView?: boolean;
 }
 
-export default function BookingSummary({ vehicle, formData }: BookingSummaryProps) {
+export default function BookingSummary({ vehicle, formData, isRemainingView = false }: BookingSummaryProps) {
   const [expanded, setExpanded] = useState(false);
   const { t } = useTranslation("booking");
   const { formatCurrency } = useCurrency();
@@ -173,14 +174,29 @@ export default function BookingSummary({ vehicle, formData }: BookingSummaryProp
               </div>
 
               <div className={styles.depositBox}>
-                <div className={styles.depositRow}>
-                  <span className={styles.depositLabel}>{t("sidebar.payNow", "Pay now")} {depositFactor === 1 ? t("sidebar.fullAmount", "(Full amount)") : t("sidebar.deposit30", "(30% deposit)")}</span>
-                  <span className={styles.depositAmount}>{formatCurrency(depositPrices)}</span>
-                </div>
-                <div className={styles.remainingRow}>
-                  <span className={styles.remainingNote}>{t("sidebar.remainingNote", "Remaining 70% due one month before your trip")}</span>
-                  <span className={styles.remainingVal}>{formatCurrency(remainingPrices)}</span>
-                </div>
+                {isRemainingView ? (
+                  <>
+                    <div className={styles.depositRow}>
+                      <span className={styles.depositLabel}>{t("sidebar.remainingBalance", "Remaining balance")}</span>
+                      <span className={styles.depositAmount}>{formatCurrency(remainingPrices)}</span>
+                    </div>
+                    <div className={styles.remainingRow}>
+                      <span className={styles.remainingNote}>{t("sidebar.paid30", "Paid (30%)")}</span>
+                      <span className={styles.remainingVal}>{formatCurrency(depositPrices)}</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className={styles.depositRow}>
+                      <span className={styles.depositLabel}>{t("sidebar.payNow", "Pay now")} {depositFactor === 1 ? t("sidebar.fullAmount", "(Full amount)") : t("sidebar.deposit30", "(30% deposit)")}</span>
+                      <span className={styles.depositAmount}>{formatCurrency(depositPrices)}</span>
+                    </div>
+                    <div className={styles.remainingRow}>
+                      <span className={styles.remainingNote}>{t("sidebar.remainingNote", "Remaining 70% due one month before your trip")}</span>
+                      <span className={styles.remainingVal}>{formatCurrency(remainingPrices)}</span>
+                    </div>
+                  </>
+                )}
               </div>
 
               <div className={styles.trustBadges}>

@@ -233,7 +233,7 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
             { label: t("sidebar.bookingSummary", "Booking Reference"), value: `BK-${String(confirmedBooking?.id || Math.floor(Math.random() * 90000000 + 10000000)).padStart(6, "0")}` },
             { label: t("transportBooking.rideDetails.vehicle", "Vehicle"), value: confirmedBooking?.vehicleName || `${vehicle.type} - ${vehicle.name}` },
             { label: t("transportBooking.rideDetails.pickupDate", "Pickup Date"), value: confirmedBooking?.pickupDate || formData.pickupDate || "—" },
-            { label: t("sidebar.totalPrice", "Total Paid"), value: confirmedBooking?.depositAmount ? formatCurrency(Number(confirmedBooking.depositAmount)) : formatCurrency(vehicle.prices || Number(vehicle.price.replace(/[^0-9.]/g, "")) || 0), valueColor: "#FF6600" },
+            { label: t("sidebar.totalPrice", "Total Paid"), value: confirmedBooking?.depositAmount ? formatCurrency({ usd: Number(confirmedBooking.depositAmount) }) : formatCurrency(vehicle.prices || Number(vehicle.price.replace(/[^0-9.]/g, "")) || 0), valueColor: "#FF6600" },
           ]}
         />
       )}

@@ -20,6 +20,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { getFavoriteTrips, getFavoriteHotels, getProfileRequests, getProfileSummary, getProfileBookings, getPaymentReceipt } from "@/lib/api";
 import { getStatusConfig } from "@/utils/statusUtils";
+import type { MultiCurrencyPrice } from "@/constants/currency";
 import styles from "./ProfilePage.module.scss";
 
 function parseProfileTab(param: string | null): TabType {
@@ -160,7 +161,7 @@ export default function ProfilePage() {
               description: t.short_description,
               location: t.location_text,
               price: parseFloat(t.base_price),
-              currency: t.currency_code === "USD" ? "£" : t.currency_code,
+              currency: t.currency_code,
               priceLabel: t.price_label,
               duration: t.duration,
               image: t.image || "/images/destination1.png",
@@ -179,7 +180,7 @@ export default function ProfilePage() {
               reviews: h.review_count,
               rooms: h.rooms,
               pricePerNight: parseFloat(h.price_per_night),
-              currency: h.currency_code === "USD" ? "£" : h.currency_code,
+              currency: h.currency_code,
               isFavorite: h.is_favorite,
             }))
           );
@@ -234,21 +235,59 @@ export default function ProfilePage() {
                 contactPerson: req.details?.contact_person || "",
                 emailAddress: req.details?.email_address || "",
                 phoneNumber: req.details?.phone_number || "",
-                website: req.details?.website || "",
+                website: req.details?.website?.trim() ? req.details.website : "-",
               };
             }
 
             const rawStatus = req.display_status || req.request_status || req.status || "new";
             const statusConfig = getStatusConfig(rawStatus);
+            const normStatus = (rawStatus || "").toLowerCase().replace(/[-_]/g, " ").trim();
+
+            let defaultInfoMessage = t("profile.card.proposalExpected", "Proposal expected within 24-48 hrs");
+            if (normStatus === "in trip" || normStatus === "on trip") {
+              defaultInfoMessage = t("profile.card.tripInProgress", "Your trip is in progress");
+            } else if (normStatus === "in stay") {
+              defaultInfoMessage = t("profile.card.stayInProgress", "Your stay is in progress");
+            } else if (normStatus === "in transit") {
+              defaultInfoMessage = t("profile.card.transitInProgress", "Your transit is in progress");
+            } else if (normStatus === "completed") {
+              defaultInfoMessage = t("profile.card.tripCompleted", "Trip Completed");
+            } else if (normStatus === "rejected") {
+              defaultInfoMessage = t("profile.card.rejectedByAdmin", "Request Rejected");
+            } else if (normStatus === "proposal ready") {
+              defaultInfoMessage = t("profile.card.proposalReady", "Proposal Ready");
+            } else if (normStatus === "proposal sent") {
+              defaultInfoMessage = t("profile.card.proposalSent", "Proposal Sent");
+            } else if (normStatus === "proposal in progress") {
+              defaultInfoMessage = t("profile.card.proposalInProgress", "Proposal In progress");
+            }
+
+            let cardTitle = req.title || "";
+            if (req.type === "events") {
+              cardTitle =
+                req.request_code ||
+                (req.title && req.title.startsWith("MICE-") ? req.title : "") ||
+                (req.id ? `MICE-${String(req.id).padStart(6, "0")}` : req.title || "");
+            } else if (req.type === "b2b") {
+              cardTitle =
+                req.request_code ||
+                (req.title && req.title.startsWith("B2B-") ? req.title : "") ||
+                (req.id ? `B2B-${String(req.id).padStart(6, "0")}` : req.title || "");
+            } else if (req.type === "plan_your_trip") {
+              cardTitle =
+                req.request_code ||
+                (req.title && req.title.startsWith("CTP-") ? req.title : "") ||
+                (req.id ? `CTP-${String(req.id).padStart(6, "0")}` : req.title || "");
+            }
 
             return {
               variant: (req.type === "events" ? "mice" : req.type) as any,
               showImage: false,
-              tripTitle: req.title || req.event_name || req.company_name || "",
+              tripTitle: cardTitle,
               status: rawStatus as any,
               statusLabel: statusConfig.label,
               statusVariant: statusConfig.variant,
-              infoMessage: req.info_message || t("profile.card.proposalExpected", "Proposal expected within 24-48 hrs"),
+              infoMessage: req.info_message || defaultInfoMessage,
               details: mappedDetails as any,
               primaryLabel: t("buttons.viewDetails", "View Details"),
               primaryHref: `/profile/requests-details?type=${req.type}&id=${req.id}&status=${rawStatus}`,
@@ -283,16 +322,58 @@ export default function ProfilePage() {
             let mappedDetails: any = {};
             const d = bk.details || {};
 
+            const computeRoomExtraCount = (): number | undefined => {
+              if (typeof d.room_extra_count === "number" && d.room_extra_count > 0) {
+                return d.room_extra_count;
+              }
+              const roomOverview = d.room_overview || bk.room_overview || bk.price_breakdown?.room_overview;
+              if (Array.isArray(roomOverview) && roomOverview.length > 0) {
+                const totalRooms = roomOverview.reduce(
+                  (acc: number, it: any) => acc + (parseInt(String(it.quantity || it.count || 1), 10) || 1),
+                  0
+                );
+                return totalRooms > 1 ? totalRooms - 1 : undefined;
+              }
+              if (bk.rooms && typeof bk.rooms === "object") {
+                const totalRooms = (bk.rooms.single || 0) + (bk.rooms.double || 0) + (bk.rooms.triple || 0);
+                if (totalRooms > 1) return totalRooms - 1;
+              }
+              if (d.room_number) {
+                const match = String(d.room_number).match(/(\d+)/);
+                if (match) {
+                  const count = parseInt(match[1], 10);
+                  if (count > 1) return count - 1;
+                }
+              }
+              return undefined;
+            };
+
+            const roomExtraCount = computeRoomExtraCount();
+
             if (type === "trip") {
+              const rawTourType = (
+                d.tour_type ||
+                bk.tour_type ||
+                d.travel_type ||
+                ""
+              ).toLowerCase().trim();
+
+              let travelType = d.travel_type || "";
+              if (rawTourType.includes("group")) {
+                travelType = t("profile.card.group", "Group");
+              } else if (rawTourType.includes("private") || travelType.toLowerCase() === "tour") {
+                travelType = t("profile.card.private", "Private");
+              }
+
               mappedDetails = {
                 tripName: d.trip_name || bk.title || "",
                 destination: d.destination || bk.destination || "",
                 departureDate: d.departure_date || "",
                 returnDate: d.return_date || "",
-                travelType: d.travel_type || "",
+                travelType,
                 durationLabel: d.duration_label || "",
                 roomType: d.room_type || "",
-                roomExtraCount: d.room_extra_count,
+                roomExtraCount,
                 travelersLabel: d.travelers_label || "",
               };
             } else if (type === "hotel") {
@@ -301,6 +382,7 @@ export default function ProfilePage() {
                 checkOut: d.check_out || "",
                 nights: d.nights || "",
                 roomType: d.room_type || "",
+                roomExtraCount,
                 roomNumber: d.room_number || "",
                 guests: d.guests || "",
               };
@@ -322,31 +404,34 @@ export default function ProfilePage() {
 
             const isCancelled = reqStatus === "cancelled" || reqStatus === "canceled" || opStatus === "cancelled" || opStatus === "canceled";
             const isRejected = reqStatus === "rejected";
-            const isPartiallyPaid = reqStatus === "partially_paid" || remStatus === "pending" || bk.status === "partially_paid";
+            const isFullyPaid =
+              remStatus === "paid" ||
+              bk.payment_status === "paid" ||
+              bk.payment_summary?.payment_status === "paid" ||
+              bk.payment_summary?.remaining_amount === "0.00" ||
+              bk.remaining_amount === "0.00";
+            const isPartiallyPaid = !isFullyPaid && (reqStatus === "partially_paid" || remStatus === "pending" || bk.status === "partially_paid");
 
-            let primaryStatus = reqStatus;
+            let cardStatus = "confirmed";
+            let cardStatusLabel = t("profile.status.confirmed", "Confirmed");
+            let cardStatusVariant: any = "green";
+
             if (isCancelled) {
-              primaryStatus = "cancelled";
+              cardStatus = "cancelled";
+              cardStatusLabel = t("profile.status.cancelled", "Cancelled");
+              cardStatusVariant = "redSoft";
             } else if (isRejected) {
-              primaryStatus = "rejected";
-            } else if (opStatus) {
-              primaryStatus = opStatus;
-            }
-
-            const primaryConfig = getStatusConfig(primaryStatus);
-
-            let secondaryStatusLabel: string | undefined = undefined;
-            let secondaryStatusVariant = undefined;
-            let secondaryStatusIconType = undefined;
-
-            if (!isCancelled && !isRejected) {
-              const paymentStatusToUse = remStatus || (isPartiallyPaid ? "partially_paid" : undefined);
-              if (paymentStatusToUse && paymentStatusToUse !== primaryStatus) {
-                const remConfig = getStatusConfig(paymentStatusToUse);
-                secondaryStatusLabel = remConfig.label;
-                secondaryStatusVariant = remConfig.variant;
-                secondaryStatusIconType = remConfig.iconType;
-              }
+              cardStatus = "rejected";
+              cardStatusLabel = t("profile.status.rejected", "Rejected");
+              cardStatusVariant = "redSoft";
+            } else if (isPartiallyPaid) {
+              cardStatus = "partially_paid";
+              cardStatusLabel = t("profile.status.partiallyPaid", "Partially Paid");
+              cardStatusVariant = "orange";
+            } else {
+              cardStatus = "confirmed";
+              cardStatusLabel = t("profile.status.confirmed", "Confirmed");
+              cardStatusVariant = "green";
             }
 
             let primaryLabel = t("buttons.viewDetails", "View Details");
@@ -359,31 +444,90 @@ export default function ProfilePage() {
             const paidVal = bk.paid_amount ?? payment.paid_amount;
             const remainingVal = bk.remaining_amount ?? payment.remaining_amount;
 
-            const paidNum = paidVal != null ? parseFloat(String(paidVal)) : (isPartiallyPaid ? 0 : undefined);
             const totalNum = totalVal != null ? parseFloat(String(totalVal)) : undefined;
-            const remainingNum = remainingVal != null
-              ? parseFloat(String(remainingVal))
-              : (isPartiallyPaid ? (totalNum != null && paidNum != null ? totalNum - paidNum : totalNum) : undefined);
+            const rawPaidNum = paidVal != null ? parseFloat(String(paidVal)) : undefined;
+            const rawRemainingNum = remainingVal != null ? parseFloat(String(remainingVal)) : undefined;
+
+            let paidNum = rawPaidNum;
+            let remainingNum = rawRemainingNum;
+
+            if (isPartiallyPaid) {
+              if (paidNum == null || paidNum <= 0) {
+                paidNum = totalNum ? Math.round(totalNum * 0.3 * 100) / 100 : 0;
+              }
+              if (remainingNum == null || remainingNum <= 0) {
+                remainingNum = totalNum && paidNum != null ? Math.max(0, Math.round((totalNum - paidNum) * 100) / 100) : 0;
+              }
+            } else if (isFullyPaid) {
+              paidNum = totalNum;
+              remainingNum = 0;
+            }
+
+            const activeTimer =
+              !isCancelled && !isRejected && bk.timer_label
+                ? bk.timer_label
+                : undefined;
+
+            // Drive the pill from operational status when available,
+            // but keep `status` = cardStatus so footer logic ("Fully Paid" vs "Paid • Remaining") works correctly.
+            let pillLabel = cardStatusLabel;
+            let pillVariant = cardStatusVariant;
+
+            if (!isCancelled && !isRejected && opStatus && opStatus !== reqStatus) {
+              const opConfig = getStatusConfig(opStatus);
+              pillLabel = opConfig.label;
+              pillVariant = opConfig.variant;
+            }
+
+            let secondaryLabel: string | undefined;
+            let secondaryVariant: any = undefined;
+            let secondaryIconType: any = undefined;
+
+            if (!isCancelled && !isRejected && remStatus && remStatus !== "paid") {
+              const remConfig = getStatusConfig(remStatus);
+              secondaryLabel = remConfig.label;
+              secondaryVariant = remConfig.variant;
+              secondaryIconType = remConfig.iconType;
+            }
+
+            const bookingCurrency = (
+              bk.currency ||
+              bk.currency_code ||
+              payment.currency_code ||
+              payment.currency ||
+              "USD"
+            ).toUpperCase();
+
+            const isEgp = bookingCurrency === "EGP" || bookingCurrency === "£";
+            const isEur = bookingCurrency === "EUR" || bookingCurrency === "€";
+
+            const toMultiPrice = (amt?: number): MultiCurrencyPrice | undefined => {
+              if (amt == null || isNaN(amt)) return undefined;
+              if (isEgp) return { egp: amt };
+              if (isEur) return { eur: amt };
+              return { usd: amt };
+            };
 
             return {
               variant: type as any,
               imageSrc: bk.image || defaultImage,
               tripTitle: bk.title || bk.hotel_name || bk.vehicle_name || "",
-              status: primaryStatus,
-              statusLabel: primaryConfig.label,
-              statusVariant: primaryConfig.variant,
-              secondaryStatusLabel,
-              secondaryStatusVariant,
-              secondaryStatusIconType,
-              timerLabel: bk.timer_label || (isCancelled || isRejected ? undefined : "In the past"),
-              paidAmount: paidNum,
-              remainingAmount: remainingNum,
-              totalAmount: totalNum,
+              status: cardStatus,
+              statusLabel: pillLabel,
+              statusVariant: pillVariant,
+              secondaryStatusLabel: secondaryLabel,
+              secondaryStatusVariant: secondaryVariant,
+              secondaryStatusIconType: secondaryIconType,
+              timerLabel: activeTimer,
+              paidAmount: toMultiPrice(paidNum),
+              remainingAmount: toMultiPrice(remainingNum),
+              totalAmount: toMultiPrice(totalNum),
+              currency: bookingCurrency,
               cancelledLabel: bk.cancelled_label || (isCancelled ? "Cancelled by You — Apr 1, 2026" : undefined),
               infoMessage: "",
               details: mappedDetails,
               primaryLabel,
-              primaryHref: `/profile/bookings-details?type=${type}&id=${bk.id}&status=${primaryStatus}`,
+              primaryHref: `/profile/bookings-details?type=${type}&id=${bk.id}&status=${cardStatus}`,
             };
           };
 

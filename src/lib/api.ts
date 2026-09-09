@@ -363,6 +363,18 @@ export async function payRemainingBookingBalance(
   return await apiClient.post(`/profile/bookings/${id}/pay-remaining/?type=${type}`, {});
 }
 
+export async function cancelProfileBooking(
+  type: string,
+  id: string,
+  data?: Record<string, any>
+): Promise<any> {
+  return await apiClient.post(`/profile/bookings/${id}/cancel/?type=${type}`, data || {});
+}
+
+export async function confirmPaymobPaymentRedirect(payload: Record<string, any>): Promise<any> {
+  return await apiClient.post('/payments/paymob/confirm-redirect/', payload);
+}
+
 export interface PublicBookingPaymentResponse {
   id: number;
   message: string;

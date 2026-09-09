@@ -25,7 +25,6 @@ interface StepPersonalInfoProps {
   onContinue: () => void;
   isSubmitting?: boolean;
   totalAmount: number;
-  vatAmount: number;
   depositAmount: number;
   totalRooms: number;
   totalGuests: number;
@@ -36,7 +35,7 @@ interface StepPersonalInfoProps {
 export default function StepPersonalInfo({
   hotel, formData, onChange, onPrevious, onContinue,
   isSubmitting,
-  totalAmount, vatAmount, depositAmount, totalRooms, totalGuests,
+  totalAmount, depositAmount, totalRooms, totalGuests,
   totalPrices, depositPrices,
 }: StepPersonalInfoProps) {
   const [showTermsModal, setShowTermsModal] = useState(false);
@@ -89,7 +88,6 @@ export default function StepPersonalInfo({
                 hotel={hotel}
                 formData={formData}
                 totalAmount={totalAmount}
-                vatAmount={vatAmount}
                 depositAmount={depositAmount}
                 totalRooms={totalRooms}
                 totalGuests={totalGuests}
@@ -202,7 +200,6 @@ export default function StepPersonalInfo({
             hotel={hotel}
             formData={formData}
             totalAmount={totalAmount}
-            vatAmount={vatAmount}
             depositAmount={depositAmount}
             totalRooms={totalRooms}
             totalGuests={totalGuests}

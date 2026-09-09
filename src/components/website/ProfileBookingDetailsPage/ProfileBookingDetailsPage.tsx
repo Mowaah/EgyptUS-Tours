@@ -9,27 +9,19 @@ import {
   CancelBookingModal,
   PageHeader,
   PaymentForm,
+  StatusPill,
   SuccessModal,
   type BookingDetailsSection,
-  type TripBookingStatus,
 } from "@/components/shared";
 import TransportBookingSummary from "@/components/website/BookTransportationPage/BookingSummary/BookingSummary";
-import { getProfileBookingDetail, payRemainingBookingBalance } from "@/lib/api";
+import { getProfileBookingDetail, payRemainingBookingBalance, cancelProfileBooking } from "@/lib/api";
 import { COUNTRIES } from "@/data/countries";
 import { MultiCurrencyPrice } from "@/constants/currency";
 import { calculateRefundSummary } from "@/utils/cancellationPolicy";
+import { getStatusConfig } from "@/utils/statusUtils";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./ProfileBookingDetailsPage.module.scss";
-
-const getCountryName = (code: string) => {
-  if (!code) return "";
-  const country = COUNTRIES.find((c) => c.code.toLowerCase() === code.trim().toLowerCase());
-  return country ? country.nationality : code;
-};
-
-import { getStatusConfig } from "@/utils/statusUtils";
-import { StatusPill } from "@/components/shared";
 
 
 export default function ProfileBookingDetailsPage() {
@@ -67,7 +59,13 @@ export default function ProfileBookingDetailsPage() {
 
   const isCancelled = rawStatus === "cancelled" || rawStatus === "canceled" || opStatus === "cancelled" || opStatus === "canceled";
   const isRejected = rawStatus === "rejected";
-  const isPartiallyPaid = rawStatus === "partially_paid" || remStatus === "pending" || bData.status === "partially_paid";
+  const isFullyPaid =
+    remStatus === "paid" ||
+    bData.payment_status === "paid" ||
+    bData.payment_summary?.payment_status === "paid" ||
+    bData.payment_summary?.remaining_amount === "0.00" ||
+    bData.remaining_amount === "0.00";
+  const isPartiallyPaid = !isFullyPaid && (rawStatus === "partially_paid" || remStatus === "pending" || bData.status === "partially_paid");
 
   let primaryStatus = rawStatus;
   if (isCancelled) {
@@ -79,7 +77,7 @@ export default function ProfileBookingDetailsPage() {
   }
 
   const primaryConfig = getStatusConfig(primaryStatus);
-  const secondaryConfig = !isCancelled && !isRejected && remStatus && remStatus !== primaryStatus
+  const secondaryConfig = !isCancelled && !isRejected && remStatus && remStatus !== primaryStatus && !(remStatus === "paid" && (primaryStatus === "confirmed" || primaryStatus === "paid"))
     ? getStatusConfig(remStatus)
     : null;
 
@@ -87,6 +85,8 @@ export default function ProfileBookingDetailsPage() {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [isPaying, setIsPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
   const showCancelAction = !isCancelled && !isRejected;
   const showPayAction = isPartiallyPaid && !isCancelled && !isRejected;
   const showFooter = showCancelAction || showPayAction;
@@ -181,6 +181,16 @@ export default function ProfileBookingDetailsPage() {
   const parsedTotal = rawTotal != null ? parseFloat(String(rawTotal)) : NaN;
   const totalAmount = !isNaN(parsedTotal) && parsedTotal >= 0 ? parsedTotal : 0;
 
+  const rawDiscount =
+    bData.price_details?.discount != null
+      ? parseFloat(String(bData.price_details.discount))
+      : bData.discount_amount != null
+        ? parseFloat(String(bData.discount_amount))
+        : bData.discount != null
+          ? parseFloat(String(bData.discount))
+          : 0;
+  const discountAmount = !isNaN(rawDiscount) && rawDiscount > 0 ? rawDiscount : 0;
+
   const rawPaid =
     payment.paid_amount ??
     bData.paid_amount ??
@@ -191,16 +201,28 @@ export default function ProfileBookingDetailsPage() {
   const parsedPaid = rawPaid != null ? parseFloat(String(rawPaid)) : NaN;
   const paidAmount = !isNaN(parsedPaid) && parsedPaid >= 0 ? parsedPaid : 0;
 
+  const depositAmount =
+    payment.deposit_amount != null
+      ? parseFloat(String(payment.deposit_amount))
+      : bData.deposit_amount != null
+        ? parseFloat(String(bData.deposit_amount))
+        : totalAmount * 0.3;
+
   const rawRemaining =
     payment.remaining_amount ??
     bData.remaining_amount ??
     bData.payment_overview?.remaining_amount;
   const parsedRemaining = rawRemaining != null ? parseFloat(String(rawRemaining)) : NaN;
-  const remainingAmount = !isNaN(parsedRemaining) && parsedRemaining >= 0
-    ? parsedRemaining
-    : Math.max(0, totalAmount - paidAmount);
+  const remainingAmount =
+    !isNaN(parsedRemaining) && parsedRemaining >= 0
+      ? parsedRemaining
+      : Math.max(0, totalAmount - paidAmount);
 
-  const paymentUrl = payment.payment_url || null;
+  const hotelTotalRooms = safeFormData.rooms.single + safeFormData.rooms.double + safeFormData.rooms.triple;
+  const hotelTotalGuests = safeFormData.adults + safeFormData.children + safeFormData.infants;
+
+  const hotelTotalAmount = totalAmount;
+  const hotelDepositAmount = depositAmount;
 
   // Calculate final payment due date (30 days before start date, or fallback to backend provided date)
   let paymentDueDate = "—";
@@ -213,14 +235,6 @@ export default function ProfileBookingDetailsPage() {
       paymentDueDate = new Intl.DateTimeFormat(localeCode, { month: "long", day: "numeric", year: "numeric" }).format(startD);
     }
   }
-
-  const depositAmount = paidAmount > 0 ? paidAmount : totalAmount * 0.3;
-  const hotelTotalRooms = safeFormData.rooms.single + safeFormData.rooms.double + safeFormData.rooms.triple;
-  const hotelTotalGuests = safeFormData.adults + safeFormData.children + safeFormData.infants;
-
-  const hotelTotalAmount = totalAmount;
-  const hotelVatAmount = 0;
-  const hotelDepositAmount = depositAmount;
 
   const refundSummary = calculateRefundSummary(
     totalAmount,
@@ -242,27 +256,50 @@ export default function ProfileBookingDetailsPage() {
   const isEgp = currencyCode === "EGP";
   const isEur = currencyCode === "EUR";
 
-  const totalPrices: MultiCurrencyPrice = {
-    usd: isEgp ? totalAmount * 0.02 : isEur ? totalAmount * 1.08 : totalAmount,
-    egp: isEgp ? totalAmount : totalAmount * 50,
-    eur: isEur ? totalAmount : isEgp ? totalAmount * 0.019 : totalAmount * 0.92,
-  };
+  const totalPrices: MultiCurrencyPrice = isEgp
+    ? { egp: totalAmount }
+    : isEur
+      ? { eur: totalAmount }
+      : { usd: totalAmount, egp: bData.paymob_total_egp ? Number(bData.paymob_total_egp) : undefined };
 
-  const depositPrices: MultiCurrencyPrice = {
-    usd: isEgp ? depositAmount * 0.02 : isEur ? depositAmount * 1.08 : depositAmount,
-    egp: isEgp ? depositAmount : depositAmount * 50,
-    eur: isEur ? depositAmount : isEgp ? depositAmount * 0.019 : depositAmount * 0.92,
-  };
+  const discountPrices: MultiCurrencyPrice = isEgp
+    ? { egp: discountAmount }
+    : isEur
+      ? { eur: discountAmount }
+      : {
+          usd: discountAmount,
+          egp: bData.paymob_total_egp && totalAmount > 0
+            ? Math.round(Number(bData.paymob_total_egp) * (discountAmount / totalAmount) * 100) / 100
+            : undefined,
+        };
+
+  const depositPrices: MultiCurrencyPrice = isEgp
+    ? { egp: depositAmount }
+    : isEur
+      ? { eur: depositAmount }
+      : {
+          usd: depositAmount,
+          egp: bData.paymob_total_egp && totalAmount > 0
+            ? Math.round(Number(bData.paymob_total_egp) * (depositAmount / totalAmount) * 100) / 100
+            : undefined,
+        };
+
+  const remainingPrices: MultiCurrencyPrice = isEgp
+    ? { egp: remainingAmount }
+    : isEur
+      ? { eur: remainingAmount }
+      : {
+          usd: remainingAmount,
+          egp: bData.paymob_total_egp && totalAmount > 0
+            ? Math.round(Number(bData.paymob_total_egp) * (remainingAmount / totalAmount) * 100) / 100
+            : undefined,
+        };
+
+  const isDepositDue = (payment.payment_due_type === "deposit" || paidAmount <= 0) && depositAmount > 0 && depositAmount < totalAmount;
 
   const handlePayRemaining = async () => {
     if (!id || isPaying) return;
     setPayError(null);
-    // If backend already has an active payment_url, redirect to it directly
-    if (paymentUrl) {
-      window.location.href = paymentUrl;
-      return;
-    }
-    // Otherwise request a new Paymob checkout link from the backend
     setIsPaying(true);
     try {
       const result = await payRemainingBookingBalance(detailsType, id);
@@ -275,6 +312,32 @@ export default function ProfileBookingDetailsPage() {
       setPayError("Payment failed. Please try again or contact support.");
     } finally {
       setIsPaying(false);
+    }
+  };
+
+  const handleCancelBooking = async (cancelData: any) => {
+    if (!id || isCancelling) return;
+    setCancelError(null);
+    setIsCancelling(true);
+    try {
+      const updated = await cancelProfileBooking(detailsType, id, cancelData);
+      if (updated) {
+        setBookingDetail(updated);
+      } else {
+        setBookingDetail((prev: any) => ({
+          ...prev,
+          status: "cancelled",
+          request_status: "cancelled",
+          operational_status: "cancelled",
+        }));
+      }
+      setShowCancelModal(false);
+      setShowSuccess(true);
+    } catch (err: any) {
+      const msg = err?.response?.data?.detail || "Failed to cancel booking. Please try again or contact support.";
+      setCancelError(msg);
+    } finally {
+      setIsCancelling(false);
     }
   };
 
@@ -295,49 +358,123 @@ export default function ProfileBookingDetailsPage() {
     return opt;
   };
 
+  const rawOverviews: any[] =
+    (Array.isArray(bData.details?.room_overview) && bData.details.room_overview.length > 0 ? bData.details.room_overview : null) ||
+    (Array.isArray(bData.rooms?.overview) && bData.rooms.overview.length > 0 ? bData.rooms.overview : null) ||
+    (Array.isArray(bData.price_details?.line_items) && bData.price_details.line_items.length > 0 ? bData.price_details.line_items : null) ||
+    (Array.isArray(bData.price_details?.room_overview) && bData.price_details.room_overview.length > 0 ? bData.price_details.room_overview : null) ||
+    (Array.isArray(bData.room_selections) && bData.room_selections.length > 0 ? bData.room_selections : null) ||
+    [];
+
   const hotelRoomsList = (() => {
-    if (bData.room_selections && Array.isArray(bData.room_selections) && bData.room_selections.length > 0) {
-      return bData.room_selections.map((sel: any) => {
-        const typeName = sel.room_type || sel.type || "Room";
+    if (rawOverviews.length > 0) {
+      return rawOverviews.map((ov: any, idx: number) => {
+        const typeName = ov.room_type || ov.type || ov.roomName || ov.name || "Room";
         const roomTitle = getLocalizedRoomTitle(typeName);
-        const view = getLocalizedViewLabel(sel.view_label || sel.view || "Garden View");
-        const qty = sel.quantity || sel.count || 1;
-        return `${qty} × ${roomTitle} - ${view}`;
+        const rawView = ov.view_label || ov.view || ov.room_view || bData.rooms?.view || "Garden View";
+        const view = getLocalizedViewLabel(rawView);
+        const qty = ov.quantity || ov.count || 1;
+
+        const adultNum = ov.adult_count ?? ov.adultCount ?? (rawOverviews.length === 1 ? safeFormData.adults : undefined);
+        const adultText = adultNum != null && adultNum > 0
+          ? `${adultNum} ${adultNum === 1 ? t("sidebar.adult", "Adult") : t("sidebar.adults", "Adults")}`
+          : "";
+
+        const childAges: number[] = (
+          Array.isArray(ov.children)
+            ? ov.children.map((c: any) => (typeof c === "object" && c != null ? c.age : c))
+            : (rawOverviews.length === 1 ? bData.children_ages : [])
+        )?.filter((a: any) => a != null) || [];
+
+        const childCount = ov.children_count ?? (Array.isArray(ov.children) ? ov.children.length : (rawOverviews.length === 1 ? safeFormData.children : childAges.length));
+        const agesText = childAges.length > 0 ? ` (${childAges.map((a: number) => `${a} ${t("units.years", "years")}`).join(", ")})` : "";
+        const childText = childCount > 0
+          ? `${childCount} ${childCount === 1 ? t("sidebar.child", "Child") : t("sidebar.children", "Children")}${agesText}`
+          : "";
+
+        const occupantText = [adultText, childText].filter(Boolean).join(" · ");
+
+        return (
+          <span key={`room-ov-${idx}`}>
+            <strong>{qty} × {roomTitle} - {view}</strong>{" "}
+            {occupantText && <span className={styles.occupantBreakdown}>{occupantText}</span>}
+          </span>
+        );
       });
     }
+
+    const roomEntries = Object.entries(safeFormData.rooms || {}).filter(([, count]) => (count as number) > 0);
+    if (roomEntries.length > 0) {
+      return roomEntries.map(([type, count], idx) => {
+        const roomTitle = getLocalizedRoomTitle(type);
+        const view = getLocalizedViewLabel(bData.rooms?.view || "garden");
+        const qty = count as number;
+
+        const adultNum = roomEntries.length === 1 ? safeFormData.adults : undefined;
+        const adultText = adultNum != null && adultNum > 0
+          ? `${adultNum} ${adultNum === 1 ? t("sidebar.adult", "Adult") : t("sidebar.adults", "Adults")}`
+          : "";
+
+        const childAges: number[] = (bData.children_ages || []).filter((a: any) => a != null);
+        const childCount = roomEntries.length === 1 ? safeFormData.children : 0;
+        const agesText = childAges.length > 0 ? ` (${childAges.map((a: number) => `${a} ${t("units.years", "years")}`).join(", ")})` : "";
+        const childText = childCount > 0
+          ? `${childCount} ${childCount === 1 ? t("sidebar.child", "Child") : t("sidebar.children", "Children")}${agesText}`
+          : "";
+
+        const occupantText = [adultText, childText].filter(Boolean).join(" · ");
+
+        return (
+          <span key={`room-fallback-${idx}`}>
+            <strong>{qty} × {roomTitle} - {view}</strong>{" "}
+            {occupantText && <span className={styles.occupantBreakdown}>{occupantText}</span>}
+          </span>
+        );
+      });
+    }
+
     return [
-      safeFormData.rooms.single > 0 ? `${safeFormData.rooms.single} × ${getLocalizedRoomTitle("single")} - ${getLocalizedViewLabel("garden")}` : null,
-      safeFormData.rooms.double > 0 ? `${safeFormData.rooms.double} × ${getLocalizedRoomTitle("double")} - ${getLocalizedViewLabel("garden")}` : null,
-      safeFormData.rooms.triple > 0 ? `${safeFormData.rooms.triple} × ${getLocalizedRoomTitle("triple")} - ${getLocalizedViewLabel("garden")}` : null,
-    ].filter((room): room is string => Boolean(room));
+      <span key="room-default">
+        <strong>Standard Room</strong>
+      </span>
+    ];
   })();
 
   const bookingLineItems = (() => {
-    if (bData.price_details?.items && Array.isArray(bData.price_details.items) && bData.price_details.items.length > 0) {
-      return bData.price_details.items.map((it: any) => {
-        const rawPrice = parseFloat(String(it.price || it.amount || it.line_total || "0"));
-        const price = rawPrice > 0 ? rawPrice : totalAmount / (bData.price_details.items.length || 1);
-        return {
-          label: `${it.quantity ? `${it.quantity} × ` : ""}${it.name || it.room_type || "Room"}${it.view_label ? ` - ${it.view_label}` : ""}`,
-          subtext: it.occupants || (safeFormData.adults ? `${safeFormData.adults} ${safeFormData.adults === 1 ? t("sidebar.adult", "Adult") : t("sidebar.adults", "Adults")}` : undefined),
-          price: isEgp ? { egp: price, usd: price * 0.02 } : isEur ? { eur: price, usd: price * 1.08 } : { usd: price, egp: price * 50 },
-        };
-      });
-    }
-
-    if (bData.room_selections && Array.isArray(bData.room_selections) && bData.room_selections.length > 0) {
-      const totalRoomsCount = bData.room_selections.reduce((acc: number, sel: any) => acc + (sel.quantity || sel.count || 1), 0);
-      return bData.room_selections.map((sel: any) => {
-        const typeName = sel.room_type || sel.type || "Room";
+    if (rawOverviews.length > 0) {
+      return rawOverviews.map((it: any) => {
+        const typeName = it.room_type || it.type || it.roomName || it.name || "Room";
         const roomTitle = getLocalizedRoomTitle(typeName);
-        const view = getLocalizedViewLabel(sel.view_label || sel.view || "Garden View");
-        const qty = sel.quantity || sel.count || 1;
-        const selPrice = parseFloat(String(sel.price || sel.total_price || sel.amount || sel.line_total || "0"));
-        const price = selPrice > 0 ? selPrice : (totalAmount / (totalRoomsCount || 1)) * qty;
+        const rawView = it.view_label || it.view || it.room_view || bData.rooms?.view || "Garden View";
+        const view = getLocalizedViewLabel(rawView);
+        const qty = it.quantity || it.count || 1;
+
+        const adultNum = it.adult_count ?? it.adultCount ?? (rawOverviews.length === 1 ? safeFormData.adults : undefined);
+        const adultText = adultNum != null && adultNum > 0
+          ? `${adultNum} ${adultNum === 1 ? t("sidebar.adult", "Adult") : t("sidebar.adults", "Adults")}`
+          : "";
+
+        const childAges: number[] = (
+          Array.isArray(it.children)
+            ? it.children.map((c: any) => (typeof c === "object" && c != null ? c.age : c))
+            : (rawOverviews.length === 1 ? bData.children_ages : [])
+        )?.filter((a: any) => a != null) || [];
+
+        const childCount = it.children_count ?? (Array.isArray(it.children) ? it.children.length : (rawOverviews.length === 1 ? safeFormData.children : childAges.length));
+        const agesText = childAges.length > 0 ? ` (${childAges.map((a: number) => `${a} ${t("units.years", "years")}`).join(", ")})` : "";
+        const childText = childCount > 0
+          ? `${childCount} ${childCount === 1 ? t("sidebar.child", "Child") : t("sidebar.children", "Children")}${agesText}`
+          : "";
+
+        const occupantText = [adultText, childText].filter(Boolean).join(" · ");
+
+        const rawPrice = parseFloat(String(it.line_total || it.price || it.amount || it.total_price || "0"));
+        const price = rawPrice > 0 ? rawPrice : totalAmount / rawOverviews.length;
+
         return {
           label: `${qty} × ${roomTitle} - ${view}`,
-          subtext: safeFormData.adults ? `${safeFormData.adults} ${safeFormData.adults === 1 ? t("sidebar.adult", "Adult") : t("sidebar.adults", "Adults")}` : undefined,
-          price: isEgp ? { egp: price, usd: price * 0.02 } : isEur ? { eur: price, usd: price * 1.08 } : { usd: price, egp: price * 50 },
+          subtext: occupantText || undefined,
+          price: isEgp ? { egp: price } : isEur ? { eur: price } : { usd: price },
         };
       });
     }
@@ -347,12 +484,28 @@ export default function ProfileBookingDetailsPage() {
       const totalRoomsCount = roomEntries.reduce((acc, [, count]) => acc + (count as number), 0);
       return roomEntries.map(([type, count]) => {
         const roomTitle = getLocalizedRoomTitle(type);
+        const view = getLocalizedViewLabel(bData.rooms?.view || "garden");
         const qty = count as number;
         const price = (totalAmount / (totalRoomsCount || 1)) * qty;
+
+        const adultNum = roomEntries.length === 1 ? safeFormData.adults : undefined;
+        const adultText = adultNum != null && adultNum > 0
+          ? `${adultNum} ${adultNum === 1 ? t("sidebar.adult", "Adult") : t("sidebar.adults", "Adults")}`
+          : "";
+
+        const childAges: number[] = (bData.children_ages || []).filter((a: any) => a != null);
+        const childCount = roomEntries.length === 1 ? safeFormData.children : 0;
+        const agesText = childAges.length > 0 ? ` (${childAges.map((a: number) => `${a} ${t("units.years", "years")}`).join(", ")})` : "";
+        const childText = childCount > 0
+          ? `${childCount} ${childCount === 1 ? t("sidebar.child", "Child") : t("sidebar.children", "Children")}${agesText}`
+          : "";
+
+        const occupantText = [adultText, childText].filter(Boolean).join(" · ");
+
         return {
-          label: `${qty} × ${roomTitle} - ${getLocalizedViewLabel("garden")}`,
-          subtext: safeFormData.adults ? `${safeFormData.adults} ${safeFormData.adults === 1 ? t("sidebar.adult", "Adult") : t("sidebar.adults", "Adults")}` : undefined,
-          price: isEgp ? { egp: price, usd: price * 0.02 } : isEur ? { eur: price, usd: price * 1.08 } : { usd: price, egp: price * 50 },
+          label: `${qty} × ${roomTitle} - ${view}`,
+          subtext: occupantText || undefined,
+          price: isEgp ? { egp: price } : isEur ? { eur: price } : { usd: price },
         };
       });
     }
@@ -461,10 +614,20 @@ export default function ProfileBookingDetailsPage() {
     return `/profile/bookings-details?${params.toString()}`;
   };
 
-  const normalizedTotal = isEgp ? totalAmount * 0.02 : isEur ? totalAmount * 1.08 : totalAmount;
-  const normalizedDeposit = isEgp ? depositAmount * 0.02 : isEur ? depositAmount * 1.08 : depositAmount;
-  const normalizedHotelTotal = isEgp ? hotelTotalAmount * 0.02 : isEur ? hotelTotalAmount * 1.08 : hotelTotalAmount;
-  const normalizedHotelDeposit = isEgp ? hotelDepositAmount * 0.02 : isEur ? hotelDepositAmount * 1.08 : hotelDepositAmount;
+  const normalizedTotal = totalAmount;
+  const normalizedDeposit = depositAmount;
+  const normalizedHotelTotal = hotelTotalAmount;
+  const normalizedHotelDeposit = hotelDepositAmount;
+
+  const discountTitle =
+    bData.price_details?.promotion?.title ||
+    bData.price_details?.promotion_title ||
+    bData.price_details?.discount_title ||
+    bData.price_breakdown?.promotion?.title ||
+    bData.price_breakdown?.promotion_title ||
+    bData.promotion?.title ||
+    bData.promotion_title ||
+    bData.discount_title;
 
   const paymentSidebar = isTransport ? (
     <TransportBookingSummary
@@ -481,6 +644,7 @@ export default function ProfileBookingDetailsPage() {
         reviews: 0
       }}
       formData={safeFormData as any}
+      isRemainingView
     />
   ) : isHotel ? (
     <BookingSidebar
@@ -496,14 +660,19 @@ export default function ProfileBookingDetailsPage() {
         reviews: bData.hotel?.review_count || 0
       }}
       formData={safeFormData as any}
-      totalAmount={normalizedHotelTotal + hotelVatAmount}
-      vatAmount={hotelVatAmount}
+      totalAmount={normalizedHotelTotal}
       depositAmount={normalizedHotelDeposit}
+      discountAmount={discountAmount}
+      discountPrices={discountPrices}
+      discountTitle={discountTitle}
       totalRooms={hotelTotalRooms}
       totalGuests={hotelTotalGuests}
       totalPrices={totalPrices}
       depositPrices={depositPrices}
+      remainingPrices={remainingPrices}
       lineItems={bookingLineItems}
+      isRemainingView={isPartiallyPaid && !isFullyPaid}
+      isFullyPaid={isFullyPaid}
     />
   ) : (
     <BookingSidebar
@@ -520,9 +689,15 @@ export default function ProfileBookingDetailsPage() {
       formData={safeFormData as any}
       totalAmount={normalizedTotal}
       depositAmount={normalizedDeposit}
+      discountAmount={discountAmount}
+      discountPrices={discountPrices}
+      discountTitle={discountTitle}
       totalPrices={totalPrices}
       depositPrices={depositPrices}
+      remainingPrices={remainingPrices}
       lineItems={bookingLineItems}
+      isRemainingView={isPartiallyPaid && !isFullyPaid}
+      isFullyPaid={isFullyPaid}
     />
   );
 
@@ -619,7 +794,7 @@ export default function ProfileBookingDetailsPage() {
                         <span>
                           {isPaying
                             ? t("auth.pleaseWait", "Please wait...")
-                            : `${t("profile.details.payRemaining", "Pay remaining")} ${formatCurrency(remainingAmount)}`}
+                            : `${t("profile.details.payRemaining", "Pay Remaining Balance")} ${formatCurrency(remainingPrices)}`}
                         </span>
                         {!isPaying && <Image src="/images/money-send.svg" alt="" width={24} height={24} aria-hidden />}
                       </button>
@@ -679,13 +854,17 @@ export default function ProfileBookingDetailsPage() {
 
       <CancelBookingModal
         open={showCancelModal}
-        onClose={() => setShowCancelModal(false)}
-        refundSummary={refundSummary}
-        onSubmit={(data) => {
-          console.log("Cancelling booking with data:", data);
-          setShowCancelModal(false);
-          setShowSuccess(true);
+        onClose={() => {
+          if (!isCancelling) {
+            setCancelError(null);
+            setShowCancelModal(false);
+          }
         }}
+        refundSummary={refundSummary}
+        currency={currencyCode}
+        loading={isCancelling}
+        error={cancelError}
+        onSubmit={handleCancelBooking}
       />
 
       {showSuccess && (
@@ -698,8 +877,18 @@ export default function ProfileBookingDetailsPage() {
             router.push("/profile?tab=bookings");
           }}
           metadata={[
-            { label: "Booking Reference", value: "#BK53602205" },
-            { label: "Refund Amount", value: "£1,500", valueColor: "#FF6600" },
+            { label: "Booking Reference", value: `#BK${bData.id || "53602205"}` },
+            {
+              label: "Refund Amount",
+              value: formatCurrency(
+                isEgp
+                  ? { egp: refundSummary.refund_amount }
+                  : isEur
+                    ? { eur: refundSummary.refund_amount }
+                    : { usd: refundSummary.refund_amount }
+              ),
+              valueColor: "#FF6600",
+            },
             { label: "Refund Method", value: "Bank Transfer" },
             { label: "Estimated Processing Time", value: "7 - 10 Business Days" }
           ]}

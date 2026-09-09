@@ -21,16 +21,38 @@ const CANCELLATION_REASONS = [
 
 import { RefundSummary } from "@/utils/cancellationPolicy";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useCurrency } from "@/contexts/CurrencyContext";
+import type { MultiCurrencyPrice } from "@/constants/currency";
 
 export interface CancelBookingModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: any) => void;
   refundSummary?: RefundSummary;
+  currency?: string;
+  loading?: boolean;
+  error?: string | null;
 }
 
-export default function CancelBookingModal({ open, onClose, onSubmit, refundSummary }: CancelBookingModalProps) {
+export default function CancelBookingModal({
+  open,
+  onClose,
+  onSubmit,
+  refundSummary,
+  currency,
+  loading = false,
+  error = null,
+}: CancelBookingModalProps) {
   const { t } = useTranslation("common");
+  const { formatCurrency } = useCurrency();
+  const bookingCurr = (currency || "USD").toUpperCase();
+
+  const toMultiPrice = (amt?: number | null): MultiCurrencyPrice | undefined => {
+    if (amt == null || isNaN(amt)) return undefined;
+    if (bookingCurr === "EGP" || bookingCurr === "£") return { egp: amt };
+    if (bookingCurr === "EUR" || bookingCurr === "€") return { eur: amt };
+    return { usd: amt };
+  };
   const [reason, setReason] = useState("");
   const [detailedReason, setDetailedReason] = useState("");
   const [accountName, setAccountName] = useState("");
@@ -145,7 +167,9 @@ export default function CancelBookingModal({ open, onClose, onSubmit, refundSumm
             <div className={styles.summaryCard}>
               <div className={styles.summaryRow}>
                 <span className={styles.summaryLabel}>{t("cancelModal.packageTotal", "Package Total")}</span>
-                <span className={styles.summaryValue}>£{refundSummary?.package_total?.toLocaleString() ?? "0"}</span>
+                <span className={styles.summaryValue}>
+                  {formatCurrency(toMultiPrice(refundSummary?.package_total))}
+                </span>
               </div>
               <div className={styles.summaryRow}>
                 <span className={styles.summaryLabel}>{t("cancelModal.cancellationWindow", "Cancellation Window")}</span>
@@ -157,19 +181,23 @@ export default function CancelBookingModal({ open, onClose, onSubmit, refundSumm
               </div>
               <div className={styles.summaryRow}>
                 <span className={styles.summaryLabel}>{t("cancelModal.deductionAmount", "Deduction Amount")}</span>
-                <span className={styles.summaryValue}>£{refundSummary?.deduction_amount?.toLocaleString() ?? "0"}</span>
+                <span className={styles.summaryValue}>
+                  {formatCurrency(toMultiPrice(refundSummary?.deduction_amount))}
+                </span>
               </div>
               <div className={styles.summaryRow}>
                 <span className={styles.summaryLabel}>{t("cancelModal.estimatedRefund", "Estimated Refund")}</span>
                 <div className={styles.estimatedRefund}>
-                  <span style={{ marginLeft: "4px" }}>£{refundSummary?.refund_amount?.toLocaleString() ?? "0"}</span>
+                  <span>
+                    {formatCurrency(toMultiPrice(refundSummary?.refund_amount))}
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Refund Bank Details */}
             <h3 className={styles.sectionTitle}>{t("cancelModal.bankInfo", "Refund Bank Details")}</h3>
-            <div className={styles.summaryCard} style={{ gap: "14px" }}>
+            <div className={`${styles.summaryCard} ${styles.bankDetailsCard}`}>
               <FormField
                 label={t("cancelModal.accountName", "Account Holder Name")}
                 placeholder={t("cancelModal.accountName", "Account Holder Name")}
@@ -235,21 +263,24 @@ export default function CancelBookingModal({ open, onClose, onSubmit, refundSumm
               </span>
             </label>
 
+            {error && <p className={styles.errorText}>{error}</p>}
+
             {/* Actions */}
             <div className={styles.actions}>
               <button 
                 type="button" 
                 className={styles.btnOutline} 
                 onClick={onClose}
+                disabled={loading}
               >
                 {t("cancelModal.keepBooking", "Keep Booking")}
               </button>
               <button 
                 type="submit" 
                 className={styles.btnSolid}
-                disabled={!isFormValid}
+                disabled={!isFormValid || loading}
               >
-                {t("cancelModal.cancelAction", "Confirm Cancellation")}
+                {loading ? t("common.processing", "Processing...") : t("cancelModal.cancelAction", "Confirm Cancellation")}
               </button>
             </div>
           </form>

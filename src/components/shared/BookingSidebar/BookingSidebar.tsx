@@ -20,18 +20,22 @@ interface BookingSidebarProps {
   hotel?: Hotel;
   isGroupTrip?: boolean;
   isSubmitting?: boolean;
-  // Hotel-specific extras
-  vatAmount?: number;
   totalRooms?: number;
   totalGuests?: number;
   totalPrices?: MultiCurrencyPrice;
   depositPrices?: MultiCurrencyPrice;
+  discountAmount?: number;
+  discountPrices?: MultiCurrencyPrice;
+  discountTitle?: string;
+  isRemainingView?: boolean;
+  isFullyPaid?: boolean;
+  remainingPrices?: MultiCurrencyPrice;
   lineItems?: Array<{
     label: string;
     subtext?: string;
     price: number | MultiCurrencyPrice;
   }>;
-}
+};
 
 // "2026-03-15" → "Mar 15". Falls back to a neutral placeholder if empty/invalid.
 function formatShortDate(value: string | undefined, fallback: string): string {
@@ -48,13 +52,18 @@ export default function BookingSidebar({
   totalAmount,
   depositAmount,
   detailsId = "booking-summary-details",
-  vatAmount = 0,
   totalRooms = 0,
   totalGuests = 0,
   totalPrices,
   depositPrices,
+  discountAmount,
+  discountPrices,
+  discountTitle,
   isGroupTrip,
   lineItems,
+  isRemainingView = false,
+  isFullyPaid = false,
+  remainingPrices,
 }: BookingSidebarProps) {
   // Mobile-only: the full details collapse into a compact summary strip.
   // On desktop this state is ignored (CSS always shows the details).
@@ -62,7 +71,7 @@ export default function BookingSidebar({
   const { formatCurrency } = useCurrency();
   const { t } = useTranslation("booking");
 
-  const finalTotal = totalAmount + vatAmount;
+  const finalTotal = totalAmount;
   const isHotel = !!hotel;
   const formatMoney = formatCurrency;
 
@@ -105,24 +114,10 @@ export default function BookingSidebar({
   }, [depositPrices, totalPrices, hasValidPricingSummary, pricingSummary, depositAmount, finalTotal]);
 
   const resolvedTotal: MultiCurrencyPrice | number = React.useMemo(() => {
-    if (totalPrices) {
-      if (vatAmount <= 0) return totalPrices;
-      return {
-        usd: totalPrices.usd != null ? Number(totalPrices.usd) + vatAmount : undefined,
-        egp: totalPrices.egp != null ? Number(totalPrices.egp) + vatAmount : undefined,
-        eur: totalPrices.eur != null ? Number(totalPrices.eur) + vatAmount : undefined,
-      };
-    }
-    if (hasValidPricingSummary && pricingSummary) {
-      if (vatAmount <= 0) return pricingSummary.totalPrices;
-      return {
-        usd: pricingSummary.totalPrices.usd != null ? Number(pricingSummary.totalPrices.usd) + vatAmount : undefined,
-        egp: pricingSummary.totalPrices.egp != null ? Number(pricingSummary.totalPrices.egp) + vatAmount : undefined,
-        eur: pricingSummary.totalPrices.eur != null ? Number(pricingSummary.totalPrices.eur) + vatAmount : undefined,
-      };
-    }
+    if (totalPrices) return totalPrices;
+    if (hasValidPricingSummary && pricingSummary) return pricingSummary.totalPrices;
     return finalTotal;
-  }, [totalPrices, hasValidPricingSummary, pricingSummary, finalTotal, vatAmount]);
+  }, [totalPrices, hasValidPricingSummary, pricingSummary, finalTotal]);
 
   const resolvedDeposit: MultiCurrencyPrice | number = React.useMemo(() => {
     if (depositPrices) return depositPrices;
@@ -131,6 +126,7 @@ export default function BookingSidebar({
   }, [depositPrices, hasValidPricingSummary, pricingSummary, depositAmount]);
 
   const resolvedRemaining: MultiCurrencyPrice | number = React.useMemo(() => {
+    if (remainingPrices) return remainingPrices;
     if (totalPrices && depositPrices) {
       return {
         usd: Math.max(0, (Number(totalPrices.usd) || 0) - (Number(depositPrices.usd) || 0)),
@@ -140,7 +136,7 @@ export default function BookingSidebar({
     }
     if (hasValidPricingSummary && pricingSummary) return pricingSummary.remainingPrices;
     return Math.max(0, finalTotal - depositAmount);
-  }, [totalPrices, depositPrices, hasValidPricingSummary, pricingSummary, finalTotal, depositAmount]);
+  }, [remainingPrices, totalPrices, depositPrices, hasValidPricingSummary, pricingSummary, finalTotal, depositAmount]);
 
   const image = isHotel ? (hotel!.image || "/images/pyramids.jpg") : (trip!.image || "/images/cruise.jpg");
   const title = isHotel ? hotel!.name : trip!.title;
@@ -507,22 +503,15 @@ export default function BookingSidebar({
             )}
 
             {/* Special Discount / Promotion */}
-            {pricingSummary && pricingSummary.discountAmount > 0 && (
+            {((discountAmount != null && discountAmount > 0) || (pricingSummary && pricingSummary.discountAmount > 0)) && (
               <div className={`${styles.priceRow} ${styles.discount}`}>
-                <span>{pricingSummary.discountTitle || t("sidebar.specialDiscount", "Special Discount")}</span>
-                <strong>-{formatMoney(pricingSummary.discountPrices)}</strong>
-              </div>
-            )}
-
-            {isHotel && vatAmount > 0 && (
-              <div className={styles.priceRow}>
-                <span>{t("sidebar.vat", "VAT")}</span>
-                <strong>{formatMoney(vatAmount)}</strong>
+                <span>{discountTitle || pricingSummary?.discountTitle || t("sidebar.specialDiscount", "Special Discount")}</span>
+                <strong>-{formatMoney(discountPrices || pricingSummary?.discountPrices || discountAmount || 0)}</strong>
               </div>
             )}
 
             {/* Child Pricing Policy Banner */}
-            {((formData.children || 0) > 0 || (formData.infants || 0) > 0) && (
+            {!isRemainingView && ((formData.children || 0) > 0 || (formData.infants || 0) > 0) && (
               <div className={styles.childPolicyBanner}>
                 {CHILD_POLICY.bannerText}
               </div>
@@ -537,18 +526,41 @@ export default function BookingSidebar({
           </div>
 
           {/* Deposit card */}
-          <div className={styles.depositCard}>
-            <div className={styles.depositTopRow}>
-              <span className={styles.depositLabel}>
-                {t("sidebar.payNow", "Pay now")} {isDepositFull ? t("sidebar.fullAmount", "(Full amount)") : t("sidebar.deposit30", "(30% deposit)")}
-              </span>
-              <span className={styles.depositAmount}>{formatMoney(resolvedDeposit)}</span>
-            </div>
-            <div className={styles.depositBottomRow}>
-              <span className={styles.depositNote}>{t("sidebar.remainingNote", "Remaining 70% due one month before your trip")}</span>
-              <span className={styles.remainingAmount}>{formatMoney(resolvedRemaining)}</span>
-            </div>
-          </div>
+          {!isFullyPaid && (
+            isRemainingView ? (
+              <div className={styles.depositCard}>
+                <div className={styles.depositTopRow}>
+                  <span className={styles.depositLabel}>
+                    {t("sidebar.remainingBalance", "Remaining balance")}
+                  </span>
+                  <span className={styles.depositAmount}>
+                    {formatMoney(resolvedRemaining)}
+                  </span>
+                </div>
+                <div className={styles.depositBottomRow}>
+                  <span className={styles.depositNote}>
+                    {t("sidebar.paid30", "Paid (30%)")}
+                  </span>
+                  <span className={styles.remainingAmount}>
+                    {formatMoney(resolvedDeposit)}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className={styles.depositCard}>
+                <div className={styles.depositTopRow}>
+                  <span className={styles.depositLabel}>
+                    {t("sidebar.payNow", "Pay now")} {isDepositFull ? t("sidebar.fullAmount", "(Full amount)") : t("sidebar.deposit30", "(30% deposit)")}
+                  </span>
+                  <span className={styles.depositAmount}>{formatMoney(resolvedDeposit)}</span>
+                </div>
+                <div className={styles.depositBottomRow}>
+                  <span className={styles.depositNote}>{t("sidebar.remainingNote", "Remaining 70% due one month before your trip")}</span>
+                  <span className={styles.remainingAmount}>{formatMoney(resolvedRemaining)}</span>
+                </div>
+              </div>
+            )
+          )}
 
           {/* Features */}
           <div className={styles.featuresList}>

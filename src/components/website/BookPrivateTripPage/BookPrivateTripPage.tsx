@@ -247,6 +247,7 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
         special_requests: formData.specialRequests,
         terms_accepted: formData.termsAccepted,
         tour_type: isGroupTrip ? "group" : "private",
+        currency: "usd",
       };
 
       const booking = await submitTripBooking(payload);
@@ -360,8 +361,8 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
             { label: t("tripBooking.success.tripName", "Trip Name"), value: confirmedBooking?.tripTitle || trip.title },
             { label: t("tripBooking.success.travelType", "Travel Type"), value: isGroupTrip ? t("tripBooking.groupTitle", "Group Tour") : t("tripBooking.privateTitle", "Private Tour") },
             { label: t("tripBooking.success.date", "Date"), value: confirmedBooking?.startDate || formData.startDate || "—" },
-            { label: t("sidebar.totalPrice", "Total Price"), value: confirmedBooking?.totalAmount ? formatCurrency(Number(confirmedBooking.totalAmount)) : formatCurrency(totalPrices), valueColor: "#FF6600" },
-            { label: t("sidebar.payNow", "Paid Now"), value: confirmedBooking?.depositAmount ? formatCurrency(Number(confirmedBooking.depositAmount)) : formatCurrency(depositPrices), valueColor: "#FF6600" },
+            { label: t("sidebar.totalPrice", "Total Price"), value: confirmedBooking?.totalAmount ? formatCurrency({ usd: Number(confirmedBooking.totalAmount) }) : formatCurrency(totalPrices), valueColor: "#FF6600" },
+            { label: t("sidebar.payNow", "Paid Now"), value: confirmedBooking?.depositAmount ? formatCurrency({ usd: Number(confirmedBooking.depositAmount) }) : formatCurrency(depositPrices), valueColor: "#FF6600" },
           ]}
         />
       )}

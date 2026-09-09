@@ -292,6 +292,7 @@
   flex-direction: column;
   gap: 12px;
   padding: 16px;
+  min-height: 62px;
   border-radius: 24px;
   background: $gray-50;
 
@@ -306,6 +307,8 @@
 .footerMeta {
   flex: 1;
   min-width: 0;
+  display: flex;
+  align-items: center;
 }
 
 .metaPartial,
@@ -325,7 +328,7 @@
 }
 
 .metaBullet {
-  font-size: $font-size-sm;
+  font-size: $font-size-base;
   color: $text-light;
 }
 
@@ -338,32 +341,59 @@
 
 .metaPrice {
   font-size: $font-size-2xl;
-  font-weight: $font-weight-normal;
+  font-weight: $font-weight-bold;
   line-height: 150%;
   color: $primary;
 }
 
 .metaCancelled {
   margin: 0;
-  font-weight: $font-weight-medium;
-  font-size: $font-size-xs;
+  font-family: "Trip Sans", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: $font-size-base;
   line-height: 150%;
+  display: flex;
+  align-items: center;
   color: $status-danger-text;
 }
 
 .metaInfo {
   margin: 0;
-  font-weight: $font-weight-normal;
-  font-size: $font-size-sm;
+  font-family: "Trip Sans", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: $font-size-base;
   line-height: 150%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   color: $text-light;
 }
 
 .cta {
   flex-shrink: 0;
-  padding: 10px 28px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 140px;
+  height: 39px;
   min-height: 39px;
-  font-size: $font-size-xs !important;
-  font-weight: $font-weight-medium !important;
+  max-height: 39px;
+  padding: 0 16px !important;
+  background: $primary;
+  border-radius: 100px !important;
+  font-family: "Trip Sans", sans-serif;
+  font-style: normal;
+  font-weight: 500 !important;
+  font-size: $font-size-sm !important;
   line-height: 24px !important;
+  text-align: center;
+  color: $white !important;
+
+  @media (min-width: 520px) {
+    width: 140px;
+  }
 }
+

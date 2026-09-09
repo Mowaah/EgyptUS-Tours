@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { confirmPaymobPaymentRedirect } from "@/lib/api";
 
 function isPaymobSuccess(params: URLSearchParams): boolean {
   const successVal = (params.get("success") || "").toLowerCase();
@@ -44,76 +45,107 @@ function PaymentResultContent() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const success = isPaymobSuccess(urlParams);
+    let isCancelled = false;
 
-    let savedHotelSlug: string | null = null;
-    let savedTripSlug: string | null = null;
-    let isGroupTrip = false;
-    let savedBookingId: string | null = null;
-    let targetType: "hotel" | "trip" | null = null;
+    async function processResult() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const success = isPaymobSuccess(urlParams);
 
-    try {
-      const tripStored = localStorage.getItem("last_trip_booking") || sessionStorage.getItem("last_trip_booking");
-      const hotelStored = localStorage.getItem("last_hotel_booking") || sessionStorage.getItem("last_hotel_booking");
+      let savedHotelSlug: string | null = null;
+      let savedTripSlug: string | null = null;
+      let isGroupTrip = false;
+      let savedBookingId: string | null = null;
+      let targetType: "hotel" | "trip" | null = null;
 
-      const tripParsed = tripStored ? JSON.parse(tripStored) : null;
-      const hotelParsed = hotelStored ? JSON.parse(hotelStored) : null;
+      try {
+        const tripStored = localStorage.getItem("last_trip_booking") || sessionStorage.getItem("last_trip_booking");
+        const hotelStored = localStorage.getItem("last_hotel_booking") || sessionStorage.getItem("last_hotel_booking");
 
-      const tripTime = Number(tripParsed?.timestamp || 0);
-      const hotelTime = Number(hotelParsed?.timestamp || 0);
+        const tripParsed = tripStored ? JSON.parse(tripStored) : null;
+        const hotelParsed = hotelStored ? JSON.parse(hotelStored) : null;
 
-      const now = Date.now();
-      const tripValid = tripTime && now - tripTime < 2 * 60 * 60 * 1000;
-      const hotelValid = hotelTime && now - hotelTime < 2 * 60 * 60 * 1000;
+        const tripTime = Number(tripParsed?.timestamp || 0);
+        const hotelTime = Number(hotelParsed?.timestamp || 0);
 
-      if (tripValid && (!hotelValid || tripTime >= hotelTime)) {
-        targetType = "trip";
-        savedTripSlug = sanitizeSlug(tripParsed.tripSlug);
-        isGroupTrip = Boolean(tripParsed.isGroupTrip);
-        savedBookingId = tripParsed.id ? sanitizeId(String(tripParsed.id)) : null;
-      } else if (hotelValid) {
-        targetType = "hotel";
-        savedHotelSlug = sanitizeSlug(hotelParsed.hotelSlug);
-        savedBookingId = hotelParsed.id ? sanitizeId(String(hotelParsed.id)) : null;
-      }
-    } catch (e) {
-      console.error("Failed to read booking info from storage", e);
-    }
+        const now = Date.now();
+        const tripValid = tripTime && now - tripTime < 2 * 60 * 60 * 1000;
+        const hotelValid = hotelTime && now - hotelTime < 2 * 60 * 60 * 1000;
 
-    const bookingIdParam = savedBookingId || sanitizeId(urlParams.get("id") || urlParams.get("order") || "");
-
-    if (targetType === "trip" && savedTripSlug) {
-      const bookPath = isGroupTrip ? "book-group" : "book-private";
-      if (success) {
-        router.replace(`/egypttours/${savedTripSlug}/${bookPath}?booking_success=true&booking_id=${bookingIdParam}`);
-      } else {
-        router.replace(`/egypttours/${savedTripSlug}/${bookPath}?payment_failed=true`);
-      }
-    } else if (targetType === "hotel" && savedHotelSlug) {
-      if (success) {
-        router.replace(`/hotels/${savedHotelSlug}/book?booking_success=true&booking_id=${bookingIdParam}`);
-      } else {
-        router.replace(`/hotels/${savedHotelSlug}/book?payment_failed=true`);
-      }
-    } else {
-      if (success) {
-        const amountCents = urlParams.get("amount_cents");
-        const merchantOrderId = urlParams.get("merchant_order_id");
-        
-        let extraParams = "";
-        if (amountCents) extraParams += `&amount_cents=${amountCents}`;
-        if (merchantOrderId) {
-          // Extract just the PAY-YYYY-XXXX part, stripping our added random UUID
-          const cleanRef = merchantOrderId.split("-").slice(0, 3).join("-");
-          extraParams += `&ref=${cleanRef}`;
+        if (tripValid && (!hotelValid || tripTime >= hotelTime)) {
+          targetType = "trip";
+          savedTripSlug = sanitizeSlug(tripParsed.tripSlug);
+          isGroupTrip = Boolean(tripParsed.isGroupTrip);
+          savedBookingId = tripParsed.id ? sanitizeId(String(tripParsed.id)) : null;
+        } else if (hotelValid) {
+          targetType = "hotel";
+          savedHotelSlug = sanitizeSlug(hotelParsed.hotelSlug);
+          savedBookingId = hotelParsed.id ? sanitizeId(String(hotelParsed.id)) : null;
         }
-        
-        router.replace(`/profile?booking_success=true&booking_id=${bookingIdParam}${extraParams}`);
+      } catch (e) {
+        console.error("Failed to read booking info from storage", e);
+      }
+
+      const bookingIdParam = savedBookingId || sanitizeId(urlParams.get("id") || urlParams.get("order") || "");
+
+      if (success) {
+        try {
+          const redirectPayload: Record<string, any> = {};
+          urlParams.forEach((val, key) => {
+            redirectPayload[key] = val;
+          });
+          if (bookingIdParam) {
+            redirectPayload.booking_id = bookingIdParam;
+          }
+          await confirmPaymobPaymentRedirect(redirectPayload);
+        } catch (err) {
+          console.warn("Backend payment confirmation warning:", err);
+        }
+      }
+
+      if (isCancelled) return;
+
+      if (targetType === "trip" && savedTripSlug) {
+        const bookPath = isGroupTrip ? "book-group" : "book-private";
+        if (success) {
+          router.replace(`/egypttours/${savedTripSlug}/${bookPath}?booking_success=true&booking_id=${bookingIdParam}`);
+        } else {
+          router.replace(`/egypttours/${savedTripSlug}/${bookPath}?payment_failed=true`);
+        }
+      } else if (targetType === "hotel" && savedHotelSlug) {
+        if (success) {
+          router.replace(`/hotels/${savedHotelSlug}/book?booking_success=true&booking_id=${bookingIdParam}`);
+        } else {
+          router.replace(`/hotels/${savedHotelSlug}/book?payment_failed=true`);
+        }
       } else {
-        router.replace("/egypttours");
+        if (success) {
+          const amountCents = urlParams.get("amount_cents");
+          const merchantOrderId = urlParams.get("merchant_order_id");
+          
+          let extraParams = "";
+          if (amountCents) extraParams += `&amount_cents=${amountCents}`;
+          if (merchantOrderId) {
+            // Extract just the PAY-YYYY-XXXX part, stripping our added random UUID
+            const cleanRef = merchantOrderId.split("-").slice(0, 3).join("-");
+            extraParams += `&ref=${cleanRef}`;
+          }
+
+          if (bookingIdParam && /^\d+$/.test(bookingIdParam)) {
+            router.replace(`/profile/bookings-details?id=${bookingIdParam}&type=trip&payment_success=true`);
+          } else {
+            router.replace(`/profile?booking_success=true&booking_id=${bookingIdParam}${extraParams}`);
+          }
+        } else {
+          router.replace("/egypttours");
+        }
       }
     }
+
+    processResult();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [router, searchParams]);
 
   return (
