@@ -387,6 +387,7 @@ export default function ProfileBookingDetailsPage() {
       if (updated) {
         setBookingDetail({
           ...updated,
+          operational_status: updated.operational_status || "refund_in_progress",
           cancelled_by: "user",
         });
       } else {
@@ -394,7 +395,7 @@ export default function ProfileBookingDetailsPage() {
           ...prev,
           status: "cancelled",
           request_status: "cancelled",
-          operational_status: "cancelled",
+          operational_status: "refund_in_progress",
           cancelled_by: "user",
         }));
       }

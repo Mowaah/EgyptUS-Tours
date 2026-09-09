@@ -854,20 +854,27 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                     </span>
                   </p>
                 )}
-              {status !== "partially_paid" && status !== "cancelled" && status !== "rejected" && totalAmount != null && (
-                <p className={styles.metaConfirmed}>
-                  <span className={styles.metaMuted}>{t("profile.card.fullyPaid", "Fully Paid")}</span>
-                  <span className={styles.metaBullet}>•</span>
-                  <span className={styles.metaPrice}>{formatCurrency(resolveAmount(totalAmount))}</span>
-                </p>
-              )}
-              {status === "cancelled" && (
+              {(status === "cancelled" || status === "refund_in_progress" || status === "refunded") && (
                 <p className={styles.metaCancelled}>{formattedCancelledText}</p>
               )}
               {status === "rejected" && (
                 <p className={styles.metaCancelled}>{cancelledLabel || t("profile.card.rejectedByAdmin", "Request Rejected")}</p>
               )}
+              {status !== "partially_paid" &&
+                status !== "cancelled" &&
+                status !== "refund_in_progress" &&
+                status !== "refunded" &&
+                status !== "rejected" &&
+                totalAmount != null && (
+                  <p className={styles.metaConfirmed}>
+                    <span className={styles.metaMuted}>{t("profile.card.fullyPaid", "Fully Paid")}</span>
+                    <span className={styles.metaBullet}>•</span>
+                    <span className={styles.metaPrice}>{formatCurrency(resolveAmount(totalAmount))}</span>
+                  </p>
+                )}
               {status !== "cancelled" &&
+                status !== "refund_in_progress" &&
+                status !== "refunded" &&
                 status !== "rejected" &&
                 (status !== "partially_paid" || paidAmount == null || remainingAmount == null) &&
                 totalAmount == null && (
