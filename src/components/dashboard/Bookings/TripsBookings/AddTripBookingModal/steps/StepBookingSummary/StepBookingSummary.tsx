@@ -5,6 +5,7 @@ import { AddTripBookingData } from "../../AddTripBookingModal";
 import { previewTripBooking } from "@/services/admin/adminBookingsService";
 import { DASHBOARD_CURRENCY } from "@/constants/currency";
 import { resolveApplicableSeason } from "@/utils/bookingPricing";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import useSWR from "swr";
 
 interface StepBookingSummaryProps {
@@ -209,7 +210,7 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
                   </div>
                   <div className={styles.dateValuesWrap}>
                     <div className={styles.dateValues}>
-                      <span className={styles.dateDay}>{formData?.startDate ? new Date(formData.startDate).toLocaleDateString("en-GB", { month: "2-digit", day: "2-digit", year: "numeric" }) : "TBD"}</span>
+                      <span className={styles.dateDay}>{formData?.startDate ? formatDateDDMMYYYY(formData.startDate) || "TBD" : "TBD"}</span>
                     </div>
                   </div>
                 </div>
@@ -222,7 +223,7 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
                   </div>
                   <div className={styles.dateValuesWrap}>
                     <div className={styles.dateValues}>
-                      <span className={styles.dateDay}>{formData?.endDate ? new Date(formData.endDate).toLocaleDateString("en-GB", { month: "2-digit", day: "2-digit", year: "numeric" }) : "TBD"}</span>
+                      <span className={styles.dateDay}>{formData?.endDate ? formatDateDDMMYYYY(formData.endDate) || "TBD" : "TBD"}</span>
                     </div>
                   </div>
                 </div>

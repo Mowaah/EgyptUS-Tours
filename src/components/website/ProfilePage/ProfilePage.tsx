@@ -18,7 +18,8 @@ import type { TabType, TripBookingCardProps } from "@/components/shared";
 import { Trip, Hotel } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
-import { getFavoriteTrips, getFavoriteHotels, getProfileRequests, getProfileSummary, getProfileBookings, getPaymentReceipt } from "@/lib/api";
+import { getFavoriteTrips, getFavoriteHotels, getProfileRequests, getProfileSummary, getProfileBookings, getPaymentReceipt, getFullImageUrl } from "@/lib/api";
+import { getAllHotels } from "@/services/hotelsService";
 import { getStatusConfig } from "@/utils/statusUtils";
 import type { MultiCurrencyPrice } from "@/constants/currency";
 import styles from "./ProfilePage.module.scss";
@@ -260,6 +261,10 @@ export default function ProfilePage() {
               defaultInfoMessage = t("profile.card.proposalSent", "Proposal Sent");
             } else if (normStatus === "proposal in progress") {
               defaultInfoMessage = t("profile.card.proposalInProgress", "Proposal In progress");
+            } else if (normStatus === "refund in progress" || normStatus === "refund_in_progress") {
+              defaultInfoMessage = t("profile.card.refundInProgress", "Refund in Progress");
+            } else if (normStatus === "refunded" || normStatus === "refund completed" || normStatus === "refund_completed") {
+              defaultInfoMessage = t("profile.card.refundCompleted", "Refund Completed");
             }
 
             let cardTitle = req.title || "";
@@ -312,10 +317,11 @@ export default function ProfilePage() {
       const fetchBookings = async () => {
         setBookingsLoading(true);
         try {
-          const [tripData, hotelData, transportData] = await Promise.all([
+          const [tripData, hotelData, transportData, allHotels] = await Promise.all([
             getProfileBookings("trip"),
             getProfileBookings("hotel"),
             getProfileBookings("transport"),
+            getAllHotels().catch(() => []),
           ]);
 
           const mapBooking = (bk: any, type: string, defaultImage: string): TripBookingCardProps => {
@@ -377,13 +383,60 @@ export default function ProfilePage() {
                 travelersLabel: d.travelers_label || "",
               };
             } else if (type === "hotel") {
+              const rawRoomType = (d.room_type || bk.room_type || "").trim();
+              let resolvedRoomType = rawRoomType;
+
+              const isInvalidRoomType =
+                !resolvedRoomType ||
+                resolvedRoomType.toLowerCase() === "any" ||
+                resolvedRoomType.toLowerCase() === "none";
+
+              if (isInvalidRoomType) {
+                const roomOverview = d.room_overview || bk.room_overview || bk.price_breakdown?.room_overview;
+                if (Array.isArray(roomOverview) && roomOverview.length > 0) {
+                  const first = roomOverview[0];
+                  resolvedRoomType =
+                    first.type_label ||
+                    first.room_name ||
+                    first.room_type ||
+                    first.name ||
+                    first.category_label ||
+                    "";
+                }
+                if (!resolvedRoomType && bk.rooms && typeof bk.rooms === "object") {
+                  if (bk.rooms.double > 0) resolvedRoomType = "Double Room";
+                  else if (bk.rooms.single > 0) resolvedRoomType = "Single Room";
+                  else if (bk.rooms.triple > 0) resolvedRoomType = "Triple Room";
+                }
+                if (!resolvedRoomType && d.room_category) {
+                  resolvedRoomType = `${d.room_category} Room`;
+                }
+                if (!resolvedRoomType) {
+                  resolvedRoomType = "Standard Room";
+                }
+              }
+
+              const lower = resolvedRoomType.toLowerCase();
+              if (lower === "double" || lower === "single" || lower === "triple") {
+                resolvedRoomType = `${resolvedRoomType.charAt(0).toUpperCase() + resolvedRoomType.slice(1)} Room`;
+              }
+
+              let resolvedRoomNumber = d.room_number || bk.room_number || "";
+              if (!resolvedRoomNumber || resolvedRoomNumber === "0 Rooms" || resolvedRoomNumber.startsWith("0 ")) {
+                const totalRooms =
+                  (typeof d.room_extra_count === "number" && d.room_extra_count >= 0 ? d.room_extra_count + 1 : undefined) ||
+                  (roomExtraCount != null ? roomExtraCount + 1 : undefined) ||
+                  1;
+                resolvedRoomNumber = totalRooms === 1 ? `1 ${t("units.room", "Room")}` : `${totalRooms} ${t("units.rooms", "Rooms")}`;
+              }
+
               mappedDetails = {
                 checkIn: d.check_in || "",
                 checkOut: d.check_out || "",
                 nights: d.nights || "",
-                roomType: d.room_type || "",
+                roomType: resolvedRoomType,
                 roomExtraCount,
-                roomNumber: d.room_number || "",
+                roomNumber: resolvedRoomNumber,
                 guests: d.guests || "",
               };
             } else if (type === "transport") {
@@ -412,11 +465,22 @@ export default function ProfilePage() {
               bk.remaining_amount === "0.00";
             const isPartiallyPaid = !isFullyPaid && (reqStatus === "partially_paid" || remStatus === "pending" || bk.status === "partially_paid");
 
+            const isRefundInProgress = opStatus === "refund_in_progress" || reqStatus === "refund_in_progress" || bk.status === "refund_in_progress";
+            const isRefunded = opStatus === "refunded" || reqStatus === "refunded" || bk.status === "refunded";
+
             let cardStatus = "confirmed";
             let cardStatusLabel = t("profile.status.confirmed", "Confirmed");
             let cardStatusVariant: any = "green";
 
-            if (isCancelled) {
+            if (isRefunded) {
+              cardStatus = "refunded";
+              cardStatusLabel = t("profile.card.refundCompleted", "Refund Completed");
+              cardStatusVariant = "darkBlue";
+            } else if (isRefundInProgress) {
+              cardStatus = "refund_in_progress";
+              cardStatusLabel = t("profile.card.refundInProgress", "Refund in Progress");
+              cardStatusVariant = "darkBlue";
+            } else if (isCancelled) {
               cardStatus = "cancelled";
               cardStatusLabel = t("profile.status.cancelled", "Cancelled");
               cardStatusVariant = "redSoft";
@@ -435,7 +499,7 @@ export default function ProfilePage() {
             }
 
             let primaryLabel = t("buttons.viewDetails", "View Details");
-            if (isPartiallyPaid && !isCancelled && !isRejected) {
+            if (isPartiallyPaid && !isCancelled && !isRejected && !isRefundInProgress && !isRefunded) {
               primaryLabel = t("profile.card.completePayment", "Complete Payment");
             }
 
@@ -464,7 +528,7 @@ export default function ProfilePage() {
             }
 
             const activeTimer =
-              !isCancelled && !isRejected && bk.timer_label
+              !isCancelled && !isRejected && !isRefundInProgress && !isRefunded && bk.timer_label
                 ? bk.timer_label
                 : undefined;
 
@@ -473,7 +537,15 @@ export default function ProfilePage() {
             let pillLabel = cardStatusLabel;
             let pillVariant = cardStatusVariant;
 
-            if (!isCancelled && !isRejected && opStatus && opStatus !== reqStatus) {
+            if (isRefunded) {
+              const opConfig = getStatusConfig("refunded");
+              pillLabel = opConfig.label;
+              pillVariant = opConfig.variant;
+            } else if (isRefundInProgress) {
+              const opConfig = getStatusConfig("refund_in_progress");
+              pillLabel = opConfig.label;
+              pillVariant = opConfig.variant;
+            } else if (!isCancelled && !isRejected && opStatus && opStatus !== reqStatus) {
               const opConfig = getStatusConfig(opStatus);
               pillLabel = opConfig.label;
               pillVariant = opConfig.variant;
@@ -508,9 +580,63 @@ export default function ProfilePage() {
               return { usd: amt };
             };
 
+            const actorLower = (bk.cancelled_by || "").toLowerCase();
+            const reasonLower = (bk.cancellation_reason || bk.details?.cancellation_reason || "").toLowerCase();
+            const rawCancelledLabel = (bk.cancelled_label || "").toLowerCase();
+            const isUserCancelledStored =
+              typeof window !== "undefined" &&
+              (localStorage.getItem(`cancelled_by_user_${type}_${bk.id}`) === "true" ||
+                localStorage.getItem(`cancelled_by_user_trip_${bk.id}`) === "true" ||
+                localStorage.getItem(`cancelled_by_user_hotel_${bk.id}`) === "true" ||
+                localStorage.getItem(`cancelled_by_user_transport_${bk.id}`) === "true");
+
+            let cancelledBy: "user" | "admin" = "user";
+            if (
+              actorLower.includes("admin") ||
+              actorLower.includes("egypt us") ||
+              actorLower.includes("egyptus") ||
+              rawCancelledLabel.includes("egypt us") ||
+              rawCancelledLabel.includes("admin") ||
+              reasonLower.includes("[admin]") ||
+              reasonLower.includes("by admin") ||
+              reqStatus === "rejected" ||
+              opStatus === "rejected"
+            ) {
+              cancelledBy = "admin";
+            } else if (
+              isUserCancelledStored ||
+              actorLower.includes("user") ||
+              actorLower.includes("customer") ||
+              actorLower.includes("you") ||
+              rawCancelledLabel.includes("you") ||
+              reasonLower.includes("by customer")
+            ) {
+              cancelledBy = "user";
+            }
+
+            let resolvedImage = bk.image;
+            if (type === "hotel") {
+              const hotelName = (bk.title || bk.hotel_name || "").toLowerCase().trim();
+              const matchedHotel = (allHotels || []).find(
+                (h: any) =>
+                  h.name?.toLowerCase().trim() === hotelName ||
+                  (bk.details?.hotel_slug && h.slug === bk.details.hotel_slug) ||
+                  (bk.details?.hotel_id && String(h.id) === String(bk.details.hotel_id))
+              );
+              if (matchedHotel?.hero_image && !matchedHotel.hero_image.includes("legacy-hero")) {
+                resolvedImage = matchedHotel.hero_image;
+              } else if (!resolvedImage || resolvedImage.includes("legacy-hero")) {
+                resolvedImage = defaultImage;
+              }
+            } else if (!resolvedImage || resolvedImage.includes("legacy-hero")) {
+              resolvedImage = defaultImage;
+            }
+
+            resolvedImage = getFullImageUrl(resolvedImage) || defaultImage;
+
             return {
               variant: type as any,
-              imageSrc: bk.image || defaultImage,
+              imageSrc: resolvedImage,
               tripTitle: bk.title || bk.hotel_name || bk.vehicle_name || "",
               status: cardStatus,
               statusLabel: pillLabel,
@@ -523,7 +649,8 @@ export default function ProfilePage() {
               remainingAmount: toMultiPrice(remainingNum),
               totalAmount: toMultiPrice(totalNum),
               currency: bookingCurrency,
-              cancelledLabel: bk.cancelled_label || (isCancelled ? "Cancelled by You — Apr 1, 2026" : undefined),
+              cancelledLabel: bk.cancelled_label,
+              cancelledBy,
               infoMessage: "",
               details: mappedDetails,
               primaryLabel,
@@ -926,11 +1053,16 @@ export default function ProfilePage() {
         <SuccessModal
           title="Booking Confirmed!"
           message="Your booking has been successfully paid and confirmed. Confirmation details have been sent to your email."
-          primaryButtonText="View Bookings"
+          primaryButtonText="View Booking"
           buttonText="Back to Home"
           onPrimaryClick={() => {
             setShowSuccessModal(false);
-            router.replace("/profile?tab=bookings", { scroll: false });
+            const targetId = (receiptData as any)?.booking_id || searchParams.get("booking_id");
+            if (targetId) {
+              router.replace(`/profile/bookings-details?id=${targetId}&type=${(receiptData as any)?.booking_type || "trip"}`);
+            } else {
+              router.replace("/profile?tab=bookings", { scroll: false });
+            }
           }}
           onClose={() => {
             setShowSuccessModal(false);

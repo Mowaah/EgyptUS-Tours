@@ -4,6 +4,8 @@ import styles from "./StepBookingSummary.module.scss";
 import { DASHBOARD_CURRENCY, formatPrice } from "@/constants/currency";
 import { AddHotelBookingData } from "../../AddHotelBookingModal";
 import { previewHotelBooking } from "@/services/admin/adminBookingsService";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
+
 
 interface StepBookingSummaryProps {
   formData?: AddHotelBookingData;
@@ -119,7 +121,7 @@ export default function StepBookingSummary({ formData, onSummaryLoad }: StepBook
                 </div>
                 <div className={styles.dateValuesWrap}>
                   <div className={styles.dateValues}>
-                    <span className={styles.dateDay}>{formData?.checkInDate ? new Date(formData.checkInDate).toLocaleDateString("en-GB", { weekday: 'short', month: 'short', day: 'numeric' }) : "Sun, Mar 15"}</span>
+                    <span className={styles.dateDay}>{formData?.checkInDate ? formatDateDDMMYYYY(formData.checkInDate) || "DD/MM/YYYY" : "DD/MM/YYYY"}</span>
                     <span className={styles.dateTime}>From 15:00</span>
                   </div>
                 </div>
@@ -133,7 +135,7 @@ export default function StepBookingSummary({ formData, onSummaryLoad }: StepBook
                 </div>
                 <div className={styles.dateValuesWrap}>
                   <div className={styles.dateValues}>
-                    <span className={styles.dateDay}>{formData?.checkOutDate ? new Date(formData.checkOutDate).toLocaleDateString("en-GB", { weekday: 'short', month: 'short', day: 'numeric' }) : "Sun, Mar 15"}</span>
+                    <span className={styles.dateDay}>{formData?.checkOutDate ? formatDateDDMMYYYY(formData.checkOutDate) || "DD/MM/YYYY" : "DD/MM/YYYY"}</span>
                     <span className={styles.dateTime}>From 15:00</span>
                   </div>
                 </div>

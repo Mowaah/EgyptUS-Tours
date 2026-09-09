@@ -222,8 +222,13 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
           message={t("transportBooking.success.message", "Your vehicle has been successfully booked. Confirmation details have been sent to your email.")}
           primaryButtonText={t("transportBooking.success.viewBooking", "View Booking")}
           onPrimaryClick={() => {
+            const targetId = confirmedBooking?.id;
             clearTransportBookingInfo();
-            router.push("/profile");
+            if (targetId) {
+              router.push(`/profile/bookings-details?id=${targetId}&type=transport`);
+            } else {
+              router.push("/profile?tab=bookings");
+            }
           }}
           onClose={() => {
             clearTransportBookingInfo();

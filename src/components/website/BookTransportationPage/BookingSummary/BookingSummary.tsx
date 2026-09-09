@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Vehicle, TransportationBookingData } from "@/types";
 import useSWR from "swr";
 import { apiClient } from "@/lib/api";
@@ -16,9 +17,10 @@ interface BookingSummaryProps {
   vehicle: Vehicle;
   formData: TransportationBookingData;
   isRemainingView?: boolean;
+  itemHref?: string;
 }
 
-export default function BookingSummary({ vehicle, formData, isRemainingView = false }: BookingSummaryProps) {
+export default function BookingSummary({ vehicle, formData, isRemainingView = false, itemHref }: BookingSummaryProps) {
   const [expanded, setExpanded] = useState(false);
   const { t } = useTranslation("booking");
   const { formatCurrency } = useCurrency();
@@ -144,7 +146,20 @@ export default function BookingSummary({ vehicle, formData, isRemainingView = fa
                 </div>
 
                 <div className={styles.vehicleDetails}>
-                  <h3 className={styles.vehicleName}>{vehicle.type} - {vehicle.name}</h3>
+                  {(() => {
+                    const vehicleHref = itemHref || (vehicle.id && vehicle.id !== "vehicle" ? `/transportation/${vehicle.id}` : undefined);
+                    return (
+                      <h3 className={styles.vehicleName}>
+                        {vehicleHref ? (
+                          <Link href={vehicleHref} className={styles.vehicleNameLink}>
+                            {vehicle.type} - {vehicle.name}
+                          </Link>
+                        ) : (
+                          <span className={styles.vehicleNameLink}>{vehicle.type} - {vehicle.name}</span>
+                        )}
+                      </h3>
+                    );
+                  })()}
 
                   <div className={styles.priceTable}>
                     <div className={styles.priceRow}>

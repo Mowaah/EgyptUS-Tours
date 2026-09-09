@@ -63,6 +63,9 @@ export default function CancelBookingModal({
   const [country, setCountry] = useState("Egypt");
   const [agreed, setAgreed] = useState(false);
 
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+
   const cancellationReasons = [
     { label: t("cancelModal.selectReason", "Select a Reason"), value: "", disabled: true, hidden: true },
     { label: t("cancelModal.reasons.changeOfPlans", "Change of plans"), value: "Change of plans" },
@@ -82,8 +85,10 @@ export default function CancelBookingModal({
     setAccountNumber("");
     setIban("");
     setSwift("");
-    setCountry("");
+    setCountry("Egypt");
     setAgreed(false);
+    setTouched({});
+    setHasSubmitted(false);
 
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -101,25 +106,98 @@ export default function CancelBookingModal({
 
   if (!open) return null;
 
+  const isOther = reason === "Other";
+
+  const getErrors = () => {
+    const errs: Record<string, string> = {};
+
+    if (!reason) {
+      errs.reason = t("cancelModal.errors.reasonRequired", "Please select a cancellation reason.");
+    }
+
+    if (isOther) {
+      if (!detailedReason.trim()) {
+        errs.detailedReason = t("cancelModal.errors.detailedReasonRequired", "Please provide details for your cancellation.");
+      } else if (detailedReason.trim().length < 5) {
+        errs.detailedReason = t("cancelModal.errors.detailedReasonMin", "Please provide at least 5 characters.");
+      }
+    }
+
+    if (!accountName.trim()) {
+      errs.accountName = t("cancelModal.errors.accountNameRequired", "Account holder name is required.");
+    } else if (accountName.trim().length < 3) {
+      errs.accountName = t("cancelModal.errors.accountNameMin", "Account holder name must be at least 3 characters.");
+    } else if (!/^[\p{L}\s.'-]+$/u.test(accountName.trim())) {
+      errs.accountName = t("cancelModal.errors.accountNameInvalid", "Please enter a valid name.");
+    }
+
+    if (!bankName.trim()) {
+      errs.bankName = t("cancelModal.errors.bankNameRequired", "Bank name is required.");
+    } else if (bankName.trim().length < 2) {
+      errs.bankName = t("cancelModal.errors.bankNameMin", "Bank name must be at least 2 characters.");
+    }
+
+    const cleanAcc = accountNumber.replace(/[\s-]/g, "");
+    if (!accountNumber.trim()) {
+      errs.accountNumber = t("cancelModal.errors.accountNumberRequired", "Account number is required.");
+    } else if (cleanAcc.length < 6 || cleanAcc.length > 34 || !/^[A-Za-z0-9]+$/.test(cleanAcc)) {
+      errs.accountNumber = t("cancelModal.errors.accountNumberInvalid", "Please enter a valid account number (6–34 characters).");
+    }
+
+    const cleanIban = iban.replace(/\s/g, "").toUpperCase();
+    if (!iban.trim()) {
+      errs.iban = t("cancelModal.errors.ibanRequired", "IBAN is required.");
+    } else if (!/^[A-Z]{2}[0-9A-Z]{13,32}$/.test(cleanIban)) {
+      errs.iban = t("cancelModal.errors.ibanInvalid", "Please enter a valid IBAN format.");
+    }
+
+    const cleanSwift = swift.replace(/\s/g, "").toUpperCase();
+    if (!swift.trim()) {
+      errs.swift = t("cancelModal.errors.swiftRequired", "SWIFT / BIC code is required.");
+    } else if (!/^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/.test(cleanSwift)) {
+      errs.swift = t("cancelModal.errors.swiftInvalid", "Please enter a valid SWIFT/BIC code (8 or 11 characters).");
+    }
+
+    if (!country || !country.trim()) {
+      errs.country = t("cancelModal.errors.countryRequired", "Please select a bank country.");
+    }
+
+    if (!agreed) {
+      errs.agreed = t("cancelModal.errors.agreedRequired", "You must confirm and agree to proceed.");
+    }
+
+    return errs;
+  };
+
+  const errors = getErrors();
+  const isFormValid = Object.keys(errors).length === 0;
+
+  const markTouched = (field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+  };
+
+  const getFieldError = (field: string) => {
+    return (hasSubmitted || touched[field]) ? errors[field] : undefined;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!agreed) return;
+    setHasSubmitted(true);
+    if (!isFormValid) return;
 
     onSubmit({
       reason,
-      detailedReason,
+      detailedReason: detailedReason.trim(),
       bankDetails: {
-        accountName,
-        bankName,
-        accountNumber,
-        iban,
-        swift,
-        country
-      }
+        accountName: accountName.trim(),
+        bankName: bankName.trim(),
+        accountNumber: accountNumber.trim(),
+        iban: iban.replace(/\s/g, "").toUpperCase(),
+        swift: swift.replace(/\s/g, "").toUpperCase(),
+        country: country.trim(),
+      },
     });
   };
-
-  const isFormValid = reason && detailedReason && accountName && bankName && accountNumber && iban && swift && country && agreed;
 
   return (
     <div className={styles.overlay} onMouseDown={onClose}>
@@ -139,26 +217,41 @@ export default function CancelBookingModal({
             </div>
           </div>
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} noValidate>
             {/* Cancellation Reason */}
             <div className={styles.formGroup}>
               <label className={styles.label}>{t("cancelModal.reasonLabel", "Cancellation Reason")} *</label>
               <SelectDropdown
                 options={cancellationReasons}
                 value={reason}
-                onChange={(val) => setReason(val)}
+                onChange={(val) => {
+                  setReason(val);
+                  markTouched("reason");
+                }}
+                error={Boolean(getFieldError("reason"))}
               />
+              {getFieldError("reason") && (
+                <div className={styles.fieldError}>
+                  <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+                  <span>{getFieldError("reason")}</span>
+                </div>
+              )}
             </div>
 
             {reason && (
               <FormField
                 isTextarea
                 wrapperClassName={styles.formGroup}
-                label={t("cancelModal.detailsLabel", "Additional Details (Optional)")}
+                label={`${t("cancelModal.detailsLabel", "Additional Details")}${isOther ? " *" : ` (${t("common.optional", "Optional")})`}`}
                 placeholder={t("cancelModal.detailsPlaceholder", "Please provide any additional context...")}
                 value={detailedReason}
-                onChange={(e) => setDetailedReason(e.target.value)}
-                required
+                onChange={(e) => {
+                  setDetailedReason(e.target.value);
+                  markTouched("detailedReason");
+                }}
+                onBlur={() => markTouched("detailedReason")}
+                error={getFieldError("detailedReason")}
+                required={isOther}
               />
             )}
 
@@ -202,7 +295,12 @@ export default function CancelBookingModal({
                 label={t("cancelModal.accountName", "Account Holder Name")}
                 placeholder={t("cancelModal.accountName", "Account Holder Name")}
                 value={accountName}
-                onChange={(e) => setAccountName(e.target.value)}
+                onChange={(e) => {
+                  setAccountName(e.target.value);
+                  markTouched("accountName");
+                }}
+                onBlur={() => markTouched("accountName")}
+                error={getFieldError("accountName")}
                 required
               />
 
@@ -210,7 +308,12 @@ export default function CancelBookingModal({
                 label={t("cancelModal.bankName", "Bank Name")}
                 placeholder={t("cancelModal.bankName", "Bank Name")}
                 value={bankName}
-                onChange={(e) => setBankName(e.target.value)}
+                onChange={(e) => {
+                  setBankName(e.target.value);
+                  markTouched("bankName");
+                }}
+                onBlur={() => markTouched("bankName")}
+                error={getFieldError("bankName")}
                 required
               />
 
@@ -218,7 +321,12 @@ export default function CancelBookingModal({
                 label={t("cancelModal.accountNumber", "Bank Account Number")}
                 placeholder={t("cancelModal.accountNumber", "Bank Account Number")}
                 value={accountNumber}
-                onChange={(e) => setAccountNumber(e.target.value)}
+                onChange={(e) => {
+                  setAccountNumber(e.target.value);
+                  markTouched("accountNumber");
+                }}
+                onBlur={() => markTouched("accountNumber")}
+                error={getFieldError("accountNumber")}
                 required
               />
 
@@ -226,7 +334,12 @@ export default function CancelBookingModal({
                 label={t("cancelModal.iban", "IBAN")}
                 placeholder="EG12 XXXX XXXX XXXX XXXX XXXX"
                 value={iban}
-                onChange={(e) => setIban(e.target.value)}
+                onChange={(e) => {
+                  setIban(e.target.value);
+                  markTouched("iban");
+                }}
+                onBlur={() => markTouched("iban")}
+                error={getFieldError("iban")}
                 required
               />
 
@@ -234,7 +347,12 @@ export default function CancelBookingModal({
                 label={t("cancelModal.swift", "SWIFT Code")}
                 placeholder="CIBEEGCX"
                 value={swift}
-                onChange={(e) => setSwift(e.target.value)}
+                onChange={(e) => {
+                  setSwift(e.target.value);
+                  markTouched("swift");
+                }}
+                onBlur={() => markTouched("swift")}
+                error={getFieldError("swift")}
                 required
               />
 
@@ -243,25 +361,46 @@ export default function CancelBookingModal({
                 <NationalitySelect
                   useCountryName={true}
                   value={country}
-                  onChange={(val) => setCountry(val)}
+                  onChange={(val) => {
+                    setCountry(val);
+                    markTouched("country");
+                  }}
+                  error={Boolean(getFieldError("country"))}
                   placeholder={t("forms.selectCountry", "Select Country")}
                   placement="top"
                 />
+                {getFieldError("country") && (
+                  <div className={styles.fieldError}>
+                    <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+                    <span>{getFieldError("country")}</span>
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Terms Checkbox */}
-            <label className={styles.checkboxWrap}>
-              <input 
-                type="checkbox" 
-                checked={agreed}
-                onChange={(e) => setAgreed(e.target.checked)}
-                required
-              />
-              <span className={styles.checkboxLabel}>
-                {t("cancelModal.confirmText", "I confirm that I want to cancel this booking and agree to the cancellation policy.")}
-              </span>
-            </label>
+            <div>
+              <label className={styles.checkboxWrap}>
+                <input 
+                  type="checkbox" 
+                  checked={agreed}
+                  onChange={(e) => {
+                    setAgreed(e.target.checked);
+                    markTouched("agreed");
+                  }}
+                  required
+                />
+                <span className={styles.checkboxLabel}>
+                  {t("cancelModal.confirmText", "I confirm that I want to cancel this booking and agree to the cancellation policy.")}
+                </span>
+              </label>
+              {getFieldError("agreed") && (
+                <div className={styles.fieldError} style={{ marginTop: "-16px", marginBottom: "16px" }}>
+                  <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+                  <span>{getFieldError("agreed")}</span>
+                </div>
+              )}
+            </div>
 
             {error && <p className={styles.errorText}>{error}</p>}
 
@@ -278,7 +417,7 @@ export default function CancelBookingModal({
               <button 
                 type="submit" 
                 className={styles.btnSolid}
-                disabled={!isFormValid || loading}
+                disabled={(hasSubmitted && !isFormValid) || loading}
               >
                 {loading ? t("common.processing", "Processing...") : t("cancelModal.cancelAction", "Confirm Cancellation")}
               </button>

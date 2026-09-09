@@ -186,6 +186,21 @@
   text-align: center;
 }
 
+.fieldError {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #C11515;
+  font-size: $font-size-xs;
+  line-height: 16px;
+  margin-top: 4px;
+
+  img,
+  svg {
+    flex-shrink: 0;
+  }
+}
+
 .summaryRow {
   display: flex;
   justify-content: space-between;

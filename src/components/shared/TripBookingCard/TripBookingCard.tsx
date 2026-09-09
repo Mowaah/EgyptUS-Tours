@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import Image from "next/image";
 import Button from "@/components/shared/Button/Button";
 import StatusPill from "@/components/shared/StatusPill/StatusPill";
@@ -9,6 +9,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import type { MultiCurrencyPrice } from "@/constants/currency";
 import styles from "./TripBookingCard.module.scss";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 
 export type TripBookingStatus =
   | "partially_paid"
@@ -124,6 +125,7 @@ type BookingCardShared = {
   totalAmount?: number | MultiCurrencyPrice;
   currency?: string;
   cancelledLabel?: string;
+  cancelledBy?: "user" | "admin" | "you" | "egypt_us";
   /** Optional neutral footer message for request cards */
   infoMessage?: string;
   primaryLabel: string;
@@ -175,6 +177,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
     totalAmount,
     currency: cardCurrency,
     cancelledLabel,
+    cancelledBy,
     infoMessage,
     primaryLabel,
     primaryHref = "/egypttours",
@@ -192,12 +195,34 @@ export default function TripBookingCard(props: TripBookingCardProps) {
     return { usd: amt };
   };
 
+  const fallbackDefault =
+    props.variant === "hotel"
+      ? "/images/hotels/hotel6.png"
+      : props.variant === "transport"
+        ? "/images/sedan.png"
+        : "/images/pyramids.jpg";
+
+  const [imgSrc, setImgSrc] = useState<string>(() => {
+    if (imageSrc && !imageSrc.includes("legacy-hero")) {
+      return imageSrc;
+    }
+    return fallbackDefault;
+  });
+
+  useEffect(() => {
+    if (imageSrc && !imageSrc.includes("legacy-hero")) {
+      setImgSrc(imageSrc);
+    } else {
+      setImgSrc(fallbackDefault);
+    }
+  }, [imageSrc, fallbackDefault]);
+
   const isRequestVariant =
     props.variant === "plan_your_trip" ||
     props.variant === "mice" ||
     (props.variant as string) === "events" ||
     props.variant === "b2b";
-  const hasImage = Boolean(imageSrc && showImage && !isRequestVariant);
+  const hasImage = Boolean((imageSrc || fallbackDefault) && showImage && !isRequestVariant);
 
   const isTerminalNegative =
     status === "cancelled" ||
@@ -244,10 +269,14 @@ export default function TripBookingCard(props: TripBookingCardProps) {
 
   const getLocalizedRoomTitle = (tName: string) => {
     if (!tName) return "";
-    const raw = tName.toLowerCase();
+    const raw = tName.toLowerCase().trim();
+    if (raw === "any" || raw === "none") return t("rooms.standardRoom", "Standard Room");
     if (raw.includes("single")) return t("rooms.singleRoom", "Single Room");
     if (raw.includes("double") || raw.includes("twin")) return t("rooms.doubleRoom", "Double Room");
     if (raw.includes("triple")) return t("rooms.tripleRoom", "Triple Room");
+    if (raw.includes("standard")) return t("rooms.standardRoom", "Standard Room");
+    if (raw.includes("deluxe")) return t("rooms.deluxeRoom", "Deluxe Room");
+    if (raw.includes("suite")) return t("rooms.suite", "Suite");
     return tName;
   };
 
@@ -269,27 +298,17 @@ export default function TripBookingCard(props: TripBookingCardProps) {
     });
   };
 
-  const formatLocalizedDate = (dateStr: string | undefined | null) => {
-    if (!dateStr || dateStr === "—") return "";
-    try {
-      const d = new Date(dateStr);
-      if (isNaN(d.getTime())) return dateStr;
-      return new Intl.DateTimeFormat(localeCode, { month: "long", day: "numeric", year: "numeric" }).format(d);
-    } catch {
-      return dateStr;
-    }
+  const formatLocalizedDate = (dateStr: string | undefined | null): string => {
+    return formatDateDDMMYYYY(dateStr ?? undefined, "");
   };
 
   const formatLocalizedDateRange = (raw: string | undefined | null) => {
     if (!raw || raw === "—") return "";
     const parts = raw.split(/\s*[-–—]\s*|\s+to\s+/i);
     if (parts.length === 2) {
-      const d1 = new Date(parts[0].trim());
-      const d2 = new Date(parts[1].trim());
-      if (!isNaN(d1.getTime()) && !isNaN(d2.getTime())) {
-        const fmt = new Intl.DateTimeFormat(localeCode, { month: "long", day: "numeric", year: "numeric" });
-        return `${fmt.format(d1)} – ${fmt.format(d2)}`;
-      }
+      const d1 = formatDateDDMMYYYY(parts[0].trim());
+      const d2 = formatDateDDMMYYYY(parts[1].trim());
+      if (d1 && d2) return `${d1} – ${d2}`;
     }
     return formatLocalizedDate(raw);
   };
@@ -380,6 +399,9 @@ export default function TripBookingCard(props: TripBookingCardProps) {
     if (norm === "awaiting payment") {
       return t("profile.card.awaitingPayment", "100% Pending Payment");
     }
+    if (norm === "refund in progress" || norm === "refund_in_progress") {
+      return t("profile.card.refundInProgress", "Refund in Progress");
+    }
     if (norm.includes("refund")) {
       return t("profile.card.refundCompleted", "Refund Completed");
     }
@@ -458,16 +480,51 @@ export default function TripBookingCard(props: TripBookingCardProps) {
     return raw;
   };
 
+  const formattedCancelledText = (() => {
+    const fallbackBy = cancelledBy === "admin" || cancelledBy === "egypt_us" ? "admin" : "user";
+    let dateStr = "";
+    let detectedActor = fallbackBy;
+
+    if (cancelledLabel) {
+      const lower = cancelledLabel.toLowerCase();
+      if (lower.includes("egypt us") || lower.includes("admin")) {
+        detectedActor = "admin";
+      } else if (lower.includes("you") || lower.includes("user") || lower.includes("customer")) {
+        detectedActor = "user";
+      }
+
+      const match = cancelledLabel.match(/[—\-]\s*(.+)$/);
+      if (match) {
+        dateStr = match[1].trim();
+      }
+    }
+
+    const isAdmin = cancelledBy === "admin" || cancelledBy === "egypt_us" || detectedActor === "admin";
+
+    if (isAdmin) {
+      const base = t("profile.card.cancelledByAdmin", "Cancelled by Egypt US");
+      return dateStr ? `${base} — ${dateStr}` : base;
+    }
+
+    const base = t("profile.card.cancelledByYou", "Cancelled by You");
+    return dateStr ? `${base} — ${dateStr}` : base;
+  })();
+
   return (
     <article className={`${styles.card} ${!hasImage ? styles.noImage : ""}`}>
-      {hasImage && imageSrc && (
+      {hasImage && (
         <div className={styles.imageCol}>
           <Image
-            src={imageSrc}
+            src={imgSrc || fallbackDefault}
             alt={imageAlt}
             fill
             className={styles.image}
             sizes="(max-width: 768px) 100vw, 263px"
+            onError={() => {
+              if (imgSrc !== fallbackDefault) {
+                setImgSrc(fallbackDefault);
+              }
+            }}
           />
           <div className={styles.imageOverlay} aria-hidden />
         </div>
@@ -549,7 +606,13 @@ export default function TripBookingCard(props: TripBookingCardProps) {
               <DetailCell
                 icon={HOTEL_ICONS.roomNumber}
                 label={t("profile.card.roomNumber", "Room Number")}
-                value={props.details.roomNumber}
+                value={
+                  !props.details.roomNumber || props.details.roomNumber === "0 Rooms" || props.details.roomNumber.startsWith("0 ")
+                    ? (props.details.roomExtraCount != null && props.details.roomExtraCount > 0
+                        ? `${props.details.roomExtraCount + 1} ${t("units.rooms", "Rooms")}`
+                        : `1 ${t("units.room", "Room")}`)
+                    : props.details.roomNumber
+                }
                 iconSize={16}
               />
               <DetailCell
@@ -799,7 +862,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                 </p>
               )}
               {status === "cancelled" && (
-                <p className={styles.metaCancelled}>{cancelledLabel || t("profile.card.cancelledByYou", "Cancelled by You — Apr 1, 2026")}</p>
+                <p className={styles.metaCancelled}>{formattedCancelledText}</p>
               )}
               {status === "rejected" && (
                 <p className={styles.metaCancelled}>{cancelledLabel || t("profile.card.rejectedByAdmin", "Request Rejected")}</p>

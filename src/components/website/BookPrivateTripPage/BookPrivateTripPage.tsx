@@ -288,8 +288,13 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
 
   const handlePrimaryModal = () => {
     setShowSuccessModal(false);
+    const targetId = confirmedBooking?.id;
     clearBookingInfo();
-    router.push("/profile");
+    if (targetId) {
+      router.push(`/profile/bookings-details?id=${targetId}&type=trip`);
+    } else {
+      router.push("/profile?tab=bookings");
+    }
   };
 
   const { t } = useTranslation("booking");
@@ -352,7 +357,7 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
         <SuccessModal
           title={t("tripBooking.success.title", "Booking Confirmed!")}
           message={t("tripBooking.success.message", "Your trip reservation has been successfully booked. Confirmation details have been sent to your email.")}
-          primaryButtonText={t("tripBooking.success.viewBookings", "View My Bookings")}
+          primaryButtonText={t("tripBooking.success.viewBookings", "View Booking")}
           buttonText={t("tripBooking.success.backToTrips", "Back to Trips")}
           onPrimaryClick={handlePrimaryModal}
           onClose={handleCloseModal}

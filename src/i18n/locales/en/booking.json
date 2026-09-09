@@ -205,7 +205,7 @@
       "message": "Your hotel reservation has been successfully booked. Confirmation details have been sent to your email.",
       "reference": "Booking Reference",
       "hotel": "Hotel",
-      "viewBookings": "View My Bookings",
+      "viewBookings": "View Booking",
       "backToHotels": "Back to Hotels"
     }
   },
@@ -257,7 +257,7 @@
       "tripName": "Trip Name",
       "travelType": "Travel Type",
       "date": "Date",
-      "viewBookings": "View My Bookings",
+      "viewBookings": "View Booking",
       "backToTrips": "Back to Trips"
     }
   },

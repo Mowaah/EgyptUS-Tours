@@ -1,18 +1,14 @@
 import Image from "next/image";
 import styles from "./ViewTrip.module.scss";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
+
 
 interface BookingInformationProps {
   booking: any;
 }
 
 function formatDateString(dateStr: string) {
-  if (!dateStr) return "-";
-  try {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString("en-US", { weekday: 'short', month: 'short', day: 'numeric' });
-  } catch {
-    return dateStr;
-  }
+  return formatDateDDMMYYYY(dateStr, "-");
 }
 
 export default function BookingInformation({ booking }: BookingInformationProps) {

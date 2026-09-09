@@ -38,6 +38,8 @@ const cancelBookingConfig: ActionNoteModalConfig = {
 
 import { getHotelBookingById, cancelHotelBooking, sendHotelBookingReminder } from "@/services/admin/adminBookingsService";
 import useSWR from "swr";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
+
 
 export default function ViewHotel({ bookingId }: ViewHotelProps) {
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
@@ -165,7 +167,7 @@ export default function ViewHotel({ bookingId }: ViewHotelProps) {
         <ProfileHeader
           title={payload?.hotel_card?.hotel_name || payload?.stay?.hotel_name || "Hotel Booking"}
           customPills={customPills}
-          subtitleElements={[`${displayId}`, payload?.stay?.check_in_date || "-", "10:30 AM"]}
+          subtitleElements={[`${displayId}`, payload?.stay?.check_in_date ? formatDateDDMMYYYY(payload.stay.check_in_date) || "-" : "-", "10:30 AM"]}
           actionButtons={payload ? actionButtons : null}
         />
       </DashboardNavbar>

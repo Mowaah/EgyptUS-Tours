@@ -191,6 +191,21 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
     setIsStartingCheckout(true);
     try {
       const roomSelections = buildRoomSelections(formData, hotel);
+      const calculatedSingle = (formData.roomCustomizations?.single || []).length || formData.rooms?.single || 0;
+      const calculatedDouble = (formData.roomCustomizations?.double || []).length || formData.rooms?.double || 0;
+      const calculatedTriple = (formData.roomCustomizations?.triple || []).length || formData.rooms?.triple || 0;
+
+      const requestedRoomType =
+        calculatedDouble > 0
+          ? "Double Room"
+          : calculatedSingle > 0
+            ? "Single Room"
+            : calculatedTriple > 0
+              ? "Triple Room"
+              : formData.roomCategory
+                ? `${formData.roomCategory} Room`
+                : "Standard Room";
+
       const booking = await submitHotelBooking({
         name: formData.name.trim(),
         hotel_slug: hotel.id,
@@ -203,16 +218,16 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
         children: formData.children,
         infants: formData.infants,
         rooms: {
-          single: formData.rooms?.single || 0,
-          double: formData.rooms?.double || 0,
-          triple: formData.rooms?.triple || 0,
+          single: calculatedSingle,
+          double: calculatedDouble,
+          triple: calculatedTriple,
         },
         ...(roomSelections?.length ? { room_selections: roomSelections } : {}),
         children_ages: formData.children > 0 ? (formData.childrenAges || []) : undefined,
         child_room_pricing: formData.children > 0 ? (formData.childRoomPricing || []) : undefined,
         room_category: formData.roomCategory,
         room_view: formData.roomView,
-        requested_room_type: "Any",
+        requested_room_type: requestedRoomType,
         special_requests: formData.specialRequests,
         terms_accepted: formData.termsAccepted,
         currency: "usd",
@@ -268,8 +283,13 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
 
   const handlePrimaryModal = () => {
     setShowSuccessModal(false);
+    const targetId = confirmedBooking?.id;
     clearBookingInfo();
-    router.push("/profile");
+    if (targetId) {
+      router.push(`/profile/bookings-details?id=${targetId}&type=hotel`);
+    } else {
+      router.push("/profile?tab=bookings");
+    }
   };
 
   const { t } = useTranslation("booking");
@@ -316,7 +336,7 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
         <SuccessModal
           title={t("hotelBooking.success.title", "Booking Confirmed!")}
           message={t("hotelBooking.success.message", "Your hotel reservation has been successfully booked. Confirmation details have been sent to your email.")}
-          primaryButtonText={t("hotelBooking.success.viewBookings", "View My Bookings")}
+          primaryButtonText={t("hotelBooking.success.viewBookings", "View Booking")}
           buttonText={t("hotelBooking.success.backToHotels", "Back to Hotels")}
           onPrimaryClick={handlePrimaryModal}
           onClose={handleCloseModal}

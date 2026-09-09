@@ -228,6 +228,8 @@
       "awaitingDeposit": "30% Pagamento in attesa",
       "awaitingPayment": "100% Pagamento in attesa",
       "refundCompleted": "Rimborso completato",
+      "refundInProgress": "Rimborso in corso",
+      "refunded": "Rimborso completato",
       "rejectedByAdmin": "Richiesta rifiutata",
       "notSpecified": "Non specificato"
     },
@@ -301,6 +303,10 @@
         "cancelled": "Annullata",
         "pending": "In Attesa"
       }
+    },
+    "card": {
+      "cancelledByYou": "Annullata da te",
+      "cancelledByAdmin": "Annullata da Egypt US"
     }
   },
   "cancelModal": {
@@ -327,7 +333,25 @@
     "country": "Paese della Banca",
     "confirmText": "Confermo di voler annullare questa prenotazione e accetto l'informativa sulla cancellazione.",
     "cancelAction": "Conferma Annullamento",
-    "keepBooking": "Mantieni Prenotazione"
+    "keepBooking": "Mantieni Prenotazione",
+    "errors": {
+      "reasonRequired": "Seleziona un motivo di annullamento.",
+      "detailedReasonRequired": "Fornisci ulteriori dettagli per l'annullamento.",
+      "detailedReasonMin": "Fornisci almeno 5 caratteri.",
+      "accountNameRequired": "L'intestatario del conto è obbligatorio.",
+      "accountNameMin": "L'intestatario deve contenere almeno 3 caratteri.",
+      "accountNameInvalid": "Inserisci un nome valido.",
+      "bankNameRequired": "Il nome della banca è obbligatorio.",
+      "bankNameMin": "Il nome della banca deve contenere almeno 2 caratteri.",
+      "accountNumberRequired": "Il numero di conto è obbligatorio.",
+      "accountNumberInvalid": "Inserisci un numero di conto valido (6–34 caratteri).",
+      "ibanRequired": "L'IBAN è obbligatorio.",
+      "ibanInvalid": "Inserisci un formato IBAN valido.",
+      "swiftRequired": "Il codice SWIFT / BIC è obbligatorio.",
+      "swiftInvalid": "Inserisci un codice SWIFT/BIC valido (8 o 11 caratteri).",
+      "countryRequired": "Seleziona il paese della banca.",
+      "agreedRequired": "Devi confermare e accettare per procedere."
+    }
   },
   "units": {
     "night": "Notte",
@@ -339,14 +363,32 @@
     "child": "Bambino",
     "children": "Bambini",
     "infant": "Neonato",
-    "infants": "Neonati"
+    "infants": "Neonati",
+    "room": "Camera",
+    "rooms": "Camere"
   },
   "rooms": {
     "singleRoom": "Camera Singola",
     "doubleRoom": "Camera Doppia",
     "tripleRoom": "Camera Tripla",
+    "standardRoom": "Camera Standard",
+    "deluxeRoom": "Camera Deluxe",
+    "suite": "Suite",
     "seaView": "Vista Mare",
     "poolView": "Vista Piscina",
     "gardenView": "Vista Giardino"
+  },
+  "refund": {
+    "bankDetailsTitle": "Dettagli bancari per il rimborso",
+    "summaryTitle": "Riepilogo rimborso",
+    "packageTotal": "Totale pacchetto",
+    "daysBeforeTravel": "Giorni prima del viaggio",
+    "cancellationPolicyApplied": "Politica di cancellazione applicata",
+    "deduction": "Detrazione",
+    "deductionAmount": "Importo detrazione",
+    "refundAmount": "Importo rimborso",
+    "transactionReference": "Riferimento transazione",
+    "refundReceipt": "Ricevuta di rimborso",
+    "reason": "Motivo"
   }
 }

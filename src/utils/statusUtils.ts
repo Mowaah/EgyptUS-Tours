@@ -20,6 +20,8 @@ export function formatStatusLabel(rawStatus?: string | null): string {
       return "30% Pending Payment";
     case "awaiting_payment":
       return "100% Pending Payment";
+    case "refund_in_progress":
+      return "Refund in Progress";
     case "refunded":
     case "refund_completed":
       return "Refund Completed";
@@ -60,6 +62,7 @@ export function getStatusVariant(status?: string | null): StatusPillVariant {
   if (!status) return "gray";
   const s = status.toLowerCase().replace(/[-_]/g, " ").trim();
 
+  if (s.includes("refund")) return "darkBlue";
   if (s === "new") return "green";
   if (s.includes("in progress")) return "orangeDark";
   if (s.includes("proposal ready")) return "teal";
@@ -72,7 +75,6 @@ export function getStatusVariant(status?: string | null): StatusPillVariant {
   if (s.includes("fully paid")) return "purple";
   if (s.includes("in trip") || s.includes("in stay") || s.includes("in transit") || s.includes("on trip")) return "magenta";
   if (s.includes("completed")) return "green";
-  if (s.includes("refund")) return "darkBlue";
   if (s.includes("overdue")) return "red";
   if (s.includes("upcoming")) return "blue";
   if (s.includes("partially paid") || s.includes("pending")) return "orange";
@@ -88,6 +90,14 @@ export function getStatusVariant(status?: string | null): StatusPillVariant {
 export function getStatusIconType(status?: string | null): StatusIconType {
   if (!status) return "dot";
   const s = status.toLowerCase().replace(/[-_]/g, " ").trim();
+
+  // Refund states
+  if (s.includes("refund in progress") || s === "refund_in_progress") {
+    return "spinner";
+  }
+  if (s.includes("refunded") || s === "refunded" || s.includes("refund completed")) {
+    return "check";
+  }
 
   // Pending / In progress states -> Spinner
   if (

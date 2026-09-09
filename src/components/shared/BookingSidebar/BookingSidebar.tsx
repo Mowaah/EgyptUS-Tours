@@ -2,12 +2,14 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Trip, Hotel } from "@/types";
 import { BookingData } from "@/types";
 import { MultiCurrencyPrice } from "@/constants/currency";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { calculateTripBookingPrice, calculateHotelBookingPrice, CHILD_POLICY, normalizeRoomType, resolveApplicableSeason } from "@/utils/bookingPricing";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import styles from "./BookingSidebar.module.scss";
 
 interface BookingSidebarProps {
@@ -15,6 +17,7 @@ interface BookingSidebarProps {
   totalAmount: number;
   depositAmount: number;
   detailsId?: string;
+  itemHref?: string;
   // Pass either a trip or a hotel — not both
   trip?: Trip;
   hotel?: Hotel;
@@ -37,12 +40,12 @@ interface BookingSidebarProps {
   }>;
 };
 
-// "2026-03-15" → "Mar 15". Falls back to a neutral placeholder if empty/invalid.
+
+// "2026-03-15" → "09/10/2026". Falls back to a neutral placeholder if empty/invalid.
 function formatShortDate(value: string | undefined, fallback: string): string {
   if (!value) return fallback;
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return fallback;
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const result = formatDateDDMMYYYY(value);
+  return result || fallback;
 }
 
 export default function BookingSidebar({
@@ -52,6 +55,7 @@ export default function BookingSidebar({
   totalAmount,
   depositAmount,
   detailsId = "booking-summary-details",
+  itemHref,
   totalRooms = 0,
   totalGuests = 0,
   totalPrices,
@@ -141,6 +145,11 @@ export default function BookingSidebar({
   const image = isHotel ? (hotel!.image || "/images/pyramids.jpg") : (trip!.image || "/images/cruise.jpg");
   const title = isHotel ? hotel!.name : trip!.title;
   const rating = isHotel ? (hotel?.rating ?? 0) : (trip?.rating ?? 0);
+  const targetHref = itemHref || (
+    isHotel
+      ? (hotel?.id && hotel.id !== "hotel" ? `/hotels/${hotel.id}` : undefined)
+      : (trip?.id && trip.id !== "trip" ? `/egypttours/${trip.id}` : undefined)
+  );
 
   const startLabel = isHotel ? t("sidebar.checkIn", "Check-in") : t("sidebar.startDate", "Start Date");
   const endLabel = isHotel ? t("sidebar.checkOut", "Check-Out") : t("sidebar.endDate", "End Date");
@@ -319,11 +328,19 @@ export default function BookingSidebar({
         <div id={detailsId} className={styles.detailsContent}>
           {/* Main card */}
           <div className={styles.thumbWrap}>
-            <Image src={image} width={384} height={200} alt={title} className={styles.thumb} />
+            <Image src={image} width={369} height={145} alt={title} className={styles.sidebarImage} />
           </div>
 
           <div className={styles.titleRow}>
-            <h3 className={styles.title}>{title}</h3>
+            <h3 className={styles.sidebarTitle}>
+              {targetHref ? (
+                <Link href={targetHref} className={styles.titleLink}>
+                  {title}
+                </Link>
+              ) : (
+                <span className={styles.titleUnderline}>{title}</span>
+              )}
+            </h3>
             {rating > 0 && (
               <div className={styles.ratingPill}>
                 <svg width="18" height="18" viewBox="0 0 28 28" fill="none" className={styles.starIcon}>
@@ -345,7 +362,7 @@ export default function BookingSidebar({
                 <span className={styles.dateLabel}>{startLabel}</span>
               </div>
               <div className={styles.dateTextBlock}>
-                <strong className={styles.dateValue}>{formData.startDate || "Sun, Mar 15"}</strong>
+                <strong className={styles.dateValue}>{formatDateDDMMYYYY(formData.startDate) || "DD/MM/YYYY"}</strong>
                 <small className={styles.dateTime}>{t("sidebar.fromTime", "From 15:00")}</small>
               </div>
             </div>
@@ -357,7 +374,7 @@ export default function BookingSidebar({
                 <span className={styles.dateLabel}>{endLabel}</span>
               </div>
               <div className={styles.dateTextBlock}>
-                <strong className={styles.dateValue}>{formData.endDate || "Sun, Mar 15"}</strong>
+                <strong className={styles.dateValue}>{formatDateDDMMYYYY(formData.endDate) || "DD/MM/YYYY"}</strong>
                 <small className={styles.dateTime}>{t("sidebar.fromTime", "From 15:00")}</small>
               </div>
             </div>

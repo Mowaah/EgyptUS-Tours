@@ -6,6 +6,8 @@ import { getProfileRequestDetail } from "@/lib/api";
 import {
   BookingDetailsSections,
   PageHeader,
+  RefundBankDetailsCard,
+  RefundSummaryCard,
   StatusPill,
   type BookingDetailsSection,
   type TripBookingStatus,
@@ -349,6 +351,25 @@ export default function ProfileRequestDetailsPage() {
     ];
   }
 
+  const refundBankData = (data as any)?.refund_bank_details || (data as any)?.bank_details || {};
+  const refundSummaryData = (data as any)?.refund_summary || {};
+  const hasBankData = Boolean(
+    refundBankData.account_holder_name ||
+    refundBankData.bank_name ||
+    refundBankData.account_number ||
+    refundBankData.iban
+  );
+  const hasSummaryData = Boolean(
+    refundSummaryData.refund_amount ||
+    refundSummaryData.package_total ||
+    refundSummaryData.deduction_amount ||
+    (data as any)?.reason ||
+    (data as any)?.refund_receipt
+  );
+  const isRefundInProgress = rawStatus === "refund_in_progress" || (data as any)?.workflow_status === "refund_in_progress";
+  const isRefunded = rawStatus === "refunded" || (data as any)?.workflow_status === "refunded";
+  const hasRefundDetails = (isRefundInProgress || isRefunded) && (hasBankData || hasSummaryData);
+
   return (
     <div className={styles.page}>
       <PageHeader
@@ -394,7 +415,24 @@ export default function ProfileRequestDetailsPage() {
               Loading request details...
             </div>
           ) : (
-            <BookingDetailsSections sections={sections} className={styles.sections} />
+            <>
+              <BookingDetailsSections sections={sections} className={styles.sections} />
+
+              {(isRefundInProgress || isRefunded) && hasRefundDetails && (
+                <div className={styles.refundContainer}>
+                  {hasBankData && (
+                    <RefundBankDetailsCard data={refundBankData} />
+                  )}
+                  {hasSummaryData && (
+                    <RefundSummaryCard
+                      data={refundSummaryData}
+                      receipt={(data as any)?.refund_receipt}
+                      reason={(data as any)?.reason}
+                    />
+                  )}
+                </div>
+              )}
+            </>
           )}
         </section>
       </div>

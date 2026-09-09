@@ -53,33 +53,42 @@ function PaymentResultContent() {
 
       let savedHotelSlug: string | null = null;
       let savedTripSlug: string | null = null;
+      let savedVehicleSlug: string | null = null;
       let isGroupTrip = false;
       let savedBookingId: string | null = null;
-      let targetType: "hotel" | "trip" | null = null;
+      let targetType: "hotel" | "trip" | "transport" | null = null;
 
       try {
         const tripStored = localStorage.getItem("last_trip_booking") || sessionStorage.getItem("last_trip_booking");
         const hotelStored = localStorage.getItem("last_hotel_booking") || sessionStorage.getItem("last_hotel_booking");
+        const transportStored = localStorage.getItem("last_transport_booking") || sessionStorage.getItem("last_transport_booking");
 
         const tripParsed = tripStored ? JSON.parse(tripStored) : null;
         const hotelParsed = hotelStored ? JSON.parse(hotelStored) : null;
+        const transportParsed = transportStored ? JSON.parse(transportStored) : null;
 
         const tripTime = Number(tripParsed?.timestamp || 0);
         const hotelTime = Number(hotelParsed?.timestamp || 0);
+        const transportTime = Number(transportParsed?.timestamp || 0);
 
         const now = Date.now();
         const tripValid = tripTime && now - tripTime < 2 * 60 * 60 * 1000;
         const hotelValid = hotelTime && now - hotelTime < 2 * 60 * 60 * 1000;
+        const transportValid = transportTime && now - transportTime < 2 * 60 * 60 * 1000;
 
-        if (tripValid && (!hotelValid || tripTime >= hotelTime)) {
+        if (tripValid && (!hotelValid || tripTime >= hotelTime) && (!transportValid || tripTime >= transportTime)) {
           targetType = "trip";
           savedTripSlug = sanitizeSlug(tripParsed.tripSlug);
           isGroupTrip = Boolean(tripParsed.isGroupTrip);
           savedBookingId = tripParsed.id ? sanitizeId(String(tripParsed.id)) : null;
-        } else if (hotelValid) {
+        } else if (hotelValid && (!transportValid || hotelTime >= transportTime)) {
           targetType = "hotel";
           savedHotelSlug = sanitizeSlug(hotelParsed.hotelSlug);
           savedBookingId = hotelParsed.id ? sanitizeId(String(hotelParsed.id)) : null;
+        } else if (transportValid) {
+          targetType = "transport";
+          savedVehicleSlug = sanitizeSlug(transportParsed.vehicleSlug || transportParsed.id);
+          savedBookingId = transportParsed.id ? sanitizeId(String(transportParsed.id)) : null;
         }
       } catch (e) {
         console.error("Failed to read booking info from storage", e);
@@ -117,6 +126,12 @@ function PaymentResultContent() {
         } else {
           router.replace(`/hotels/${savedHotelSlug}/book?payment_failed=true`);
         }
+      } else if (targetType === "transport" && savedVehicleSlug) {
+        if (success) {
+          router.replace(`/transportation/${savedVehicleSlug}/book?booking_success=true&booking_id=${bookingIdParam}`);
+        } else {
+          router.replace(`/transportation/${savedVehicleSlug}/book?payment_failed=true`);
+        }
       } else {
         if (success) {
           const amountCents = urlParams.get("amount_cents");
@@ -131,7 +146,7 @@ function PaymentResultContent() {
           }
 
           if (bookingIdParam && /^\d+$/.test(bookingIdParam)) {
-            router.replace(`/profile/bookings-details?id=${bookingIdParam}&type=trip&payment_success=true`);
+            router.replace(`/profile/bookings-details?id=${bookingIdParam}&type=${targetType || "trip"}&payment_success=true`);
           } else {
             router.replace(`/profile?booking_success=true&booking_id=${bookingIdParam}${extraParams}`);
           }

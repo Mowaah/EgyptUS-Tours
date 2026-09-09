@@ -319,4 +319,12 @@
   font-weight: $font-weight-normal;
 }
 
+.refundContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  margin-top: 24px;
+}
+
 

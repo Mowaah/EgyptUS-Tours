@@ -228,6 +228,8 @@
       "awaitingDeposit": "30% Pending Payment",
       "awaitingPayment": "100% Pending Payment",
       "refundCompleted": "Refund Completed",
+      "refundInProgress": "Refund in Progress",
+      "refunded": "Refund Completed",
       "rejectedByAdmin": "Request Rejected",
       "notSpecified": "Not Specified"
     },
@@ -301,6 +303,10 @@
         "cancelled": "Cancelled",
         "pending": "Pending"
       }
+    },
+    "card": {
+      "cancelledByYou": "Cancelled by You",
+      "cancelledByAdmin": "Cancelled by Egypt US"
     }
   },
   "cancelModal": {
@@ -327,7 +333,25 @@
     "country": "Bank Country",
     "confirmText": "I confirm that I want to cancel this booking and agree to the cancellation policy.",
     "cancelAction": "Confirm Cancellation",
-    "keepBooking": "Keep Booking"
+    "keepBooking": "Keep Booking",
+    "errors": {
+      "reasonRequired": "Please select a cancellation reason.",
+      "detailedReasonRequired": "Please provide details for your cancellation.",
+      "detailedReasonMin": "Please provide at least 5 characters.",
+      "accountNameRequired": "Account holder name is required.",
+      "accountNameMin": "Account holder name must be at least 3 characters.",
+      "accountNameInvalid": "Please enter a valid name.",
+      "bankNameRequired": "Bank name is required.",
+      "bankNameMin": "Bank name must be at least 2 characters.",
+      "accountNumberRequired": "Account number is required.",
+      "accountNumberInvalid": "Please enter a valid account number (6–34 characters).",
+      "ibanRequired": "IBAN is required.",
+      "ibanInvalid": "Please enter a valid IBAN format.",
+      "swiftRequired": "SWIFT / BIC code is required.",
+      "swiftInvalid": "Please enter a valid SWIFT/BIC code (8 or 11 characters).",
+      "countryRequired": "Please select a bank country.",
+      "agreedRequired": "You must confirm and agree to proceed."
+    }
   },
   "units": {
     "night": "Night",
@@ -339,14 +363,32 @@
     "child": "Child",
     "children": "Children",
     "infant": "Infant",
-    "infants": "Infants"
+    "infants": "Infants",
+    "room": "Room",
+    "rooms": "Rooms"
   },
   "rooms": {
     "singleRoom": "Single Room",
     "doubleRoom": "Double Room",
     "tripleRoom": "Triple Room",
+    "standardRoom": "Standard Room",
+    "deluxeRoom": "Deluxe Room",
+    "suite": "Suite",
     "seaView": "Sea View",
     "poolView": "Pool View",
     "gardenView": "Garden View"
+  },
+  "refund": {
+    "bankDetailsTitle": "Refund Bank Details",
+    "summaryTitle": "Refund Summary",
+    "packageTotal": "Package Total",
+    "daysBeforeTravel": "Days Before Travel",
+    "cancellationPolicyApplied": "Cancellation Policy Applied",
+    "deduction": "Deduction",
+    "deductionAmount": "Deduction Amount",
+    "refundAmount": "Refund Amount",
+    "transactionReference": "Transaction Reference",
+    "refundReceipt": "Refund Receipt",
+    "reason": "Reason"
   }
 }

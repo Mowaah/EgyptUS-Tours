@@ -1,17 +1,12 @@
 import styles from "./ViewTransportation.module.scss";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 
 interface TransferDetailsProps {
   transfer: any;
 }
 
 function formatDateString(dateStr: string) {
-  if (!dateStr) return "-";
-  try {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString("en-US", { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-  } catch {
-    return dateStr;
-  }
+  return formatDateDDMMYYYY(dateStr, "-");
 }
 
 export default function TransferDetails({ transfer }: TransferDetailsProps) {
