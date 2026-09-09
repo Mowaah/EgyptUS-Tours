@@ -86,10 +86,10 @@
     "perNight": "/notte",
     "perNightFull": "a notte",
     "perPerson": "a persona",
-    "day": "giorno",
-    "days": "giorni",
-    "night": "notte",
-    "nights": "notti",
+    "day": "Giorno",
+    "days": "Giorni",
+    "night": "Notte",
+    "nights": "Notti",
     "hour": "ora",
     "hours": "ore",
     "country": "paese",
@@ -106,7 +106,13 @@
     "largeSuitcases": "{count} valigie grandi",
     "starLuxuryHotel": "Hotel di lusso a {stars} stelle",
     "viewTrip": "Visualizza viaggio",
-    "bookNow": "Prenota ora"
+    "bookNow": "Prenota ora",
+    "adult": "Adulto",
+    "adults": "Adulti",
+    "child": "Bambino",
+    "children": "Bambini",
+    "infant": "Neonato",
+    "infants": "Neonati"
   },
   "breadcrumb": {
     "home": "Inizio",
@@ -231,7 +237,9 @@
       "refundInProgress": "Rimborso in corso",
       "refunded": "Rimborso completato",
       "rejectedByAdmin": "Richiesta rifiutata",
-      "notSpecified": "Non specificato"
+      "notSpecified": "Non specificato",
+      "cancelledByYou": "Annullata da te",
+      "cancelledByAdmin": "Annullata da Egypt US"
     },
     "emptyStates": {
       "authFavoritesTitle": "Crea un account per vedere i tuoi preferiti",
@@ -303,10 +311,6 @@
         "cancelled": "Annullata",
         "pending": "In Attesa"
       }
-    },
-    "card": {
-      "cancelledByYou": "Annullata da te",
-      "cancelledByAdmin": "Annullata da Egypt US"
     }
   },
   "cancelModal": {
@@ -352,20 +356,6 @@
       "countryRequired": "Seleziona il paese della banca.",
       "agreedRequired": "Devi confermare e accettare per procedere."
     }
-  },
-  "units": {
-    "night": "Notte",
-    "nights": "Notti",
-    "day": "Giorno",
-    "days": "Giorni",
-    "adult": "Adulto",
-    "adults": "Adulti",
-    "child": "Bambino",
-    "children": "Bambini",
-    "infant": "Neonato",
-    "infants": "Neonati",
-    "room": "Camera",
-    "rooms": "Camere"
   },
   "rooms": {
     "singleRoom": "Camera Singola",

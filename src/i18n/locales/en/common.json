@@ -86,10 +86,10 @@
     "perNight": "/night",
     "perNightFull": "per night",
     "perPerson": "per person",
-    "day": "day",
-    "days": "days",
-    "night": "night",
-    "nights": "nights",
+    "day": "Day",
+    "days": "Days",
+    "night": "Night",
+    "nights": "Nights",
     "hour": "hour",
     "hours": "hours",
     "country": "country",
@@ -106,7 +106,13 @@
     "largeSuitcases": "{count} large suitcases",
     "starLuxuryHotel": "{stars}-Star Luxury Hotel",
     "viewTrip": "View Trip",
-    "bookNow": "Book Now"
+    "bookNow": "Book Now",
+    "adult": "Adult",
+    "adults": "Adults",
+    "child": "Child",
+    "children": "Children",
+    "infant": "Infant",
+    "infants": "Infants"
   },
   "breadcrumb": {
     "home": "Home",
@@ -231,7 +237,9 @@
       "refundInProgress": "Refund in Progress",
       "refunded": "Refund Completed",
       "rejectedByAdmin": "Request Rejected",
-      "notSpecified": "Not Specified"
+      "notSpecified": "Not Specified",
+      "cancelledByYou": "Cancelled by You",
+      "cancelledByAdmin": "Cancelled by Egypt US"
     },
     "emptyStates": {
       "authFavoritesTitle": "Create an Account to View Your Favorites",
@@ -303,10 +311,6 @@
         "cancelled": "Cancelled",
         "pending": "Pending"
       }
-    },
-    "card": {
-      "cancelledByYou": "Cancelled by You",
-      "cancelledByAdmin": "Cancelled by Egypt US"
     }
   },
   "cancelModal": {
@@ -352,20 +356,6 @@
       "countryRequired": "Please select a bank country.",
       "agreedRequired": "You must confirm and agree to proceed."
     }
-  },
-  "units": {
-    "night": "Night",
-    "nights": "Nights",
-    "day": "Day",
-    "days": "Days",
-    "adult": "Adult",
-    "adults": "Adults",
-    "child": "Child",
-    "children": "Children",
-    "infant": "Infant",
-    "infants": "Infants",
-    "room": "Room",
-    "rooms": "Rooms"
   },
   "rooms": {
     "singleRoom": "Single Room",
