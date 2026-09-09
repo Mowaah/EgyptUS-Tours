@@ -145,6 +145,8 @@ export default function ViewB2BRequest({ requestId }: { requestId: string }) {
           <ActivityTimeline timelineRows={requestData.activity_timeline} />
         </>
       }
+      tripStartDate={requestData.start_date || requestData.program_start_date}
+      tripEndDate={requestData.end_date}
       onActionSubmit={handleActionSubmit}
     />
   );

@@ -63,7 +63,7 @@ export default function RecordDepositPaymentModal({ open, onClose, onSubmit, pay
               label=""
               id="total-trip-cost"
               variant="modal"
-              value={paymentOverview?.total_price ? `${paymentOverview.currency?.toUpperCase() === 'GBP' ? '£' : paymentOverview.currency?.toUpperCase() === 'USD' ? '$' : paymentOverview.currency?.toUpperCase() || ''} ${parseFloat(paymentOverview.total_price).toLocaleString()}` : "N/A"}
+              value={paymentOverview?.total_price ? `$${parseFloat(paymentOverview.total_price).toLocaleString()}` : "N/A"}
               disabled
               onChange={() => {}}
             />
@@ -85,11 +85,11 @@ export default function RecordDepositPaymentModal({ open, onClose, onSubmit, pay
           <div className={styles.summaryBox}>
             <div className={styles.summaryCol}>
               <span className={styles.summaryTitle}>Deposit Amount</span>
-              <span className={styles.summaryValue}>{paymentOverview?.deposit_amount ? `${paymentOverview.currency?.toUpperCase() === 'GBP' ? '£' : paymentOverview.currency?.toUpperCase() === 'USD' ? '$' : paymentOverview.currency?.toUpperCase() || ''} ${parseFloat(paymentOverview.deposit_amount).toLocaleString()}` : "N/A"}</span>
+              <span className={styles.summaryValue}>{paymentOverview?.deposit_amount ? `$${parseFloat(paymentOverview.deposit_amount).toLocaleString()}` : "N/A"}</span>
             </div>
             <div className={styles.summaryCol}>
               <span className={styles.summaryTitle}>Remaining Balance</span>
-              <span className={styles.summaryValue}>{paymentOverview?.remaining_balance ? `${paymentOverview.currency?.toUpperCase() === 'GBP' ? '£' : paymentOverview.currency?.toUpperCase() === 'USD' ? '$' : paymentOverview.currency?.toUpperCase() || ''} ${parseFloat(paymentOverview.remaining_balance).toLocaleString()}` : "N/A"}</span>
+              <span className={styles.summaryValue}>{paymentOverview?.remaining_balance ? `$${parseFloat(paymentOverview.remaining_balance).toLocaleString()}` : "N/A"}</span>
             </div>
           </div>
           

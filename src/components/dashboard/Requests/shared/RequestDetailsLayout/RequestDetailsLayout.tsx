@@ -66,6 +66,8 @@ interface RequestDetailsLayoutProps {
     refund_amount: string;
     currency: string;
   };
+  tripStartDate?: string;
+  tripEndDate?: string;
 }
 
 export default function RequestDetailsLayout({
@@ -86,7 +88,9 @@ export default function RequestDetailsLayout({
   onActionSubmit,
   hasUnsentProposal,
   paymentOverview,
-  refundSummary
+  refundSummary,
+  tripStartDate,
+  tripEndDate,
 }: RequestDetailsLayoutProps) {
   const [activeModalKey, setActiveModalKey] = useState<string | null>(null);
   const [bannerMessage, setBannerMessage] = useState("");
@@ -589,6 +593,8 @@ export default function RequestDetailsLayout({
         open={activeModalKey === "approve"}
         onClose={() => setActiveModalKey(null)}
         onSubmit={(data) => handleModalSubmit("approve", data)}
+        defaultStartDate={tripStartDate}
+        defaultEndDate={tripEndDate}
       />
 
       <RecordDepositPaymentModal

@@ -84,7 +84,7 @@ export default function RefundPaymentModal({ open, onClose, onSubmit, refundSumm
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #F8FAFC" }}>
               <span style={{ color: "#A3A3A3", fontSize: "14px", fontWeight: 500 }}>Package Total</span>
-              <span style={{ color: "#374151", fontSize: "16px", fontFamily: "Trip Sans", fontWeight: 500 }}>{refundSummary?.package_total ? `${refundSummary.currency?.toUpperCase() === 'GBP' ? '£' : refundSummary.currency?.toUpperCase() === 'USD' ? '$' : refundSummary.currency?.toUpperCase() || ''} ${parseFloat(refundSummary.package_total).toLocaleString()}` : "N/A"}</span>
+              <span style={{ color: "#374151", fontSize: "16px", fontFamily: "Trip Sans", fontWeight: 500 }}>{refundSummary?.package_total ? `$${parseFloat(refundSummary.package_total).toLocaleString()}` : "N/A"}</span>
             </div>
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #F8FAFC" }}>
@@ -104,13 +104,13 @@ export default function RefundPaymentModal({ open, onClose, onSubmit, refundSumm
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #F8FAFC" }}>
               <span style={{ color: "#A3A3A3", fontSize: "14px", fontWeight: 500 }}>Deduction Amount</span>
-              <span style={{ color: "#374151", fontSize: "16px", fontFamily: "Trip Sans", fontWeight: 500 }}>{refundSummary?.deduction_amount ? `${refundSummary.currency?.toUpperCase() === 'GBP' ? '£' : refundSummary.currency?.toUpperCase() === 'USD' ? '$' : refundSummary.currency?.toUpperCase() || ''} ${parseFloat(refundSummary.deduction_amount).toLocaleString()}` : "N/A"}</span>
+              <span style={{ color: "#374151", fontSize: "16px", fontFamily: "Trip Sans", fontWeight: 500 }}>{refundSummary?.deduction_amount ? `$${parseFloat(refundSummary.deduction_amount).toLocaleString()}` : "N/A"}</span>
             </div>
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #F8FAFC" }}>
               <span style={{ color: "#A3A3A3", fontSize: "14px", fontWeight: 500 }}>Refund Amount</span>
               <div style={{ background: "rgba(255, 102, 0, 0.1)", borderRadius: "128px", padding: "4px 12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <span style={{ color: "#FF6600", fontSize: "16px", fontFamily: "Trip Sans", fontWeight: 500 }}>{refundSummary?.refund_amount ? `${refundSummary.currency?.toUpperCase() === 'GBP' ? '£' : refundSummary.currency?.toUpperCase() === 'USD' ? '$' : refundSummary.currency?.toUpperCase() || ''} ${parseFloat(refundSummary.refund_amount).toLocaleString()}` : "N/A"}</span>
+                <span style={{ color: "#FF6600", fontSize: "16px", fontFamily: "Trip Sans", fontWeight: 500 }}>{refundSummary?.refund_amount ? `$${parseFloat(refundSummary.refund_amount).toLocaleString()}` : "N/A"}</span>
               </div>
             </div>
 

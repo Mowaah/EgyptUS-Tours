@@ -13,10 +13,12 @@ interface RejectRequestModalProps {
 
 export default function RejectRequestModal({ open, onClose, onSubmit }: RejectRequestModalProps) {
   const [reason, setReason] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!open) return;
     setReason("");
+    setError("");
     
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -35,6 +37,10 @@ export default function RejectRequestModal({ open, onClose, onSubmit }: RejectRe
   if (!open) return null;
 
   const handleSubmit = () => {
+    if (!reason.trim()) {
+      setError("Rejection reason is required.");
+      return;
+    }
     onSubmit(reason);
     onClose();
   };
@@ -58,7 +64,11 @@ export default function RejectRequestModal({ open, onClose, onSubmit }: RejectRe
               variant="modal"
               placeholder="Describe why this request is being rejected."
               value={reason}
-              onChange={(e) => setReason(e.target.value)}
+              onChange={(e) => {
+                setReason(e.target.value);
+                if (e.target.value.trim()) setError("");
+              }}
+              error={error}
               style={{ minHeight: "160px", resize: "none" }}
             />
           </div>

@@ -15,9 +15,30 @@
   gap: 8px;
 }
 
+.twoColRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.datePickerTrigger {
+  width: 100%;
+  cursor: pointer;
+}
+
 .fieldLabel {
   font-family: 'Trip Sans', sans-serif;
-  font-weight: 700;
+  font-weight: 500;
   font-size: $font-size-base;
   line-height: 20px;
   color: $dark;

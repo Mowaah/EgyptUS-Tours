@@ -145,6 +145,8 @@ export default function ViewMiceRequest({ requestId }: { requestId: string }) {
           <ActivityTimeline timelineRows={requestData.activity_timeline} />
         </>
       }
+      tripStartDate={requestData.event_details?.start_date}
+      tripEndDate={requestData.event_details?.end_date}
       onActionSubmit={handleActionSubmit}
     />
   );

@@ -13,10 +13,12 @@ interface MarkProposalSentModalProps {
 
 export default function MarkProposalSentModal({ open, onClose, onSubmit }: MarkProposalSentModalProps) {
   const [note, setNote] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!open) return;
     setNote("");
+    setError("");
     
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -35,6 +37,10 @@ export default function MarkProposalSentModal({ open, onClose, onSubmit }: MarkP
   if (!open) return null;
 
   const handleSubmit = () => {
+    if (!note.trim()) {
+      setError("Activity note is required.");
+      return;
+    }
     onSubmit(note);
     onClose();
   };
@@ -57,7 +63,11 @@ export default function MarkProposalSentModal({ open, onClose, onSubmit }: MarkP
               variant="modal"
               placeholder="Describe how the proposal was shared with the customer"
               value={note}
-              onChange={(e) => setNote(e.target.value)}
+              onChange={(e) => {
+                setNote(e.target.value);
+                if (e.target.value.trim()) setError("");
+              }}
+              error={error}
               style={{ minHeight: "160px", resize: "none" }}
             />
           </div>

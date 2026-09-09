@@ -76,6 +76,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   gap: 0.25rem;
   height: 1.5rem;
   padding: 0.25rem 0.5rem;

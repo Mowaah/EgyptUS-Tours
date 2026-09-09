@@ -13,10 +13,12 @@ interface StartNegotiationModalProps {
 
 export default function StartNegotiationModal({ open, onClose, onSubmit }: StartNegotiationModalProps) {
   const [reason, setReason] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!open) return;
     setReason("");
+    setError("");
     
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -35,6 +37,10 @@ export default function StartNegotiationModal({ open, onClose, onSubmit }: Start
   if (!open) return null;
 
   const handleSubmit = () => {
+    if (!reason.trim()) {
+      setError("Negotiation reason is required.");
+      return;
+    }
     onSubmit(reason);
     onClose();
   };
@@ -57,7 +63,11 @@ export default function StartNegotiationModal({ open, onClose, onSubmit }: Start
               variant="modal"
               placeholder="Customer requested a lower price and a different hotel"
               value={reason}
-              onChange={(e) => setReason(e.target.value)}
+              onChange={(e) => {
+                setReason(e.target.value);
+                if (e.target.value.trim()) setError("");
+              }}
+              error={error}
               style={{ minHeight: "160px", resize: "none" }}
             />
           </div>

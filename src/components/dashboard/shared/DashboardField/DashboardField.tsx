@@ -19,8 +19,9 @@ import styles from "./DashboardField.module.scss";
 type DashboardFieldVariant = "default" | "modal";
 
 interface DashboardFieldBaseProps {
-  label: ReactNode;
+  label?: ReactNode;
   error?: string;
+  startAdornment?: ReactNode;
   endAdornment?: ReactNode;
   variant?: DashboardFieldVariant;
   disableLabelDim?: boolean;
@@ -266,9 +267,11 @@ function ModalSelect({
 
   return (
     <>
-      <label htmlFor={id} className={`${styles.label} ${variant === "modal" ? styles.modalLabel : ""} ${disabled && variant !== "modal" ? styles.labelDisabled : ""}`}>
-        {label}
-      </label>
+      {Boolean(label) && (
+        <label htmlFor={id} className={`${styles.label} ${variant === "modal" ? styles.modalLabel : ""} ${disabled && variant !== "modal" ? styles.labelDisabled : ""}`}>
+          {label}
+        </label>
+      )}
       <div className={`${styles.control} ${styles.modalSelectWrap}`} ref={ref}>
         <button
           type="button"
@@ -306,6 +309,7 @@ function ModalSelect({
 export default function DashboardField({
   label,
   error,
+  startAdornment,
   endAdornment,
   variant = "default",
   className,
@@ -339,6 +343,8 @@ export default function DashboardField({
   const inputClassName = `${styles.input} ${
     variant === "modal" ? styles.modalInput : ""
   } ${error ? styles.inputError : ""} ${
+    startAdornment ? styles.hasStartAdornment : ""
+  } ${
     endAdornment ? styles.hasAdornment : ""
   } ${className || ""}`;
 
@@ -363,10 +369,15 @@ export default function DashboardField({
         />
       ) : (
         <>
-          <label htmlFor={id} className={labelClassName}>
-            {label}
-          </label>
+          {Boolean(label) && (
+            <label htmlFor={id} className={labelClassName}>
+              {label}
+            </label>
+          )}
           <div className={styles.control}>
+            {startAdornment ? (
+              <div className={styles.startAdornment}>{startAdornment}</div>
+            ) : null}
             {control === "textarea" ? (
               <textarea
                 id={id}

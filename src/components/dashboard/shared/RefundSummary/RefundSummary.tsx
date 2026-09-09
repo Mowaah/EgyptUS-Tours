@@ -47,8 +47,7 @@ export default function RefundSummary({ data }: RefundSummaryProps) {
   const refundAmt = data.refund_amount || "0";
   const ref = data.transaction_reference || data.reference || "N/A";
   
-  const rawCurrency = ((data as any)?.currency || "usd").toLowerCase();
-  const currencySymbol = rawCurrency === "eur" ? "€" : rawCurrency === "gbp" ? "£" : "$";
+  const currencySymbol = "$";
 
   return (
     <div className={styles.container}>

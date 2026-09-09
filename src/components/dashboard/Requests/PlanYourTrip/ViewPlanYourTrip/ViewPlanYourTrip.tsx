@@ -190,6 +190,8 @@ export default function ViewPlanYourTrip({ requestId }: { requestId: string }) {
           <ActivityTimeline timelineRows={requestData.activity_timeline} />
         </>
       }
+      tripStartDate={requestData.trip_details?.start_date}
+      tripEndDate={requestData.trip_details?.end_date}
       onActionSubmit={handleActionSubmit}
     />
   );

@@ -25,6 +25,7 @@ import type {
   Tone,
   Trend,
 } from "./types";
+import { formatCompactMetric, formatTrendPct } from "@/utils/formatMetric";
 import styles from "./DashboardHome.module.scss";
 
 const DESTINATION_COLORS = ["#A1CCFF", "#FFC6A0", "#FFD6DD", "#E9BDFF", "#B6F3D2"];
@@ -49,12 +50,60 @@ function formatTimeAgo(isoDate: string): string {
 function mapMetricCards(cards: DashboardCards): MetricCardData[] {
   const toTrend = (pct: string): Trend => (pct?.startsWith("-") ? "down" : "up");
   return [
-    { label: "Total Bookings", value: String(cards.total_bookings?.value ?? 0), change: cards.total_bookings?.trend_pct ?? "0%", trend: toTrend(cards.total_bookings?.trend_pct), tone: "blue", icon: "total-bookings", spark: "" },
-    { label: "Total Revenue", value: String(cards.total_revenue?.value ?? "£0"), change: cards.total_revenue?.trend_pct ?? "0%", trend: toTrend(cards.total_revenue?.trend_pct), tone: "green", icon: "total-revenue", spark: "" },
-    { label: "Pending Confirmations", value: String(cards.pending_confirmations?.value ?? 0), change: cards.pending_confirmations?.trend_pct ?? "0%", trend: toTrend(cards.pending_confirmations?.trend_pct), tone: "orange", icon: "pending-confirmation", spark: "" },
-    { label: "New Leads", value: String(cards.new_leads?.value ?? 0), change: cards.new_leads?.trend_pct ?? "0%", trend: toTrend(cards.new_leads?.trend_pct), tone: "purple", icon: "new-leads", spark: "" },
-    { label: "Upcoming Departures", value: String(cards.upcoming_departures?.value ?? 0), change: cards.upcoming_departures?.trend_pct ?? "0%", trend: toTrend(cards.upcoming_departures?.trend_pct), tone: "pink", icon: "upcoming-deartures", spark: "" },
-    { label: "Outstanding Deposits", value: String(cards.outstanding_deposits?.value ?? "£0"), change: cards.outstanding_deposits?.trend_pct ?? "0%", trend: toTrend(cards.outstanding_deposits?.trend_pct), tone: "amber", icon: "outstanding-deposits", spark: "" },
+    {
+      label: "Total Bookings",
+      value: formatCompactMetric(cards.total_bookings?.value, false),
+      change: formatTrendPct(cards.total_bookings?.trend_pct),
+      trend: toTrend(cards.total_bookings?.trend_pct),
+      tone: "blue",
+      icon: "total-bookings",
+      spark: "",
+    },
+    {
+      label: "Total Revenue",
+      value: formatCompactMetric(cards.total_revenue?.value, true),
+      change: formatTrendPct(cards.total_revenue?.trend_pct),
+      trend: toTrend(cards.total_revenue?.trend_pct),
+      tone: "green",
+      icon: "total-revenue",
+      spark: "",
+    },
+    {
+      label: "Pending Confirmations",
+      value: formatCompactMetric(cards.pending_confirmations?.value, false),
+      change: formatTrendPct(cards.pending_confirmations?.trend_pct),
+      trend: toTrend(cards.pending_confirmations?.trend_pct),
+      tone: "orange",
+      icon: "pending-confirmation",
+      spark: "",
+    },
+    {
+      label: "New Leads",
+      value: formatCompactMetric(cards.new_leads?.value, false),
+      change: formatTrendPct(cards.new_leads?.trend_pct),
+      trend: toTrend(cards.new_leads?.trend_pct),
+      tone: "purple",
+      icon: "new-leads",
+      spark: "",
+    },
+    {
+      label: "Upcoming Departures",
+      value: formatCompactMetric(cards.upcoming_departures?.value, false),
+      change: formatTrendPct(cards.upcoming_departures?.trend_pct),
+      trend: toTrend(cards.upcoming_departures?.trend_pct),
+      tone: "pink",
+      icon: "upcoming-deartures",
+      spark: "",
+    },
+    {
+      label: "Outstanding Deposits",
+      value: formatCompactMetric(cards.outstanding_deposits?.value, true),
+      change: formatTrendPct(cards.outstanding_deposits?.trend_pct),
+      trend: toTrend(cards.outstanding_deposits?.trend_pct),
+      tone: "amber",
+      icon: "outstanding-deposits",
+      spark: "",
+    },
   ];
 }
 

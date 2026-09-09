@@ -22,8 +22,7 @@ export default function RefundModal({ open, onClose, onSubmit, refundSummary, cu
   const [file, setFile] = useState<File | undefined>();
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
-  const rawCurrency = (currency || (refundSummary as any)?.currency || "usd").toLowerCase();
-  const currencySymbol = rawCurrency === "eur" ? "€" : rawCurrency === "gbp" ? "£" : "$";
+  const currencySymbol = "$";
 
   useEffect(() => {
     if (!open) return;
