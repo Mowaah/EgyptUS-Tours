@@ -17,40 +17,26 @@ export async function getCategories(params?: QueryParams): Promise<ApiResponse> 
 
 
 export async function getAllCategories(params?: QueryParams): Promise<ApiResponse[]> {
-  const firstPage = await getCategories({ ...params, page: 1 });
-  if (Array.isArray(firstPage)) return firstPage;
-
-  const results: ApiResponse[] = Array.isArray(firstPage?.results)
-    ? [...firstPage.results]
-    : Array.isArray(firstPage?.data?.results)
-    ? [...firstPage.data.results]
-    : Array.isArray(firstPage?.data)
-    ? [...firstPage.data]
-    : [];
-
-  const count = firstPage?.count ?? firstPage?.data?.count ?? results.length;
-  const pageSize = results.length > 0 ? results.length : 10;
-  const totalPages = Math.ceil(count / pageSize);
-
-  if (totalPages > 1) {
-    const pagePromises = [];
-    for (let p = 2; p <= totalPages; p++) {
-      pagePromises.push(getCategories({ ...params, page: p }));
+  try {
+    let page = 1;
+    const allResults: ApiResponse[] = [];
+    while (true) {
+      const res: ApiResponse = await adminDataClient.get(TRIP_CATEGORIES_ENDPOINT, {
+        params: { ...params, page },
+      });
+      if (Array.isArray(res)) return res;
+      const items = (Array.isArray(res?.results) ? res.results : Array.isArray(res?.data) ? res.data : []) as ApiResponse[];
+      allResults.push(...items);
+      const total = Number(res?.count ?? allResults.length);
+      if (!res?.next || items.length === 0 || allResults.length >= total) {
+        break;
+      }
+      page++;
     }
-    const subsequentPages = await Promise.all(pagePromises);
-    for (const res of subsequentPages) {
-      const pageResults = Array.isArray(res?.results)
-        ? res.results
-        : Array.isArray(res?.data?.results)
-        ? res.data.results
-        : Array.isArray(res?.data)
-        ? res.data
-        : [];
-      results.push(...pageResults);
-    }
+    return allResults;
+  } catch {
+    return [];
   }
-
-  return results;
 }
 
 export async function createCategory(data: { translations: Record<string, { name: string }> }): Promise<ApiResponse> {

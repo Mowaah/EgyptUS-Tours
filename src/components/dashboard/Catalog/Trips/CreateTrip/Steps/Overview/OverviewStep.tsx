@@ -93,30 +93,30 @@ export function OverviewStep() {
   useEffect(() => {
     let ignore = false;
 
-    Promise.all([getCategories({ page_size: 100 }), getDestinations({ page_size: 100 })])
-      .then(([categoriesPayload, destinationsPayload]) => {
+    Promise.allSettled([getCategories({ page_size: 100 }), getDestinations({ page_size: 100 })])
+      .then(([categoriesResult, destinationsResult]) => {
         if (ignore) return;
-        setCategoryOptions([
-          { label: "Select Category", value: "", disabled: true },
-          ...asList(categoriesPayload).map((category) => ({
-            label: optionLabel(category),
-            value: String(category.slug || category.id),
-            disabled: false,
-          })),
-        ]);
-        setDestinationOptions([
-          { label: "Select Destinations", value: "", disabled: true },
-          ...asList(destinationsPayload).map((destination) => ({
-            label: optionLabel(destination),
-            value: String(destination.slug || destination.id),
-            disabled: false,
-          })),
-        ]);
-      })
-      .catch(() => {
-        if (!ignore) {
-          setCategoryOptions([{ label: "Select Category", value: "", disabled: true }]);
-          setDestinationOptions([{ label: "Select Destinations", value: "", disabled: true }]);
+
+        if (categoriesResult.status === "fulfilled") {
+          setCategoryOptions([
+            { label: "Select Category", value: "", disabled: true },
+            ...asList(categoriesResult.value).map((category) => ({
+              label: optionLabel(category),
+              value: String(category.slug || category.id),
+              disabled: false,
+            })),
+          ]);
+        }
+
+        if (destinationsResult.status === "fulfilled") {
+          setDestinationOptions([
+            { label: "Select Destinations", value: "", disabled: true },
+            ...asList(destinationsResult.value).map((destination) => ({
+              label: optionLabel(destination),
+              value: String(destination.slug || destination.id),
+              disabled: false,
+            })),
+          ]);
         }
       });
 

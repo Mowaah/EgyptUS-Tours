@@ -24,6 +24,7 @@ export async function getAllDestinations(params?: QueryParams): Promise<Record<s
       const res: Record<string, unknown> = await adminDataClient.get('/catalog/destinations/', {
         params: { ...params, page },
       });
+      if (Array.isArray(res)) return res as Record<string, unknown>[];
       const items = (Array.isArray(res?.results) ? res.results : Array.isArray(res?.data) ? res.data : []) as Record<string, unknown>[];
       allResults.push(...items);
       const total = Number(res?.count ?? allResults.length);

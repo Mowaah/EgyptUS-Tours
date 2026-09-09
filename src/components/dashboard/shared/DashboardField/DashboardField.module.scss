@@ -166,6 +166,8 @@
 
 .modalSelectTrigger {
   position: relative;
+  display: flex;
+  align-items: center;
   justify-content: flex-start;
   padding-right: 3rem;
   cursor: pointer;
@@ -183,12 +185,14 @@
 }
 
 .modalSelectValue {
-  display: block;
+  display: flex;
+  align-items: center;
   min-width: 0;
   overflow: hidden;
   color: $gray-500-zinc;
   font-size: $font-size-sm;
   font-weight: 400;
+  line-height: 1.35;
   text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -203,13 +207,18 @@
   flex-direction: row;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+  line-height: 1.35;
 }
 
 .multiSelectTagText {
   color: $dark;
   font-size: $font-size-sm;
   font-weight: 400;
-  line-height: 14px;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .multiSelectTagPill {
@@ -219,7 +228,9 @@
   padding: 2px 8px;
   font-size: $font-size-sm;
   font-weight: 500;
-  line-height: 19px;
+  line-height: 1.25;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .modalSelectDropdown {

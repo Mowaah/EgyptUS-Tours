@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect, type ReactNode } from "react";
 import Image from "next/image";
 import Button from "@/components/shared/Button/Button";
