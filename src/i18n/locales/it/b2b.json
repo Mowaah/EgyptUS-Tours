@@ -89,9 +89,9 @@
     "requestDetailsPlaceholder": "Descrivi la richiesta, il numero stimato di partecipanti, le destinazioni...",
     "submitButton": "Invia Richiesta di Proposta",
     "submitting": "Invio in corso...",
-    "successTitle": "Richiesta di Proposta Inviata con Successo!",
+    "successTitle": "La Tua Proposta Aziendale È in Lavorazione",
     "successRequestId": "ID Richiesta:",
-    "successDesc": "Il nostro team corporate esaminerà i dettagli e ti ricontatterà con una proposta personalizzata entro 24 ore.",
+    "successDesc": "Abbiamo ricevuto la tua richiesta e il nostro team sta preparando una risposta su misura per le tue esigenze.",
     "viewRequest": "Visualizza Richiesta",
     "backToHome": "Torna alla Home",
     "errors": {

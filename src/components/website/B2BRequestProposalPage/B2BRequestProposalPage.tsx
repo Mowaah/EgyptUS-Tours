@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { FormField, PhoneInput, NationalitySelect, SuccessModal, PageHeader, Button } from "@/components/shared";
 import { submitB2BProposal, extractApiError, extractFieldErrors } from "@/lib/api";
@@ -14,6 +14,7 @@ export default function B2BRequestProposalPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submittedId, setSubmittedId] = useState<string | number>("");
+  const submittedIdRef = useRef<string | number>("");
   const [formData, setFormData] = useState({
     companyName: "",
     country: "",
@@ -67,10 +68,10 @@ export default function B2BRequestProposalPage() {
     try {
       setIsSubmitting(true);
       const res = await submitB2BProposal(formData);
-      if (res && res.id) {
-        setSubmittedId(res.id);
-      } else {
-        setSubmittedId(Math.floor(100000 + Math.random() * 900000));
+      const newId = res?.id ?? res?.data?.id ?? "";
+      if (newId) {
+        setSubmittedId(newId);
+        submittedIdRef.current = newId;
       }
       setShowModal(true);
     } catch (err: any) {
@@ -248,16 +249,18 @@ export default function B2BRequestProposalPage() {
       {showModal && (
         <SuccessModal
           title={t("form.successTitle", "Your Corporate Proposal Is in Progress")}
-          message={t("form.successDesc", "We've received your request and our team is preparing a tailored response based on your requirements.")}
+          message={t("form.successDesc", "We’ve received your request and our team is preparing a tailored response based on your requirements.")}
           primaryButtonText={t("form.viewRequest", "View Request")}
           buttonText={t("form.backToHome", "Back to Home")}
-          onPrimaryClick={() => router.push("/profile?tab=requests")}
+          onPrimaryClick={() => {
+            const targetId = submittedIdRef.current || submittedId;
+            if (targetId) {
+              router.push(`/profile/requests-details?type=b2b&id=${targetId}`);
+            } else {
+              router.push("/profile?tab=requests");
+            }
+          }}
           onClose={handleReset}
-          metadata={[
-            { label: t("form.successRequestId", "Reference Number"), value: `#B2B-${submittedId || "042918"}` },
-            { label: t("form.companyName", "Company"), value: formData.companyName || "AUS Enterprise" },
-            { label: t("form.contactPerson", "Contact Person"), value: formData.contactPerson || "John Doe" },
-          ]}
         />
       )}
     </div>

@@ -22,21 +22,28 @@ interface TripsPageProps {
     budget?: string;
     tripType?: string;
     category?: string;
+    search?: string;
   }>;
 }
 
 export default async function TripsPage({ searchParams }: TripsPageProps) {
   const params = await searchParams;
+  const isDesert = params.tripType?.toLowerCase() === "desert";
 
   const apiParams: Record<string, string> = {};
   if (params.destination && params.destination.toLowerCase() !== "all") {
     apiParams.destination = params.destination;
-  } else if (!params.destination) {
+  } else if (!params.destination && !isDesert) {
     apiParams.destination = "egypt";
   }
 
-  if (params.tripType && params.tripType.toLowerCase() !== "desert") {
-    apiParams.tag = params.tripType;
+  if (params.tripType && !isDesert) {
+    const lowerType = params.tripType.toLowerCase();
+    if (lowerType === "group tour" || lowerType === "private tour" || lowerType === "group" || lowerType === "private") {
+      apiParams.tour_type = params.tripType;
+    } else if (lowerType !== "all") {
+      apiParams.tag = params.tripType;
+    }
   }
 
 

@@ -22,6 +22,31 @@
   flex-direction: column;
   z-index: 9999;
   box-sizing: border-box;
+  max-height: 260px;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: thin;
+  scrollbar-color: #DDDDDD transparent;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #DDDDDD;
+    border-radius: 8px;
+  }
+
+  &::-webkit-scrollbar-button {
+    display: none;
+    width: 0;
+    height: 0;
+  }
 
   @media (max-width: 768px) {
     min-width: 180px;

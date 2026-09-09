@@ -1,6 +1,7 @@
 import { serverFetch } from "@/lib/api";
 import { PaginatedResponse } from "@/types/api";
 import { getAllTrips } from "@/services/tripsService";
+import { isDesertCategory } from "@/constants";
 
 export interface CategoryList {
   id: number;
@@ -40,7 +41,7 @@ export async function getAllCategories(): Promise<CategoryList[]> {
 
 
 /**
- * Returns only categories that have published trips with destination Egypt.
+ * Returns only categories that have published trips with destination Egypt (excluding desert categories).
  */
 export async function getEgyptTripCategories(): Promise<CategoryList[]> {
   try {
@@ -50,7 +51,12 @@ export async function getEgyptTripCategories(): Promise<CategoryList[]> {
     for (const trip of egyptTrips) {
       if (Array.isArray(trip.tags)) {
         for (const tag of trip.tags) {
-          if (tag.name && !categoryMap.has(tag.name.toLowerCase())) {
+          if (
+            tag.name &&
+            !isDesertCategory(tag.name) &&
+            !isDesertCategory(tag.slug) &&
+            !categoryMap.has(tag.name.toLowerCase())
+          ) {
             categoryMap.set(tag.name.toLowerCase(), {
               id: tag.id,
               name: tag.name,

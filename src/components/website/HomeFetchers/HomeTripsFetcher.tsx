@@ -2,6 +2,7 @@ import TripsSection from "@/components/website/TripsSection/TripsSection";
 import MultiCountrySection from "@/components/website/MultiCountrySection/MultiCountrySection";
 import { getAllTrips } from "@/services/tripsService";
 import { getPublicPromotions } from "@/services/promotionsService";
+import { hasDesertCategory } from "@/constants";
 import { Trip } from "@/types";
 
 export default async function HomeTripsFetcher() {
@@ -60,7 +61,7 @@ export default async function HomeTripsFetcher() {
         })) ||
         (t.location || "").toLowerCase().includes("egypt")
       );
-      return hasEgypt;
+      return hasEgypt && !hasDesertCategory(t.tags);
     });
 
     return (

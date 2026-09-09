@@ -21,6 +21,7 @@ import { useScrollLock } from "@/hooks/useScrollLock";
 import { useTranslation } from "@/hooks/useTranslation";
 import { Trip } from "@/types";
 import { PublicPromotion, fetchPublicPromotionsClient } from "@/services/promotionsService";
+import { DESERT_CATEGORIES, isDesertCategory, hasDesertCategory } from "@/constants";
 import styles from "./TripsSection.module.scss";
 
 // Internal filter values — language-independent keys used for filtering logic
@@ -32,6 +33,7 @@ export interface SearchParams {
   budget?: string;
   tripType?: string;
   category?: string;
+  search?: string;
 }
 
 interface TripsSectionProps {
@@ -59,7 +61,12 @@ export default function TripsSection({
   const { t: tHome } = useTranslation("home");
   const { t } = useTranslation("trips");
   const isPage = variant === "page";
-  const isSearchResults = isPage && !!searchParams;
+  // The search filter summary bar is ONLY shown when searching using the search in the home page
+  const isSearchResults = isPage && Boolean(
+    searchParams?.search === "true" ||
+    searchParams?.date ||
+    searchParams?.budget
+  );
 
   const sortOptions = useMemo(() => [
     { value: "recommended", label: t("sort.recommended", "Recommended") },
@@ -130,22 +137,26 @@ export default function TripsSection({
   const [currentPage, setCurrentPage] = useState(1);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [sortBy, setSortBy] = useState("recommended");
-  const DESERT_CATEGORIES = ["Western Desert", "Sinai Desert", "Oasis Desert", "Safari Trips"];
   const PAGE_SIZE = 6;
   const [trips, setTrips] = useState<Trip[]>(initialTrips);
+  const isDesert = searchParams?.tripType?.toLowerCase() === "desert";
 
   const dynamicCategories = useMemo(() => {
+    if (isDesert) {
+      return [...DESERT_CATEGORIES];
+    }
+
     const cats = new Set<string>();
     trips.forEach((trip) => {
-      trip.tags?.forEach((tag) => cats.add(tag));
+      trip.tags?.forEach((tag) => {
+        if (!isDesertCategory(tag)) {
+          cats.add(tag);
+        }
+      });
     });
     
-    if (searchParams?.tripType?.toLowerCase() === "desert") {
-      return ["Western Desert", "Sinai Desert", "Oasis Desert", "Safari Trips"];
-    }
-    
     return ["All Trips", ...Array.from(cats)];
-  }, [trips, searchParams?.tripType]);
+  }, [trips, isDesert]);
 
   // Read category directly from URL so it reacts instantly to client-side navigation
   const urlCategory = urlSearchParams.get("category");
@@ -156,11 +167,14 @@ export default function TripsSection({
       (c) => c.toLowerCase().trim() === catLower || c.toLowerCase().replace(/\s+/g, "-") === catLower
     );
     if (idx >= 0) return idx;
-    const desertIdx = DESERT_CATEGORIES.findIndex(
-      (c) => c.toLowerCase().trim() === catLower || c.toLowerCase().replace(/\s+/g, "-") === catLower
-    );
-    return desertIdx >= 0 ? desertIdx : 0;
-  }, [urlCategory, dynamicCategories]);
+    if (isDesert) {
+      const desertIdx = DESERT_CATEGORIES.findIndex(
+        (c) => c.toLowerCase().trim() === catLower || c.toLowerCase().replace(/\s+/g, "-") === catLower
+      );
+      return desertIdx >= 0 ? desertIdx : 0;
+    }
+    return 0;
+  }, [urlCategory, dynamicCategories, isDesert]);
 
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(categoryFromUrl);
 
@@ -228,8 +242,13 @@ export default function TripsSection({
     setCurrentPage(1);
   }, [durationFilter, offersFilter, searchQuery, expanded.priceRange.min, expanded.priceRange.max]);
 
+  // 0. Filter by Desert: trips with desert categories should ONLY exist in tripType=desert
+  let processedTrips = trips.filter((trip) =>
+    isDesert ? hasDesertCategory(trip.tags) : !hasDesertCategory(trip.tags)
+  );
+
   // 1. Filter by Search Query
-  let processedTrips = trips.filter(
+  processedTrips = processedTrips.filter(
     (trip) =>
       trip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       trip.location.toLowerCase().includes(searchQuery.toLowerCase())
@@ -311,14 +330,32 @@ export default function TripsSection({
     setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // Build filter pills from searchParams
+  const hasSearchParams = Boolean(
+    searchParams?.date ||
+    searchParams?.destination ||
+    searchParams?.budget ||
+    (searchParams?.tripType && searchParams.tripType.toLowerCase() !== "desert")
+  );
+
+  // Build filter pills from searchParams (ONLY when searching from the homepage)
   const filterPills: FilterPill[] = [];
-  if (searchParams?.date)
-    filterPills.push({ icon: "calendar", label: t("filterPills.date", "Date"), value: searchParams.date });
-  if (searchParams?.budget)
-    filterPills.push({ icon: "budget", label: t("filterPills.budget", "Budget"), value: searchParams.budget });
-  if (searchParams?.tripType && searchParams.tripType.toLowerCase() !== "desert")
-    filterPills.push({ icon: "trip-type", label: t("filterPills.tripType", "Trip Type"), value: searchParams.tripType });
+  if (isSearchResults) {
+    if (searchParams?.date) {
+      filterPills.push({ icon: "calendar", label: t("filterPills.date", "Date"), value: searchParams.date });
+    }
+
+    if (searchParams?.destination && searchParams.destination.toLowerCase() !== "all") {
+      filterPills.push({ icon: "location", label: t("filterPills.destination", "Destination"), value: searchParams.destination });
+    }
+
+    if (searchParams?.budget) {
+      filterPills.push({ icon: "budget", label: t("filterPills.budget", "Budget"), value: searchParams.budget });
+    }
+
+    if (searchParams?.tripType && searchParams.tripType.toLowerCase() !== "desert") {
+      filterPills.push({ icon: "trip-type", label: t("filterPills.tripType", "Trip Type"), value: searchParams.tripType });
+    }
+  }
 
   return (
     <section className={styles.section}>
@@ -326,11 +363,23 @@ export default function TripsSection({
       {/* ── Header ── */}
       {isPage ? (
         <PageHeader
-          breadcrumbs={[{ label: t("breadcrumb", "Egypt Tours"), isCurrent: true }]}
+          breadcrumbs={[{
+            label: searchParams?.destination?.toLowerCase() === "all"
+              ? (tHome("nav.destinations", "Destinations") || t("breadcrumb", "Destinations"))
+              : t("breadcrumb", "Egypt Tours"),
+            isCurrent: true,
+          }]}
           title={
             searchParams?.tripType?.toLowerCase() === "desert" ? (
               <>
                 {t("desertTitle", "Find Your Perfect Desert Escape in Egypt")}
+              </>
+            ) : searchParams?.destination?.toLowerCase() === "all" ? (
+              <>
+                {t("pageTitle", "Choose The Right Trip For Your Adventure In")}{" "}
+                <span className={styles.highlight}>
+                  {tHome("nav.destinations", "DESTINATIONS").toUpperCase()}
+                </span>
               </>
             ) : (
               <>

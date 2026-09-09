@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { SectionHeader, Button, FormField, PhoneInput, NationalitySelect, SuccessModal } from "@/components/shared";
 import { submitB2BProposal, extractApiError, extractFieldErrors } from "@/lib/api";
@@ -16,6 +16,7 @@ export default function B2BSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submittedId, setSubmittedId] = useState<string | number>("");
+  const submittedIdRef = useRef<string | number>("");
   const [formData, setFormData] = useState({
     companyName: "",
     country: "",
@@ -67,10 +68,10 @@ export default function B2BSection() {
     try {
       setIsSubmitting(true);
       const res = await submitB2BProposal(formData);
-      if (res && res.id) {
-        setSubmittedId(res.id);
-      } else {
-        setSubmittedId(Math.floor(100000 + Math.random() * 900000));
+      const newId = res?.id ?? res?.data?.id ?? "";
+      if (newId) {
+        setSubmittedId(newId);
+        submittedIdRef.current = newId;
       }
       setShowModal(true);
     } catch (err: any) {
@@ -93,6 +94,7 @@ export default function B2BSection() {
 
   const handleReset = () => {
     setShowModal(false);
+    router.push("/");
     setFormData({
       companyName: "",
       country: "",
@@ -308,16 +310,18 @@ export default function B2BSection() {
       {showModal && (
         <SuccessModal
           title={t("b2bSection.successTitle", "Your Corporate Proposal Is in Progress")}
-          message={t("b2bSection.successDesc", "We've received your request and our team is preparing a tailored response based on your requirements.")}
+          message={t("b2bSection.successDesc", "We’ve received your request and our team is preparing a tailored response based on your requirements.")}
           primaryButtonText={t("b2bSection.viewRequest", "View Request")}
-          buttonText={t("b2bSection.close", "Close")}
-          onPrimaryClick={() => router.push("/profile?tab=requests")}
+          buttonText={t("b2bSection.backToHome", "Back to Home")}
+          onPrimaryClick={() => {
+            const targetId = submittedIdRef.current || submittedId;
+            if (targetId) {
+              router.push(`/profile/requests-details?type=b2b&id=${targetId}`);
+            } else {
+              router.push("/profile?tab=requests");
+            }
+          }}
           onClose={handleReset}
-          metadata={[
-            { label: "Reference Number", value: `#B2B-${submittedId || "042918"}` },
-            { label: t("b2bSection.companyName", "Company"), value: formData.companyName || "AUS Enterprise" },
-            { label: t("b2bSection.contactPerson", "Contact Person"), value: formData.contactPerson || "John Doe" },
-          ]}
         />
       )}
     </section>

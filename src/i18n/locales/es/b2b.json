@@ -89,9 +89,9 @@
     "requestDetailsPlaceholder": "Describa su solicitud, número previsto de personas, destinos...",
     "submitButton": "Enviar Solicitud de Propuesta",
     "submitting": "Enviando...",
-    "successTitle": "¡Solicitud de Propuesta Enviada con Éxito!",
+    "successTitle": "Su Propuesta Corporativa Está en Proceso",
     "successRequestId": "ID de Solicitud:",
-    "successDesc": "Nuestro equipo corporativo revisará sus requisitos y se pondrá en contacto con una propuesta a medida en un plazo de 24 horas.",
+    "successDesc": "Hemos recibido su petición y nuestro equipo está elaborando una respuesta adaptada puntualmente a sus requisitos.",
     "viewRequest": "Ver Solicitud",
     "backToHome": "Volver al Inicio",
     "errors": {

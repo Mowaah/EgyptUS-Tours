@@ -69,7 +69,7 @@ const navItems: NavItem[] = [
     children: [
       { label: "User Management", href: "/dashboard/settings/user-management" },
       { label: "Access Control", href: "/dashboard/settings/access-control" },
-      // { label: "System Configuration", href: "/dashboard/settings/system-configuration" },
+      { label: "Exchange Rates", href: "/dashboard/settings/exchange-rates" },
       { label: "Audit Log", href: "/dashboard/settings/audit-log" },
     ],
   },
@@ -95,6 +95,7 @@ const iconNameByLabel: Partial<Record<string, string>> = {
   "Privacy Policy": "privacy",
   "FAQ Management": "faq",
   "Lead Management": "leads-inquiries",
+  "Exchange Rates": "financial-reports",
 };
 
 function DashboardIcon({

@@ -18,7 +18,7 @@ export default async function HeroSection() {
       const slug = (d.slug || "").trim().toLowerCase();
       return slug !== "egypt" && !name.includes("egypt");
     })
-    .map(d => ({
+    .map((d) => ({
       label: d.name,
       value: d.name,
     }));

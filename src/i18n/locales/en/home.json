@@ -120,8 +120,9 @@
     "submit": "Request Proposal",
     "submitting": "Submitting...",
     "successTitle": "Your Corporate Proposal Is in Progress",
-    "successDesc": "We've received your request and our team is preparing a tailored response based on your requirements.",
+    "successDesc": "We’ve received your request and our team is preparing a tailored response based on your requirements.",
     "viewRequest": "View Request",
+    "backToHome": "Back to Home",
     "close": "Close"
   },
   "desertBanner": {

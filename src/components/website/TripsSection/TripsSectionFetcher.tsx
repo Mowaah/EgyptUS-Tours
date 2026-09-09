@@ -1,6 +1,7 @@
 import TripsSection from "./TripsSection";
 import { getAllTrips } from "@/services/tripsService";
 import { getPublicPromotions } from "@/services/promotionsService";
+import { hasDesertCategory } from "@/constants";
 import { Trip } from "@/types";
 
 interface TripsSectionFetcherProps {
@@ -11,6 +12,7 @@ interface TripsSectionFetcherProps {
     budget?: string;
     tripType?: string;
     category?: string;
+    search?: string;
   };
 }
 
@@ -20,10 +22,22 @@ export default async function TripsSectionFetcher({ apiParams, searchParams }: T
     getPublicPromotions({ applies_to: "trip" }).catch(() => []),
   ]);
 
+  const isDesert = searchParams?.tripType?.toLowerCase() === "desert";
   const isDestAll = searchParams?.destination?.toLowerCase() === "all";
-  const isEgyptPage = !searchParams?.destination || searchParams?.destination?.toLowerCase() === "egypt";
+  const isEgyptPage = !isDesert && (!searchParams?.destination || searchParams?.destination?.toLowerCase() === "egypt");
 
   const filteredTripsData = tripsData.filter((t) => {
+    const isDesertTrip = hasDesertCategory(t.tags);
+
+    if (isDesert) {
+      return isDesertTrip;
+    }
+
+    // Trips with these 4 categories should ONLY exist in tripType=desert
+    if (isDesertTrip) {
+      return false;
+    }
+
     const hasEgypt = (
       (Array.isArray(t.destinations) && t.destinations.some((d: any) => {
         const slug = (typeof d === "string" ? d : d.slug || "").toLowerCase();
@@ -44,6 +58,12 @@ export default async function TripsSectionFetcher({ apiParams, searchParams }: T
         return slug !== "egypt" && !name.includes("egypt");
       });
       return hasNonEgyptDest;
+    }
+
+    if (searchParams?.tripType && !isDesert) {
+      const tt = searchParams.tripType.toLowerCase();
+      if (tt.includes("private") && (t as any).offers_private_tour === false) return false;
+      if (tt.includes("group") && (t as any).offers_group_tour === false) return false;
     }
 
     return true;

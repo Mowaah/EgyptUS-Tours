@@ -31,7 +31,8 @@
     "errMessageRequired": "El mensaje es obligatorio.",
     "successTitle": "¡Mensaje Enviado con Éxito!",
     "successDesc": "Gracias por ponerse en contacto con nosotros. Un miembro de nuestro equipo de especialistas revisará su consulta y le responderá en un plazo de 24 horas.",
-    "closeModal": "Cerrar"
+    "closeModal": "Volver al Inicio",
+    "backToHome": "Volver al Inicio"
   },
   "form": {
     "fullName": "Nombre Completo",

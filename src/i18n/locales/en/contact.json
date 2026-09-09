@@ -31,7 +31,8 @@
     "errMessageRequired": "Message is required.",
     "successTitle": "Message Sent Successfully!",
     "successDesc": "Thank you for reaching out. A member of our travel specialist team will review your inquiry and get back to you within 24 hours.",
-    "closeModal": "Close"
+    "closeModal": "Back to Home",
+    "backToHome": "Back to Home"
   },
   "form": {
     "fullName": "Full Name",

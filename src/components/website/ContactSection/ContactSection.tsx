@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button, SuccessModal, FormField } from "@/components/shared";
 import { submitContactInquiry, extractApiError } from "@/lib/api";
 import { isValidEmail } from "@/utils/validators";
@@ -15,6 +16,7 @@ const AVATARS = [
 ];
 
 export default function ContactSection() {
+  const router = useRouter();
   const { t } = useTranslation("contact");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -175,8 +177,11 @@ export default function ContactSection() {
         <SuccessModal
           title={t("section.successTitle", "Message Sent Successfully!")}
           message={t("section.successDesc", "Thank you for reaching out. A member of our travel specialist team will review your inquiry and get back to you within 24 hours.")}
-          buttonText={t("section.closeModal", "Close")}
-          onClose={() => setShowSuccess(false)}
+          buttonText={t("section.backToHome", "Back to Home")}
+          onClose={() => {
+            setShowSuccess(false);
+            router.push("/");
+          }}
         />
       )}
     </section>

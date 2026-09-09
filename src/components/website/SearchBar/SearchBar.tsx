@@ -35,6 +35,7 @@ export default function SearchBar({ destinations = [] }: SearchBarProps) {
 
   const handleSearch = () => {
     const params = new URLSearchParams();
+    params.set("search", "true");
     if (date) params.append("date", date);
     if (destination) params.append("destination", destination);
     if (budget) params.append("budget", budget);

@@ -111,7 +111,7 @@
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  padding: 5px 10px;
+  padding: 6px 16px;
   background: $background-blue-lighter;
   border: 1px solid $primary;
   border-radius: 32px;
@@ -120,9 +120,9 @@
   font-weight: $font-weight-normal;
 
   @media (min-width: 1024px) {
-    padding: 8px 17px;
+    padding: 8px 20px;
     height: 32px;
-    font-size: $font-size-lg;
+    font-size: $font-size-base;
   }
 }
 
@@ -241,16 +241,20 @@
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  padding: 3px 6.5px;
+  padding: 4px 14px;
   background: $background-blue-lighter;
   border: 1px solid $primary;
-  border-radius: 12px;
+  border-radius: 16px;
   color: $primary;
   font-size: $font-size-2xs;
   font-weight: $font-weight-normal;
 
+  @media (min-width: 768px) {
+    padding: 5px 16px;
+  }
+
   @media (min-width: 1200px) {
-    padding: 4.7px 7.9px;
+    padding: 6px 18px;
     font-size: $font-size-2xs;
     height: 32px;
     border-radius: 24.5px;
