@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import Cookies from "js-cookie";
 import { submitEventProposal, extractApiError } from "@/lib/api";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -48,6 +49,14 @@ const initialData: EventProposalData = {
 
 export default function EventsRequestProposalPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isAgentMode, setIsAgentMode] = useState(false);
+
+  useEffect(() => {
+    const hasAdminToken = Boolean(Cookies.get("admin_access_token"));
+    setIsAgentMode(searchParams.get("mode") === "agent" && hasAdminToken);
+  }, [searchParams]);
+
   const { t } = useTranslation("events");
   const [currentStep, setCurrentStep] = useState<EventStep>(1);
   const [showModal, setShowModal] = useState(false);
@@ -206,11 +215,48 @@ export default function EventsRequestProposalPage() {
 
     try {
       setIsSubmitting(true);
-      const res = await submitEventProposal(proposalData);
-      if (res && res.id) {
-        setSubmittedId(res.id);
+      if (isAgentMode) {
+        const { createAdminMICEEvent } = await import("@/services/admin/adminRequestsService");
+        const { formatDateForBackend, formatUrlForBackend } = await import("@/lib/api");
+
+        const payload = {
+          organization_name: proposalData.organization.name.trim(),
+          industry: proposalData.organization.industry || '',
+          country: proposalData.organization.country || '',
+          website: formatUrlForBackend(proposalData.organization.website) || '',
+          contact_person: proposalData.organization.contactPerson.trim(),
+          job_title: proposalData.organization.jobTitle || '',
+          email: proposalData.organization.email.trim(),
+          phone: proposalData.organization.phone.trim(),
+          event_type: proposalData.eventDetails.eventType || '',
+          event_name: proposalData.eventDetails.eventName || '',
+          expected_attendees: parseInt(proposalData.eventDetails.expectedAttendees, 10) || null,
+          preferred_city: proposalData.eventDetails.preferredCity || '',
+          start_date: formatDateForBackend(proposalData.eventDetails.startDate),
+          end_date: formatDateForBackend(proposalData.eventDetails.endDate),
+          description: proposalData.eventDetails.description || '',
+          venue_type: proposalData.requirements.venueType || '',
+          additional_services: proposalData.requirements.additionalServices || [],
+          additional_requirements: proposalData.requirements.additionalRequirements || '',
+          estimated_budget_range: proposalData.budget.estimatedBudget || '',
+          budget_flexibility: proposalData.budget.budgetFlexibility || '',
+          hear_about_us: proposalData.budget.hearAboutUs || '',
+          currency: 'usd',
+          source: 'agent',
+        };
+
+        const res = await createAdminMICEEvent(payload);
+        const newId = res?.id ?? res?.data?.id ?? "";
+        if (newId) {
+          setSubmittedId(newId);
+        }
       } else {
-        setSubmittedId(Math.floor(100000 + Math.random() * 900000));
+        const res = await submitEventProposal(proposalData);
+        if (res && res.id) {
+          setSubmittedId(res.id);
+        } else {
+          setSubmittedId(Math.floor(100000 + Math.random() * 900000));
+        }
       }
       setShowModal(true);
     } catch (err: any) {
@@ -232,7 +278,11 @@ export default function EventsRequestProposalPage() {
     setShowModal(false);
     setProposalData(initialData);
     setCurrentStep(1);
-    router.push("/");
+    if (isAgentMode) {
+      router.push("/dashboard/requests/mice-corporate");
+    } else {
+      router.push("/");
+    }
   };
 
   useEffect(() => {
@@ -248,7 +298,10 @@ export default function EventsRequestProposalPage() {
         ]}
         title={t("proposal.title", "Request a Custom Proposal")}
         subtitle={t("proposal.subtitle", "Share your requirements and we'll design a tailored corporate event or MICE solution.")}
-        backButton={{ text: t("proposal.backButton", "Back To Events"), href: "/events" }}
+        backButton={{
+          text: isAgentMode ? "Back to Dashboard" : t("proposal.backButton", "Back To Events"),
+          href: isAgentMode ? "/dashboard/requests/mice-corporate" : "/events",
+        }}
         decorationSrc="/images/dotted-line3.svg"
         subtitleMaxWidth="750px"
       />
@@ -259,6 +312,21 @@ export default function EventsRequestProposalPage() {
 
       <main className={styles.mainContent}>
         <div className={styles.content}>
+          {isAgentMode && (
+            <div className={styles.agentModeBanner}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+              <span>
+                <strong>Agent Mode</strong>
+                <span className={styles.agentModeDesc}>: This request is being created on behalf of a client and will be registered in the dashboard with Source: Agent.</span>
+              </span>
+            </div>
+          )}
+
           {currentStep === 1 && (
             <StepOrganization
               data={proposalData.organization}
@@ -305,11 +373,29 @@ export default function EventsRequestProposalPage() {
 
       {showModal && (
         <SuccessModal
-          title={t("proposal.success.title", "Your Proposal Request Has Been Received!")}
-          message={t("proposal.success.message", "Thank you for reaching out. Our corporate events specialist will review your request and provide a detailed proposal within 24 hours.")}
-          primaryButtonText={t("proposal.success.viewRequest", "View Request")}
-          buttonText={t("proposal.success.backToHome", "Back to Home")}
-          onPrimaryClick={() => router.push("/profile?tab=requests")}
+          title={
+            isAgentMode
+              ? "MICE Proposal Created Successfully!"
+              : t("proposal.success.title", "Your Proposal Request Has Been Received!")
+          }
+          message={
+            isAgentMode
+              ? "The MICE request has been recorded under your agent account with Source: Agent. You can now view and manage it directly in the dashboard."
+              : t("proposal.success.message", "Thank you for reaching out. Our corporate events specialist will review your request and provide a detailed proposal within 24 hours.")
+          }
+          primaryButtonText={
+            isAgentMode
+              ? "View Request in Dashboard"
+              : t("proposal.success.viewRequest", "View Request")
+          }
+          buttonText={isAgentMode ? "Back to Dashboard" : t("proposal.success.backToHome", "Back to Home")}
+          onPrimaryClick={() => {
+            if (isAgentMode) {
+              router.push(submittedId ? `/dashboard/requests/mice-corporate/${submittedId}` : "/dashboard/requests/mice-corporate");
+            } else {
+              router.push("/profile?tab=requests");
+            }
+          }}
           onClose={handleReset}
           metadata={[
             { label: t("proposal.success.referenceNumber", "Reference Number"), value: `#MICE-${submittedId || "059208"}` },

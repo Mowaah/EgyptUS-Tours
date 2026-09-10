@@ -286,3 +286,16 @@ export async function getB2BDetails(id: number | string): Promise<any> {
 export async function getEventsDetails(id: number | string): Promise<any> {
   return await adminDataClient.get(`/requests/mice-events/${id}/`);
 }
+
+export async function createAdminPlanYourTripRequest(data: any): Promise<any> {
+  return await adminDataClient.post('/requests/plan-your-trip/', data);
+}
+
+export async function createAdminB2BProposal(data: any): Promise<any> {
+  return await adminDataClient.post('/requests/b2b-proposals/', data);
+}
+
+export async function createAdminMICEEvent(data: any): Promise<any> {
+  return await adminDataClient.post('/requests/mice-events/', data);
+}
+

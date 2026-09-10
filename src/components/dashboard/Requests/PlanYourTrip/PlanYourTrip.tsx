@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import RequestsSummaryGrid from "../shared/Layouts/RequestsSummaryGrid";
 import CustomTripRequestsPanel from "./CustomTripRequestsPanel";
@@ -9,6 +10,7 @@ import { useRequestStats } from "@/hooks/useRequestStats";
 import styles from "./PlanYourTrip.module.scss";
 
 export default function PlanYourTrip() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const { stats } = useRequestStats(getPlanYourTripStats, "adminPlanYourTripStats");
 
@@ -17,6 +19,7 @@ export default function PlanYourTrip() {
       <DashboardNavbar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        onPrimaryAction={() => router.push("/booking?mode=agent")}
       />
       <RequestsSummaryGrid stats={stats} />
       <CustomTripRequestsPanel searchQuery={searchQuery} />

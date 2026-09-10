@@ -1,14 +1,23 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Cookies from "js-cookie";
 import { FormField, PhoneInput, NationalitySelect, SuccessModal, PageHeader, Button } from "@/components/shared";
-import { submitB2BProposal, extractApiError, extractFieldErrors } from "@/lib/api";
+import { submitB2BProposal, extractApiError, extractFieldErrors, formatUrlForBackend } from "@/lib/api";
 import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./B2BRequestProposalPage.module.scss";
 
 export default function B2BRequestProposalPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isAgentMode, setIsAgentMode] = useState(false);
+
+  useEffect(() => {
+    const hasAdminToken = Boolean(Cookies.get("admin_access_token"));
+    setIsAgentMode(searchParams.get("mode") === "agent" && hasAdminToken);
+  }, [searchParams]);
+
   const { t } = useTranslation("b2b");
   const [showModal, setShowModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,11 +76,34 @@ export default function B2BRequestProposalPage() {
 
     try {
       setIsSubmitting(true);
-      const res = await submitB2BProposal(formData);
-      const newId = res?.id ?? res?.data?.id ?? "";
-      if (newId) {
-        setSubmittedId(newId);
-        submittedIdRef.current = newId;
+      if (isAgentMode) {
+        const { createAdminB2BProposal } = await import("@/services/admin/adminRequestsService");
+        const res = await createAdminB2BProposal({
+          company_name: formData.companyName.trim(),
+          country: formData.country.trim(),
+          contact_person: formData.contactPerson.trim(),
+          job_title: formData.jobTitle.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          website: formatUrlForBackend(formData.website),
+          request_details: formData.requestDetails.trim(),
+          start_date: null,
+          end_date: null,
+          currency: "usd",
+          source: "agent",
+        });
+        const newId = res?.id ?? res?.data?.id ?? "";
+        if (newId) {
+          setSubmittedId(newId);
+          submittedIdRef.current = newId;
+        }
+      } else {
+        const res = await submitB2BProposal(formData);
+        const newId = res?.id ?? res?.data?.id ?? "";
+        if (newId) {
+          setSubmittedId(newId);
+          submittedIdRef.current = newId;
+        }
       }
       setShowModal(true);
     } catch (err: any) {
@@ -94,7 +126,11 @@ export default function B2BRequestProposalPage() {
 
   const handleReset = () => {
     setShowModal(false);
-    router.push("/");
+    if (isAgentMode) {
+      router.push("/dashboard/requests/b2b-programs");
+    } else {
+      router.push("/");
+    }
   };
 
   return (
@@ -106,12 +142,30 @@ export default function B2BRequestProposalPage() {
         ]}
         title={t("form.pageTitle", "Request a Corporate Proposal")}
         subtitle={t("form.pageSubtitle", "Share your requirements and we'll create a tailored proposal for your organization.")}
-        backButton={{ text: t("form.backButton", "Back To B2B Programs"), href: "/b2b-programs" }}
+        backButton={{
+          text: isAgentMode ? "Back to Dashboard" : t("form.backButton", "Back To B2B Programs"),
+          href: isAgentMode ? "/dashboard/requests/b2b-programs" : "/b2b-programs",
+        }}
         decorationSrc="/images/dotted-line3.svg"
       />
 
       <main className={styles.mainContent}>
         <div className={styles.content}>
+          {isAgentMode && (
+            <div className={styles.agentModeBanner}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+              <span>
+                <strong>Agent Mode</strong>
+                <span className={styles.agentModeDesc}>: This request is being created on behalf of a client and will be registered in the dashboard with Source: Agent.</span>
+              </span>
+            </div>
+          )}
+
           <div className={styles.formCard}>
             <div className={styles.formHeader}>
               <h2 className={styles.formTitle}>{t("form.sectionTitle", "Company Information")}</h2>
@@ -248,13 +302,27 @@ export default function B2BRequestProposalPage() {
 
       {showModal && (
         <SuccessModal
-          title={t("form.successTitle", "Your Corporate Proposal Is in Progress")}
-          message={t("form.successDesc", "We’ve received your request and our team is preparing a tailored response based on your requirements.")}
-          primaryButtonText={t("form.viewRequest", "View Request")}
-          buttonText={t("form.backToHome", "Back to Home")}
+          title={
+            isAgentMode
+              ? "Corporate Proposal Created Successfully!"
+              : t("form.successTitle", "Your Corporate Proposal Is in Progress")
+          }
+          message={
+            isAgentMode
+              ? "The proposal request has been recorded under your agent account with Source: Agent. You can now view and manage it directly in the dashboard."
+              : t("form.successDesc", "We’ve received your request and our team is preparing a tailored response based on your requirements.")
+          }
+          primaryButtonText={
+            isAgentMode
+              ? "View Request in Dashboard"
+              : t("form.viewRequest", "View Request")
+          }
+          buttonText={isAgentMode ? "Back to Dashboard" : t("form.backToHome", "Back to Home")}
           onPrimaryClick={() => {
             const targetId = submittedIdRef.current || submittedId;
-            if (targetId) {
+            if (isAgentMode) {
+              router.push(targetId ? `/dashboard/requests/b2b-programs/${targetId}` : "/dashboard/requests/b2b-programs");
+            } else if (targetId) {
               router.push(`/profile/requests-details?type=b2b&id=${targetId}`);
             } else {
               router.push("/profile?tab=requests");

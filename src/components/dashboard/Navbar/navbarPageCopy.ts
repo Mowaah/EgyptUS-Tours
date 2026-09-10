@@ -30,6 +30,13 @@ const pageCopyByPath: Record<string, PageCopy> = {
     searchPlaceholder: "Search bookings, customers...",
     primaryAction: { label: "New MICE Request", iconSrc: "/images/dashboard/navbar/add-circle.svg" },
   },
+  "/dashboard/requests/b2b-programs": {
+    title: "B2B Programs",
+    subtitle: "Capture, qualify and convert every lead — from first contact to completed deal.",
+    breadcrumbTrail: [{ label: "Requests" }, { label: "B2B Programs" }],
+    searchPlaceholder: "Search bookings, customers...",
+    primaryAction: { label: "New B2B Request", iconSrc: "/images/dashboard/navbar/add-circle.svg" },
+  },
   "/dashboard/requests/plan-your-trip": {
     title: "Plan Your trip",
     subtitle: "Capture, qualify and convert every lead — from first contact to completed deal.",

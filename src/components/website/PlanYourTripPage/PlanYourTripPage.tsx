@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import Cookies from "js-cookie";
 
 import styles from "./PlanYourTripPage.module.scss";
 import { EXPERIENCE_OPTIONS, STEPS, TRANSPORT_OPTIONS } from "./planYourTripData";
@@ -46,11 +47,19 @@ const initialTripData: TripData = {
 
 export default function PlanYourTripPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isAgentMode, setIsAgentMode] = useState(false);
   const [currentStep, setCurrentStep] = useState<PlanStep>(1);
   const [showModal, setShowModal] = useState(false);
+  const [submittedId, setSubmittedId] = useState<string | number>("");
   const [tripData, setTripData] = useState<TripData>(initialTripData);
   const [availableDestinations, setAvailableDestinations] = useState<PlanDestination[]>([]);
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    const hasAdminToken = Boolean(Cookies.get("admin_access_token"));
+    setIsAgentMode(searchParams.get("mode") === "agent" && hasAdminToken);
+  }, [searchParams]);
 
   useEffect(() => {
     async function fetchData() {
@@ -134,9 +143,7 @@ export default function PlanYourTripPage() {
     try {
       setIsSubmitting(true);
       setSubmitError(null);
-      
-      const { createCustomTripRequest } = await import("@/lib/api");
-      
+
       const validIds: number[] = [];
       const invalidNames: string[] = [];
 
@@ -157,8 +164,73 @@ export default function PlanYourTripPage() {
         finalTripData.travelerInfo.tripDetails += appendText;
       }
 
-      await createCustomTripRequest(finalTripData);
-      
+      if (isAgentMode) {
+        const { createAdminPlanYourTripRequest } = await import("@/services/admin/adminRequestsService");
+        const { formatDateForBackend } = await import("@/lib/api");
+
+        let budget_min = null;
+        let budget_max = null;
+        if (tripData.preferences.budget) {
+          const budgetStr = tripData.preferences.budget.replace(/[^0-9\-+]/g, '');
+          const parts = budgetStr.split('-');
+          if (parts.length === 2) {
+            budget_min = parseInt(parts[0], 10);
+            budget_max = parseInt(parts[1], 10);
+          } else if (budgetStr.includes('+')) {
+            budget_min = parseInt(budgetStr.replace('+', ''), 10);
+          } else {
+            budget_min = parseInt(budgetStr, 10);
+            budget_max = parseInt(budgetStr, 10);
+          }
+        }
+
+        const roomTypesList = Array.isArray(tripData.preferences.roomType)
+          ? tripData.preferences.roomType
+          : tripData.preferences.roomType ? [tripData.preferences.roomType] : [];
+
+        const adminPayload = {
+          full_name: tripData.travelerInfo.name,
+          email: tripData.travelerInfo.email,
+          phone: tripData.travelerInfo.phone,
+          nationality: tripData.travelerInfo.nationality || '',
+          start_date: formatDateForBackend(tripData.travelerInfo.startDate),
+          end_date: formatDateForBackend(tripData.travelerInfo.endDate),
+          adults: tripData.travelerInfo.adults || 1,
+          children: tripData.travelerInfo.children || 0,
+          infants: tripData.travelerInfo.infants || 0,
+          trip_details_text: finalTripData.travelerInfo.tripDetails || '',
+          hotel_category: tripData.preferences.hotelCategory || '',
+          room_type: roomTypesList[0] || '',
+          room_types: roomTypesList,
+          transportation_type: tripData.preferences.transportation || '',
+          experiences: tripData.preferences.experiences || [],
+          trip_categories: tripData.preferences.tripCategory || [],
+          activities: tripData.preferences.activities || [],
+          additional_experiences: [],
+          preferred_contact_method: tripData.preferences.contactMethod === "Phone Call" 
+            ? "phone" 
+            : (tripData.preferences.contactMethod?.toLowerCase() || ''),
+          budget_min,
+          budget_max,
+          currency: 'usd',
+          source: 'agent',
+          destination_ids: validIds,
+        };
+
+        const res = await createAdminPlanYourTripRequest(adminPayload);
+        const newId = res?.id ?? res?.data?.id ?? "";
+        if (newId) {
+          setSubmittedId(newId);
+        }
+      } else {
+        const { createCustomTripRequest } = await import("@/lib/api");
+        const res = await createCustomTripRequest(finalTripData);
+        const newId = res?.id ?? res?.data?.id ?? "";
+        if (newId) {
+          setSubmittedId(newId);
+        }
+      }
+
       setShowModal(true);
     } catch (err: any) {
       setSubmitError(err.message || "Something went wrong submitting your request. Please try again.");
@@ -174,7 +246,11 @@ export default function PlanYourTripPage() {
   const handleReset = () => {
     setShowModal(false);
     setCurrentStep(1);
-    router.push("/");
+    if (isAgentMode) {
+      router.push("/dashboard/requests/plan-your-trip");
+    } else {
+      router.push("/");
+    }
   };
 
   useEffect(() => {
@@ -196,7 +272,10 @@ export default function PlanYourTripPage() {
         breadcrumbs={[{ label: t("planYourTrip.breadcrumb", "Plan Your Trip"), isCurrent: true }]}
         title={t("planYourTrip.pageTitle", "Plan Your Perfect Trip")}
         subtitle={t("planYourTrip.pageSubtitle", "Fill out the form below and our team will craft a personalized travel experience tailored just for you.")}
-        backButton={{ text: t("planYourTrip.success.backToHome", "Back To Home"), href: "/" }}
+        backButton={{
+          text: isAgentMode ? "Back to Dashboard" : t("planYourTrip.success.backToHome", "Back To Home"),
+          href: isAgentMode ? "/dashboard/requests/plan-your-trip" : "/",
+        }}
         decorationSrc="/images/dotted-line3.svg"
         subtitleMaxWidth="750px"
       />
@@ -207,6 +286,21 @@ export default function PlanYourTripPage() {
 
       <main className={styles.mainContent}>
         <div className={styles.content}>
+          {isAgentMode && (
+            <div className={styles.agentModeBanner}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+              <span>
+                <strong>Agent Mode</strong>
+                <span className={styles.agentModeDesc}>: This request is being created on behalf of a client and will be registered in the dashboard with Source: Agent.</span>
+              </span>
+            </div>
+          )}
+
           {currentStep === 1 && (
             <StepDestination
               destinations={availableDestinations}
@@ -254,12 +348,30 @@ export default function PlanYourTripPage() {
 
       {showModal && (
         <SuccessModal
-          title={t("planYourTrip.success.title", "Your Custom Trip Request Has Been Received!")}
-          message={t("planYourTrip.success.message", "Thank you for designing your journey with us. Our travel specialists are reviewing your preferences and will contact you within 24 hours.")}
-          primaryButtonText={t("planYourTrip.success.viewRequest", "View Request Details")}
-          buttonText={t("planYourTrip.success.backToHome", "Back to Home")}
-          onPrimaryClick={() => router.push("/profile?tab=requests")}
-          onClose={() => router.push("/")}
+          title={
+            isAgentMode
+              ? "Trip Request Created Successfully!"
+              : t("planYourTrip.success.title", "Your Custom Trip Request Has Been Received!")
+          }
+          message={
+            isAgentMode
+              ? "The trip request has been recorded under your agent account with Source: Agent. You can now view and manage it directly in the dashboard."
+              : t("planYourTrip.success.message", "Thank you for designing your journey with us. Our travel specialists are reviewing your preferences and will contact you within 24 hours.")
+          }
+          primaryButtonText={
+            isAgentMode
+              ? "View Request in Dashboard"
+              : t("planYourTrip.success.viewRequest", "View Request Details")
+          }
+          buttonText={isAgentMode ? "Back to Dashboard" : t("planYourTrip.success.backToHome", "Back to Home")}
+          onPrimaryClick={() => {
+            if (isAgentMode) {
+              router.push(submittedId ? `/dashboard/requests/plan-your-trip/${submittedId}` : "/dashboard/requests/plan-your-trip");
+            } else {
+              router.push("/profile?tab=requests");
+            }
+          }}
+          onClose={handleReset}
         />
       )}
     </div>
