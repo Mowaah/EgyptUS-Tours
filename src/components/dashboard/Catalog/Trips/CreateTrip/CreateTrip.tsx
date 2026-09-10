@@ -54,20 +54,20 @@ const EMPTY_VALUES: CreateTripValues = {
   description: { en: "", it: "", es: "" },
   culturalValue: { en: "", it: "", es: "" },
   whoIsTripFor: { en: "", it: "", es: "" },
-  inclusions: [],
-  exclusions: [],
+  inclusions: [{ en: "", it: "", es: "" }],
+  exclusions: [{ en: "", it: "", es: "" }],
   pricing: {
     privateTour: { seasons: [
       { dateRange: "May - Sep", singleRoom: "", doubleRoom: "", tripleRoom: "" },
-      { dateRange: "Oct - Apr", singleRoom: "", doubleRoom: "", tripleRoom: "" }
+      { dateRange: "Oct - Apr", singleRoom: "", doubleRoom: "", tripleRoom: "" },
     ] },
     groupTour: { seasons: [
       { dateRange: "May - Sep", singleRoom: "", doubleRoom: "", tripleRoom: "" },
-      { dateRange: "Oct - Apr", singleRoom: "", doubleRoom: "", tripleRoom: "" }
+      { dateRange: "Oct - Apr", singleRoom: "", doubleRoom: "", tripleRoom: "" },
     ] },
     additionalRooms: { seaView: "", poolView: "" },
   },
-  itinerary: [{ title: { en: "", it: "", es: "" }, subtitle: { en: "", it: "", es: "" }, description: { en: "", it: "", es: "" }, highlights: [], image: undefined }],
+  itinerary: [{ title: { en: "", it: "", es: "" }, subtitle: { en: "", it: "", es: "" }, description: { en: "", it: "", es: "" }, highlights: [{ en: "", it: "", es: "" }], image: undefined }],
   hotels: [],
   photos: [
     { file: undefined, title: "", alt: "" }, // index 0 = hero
@@ -239,21 +239,33 @@ function mapTripToFormValues(trip: any): CreateTripValues {
 
   const seasonValues = (tourType: string) => {
     const rows = seasonRows.filter((season) => asText(season?.tour_type).toLowerCase() === tourType);
-    return rows.length
-      ? rows.map((season) => {
-          const tiers = asList(season?.tiers);
-          const byLabel = (label: string) => money(tiers.find((tier) => asText(tier?.label).toLowerCase().includes(label))?.price) || "";
-          return {
-            dateRange: asText(season?.season_label || [season?.start_date, season?.end_date].filter(Boolean).join(" - ")),
-            singleRoom: byLabel("single"),
-            doubleRoom: byLabel("double"),
-            tripleRoom: byLabel("triple"),
-          };
-        })
-      : [
-          { dateRange: "May - Sep", singleRoom: "", doubleRoom: "", tripleRoom: "" },
-          { dateRange: "Oct - Apr", singleRoom: "", doubleRoom: "", tripleRoom: "" }
-        ];
+    const mapped = rows.map((season) => {
+      const tiers = asList(season?.tiers);
+      const byLabel = (label: string) => money(tiers.find((tier) => asText(tier?.label).toLowerCase().includes(label))?.price) || "";
+      return {
+        dateRange: asText(season?.season_label || [season?.start_date, season?.end_date].filter(Boolean).join(" - ")),
+        singleRoom: byLabel("single"),
+        doubleRoom: byLabel("double"),
+        tripleRoom: byLabel("triple"),
+      };
+    });
+
+    // Find the Christmas season from backend data if it exists
+    const christmasFromBackend = mapped.find((s) => s.dateRange.toLowerCase().includes("christmas"));
+    // The first 2 editable seasons (non-christmas)
+    const editableSeasons = mapped.filter((s) => !s.dateRange.toLowerCase().includes("christmas")).slice(0, 2);
+
+    // Pad editable seasons to always have 2 entries
+    while (editableSeasons.length < 2) {
+      editableSeasons.push(editableSeasons.length === 0
+        ? { dateRange: "May - Sep", singleRoom: "", doubleRoom: "", tripleRoom: "" }
+        : { dateRange: "Oct - Apr", singleRoom: "", doubleRoom: "", tripleRoom: "" }
+      );
+    }
+
+    return christmasFromBackend
+      ? [...editableSeasons, christmasFromBackend]
+      : editableSeasons;
   };
 
   return {
@@ -310,6 +322,9 @@ function mapTripToFormValues(trip: any): CreateTripValues {
         const itHighlights = asList(day?.translations?.it?.highlights);
         const esHighlights = asList(day?.translations?.es?.highlights);
         const maxLen = Math.max(enHighlights.length, itHighlights.length, esHighlights.length);
+        if (maxLen === 0) {
+          return [{ en: "", it: "", es: "" }];
+        }
         return Array.from({ length: maxLen }, (_, i) => ({
           en: asText(enHighlights[i] ?? ""),
           it: asText(itHighlights[i] ?? ""),

@@ -36,7 +36,7 @@ export const catalogTripsColumns: DataTableColumn<any>[] = [
   {
     id: "startingFrom",
     header: "Starting From",
-    render: (row) => row.starting_from ? `£${row.starting_from}` : "N/A",
+    render: (row) => row.starting_from ? `$${Number(row.starting_from).toLocaleString("en-US", { maximumFractionDigits: 0 })}` : "N/A",
   },
   {
     id: "status",

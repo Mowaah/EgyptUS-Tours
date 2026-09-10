@@ -13,6 +13,7 @@ interface ItineraryDay {
   highlights: string[];
   imageName: string;
   imageSize: string;
+  imageUrl: string | null;
 }
 
 interface ApiItineraryDay {
@@ -64,13 +65,23 @@ function DayCard({ day }: { day: ItineraryDay }) {
 
         <div className={styles.fieldGroup}>
           <label className={styles.label}>Image ( 663 x 528 )</label>
-          <div className={styles.fileUpload}>
-            <Image src="/images/dashboard/file/png.svg" alt="" width={40} height={40} className={styles.fileIcon} />
-            <div className={styles.fileInfo}>
-              <p className={styles.fileName}>{day.imageName}</p>
-              <p className={styles.fileSize}>{day.imageSize}</p>
+          {day.imageUrl ? (
+            <a href={day.imageUrl} target="_blank" rel="noopener noreferrer" className={styles.fileUpload}>
+              <Image src="/images/dashboard/file/png.svg" alt="" width={40} height={40} className={styles.fileIcon} />
+              <div className={styles.fileInfo}>
+                <p className={styles.fileName}>{day.imageName}</p>
+                <p className={styles.fileSize}>{day.imageSize}</p>
+              </div>
+            </a>
+          ) : (
+            <div className={styles.fileUpload}>
+              <Image src="/images/dashboard/file/png.svg" alt="" width={40} height={40} className={styles.fileIcon} />
+              <div className={styles.fileInfo}>
+                <p className={styles.fileName}>{day.imageName}</p>
+                <p className={styles.fileSize}>{day.imageSize}</p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
@@ -120,6 +131,7 @@ export default function TripItineraryPage() {
                 highlights: getHighlights(day),
                 imageName: day.image_url ? day.image_url.split("/").pop() || "image.jpg" : "No image",
                 imageSize: day.image_url ? "Uploaded image" : "No image uploaded",
+                imageUrl: day.image_url || null,
               }}
             />
           ))}

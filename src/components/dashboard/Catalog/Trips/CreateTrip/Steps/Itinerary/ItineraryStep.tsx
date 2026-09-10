@@ -180,7 +180,7 @@ export function ItineraryStep() {
       title: { en: "", it: "", es: "" },
       subtitle: { en: "", it: "", es: "" },
       description: { en: "", it: "", es: "" },
-      highlights: [],
+      highlights: [{ en: "", it: "", es: "" }],
       image: undefined,
     } as never);
   };

@@ -190,3 +190,19 @@
     }
   }
 }
+
+.deleteButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+
+  &:hover {
+    background: $gray-50-tailwind;
+  }
+}
+

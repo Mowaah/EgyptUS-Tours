@@ -46,7 +46,10 @@ export const transportationColumns: DataTableColumn<any>[] = [
   {
     id: "startingFrom",
     header: "Starting From",
-    render: (row) => `£${row.starting_from || "0.00"}`,
+    render: (row) =>
+      row.starting_from
+        ? `$${Number(row.starting_from).toLocaleString("en-US", { maximumFractionDigits: 0 })}`
+        : "$0",
   },
   {
     id: "status",

@@ -102,7 +102,25 @@ export const createTripSchema = z
           title: requiredLocalizedStringSchema("Itinerary title is required"),
           subtitle: requiredLocalizedStringSchema("Itinerary subtitle is required"),
           description: requiredLocalizedStringSchema("Itinerary description is required"),
-          highlights: z.array(requiredLocalizedStringSchema("Highlight is required")).optional(),
+          highlights: z.array(
+            z.object({
+              en: z.string(),
+              it: z.string(),
+              es: z.string(),
+            }).superRefine((val, ctx) => {
+              const hasAny = !!val.en?.trim() || !!val.it?.trim() || !!val.es?.trim();
+              if (!hasAny) return;
+              if (!val.en?.trim()) {
+                ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["en"], message: "Highlight is required" });
+              }
+              if (!val.it?.trim()) {
+                ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["it"], message: "Highlight is required" });
+              }
+              if (!val.es?.trim()) {
+                ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["es"], message: "Highlight is required" });
+              }
+            })
+          ).optional(),
           image: z.any().optional(),
         })
       )

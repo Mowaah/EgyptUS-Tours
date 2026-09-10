@@ -32,11 +32,14 @@ type HotelRecord = {
   image?: string;
   location?: { name?: string };
   location_name?: string;
+  location_text?: string;
   city?: string;
   rating?: string | number;
+  rating_avg?: string | number;
   average_rating?: string | number;
   review_count?: string | number;
   reviews_count?: string | number;
+  stars?: number;
   amenities?: string[];
   facilities?: string[];
   translations?: {
@@ -72,16 +75,16 @@ function mapHotelOption(hotel: HotelRecord): HotelOption {
   const translation = hotel.translations?.en || hotel.translation || {};
 
   const heroMedia = hotel.media_items?.find((m) => m.kind === "hero");
-  const extractedImage = hotel.image_url || hotel.hero_image_url || hotel.hero_image || hotel.image || heroMedia?.image_url || heroMedia?.image;
+  const extractedImage = hotel.hero_image || hotel.hero_image_url || hotel.image_url || hotel.image || heroMedia?.image_url || heroMedia?.image;
 
   return {
     id: String(hotel.id),
     slug: String(hotel.slug || hotel.id),
     name: hotel.name || translation.name || translation.title || "Untitled hotel",
-    location: hotel.location?.name || hotel.location_name || hotel.city || "Egypt",
+    location: hotel.location_text || hotel.location?.name || hotel.location_name || hotel.city || "Egypt",
     description: hotel.description || translation.description || "",
     image: extractedImage || "/images/hotels/hotel1.jpg",
-    rating: Number(hotel.rating || hotel.average_rating || 0),
+    rating: Number(hotel.rating_avg || hotel.rating || hotel.average_rating || 0),
     reviewCount: Number(hotel.review_count || hotel.reviews_count || 0),
     amenities: hotel.amenities || hotel.facilities || [],
   };

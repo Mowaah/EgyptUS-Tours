@@ -95,9 +95,13 @@
 }
 
 .modalInput {
-  height: 3rem;
-  border-color: $gray-100-zinc;
-  color: #444A51;
+  height: 48px;
+  border-color: $gray-200-zinc;
+  border-radius: 24px;
+  color: $gray-700;
+  font-size: $font-size-sm;
+  line-height: 16px;
+  font-weight: 400;
   letter-spacing: 0;
 
   &::placeholder {

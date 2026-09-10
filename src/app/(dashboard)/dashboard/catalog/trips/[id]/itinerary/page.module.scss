@@ -170,6 +170,8 @@
   background: $white;
   cursor: pointer;
   transition: background 0.2s;
+  text-decoration: none;
+  color: inherit;
 
   &:hover {
     background: $gray-50;

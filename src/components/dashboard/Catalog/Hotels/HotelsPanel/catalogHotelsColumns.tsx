@@ -35,7 +35,10 @@ export const catalogHotelsColumns: DataTableColumn<CatalogHotelRow>[] = [
   {
     id: "startingFrom",
     header: "Starting From",
-    render: (row) => row.starting_from ? `£${row.starting_from}` : "-",
+    render: (row) =>
+      row.starting_from
+        ? `$${Number(row.starting_from).toLocaleString("en-US", { maximumFractionDigits: 0 })}`
+        : "-",
   },
   {
     id: "status",
