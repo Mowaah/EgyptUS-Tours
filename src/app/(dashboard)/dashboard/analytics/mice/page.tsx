@@ -25,7 +25,7 @@ export default function MiceReportsPage() {
   );
 
   if (isLoading) {
-    return <div style={{ padding: "40px", textAlign: "center" }}>Loading reports...</div>;
+    return <div className={styles.loadingState}>Loading reports...</div>;
   }
 
   return (
@@ -47,10 +47,11 @@ export default function MiceReportsPage() {
           />
         </div>
       </div>
-      <MiceBookingsDetail 
+      {/* MICE Proposals Detail table commented out as requested */}
+      {/* <MiceBookingsDetail 
         proposals={reportsData?.proposals_detail?.results} 
         actions={<ExportButtons onCsvClick={() => downloadReportExport("mice", "proposals_detail", ALL_TIME_PARAMS)} />} 
-      />
+      /> */}
     </div>
   );
 }

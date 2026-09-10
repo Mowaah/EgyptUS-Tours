@@ -1,4 +1,5 @@
 import type { DataTableColumn } from "@/components/dashboard/DataTable";
+import { formatCurrencyAmount } from "@/utils/formatMetric";
 import styles from "./reportsColumns.module.scss";
 
 export type ReportRow = any;
@@ -37,7 +38,7 @@ export const reportsColumns: DataTableColumn<ReportRow>[] = [
   {
     id: "product",
     header: "Product",
-    render: (row) => <strong style={{ color: "#374151" }}>{row.destination || row.destination_name || row.product || "Unassigned"}</strong>,
+    render: (row) => <strong className={styles.productName}>{row.destination || row.destination_name || row.product || "Unassigned"}</strong>,
   },
   {
     id: "type",
@@ -61,7 +62,7 @@ export const reportsColumns: DataTableColumn<ReportRow>[] = [
   {
     id: "revenue",
     header: "Revenue",
-    render: (row) => row.total_revenue ? `$${row.total_revenue}` : (row.revenue || "£0.00"),
+    render: (row) => formatCurrencyAmount(row.total_revenue || row.revenue),
   },
   {
     id: "margin",

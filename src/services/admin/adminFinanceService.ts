@@ -4,6 +4,10 @@ export async function getPayments(params?: any): Promise<any> {
   return await adminDataClient.get('/finance/payments/', { params });
 }
 
+export async function getPaymentStats(params?: any): Promise<any> {
+  return await adminDataClient.get('/finance/payments/stats/', { params });
+}
+
 export async function getFinanceReport(params?: any): Promise<any> {
   return await adminDataClient.get('/finance/reports/', { params });
 }

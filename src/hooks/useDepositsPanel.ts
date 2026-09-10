@@ -91,6 +91,7 @@ export function useDepositsPanel({ searchQuery, page = 1, pageSize = 10 }: { sea
     loading,
     totalCount,
     filters,
+    appliedFilters,
     setFilters,
     handleApply,
     handleClean,

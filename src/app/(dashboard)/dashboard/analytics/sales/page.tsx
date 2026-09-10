@@ -9,6 +9,7 @@ import RevenueByPartnerChart from "@/components/dashboard/Analytics/RevenueByPar
 import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 import styles from "@/components/dashboard/Analytics/ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
 import { fetchSalesReports, downloadReportExport } from "@/services/admin/adminReportsService";
+import { formatCompactMetric } from "@/utils/formatMetric";
 
 const ALL_TIME_PARAMS = {
   range: "custom",
@@ -26,7 +27,13 @@ export default function SalesReportsPage() {
   );
 
   const destinationData = useMemo(() => {
-    if (!reportsData?.revenue_by_destination) return { chartData: [], maxValue: 550000, gridLabels: ["0$", "55000$", "110000$", "165000$", "220000$", "420000$", "550000$"] };
+    if (!reportsData?.revenue_by_destination) {
+      return { 
+        chartData: [], 
+        maxValue: 550000, 
+        gridLabels: ["$0", "$55k", "$110k", "$165k", "$220k", "$420k", "$550k"] 
+      };
+    }
     const items = reportsData.revenue_by_destination;
     const totalRev = items.reduce((sum, item) => sum + (parseFloat(item.total_revenue as string) || 0), 0) || 1;
     const maxVal = Math.max(10, ...items.map(i => parseFloat(i.total_revenue as string) || 0));
@@ -40,19 +47,19 @@ export default function SalesReportsPage() {
       })).slice(0, 5), // Show top 5
       maxValue: maxVal,
       gridLabels: [
-        "0$",
-        Math.round(step).toString() + "£",
-        Math.round(step * 2).toString() + "£",
-        Math.round(step * 3).toString() + "£",
-        Math.round(step * 4).toString() + "£",
-        Math.round(step * 5).toString() + "£",
-        Math.round(maxVal).toString() + "£",
+        "$0",
+        formatCompactMetric(step, true),
+        formatCompactMetric(step * 2, true),
+        formatCompactMetric(step * 3, true),
+        formatCompactMetric(step * 4, true),
+        formatCompactMetric(step * 5, true),
+        formatCompactMetric(maxVal, true),
       ]
     };
   }, [reportsData]);
 
   if (isLoading) {
-    return <div style={{ padding: "40px", textAlign: "center" }}>Loading reports...</div>;
+    return <div className={styles.loadingState}>Loading reports...</div>;
   }
 
   return (

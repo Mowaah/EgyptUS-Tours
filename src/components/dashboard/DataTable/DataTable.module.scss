@@ -49,6 +49,23 @@
     border-bottom: 1px solid #f0f1f3;
   }
 
+  tbody tr:last-child td {
+    border-bottom: none;
+
+    &:first-child {
+      border-bottom-left-radius: 12px;
+    }
+
+    &:last-child {
+      border-bottom-right-radius: 12px;
+    }
+
+    &:only-child {
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+  }
+
   tr:nth-child(odd) td {
     background: $background;
   }

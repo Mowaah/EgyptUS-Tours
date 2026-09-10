@@ -31,7 +31,7 @@ export function AnimatedNumber({ value, isActive, duration = 500 }: AnimatedNumb
       if (progress < 1) {
         window.requestAnimationFrame(step);
       } else {
-        setDisplayValue(value);
+        setDisplayValue(Math.round(value));
       }
     };
     
@@ -39,5 +39,5 @@ export function AnimatedNumber({ value, isActive, duration = 500 }: AnimatedNumb
     return () => window.cancelAnimationFrame(reqId);
   }, [value, isActive, duration]);
 
-  return <>{displayValue}</>;
+  return <>{displayValue.toLocaleString("en-US")}</>;
 }

@@ -139,6 +139,7 @@ export function usePaymentsPanel({ searchQuery, page = 1, pageSize = 10 }: UsePa
     loading,
     totalCount,
     filters,
+    appliedFilters,
     setFilters,
     handleApply,
     handleClean,

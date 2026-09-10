@@ -123,13 +123,17 @@
 .subtitleRow {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
+  padding: 0px;
   gap: 8px;
+  opacity: 0.8;
 
   span {
+    font-family: 'Trip Sans', sans-serif;
+    font-style: normal;
     font-weight: 400;
     font-size: $font-size-lg;
-    line-height: 1;
+    line-height: 22px;
     color: $text-muted;
   }
 

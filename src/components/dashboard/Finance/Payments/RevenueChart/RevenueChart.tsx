@@ -19,16 +19,24 @@ export default function RevenueChart({ chartData }: RevenueChartProps) {
 
   const maxVal = chartData.length > 0 ? Math.max(...chartData.map(d => d.value)) : 0;
   
+  const formatAxisLabel = (val: number): string => {
+    if (val === 0) return "$0";
+    if (val >= 1_000_000_000) return `$${Math.round(val / 1_000_000_000)}B`;
+    if (val >= 1_000_000) return `$${Math.round(val / 1_000_000)}M`;
+    if (val >= 1_000) return `$${Math.round(val / 1_000)}k`;
+    return `$${Math.round(val).toLocaleString("en-US")}`;
+  };
+
   const yAxisLabels = [
-    `$${maxVal >= 1000 ? (maxVal / 1000).toFixed(0) + 'k' : maxVal}`,
-    `$${maxVal >= 1000 ? (maxVal * 0.75 / 1000).toFixed(0) + 'k' : Math.round(maxVal * 0.75)}`,
-    `$${maxVal >= 1000 ? (maxVal * 0.5 / 1000).toFixed(0) + 'k' : Math.round(maxVal * 0.5)}`,
-    `$${maxVal >= 1000 ? (maxVal * 0.25 / 1000).toFixed(0) + 'k' : Math.round(maxVal * 0.25)}`,
-    "£0"
+    formatAxisLabel(maxVal),
+    formatAxisLabel(maxVal * 0.75),
+    formatAxisLabel(maxVal * 0.5),
+    formatAxisLabel(maxVal * 0.25),
+    "$0",
   ];
 
   return (
-    <div className={styles.chartCard} style={{ padding: 32, gap: 32 }}>
+    <div className={styles.revenueChartCard}>
       <div className={styles.cardHeader}>
         <div className={styles.iconBox}>
           <Image src="/images/dashboard/finance/payment/chart.svg" alt="" width={24} height={24} />
@@ -40,8 +48,6 @@ export default function RevenueChart({ chartData }: RevenueChartProps) {
           </p>
         </div>
       </div>
-
-      <hr className={styles.divider} />
 
       <div className={styles.barChartContainer}>
         {/* Y Axis Labels */}
@@ -77,14 +83,14 @@ export default function RevenueChart({ chartData }: RevenueChartProps) {
                 >
                   <div className={styles.barWrapper}>
                     <div className={styles.tooltip}>
-                      £ <AnimatedNumber value={col.value} isActive={isActive} />
+                      $ <AnimatedNumber value={Math.round(col.value)} isActive={isActive} />
                     </div>
                     <div 
                       className={`${styles.barFill} ${isActive ? styles.barFillActive : ""}`} 
                       style={{ height: `${col.heightPct}%` }}
                     />
                   </div>
-                  <div className={styles.xAxisLabel} style={{ fontSize: "10px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", width: "100%", textAlign: "center" }}>{col.label}</div>
+                  <div className={styles.xAxisLabel}>{col.label}</div>
                 </div>
               );
             })}

@@ -1,16 +1,38 @@
 @use "@/styles/variables" as *;
 
+.card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .tableWrapper {
   width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .compactTable {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
   table {
     min-width: 0 !important;
   }
   
   th, td {
     padding: 0.5rem 0.5rem !important;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none !important;
+  }
+
+  > div:last-child {
+    margin-top: auto;
   }
 }
 

@@ -8,16 +8,8 @@ import RevenueByDestinationChart from "@/components/dashboard/shared/RevenueByDe
 import SeasonalRevenueHeatmap from "../SeasonalRevenueHeatmap/SeasonalRevenueHeatmap";
 import FleetUtilizationChart from "@/components/dashboard/shared/FleetUtilizationChart/FleetUtilizationChart";
 import { useFinanceReport } from "@/hooks/useFinanceReport";
+import { formatCompactMetric } from "@/utils/formatMetric";
 import styles from "./FinancialReportsPage.module.scss";
-
-const formatCurrencyK = (val: string | number) => {
-  const num = typeof val === "string" ? parseFloat(val) : val;
-  if (isNaN(num) || num === 0) return "£0";
-  if (num >= 1000) {
-    return `$${(num / 1000).toFixed(1).replace(/\.0$/, "")}k`;
-  }
-  return `$${num}`;
-};
 
 export default function FinancialReportsPage() {
   const [rangeKey, setRangeKey] = useState("last_12m");
@@ -78,7 +70,7 @@ export default function FinancialReportsPage() {
         />
         <SummaryCard
           label="Total Revenue"
-          value={formatCurrencyK(data?.total_revenue || 0)}
+          value={formatCompactMetric(data?.total_revenue || 0, true)}
           change={`${data?.revenue_growth_pct || "0"}%`}
           trend={parseFloat(data?.revenue_growth_pct || "0") >= 0 ? "up" : "down"}
           tone="pink"

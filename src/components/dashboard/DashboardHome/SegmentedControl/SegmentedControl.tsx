@@ -1,8 +1,8 @@
 import styles from "./SegmentedControl.module.scss";
 
-export type DashboardRange = "Today" | "Week" | "Month";
+export type DashboardRange = "Monthly" | "Yearly";
 
-const ranges: DashboardRange[] = ["Today", "Week", "Month"];
+const ranges: DashboardRange[] = ["Monthly", "Yearly"];
 
 interface SegmentedControlProps {
   value: DashboardRange;

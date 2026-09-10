@@ -1,5 +1,6 @@
 import type { DataTableColumn, DataTableRowAction } from "@/components/dashboard/DataTable";
 import styles from "./depositsColumns.module.scss";
+import { formatCurrencyAmount } from "@/utils/formatMetric";
 
 export type DepositRow = any; // Just use any or a proper type if desired
 
@@ -40,17 +41,17 @@ export const depositsColumns: DataTableColumn<DepositRow>[] = [
   {
     id: "totalAmount",
     header: "Total Amount",
-    render: (row) => `$${row.total_price}`,
+    render: (row) => formatCurrencyAmount(row.total_price),
   },
   {
     id: "deposit",
     header: "Deposit (30%)",
-    render: (row) => `$${row.deposit_amount}`,
+    render: (row) => formatCurrencyAmount(row.deposit_amount),
   },
   {
     id: "remainingBalance",
     header: "Remaining Balance (70%)",
-    render: (row) => `$${row.remaining_balance}`,
+    render: (row) => formatCurrencyAmount(row.remaining_balance),
   },
   {
     id: "dueDate",

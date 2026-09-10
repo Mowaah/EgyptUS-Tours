@@ -52,7 +52,7 @@ export default function HatchedBarChart({ data, yAxisLabels, barWidth }: Hatched
                     : `${Number.isInteger(item.value) ? item.value : item.value.toFixed(1)}%`}
                 </span>
               </div>
-              <span className={styles.barLabel}>{item.label}</span>
+              <span className={styles.barLabel} title={item.label}>{item.label}</span>
             </div>
           ))}
         </div>

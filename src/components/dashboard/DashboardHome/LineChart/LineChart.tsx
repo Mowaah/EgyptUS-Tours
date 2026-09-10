@@ -25,21 +25,26 @@ export default function LineChart({
     if (p > computedMax) computedMax = p;
   }));
 
-  const paddedMax = computedMax * 1.05;
-  const minStep = Math.max(paddedMax / 5, 0.2); // Ensure we don't get 0
-  const order = Math.pow(10, Math.floor(Math.log10(minStep)));
-  const normalizedTick = minStep / order;
+  let maxValue = 12000;
+  let step = 2400;
 
-  let niceTick;
-  if (normalizedTick <= 1) niceTick = 1;
-  else if (normalizedTick <= 2) niceTick = 2;
-  else if (normalizedTick <= 2.5) niceTick = 2.5;
-  else if (normalizedTick <= 5) niceTick = 5;
-  else niceTick = 10;
+  if (computedMax > 0) {
+    const paddedMax = computedMax * 1.05;
+    const minStep = Math.max(paddedMax / 5, 0.2); // Ensure we don't get 0
+    const order = Math.pow(10, Math.floor(Math.log10(minStep)));
+    const normalizedTick = minStep / order;
 
-  let step = niceTick * order;
-  if (step === 0) step = 1;
-  let maxValue = step * 5;
+    let niceTick;
+    if (normalizedTick <= 1) niceTick = 1;
+    else if (normalizedTick <= 2) niceTick = 2;
+    else if (normalizedTick <= 2.5) niceTick = 2.5;
+    else if (normalizedTick <= 5) niceTick = 5;
+    else niceTick = 10;
+
+    step = niceTick * order;
+    if (step === 0) step = 1;
+    maxValue = step * 5;
+  }
 
   const yAxisLabels = Array.from({ length: 6 }, (_, i) => {
     const val = maxValue - step * i;
@@ -52,6 +57,7 @@ export default function LineChart({
   const [hoverData, setHoverData] = useState<{ index: number; x: number; y: number } | null>(null);
 
   const handlePointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
+    if (numPoints === 0) return;
     const svg = e.currentTarget;
     const rect = svg.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -100,8 +106,8 @@ export default function LineChart({
               key={`v-${index}`}
               y1="0"
               y2={height}
-              x1={(index * width) / (maxIndex || 1)}
-              x2={(index * width) / (maxIndex || 1)}
+              x1={(index * width) / (labels.length - 1 || 1)}
+              x2={(index * width) / (labels.length - 1 || 1)}
               className={styles.gridLine}
             />
           ))}
@@ -132,21 +138,23 @@ export default function LineChart({
             const gradId = `areaGrad-${line.name.replace(/\s+/g, "-")}`;
             return (
               <g key={line.name}>
-                {area ? (
+                {area && path ? (
                   <path d={`${path} L ${width} ${height} L 0 ${height} Z`} fill={`url(#${gradId})`} />
                 ) : null}
-                <path
-                  d={path}
-                  fill="none"
-                  stroke={line.color}
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+                {path ? (
+                  <path
+                    d={path}
+                    fill="none"
+                    stroke={line.color}
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                ) : null}
               </g>
             );
           })}
-          {hoverData !== null ? (
+          {hoverData !== null && numPoints > 0 ? (
             <line
               x1={(hoverData.index * width) / (maxIndex || 1)}
               x2={(hoverData.index * width) / (maxIndex || 1)}
@@ -157,7 +165,7 @@ export default function LineChart({
           ) : null}
         </svg>
 
-        {hoverData !== null
+        {hoverData !== null && numPoints > 0
           ? lines.map((line, i) => {
               const leftPercent = (hoverData.index / (maxIndex || 1)) * 100;
               const topPercent = (1 - (line.points[hoverData.index] ?? 0) / maxValue) * 100;
@@ -195,7 +203,7 @@ export default function LineChart({
           : null}
       </div>
 
-      {hoverData !== null ? (
+      {hoverData !== null && numPoints > 0 ? (
         <div
           className={styles.tooltip}
           style={{

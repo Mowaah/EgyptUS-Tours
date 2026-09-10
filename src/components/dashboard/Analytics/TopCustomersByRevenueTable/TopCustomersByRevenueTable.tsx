@@ -4,6 +4,7 @@ import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 import DataTable from "@/components/dashboard/DataTable/DataTable";
 import ViewButton from "@/components/shared/ViewButton/ViewButton";
 import styles from "./TopCustomersByRevenueTable.module.scss";
+import { formatCurrencyAmount } from "@/utils/formatMetric";
 
 import { TopCustomer } from "@/services/admin/adminReportsService";
 
@@ -30,7 +31,7 @@ export default function TopCustomersByRevenueTable({
       header: "Amount",
       render: (row: TopCustomer) => (
         <span className={styles.cellText}>
-          £{parseFloat(row.total_revenue).toLocaleString()}
+          {formatCurrencyAmount(row.total_revenue)}
         </span>
       ),
     },
@@ -42,7 +43,7 @@ export default function TopCustomersByRevenueTable({
   ];
 
   return (
-    <article className={parentStyles.chartCard}>
+    <article className={`${parentStyles.chartCard} ${styles.card}`}>
       <PanelHeader
         icon="finance/payment/chart" 
         title="Top Customers by Revenue"

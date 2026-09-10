@@ -8,6 +8,7 @@ import RequestDetailsLayout from "../shared/RequestDetailsLayout/RequestDetailsL
 import { ActivityTimeline } from "../shared/Sections";
 import InquiryDetails from "./InquiryDetails";
 import phStyles from "@/components/dashboard/shared/ProfileHeader/ProfileHeader.module.scss";
+import { formatDateTimeAt } from "@/utils/dateFormat";
 
 export default function ViewContactUsRequest({ requestId }: { requestId: string }) {
   const [data, setData] = useState<any>(null);
@@ -105,7 +106,7 @@ export default function ViewContactUsRequest({ requestId }: { requestId: string 
       requestTitle={`${data.full_name} - ${data.inquiry_code}`}
       status={data.display_status || data.status}
       statusVariant={getContactUsStatusVariant(data.status)}
-      date={data.submitted_on ? new Date(data.submitted_on).toLocaleDateString() : ""}
+      date={formatDateTimeAt(data.submitted_on || data.created_at)}
       hideDefaultActions={hideDefaultActions}
       prependActionButtons={prependActionButtons}
       appendActionButtons={appendActionButtons}

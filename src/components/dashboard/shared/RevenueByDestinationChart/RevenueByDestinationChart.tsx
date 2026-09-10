@@ -3,6 +3,7 @@
 import { useState } from "react";
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
 import { AnimatedNumber } from "@/components/shared/AnimatedNumber/AnimatedNumber";
+import { formatCompactMetric } from "@/utils/formatMetric";
 import styles from "./RevenueByDestinationChart.module.scss";
 
 interface ChartData {
@@ -19,7 +20,7 @@ const defaultData: ChartData[] = [
   { label: "SIWA", value: 283000, percentage: 63 },
 ];
 
-const defaultGridLabels = ["£0K", "£75K", "£150K", "£225K", "£300K", "£375K", "£450K"];
+const defaultGridLabels = ["$0", "$75k", "$150k", "$225k", "$300k", "$375k", "$450k"];
 
 export interface RevenueByDestinationChartProps {
   title?: string;
@@ -47,11 +48,11 @@ export default function RevenueByDestinationChart({
   const activeMaxVal = maxValue || Math.max(100, ...data.map(d => d.value));
   
   const activeGridLabels = gridLabels || [
-    "£0K",
-    `$${Math.round((activeMaxVal * 0.25) / 1000)}K`,
-    `$${Math.round((activeMaxVal * 0.5) / 1000)}K`,
-    `$${Math.round((activeMaxVal * 0.75) / 1000)}K`,
-    `$${Math.round(activeMaxVal / 1000)}K`,
+    "$0",
+    formatCompactMetric(activeMaxVal * 0.25, true),
+    formatCompactMetric(activeMaxVal * 0.5, true),
+    formatCompactMetric(activeMaxVal * 0.75, true),
+    formatCompactMetric(activeMaxVal, true),
   ];
 
   return (
@@ -65,7 +66,7 @@ export default function RevenueByDestinationChart({
 
       <div className={styles.chartBody}>
         {data.length === 0 ? (
-          <div style={{ padding: "40px 0", textAlign: "center", color: "#6B7280", fontSize: "0.9rem" }}>
+          <div className={styles.emptyMessage}>
             No destination revenue recorded for this period.
           </div>
         ) : (
@@ -104,10 +105,12 @@ export default function RevenueByDestinationChart({
                           {tooltipFormat === "revenue" ? (
                             <>
                               $
-                              {item.value >= 1000 ? (
-                                <><AnimatedNumber value={Math.round(item.value / 1000)} isActive={isHovered} />K</>
+                              {item.value >= 1_000_000 ? (
+                                <><AnimatedNumber value={Math.round(item.value / 1_000_000)} isActive={isHovered} />M</>
+                              ) : item.value >= 1000 ? (
+                                <><AnimatedNumber value={Math.round(item.value / 1000)} isActive={isHovered} />k</>
                               ) : (
-                                <AnimatedNumber value={item.value} isActive={isHovered} />
+                                <AnimatedNumber value={Math.round(item.value)} isActive={isHovered} />
                               )}
                             </>
                           ) : (

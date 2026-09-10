@@ -1,6 +1,7 @@
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
 import styles from "./RevenueByPartnerChart.module.scss";
 import { RevenueByPartner } from "@/services/admin/adminReportsService";
+import { formatCompactMetric, formatCurrencyAmount } from "@/utils/formatMetric";
 import { useMemo } from "react";
 
 interface RevenueByPartnerChartProps {
@@ -18,16 +19,16 @@ export default function RevenueByPartnerChart({ data = [], actions }: RevenueByP
   }, [data]);
 
   const { yAxisLabels, maxValue } = useMemo(() => {
-    if (!chartData.length) return { yAxisLabels: ["100 $", "75 $", "50 $", "25 $", "0 $"], maxValue: 100 };
+    if (!chartData.length) return { yAxisLabels: ["$100", "$75", "$50", "$25", "$0"], maxValue: 100 };
     const max = Math.max(10, ...chartData.map(d => d.value));
     const step = max / 4;
     return {
       yAxisLabels: [
-        Math.round(max) + " $",
-        Math.round(max - step) + " $",
-        Math.round(max - step * 2) + " $",
-        Math.round(max - step * 3) + " $",
-        "0 $"
+        formatCompactMetric(max, true),
+        formatCompactMetric(max - step, true),
+        formatCompactMetric(max - step * 2, true),
+        formatCompactMetric(max - step * 3, true),
+        "$0"
       ],
       maxValue: max
     };
@@ -67,6 +68,7 @@ export default function RevenueByPartnerChart({ data = [], actions }: RevenueByP
             {chartData.map((col, index) => {
               // Calculate height percentage relative to maxValue
               const heightPct = (col.value / maxValue) * 100;
+              const formattedVal = formatCurrencyAmount(col.value);
               
               return (
                 <div key={index} className={styles.barColumn}>
@@ -74,10 +76,10 @@ export default function RevenueByPartnerChart({ data = [], actions }: RevenueByP
                     <div 
                       className={styles.barFill} 
                       style={{ height: `${heightPct}%` }}
-                      title={`$${col.value.toLocaleString()}`}
+                      title={formattedVal}
                     >
                       <span className={styles.barValueHover}>
-                        ${col.value.toLocaleString()}
+                        {formattedVal}
                       </span>
                     </div>
                   </div>

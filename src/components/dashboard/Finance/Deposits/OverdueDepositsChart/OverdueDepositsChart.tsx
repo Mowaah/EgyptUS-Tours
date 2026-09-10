@@ -1,6 +1,7 @@
 import Image from "next/image";
 import parentStyles from "../DepositsPage/DepositsPage.module.scss";
 import HatchedBarChart from "@/components/dashboard/shared/HatchedBarChart/HatchedBarChart";
+import { formatCompactMetric } from "@/utils/formatMetric";
 
 export default function OverdueDepositsChart({ chartData }: { chartData?: Record<string, string> }) {
   const COLOR_MAP: Record<string, string> = {
@@ -14,15 +15,6 @@ export default function OverdueDepositsChart({ chartData }: { chartData?: Record
     hotel: "Hotels",
     transport: "Transport",
     custom_trip: "Custom",
-  };
-
-  const formatCurrencyK = (value: string | number) => {
-    const num = typeof value === 'string' ? parseFloat(value.replace(/[^0-9.-]+/g, "")) : value;
-    if (isNaN(num)) return "£0";
-    if (num >= 1000) {
-      return `$${(num / 1000).toFixed(1).replace(/\.0$/, '')}k`;
-    }
-    return `$${num}`;
   };
 
   const distribution = Object.entries(chartData || {}).map(([key, val]) => {
@@ -40,15 +32,15 @@ export default function OverdueDepositsChart({ chartData }: { chartData?: Record
     ...d,
     value: maxVal > 0 ? (d.value / maxVal) * 100 : 0, // Using value for height
     originalValue: d.value,
-    displayValue: formatCurrencyK(d.value),
+    displayValue: formatCompactMetric(d.value, true),
   }));
 
   const yAxisLabels = [
-    formatCurrencyK(maxVal),
-    formatCurrencyK(maxVal * 0.75),
-    formatCurrencyK(maxVal * 0.5),
-    formatCurrencyK(maxVal * 0.25),
-    "£0",
+    formatCompactMetric(maxVal, true),
+    formatCompactMetric(maxVal * 0.75, true),
+    formatCompactMetric(maxVal * 0.5, true),
+    formatCompactMetric(maxVal * 0.25, true),
+    "$0",
   ];
 
   return (

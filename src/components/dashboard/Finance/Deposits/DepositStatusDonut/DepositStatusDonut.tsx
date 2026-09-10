@@ -11,7 +11,7 @@ export default function DepositStatusDonut({ chartData }: { chartData?: Record<s
   ];
 
   return (
-    <div className={styles.chartCard} style={{ paddingBottom: 24 }}>
+    <div className={styles.chartCard}>
       <div className={styles.cardHeader}>
         <div className={styles.iconBox}>
           <Image src="/images/dashboard/finance/payment/chart.svg" alt="" width={24} height={24} />
@@ -25,7 +25,7 @@ export default function DepositStatusDonut({ chartData }: { chartData?: Record<s
       <div className={styles.donutWrapper}>
         <RoundedDonutChart 
           data={mappedData} 
-          centerValue={`${totalCount === 1 && !chartData ? 0 : totalCount}`} 
+          centerValue={`${totalCount === 1 && !chartData ? 0 : totalCount.toLocaleString("en-US")}`} 
           centerLabel="Total Deposits" 
         />
         

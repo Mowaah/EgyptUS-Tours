@@ -1,15 +1,16 @@
 "use client";
 
-import Image from "next/image";
+import { useState } from "react";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import { SummaryCard } from "@/components/dashboard/SummaryCard";
 import PaymentsTable from "../PaymentsTable/PaymentsTable";
 import RevenueByCategory from "../RevenueByCategory/RevenueByCategory";
 import RevenueChart from "../RevenueChart/RevenueChart";
-import pageStyles from "@/app/(dashboard)/dashboard/page.module.scss";
 import styles from "./PaymentsPage.module.scss";
 import { useFinanceReport } from "@/hooks/useFinanceReport";
+import { usePaymentStats } from "@/hooks/usePaymentStats";
 import { downloadBlobAsCSV } from "@/lib/utils";
+import { formatCompactMetric, formatCountWithCommas, formatTrendPct } from "@/utils/formatMetric";
 
 const CATEGORY_COLORS: Record<string, string> = {
   Trip: "#A1CCFF",
@@ -18,35 +19,25 @@ const CATEGORY_COLORS: Record<string, string> = {
   "Custom trip": "#D8F3DC",
 };
 
-function formatCurrency(amountStr: string | undefined): string {
-  if (!amountStr) return "0";
-  const amount = parseFloat(amountStr);
-  if (isNaN(amount) || amount === 0) return "0";
-  if (amount >= 1000) {
-    return (amount / 1000).toFixed(1).replace(/\.0$/, '') + "k";
-  }
-  return amount.toFixed(0);
-}
-
-const exportFinanceReportToCSV = (data: any) => {
-  if (!data) return;
+const exportFinanceReportToCSV = (data: any, statsData?: any) => {
+  if (!data && !statsData) return;
   const lines = [];
   lines.push("Metric,Value");
-  lines.push(`Total Revenue,$${data.total_revenue || 0}`);
-  lines.push(`Total Transactions,${data.total_transactions || 0}`);
-  lines.push(`Refunded Amount,$${data.refunded_amount || 0}`);
-  lines.push(`Revenue Growth,${data.revenue_growth_pct || 0}%`);
+  lines.push(`Total Revenue,$${data?.total_revenue || 0}`);
+  lines.push(`Total Transactions,${statsData?.total_transactions || data?.total_transactions || 0}`);
+  lines.push(`Refunded Amount,$${statsData?.refunded_amount || data?.refunded_amount || 0}`);
+  lines.push(`Revenue Growth,${statsData?.revenue_growth_pct || data?.revenue_growth_pct || 0}%`);
   
   lines.push("");
   lines.push("Category,Revenue");
-  const revMap = data.revenue_by_category || {};
+  const revMap = data?.revenue_by_category || statsData?.revenue_by_category || {};
   Object.keys(revMap).forEach(k => {
     lines.push(`"${k}",$${revMap[k]}`);
   });
 
   lines.push("");
   lines.push("Month,Revenue");
-  const heatmap = data.seasonal_heatmap || [];
+  const heatmap = data?.seasonal_heatmap || [];
   heatmap.forEach((m: any) => {
     const totalRev = parseFloat(m.trip) + parseFloat(m.hotel) + parseFloat(m.transport) + parseFloat(m.custom_trip);
     lines.push(`"${m.month}",$${totalRev.toFixed(2)}`);
@@ -56,11 +47,10 @@ const exportFinanceReportToCSV = (data: any) => {
   downloadBlobAsCSV(blob, "finance_report_summary.csv");
 };
 
-import { useState } from "react";
-
 export default function PaymentsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const { data, loading } = useFinanceReport("ytd");
+  const { data: statsData } = usePaymentStats();
 
   const revenueByCatMap = data?.revenue_by_category || {};
   const categoryData = Object.keys(revenueByCatMap)
@@ -102,69 +92,72 @@ export default function PaymentsPage() {
     heightPct: maxVal > 0 ? (d.value / maxVal) * 100 : 0
   }));
 
+  const growthPct = statsData?.revenue_growth_pct || data?.revenue_growth_pct || "0";
+  const totalRevenueVal = data?.total_revenue || statsData?.total_payments_mtd || "0";
+  const transactionsVal = statsData?.total_transactions ?? data?.total_transactions ?? 0;
+  const refundedVal = statsData?.refunded_amount ?? data?.refunded_amount ?? "0";
+  const donutCenterVal = totalCatVal > 0 ? totalCatVal : totalRevenueVal;
+
   return (
     <>
-      
-      
-        <DashboardNavbar
-          breadcrumbTrail={[
-            { label: "Finance", href: "/dashboard/finance/payments" },
-            { label: "Payments" },
-          ]}
-          title="Payments"
-          subtitle="Track and manage all payment transactions."
-          searchPlaceholder="Search Customer, Booking ID, Payment ID"
-          primaryAction={{
-            label: "Export Report",
-            iconSrc: "/images/dashboard/export2.svg"
-          }}
-          onPrimaryAction={() => exportFinanceReportToCSV(data)}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
+      <DashboardNavbar
+        breadcrumbTrail={[
+          { label: "Finance", href: "/dashboard/finance/payments" },
+          { label: "Payments" },
+        ]}
+        title="Payments"
+        subtitle="Track and manage all payment transactions."
+        searchPlaceholder="Search Customer, Booking ID, Payment ID"
+        primaryAction={{
+          label: "Export Report",
+          iconSrc: "/images/dashboard/export2.svg",
+        }}
+        onPrimaryAction={() => exportFinanceReportToCSV(data, statsData)}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+      />
+
+      <div className={styles.metricsGrid}>
+        <SummaryCard
+          label="Total Revenue (YTD)"
+          value={formatCompactMetric(totalRevenueVal, true)}
+          change={growthPct ? formatTrendPct(growthPct) : "0%"}
+          trend={parseFloat(growthPct) >= 0 ? "up" : "down"}
+          tone="green"
+          iconSrc="/images/dashboard/finance/payment/total.svg"
         />
+        <SummaryCard
+          label="Total Transactions"
+          value={formatCountWithCommas(transactionsVal)}
+          change=""
+          trend="up"
+          tone="orange"
+          iconSrc="/images/dashboard/finance/payment/total_transaction.svg"
+        />
+        <SummaryCard
+          label="Refunded Amount"
+          value={formatCompactMetric(refundedVal, true)}
+          change=""
+          trend="down"
+          tone="gray"
+          iconSrc="/images/dashboard/finance/payment/refunded.svg"
+        />
+        <SummaryCard
+          label="Revenue Growth %"
+          value={`${Math.round(parseFloat(growthPct))}%`}
+          change=""
+          trend={parseFloat(growthPct) >= 0 ? "up" : "down"}
+          tone="pink"
+          iconSrc="/images/dashboard/finance/payment/money.svg"
+        />
+      </div>
 
-        <div className={styles.metricsGrid}>
-          <SummaryCard
-            label="Total Revenue (YTD)"
-            value={`$${formatCurrency(data?.total_revenue)}`}
-            change={data?.revenue_growth_pct ? `${parseFloat(data.revenue_growth_pct) > 0 ? "+" : ""}${data.revenue_growth_pct}%` : "0%"}
-            trend={parseFloat(data?.revenue_growth_pct || "0") >= 0 ? "up" : "down"}
-            tone="green"
-            iconSrc="/images/dashboard/finance/payment/total.svg"
-          />
-          <SummaryCard
-            label="Total Transactions"
-            value={data?.total_transactions?.toString() || "0"}
-            change=""
-            trend="up"
-            tone="orange"
-            iconSrc="/images/dashboard/finance/payment/total_transaction.svg"
-          />
-          <SummaryCard
-            label="Refunded Amount"
-            value={`$${formatCurrency(data?.refunded_amount)}`}
-            change=""
-            trend="down"
-            tone="gray"
-            iconSrc="/images/dashboard/finance/payment/refunded.svg"
-          />
-          <SummaryCard
-            label="Revenue Growth %"
-            value={`${data?.revenue_growth_pct || "0"}%`}
-            change=""
-            trend={parseFloat(data?.revenue_growth_pct || "0") >= 0 ? "up" : "down"}
-            tone="pink"
-            iconSrc="/images/dashboard/finance/payment/money.svg"
-          />
-        </div>
+      <div className={styles.chartsGrid}>
+        <RevenueChart chartData={seasonalData} />
+        <RevenueByCategory chartData={chartDataNormalized} totalValue={formatCompactMetric(donutCenterVal, false)} />
+      </div>
 
-        <div className={styles.chartsGrid}>
-          <RevenueChart chartData={seasonalData} />
-          <RevenueByCategory chartData={chartDataNormalized} totalValue={formatCurrency(data?.total_revenue)} />
-        </div>
-
-        <PaymentsTable searchQuery={searchQuery} onClearSearch={() => setSearchQuery("")} />
-      
+      <PaymentsTable searchQuery={searchQuery} onClearSearch={() => setSearchQuery("")} />
     </>
   );
 }

@@ -6,12 +6,11 @@ import {
   TablePanelFilterBar,
 } from "@/components/dashboard/TablePanel";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { paymentsColumns, paymentRowActions } from "../paymentsColumns/paymentsColumns";
 
 import { usePaymentsPanel } from "@/hooks/usePaymentsPanel";
-import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
-
 
 interface PaymentsTableProps {
   searchQuery?: string;
@@ -26,6 +25,7 @@ export default function PaymentsTable({ searchQuery = "", onClearSearch }: Payme
     data,
     loading,
     filters,
+    appliedFilters,
     setFilters,
     handleApply,
     handleClean,
@@ -61,25 +61,10 @@ export default function PaymentsTable({ searchQuery = "", onClearSearch }: Payme
     console.log("Action:", action.label, "Row:", row);
   };
 
-  if (loading && data.length === 0) {
-    return <div style={{ padding: "40px", textAlign: "center", color: "#666" }}>Loading data...</div>;
-  }
-
-  if (data.length === 0 && searchQuery) {
-    return <DashboardSearchEmptyState onClearSearch={() => {
-      handleClean();
-      onClearSearch?.();
-    }} />;
-  }
-
-  if (data.length === 0) {
-    return (
-      <DashboardEmptyState
-        title="No Payments Yet"
-        subtitle="Payment data will appear here once transactions are recorded."
-      />
-    );
-  }
+  const handleClearAll = () => {
+    handleClean();
+    onClearSearch?.();
+  };
 
   return (
     <TablePanel
@@ -92,10 +77,7 @@ export default function PaymentsTable({ searchQuery = "", onClearSearch }: Payme
       toolbar={
         <TablePanelFilterBar
           fields={filterFields}
-          onClean={() => {
-            handleClean();
-            onClearSearch?.();
-          }}
+          onClean={handleClearAll}
           onApply={handleApply}
         />
       }
@@ -113,6 +95,22 @@ export default function PaymentsTable({ searchQuery = "", onClearSearch }: Payme
         onPageSizeChange={setPageSize}
         defaultPageSize={10}
         isLoading={loading}
+        onClearSearch={handleClearAll}
+        emptyState={
+          !searchQuery && Object.values(appliedFilters).every((v) => v === "All") ? (
+            <DashboardEmptyState
+              title="No Payments Found"
+              subtitle="Payment transactions will appear here once they are recorded."
+              imageSrc="/images/dashboard/empty.png"
+            />
+          ) : !searchQuery && Object.values(appliedFilters).some((v) => v !== "All") ? (
+            <DashboardFilterEmptyState
+              onClearFilters={handleClearAll}
+              title="No Results Found"
+              subtitle="No payments match the selected filters."
+            />
+          ) : undefined
+        }
       />
     </TablePanel>
   );

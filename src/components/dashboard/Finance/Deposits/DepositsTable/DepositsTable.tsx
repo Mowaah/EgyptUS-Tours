@@ -6,7 +6,7 @@ import { TablePanel, TablePanelFilterBar } from "@/components/dashboard/TablePan
 import { depositsColumns, depositRowActions } from "../depositsColumns/depositsColumns";
 import { useDepositsPanel } from "@/hooks/useDepositsPanel";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
-import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 
 interface DepositsTableProps {
   searchQuery?: string;
@@ -21,6 +21,7 @@ export default function DepositsTable({ searchQuery = "", onClearSearch }: Depos
     data,
     loading,
     filters,
+    appliedFilters,
     setFilters,
     handleApply,
     handleClean,
@@ -30,6 +31,11 @@ export default function DepositsTable({ searchQuery = "", onClearSearch }: Depos
 
   const handleAction = (action: { label: string }, row: any) => {
     console.log(`Action ${action.label} on row`, row);
+  };
+
+  const handleClearAll = () => {
+    handleClean();
+    onClearSearch?.();
   };
 
   const filterFields = [
@@ -56,16 +62,6 @@ export default function DepositsTable({ searchQuery = "", onClearSearch }: Depos
     },
   ];
 
-  if (!loading && data.length === 0 && !searchQuery && filters.service === "All" && filters.status === "All") {
-    return (
-      <DashboardEmptyState
-        imageSrc="/images/dashboard/finance/payment/total_transaction.svg"
-        title="No Deposits Yet"
-        subtitle="There are currently no deposits tracked."
-      />
-    );
-  }
-
   return (
     <TablePanel
       title="Deposits"
@@ -77,31 +73,41 @@ export default function DepositsTable({ searchQuery = "", onClearSearch }: Depos
       toolbar={
         <TablePanelFilterBar
           fields={filterFields}
-          onClean={handleClean}
+          onClean={handleClearAll}
           onApply={handleApply}
         />
       }
     >
-      {!loading && data.length === 0 && searchQuery ? (
-        <DashboardSearchEmptyState
-          onClearSearch={onClearSearch}
-        />
-      ) : (
-        <DataTable
-          data={data}
-          columns={depositsColumns}
-          rowActions={depositRowActions(handleAction)}
-          getRowId={(row) => `${row.booking_type}-${row.booking_id}`}
-          serverSidePagination={true}
-          totalCount={totalCount}
-          pageIndex={page - 1}
-          pageSize={pageSize}
-          onPageChange={(p) => setPage(p + 1)}
-          onPageSizeChange={setPageSize}
-          defaultPageSize={10}
+      <DataTable
+        data={data}
+        columns={depositsColumns}
+        rowActions={depositRowActions(handleAction)}
+        getRowId={(row) => `${row.booking_type}-${row.booking_id}`}
+        serverSidePagination={true}
+        totalCount={totalCount}
+        pageIndex={page - 1}
+        pageSize={pageSize}
+        onPageChange={(p) => setPage(p + 1)}
+        onPageSizeChange={setPageSize}
+        defaultPageSize={10}
         isLoading={loading}
-        />
-      )}
+        onClearSearch={handleClearAll}
+        emptyState={
+          !searchQuery && Object.values(appliedFilters).every((v) => v === "All") ? (
+            <DashboardEmptyState
+              title="No Deposits Found"
+              subtitle="Deposits will appear here once bookings are created."
+              imageSrc="/images/dashboard/empty.png"
+            />
+          ) : !searchQuery && Object.values(appliedFilters).some((v) => v !== "All") ? (
+            <DashboardFilterEmptyState
+              onClearFilters={handleClearAll}
+              title="No Results Found"
+              subtitle="No deposits match the selected filters."
+            />
+          ) : undefined
+        }
+      />
     </TablePanel>
   );
 }

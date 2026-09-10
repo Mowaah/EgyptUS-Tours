@@ -1,15 +1,33 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import useSWR from "swr";
 import { getFinanceReport } from "@/services/admin/adminFinanceService";
 import { downloadBlobAsCSV } from "@/lib/utils";
 
 export function useFinanceReport(rangeKey: string = "last_12m") {
-  const { data, isLoading: loading, mutate } = useSWR(
+  const { data: rawData, isLoading: loading, mutate } = useSWR(
     ["adminFinanceReport", rangeKey],
     () => getFinanceReport({ range: rangeKey }),
     { keepPreviousData: true }
   );
+
+  const data = useMemo(() => {
+    if (!rawData) return rawData;
+    let totalRev = rawData.total_revenue;
+    if (!totalRev && rawData.revenue_by_category) {
+      const sum = Object.values(rawData.revenue_by_category).reduce(
+        (acc: number, val: any) => acc + (parseFloat(val as string) || 0),
+        0
+      );
+      if (sum > 0) {
+        totalRev = sum.toFixed(2);
+      }
+    }
+    return {
+      ...rawData,
+      total_revenue: totalRev,
+    };
+  }, [rawData]);
 
   const handleExportCSV = useCallback(() => {
     if (!data) return;

@@ -10,6 +10,7 @@ import { MetricCard } from "./MetricCard";
 import { PanelHeader } from "./PanelHeader";
 import PendingActions from "./PendingActions/PendingActions";
 import type { DashboardRange } from "./SegmentedControl/SegmentedControl";
+import { months } from "./dashboardHomeData";
 import type {
   BookingDistribution,
   ChartLine,
@@ -30,10 +31,9 @@ import styles from "./DashboardHome.module.scss";
 
 const DESTINATION_COLORS = ["#A1CCFF", "#FFC6A0", "#FFD6DD", "#E9BDFF", "#B6F3D2"];
 
-function toApiRange(range: DashboardRange): "today" | "this_week" | "this_month" {
-  if (range === "Today") return "today";
-  if (range === "Week") return "this_week";
-  return "this_month";
+function toApiRange(range: DashboardRange): "month" | "year" {
+  if (range === "Yearly") return "year";
+  return "month";
 }
 
 function parseMoney(value: string): number {
@@ -59,6 +59,7 @@ function mapMetricCards(cards: DashboardCards): MetricCardData[] {
       icon: "total-bookings",
       spark: "",
     },
+    /*
     {
       label: "Total Revenue",
       value: formatCompactMetric(cards.total_revenue?.value, true),
@@ -77,6 +78,7 @@ function mapMetricCards(cards: DashboardCards): MetricCardData[] {
       icon: "pending-confirmation",
       spark: "",
     },
+    */
     {
       label: "New Leads",
       value: formatCompactMetric(cards.new_leads?.value, false),
@@ -117,21 +119,67 @@ function mapRevenueLines(rows: RevenueOverviewRow[]): ChartLine[] {
   ];
 }
 
-function extractLabels(rows: { date: string }[], range: DashboardRange): string[] {
-  if (!Array.isArray(rows)) return [];
+const DEFAULT_REVENUE_LINES: ChartLine[] = [
+  { name: "Trips", color: "#2E93FA", points: [] },
+  { name: "Hotels", color: "#FF8B3D", points: [] },
+  { name: "Transportation", color: "#FB7D91", points: [] },
+  { name: "MICE", color: "#A23DE0", points: [] },
+];
+
+const DEFAULT_DOMESTIC_LINES: ChartLine[] = [
+  { name: "inside Egypt", color: "#3894FF", areaColor: "#3894FF", points: [] },
+  { name: "International", color: "#FFAA70", areaColor: "#FFAA70", points: [] },
+];
+
+function getYearlyLabels(): string[] {
+  const currentYear = new Date().getFullYear();
+  return Array.from({ length: 5 }, (_, i) => (currentYear - 4 + i).toString());
+}
+
+const MONTH_NAMES = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
+function extractLabels(
+  rows: Array<{ date?: string; month?: string; hour?: string }> | Record<string, number> | undefined,
+  range: DashboardRange
+): string[] {
+  if (!Array.isArray(rows) || rows.length === 0) {
+    return range === "Yearly" ? getYearlyLabels() : months;
+  }
   return rows.map((r) => {
-    const d = new Date(r.date);
-    if (range === "Today") return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    if (range === "Week") return d.toLocaleDateString(undefined, { weekday: 'short' });
-    return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    const raw = r.month || r.date || r.hour || "";
+    if (!raw) return "";
+
+    if (r.month || range === "Monthly") {
+      const parts = raw.split("-");
+      if (parts.length >= 2) {
+        const monthNum = parseInt(parts[1], 10);
+        if (monthNum >= 1 && monthNum <= 12) {
+          return MONTH_NAMES[monthNum - 1];
+        }
+      }
+    }
+
+    if (range === "Yearly") {
+      const parts = raw.split("-");
+      if (parts.length >= 1 && parts[0].length === 4) {
+        return parts[0];
+      }
+      const d = new Date(raw);
+      return !isNaN(d.getTime()) ? d.getFullYear().toString() : raw;
+    }
+
+    const d = new Date(raw);
+    return !isNaN(d.getTime())
+      ? d.toLocaleDateString("en-US", { month: "short" }).toUpperCase()
+      : raw;
   });
 }
 
-function mapDomesticLines(rows: DomesticOverviewRow[]): ChartLine[] {
-  if (!Array.isArray(rows)) return [];
+function mapDomesticLines(rows: DomesticOverviewRow[] | Record<string, number> | undefined): ChartLine[] {
+  if (!Array.isArray(rows)) return DEFAULT_DOMESTIC_LINES;
   return [
-    { name: "Inside Egypt", color: "rgba(41, 113, 230, 0.7)", areaColor: "#8DC1FF", points: rows.map((r) => r.domestic) },
-    { name: "International", color: "#FFD0B0", areaColor: "#FFEDD5", points: rows.map((r) => r.international) },
+    { name: "inside Egypt", color: "#3894FF", areaColor: "#3894FF", points: rows.map((r) => r.domestic ?? 0) },
+    { name: "International", color: "#FFAA70", areaColor: "#FFAA70", points: rows.map((r) => r.international ?? 0) },
   ];
 }
 
@@ -207,11 +255,11 @@ function buildYAxisLabels(maxValue: number): string[] {
 }
 
 export default function DashboardHome() {
-  const [revenueRange, setRevenueRange] = useState<DashboardRange>("Month");
-  const [bookingRange, setBookingRange] = useState<DashboardRange>("Month");
+  const [revenueRange, setRevenueRange] = useState<DashboardRange>("Monthly");
+  const [bookingRange, setBookingRange] = useState<DashboardRange>("Monthly");
 
-  // Base fetch for metric cards, destinations, distribution, and pending actions (always "Month")
-  const baseApi = useAdminDashboard("this_month");
+  // Base fetch for metric cards, destinations, distribution, and pending actions (always "month")
+  const baseApi = useAdminDashboard("month");
   
   // Two separate fetches so each panel's range is independent
   const revenueApi = useAdminDashboard(toApiRange(revenueRange));
@@ -222,17 +270,22 @@ export default function DashboardHome() {
   const bookingPayload = bookingApi.dashboardData;
 
   const metricCards = basePayload ? mapMetricCards(basePayload.cards) : [];
-  const revenueLines = revenuePayload ? mapRevenueLines(revenuePayload.revenue_overview ?? []) : [];
-  const revenueLabels = revenuePayload ? extractLabels(revenuePayload.revenue_overview ?? [], revenueRange) : undefined;
+
+  const rawRevenue = revenuePayload?.revenue_overview;
+  const revenueLines = rawRevenue && rawRevenue.length > 0 ? mapRevenueLines(rawRevenue) : DEFAULT_REVENUE_LINES;
+  const revenueLabels = extractLabels(rawRevenue, revenueRange);
   
-  const domesticLines = bookingPayload ? mapDomesticLines(bookingPayload.domestic_vs_international ?? []) : [];
-  const domesticLabels = bookingPayload ? extractLabels(bookingPayload.domestic_vs_international ?? [], bookingRange) : undefined;
+  const rawDomestic = bookingPayload?.domestic_vs_international;
+  const domesticLines = Array.isArray(rawDomestic) && rawDomestic.length > 0 ? mapDomesticLines(rawDomestic) : DEFAULT_DOMESTIC_LINES;
+  const domesticLabels = extractLabels(rawDomestic, bookingRange);
   
   const destinations = basePayload ? mapDestinations(basePayload) : [];
+  /*
   const distMax = basePayload ? getDistributionMax(basePayload.booking_distribution ?? {} as BookingDistribution) : 10;
   const distribution = basePayload ? mapDistribution(basePayload.booking_distribution ?? {} as BookingDistribution, distMax) : [];
   const yAxisLabels = buildYAxisLabels(distMax);
   const pendingActions = basePayload ? mapPendingActions(basePayload.pending_actions ?? []) : [];
+  */
   const totalBookings = destinations.reduce((sum, d) => sum + d.value, 0);
 
   const isBaseLoading = baseApi.isLoading;
@@ -282,23 +335,16 @@ export default function DashboardHome() {
           <PanelHeader
             icon="domestic"
             title="Domestic vs International Bookings"
-            subtitle={`${bookingRange} comparison inside Egypt and outbound destinations`}
+            subtitle="Comparison of booking volume inside Egypt and outbound destinations"
             range={bookingRange}
             onRangeChange={setBookingRange}
           />
-          {bookingApi.isLoading ? (
-            <div style={{ padding: "40px", textAlign: "center" }}>Loading...</div>
-          ) : domesticLines.length > 0 ? (
-            <>
-              <LineChart lines={domesticLines} area xAxisLabels={domesticLabels} />
-              <Legend items={domesticLines} />
-            </>
-          ) : (
-            <div style={{ padding: "40px", textAlign: "center" }}>No data available</div>
-          )}
+          <LineChart lines={domesticLines} area xAxisLabels={domesticLabels} />
+          <Legend items={domesticLines} />
         </article>
       </section>
 
+      {/*
       <section className={styles.bottomGrid}>
         <article className={`${styles.panel} ${styles.distributionPanel}`}>
           <PanelHeader
@@ -318,6 +364,7 @@ export default function DashboardHome() {
           <PendingActions pendingActions={pendingActions} />
         </article>
       </section>
+      */}
     </div>
   );
 }

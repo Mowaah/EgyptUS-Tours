@@ -56,7 +56,9 @@ export interface DashboardCards {
 }
 
 export interface RevenueOverviewRow {
-  date: string;
+  date?: string;
+  month?: string;
+  hour?: string;
   trip: string;
   hotel: string;
   transport: string;
@@ -65,7 +67,9 @@ export interface RevenueOverviewRow {
 }
 
 export interface DomesticOverviewRow {
-  date: string;
+  date?: string;
+  month?: string;
+  hour?: string;
   domestic: number;
   international: number;
   unknown: number;
@@ -98,7 +102,7 @@ export interface DashboardPayload {
   cards: DashboardCards;
   revenue_overview: RevenueOverviewRow[];
   bookings_by_destination: BookingDestinationRow[];
-  domestic_vs_international: DomesticOverviewRow[];
+  domestic_vs_international: DomesticOverviewRow[] | Record<string, number>;
   booking_distribution: BookingDistribution;
   pending_actions: PendingActionRaw[];
   range: string;

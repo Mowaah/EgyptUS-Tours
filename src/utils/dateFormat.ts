@@ -106,3 +106,44 @@ export function parseDate(value?: string | Date | null): Date | null {
   const d = new Date(str);
   return isNaN(d.getTime()) ? null : d;
 }
+
+/**
+ * Formats a given date into "Month D, YYYY at h:mm A" format (e.g. "April 10, 2025 at 1:20 PM").
+ *
+ * @param value The date input (string, Date, null, or undefined)
+ * @param fallback Fallback string if value is missing or invalid (defaults to "")
+ * @returns Formatted date-time string
+ */
+export function formatDateTimeAt(
+  value?: string | Date | null,
+  fallback: string = ""
+): string {
+  if (!value) return fallback;
+  let date: Date;
+  if (value instanceof Date) {
+    date = value;
+  } else {
+    const str = String(value).trim();
+    if (!str || str === "—" || str === "-") return fallback;
+    const normalized = str.includes(" ") && !str.includes("T") ? str.replace(" ", "T") : str;
+    date = new Date(normalized);
+    if (isNaN(date.getTime())) {
+      date = new Date(str);
+    }
+  }
+  if (isNaN(date.getTime())) return fallback;
+
+  const datePart = date.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+  const timePart = date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  return `${datePart} at ${timePart}`;
+}
+
