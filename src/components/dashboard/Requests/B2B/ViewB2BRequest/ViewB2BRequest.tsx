@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import CompanyInformation from "./CompanyInformation";
 import RequestDetailsLayout from "../../shared/RequestDetailsLayout/RequestDetailsLayout";
 import { ProposalFile, PaymentOverview, ActivityTimeline } from "../../shared/Sections";
+import RefundSummary from "@/components/dashboard/shared/RefundSummary/RefundSummary";
 import { calculateRefundSummary } from "@/utils/cancellationPolicy";
 import { getB2BDetails } from "@/services/admin/adminRequestsService";
 import { formatStatusLabel } from "../b2bColumns";
@@ -138,6 +139,9 @@ export default function ViewB2BRequest({ requestId }: { requestId: string }) {
           )}
           {requestData.payment_overview && ["approved", "cancelled"].includes(requestData.workflow_status) && (
             <PaymentOverview request={requestData.payment_overview} />
+          )}
+          {requestData.refund_summary && (
+            <RefundSummary data={requestData.refund_summary} />
           )}
         </>
       }

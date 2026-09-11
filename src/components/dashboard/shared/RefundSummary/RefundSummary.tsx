@@ -2,12 +2,15 @@ import React from "react";
 import Image from "next/image";
 import styles from "./RefundSummary.module.scss";
 
+import { BASE_URL } from "@/lib/adminCoreApi";
+
 export interface RefundData {
   reference?: string;
   transaction_reference?: string;
   notes?: string;
-  file?: File;
+  file?: File | string;
   receipt_file?: string;
+  currency?: string;
   package_total?: number | string;
   paid_amount?: number | string;
   days_before_travel?: number;
@@ -32,12 +35,64 @@ function formatBytes(bytes: number, decimals = 2) {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
 
+const getFullReceiptUrl = (rawUrl?: string | null): string => {
+  if (!rawUrl) return "#";
+  if (
+    rawUrl.startsWith("http://") ||
+    rawUrl.startsWith("https://") ||
+    rawUrl.startsWith("blob:") ||
+    rawUrl.startsWith("data:")
+  ) {
+    return rawUrl;
+  }
+  const cleanBase = BASE_URL.replace(/\/$/, "");
+  const cleanPath = rawUrl.startsWith("/") ? rawUrl : `/${rawUrl}`;
+  return `${cleanBase}${cleanPath}`;
+};
+
 export default function RefundSummary({ data }: RefundSummaryProps) {
+  const rawFilePath =
+    typeof data?.receipt_file === "string" && data.receipt_file.trim()
+      ? data.receipt_file.trim()
+      : typeof data?.file === "string" && data.file.trim()
+      ? data.file.trim()
+      : "";
+
+  const [blobUrl, setBlobUrl] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined" && data?.file instanceof File) {
+      const url = URL.createObjectURL(data.file);
+      setBlobUrl(url);
+      return () => {
+        URL.revokeObjectURL(url);
+      };
+    }
+    setBlobUrl(null);
+  }, [data?.file]);
+
   if (!data) return null;
 
-  const fileName = data.file?.name || (data.receipt_file ? data.receipt_file.split('/').pop() : "Refund Payment.pdf");
-  const fileSize = data.file?.size ? formatBytes(data.file.size) : undefined;
-  const fileExt = fileName?.split('.').pop()?.toUpperCase() || 'PDF';
+  const receiptUrl = blobUrl || (rawFilePath ? getFullReceiptUrl(rawFilePath) : "#");
+
+  const getFileNameFromUrl = (url: string) => {
+    try {
+      const pathOnly = url.split("?")[0].split("#")[0];
+      const name = pathOnly.split("/").pop();
+      return name ? decodeURIComponent(name) : "";
+    } catch {
+      return url.split("/").pop() || "";
+    }
+  };
+
+  const fileName =
+    data.file instanceof File
+      ? data.file.name
+      : rawFilePath
+      ? getFileNameFromUrl(rawFilePath) || "Refund Payment.pdf"
+      : "Refund Payment.pdf";
+  const fileSize = data.file instanceof File ? formatBytes(data.file.size) : undefined;
+  const fileExt = fileName.split('.').pop()?.toUpperCase() || 'PDF';
   
   const pkgTotal = data.package_total || data.paid_amount || "0";
   const daysBefore = data.days_before_travel ?? "0";
@@ -107,10 +162,16 @@ export default function RefundSummary({ data }: RefundSummaryProps) {
         <span className={styles.value}>{ref}</span>
       </div>
 
-      {(data.file || data.receipt_file) && (
+      {(Boolean(rawFilePath) || Boolean(data.file)) && (
         <div className={styles.receiptSection}>
           <span className={styles.label}>Refund Receipt</span>
-          <a href={data.receipt_file || "#"} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+          <a
+            href={receiptUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.receiptLink}
+            download={fileName}
+          >
             <div className={styles.fileItem}>
               <div className={styles.fileIcon}>
                 <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">

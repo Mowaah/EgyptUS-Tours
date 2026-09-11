@@ -80,6 +80,12 @@
   }
 }
 
+.receiptLink {
+  text-decoration: none;
+  display: block;
+  color: inherit;
+}
+
 .fileItem {
   display: flex;
   align-items: flex-start;
@@ -87,6 +93,13 @@
   gap: 1rem; // 16px
   border: 1px solid $border-strong;
   border-radius: 1.5rem; // 24px
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: $primary;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
 
   .fileIcon {
     flex-shrink: 0;

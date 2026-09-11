@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { useTranslation } from "@/hooks/useTranslation";
+import { BASE_URL } from "@/lib/api";
 import styles from "./RefundCards.module.scss";
 
 export interface RefundBankDetailsData {
@@ -91,6 +92,21 @@ interface RefundSummaryCardProps {
   className?: string;
 }
 
+const getFullReceiptUrl = (rawUrl?: string | null): string => {
+  if (!rawUrl) return "#";
+  if (
+    rawUrl.startsWith("http://") ||
+    rawUrl.startsWith("https://") ||
+    rawUrl.startsWith("blob:") ||
+    rawUrl.startsWith("data:")
+  ) {
+    return rawUrl;
+  }
+  const cleanBase = BASE_URL.replace(/\/$/, "");
+  const cleanPath = rawUrl.startsWith("/") ? rawUrl : `/${rawUrl}`;
+  return `${cleanBase}${cleanPath}`;
+};
+
 export function RefundSummaryCard({
   data,
   receipt,
@@ -151,9 +167,23 @@ export function RefundSummaryCard({
     rows.push({ label: t("refund.transactionReference", "Transaction Reference"), value: ref });
   }
 
-  const effectiveFileName = receiptFileName || (receipt ? receipt.split("/").pop()?.split("?")[0] : "") || "Refund Payment.pdf";
+  const getFileNameFromUrl = (url: string) => {
+    try {
+      const pathOnly = url.split("?")[0].split("#")[0];
+      const name = pathOnly.split("/").pop();
+      return name ? decodeURIComponent(name) : "";
+    } catch {
+      return url.split("/").pop() || "";
+    }
+  };
+
+  const effectiveFileName =
+    receiptFileName ||
+    (receipt ? getFileNameFromUrl(receipt) : "") ||
+    "Refund Payment.pdf";
   const effectiveFileSize = receiptFileSize || "200 KB of 200 KB";
   const hasReceipt = Boolean(receipt);
+  const receiptUrl = getFullReceiptUrl(receipt);
 
   if (rows.length === 0 && !hasReceipt && !reason) return null;
 
@@ -195,7 +225,7 @@ export function RefundSummaryCard({
           <div className={styles.receiptSection}>
             <span className={styles.label}>{t("refund.refundReceipt", "Refund Receipt")}</span>
             <a
-              href={receipt || "#"}
+              href={receiptUrl}
               target="_blank"
               rel="noopener noreferrer"
               className={styles.pdfCard}
