@@ -12,6 +12,7 @@ export interface DestinationList {
   thumbnail: string | null;
   is_featured: boolean;
   children_count: number;
+  order?: number;
 }
 
 export async function getAllDestinations(params?: Record<string, string>): Promise<DestinationList[]> {

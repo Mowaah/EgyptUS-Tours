@@ -43,8 +43,12 @@ export async function createCategory(data: { translations: Record<string, { name
   return await adminDataClient.post(TRIP_CATEGORIES_ENDPOINT, { ...data, name: data.translations.en?.name });
 }
 
-export async function updateCategory(id: string | number, data: { translations?: Record<string, { name: string }> }): Promise<ApiResponse> {
-  return await adminDataClient.patch(`${TRIP_CATEGORIES_ENDPOINT}${id}/`, { ...data, name: data.translations?.en?.name });
+export async function updateCategory(id: string | number, data: { translations?: Record<string, { name: string }>; order?: number }): Promise<ApiResponse> {
+  const payload: Record<string, unknown> = { ...data };
+  if (data.translations?.en?.name) {
+    payload.name = data.translations.en.name;
+  }
+  return await adminDataClient.patch(`${TRIP_CATEGORIES_ENDPOINT}${id}/`, payload);
 }
 
 export async function deleteCategory(id: string | number): Promise<ApiResponse> {

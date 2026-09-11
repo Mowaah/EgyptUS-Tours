@@ -45,9 +45,41 @@ export async function getAllCategories(): Promise<CategoryList[]> {
  */
 export async function getEgyptTripCategories(): Promise<CategoryList[]> {
   try {
-    const egyptTrips = await getAllTrips({ destination: "egypt" });
-    const categoryMap = new Map<string, CategoryList>();
+    const [allTags, egyptTrips] = await Promise.all([
+      getAllCategories(),
+      getAllTrips({ destination: "egypt" }),
+    ]);
+    const validCategoryIds = new Set<number>();
+    const validCategorySlugs = new Set<string>();
 
+    for (const trip of egyptTrips) {
+      if (Array.isArray(trip.tags)) {
+        for (const tag of trip.tags) {
+          if (
+            tag.name &&
+            !isDesertCategory(tag.name) &&
+            !isDesertCategory(tag.slug)
+          ) {
+            validCategoryIds.add(tag.id);
+            if (tag.slug) validCategorySlugs.add(tag.slug.toLowerCase());
+          }
+        }
+      }
+    }
+
+    // Filter allTags preserving the backend's custom order (ordered by order, name)
+    const result = allTags.filter(
+      (tag) =>
+        validCategoryIds.has(tag.id) ||
+        (tag.slug && validCategorySlugs.has(tag.slug.toLowerCase()))
+    );
+
+    if (result.length > 0) {
+      return result;
+    }
+
+    // Fallback if allTags was empty
+    const categoryMap = new Map<string, CategoryList>();
     for (const trip of egyptTrips) {
       if (Array.isArray(trip.tags)) {
         for (const tag of trip.tags) {
@@ -66,8 +98,7 @@ export async function getEgyptTripCategories(): Promise<CategoryList[]> {
         }
       }
     }
-
-    return Array.from(categoryMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+    return Array.from(categoryMap.values());
   } catch (error) {
     console.error("Error in getEgyptTripCategories:", error);
     return [];

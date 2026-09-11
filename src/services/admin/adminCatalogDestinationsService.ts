@@ -58,21 +58,22 @@ export async function getAllDestinations(params?: QueryParams): Promise<Record<s
   }
 }
 
-async function buildDestinationPayload(data: { translations?: Record<string, { name: string }>; image?: File }) {
-  const payload: { translations?: Record<string, { name: string }>; name?: string; image?: string } = {};
+async function buildDestinationPayload(data: { translations?: Record<string, { name: string }>; image?: File; order?: number }) {
+  const payload: { translations?: Record<string, { name: string }>; name?: string; image?: string; order?: number } = {};
   if (data.translations !== undefined) {
     payload.translations = data.translations;
     payload.name = data.translations.en?.name;
   }
   if (data.image) payload.image = await fileToBase64(data.image);
+  if (data.order !== undefined) payload.order = data.order;
   return payload;
 }
 
-export async function createDestination(data: { translations: Record<string, { name: string }>; image?: File }): Promise<ApiResponse> {
+export async function createDestination(data: { translations: Record<string, { name: string }>; image?: File; order?: number }): Promise<ApiResponse> {
   return await adminDataClient.post('/catalog/destinations/', await buildDestinationPayload(data));
 }
 
-export async function updateDestination(id: string | number, data: { translations?: Record<string, { name: string }>; image?: File }): Promise<ApiResponse> {
+export async function updateDestination(id: string | number, data: { translations?: Record<string, { name: string }>; image?: File; order?: number }): Promise<ApiResponse> {
   return await adminDataClient.patch(`/catalog/destinations/${id}/`, await buildDestinationPayload(data));
 }
 

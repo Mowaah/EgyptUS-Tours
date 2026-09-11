@@ -1,16 +1,33 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import useSWR from "swr";
-import CategoryCard, { Category } from "../CategoryCard/CategoryCard";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragStartEvent,
+  DragEndEvent,
+  DragOverlay,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  rectSortingStrategy,
+} from "@dnd-kit/sortable";
+import CategoryCard, { Category, SortableCategoryCard } from "../CategoryCard/CategoryCard";
 import TablePagination from "@/components/dashboard/shared/TablePagination/TablePagination";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import { LoadingSpinner } from "@/components/shared";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import styles from "./CategoriesPanel.module.scss";
-import { getAllCategories } from "@/services/admin/adminCatalogCategoriesService";
+import { getAllCategories, updateCategory } from "@/services/admin/adminCatalogCategoriesService";
 import { getLangKey, getLocalizedName } from "@/components/dashboard/shared/i18n";
 
 interface CategoriesPanelProps {
@@ -54,7 +71,7 @@ export default function CategoriesPanel({
 
   const langCode = getLangKey(lang);
 
-  const { data: rawCategories, isLoading: loading } = useSWR(
+  const { data: rawCategories, isLoading: loading, mutate } = useSWR(
     ["adminCatalogAllCategories", langCode, refreshTrigger],
     () => getAllCategories({ lang: langCode }),
     { keepPreviousData: true }
@@ -79,17 +96,40 @@ export default function CategoriesPanel({
     });
   }, [rawCategories, lang]);
 
+  const [orderedItems, setOrderedItems] = useState<Category[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setOrderedItems(categories);
+  }, [categories]);
+
+  const activeCategory = useMemo(
+    () => orderedItems.find((item) => item.id === activeId),
+    [orderedItems, activeId]
+  );
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   const filteredCategories = useMemo(() => {
-    if (!searchQuery.trim()) return categories;
+    if (!searchQuery.trim()) return orderedItems;
     const q = searchQuery.toLowerCase().trim();
-    return categories.filter(
+    return orderedItems.filter(
       (c) =>
         c.name.toLowerCase().includes(q) ||
         Boolean(c.translations?.en?.toLowerCase().includes(q)) ||
         Boolean(c.translations?.it?.toLowerCase().includes(q)) ||
         Boolean(c.translations?.es?.toLowerCase().includes(q))
     );
-  }, [categories, searchQuery]);
+  }, [orderedItems, searchQuery]);
 
   const totalCount = filteredCategories.length;
   const pageCount = Math.max(1, Math.ceil(totalCount / rowsPerPage));
@@ -99,6 +139,40 @@ export default function CategoriesPanel({
   const visibleCategories = useMemo(() => {
     return filteredCategories.slice(startIndex, startIndex + rowsPerPage);
   }, [filteredCategories, startIndex, rowsPerPage]);
+
+  const handleDragStart = (event: DragStartEvent) => {
+    if (searchQuery.trim()) return;
+    setActiveId(String(event.active.id));
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveId(null);
+
+    if (!over || active.id === over.id || searchQuery.trim()) return;
+
+    const sourceIndex = orderedItems.findIndex((item) => item.id === active.id);
+    const targetIndex = orderedItems.findIndex((item) => item.id === over.id);
+    if (sourceIndex === -1 || targetIndex === -1) return;
+
+    const newItems = arrayMove(orderedItems, sourceIndex, targetIndex);
+    setOrderedItems(newItems);
+
+    try {
+      const updates = newItems.map((item, idx) =>
+        updateCategory(item.id, { order: idx })
+      );
+      await Promise.all(updates);
+      mutate();
+    } catch (err) {
+      console.error("Failed to update category order:", err);
+      setOrderedItems(categories);
+    }
+  };
+
+  const handleDragCancel = () => {
+    setActiveId(null);
+  };
 
   const handleEdit = (id: string) => {
     const category = categories.find((c) => c.id === id);
@@ -157,16 +231,35 @@ export default function CategoriesPanel({
           />
         )
       ) : (
-        <div className={styles.grid}>
-          {visibleCategories.map((category) => (
-            <CategoryCard
-              key={category.id}
-              category={category}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          ))}
-        </div>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          onDragCancel={handleDragCancel}
+        >
+          <SortableContext
+            items={visibleCategories.map((c) => c.id)}
+            strategy={rectSortingStrategy}
+          >
+            <div className={styles.grid}>
+              {visibleCategories.map((category) => (
+                <SortableCategoryCard
+                  key={category.id}
+                  category={category}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  disabled={Boolean(searchQuery.trim())}
+                />
+              ))}
+            </div>
+          </SortableContext>
+          <DragOverlay adjustScale={false}>
+            {activeCategory ? (
+              <CategoryCard category={activeCategory} isOverlay />
+            ) : null}
+          </DragOverlay>
+        </DndContext>
       )}
 
       {!loading && filteredCategories.length > 0 && (

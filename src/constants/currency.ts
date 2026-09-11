@@ -4,6 +4,60 @@ export interface MultiCurrencyPrice {
   eur?: number | string | null;
 }
 
+export type DisplayCurrencyCode = "USD" | "EUR" | "EGP";
+
+export const CURRENCY_STORAGE_KEY = "egyptus_display_currency";
+export const CURRENCY_COOKIE_KEY = "egyptus_currency";
+export const DEFAULT_CURRENCY: DisplayCurrencyCode = "USD";
+
+export const CURRENCY_OPTIONS: Array<{ code: DisplayCurrencyCode; symbol: string }> = [
+  { code: "USD", symbol: "$" },
+  { code: "EUR", symbol: "€" },
+  { code: "EGP", symbol: "£" },
+];
+
+export type CurrencyRates = Record<DisplayCurrencyCode, number>;
+
+// Static exchange rates from EGP base (used only as fallback when backend multi-currency values are absent)
+export const STATIC_RATES: CurrencyRates = {
+  EGP: 1,
+  USD: 0.020,  // 1 EGP ≈ 0.020 USD
+  EUR: 0.019,  // 1 EGP ≈ 0.019 EUR
+};
+
+export function normalizeCurrency(value: string | null | undefined): DisplayCurrencyCode {
+  const upper = value?.toUpperCase();
+  return CURRENCY_OPTIONS.some((option) => option.code === upper)
+    ? (upper as DisplayCurrencyCode)
+    : DEFAULT_CURRENCY;
+}
+
+export function resolveMultiCurrencyPrice(
+  amount: MultiCurrencyPrice | number | string | null | undefined,
+  currency: DisplayCurrencyCode
+): number {
+  if (amount == null) return 0;
+
+  if (typeof amount === "object") {
+    let rawVal: number | string | null | undefined;
+    if (currency === "USD") {
+      rawVal = amount.usd ?? (amount.egp != null ? Number(amount.egp) * STATIC_RATES.USD : amount.eur != null ? Number(amount.eur) : 0);
+    } else if (currency === "EUR") {
+      rawVal = amount.eur ?? (amount.usd != null ? Number(amount.usd) * (STATIC_RATES.EUR / STATIC_RATES.USD) : amount.egp != null ? Number(amount.egp) * STATIC_RATES.EUR : 0);
+    } else {
+      // EGP
+      rawVal = amount.egp ?? (amount.usd != null ? Number(amount.usd) / STATIC_RATES.USD : 0);
+    }
+    const parsed = typeof rawVal === "number" ? rawVal : parseFloat(String(rawVal ?? 0));
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  // Primitive number or string (legacy EGP base)
+  const parsed = typeof amount === "number" ? amount : parseFloat(String(amount ?? 0).replace(/,/g, ""));
+  const rate = STATIC_RATES[currency] ?? 1;
+  return Number.isFinite(parsed) ? parsed * rate : 0;
+}
+
 export interface DashboardCurrencyConfig {
   code: "USD" | "EUR" | "EGP";
   symbol: string;

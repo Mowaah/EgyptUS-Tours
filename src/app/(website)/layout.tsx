@@ -5,6 +5,7 @@ import ChatBot from "@/components/website/ChatBot/ChatBot";
 import { getEgyptTripCategories } from "@/services/categoriesService";
 import { getAllDestinations } from "@/services/destinationsService";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
+import { CURRENCY_COOKIE_KEY, normalizeCurrency } from "@/constants/currency";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { normalizeLanguage, LANGUAGE_COOKIE_KEY } from "@/i18n";
 import { cookies } from "next/headers";
@@ -18,6 +19,9 @@ export default async function WebsiteLayout({
   const cookieStore = await cookies();
   const langCookie = cookieStore.get(LANGUAGE_COOKIE_KEY)?.value;
   const initialLanguage = normalizeLanguage(langCookie);
+
+  const currencyCookie = cookieStore.get(CURRENCY_COOKIE_KEY)?.value;
+  const initialCurrency = normalizeCurrency(currencyCookie);
 
   const [categoriesData, destinationsData] = await Promise.all([
     getEgyptTripCategories(),
@@ -42,7 +46,7 @@ export default async function WebsiteLayout({
 
   return (
     <LanguageProvider initialLanguage={initialLanguage}>
-      <CurrencyProvider>
+      <CurrencyProvider initialCurrency={initialCurrency}>
         <TopBar />
         <Suspense fallback={null}>
           <Navbar categoryLinks={categoryLinks} destinationLinks={destinationLinks} />

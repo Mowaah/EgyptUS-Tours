@@ -350,7 +350,7 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
                 valueMin={priceRange.min}
                 valueMax={Math.min(priceRange.max, maxHotelPriceLimit)}
                 onChange={(min, max) => setPriceRange({ min, max })}
-                formatValue={formatCurrency}
+                formatValue={(val) => formatCurrency({ usd: val, eur: val, egp: val * 50 })}
               />
             </FilterGroup>
 
