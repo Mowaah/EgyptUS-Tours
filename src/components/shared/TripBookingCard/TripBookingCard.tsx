@@ -367,7 +367,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
           ? t("profile.card.transitInProgress", "Your transit is in progress")
           : t("profile.card.tripInProgress", "Your trip is in progress");
     }
-    if (norm === "in stay") {
+    if (norm === "in stay" || norm === "in hotel") {
       return t("profile.card.stayInProgress", "Your stay is in progress");
     }
     if (norm === "in transit") {

@@ -135,8 +135,8 @@
   cursor: pointer;
 
   font-family: 'Trip Sans', sans-serif;
-  font-weight: 700;
-  font-size: $font-size-lg;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-base;
   line-height: 16px;
   color: $primary;
   transition: opacity 0.2s;

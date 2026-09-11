@@ -42,6 +42,8 @@ export function formatStatusLabel(rawStatus?: string | null): string {
       return "In Trip";
     case "in_stay":
     case "in_hotel":
+    case "in stay":
+    case "in hotel":
       return "In Hotel";
     case "in_transit":
       return "In Transit";
@@ -110,6 +112,7 @@ export function getStatusIconType(status?: string | null): StatusIconType {
     s.includes("awaiting") ||
     s.includes("in trip") ||
     s.includes("in stay") ||
+    s.includes("in hotel") ||
     s.includes("in transit") ||
     s.includes("on trip")
   ) {

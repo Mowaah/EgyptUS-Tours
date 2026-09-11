@@ -247,7 +247,7 @@ export default function ProfilePage() {
             let defaultInfoMessage = t("profile.card.proposalExpected", "Proposal expected within 24-48 hrs");
             if (normStatus === "in trip" || normStatus === "on trip") {
               defaultInfoMessage = t("profile.card.tripInProgress", "Your trip is in progress");
-            } else if (normStatus === "in stay") {
+            } else if (normStatus === "in stay" || normStatus === "in hotel") {
               defaultInfoMessage = t("profile.card.stayInProgress", "Your stay is in progress");
             } else if (normStatus === "in transit") {
               defaultInfoMessage = t("profile.card.transitInProgress", "Your transit is in progress");

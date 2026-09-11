@@ -6,6 +6,10 @@ import styles from "./BookingHistoryPanel.module.scss";
 
 const formatLabel = (str: string) => {
   if (!str) return "";
+  const s = str.toLowerCase();
+  if (s === "in_stay" || s === "in_hotel" || s === "in stay" || s === "in hotel") {
+    return "In Hotel";
+  }
   return str.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
 };
 
@@ -27,6 +31,10 @@ const getStatusVariant = (status: string) => {
     case "pending":
     case "deposit_paid":
     case "on_trip":
+    case "in_stay":
+    case "in_hotel":
+    case "in stay":
+    case "in hotel":
       return "orange";
     case "overdue":
     case "canceled":
