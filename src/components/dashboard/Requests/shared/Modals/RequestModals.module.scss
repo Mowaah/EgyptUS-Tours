@@ -45,3 +45,53 @@
   line-height: 20px;
   color: #475467;
 }
+
+.summarySection {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid $gray-25-slate;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.summaryLabel {
+  color: $gray-400-zinc;
+  font-size: $font-size-sm;
+  font-weight: 500;
+}
+
+.summaryValue {
+  color: $gray-700;
+  font-size: $font-size-base;
+  font-weight: 500;
+}
+
+.refundAmountPill {
+  background: rgba(255, 102, 0, 0.1);
+  border-radius: 128px;
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  span {
+    color: $secondary;
+    font-size: $font-size-base;
+    font-weight: 500;
+  }
+}
+
+.requiredStar {
+  color: $danger;
+}

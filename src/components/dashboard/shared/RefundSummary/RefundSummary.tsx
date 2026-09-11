@@ -70,6 +70,13 @@ export default function RefundSummary({ data }: RefundSummaryProps) {
         <span className={styles.value}>{currencySymbol}{parseFloat(String(pkgTotal)).toLocaleString()}</span>
       </div>
 
+      {data.paid_amount != null && (
+        <div className={styles.row}>
+          <span className={styles.label}>Paid to Date</span>
+          <span className={styles.value}>{currencySymbol}{parseFloat(String(data.paid_amount)).toLocaleString()}</span>
+        </div>
+      )}
+
       <div className={styles.row}>
         <span className={styles.label}>Days Before Travel</span>
         <span className={styles.value}>{daysBefore} Days</span>

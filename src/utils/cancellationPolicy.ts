@@ -1,5 +1,6 @@
 export interface RefundSummary {
   package_total: number;
+  paid_amount?: number;
   days_before_travel: number;
   policy_applied: string;
   deduction_percentage: number;
@@ -57,6 +58,7 @@ export function calculateRefundSummary(
 
   return {
     package_total: totalPackageCost,
+    paid_amount: paidAmount,
     days_before_travel: diffDays,
     policy_applied: policyLabel,
     deduction_percentage: deductionPercent,

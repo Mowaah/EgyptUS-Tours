@@ -19,7 +19,7 @@ import { ReassignModal } from "@/components/dashboard/shared";
 
 const filterOptions = {
   paymentStatus: ["All", "Paid", "Pending", "Overdue"],
-  status: ["All", "Upcoming", "In Stay", "Completed", "Cancelled"],
+  status: ["All", "Upcoming", "In Hotel", "Completed", "Cancelled"],
   source: ["All", "Website", "Agent"],
 };
 
@@ -56,6 +56,7 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
     if (appliedFilters.status !== "All") {
       const statusMap: Record<string, string> = {
         Upcoming: "upcoming",
+        "In Hotel": "in_stay",
         "In Stay": "in_stay",
         Completed: "completed",
         Cancelled: "cancelled",

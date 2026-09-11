@@ -78,7 +78,12 @@ export function UploadDropzone({
   return (
     <div className={styles.uploadContainer}>
       {!value && (
-        <div className={`${styles.dropzone} ${className}`} onClick={handleClick} role="button" tabIndex={0}>
+        <div 
+          className={`${styles.dropzone} ${className} ${error ? styles.dropzoneError : ""}`} 
+          onClick={handleClick} 
+          role="button" 
+          tabIndex={0}
+        >
           <input
             type="file"
             ref={inputRef}
@@ -190,7 +195,7 @@ export function UploadDropzone({
         />
       )}
       {error && (
-        <div className={dashboardFieldStyles.errorText} role="alert" style={{ marginTop: "4px" }}>
+        <div className={styles.uploadErrorText} role="alert">
           <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
           <span>{error}</span>
         </div>

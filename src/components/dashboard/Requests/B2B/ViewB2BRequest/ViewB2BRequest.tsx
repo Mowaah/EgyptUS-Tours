@@ -40,6 +40,7 @@ export default function ViewB2BRequest({ requestId }: { requestId: string }) {
     const summary = calculateRefundSummary(total, totalPaid, travelDate);
     return {
       package_total: summary.package_total.toString(),
+      paid_amount: (summary.paid_amount ?? totalPaid).toString(),
       days_before_travel: summary.days_before_travel,
       policy_applied: summary.policy_applied,
       deduction_percentage: summary.deduction_percentage,

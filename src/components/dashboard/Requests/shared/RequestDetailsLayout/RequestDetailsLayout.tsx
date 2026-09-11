@@ -59,6 +59,7 @@ interface RequestDetailsLayoutProps {
   };
   refundSummary?: {
     package_total: string;
+    paid_amount?: string | number;
     days_before_travel: number;
     policy_applied: string;
     deduction_percentage: number;

@@ -47,7 +47,11 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
   );
 
   const payload = tripData;
-  const isRefunded = payload?.operational_status === "refunded";
+  const isRefunded = 
+    payload?.operational_status === "refunded" || 
+    payload?.operational_status === "no_refund" || 
+    payload?.operational_status === "no_refunded" || 
+    payload?.operational_status === "no_refunded_amount";
   const isCancelled = payload?.operational_status === "cancelled";
   const displayId = payload?.booking_code || `BK-${String(tripId).padStart(6, "0")}`;
 
@@ -121,6 +125,22 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
       : "-";
   }, [payload]);
 
+  const operationalStatusLabel = React.useMemo(() => {
+    if (!payload?.operational_status) return "-";
+    const op = payload.operational_status.toLowerCase();
+    if (op === "no_refund" || op === "no_refunded" || op === "no_refunded_amount") {
+      return "No Refunded Amount";
+    }
+    if (op === "refunded") {
+      const refAmt = Number(payload.refunded_amount ?? payload.payment_overview?.refunded_amount);
+      if (!isNaN(refAmt) && refAmt === 0 && (payload.refunded_amount !== undefined || payload.payment_overview?.refunded_amount !== undefined)) {
+        return "No Refunded Amount";
+      }
+      return "Refunded";
+    }
+    return payload.operational_status.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  }, [payload]);
+
   const customPills = payload ? (
     <div className={styles.customPills}>
       {!isRefunded && (
@@ -131,7 +151,7 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
       )}
       <span className={getTripsPillStyle(payload.operational_status)}>
         <i aria-hidden></i>
-        {payload.operational_status ? payload.operational_status.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : "-"}
+        {operationalStatusLabel}
       </span>
       <span className={getTripsPillStyle(payload.booking?.source)}>
         {payload.booking?.source === "website" ? (

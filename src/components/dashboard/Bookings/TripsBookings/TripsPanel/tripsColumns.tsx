@@ -12,10 +12,19 @@ export const getTripsPillStyle = (status: string) => {
     fully_paid: styles.pillPaid,
     pending: styles.pillPending,
     partially_paid: styles.pillPending,
+    in_stay: styles.pillPending,
+    in_hotel: styles.pillPending,
+    "in stay": styles.pillPending,
+    "in hotel": styles.pillPending,
     upcoming: styles.pillUpcoming,
     cancelled: styles.pillCanceled,
     canceled: styles.pillCanceled,
     refunded: styles.pillRefunded,
+    no_refund: styles.pillRefunded,
+    no_refunded: styles.pillRefunded,
+    no_refunded_amount: styles.pillRefunded,
+    "no refund": styles.pillRefunded,
+    "no refunded amount": styles.pillRefunded,
     on_trip: styles.pillOnTrip,
     completed: styles.pillCompleted,
     overdue: styles.pillOverdue,
@@ -91,12 +100,23 @@ export const tripsColumns: DataTableColumn<TripBookingRow>[] = [
   {
     id: "operationalStatus",
     header: "Status",
-    render: (row) => (
-      <span className={getTripsPillStyle(row.operational_status)}>
-        <i aria-hidden />
-        {row.operational_status ? row.operational_status.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : "-"}
-      </span>
-    ),
+    render: (row) => {
+      const op = row.operational_status?.toLowerCase();
+      let label = row.operational_status
+        ? row.operational_status.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+        : "-";
+
+      if (op === "no_refund" || op === "no_refunded" || op === "no_refunded_amount") {
+        label = "No Refunded Amount";
+      }
+
+      return (
+        <span className={getTripsPillStyle(row.operational_status)}>
+          <i aria-hidden />
+          {label}
+        </span>
+      );
+    },
   },
   {
     id: "source",

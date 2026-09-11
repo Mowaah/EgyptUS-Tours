@@ -11,7 +11,7 @@ import { RefundSummary } from "@/utils/cancellationPolicy";
 interface RefundModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: { reference: string; notes: string; file: File }) => void;
+  onSubmit: (data: { reference: string; notes: string; file?: File }) => void;
   refundSummary?: RefundSummary;
   currency?: string;
 }
@@ -64,10 +64,19 @@ export default function RefundModal({ open, onClose, onSubmit, refundSummary, cu
 
   if (!open) return null;
 
+  const parsedRefundAmount = refundSummary?.refund_amount ? parseFloat(String(refundSummary.refund_amount)) : 0;
+  const isRefundable = parsedRefundAmount > 0;
+
   const handleSubmit = () => {
-    setHasSubmitted(true);
-    if (!reference.trim() || !file) return;
-    onSubmit({ reference, notes, file });
+    if (isRefundable) {
+      setHasSubmitted(true);
+      if (!reference.trim() || !file) return;
+    }
+    onSubmit({
+      reference: isRefundable ? reference.trim() : (reference.trim() || "N/A"),
+      notes: notes.trim(),
+      file: isRefundable ? file : undefined,
+    });
   };
 
   return (
@@ -85,6 +94,12 @@ export default function RefundModal({ open, onClose, onSubmit, refundSummary, cu
               <span className={styles.summaryLabel}>Package Total</span>
               <span className={styles.summaryValue}>{currencySymbol}{formatMoney(refundSummary?.package_total)}</span>
             </div>
+            {refundSummary?.paid_amount != null && (
+              <div className={styles.summaryRow}>
+                <span className={styles.summaryLabel}>Paid to Date</span>
+                <span className={styles.summaryValue}>{currencySymbol}{formatMoney(refundSummary?.paid_amount)}</span>
+              </div>
+            )}
             <div className={styles.summaryRow}>
               <span className={styles.summaryLabel}>Days Before Travel</span>
               <span className={styles.summaryValue}>{refundSummary?.days_before_travel ?? "0"} Days</span>
@@ -107,35 +122,37 @@ export default function RefundModal({ open, onClose, onSubmit, refundSummary, cu
             </div>
           </div>
 
-          <DashboardField
-            label="Transaction Reference *"
-            placeholder="Enter transaction/reference number"
-            value={reference}
-            onChange={(e) => setReference(e.target.value)}
-            error={hasSubmitted && !reference.trim() ? "Transaction Reference is required" : undefined}
-          />
+          {isRefundable && (
+            <>
+              <DashboardField
+                label="Transaction Reference *"
+                placeholder="Enter transaction/reference number"
+                value={reference}
+                onChange={(e) => setReference(e.target.value)}
+                error={hasSubmitted && !reference.trim() ? "Transaction Reference is required" : undefined}
+              />
 
-          <div className={styles.uploadField}>
-            <label className={styles.uploadLabel}>Upload Refund Receipt *</label>
-            <UploadDropzone
-              onFileSelect={(f) => setFile(f ?? undefined)}
-              value={file}
-              accept="application/pdf, image/png"
-              title="Click to upload an PDF File or PNG"
-              subtitle="up to 10MB"
-            />
-            {hasSubmitted && !file && (
-              <span className={styles.errorText}>Refund Receipt is required</span>
-            )}
-          </div>
+              <div className={styles.uploadField}>
+                <label className={styles.uploadLabel}>Upload Refund Receipt *</label>
+                <UploadDropzone
+                  onFileSelect={(f) => setFile(f ?? undefined)}
+                  value={file}
+                  accept="application/pdf, image/png"
+                  title="Click to upload an PDF File or PNG"
+                  subtitle="up to 10MB"
+                  error={hasSubmitted && !file ? "Refund Receipt is required" : undefined}
+                />
+              </div>
 
-          <DashboardField
-            label="Notes"
-            control="textarea"
-            placeholder="Add any additional notes or important details related to this refund here."
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-          />
+              <DashboardField
+                label="Notes"
+                control="textarea"
+                placeholder="Add any additional notes or important details related to this refund here."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+              />
+            </>
+          )}
         </div>
 
         <ModalFooter

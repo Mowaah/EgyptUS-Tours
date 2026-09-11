@@ -41,7 +41,8 @@ export function formatStatusLabel(rawStatus?: string | null): string {
     case "in_trip":
       return "In Trip";
     case "in_stay":
-      return "In Stay";
+    case "in_hotel":
+      return "In Hotel";
     case "in_transit":
       return "In Transit";
     case "on_trip":
@@ -74,7 +75,8 @@ export function getStatusVariant(status?: string | null): StatusPillVariant {
   if (s.includes("awaiting") || s.includes("pending payment")) return "pinkSoft";
   if (s.includes("deposit paid")) return "lightBlue";
   if (s.includes("fully paid")) return "purple";
-  if (s.includes("in trip") || s.includes("in stay") || s.includes("in transit") || s.includes("on trip")) return "magenta";
+  if (s.includes("in stay") || s.includes("in hotel")) return "orange";
+  if (s.includes("in trip") || s.includes("in transit") || s.includes("on trip")) return "magenta";
   if (s.includes("completed")) return "green";
   if (s.includes("overdue")) return "red";
   if (s.includes("upcoming")) return "blue";

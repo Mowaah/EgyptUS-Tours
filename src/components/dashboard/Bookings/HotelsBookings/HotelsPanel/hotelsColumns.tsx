@@ -91,8 +91,26 @@ export const hotelsColumns: DataTableColumn<HotelBookingRow>[] = [
     header: "Status",
     render: (row) => {
       const status = row.operational_status;
-      const variant = status === "upcoming" ? "blue" : status === "completed" ? "green" : status === "on_trip" ? "orange" : status === "refunded" ? "pink" : "red";
-      const display = status ? status.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : "-";
+      const op = status?.toLowerCase();
+      const isNoRefund = op === "no_refund" || op === "no_refunded" || op === "no_refunded_amount";
+      const isInHotel = op === "in_stay" || op === "in_hotel" || op === "in stay" || op === "in hotel" || op === "on_trip";
+
+      const variant = status === "upcoming"
+        ? "blue"
+        : status === "completed"
+        ? "green"
+        : isInHotel
+        ? "orange"
+        : (op === "refunded" || isNoRefund)
+        ? "pink"
+        : "red";
+
+      const display = isNoRefund
+        ? "No Refunded Amount"
+        : isInHotel
+        ? "In Hotel"
+        : (status ? status.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : "-");
+
       return <StatusPill label={display} variant={variant} />;
     },
   },
