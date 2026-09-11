@@ -4,10 +4,10 @@ import useSWR from "swr";
 import { getFinanceReport } from "@/services/admin/adminFinanceService";
 import { downloadBlobAsCSV } from "@/lib/utils";
 
-export function useFinanceReport(rangeKey: string = "last_12m") {
+export function useFinanceReport(rangeKey: string = "last_12m", date_from?: string, date_to?: string) {
   const { data: rawData, isLoading: loading, mutate } = useSWR(
-    ["adminFinanceReport", rangeKey],
-    () => getFinanceReport({ range: rangeKey }),
+    ["adminFinanceReport", rangeKey, date_from, date_to],
+    () => getFinanceReport({ range: rangeKey, date_from, date_to }),
     { keepPreviousData: true }
   );
 

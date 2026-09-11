@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
+import FinanceDateFilter from "@/components/dashboard/Finance/FinanceDateFilter/FinanceDateFilter";
 import { SummaryCard } from "@/components/dashboard/SummaryCard";
 import DepositsTable from "../DepositsTable/DepositsTable";
 import DepositStatusDonut from "../DepositStatusDonut/DepositStatusDonut";
 import OverdueDepositsChart from "../OverdueDepositsChart/OverdueDepositsChart";
 import styles from "./DepositsPage.module.scss";
 import { useDepositStats } from "@/hooks/useDepositStats";
+import { useFinanceFilter } from "@/hooks/useFinanceFilter";
 import { downloadBlobAsCSV } from "@/lib/utils";
 import { formatCompactMetric } from "@/utils/formatMetric";
 
@@ -33,7 +35,12 @@ const exportDepositsReportToCSV = (data: any) => {
 
 export default function DepositsPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const { data, loading } = useDepositStats();
+  const filterParams = useFinanceFilter();
+  const { data, loading } = useDepositStats(
+    filterParams.date_from || filterParams.date_to
+      ? { date_from: filterParams.date_from, date_to: filterParams.date_to }
+      : undefined
+  );
 
   return (
     <>
@@ -45,6 +52,7 @@ export default function DepositsPage() {
         title="Deposits"
         subtitle="Track deposit status for all bookings (30% policy)."
         searchPlaceholder="Search Customer, Booking ID, Payment ID"
+        customFilterDropdown={<FinanceDateFilter />}
         primaryAction={{
           label: "Export Report",
           iconSrc: "/images/dashboard/export2.svg"
@@ -94,7 +102,12 @@ export default function DepositsPage() {
           <DepositStatusDonut chartData={data?.deposit_status_distribution} />
         </div>
 
-        <DepositsTable searchQuery={searchQuery} onClearSearch={() => setSearchQuery("")} />
+        <DepositsTable
+          searchQuery={searchQuery}
+          onClearSearch={() => setSearchQuery("")}
+          date_from={filterParams.date_from}
+          date_to={filterParams.date_to}
+        />
       
     </>
   );

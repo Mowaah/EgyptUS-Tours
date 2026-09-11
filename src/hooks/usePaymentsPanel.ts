@@ -7,9 +7,17 @@ export interface UsePaymentsPanelOptions {
   searchQuery?: string;
   page?: number;
   pageSize?: number;
+  date_from?: string;
+  date_to?: string;
 }
 
-export function usePaymentsPanel({ searchQuery, page = 1, pageSize = 10 }: UsePaymentsPanelOptions = {}) {
+export function usePaymentsPanel({
+  searchQuery,
+  page = 1,
+  pageSize = 10,
+  date_from,
+  date_to,
+}: UsePaymentsPanelOptions = {}) {
   
   const [filters, setFilters] = useState({
     service: "All",
@@ -41,6 +49,9 @@ export function usePaymentsPanel({ searchQuery, page = 1, pageSize = 10 }: UsePa
       params.status = appliedFilters.status === "Fully Paid" ? "fully_paid" : "refunded";
     }
     
+    if (date_from) params.date_from = date_from;
+    if (date_to) params.date_to = date_to;
+
     if (appliedFilters.date && appliedFilters.date !== "All") {
       const now = new Date();
       if (appliedFilters.date === "Last 7 Days") {
@@ -63,7 +74,7 @@ export function usePaymentsPanel({ searchQuery, page = 1, pageSize = 10 }: UsePa
     }
     
     return params;
-  }, [appliedFilters, searchQuery, page, pageSize]);
+  }, [appliedFilters, searchQuery, page, pageSize, date_from, date_to]);
 
   const { data: res, isLoading: loading } = useSWR<any>(
     ["adminFinancePayments", apiFilters],

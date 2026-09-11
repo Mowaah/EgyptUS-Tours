@@ -39,8 +39,8 @@ export default function HatchedBarChart({ data, yAxisLabels, barWidth }: Hatched
           />
         ))}
         <div className={styles.bars}>
-          {data.map((item) => (
-            <div className={styles.barCol} key={item.label}>
+          {data.map((item, index) => (
+            <div className={styles.barCol} key={`${item.label}-${index}`}>
               <div className={styles.barTrack} />
               <div
                 className={styles.barFill}

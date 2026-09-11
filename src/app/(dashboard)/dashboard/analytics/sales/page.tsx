@@ -10,17 +10,14 @@ import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 import styles from "@/components/dashboard/Analytics/ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
 import { fetchSalesReports, downloadReportExport } from "@/services/admin/adminReportsService";
 import { formatCompactMetric } from "@/utils/formatMetric";
-
-const ALL_TIME_PARAMS = {
-  range: "custom",
-  date_from: "2000-01-01",
-  date_to: "2099-12-31",
-};
+import { useReportsFilter } from "@/hooks/useReportsFilter";
 
 export default function SalesReportsPage() {
+  const filterParams = useReportsFilter();
+
   const { data: reportsData, isLoading } = useSWR(
-    ["/admin/reports/sales/all-time"],
-    () => fetchSalesReports(ALL_TIME_PARAMS),
+    ["/admin/reports/sales", filterParams],
+    () => fetchSalesReports(filterParams),
     {
       revalidateOnFocus: false,
     }
@@ -75,16 +72,16 @@ export default function SalesReportsPage() {
             tooltipFormat="revenue"
             maxValue={destinationData.maxValue}
             data={destinationData.chartData}
-            actions={<ExportButtons onCsvClick={() => downloadReportExport("sales", "revenue_by_destination", ALL_TIME_PARAMS)} />}
+            actions={<ExportButtons onCsvClick={() => downloadReportExport("sales", "revenue_by_destination", filterParams)} />}
           />
         </div>
         
         <div className={styles.rightColumn}>
-          <ServiceRevenueChart data={reportsData?.revenue_by_service} actions={<ExportButtons onCsvClick={() => downloadReportExport("sales", "revenue_by_service", ALL_TIME_PARAMS)} />} />
+          <ServiceRevenueChart data={reportsData?.revenue_by_service} actions={<ExportButtons onCsvClick={() => downloadReportExport("sales", "revenue_by_service", filterParams)} />} />
         </div>
       </div>
 
-      <RevenueByPartnerChart data={reportsData?.revenue_by_partner} actions={<ExportButtons onCsvClick={() => downloadReportExport("sales", "revenue_by_partner", ALL_TIME_PARAMS)} />} />
+      <RevenueByPartnerChart data={reportsData?.revenue_by_partner} actions={<ExportButtons onCsvClick={() => downloadReportExport("sales", "revenue_by_partner", filterParams)} />} />
     </div>
   );
 }

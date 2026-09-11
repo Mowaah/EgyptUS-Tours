@@ -1,6 +1,7 @@
 "use client";
 
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
+import ReportsDateFilter from "@/components/dashboard/Analytics/ReportsDateFilter/ReportsDateFilter";
 import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/DashboardTabs";
 import { usePathname } from "next/navigation";
 
@@ -22,6 +23,7 @@ export default function AnalyticsLayout({ children }: { children: React.ReactNod
         title="Reports & Analytics"
         subtitle="Comprehensive reports across customers, operations, sales, and leads — plus a custom builder."
         searchPlaceholder="Search bookings, customers..."
+        customFilterDropdown={<ReportsDateFilter />}
       />
 
       <DashboardTabs

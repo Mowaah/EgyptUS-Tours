@@ -4,7 +4,19 @@ import useSWR from "swr";
 import { getDeposits } from "@/services/admin/adminFinanceService";
 import { downloadBlobAsCSV } from "@/lib/utils";
 
-export function useDepositsPanel({ searchQuery, page = 1, pageSize = 10 }: { searchQuery?: string; page?: number; pageSize?: number } = {}) {
+export function useDepositsPanel({
+  searchQuery,
+  page = 1,
+  pageSize = 10,
+  date_from,
+  date_to,
+}: {
+  searchQuery?: string;
+  page?: number;
+  pageSize?: number;
+  date_from?: string;
+  date_to?: string;
+} = {}) {
   const [filters, setFilters] = useState({
     service: "All",
     date: "All",
@@ -14,6 +26,8 @@ export function useDepositsPanel({ searchQuery, page = 1, pageSize = 10 }: { sea
 
   const apiFilters = useMemo(() => {
     const params: any = { page, page_size: pageSize };
+    if (date_from) params.date_from = date_from;
+    if (date_to) params.date_to = date_to;
     if (appliedFilters.service && appliedFilters.service !== "All") {
       const s = appliedFilters.service.toLowerCase();
       if (s === "trips") params.service = "trip";
@@ -25,7 +39,7 @@ export function useDepositsPanel({ searchQuery, page = 1, pageSize = 10 }: { sea
     if (appliedFilters.status && appliedFilters.status !== "All") params.deposit_status = appliedFilters.status.toLowerCase();
     if (searchQuery) params.search = searchQuery;
     return params;
-  }, [appliedFilters, searchQuery, page, pageSize]);
+  }, [appliedFilters, searchQuery, page, pageSize, date_from, date_to]);
 
   const { data: res, isLoading: loading } = useSWR<any>(
     ["adminFinanceDeposits", apiFilters],

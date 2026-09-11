@@ -28,16 +28,27 @@ export default function CustomersByNationality({
     return data.reduce((sum, item) => sum + (item.customer_count || 0), 0);
   }, [data]);
 
-  // Map full dataset to nationalities and percentages
+  // Map full dataset to nationalities, aggregate duplicates, and compute percentages
   const allDistribution = useMemo(() => {
-    return data.map((item) => {
-      const pct = totalCustomers > 0 ? Math.round((item.customer_count / totalCustomers) * 100) : 0;
+    const countByLabel = new Map<string, number>();
+
+    data.forEach((item) => {
+      const label = getNationalityName(item.nationality);
+      const current = countByLabel.get(label) || 0;
+      countByLabel.set(label, current + (item.customer_count || 0));
+    });
+
+    const entries = Array.from(countByLabel.entries()).map(([nationalityLabel, customer_count]) => {
+      const pct = totalCustomers > 0 ? Math.round((customer_count / totalCustomers) * 100) : 0;
       return {
-        ...item,
-        nationalityLabel: getNationalityName(item.nationality),
+        nationality: nationalityLabel,
+        nationalityLabel,
+        customer_count,
         pct,
       };
     });
+
+    return entries.sort((a, b) => b.customer_count - a.customer_count);
   }, [data, totalCustomers]);
 
   const maxPercent = useMemo(() => {

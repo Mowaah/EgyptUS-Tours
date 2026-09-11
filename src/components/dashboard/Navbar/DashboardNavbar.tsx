@@ -38,6 +38,7 @@ interface DashboardNavbarProps {
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
   searchPlaceholder?: string;
+  customFilterDropdown?: React.ReactNode;
 }
 
 
@@ -78,6 +79,7 @@ export default function DashboardNavbar({
   searchQuery,
   onSearchChange,
   searchPlaceholder,
+  customFilterDropdown,
 }: DashboardNavbarProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -174,7 +176,9 @@ export default function DashboardNavbar({
             </div>
 
             <div className={styles.tools}>
-              {(pageCopy as any).showStatusFilter ? (
+              {customFilterDropdown ? (
+                customFilterDropdown
+              ) : (pageCopy as any).showStatusFilter ? (
                 <StatusFilterDropdown />
               ) : (
                 !isFilterHidden && (

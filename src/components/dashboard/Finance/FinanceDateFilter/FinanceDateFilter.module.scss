@@ -1,0 +1,234 @@
+@use "@/styles/variables" as *;
+
+.container {
+  position: relative;
+  display: inline-block;
+}
+
+.filterButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 56px;
+  width: 56px;
+  height: 56px;
+  border-radius: $radius-full;
+  border: 1px solid $border-strong;
+  background: $white;
+  color: $gray-400;
+  outline: none;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $primary;
+  }
+
+  &.active {
+    border-color: $primary;
+    box-shadow: 0px 0px 0px 4px $background-blue-alt, 0px 1px 2px 0px rgba(217, 217, 234, 0.05);
+  }
+
+  &.hasFilter {
+    border-color: $dark;
+    background: #F0F4F8;
+    color: $dark;
+  }
+}
+
+.actionIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.filterPopover {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 469px;
+  max-width: calc(100vw - 32px);
+  background: $background;
+  box-shadow: 0px 12px 24px rgba(14, 18, 27, 0.06), 0px 1px 2px rgba(14, 18, 27, 0.03);
+  border-radius: 16px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.popoverHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 16px 20px;
+  gap: 12px;
+  height: 72px;
+  border-radius: 16px 16px 0 0;
+}
+
+.headerIconBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #FBFBFD;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.headerTitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 700;
+  font-size: $font-size-lg;
+  line-height: 22px;
+  color: $primary-deep;
+}
+
+.popoverBody {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px 32px;
+  gap: 24px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sectionTitle {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: $font-size-base;
+  line-height: 20px;
+  color: $dark;
+}
+
+.quickFiltersRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.quickFilterPill {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 12px;
+  gap: 8px;
+  flex: 1;
+  height: 52px;
+  background: $white;
+  border: 1px solid $border-strong;
+  border-radius: 1000px;
+  cursor: pointer;
+  transition: border-color $transition-fast, background-color $transition-fast;
+
+  &:hover {
+    border-color: $secondary;
+  }
+
+  &.quickFilterPillActive {
+    border-color: $secondary;
+    background: #FFF4ED;
+  }
+}
+
+.quickFilterText {
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: $font-size-15;
+  line-height: 18px;
+  color: $dark;
+  white-space: nowrap;
+}
+
+.customRangeRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.datePickerTrigger {
+  flex: 1;
+  width: 100%;
+  cursor: pointer;
+
+  input {
+    cursor: pointer;
+  }
+}
+
+.inputActive {
+  border-color: $primary !important;
+  box-shadow: 0px 0px 0px 4px $background-blue-alt, 0px 1px 2px 0px rgba(217, 217, 234, 0.05) !important;
+}
+
+.datePickerPortal {
+  z-index: 10000;
+}
+
+.popoverFooter {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 16px 20px;
+  gap: 8px;
+  height: 78px;
+  border-top: 1px solid #EDEDED;
+}
+
+.btnClean {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 16px;
+  width: 97px;
+  height: 46px;
+  background: $background;
+  border: 1px solid $gray-50-alt;
+  border-radius: 50px;
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: $font-size-base;
+  line-height: 19px;
+  color: $dark;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: $gray-25-slate;
+  }
+}
+
+.btnApply {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 16px;
+  width: 97px;
+  height: 46px;
+  background: $dark;
+  border-radius: 50px;
+  border: none;
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: $font-size-base;
+  line-height: 19px;
+  text-align: center;
+  color: $background;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}

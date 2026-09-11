@@ -9,29 +9,14 @@ import FleetUtilizationChart from "@/components/dashboard/shared/FleetUtilizatio
 import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 import styles from "@/components/dashboard/Analytics/ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
 import { fetchOperationalReports, downloadReportExport } from "@/services/admin/adminReportsService";
-
-const ALL_TIME_PARAMS = {
-  range: "custom",
-  date_from: "2000-01-01",
-  date_to: "2099-12-31",
-};
-
-const HOTEL_PARAMS = {
-  range: "this_month",
-};
+import { useReportsFilter } from "@/hooks/useReportsFilter";
 
 export default function OperationalReportsPage() {
-  const { data: reportsData, isLoading } = useSWR(
-    ["/admin/reports/operational/all-time"],
-    () => fetchOperationalReports(ALL_TIME_PARAMS),
-    {
-      revalidateOnFocus: false,
-    }
-  );
+  const filterParams = useReportsFilter();
 
-  const { data: hotelReportsData } = useSWR(
-    ["/admin/reports/operational/hotel-occupancy"],
-    () => fetchOperationalReports(HOTEL_PARAMS),
+  const { data: reportsData, isLoading } = useSWR(
+    ["/admin/reports/operational", filterParams],
+    () => fetchOperationalReports(filterParams),
     {
       revalidateOnFocus: false,
     }
@@ -67,7 +52,7 @@ export default function OperationalReportsPage() {
   }, [reportsData]);
 
   if (isLoading) {
-    return <div style={{ padding: "40px", textAlign: "center" }}>Loading reports...</div>;
+    return <div className={styles.loadingState}>Loading reports...</div>;
   }
 
   return (
@@ -81,19 +66,19 @@ export default function OperationalReportsPage() {
           tooltipFormat="booking"
           maxValue={destinationData.maxValue}
           data={destinationData.chartData}
-          actions={<ExportButtons onCsvClick={() => downloadReportExport("operational", "top_destinations", ALL_TIME_PARAMS)} />}
+          actions={<ExportButtons onCsvClick={() => downloadReportExport("operational", "top_destinations", filterParams)} />}
         />
         
         <HotelOccupancyChart 
-          data={hotelReportsData?.hotel_occupancy || reportsData?.hotel_occupancy || []} 
-          actions={<ExportButtons onCsvClick={() => downloadReportExport("operational", "hotel_occupancy", HOTEL_PARAMS)} />} 
+          data={reportsData?.hotel_occupancy || []} 
+          actions={<ExportButtons onCsvClick={() => downloadReportExport("operational", "hotel_occupancy", filterParams)} />} 
         />
       </div>
       
       <div className={styles.rightColumn}>
         <BookingsByServiceChart 
           data={reportsData?.bookings_by_service} 
-          actions={<ExportButtons onCsvClick={() => downloadReportExport("operational", "bookings_by_service", ALL_TIME_PARAMS)} />} 
+          actions={<ExportButtons onCsvClick={() => downloadReportExport("operational", "bookings_by_service", filterParams)} />} 
         />
         
         <FleetUtilizationChart 
@@ -102,7 +87,7 @@ export default function OperationalReportsPage() {
           showBanner={false}
           mode="operational"
           fleetData={reportsData?.fleet_utilization || []}
-          actions={<ExportButtons onCsvClick={() => downloadReportExport("operational", "fleet_utilization", ALL_TIME_PARAMS)} />}
+          actions={<ExportButtons onCsvClick={() => downloadReportExport("operational", "fleet_utilization", filterParams)} />}
         />
       </div>
     </div>

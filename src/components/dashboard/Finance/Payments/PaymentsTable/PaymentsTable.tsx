@@ -15,9 +15,11 @@ import { usePaymentsPanel } from "@/hooks/usePaymentsPanel";
 interface PaymentsTableProps {
   searchQuery?: string;
   onClearSearch?: () => void;
+  date_from?: string;
+  date_to?: string;
 }
 
-export default function PaymentsTable({ searchQuery = "", onClearSearch }: PaymentsTableProps) {
+export default function PaymentsTable({ searchQuery = "", onClearSearch, date_from, date_to }: PaymentsTableProps) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -31,7 +33,7 @@ export default function PaymentsTable({ searchQuery = "", onClearSearch }: Payme
     handleClean,
     handleExport,
     totalCount,
-  } = usePaymentsPanel({ searchQuery, page, pageSize });
+  } = usePaymentsPanel({ searchQuery, page, pageSize, date_from, date_to });
 
   const filterFields = [
     {

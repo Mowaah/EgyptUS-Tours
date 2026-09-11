@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
+import FinanceDateFilter from "@/components/dashboard/Finance/FinanceDateFilter/FinanceDateFilter";
 import { SummaryCard } from "@/components/dashboard/SummaryCard";
 import PaymentsTable from "../PaymentsTable/PaymentsTable";
 import RevenueByCategory from "../RevenueByCategory/RevenueByCategory";
@@ -9,6 +10,7 @@ import RevenueChart from "../RevenueChart/RevenueChart";
 import styles from "./PaymentsPage.module.scss";
 import { useFinanceReport } from "@/hooks/useFinanceReport";
 import { usePaymentStats } from "@/hooks/usePaymentStats";
+import { useFinanceFilter } from "@/hooks/useFinanceFilter";
 import { downloadBlobAsCSV } from "@/lib/utils";
 import { formatCompactMetric, formatCountWithCommas, formatTrendPct } from "@/utils/formatMetric";
 
@@ -49,8 +51,14 @@ const exportFinanceReportToCSV = (data: any, statsData?: any) => {
 
 export default function PaymentsPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const { data, loading } = useFinanceReport("ytd");
-  const { data: statsData } = usePaymentStats();
+  const filterParams = useFinanceFilter();
+  const rangeKey = filterParams.range === "custom" ? "custom" : filterParams.range || "ytd";
+  const { data, loading } = useFinanceReport(rangeKey, filterParams.date_from, filterParams.date_to);
+  const { data: statsData } = usePaymentStats(
+    filterParams.date_from || filterParams.date_to
+      ? { date_from: filterParams.date_from, date_to: filterParams.date_to }
+      : undefined
+  );
 
   const revenueByCatMap = data?.revenue_by_category || {};
   const categoryData = Object.keys(revenueByCatMap)
@@ -98,6 +106,17 @@ export default function PaymentsPage() {
   const refundedVal = statsData?.refunded_amount ?? data?.refunded_amount ?? "0";
   const donutCenterVal = totalCatVal > 0 ? totalCatVal : totalRevenueVal;
 
+  const revenueLabel =
+    filterParams.range === "today"
+      ? "Total Revenue (Today)"
+      : filterParams.range === "this_week"
+      ? "Total Revenue (This Week)"
+      : filterParams.range === "this_month"
+      ? "Total Revenue (This Month)"
+      : filterParams.range === "custom"
+      ? "Total Revenue (Custom)"
+      : "Total Revenue (YTD)";
+
   return (
     <>
       <DashboardNavbar
@@ -108,6 +127,7 @@ export default function PaymentsPage() {
         title="Payments"
         subtitle="Track and manage all payment transactions."
         searchPlaceholder="Search Customer, Booking ID, Payment ID"
+        customFilterDropdown={<FinanceDateFilter />}
         primaryAction={{
           label: "Export Report",
           iconSrc: "/images/dashboard/export2.svg",
@@ -119,7 +139,7 @@ export default function PaymentsPage() {
 
       <div className={styles.metricsGrid}>
         <SummaryCard
-          label="Total Revenue (YTD)"
+          label={revenueLabel}
           value={formatCompactMetric(totalRevenueVal, true)}
           change={growthPct ? formatTrendPct(growthPct) : "0%"}
           trend={parseFloat(growthPct) >= 0 ? "up" : "down"}
@@ -157,7 +177,12 @@ export default function PaymentsPage() {
         <RevenueByCategory chartData={chartDataNormalized} totalValue={formatCompactMetric(donutCenterVal, false)} />
       </div>
 
-      <PaymentsTable searchQuery={searchQuery} onClearSearch={() => setSearchQuery("")} />
+      <PaymentsTable
+        searchQuery={searchQuery}
+        onClearSearch={() => setSearchQuery("")}
+        date_from={filterParams.date_from}
+        date_to={filterParams.date_to}
+      />
     </>
   );
 }

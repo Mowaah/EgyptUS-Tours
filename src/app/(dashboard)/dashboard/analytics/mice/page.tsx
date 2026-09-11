@@ -4,21 +4,17 @@ import useSWR from "swr";
 import MiceMetrics from "@/components/dashboard/Analytics/MiceMetrics/MiceMetrics";
 import MicePipeline from "@/components/dashboard/Analytics/MicePipeline/MicePipeline";
 import MiceRevenueByEventType from "@/components/dashboard/Analytics/MiceRevenueByEventType/MiceRevenueByEventType";
-import MiceBookingsDetail from "@/components/dashboard/Analytics/MiceBookingsDetail/MiceBookingsDetail";
 import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 import styles from "@/components/dashboard/Analytics/ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
 import { fetchMiceReports, downloadReportExport } from "@/services/admin/adminReportsService";
-
-const ALL_TIME_PARAMS = {
-  range: "custom",
-  date_from: "2000-01-01",
-  date_to: "2099-12-31",
-};
+import { useReportsFilter } from "@/hooks/useReportsFilter";
 
 export default function MiceReportsPage() {
+  const filterParams = useReportsFilter();
+
   const { data: reportsData, isLoading } = useSWR(
-    ["/admin/reports/mice/all-time"],
-    () => fetchMiceReports(ALL_TIME_PARAMS),
+    ["/admin/reports/mice", filterParams],
+    () => fetchMiceReports(filterParams),
     {
       revalidateOnFocus: false,
     }
@@ -37,20 +33,20 @@ export default function MiceReportsPage() {
         <div className={styles.leftColumn}>
           <MicePipeline 
             pipeline={reportsData?.pipeline} 
-            actions={<ExportButtons onCsvClick={() => downloadReportExport("mice", "pipeline", ALL_TIME_PARAMS)} />} 
+            actions={<ExportButtons onCsvClick={() => downloadReportExport("mice", "pipeline", filterParams)} />} 
           />
         </div>
         <div className={styles.rightColumn}>
           <MiceRevenueByEventType 
             data={reportsData?.revenue_by_event_type?.fallback?.by_event_type_count} 
-            actions={<ExportButtons onCsvClick={() => downloadReportExport("mice", "revenue_by_event_type", ALL_TIME_PARAMS)} />} 
+            actions={<ExportButtons onCsvClick={() => downloadReportExport("mice", "revenue_by_event_type", filterParams)} />} 
           />
         </div>
       </div>
       {/* MICE Proposals Detail table commented out as requested */}
       {/* <MiceBookingsDetail 
         proposals={reportsData?.proposals_detail?.results} 
-        actions={<ExportButtons onCsvClick={() => downloadReportExport("mice", "proposals_detail", ALL_TIME_PARAMS)} />} 
+        actions={<ExportButtons onCsvClick={() => downloadReportExport("mice", "proposals_detail", filterParams)} />} 
       /> */}
     </div>
   );

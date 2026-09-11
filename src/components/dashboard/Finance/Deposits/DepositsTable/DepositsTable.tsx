@@ -11,9 +11,11 @@ import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyStat
 interface DepositsTableProps {
   searchQuery?: string;
   onClearSearch?: () => void;
+  date_from?: string;
+  date_to?: string;
 }
 
-export default function DepositsTable({ searchQuery = "", onClearSearch }: DepositsTableProps) {
+export default function DepositsTable({ searchQuery = "", onClearSearch, date_from, date_to }: DepositsTableProps) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -27,7 +29,7 @@ export default function DepositsTable({ searchQuery = "", onClearSearch }: Depos
     handleClean,
     handleExport,
     totalCount,
-  } = useDepositsPanel({ searchQuery, page, pageSize });
+  } = useDepositsPanel({ searchQuery, page, pageSize, date_from, date_to });
 
   const handleAction = (action: { label: string }, row: any) => {
     console.log(`Action ${action.label} on row`, row);
