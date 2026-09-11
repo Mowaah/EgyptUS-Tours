@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import styles from "./SearchBar.module.scss";
 import { GlassCard, CheckboxDropdown, CustomDatePicker } from "@/components/shared";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface SearchBarProps {
   destinations?: { label: string; value: string }[];
@@ -13,6 +14,7 @@ interface SearchBarProps {
 
 export default function SearchBar({ destinations = [] }: SearchBarProps) {
   const { t } = useTranslation("home");
+  const { formatCurrency } = useCurrency();
   const [date, setDate] = useState("");
   const [destination, setDestination] = useState("");
   const [budget, setBudget] = useState("");
@@ -20,12 +22,45 @@ export default function SearchBar({ destinations = [] }: SearchBarProps) {
   const router = useRouter();
 
   const budgetOptions = useMemo(() => [
-    { label: t("search.budgetLess1000", "less than 1,000$"), value: "less than 1,000$" },
-    { label: t("search.budget1000_2000", "1,000£ - 2,000$"), value: "1,000£ - 2,000$" },
-    { label: t("search.budget2000_3000", "2,000£ - 3,000$"), value: "2,000£ - 3,000$" },
-    { label: t("search.budget4000_5000", "4,000£ - 5,000$"), value: "4,000£ - 5,000$" },
-    { label: t("search.budgetOver5000", "Over 5,000$"), value: "Over 5,000$" },
-  ], [t]);
+    {
+      label: t("search.budgetLess1000", "less than {amount}").replace(
+        "{amount}",
+        formatCurrency({ usd: 1000, eur: 1000, egp: 50000 })
+      ),
+      value: "less1000",
+    },
+    {
+      label: t("search.budget1000_2000", "{min} - {max}")
+        .replace("{min}", formatCurrency({ usd: 1000, eur: 1000, egp: 50000 }))
+        .replace("{max}", formatCurrency({ usd: 2000, eur: 2000, egp: 100000 })),
+      value: "1000_2000",
+    },
+    {
+      label: t("search.budget2000_3000", "{min} - {max}")
+        .replace("{min}", formatCurrency({ usd: 2000, eur: 2000, egp: 100000 }))
+        .replace("{max}", formatCurrency({ usd: 3000, eur: 3000, egp: 150000 })),
+      value: "2000_3000",
+    },
+    {
+      label: t("search.budget4000_5000", "{min} - {max}")
+        .replace("{min}", formatCurrency({ usd: 4000, eur: 4000, egp: 200000 }))
+        .replace("{max}", formatCurrency({ usd: 5000, eur: 5000, egp: 250000 })),
+      value: "4000_5000",
+    },
+    {
+      label: t("search.budgetOver5000", "Over {amount}").replace(
+        "{amount}",
+        formatCurrency({ usd: 5000, eur: 5000, egp: 250000 })
+      ),
+      value: "over5000",
+    },
+  ], [t, formatCurrency]);
+
+  const selectedBudgetOption = useMemo(
+    () => budgetOptions.find((opt) => opt.value === budget),
+    [budgetOptions, budget]
+  );
+  const budgetDisplayLabel = selectedBudgetOption ? selectedBudgetOption.label : budget;
 
   const tripTypeOptions = useMemo(() => [
     { label: t("search.tripTypeAll", "All"), value: "All" },
@@ -38,7 +73,7 @@ export default function SearchBar({ destinations = [] }: SearchBarProps) {
     params.set("search", "true");
     if (date) params.append("date", date);
     if (destination) params.append("destination", destination);
-    if (budget) params.append("budget", budget);
+    if (budget) params.append("budget", budgetDisplayLabel);
     if (tripType) params.append("tripType", tripType);
     
     router.push(`/egypttours?${params.toString()}`);
@@ -98,7 +133,7 @@ export default function SearchBar({ destinations = [] }: SearchBarProps) {
             value={budget}
             onChange={setBudget}
             dropdownClassName={styles.searchDropdown}
-            renderTrigger={(isOpen, setIsOpen) => renderTrigger("budget", t("search.budget", "Budget"), budget, isOpen, setIsOpen)}
+            renderTrigger={(isOpen, setIsOpen) => renderTrigger("budget", t("search.budget", "Budget"), budgetDisplayLabel, isOpen, setIsOpen)}
           />
         </div>
 

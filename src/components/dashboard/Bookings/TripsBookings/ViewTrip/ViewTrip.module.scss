@@ -546,3 +546,8 @@
 .paymentAmount {
   font-weight: 700 !important;
 }
+
+.refundedAmount {
+  color: $status-danger-dark !important;
+  font-weight: 700 !important;
+}

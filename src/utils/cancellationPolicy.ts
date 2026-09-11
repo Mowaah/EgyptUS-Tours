@@ -53,7 +53,7 @@ export function calculateRefundSummary(
   }
 
   const deductionAmount = (totalPackageCost * deductionPercent) / 100;
-  const refundAmount = Math.max(0, paidAmount - deductionAmount);
+  const refundAmount = deductionPercent >= 100 ? 0 : Math.max(0, paidAmount - deductionAmount);
 
   return {
     package_total: totalPackageCost,

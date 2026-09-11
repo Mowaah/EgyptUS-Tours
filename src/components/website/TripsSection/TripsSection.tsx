@@ -19,6 +19,7 @@ import {
 } from "@/components/shared";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { Trip } from "@/types";
 import { PublicPromotion, fetchPublicPromotionsClient } from "@/services/promotionsService";
 import { DESERT_CATEGORIES, isDesertCategory, hasDesertCategory } from "@/constants";
@@ -34,6 +35,31 @@ export interface SearchParams {
   tripType?: string;
   category?: string;
   search?: string;
+}
+
+function parseBudgetRange(budgetStr?: string): { min: number; max: number } | null {
+  if (!budgetStr) return null;
+  const numbers = budgetStr.match(/\d[\d,]*/g);
+  if (!numbers || numbers.length === 0) return null;
+
+  const parsedNumbers = numbers.map((n) => parseInt(n.replace(/,/g, ""), 10));
+  const isEgp = budgetStr.includes("£") || parsedNumbers.some((n) => n >= 10000);
+  const rate = isEgp ? 50 : 1;
+
+  const lower = budgetStr.toLowerCase();
+  const isLessThan = lower.includes("less") || lower.includes("menos") || lower.includes("meno") || lower.includes("under");
+  const isOver = lower.includes("over") || lower.includes("más") || lower.includes("mas") || lower.includes("oltre") || lower.includes("+");
+
+  if (isLessThan) {
+    return { min: 0, max: Math.round(parsedNumbers[0] / rate) };
+  }
+  if (isOver) {
+    return { min: Math.round(parsedNumbers[0] / rate), max: 100000 };
+  }
+  if (parsedNumbers.length >= 2) {
+    return { min: Math.round(parsedNumbers[0] / rate), max: Math.round(parsedNumbers[1] / rate) };
+  }
+  return null;
 }
 
 interface TripsSectionProps {
@@ -60,6 +86,7 @@ export default function TripsSection({
 }: TripsSectionProps) {
   const { t: tHome } = useTranslation("home");
   const { t } = useTranslation("trips");
+  const { formatCurrency } = useCurrency();
   const isPage = variant === "page";
   // The search filter summary bar is ONLY shown when searching using the search in the home page
   const isSearchResults = isPage && Boolean(
@@ -67,6 +94,8 @@ export default function TripsSection({
     searchParams?.date ||
     searchParams?.budget
   );
+
+  const initialBudgetRange = useMemo(() => parseBudgetRange(searchParams?.budget), [searchParams?.budget]);
 
   const sortOptions = useMemo(() => [
     { value: "recommended", label: t("sort.recommended", "Recommended") },
@@ -116,12 +145,14 @@ export default function TripsSection({
     offers: boolean;
     price: boolean;
     priceRange: { min: number; max: number };
-  }>({
+  }>(() => ({
     duration: true,
     offers: true,
     price: true,
-    priceRange: { min: 0, max: 100000 },
-  });
+    priceRange: initialBudgetRange
+      ? { min: initialBudgetRange.min, max: initialBudgetRange.max }
+      : { min: 0, max: 100000 },
+  }));
 
   // Filter state uses internal value keys (language-independent)
   const [durationFilter, setDurationFilter] = useState<string>("any");
@@ -196,7 +227,7 @@ export default function TripsSection({
 
   useEffect(() => {
     setExpanded((prev) => {
-      if (prev.priceRange.max < maxPriceLimit || prev.priceRange.max === 12000) {
+      if (!initialBudgetRange && (prev.priceRange.max < maxPriceLimit || prev.priceRange.max === 12000)) {
         return {
           ...prev,
           priceRange: { min: prev.priceRange.min, max: maxPriceLimit },
@@ -204,7 +235,7 @@ export default function TripsSection({
       }
       return prev;
     });
-  }, [maxPriceLimit]);
+  }, [maxPriceLimit, initialBudgetRange]);
 
   const activeFilterCount = useMemo(() => {
     let n = 0;
@@ -603,6 +634,7 @@ export default function TripsSection({
                   ...prev,
                   priceRange: { min, max }
                 }))}
+                formatValue={(val) => formatCurrency({ usd: val, eur: val, egp: val * 50 })}
               />
             </FilterGroup>
 

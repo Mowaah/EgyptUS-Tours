@@ -22,7 +22,25 @@ export default function RefundModal({ open, onClose, onSubmit, refundSummary, cu
   const [file, setFile] = useState<File | undefined>();
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
-  const currencySymbol = "$";
+  const curr = (currency || "$").trim();
+  const currencySymbol =
+    curr.toLowerCase() === "usd" || curr === "$"
+      ? "$"
+      : curr.toLowerCase() === "eur" || curr === "€"
+      ? "€"
+      : curr.toLowerCase() === "egp" || curr === "£"
+      ? "EGP "
+      : curr.length <= 2
+      ? curr
+      : `${curr.toUpperCase()} `;
+
+  const formatMoney = (val?: number) => {
+    if (val == null || isNaN(val)) return "0";
+    return val.toLocaleString("en-US", {
+      minimumFractionDigits: val % 1 !== 0 ? 2 : 0,
+      maximumFractionDigits: 2,
+    });
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -65,7 +83,7 @@ export default function RefundModal({ open, onClose, onSubmit, refundSummary, cu
           <div className={styles.summarySection}>
             <div className={styles.summaryRow}>
               <span className={styles.summaryLabel}>Package Total</span>
-              <span className={styles.summaryValue}>{currencySymbol}{refundSummary?.package_total?.toLocaleString() ?? "0"}</span>
+              <span className={styles.summaryValue}>{currencySymbol}{formatMoney(refundSummary?.package_total)}</span>
             </div>
             <div className={styles.summaryRow}>
               <span className={styles.summaryLabel}>Days Before Travel</span>
@@ -81,11 +99,11 @@ export default function RefundModal({ open, onClose, onSubmit, refundSummary, cu
             </div>
             <div className={styles.summaryRow}>
               <span className={styles.summaryLabel}>Deduction Amount</span>
-              <span className={styles.summaryValue}>{currencySymbol}{refundSummary?.deduction_amount?.toLocaleString() ?? "0"}</span>
+              <span className={styles.summaryValue}>{currencySymbol}{formatMoney(refundSummary?.deduction_amount)}</span>
             </div>
             <div className={styles.summaryRow}>
               <span className={styles.summaryLabel}>Refund Amount</span>
-              <span className={styles.refundAmountValue}>{currencySymbol}{refundSummary?.refund_amount?.toLocaleString() ?? "0"}</span>
+              <span className={styles.refundAmountValue}>{currencySymbol}{formatMoney(refundSummary?.refund_amount)}</span>
             </div>
           </div>
 

@@ -54,40 +54,41 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
   const refundSummary = React.useMemo(() => {
     if (!payload) return undefined;
     
-    let total = Number(payload.payment_overview?.total || 0);
-    if (total === 0) {
-      const pTotal = payload.total_price || payload.total_amount;
-      if (pTotal !== undefined) {
-        total = Number(pTotal);
-      } else if (payload.price_details?.items?.length) {
-        total = payload.price_details.items.reduce((acc: number, item: any) => acc + Number(item.price || item.amount || item.line_total || 0), 0);
-      }
+    let total = Number(
+      payload.payment_overview?.total_package ??
+      payload.payment_overview?.total ??
+      payload.price_details?.total ??
+      payload.total_price ??
+      payload.total_amount ??
+      0
+    );
+
+    if (total === 0 && payload.price_details) {
+      const items = payload.price_details.line_items || payload.price_details.items || [];
+      total = items.reduce((acc: number, item: any) => acc + Number(item.price || item.amount || item.line_total || 0), 0);
     }
     
-    let totalPaid = Number(payload.payment_overview?.total_paid || 0);
-    if (totalPaid === 0) {
-      let paid = Number(payload.amount_paid || payload.paid_amount || payload.total_paid || 0);
-      if (paid === 0 && payload.payments?.length) {
-        paid = payload.payments.reduce((acc: number, p: any) => acc + Number(p.amount || 0), 0);
+    const rem = payload.remaining_payment_status?.toLowerCase();
+    const payStatus = payload.payment_status?.toLowerCase();
+    const isFullyPaid = rem === "paid" || payStatus === "paid" || rem === "completed";
+    const isPartiallyPaid = rem === "partially_paid" || payStatus === "partially_paid";
+
+    let totalPaid = 0;
+    if (isFullyPaid) {
+      totalPaid = total;
+    } else if (isPartiallyPaid) {
+      const depAmt = Number(payload.payment_overview?.deposit_amount);
+      totalPaid = !isNaN(depAmt) && depAmt > 0 ? depAmt : total * 0.3;
+    } else if (payload.payment_overview?.paid_to_date != null) {
+      const parsed = Number(payload.payment_overview.paid_to_date);
+      if (!isNaN(parsed)) {
+        totalPaid = parsed > total * 1.5 && total > 0 ? total : parsed;
       }
-      if (paid === 0 && payload.payment_summary?.paid_amount) {
-        paid = Number(payload.payment_summary.paid_amount);
-      }
-      if (paid === 0) {
-        const rem = payload.remaining_payment_status?.toLowerCase();
-        const payStatus = payload.payment_status?.toLowerCase();
-        if (rem === "paid" || payStatus === "paid" || rem === "completed") {
-          paid = total;
-        } else if (rem === "partially_paid" || payStatus === "partially_paid" || rem === "pending") {
-          paid = total * 0.3;
-        } else {
-          paid = total;
-        }
-      }
-      totalPaid = paid;
+    } else {
+      totalPaid = total;
     }
     
-    const travelDate = payload.booking?.start_date || new Date().toISOString();
+    const travelDate = payload.booking?.start_date || payload.start_date || new Date().toISOString();
     return calculateRefundSummary(total, totalPaid, travelDate);
   }, [payload]);
 

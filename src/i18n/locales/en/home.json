@@ -15,11 +15,14 @@
     "tripTypeAll": "All",
     "tripTypeGroup": "Group Tour",
     "tripTypePrivate": "Private Tour",
-    "budgetLess1000": "less than 1,000$",
-    "budget1000_2000": "1,000£ - 2,000$",
-    "budget2000_3000": "2,000£ - 3,000$",
-    "budget4000_5000": "4,000£ - 5,000$",
-    "budgetOver5000": "Over 5,000$"
+    "budgetLessThan": "less than {amount}",
+    "budgetRange": "{min} - {max}",
+    "budgetOver": "Over {amount}",
+    "budgetLess1000": "less than {amount}",
+    "budget1000_2000": "{min} - {max}",
+    "budget2000_3000": "{min} - {max}",
+    "budget4000_5000": "{min} - {max}",
+    "budgetOver5000": "Over {amount}"
   },
   "statsBar": {
     "totalCustomers": "Total Customers",

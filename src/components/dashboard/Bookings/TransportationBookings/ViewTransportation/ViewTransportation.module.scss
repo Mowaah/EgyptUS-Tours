@@ -526,6 +526,11 @@
   font-weight: 700 !important;
 }
 
+.refundedAmount {
+  color: $status-danger-dark !important;
+  font-weight: 700 !important;
+}
+
 .transferIcon {
   background-color: #94A3B8;
   -webkit-mask: url('/images/dashboard/booking/car.svg') no-repeat center;
