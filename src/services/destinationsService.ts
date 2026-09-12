@@ -13,6 +13,7 @@ export interface DestinationList {
   is_featured: boolean;
   children_count: number;
   order?: number;
+  translations?: Record<string, { name?: string; title?: string }>;
 }
 
 export async function getAllDestinations(params?: Record<string, string>): Promise<DestinationList[]> {

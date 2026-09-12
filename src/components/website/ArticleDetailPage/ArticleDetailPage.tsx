@@ -1,7 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Breadcrumb } from "@/components/shared";
 import FaqSection from "@/components/website/FaqSection/FaqSection";
+import { useTranslation } from "@/hooks/useTranslation";
 import FacebookIcon from "@public/images/facebook-gray.svg";
 import CopyLinkIcon from "@public/images/copy-link.svg";
 import styles from "./ArticleDetailPage.module.scss";
@@ -40,6 +43,7 @@ interface ArticleDetailPageProps {
 }
 
 export default function ArticleDetailPage({ content }: ArticleDetailPageProps) {
+  const { t } = useTranslation("common");
   const initials = content.author
     .split(" ")
     .slice(0, 2)
@@ -78,10 +82,10 @@ export default function ArticleDetailPage({ content }: ArticleDetailPageProps) {
                 </div>
 
                 <div className={styles.shareWrap}>
-                  <button className={styles.shareBtn} aria-label="Share on Facebook">
+                  <button className={styles.shareBtn} aria-label={t("articles.shareFacebook", "Share on Facebook")}>
                     <FacebookIcon />
                   </button>
-                  <button className={styles.shareBtn} aria-label="Copy link">
+                  <button className={styles.shareBtn} aria-label={t("articles.copyLink", "Copy link")}>
                     <CopyLinkIcon />
                   </button>
                 </div>
@@ -93,10 +97,14 @@ export default function ArticleDetailPage({ content }: ArticleDetailPageProps) {
                 <span className={styles.metaItem}>{content.date}</span>
                 <div className={styles.dividerInner} />
                 <span className={styles.dot} />
-                <span className={styles.metaItem}>{content.readTime} read</span>
+                <span className={styles.metaItem}>
+                  {t("articles.readTime", "{time} read", { time: content.readTime })}
+                </span>
                 <div className={styles.dividerInner} />
                 <span className={styles.dot} />
-                <span className={styles.metaItem}>{content.views} views</span>
+                <span className={styles.metaItem}>
+                  {t("articles.viewsCount", "{count} views", { count: content.views })}
+                </span>
               </div>
 
               <div className={styles.divider} style={{ order: 4 }} />
@@ -142,7 +150,9 @@ export default function ArticleDetailPage({ content }: ArticleDetailPageProps) {
           {/* Sidebar */}
           <aside className={styles.sidebar}>
             <h4 className={styles.relatedTitle}>
-              {content.type === "blog" ? "More Blogs" : "More Articles"}
+              {content.type === "blog"
+                ? t("blogs.moreBlogs", "More Blogs")
+                : t("articles.moreArticles", "More Articles")}
             </h4>
             <div className={styles.relatedList}>
               {content.relatedArticles.map((article) => (
@@ -174,7 +184,10 @@ export default function ArticleDetailPage({ content }: ArticleDetailPageProps) {
       {content.faqs && content.faqs.length > 0 && (
         <FaqSection
           items={content.faqs}
-          description="Find quick answers about booking, pricing and transportation details."
+          description={t(
+            "articles.faqDescription",
+            "Find quick answers about booking, pricing and transportation details."
+          )}
         />
       )}
     </main>

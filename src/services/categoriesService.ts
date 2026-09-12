@@ -8,6 +8,7 @@ export interface CategoryList {
   name: string;
   slug: string;
   is_system?: boolean;
+  translations?: Record<string, { name?: string; title?: string }>;
 }
 
 export async function getAllCategories(): Promise<CategoryList[]> {
@@ -93,6 +94,7 @@ export async function getEgyptTripCategories(): Promise<CategoryList[]> {
               id: tag.id,
               name: tag.name,
               slug: tag.slug,
+              translations: (tag as any).translations,
             });
           }
         }

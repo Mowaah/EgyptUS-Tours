@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { SectionHeader, PaginationArrows, Button, BlogCard } from "@/components/shared";
 import { Blog } from "@/types";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "@/hooks/useTranslation";
+import { getBackendLocalizedArticle, getBackendLocalizedName } from "@/utils/localizedContent";
 import Image from "next/image";
 import styles from "./BlogsSection.module.scss";
 
@@ -56,9 +59,26 @@ interface BlogsSectionProps {
 }
 
 export default function BlogsSection({ blogs }: BlogsSectionProps) {
+  const { t } = useTranslation("home");
+  const { language } = useLanguage();
   const [startIndex, setStartIndex] = useState(0);
 
-  const displayBlogs = blogs && blogs.length > 0 ? blogs : BLOGS;
+  const rawBlogs = blogs && blogs.length > 0 ? blogs : BLOGS;
+  const displayBlogs = rawBlogs.map((b) => {
+    const loc = getBackendLocalizedArticle(b, language);
+    const categoryName = getBackendLocalizedName(
+      { name: b.category, translations: b.categoryTranslations },
+      language,
+      b.category
+    );
+    return {
+      ...b,
+      title: loc.title || b.title,
+      excerpt: loc.excerpt || b.excerpt,
+      category: categoryName,
+    };
+  });
+
   const visibleBlogs = displayBlogs.slice(startIndex, startIndex + VISIBLE_COUNT);
 
   const handlePrev = () => {
@@ -78,9 +98,12 @@ export default function BlogsSection({ blogs }: BlogsSectionProps) {
           {/* Left column */}
           <div className={styles.left}>
             <SectionHeader
-              label="Blogs"
-              heading="Our Latest blogs"
-              description="Stay inspired with our latest articles. We bring you the best of Egypt's history, to help you discover the country.."
+              label={t("blogsSection.label", "Blogs")}
+              heading={t("blogsSection.heading", "Our Latest blogs")}
+              description={t(
+                "blogsSection.description",
+                "Stay inspired with our latest articles. We bring you the best of Egypt's history, to help you discover the country.."
+              )}
               align="left"
               maxWidth="386px"
               headingClassName={styles.blogsHeader}
@@ -99,7 +122,7 @@ export default function BlogsSection({ blogs }: BlogsSectionProps) {
                   />
                 }
               >
-                View all Blogs
+                {t("blogsSection.viewAll", "View all Blogs")}
               </Button>
             </div>
 

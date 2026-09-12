@@ -13,6 +13,8 @@ export default async function BlogsSectionFetcher() {
     excerpt: b.excerpt || b.subtitle || "",
     date: new Date(b.published_at || b.date).toLocaleDateString("en-US", { day: "2-digit", month: "long", year: "numeric" }),
     image: b.hero_image || b.featured_image || "/images/home/hero-bg.png",
+    translations: b.translations,
+    categoryTranslations: b.category?.translations,
   }));
 
   return <BlogsSection blogs={initialBlogs} />;

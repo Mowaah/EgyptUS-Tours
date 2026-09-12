@@ -62,6 +62,8 @@ export default function TransportationPage({ vehicles, faqs }: TransportationPag
 
   // Dynamically generate categories from the available vehicles
   const dynamicCategories = ["All Vehicles", ...Array.from(new Set(vehicles.map(v => v.type).filter(Boolean) as string[]))];
+  const allVehiclesLabel = t("searchSummary.allVehicles", "All Vehicles");
+  const displayCategories = dynamicCategories.map(cat => cat === "All Vehicles" ? allVehiclesLabel : cat);
 
   useLayoutEffect(() => {
     const mq = window.matchMedia("(min-width: 768px)");
@@ -207,7 +209,7 @@ export default function TransportationPage({ vehicles, faqs }: TransportationPag
         {!isSearchResults && (
           <div className={styles.tabsRow}>
             <CategoryTabs
-              tabs={dynamicCategories}
+              tabs={displayCategories}
               active={activeTab}
               onTabChange={(_, index) => setActiveTab(index)}
               wrap

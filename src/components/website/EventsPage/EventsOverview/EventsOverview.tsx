@@ -167,7 +167,7 @@ export default function EventsOverview() {
 
                   <div className={styles.accessItem}>
                     <div className={styles.aIconWrap}>
-                      <Image src="/images/heads-up.png" alt="Heads up" width={24} height={24} />
+                      <Image src="/images/heads-up.svg" alt="Heads up" width={24} height={24} />
                     </div>
                     <div className={styles.aTextWrap}>
                       <span className={styles.aTitle}>{t("overview.accessHeadsUp", "Heads up")}</span>

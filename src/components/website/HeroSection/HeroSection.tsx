@@ -19,8 +19,9 @@ export default async function HeroSection() {
       return slug !== "egypt" && !name.includes("egypt");
     })
     .map((d) => ({
-      label: d.name,
+      label: d.translations?.[lang]?.name || d.name,
       value: d.name,
+      translations: d.translations,
     }));
 
   return (

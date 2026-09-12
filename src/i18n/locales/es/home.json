@@ -154,5 +154,11 @@
     "label": "Testimonios",
     "heading": "Lo Que Dicen Nuestros Viajeros",
     "description": "Descubra historias auténticas, opiniones sinceras y momentos inolvidables vividos por nuestros viajeros"
+  },
+  "blogsSection": {
+    "label": "Blogs",
+    "heading": "Nuestros Últimos Blogs",
+    "description": "Inspírate con nuestros últimos artículos. Te traemos lo mejor de la historia y los secretos de Egipto para ayudarte a descubrir el país..",
+    "viewAll": "Ver todos"
   }
 }

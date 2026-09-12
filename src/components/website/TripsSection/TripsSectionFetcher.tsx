@@ -105,6 +105,12 @@ export default async function TripsSectionFetcher({ apiParams, searchParams }: T
       discountTitle: t.discount_title || undefined,
       discountValue: t.discount_value ? `${parseFloat(t.discount_value)}% Off` : undefined,
       tags: t.tags?.map(tag => tag.name) || [],
+      tagObjects: t.tags?.map(tag => ({
+        id: tag.id,
+        name: tag.name,
+        slug: tag.slug,
+        translations: tag.translations,
+      })) || [],
       destinations: (t.destinations as any) || [],
     };
   });

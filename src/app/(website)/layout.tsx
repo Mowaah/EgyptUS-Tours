@@ -29,8 +29,9 @@ export default async function WebsiteLayout({
   ]);
 
   const categoryLinks = categoriesData.map((c) => ({
-    label: c.name,
+    label: c.translations?.[initialLanguage]?.name || c.name,
     href: `/egypttours?category=${c.slug || c.name.toLowerCase().replace(/\s+/g, "-")}`,
+    translations: c.translations,
   }));
 
   const destinationLinks = destinationsData
@@ -40,8 +41,9 @@ export default async function WebsiteLayout({
       return slug !== "egypt" && !name.includes("egypt");
     })
     .map((d) => ({
-      label: d.name,
+      label: d.translations?.[initialLanguage]?.name || d.name,
       href: `/egypttours?destination=${d.slug || d.name.toLowerCase().replace(/\s+/g, "-")}`,
+      translations: d.translations,
     }));
 
   return (

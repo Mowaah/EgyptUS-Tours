@@ -74,7 +74,8 @@ export default function PlanYourTripPage() {
             id: d.id,
             name: d.name,
             region: d.region_display || "Africa",
-            image: d.image || ""
+            image: d.image || "",
+            translations: d.translations,
           }));
           setAvailableDestinations(apiDests);
         }

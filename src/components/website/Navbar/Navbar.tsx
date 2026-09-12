@@ -12,6 +12,7 @@ import { useScrollLock } from "@/hooks/useScrollLock";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useLanguage } from "@/contexts/LanguageContext";
 import styles from "./Navbar.module.scss";
 
 const NAV_CONFIG = [
@@ -40,10 +41,10 @@ const LIGHT_NAV_PATHS = [
   "/events-proposals"
 ];
 
-
 export interface NavLinkItem {
   label: string;
   href: string;
+  translations?: Record<string, { name?: string; title?: string }>;
 }
 
 
@@ -68,6 +69,11 @@ export default function Navbar({
   destinationLinks = []
 }: NavbarProps) {
   const { t } = useTranslation("common");
+  const { language } = useLanguage();
+
+  const getOptionLabel = (opt: NavLinkItem) => {
+    return opt.translations?.[language]?.name || opt.translations?.[language]?.title || opt.label;
+  };
 
   const navLinks = NAV_CONFIG.map((item) => ({
     ...item,
@@ -277,7 +283,7 @@ export default function Navbar({
                           {(link.key === "destinations" ? finalDestinationLinks : finalCategoryLinks).map((opt, i) => (
                             <Link key={i} href={opt.href} className={styles.dropdownOption}>
                               <Image src="/images/➢.svg" alt="" width={15} height={12} className={styles.dropdownIcon} />
-                              <span className={styles.dropdownText}>{opt.label}</span>
+                              <span className={styles.dropdownText}>{getOptionLabel(opt)}</span>
                             </Link>
                           ))}
                         </div>
@@ -377,7 +383,7 @@ export default function Navbar({
                           {subLinks.map((opt, i) => (
                             <li key={`${opt.href}-${i}`}>
                               <Link href={opt.href} className={styles.drawerSubLink}>
-                                {opt.label}
+                                {getOptionLabel(opt)}
                               </Link>
                             </li>
                           ))}

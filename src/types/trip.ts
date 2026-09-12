@@ -43,6 +43,12 @@ export interface Trip {
   rating?: number;
   reviewCount?: number;
   tags?: string[];
+  tagObjects?: Array<{
+    id?: number;
+    name: string;
+    slug?: string;
+    translations?: Record<string, { name?: string }>;
+  }>;
   destinations?: Array<{ id?: number; name?: string; slug?: string }>;
   privatePrice?: number;
   privatePrices?: MultiCurrencyPrice;

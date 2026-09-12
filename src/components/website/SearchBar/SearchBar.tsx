@@ -7,19 +7,34 @@ import styles from "./SearchBar.module.scss";
 import { GlassCard, CheckboxDropdown, CustomDatePicker } from "@/components/shared";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SearchBarProps {
-  destinations?: { label: string; value: string }[];
+  destinations?: { label: string; value: string; translations?: Record<string, { name?: string }> }[];
 }
 
 export default function SearchBar({ destinations = [] }: SearchBarProps) {
   const { t } = useTranslation("home");
   const { formatCurrency } = useCurrency();
+  const { language } = useLanguage();
   const [date, setDate] = useState("");
   const [destination, setDestination] = useState("");
   const [budget, setBudget] = useState("");
   const [tripType, setTripType] = useState("");
   const router = useRouter();
+
+  const destinationOptions = useMemo(() => {
+    return destinations.map((d) => ({
+      label: d.translations?.[language]?.name || d.label,
+      value: d.value,
+    }));
+  }, [destinations, language]);
+
+  const selectedDestOption = useMemo(
+    () => destinationOptions.find((opt) => opt.value === destination),
+    [destinationOptions, destination]
+  );
+  const destinationDisplayLabel = selectedDestOption ? selectedDestOption.label : destination;
 
   const budgetOptions = useMemo(() => [
     {
@@ -117,11 +132,11 @@ export default function SearchBar({ destinations = [] }: SearchBarProps) {
 
         <div className={styles.filterWrapper}>
           <CheckboxDropdown
-            options={destinations}
+            options={destinationOptions}
             value={destination}
             onChange={setDestination}
             dropdownClassName={styles.searchDropdown}
-            renderTrigger={(isOpen, setIsOpen) => renderTrigger("location", t("search.destination", "Destination"), destination, isOpen, setIsOpen)}
+            renderTrigger={(isOpen, setIsOpen) => renderTrigger("location", t("search.destination", "Destination"), destinationDisplayLabel, isOpen, setIsOpen)}
           />
         </div>
 

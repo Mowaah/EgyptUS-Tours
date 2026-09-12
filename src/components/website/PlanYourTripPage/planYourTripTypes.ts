@@ -4,6 +4,7 @@ export type PlanDestination = {
   id: string | number;
   name: string;
   image: string;
+  translations?: Record<string, { name?: string }>;
 };
 
 export type TripData = {

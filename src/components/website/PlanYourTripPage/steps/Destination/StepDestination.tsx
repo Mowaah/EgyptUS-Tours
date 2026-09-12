@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslation } from "@/hooks/useTranslation";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { CheckboxIndicator, BookingStepFooter } from "@/components/shared";
 
 import sharedStyles from "../../PlanYourTripPage.module.scss";
@@ -21,6 +22,7 @@ export default function StepDestination({
   continueDisabled: boolean;
 }) {
   const { t } = useTranslation("booking");
+  const { language } = useLanguage();
   return (
     <div className={sharedStyles.stepFormCard}>
       <header className={sharedStyles.stepFormCardHeader}>
@@ -36,6 +38,7 @@ export default function StepDestination({
         <div className={styles.destinationCards}>
           {destinations.map((destination) => {
             const selected = selectedDestinationIds.includes(destination.id);
+            const displayName = destination.translations?.[language]?.name || destination.name;
 
             return (
               <button
@@ -46,7 +49,7 @@ export default function StepDestination({
                 aria-pressed={selected}
               >
                 <div className={styles.destinationImageWrapper}>
-                  <img src={destination.image || undefined} alt={destination.name} />
+                  <img src={destination.image || undefined} alt={displayName} />
                   <CheckboxIndicator
                     variant="square"
                     surface="overlay"
@@ -55,7 +58,7 @@ export default function StepDestination({
                     aria-hidden
                   />
                 </div>
-                <h3 className={styles.destinationName}>{destination.name}</h3>
+                <h3 className={styles.destinationName}>{displayName}</h3>
               </button>
             );
           })}

@@ -106,11 +106,11 @@ function resolveNestedKey(obj: Record<string, any> | undefined, keyPath: string)
 }
 
 /**
- * Interpolates variables formatted as {varName} in the translated string.
+ * Interpolates variables formatted as {varName} or {{varName}} in the translated string.
  */
 function interpolate(text: string, params?: Record<string, string | number>): string {
   if (!params || typeof text !== "string") return text;
-  return text.replace(/\{(\w+)\}/g, (_, key) => {
+  return text.replace(/\{\{?(\w+)\}?\}/g, (_, key) => {
     return params[key] !== undefined ? String(params[key]) : `{${key}}`;
   });
 }

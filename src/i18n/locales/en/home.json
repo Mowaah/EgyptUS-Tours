@@ -154,5 +154,11 @@
     "label": "Testimonial",
     "heading": "What Travelers Say",
     "description": "Discover real stories, honest feedback, and memorable moments from our travelers"
+  },
+  "blogsSection": {
+    "label": "Blogs",
+    "heading": "Our Latest blogs",
+    "description": "Stay inspired with our latest articles. We bring you the best of Egypt's history, to help you discover the country..",
+    "viewAll": "View all"
   }
 }

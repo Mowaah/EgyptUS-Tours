@@ -20,6 +20,7 @@ import {
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Trip } from "@/types";
 import { PublicPromotion, fetchPublicPromotionsClient } from "@/services/promotionsService";
 import { DESERT_CATEGORIES, isDesertCategory, hasDesertCategory } from "@/constants";
@@ -188,6 +189,31 @@ export default function TripsSection({
     
     return ["All Trips", ...Array.from(cats)];
   }, [trips, isDesert]);
+
+  const { language } = useLanguage();
+
+  const categoryTranslationMap = useMemo(() => {
+    const map = new Map<string, Record<string, { name?: string } | undefined>>();
+    trips.forEach((t) => {
+      t.tagObjects?.forEach((tag) => {
+        if (tag.name && tag.translations) {
+          map.set(tag.name.toLowerCase().trim(), tag.translations);
+          if (tag.slug) map.set(tag.slug.toLowerCase().trim(), tag.translations);
+        }
+      });
+    });
+    return map;
+  }, [trips]);
+
+  const displayCategories = useMemo(() => {
+    return dynamicCategories.map((cat) => {
+      if (cat === "All Trips") {
+        return t("allTrips", "All Trips");
+      }
+      const trans = categoryTranslationMap.get(cat.toLowerCase().trim());
+      return trans?.[language]?.name || cat;
+    });
+  }, [dynamicCategories, categoryTranslationMap, language, t]);
 
   // Read category directly from URL so it reacts instantly to client-side navigation
   const urlCategory = urlSearchParams.get("category");
@@ -514,7 +540,7 @@ export default function TripsSection({
         </div>
 
         <CategoryTabs 
-          tabs={dynamicCategories} 
+          tabs={displayCategories} 
           wrap={isPage} 
           active={activeCategoryIndex}
           onTabChange={(_, index) => {

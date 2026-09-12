@@ -4,6 +4,9 @@ import { useState } from "react";
 
 import { BlogCard, SectionHeader, Pagination, EmptyState } from "@/components/shared";
 import { Blog } from "@/types";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "@/hooks/useTranslation";
+import { getBackendLocalizedArticle, getBackendLocalizedName } from "@/utils/localizedContent";
 import styles from "./BlogTrending.module.scss";
 
 import { ArticleList } from "@/types/api/articles";
@@ -21,19 +24,26 @@ export default function BlogTrending({
   initialBlogs = [],
   initialFeatured = []
 }: BlogTrendingProps) {
+  const { language } = useLanguage();
+  const { t } = useTranslation("common");
   const [currentPage, setCurrentPage] = useState(1);
 
   const isSearching = !!searchQuery.trim();
-  
-  const BLOGS: Blog[] = initialBlogs.map(a => ({
-    id: a.slug,
-    category: a.category?.name || "Blog", 
-    categoryColor: "blue",
-    title: a.title,
-    excerpt: a.excerpt,
-    date: new Date(a.published_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }),
-    image: a.featured_image || "/images/home/hero-bg.png"
-  }));
+  const localeCode = language === "it" ? "it-IT" : language === "es" ? "es-ES" : "en-GB";
+
+  const BLOGS: Blog[] = initialBlogs.map((a) => {
+    const loc = getBackendLocalizedArticle(a, language);
+    const categoryName = getBackendLocalizedName(a.category, language, a.category?.name || "Blog");
+    return {
+      id: a.slug,
+      category: categoryName, 
+      categoryColor: "blue",
+      title: loc.title || a.title,
+      excerpt: loc.excerpt || a.excerpt,
+      date: new Date(a.published_at).toLocaleDateString(localeCode, { day: '2-digit', month: 'long', year: 'numeric' }),
+      image: a.featured_image || a.hero_image || "/images/home/hero-bg.png"
+    };
+  });
 
   const filteredBlogs = BLOGS.filter((blog) => 
     !searchQuery || 
@@ -55,9 +65,9 @@ export default function BlogTrending({
         {!isSearching && (
           <div className={styles.sectionHeaderWrap}>
             <SectionHeader
-              label="Blogs"
-              heading="What's Trending Now"
-              description="Stay ahead of the curve with our most-read stories and trending travel insights across the country"
+              label={t("blogs.trendingLabel", "Blogs")}
+              heading={t("blogs.trendingHeading", "What's Trending Now")}
+              description={t("blogs.trendingDescription", "Stay ahead of the curve with our most-read stories and trending travel insights across the country")}
               align="center"
             />
           </div>
@@ -65,16 +75,18 @@ export default function BlogTrending({
 
         {isSearching && filteredBlogs.length > 0 && (
           <div className={styles.searchResultsWrap}>
-            <h3 className={styles.searchResultsCount}>{filteredBlogs.length} Blogs Founded</h3>
+            <h3 className={styles.searchResultsCount}>
+              {t("blogs.searchResultsCount", "{count} Blogs Found", { count: filteredBlogs.length })}
+            </h3>
           </div>
         )}
 
         {filteredBlogs.length === 0 ? (
           <div style={{ paddingTop: "40px", paddingBottom: "40px" }}>
             <EmptyState
-              title="No Available Blogs"
-              description="Sorry, no blogs matched your search. Please explore others or try different subject."
-              buttonText="Clear Search"
+              title={t("blogs.noBlogsTitle", "No Available Blogs")}
+              description={t("blogs.noBlogsDescription", "Sorry, no blogs matched your search. Please explore others or try different subject.")}
+              buttonText={t("blogs.clearSearch", "Clear Search")}
               onButtonClick={onClearSearch}
             />
           </div>

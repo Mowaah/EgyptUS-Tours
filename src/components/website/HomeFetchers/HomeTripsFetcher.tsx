@@ -49,6 +49,12 @@ export default async function HomeTripsFetcher() {
         discountValue: t.discount_value ? `${parseFloat(t.discount_value)}% Off` : undefined,
         destinations: (t.destinations as any) || [],
         tags: t.tags?.map((tag) => tag.name) || [],
+        tagObjects: t.tags?.map((tag) => ({
+          id: tag.id,
+          name: tag.name,
+          slug: tag.slug,
+          translations: tag.translations,
+        })) || [],
       };
     });
 

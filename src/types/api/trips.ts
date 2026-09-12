@@ -3,6 +3,7 @@ export interface TripTag {
   name: string;
   slug: string;
   category: string;
+  translations?: Record<string, { name?: string }>;
 }
 
 export interface TripOverview {
