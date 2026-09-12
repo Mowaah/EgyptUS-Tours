@@ -273,3 +273,14 @@
     line-height: 28px;
   }
 }
+
+.linkWrapper {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+}
+
+.clickable {
+  cursor: pointer;
+}

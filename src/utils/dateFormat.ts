@@ -147,3 +147,33 @@ export function formatDateTimeAt(
   return `${datePart} at ${timePart}`;
 }
 
+/**
+ * Formats a start and end date into a range string like "Apr 20 – Apr 28, 2026" or "Apr 20, 2026".
+ */
+export function formatDateRange(
+  start?: string | Date | null,
+  end?: string | Date | null,
+  fallback: string = "—"
+): string {
+  const sDate = parseDate(start);
+  const eDate = parseDate(end);
+
+  if (!sDate && !eDate) return fallback;
+  if (sDate && !eDate) {
+    return sDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+  if (!sDate && eDate) {
+    return eDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+
+  if (sDate!.getFullYear() === eDate!.getFullYear()) {
+    const sStr = sDate!.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    const eStr = eDate!.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    return `${sStr} – ${eStr}`;
+  }
+
+  const sStr = sDate!.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  const eStr = eDate!.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return `${sStr} – ${eStr}`;
+}
+

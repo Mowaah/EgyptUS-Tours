@@ -2,14 +2,17 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./UpcomingTripBanner.module.scss";
 
-interface UpcomingTrip {
+export interface UpcomingTrip {
   title: string;
   dates: string;
   duration: string;
   type: string;
   targetDate: Date;
+  href?: string;
 }
 
 interface CountdownTime {
@@ -62,10 +65,11 @@ export interface UpcomingTripBannerProps {
 }
 
 export default function UpcomingTripBanner({ trip, className = "" }: UpcomingTripBannerProps) {
+  const { t } = useTranslation("common");
   const countdown = useCountdown(trip.targetDate);
 
-  return (
-    <div className={`${styles.premiumBanner} ${className}`}>
+  const bannerContent = (
+    <div className={`${styles.premiumBanner} ${trip.href ? styles.clickable : ""} ${className}`}>
       {/* Background decorations */}
       <div className={styles.bannerDecorations}>
         <div className={styles.grayPlane}>
@@ -96,15 +100,15 @@ export default function UpcomingTripBanner({ trip, className = "" }: UpcomingTri
         <div className={styles.tripInfo}>
           <div className={styles.upcomingBadge}>
             <span className={styles.dot} />
-            <span>UPCOMING TRIP</span>
+            <span>{t("profile.upcomingTrip.badge", "UPCOMING TRIP")}</span>
           </div>
           <h2 className={styles.tripTitle}>{trip.title}</h2>
           <div className={styles.tripMeta}>
             <div className={styles.metaRow}>
               <span className={styles.metaItem}>✦ {trip.dates}</span>
-              <span className={styles.metaItem}>✦ {trip.duration}</span>
+              {trip.duration && <span className={styles.metaItem}>✦ {trip.duration}</span>}
             </div>
-            <span className={styles.metaItem}>✦ {trip.type}</span>
+            {trip.type && <span className={styles.metaItem}>✦ {trip.type}</span>}
           </div>
         </div>
 
@@ -112,25 +116,35 @@ export default function UpcomingTripBanner({ trip, className = "" }: UpcomingTri
         <div className={styles.countdown}>
           <div className={styles.countdownItem}>
             <div className={styles.countdownValue}>{String(countdown.days).padStart(2, "0")}</div>
-            <div className={styles.countdownLabel}>Days</div>
+            <div className={styles.countdownLabel}>{t("units.days", "Days")}</div>
           </div>
           <span className={styles.separator}>:</span>
           <div className={styles.countdownItem}>
             <div className={styles.countdownValue}>{String(countdown.hours).padStart(2, "0")}</div>
-            <div className={styles.countdownLabel}>Hours</div>
+            <div className={styles.countdownLabel}>{t("units.hours", "Hours")}</div>
           </div>
           <span className={styles.separator}>:</span>
           <div className={styles.countdownItem}>
             <div className={styles.countdownValue}>{String(countdown.minutes).padStart(2, "0")}</div>
-            <div className={styles.countdownLabel}>Mins</div>
+            <div className={styles.countdownLabel}>{t("units.mins", "Mins")}</div>
           </div>
           <span className={styles.separator}>:</span>
           <div className={styles.countdownItem}>
             <div className={styles.countdownValue}>{String(countdown.seconds).padStart(2, "0")}</div>
-            <div className={styles.countdownLabel}>Secs</div>
+            <div className={styles.countdownLabel}>{t("units.secs", "Secs")}</div>
           </div>
         </div>
       </div>
     </div>
   );
+
+  if (trip.href) {
+    return (
+      <Link href={trip.href} className={styles.linkWrapper}>
+        {bannerContent}
+      </Link>
+    );
+  }
+
+  return bannerContent;
 }

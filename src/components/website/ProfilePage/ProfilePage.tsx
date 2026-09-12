@@ -11,6 +11,7 @@ import {
   TripCard,
   HotelCard,
   TripBookingCard,
+  UpcomingTripBanner,
   SuccessModal,
   AuthModal,
 } from "@/components/shared";
@@ -18,6 +19,7 @@ import type { TabType, TripBookingCardProps } from "@/components/shared";
 import { Trip, Hotel } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useUpcomingTrip } from "@/hooks/useUpcomingTrip";
 import { getFavoriteTrips, getFavoriteHotels, getProfileRequests, getProfileSummary, getProfileBookings, getPaymentReceipt, getFullImageUrl } from "@/lib/api";
 import { getAllHotels } from "@/services/hotelsService";
 import { getStatusConfig } from "@/utils/statusUtils";
@@ -36,6 +38,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isAuthenticated, isLoading } = useAuth();
+  const { upcomingTrip } = useUpcomingTrip();
   const activeTab = useMemo(
     () => parseProfileTab(searchParams.get("tab")),
     [searchParams]
@@ -972,6 +975,9 @@ export default function ProfilePage() {
       />
 
       <div className={styles.container}>
+        {/* Premium Banner - Nearest Upcoming Trip */}
+        {upcomingTrip && <UpcomingTripBanner trip={upcomingTrip} />}
+
         {/* Main Layout */}
         <div className={styles.mainLayout}>
           {/* Sidebar Column */}

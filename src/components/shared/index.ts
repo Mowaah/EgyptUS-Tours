@@ -70,7 +70,7 @@ export { default as Pagination } from "./Pagination/Pagination";
 export { default as SearchContainer } from "./SearchContainer/SearchContainer";
 export { default as FilterSidebar } from "./FilterSidebar/FilterSidebar";
 export { default as UpcomingTripBanner } from "./UpcomingTripBanner/UpcomingTripBanner";
-export type { UpcomingTripBannerProps } from "./UpcomingTripBanner/UpcomingTripBanner";
+export type { UpcomingTrip, UpcomingTripBannerProps } from "./UpcomingTripBanner/UpcomingTripBanner";
 export { default as ProfileSidebar } from "./ProfileSidebar/ProfileSidebar";
 export type { ProfileSidebarProps, UserProfile, TabType } from "./ProfileSidebar/ProfileSidebar";
 export { default as CounterPill } from "./CounterPill/CounterPill";
