@@ -365,7 +365,8 @@
     "deposit30": "(Depósito 30%)",
     "remainingNote": "El 70% restante se paga un mes antes del viaje",
     "hideDetails": "Ocultar Detalles",
-    "viewDetails": "Ver Detalles"
+    "viewDetails": "Ver Detalles",
+    "childPricingBanner": "Tarifa niños: 6-11 años 50% · 2-5 años 25% · Menores de 2 gratis"
   },
   "terms": {
     "agreePrefix": "He leído y acepto los",

@@ -66,3 +66,24 @@ export function calculateRefundSummary(
     refund_amount: refundAmount,
   };
 }
+
+export const POLICY_LABEL_KEYS: Record<string, string> = {
+  "More than 30 days before service": "cancelModal.policies.moreThan30Days",
+  "30 days before service": "cancelModal.policies.30Days",
+  "29-15 days before service": "cancelModal.policies.29To15Days",
+  "14-10 days before service": "cancelModal.policies.14To10Days",
+  "09-06 days before service": "cancelModal.policies.9To6Days",
+  "05 days to 48 hrs before service": "cancelModal.policies.5DaysTo48Hrs",
+  "Between 48 hours to the day of service": "cancelModal.policies.48HrsToDay",
+  "No Show / After service started": "cancelModal.policies.noShow",
+};
+
+export function getLocalizedPolicyLabel(
+  policy: string | undefined | null,
+  t: (key: string, fallback?: string) => string
+): string {
+  if (!policy) return "N/A";
+  const trimmed = policy.trim();
+  const key = POLICY_LABEL_KEYS[trimmed];
+  return key ? t(key, trimmed) : policy;
+}

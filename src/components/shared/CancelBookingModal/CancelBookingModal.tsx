@@ -7,20 +7,7 @@ import SelectDropdown from "@/components/shared/SelectDropdown/SelectDropdown";
 import NationalitySelect from "@/components/shared/NationalitySelect/NationalitySelect";
 import FormField from "@/components/shared/FormField/FormField";
 import CheckboxIndicator from "@/components/shared/CheckboxIndicator/CheckboxIndicator";
-
-const CANCELLATION_REASONS = [
-  { label: "Select a Reason", value: "", disabled: true, hidden: true },
-  { label: "Change of plans", value: "Change of plans" },
-  { label: "Medical reasons", value: "Medical reasons" },
-  { label: "Travel restrictions", value: "Travel restrictions" },
-  { label: "Personal reasons", value: "Personal reasons" },
-  { label: "Found another option", value: "Found another option" },
-  { label: "Other", value: "Other" },
-];
-
-
-
-import { RefundSummary } from "@/utils/cancellationPolicy";
+import { RefundSummary, getLocalizedPolicyLabel } from "@/utils/cancellationPolicy";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import type { MultiCurrencyPrice } from "@/constants/currency";
@@ -267,7 +254,9 @@ export default function CancelBookingModal({
               )}
               <div className={styles.summaryRow}>
                 <span className={styles.summaryLabel}>{t("cancelModal.cancellationWindow", "Cancellation Window")}</span>
-                <span className={styles.summaryValue}>{refundSummary?.policy_applied ?? "N/A"}</span>
+                <span className={styles.summaryValue}>
+                  {getLocalizedPolicyLabel(refundSummary?.policy_applied, t)}
+                </span>
               </div>
               <div className={styles.summaryRow}>
                 <span className={styles.summaryLabel}>{t("cancelModal.deductionRate", "Deduction Rate")}</span>
@@ -338,7 +327,7 @@ export default function CancelBookingModal({
               />
 
               <div className={styles.formGroup} style={{ marginBottom: 0 }}>
-                <label className={styles.label}>{t("cancelModal.country", "Country")} *</label>
+                <label className={styles.label}>{t("cancelModal.country", "Bank Country")} *</label>
                 <NationalitySelect
                   useCountryName={true}
                   value={country}
@@ -408,7 +397,7 @@ export default function CancelBookingModal({
                 className={styles.btnSolid}
                 disabled={loading}
               >
-                {loading ? t("common.processing", "Processing...") : t("cancelModal.cancelAction", "Confirm Cancellation")}
+                {loading ? t("cancelModal.processing", "Processing...") : t("cancelModal.cancelAction", "Confirm Cancellation")}
               </button>
             </div>
           </form>

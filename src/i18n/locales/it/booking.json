@@ -365,7 +365,8 @@
     "deposit30": "(Acconto 30%)",
     "remainingNote": "Saldo rimanente del 70% un mese prima del viaggio",
     "hideDetails": "Nascondi Dettagli",
-    "viewDetails": "Visualizza Dettagli"
+    "viewDetails": "Visualizza Dettagli",
+    "childPricingBanner": "Prezzo bambini: 6-11 anni 50% · 2-5 anni 25% · Sotto 2 anni gratis"
   },
   "terms": {
     "agreePrefix": "Ho letto e accetto i",

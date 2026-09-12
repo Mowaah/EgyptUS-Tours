@@ -296,6 +296,13 @@ export default function BookingSidebar({
     }));
   })();
 
+  const hasChildrenOrInfants = Boolean(
+    (formData?.children || 0) > 0 ||
+    (formData?.infants || 0) > 0 ||
+    pricingSummary?.lineItems?.some((item) => (item.children && item.children.length > 0)) ||
+    lineItems?.some((item) => item.subtext && /child/i.test(item.subtext))
+  );
+
   return (
     <aside>
       <div className={`${styles.sidebarCard} ${expanded ? styles.sidebarCardExpanded : ""}`}>
@@ -547,9 +554,9 @@ export default function BookingSidebar({
             )}
 
             {/* Child Pricing Policy Banner */}
-            {!isRemainingView && ((formData.children || 0) > 0 || (formData.infants || 0) > 0) && (
+            {hasChildrenOrInfants && (
               <div className={styles.childPolicyBanner}>
-                {CHILD_POLICY.bannerText}
+                {t("sidebar.childPricingBanner", CHILD_POLICY.bannerText)}
               </div>
             )}
           </div>

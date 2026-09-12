@@ -238,6 +238,22 @@ export default function ProfileBookingDetailsPage() {
     return phone;
   };
 
+  const rawOverviews: any[] =
+    (Array.isArray(bData.details?.room_overview) && bData.details.room_overview.length > 0 ? bData.details.room_overview : null) ||
+    (Array.isArray(bData.rooms?.overview) && bData.rooms.overview.length > 0 ? bData.rooms.overview : null) ||
+    (Array.isArray(bData.price_details?.line_items) && bData.price_details.line_items.length > 0 ? bData.price_details.line_items : null) ||
+    (Array.isArray(bData.price_details?.room_overview) && bData.price_details.room_overview.length > 0 ? bData.price_details.room_overview : null) ||
+    (Array.isArray(bData.room_selections) && bData.room_selections.length > 0 ? bData.room_selections : null) ||
+    [];
+
+  const overviewsChildCount = rawOverviews.reduce((acc: number, ov: any) => {
+    const cCount = ov.children_count ?? (Array.isArray(ov.children) ? ov.children.length : 0);
+    return acc + cCount;
+  }, 0);
+
+  const totalChildrenCount = bData.children || bData.details?.children || bData.details?.children_count || overviewsChildCount || 0;
+  const totalInfantsCount = bData.infants || bData.details?.infants || bData.details?.infants_count || 0;
+
   const safeFormData = {
     ...bData,
     name: contact.full_name || "",
@@ -245,8 +261,8 @@ export default function ProfileBookingDetailsPage() {
     phone: formatPhone(contact.phone),
     nationality: contact.nationality || "",
     adults: bData.adults || 0,
-    children: bData.children || 0,
-    infants: bData.infants || 0,
+    children: totalChildrenCount,
+    infants: totalInfantsCount,
     startDate: formatDate(bData.check_in_date || bData.start_date || ""),
     endDate: formatDate(bData.check_out_date || bData.end_date || ""),
     rooms: {
@@ -265,14 +281,6 @@ export default function ProfileBookingDetailsPage() {
           ? parseFloat(String(bData.discount))
           : 0;
   const discountAmount = !isNaN(rawDiscount) && rawDiscount > 0 ? rawDiscount : 0;
-
-  const rawOverviews: any[] =
-    (Array.isArray(bData.details?.room_overview) && bData.details.room_overview.length > 0 ? bData.details.room_overview : null) ||
-    (Array.isArray(bData.rooms?.overview) && bData.rooms.overview.length > 0 ? bData.rooms.overview : null) ||
-    (Array.isArray(bData.price_details?.line_items) && bData.price_details.line_items.length > 0 ? bData.price_details.line_items : null) ||
-    (Array.isArray(bData.price_details?.room_overview) && bData.price_details.room_overview.length > 0 ? bData.price_details.room_overview : null) ||
-    (Array.isArray(bData.room_selections) && bData.room_selections.length > 0 ? bData.room_selections : null) ||
-    [];
 
   const hotelTotalRooms =
     (safeFormData.rooms.single + safeFormData.rooms.double + safeFormData.rooms.triple) ||
@@ -1101,17 +1109,17 @@ export default function ProfileBookingDetailsPage() {
 
       {showSuccess && (
         <SuccessModal
-          title="Cancellation Request Submitted"
-          message="Your cancellation request has been received successfully."
-          buttonText="Back to Home"
+          title={t("cancelModal.successTitle", "Cancellation Request Submitted")}
+          message={t("cancelModal.successMessage", "Your cancellation request has been received successfully.")}
+          buttonText={t("cancelModal.backToHome", "Back to Home")}
           onClose={() => {
             setShowSuccess(false);
             router.push("/profile?tab=bookings");
           }}
           metadata={[
-            { label: "Booking Reference", value: `#BK${bData.id || "53602205"}` },
+            { label: t("cancelModal.bookingReference", "Booking Reference"), value: `#BK${bData.id || "53602205"}` },
             {
-              label: "Refund Amount",
+              label: t("cancelModal.estimatedRefund", "Refund Amount"),
               value: formatCurrency(
                 isEgp
                   ? { egp: refundSummary.refund_amount }
@@ -1121,8 +1129,8 @@ export default function ProfileBookingDetailsPage() {
               ),
               valueColor: "#FF6600",
             },
-            { label: "Refund Method", value: "Bank Transfer" },
-            { label: "Estimated Processing Time", value: "7 - 10 Business Days" }
+            { label: t("cancelModal.refundMethod", "Refund Method"), value: t("cancelModal.bankTransfer", "Bank Transfer") },
+            { label: t("cancelModal.processingTime", "Estimated Processing Time"), value: t("cancelModal.businessDays", "7 - 10 Business Days") }
           ]}
         />
       )}

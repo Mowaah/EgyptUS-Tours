@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { useTranslation } from "@/hooks/useTranslation";
+import { getLocalizedPolicyLabel } from "@/utils/cancellationPolicy";
 import { BASE_URL } from "@/lib/api";
 import styles from "./RefundCards.module.scss";
 
@@ -158,7 +159,10 @@ export function RefundSummaryCard({
     rows.push({ label: t("refund.daysBeforeTravel", "Days Before Travel"), value: `${daysBefore} Days` });
   }
   if (policy) {
-    rows.push({ label: t("refund.cancellationPolicyApplied", "Cancellation Policy Applied"), value: policy });
+    rows.push({
+      label: t("refund.cancellationPolicyApplied", "Cancellation Policy Applied"),
+      value: getLocalizedPolicyLabel(policy, t),
+    });
   }
   if (deductionPct != null && deductionPct !== "") {
     rows.push({ label: t("refund.deduction", "Deduction"), value: `${deductionPct}%` });
