@@ -3,6 +3,23 @@
     "title": "Mettiti in Contatto",
     "subtitle": "Hai domande sui nostri tour o desideri assistenza per pianificare il tuo itinerario? Siamo qui per aiutarti."
   },
+  "page": {
+    "title": "Contattaci",
+    "subtitle": "Hai domande sui nostri tour o desideri assistenza per pianificare il tuo itinerario? Siamo qui per aiutarti.",
+    "getInTouch": "Mettiti in Contatto",
+    "addressLabel": "Indirizzo",
+    "addressValue": "643 Hadayk October, Giza",
+    "addressSubtitle": "Egitto — 11371",
+    "phoneLabel": "Telefono",
+    "phoneValue": "+20 111 140 0212",
+    "phoneSubtitle": "Dom - Gio, 9:00 - 18:00",
+    "emailLabel": "Email",
+    "emailValue": "info@egypt-us.com",
+    "emailSubtitle": "Rispondiamo entro 24 ore",
+    "mapTitle": "Mappa",
+    "mapAddress": "643 Hadayk October, Giza — Egitto",
+    "openInMaps": "Apri su Maps"
+  },
   "info": {
     "title": "Informazioni di Contatto",
     "phone": "+20 100 000 0000",
@@ -29,6 +46,7 @@
     "errEmailRequired": "L'email è obbligatoria.",
     "errEmailInvalid": "Inserisci un indirizzo email valido.",
     "errMessageRequired": "Il messaggio è obbligatorio.",
+    "errGeneric": "Si è verificato un errore durante l'invio del messaggio. Riprova.",
     "successTitle": "Messaggio Inviato con Successo!",
     "successDesc": "Grazie per averci contattato. Un membro del nostro team di specialisti esaminerà la tua richiesta e ti risponderà entro 24 ore.",
     "closeModal": "Torna alla Home",

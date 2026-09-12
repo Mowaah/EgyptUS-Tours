@@ -57,7 +57,7 @@ export default function ContactSection() {
       setErrors({});
     } catch (err: any) {
       console.error("Failed to submit contact inquiry:", err);
-      setSubmitError(extractApiError(err, "Something went wrong sending your message. Please try again."));
+      setSubmitError(extractApiError(err, t("section.errGeneric", "Something went wrong sending your message. Please try again.")));
     } finally {
       setIsSubmitting(false);
     }

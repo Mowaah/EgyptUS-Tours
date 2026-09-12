@@ -3,6 +3,23 @@
     "title": "Póngase en Contacto",
     "subtitle": "¿Tiene preguntas sobre nuestros tours o necesita ayuda para planificar su itinerario? Estamos aquí para ayudarle."
   },
+  "page": {
+    "title": "Contáctenos",
+    "subtitle": "¿Tiene preguntas sobre nuestros tours o necesita ayuda para planificar su itinerario? Estamos aquí para ayudarle.",
+    "getInTouch": "Póngase en Contacto",
+    "addressLabel": "Dirección",
+    "addressValue": "643 Hadayk October, Guiza",
+    "addressSubtitle": "Egipto — 11371",
+    "phoneLabel": "Teléfono",
+    "phoneValue": "+20 111 140 0212",
+    "phoneSubtitle": "Dom - Jue, 9:00 - 18:00",
+    "emailLabel": "Correo Electrónico",
+    "emailValue": "info@egypt-us.com",
+    "emailSubtitle": "Respondemos en 24 horas",
+    "mapTitle": "Mapa",
+    "mapAddress": "643 Hadayk October, Guiza — Egipto",
+    "openInMaps": "Abrir en Google Maps"
+  },
   "info": {
     "title": "Información de Contacto",
     "phone": "+20 100 000 0000",
@@ -29,6 +46,7 @@
     "errEmailRequired": "El correo electrónico es obligatorio.",
     "errEmailInvalid": "Por favor, introduzca una dirección de correo válida.",
     "errMessageRequired": "El mensaje es obligatorio.",
+    "errGeneric": "Se produjo un error al enviar su mensaje. Por favor, inténtelo de nuevo.",
     "successTitle": "¡Mensaje Enviado con Éxito!",
     "successDesc": "Gracias por ponerse en contacto con nosotros. Un miembro de nuestro equipo de especialistas revisará su consulta y le responderá en un plazo de 24 horas.",
     "closeModal": "Volver al Inicio",

@@ -593,8 +593,26 @@ export default function ProfilePage() {
                 localStorage.getItem(`cancelled_by_user_hotel_${bk.id}`) === "true" ||
                 localStorage.getItem(`cancelled_by_user_transport_${bk.id}`) === "true");
 
-            let cancelledBy: "user" | "admin" = "user";
-            if (
+            const hasUserRefundBankDetails = !!(
+              bk.refund_bank_details ||
+              bk.details?.refund_bank_details ||
+              bk.price_breakdown?.refund_bank_details ||
+              (typeof bk.details === "object" && bk.details && "refund_bank_details" in bk.details)
+            );
+
+            const isUserCancelled =
+              isUserCancelledStored ||
+              hasUserRefundBankDetails ||
+              actorLower === "user" ||
+              actorLower === "customer" ||
+              actorLower.includes("by you") ||
+              actorLower.includes("by customer") ||
+              rawCancelledLabel.includes("by you") ||
+              reasonLower.includes("by customer") ||
+              reasonLower.includes("[customer]") ||
+              reasonLower.includes("[user]");
+
+            const isAdminCancelled =
               actorLower.includes("admin") ||
               actorLower.includes("egypt us") ||
               actorLower.includes("egyptus") ||
@@ -603,18 +621,14 @@ export default function ProfilePage() {
               reasonLower.includes("[admin]") ||
               reasonLower.includes("by admin") ||
               reqStatus === "rejected" ||
-              opStatus === "rejected"
-            ) {
-              cancelledBy = "admin";
-            } else if (
-              isUserCancelledStored ||
-              actorLower.includes("user") ||
-              actorLower.includes("customer") ||
-              actorLower.includes("you") ||
-              rawCancelledLabel.includes("you") ||
-              reasonLower.includes("by customer")
-            ) {
+              opStatus === "rejected";
+
+            // If cancelled, default to "admin" ("Cancelled by Egypt US") unless user initiated the cancellation
+            let cancelledBy: "user" | "admin" = "admin";
+            if (isUserCancelled && !isAdminCancelled) {
               cancelledBy = "user";
+            } else {
+              cancelledBy = "admin";
             }
 
             let resolvedImage = bk.image;

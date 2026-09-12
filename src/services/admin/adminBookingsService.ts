@@ -55,15 +55,15 @@ export async function reassignBooking(type: 'trips' | 'transportation' | 'hotels
 }
 
 export async function cancelTripBooking(id: string | number, reason: string): Promise<any> {
-  return await adminDataClient.post(`/bookings/trips/${id}/cancel/`, { cancellation_reason: reason });
+  return await adminDataClient.post(`/bookings/trips/${id}/cancel/`, { cancellation_reason: reason, cancelled_by: "admin" });
 }
 
 export async function cancelTransportationBooking(id: string | number, reason: string): Promise<any> {
-  return await adminDataClient.post(`/bookings/transportation/${id}/cancel/`, { cancellation_reason: reason });
+  return await adminDataClient.post(`/bookings/transportation/${id}/cancel/`, { cancellation_reason: reason, cancelled_by: "admin" });
 }
 
 export async function cancelHotelBooking(id: string | number, reason: string): Promise<any> {
-  return await adminDataClient.post(`/bookings/hotels/${id}/cancel/`, { cancellation_reason: reason });
+  return await adminDataClient.post(`/bookings/hotels/${id}/cancel/`, { cancellation_reason: reason, cancelled_by: "admin" });
 }
 
 export async function createHotelBooking(payload: any): Promise<any> {

@@ -66,10 +66,21 @@ export default function Footer() {
       { label: t("footer.privacyPolicy", "Privacy & Policy"), href: "/privacy" },
       { label: t("footer.faqs", "FAQs"), href: "/faq" },
     ],
-    [t("footer.contact", "Contact")]: CONTACT_INFO.map((item) => ({
-      label: `${item.type}:`,
-      value: item.value.trim(),
-    })),
+    [t("footer.contact", "Contact")]: CONTACT_INFO.map((item) => {
+      const typeKey = item.type.toLowerCase();
+      const localizedType =
+        typeKey === "address"
+          ? t("footer.address", "Address")
+          : typeKey === "phone"
+            ? t("footer.phone", "Phone")
+            : typeKey === "email"
+              ? t("footer.email", "Email")
+              : item.type;
+      return {
+        label: `${localizedType}:`,
+        value: item.value.trim(),
+      };
+    }),
   };
 
   return (
