@@ -33,6 +33,8 @@ interface BookingSidebarProps {
   isRemainingView?: boolean;
   isFullyPaid?: boolean;
   remainingPrices?: MultiCurrencyPrice;
+  paidAmount?: number;
+  paidPrices?: MultiCurrencyPrice;
   lineItems?: Array<{
     label: string;
     subtext?: string;
@@ -68,6 +70,8 @@ export default function BookingSidebar({
   isRemainingView = false,
   isFullyPaid = false,
   remainingPrices,
+  paidAmount,
+  paidPrices,
 }: BookingSidebarProps) {
   // Mobile-only: the full details collapse into a compact summary strip.
   // On desktop this state is ignored (CSS always shows the details).
@@ -141,6 +145,21 @@ export default function BookingSidebar({
     if (hasValidPricingSummary && pricingSummary) return pricingSummary.remainingPrices;
     return Math.max(0, finalTotal - depositAmount);
   }, [remainingPrices, totalPrices, depositPrices, hasValidPricingSummary, pricingSummary, finalTotal, depositAmount]);
+
+  const resolvedPaid: MultiCurrencyPrice | number = React.useMemo(() => {
+    if (paidPrices) return paidPrices;
+    if (paidAmount != null && paidAmount > 0) return paidAmount;
+    return resolvedDeposit;
+  }, [paidPrices, paidAmount, resolvedDeposit]);
+
+  const paidPct = React.useMemo(() => {
+    const totalNum = typeof resolvedTotal === "number" ? resolvedTotal : Number(resolvedTotal?.usd || resolvedTotal?.egp || resolvedTotal?.eur || 0);
+    const paidNum = typeof resolvedPaid === "number" ? resolvedPaid : Number(resolvedPaid?.usd || resolvedPaid?.egp || resolvedPaid?.eur || 0);
+    if (totalNum > 0 && paidNum > 0) {
+      return Math.round((paidNum / totalNum) * 100);
+    }
+    return 30;
+  }, [resolvedTotal, resolvedPaid]);
 
   const image = isHotel ? (hotel!.image || "/images/pyramids.jpg") : (trip!.image || "/images/cruise.jpg");
   const title = isHotel ? hotel!.name : trip!.title;
@@ -556,10 +575,10 @@ export default function BookingSidebar({
                 </div>
                 <div className={styles.depositBottomRow}>
                   <span className={styles.depositNote}>
-                    {t("sidebar.paid30", "Paid (30%)")}
+                    {t("sidebar.paid", "Paid")} ({paidPct}%)
                   </span>
                   <span className={styles.remainingAmount}>
-                    {formatMoney(resolvedDeposit)}
+                    {formatMoney(resolvedPaid)}
                   </span>
                 </div>
               </div>
@@ -571,10 +590,12 @@ export default function BookingSidebar({
                   </span>
                   <span className={styles.depositAmount}>{formatMoney(resolvedDeposit)}</span>
                 </div>
-                <div className={styles.depositBottomRow}>
-                  <span className={styles.depositNote}>{t("sidebar.remainingNote", "Remaining 70% due one month before your trip")}</span>
-                  <span className={styles.remainingAmount}>{formatMoney(resolvedRemaining)}</span>
-                </div>
+                {!isDepositFull && (
+                  <div className={styles.depositBottomRow}>
+                    <span className={styles.depositNote}>{t("sidebar.remainingNote", "Remaining 70% due one month before your trip")}</span>
+                    <span className={styles.remainingAmount}>{formatMoney(resolvedRemaining)}</span>
+                  </div>
+                )}
               </div>
             )
           )}

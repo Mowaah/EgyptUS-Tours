@@ -84,7 +84,7 @@
 
   @media (min-width: 640px) {
     font-size: $font-size-5xl;
-    line-height: 40px;
+    line-height: 44px;
   }
 }
 
@@ -98,7 +98,7 @@
   @media (min-width: 640px) {
     font-size: $font-size-2xl;
     line-height: 28px;
-    max-width: 500px
+    max-width: 500px;
   }
 }
 
@@ -161,7 +161,7 @@
 .sectionTitle {
   font-weight: 500;
   font-size: $font-size-lg;
-  line-height: 16px;
+  line-height: 24px;
   color: $dark;
   margin: 0 0 12px 0;
 }
@@ -240,70 +240,73 @@
   line-height: 22px;
 }
 
+.checkboxContainer {
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
 .checkboxWrap {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 24px;
-  margin-bottom: 24px;
+  gap: 12px;
   cursor: pointer;
+  user-select: none;
 
-  input[type="checkbox"] {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 1px solid $border-strong;
-    border-radius: 5px;
-    background: $white;
-    cursor: pointer;
-    position: relative;
-    flex-shrink: 0;
-
-    &:checked {
-      background: #FF5527;
-      border-color: #FF5527;
-
-      &::after {
-        content: "";
-        position: absolute;
-        left: 6px;
-        top: 2px;
-        width: 6px;
-        height: 11px;
-        border: solid $white;
-        border-width: 0 2px 2px 0;
-        transform: rotate(45deg);
-      }
-    }
+  .hiddenCheckbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
   }
 
   .checkboxLabel {
     font-weight: $font-weight-normal;
-    font-size: $font-size-sm;
-    line-height: 18px;
+    font-size: $font-size-19;
+    line-height: 24px;
     color: $text;
     user-select: none;
 
-    @media (min-width: 640px) {
-      font-size: $font-size-19;
-    }
-
-    a, span {
+    .policyLink {
+      display: inline;
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0;
       color: $primary;
       font-weight: $font-weight-medium;
+      font-size: inherit;
+      line-height: inherit;
+      font-family: inherit;
+      cursor: pointer;
       text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 }
 
+.agreedError {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  color: $danger;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
+
 .actions {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
   gap: 16px;
   margin-top: 24px;
 
-  @media (min-width: 640px) {
-    flex-direction: row;
+  @media (max-width: 480px) {
+    gap: 10px;
   }
 }
 
@@ -312,20 +315,25 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 18px;
-  height: 56px;
-  border: 1px solid $primary;
-  border-radius: 59px;
-  background: transparent;
+  padding: 12px 20px;
+  height: 48px;
+  border: 1.5px solid $primary;
+  border-radius: 100px;
+  background: $white;
   color: $primary;
-  font-weight: 500;
+  font-weight: $font-weight-medium;
   font-size: $font-size-lg;
-  line-height: 24px;
+  line-height: 22px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 
   &:hover {
     background: rgba(41, 113, 230, 0.05);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 
@@ -334,20 +342,21 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 18px;
-  height: 56px;
+  padding: 12px 20px;
+  height: 48px;
   background: $primary;
-  border: none;
+  border: 1.5px solid $primary;
   border-radius: 100px;
   color: $white;
-  font-weight: 700;
+  font-weight: $font-weight-medium;
   font-size: $font-size-lg;
-  line-height: 24px;
+  line-height: 22px;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: all 0.2s ease;
 
   &:hover {
-    opacity: 0.9;
+    background: $primary-hover;
+    border-color: $primary-hover;
   }
 
   &:disabled {

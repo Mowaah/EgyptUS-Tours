@@ -6,6 +6,7 @@ import styles from "./CancelBookingModal.module.scss";
 import SelectDropdown from "@/components/shared/SelectDropdown/SelectDropdown";
 import NationalitySelect from "@/components/shared/NationalitySelect/NationalitySelect";
 import FormField from "@/components/shared/FormField/FormField";
+import CheckboxIndicator from "@/components/shared/CheckboxIndicator/CheckboxIndicator";
 
 const CANCELLATION_REASONS = [
   { label: "Select a Reason", value: "", disabled: true, hidden: true },
@@ -63,7 +64,6 @@ export default function CancelBookingModal({
   const [country, setCountry] = useState("Egypt");
   const [agreed, setAgreed] = useState(false);
 
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
   const cancellationReasons = [
@@ -87,7 +87,6 @@ export default function CancelBookingModal({
     setSwift("");
     setCountry("Egypt");
     setAgreed(false);
-    setTouched({});
     setHasSubmitted(false);
 
     const prev = document.body.style.overflow;
@@ -172,12 +171,8 @@ export default function CancelBookingModal({
   const errors = getErrors();
   const isFormValid = Object.keys(errors).length === 0;
 
-  const markTouched = (field: string) => {
-    setTouched((prev) => ({ ...prev, [field]: true }));
-  };
-
   const getFieldError = (field: string) => {
-    return (hasSubmitted || touched[field]) ? errors[field] : undefined;
+    return hasSubmitted ? errors[field] : undefined;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -226,7 +221,9 @@ export default function CancelBookingModal({
                 value={reason}
                 onChange={(val) => {
                   setReason(val);
-                  markTouched("reason");
+                  if (val !== "Other") {
+                    setDetailedReason("");
+                  }
                 }}
                 error={Boolean(getFieldError("reason"))}
               />
@@ -238,20 +235,16 @@ export default function CancelBookingModal({
               )}
             </div>
 
-            {reason && (
+            {isOther && (
               <FormField
                 isTextarea
                 wrapperClassName={styles.formGroup}
-                label={`${t("cancelModal.detailsLabel", "Additional Details")}${isOther ? " *" : ` (${t("common.optional", "Optional")})`}`}
-                placeholder={t("cancelModal.detailsPlaceholder", "Please provide any additional context...")}
+                label={t("cancelModal.otherReasonLabel", "Reason:")}
+                placeholder={t("cancelModal.otherReasonPlaceholder", "Please provide your reason...")}
                 value={detailedReason}
-                onChange={(e) => {
-                  setDetailedReason(e.target.value);
-                  markTouched("detailedReason");
-                }}
-                onBlur={() => markTouched("detailedReason")}
+                onChange={(e) => setDetailedReason(e.target.value)}
                 error={getFieldError("detailedReason")}
-                required={isOther}
+                required
               />
             )}
 
@@ -264,6 +257,14 @@ export default function CancelBookingModal({
                   {formatCurrency(toMultiPrice(refundSummary?.package_total))}
                 </span>
               </div>
+              {refundSummary?.paid_amount != null && (
+                <div className={styles.summaryRow}>
+                  <span className={styles.summaryLabel}>{t("cancelModal.paidToDate", "Paid to Date")}</span>
+                  <span className={styles.summaryValue}>
+                    {formatCurrency(toMultiPrice(refundSummary?.paid_amount))}
+                  </span>
+                </div>
+              )}
               <div className={styles.summaryRow}>
                 <span className={styles.summaryLabel}>{t("cancelModal.cancellationWindow", "Cancellation Window")}</span>
                 <span className={styles.summaryValue}>{refundSummary?.policy_applied ?? "N/A"}</span>
@@ -295,11 +296,7 @@ export default function CancelBookingModal({
                 label={t("cancelModal.accountName", "Account Holder Name")}
                 placeholder={t("cancelModal.accountName", "Account Holder Name")}
                 value={accountName}
-                onChange={(e) => {
-                  setAccountName(e.target.value);
-                  markTouched("accountName");
-                }}
-                onBlur={() => markTouched("accountName")}
+                onChange={(e) => setAccountName(e.target.value)}
                 error={getFieldError("accountName")}
                 required
               />
@@ -308,11 +305,7 @@ export default function CancelBookingModal({
                 label={t("cancelModal.bankName", "Bank Name")}
                 placeholder={t("cancelModal.bankName", "Bank Name")}
                 value={bankName}
-                onChange={(e) => {
-                  setBankName(e.target.value);
-                  markTouched("bankName");
-                }}
-                onBlur={() => markTouched("bankName")}
+                onChange={(e) => setBankName(e.target.value)}
                 error={getFieldError("bankName")}
                 required
               />
@@ -321,11 +314,7 @@ export default function CancelBookingModal({
                 label={t("cancelModal.accountNumber", "Bank Account Number")}
                 placeholder={t("cancelModal.accountNumber", "Bank Account Number")}
                 value={accountNumber}
-                onChange={(e) => {
-                  setAccountNumber(e.target.value);
-                  markTouched("accountNumber");
-                }}
-                onBlur={() => markTouched("accountNumber")}
+                onChange={(e) => setAccountNumber(e.target.value)}
                 error={getFieldError("accountNumber")}
                 required
               />
@@ -334,11 +323,7 @@ export default function CancelBookingModal({
                 label={t("cancelModal.iban", "IBAN")}
                 placeholder="EG12 XXXX XXXX XXXX XXXX XXXX"
                 value={iban}
-                onChange={(e) => {
-                  setIban(e.target.value);
-                  markTouched("iban");
-                }}
-                onBlur={() => markTouched("iban")}
+                onChange={(e) => setIban(e.target.value)}
                 error={getFieldError("iban")}
                 required
               />
@@ -347,11 +332,7 @@ export default function CancelBookingModal({
                 label={t("cancelModal.swift", "SWIFT Code")}
                 placeholder="CIBEEGCX"
                 value={swift}
-                onChange={(e) => {
-                  setSwift(e.target.value);
-                  markTouched("swift");
-                }}
-                onBlur={() => markTouched("swift")}
+                onChange={(e) => setSwift(e.target.value)}
                 error={getFieldError("swift")}
                 required
               />
@@ -361,10 +342,7 @@ export default function CancelBookingModal({
                 <NationalitySelect
                   useCountryName={true}
                   value={country}
-                  onChange={(val) => {
-                    setCountry(val);
-                    markTouched("country");
-                  }}
+                  onChange={setCountry}
                   error={Boolean(getFieldError("country"))}
                   placeholder={t("forms.selectCountry", "Select Country")}
                   placement="top"
@@ -379,23 +357,34 @@ export default function CancelBookingModal({
             </div>
 
             {/* Terms Checkbox */}
-            <div>
+            <div className={styles.checkboxContainer}>
               <label className={styles.checkboxWrap}>
                 <input 
                   type="checkbox" 
                   checked={agreed}
-                  onChange={(e) => {
-                    setAgreed(e.target.checked);
-                    markTouched("agreed");
-                  }}
+                  onChange={(e) => setAgreed(e.target.checked)}
+                  className={styles.hiddenCheckbox}
                   required
                 />
+                <CheckboxIndicator variant="square" size="md" selected={agreed} aria-hidden />
                 <span className={styles.checkboxLabel}>
-                  {t("cancelModal.confirmText", "I confirm that I want to cancel this booking and agree to the cancellation policy.")}
+                  {t("cancelModal.agreePrefix", "I have read and agree to the")}{" "}
+                  <a
+                    href="/terms"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.policyLink}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    {t("cancelModal.cancellationPolicyLink", "Cancellation")}
+                  </a>{" "}
+                  {t("cancelModal.policySuffix", "Policy.")}
                 </span>
               </label>
               {getFieldError("agreed") && (
-                <div className={styles.fieldError} style={{ marginTop: "-16px", marginBottom: "16px" }}>
+                <div className={styles.agreedError}>
                   <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
                   <span>{getFieldError("agreed")}</span>
                 </div>
@@ -417,7 +406,7 @@ export default function CancelBookingModal({
               <button 
                 type="submit" 
                 className={styles.btnSolid}
-                disabled={(hasSubmitted && !isFormValid) || loading}
+                disabled={loading}
               >
                 {loading ? t("common.processing", "Processing...") : t("cancelModal.cancelAction", "Confirm Cancellation")}
               </button>

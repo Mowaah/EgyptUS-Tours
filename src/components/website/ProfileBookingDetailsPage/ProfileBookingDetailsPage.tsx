@@ -88,19 +88,79 @@ export default function ProfileBookingDetailsPage() {
   }, [id, detailsType]);
 
   const bData = bookingDetail || {};
+  const contact = bData.contact || {};
+  const payment = bData.payment_summary || {};
+  const roomsObj = bData.rooms || { single: 0, double: 0, triple: 0 };
+  const specialRequests = [
+    bData.special_requests && bData.special_requests.toLowerCase() !== "none"
+      ? bData.special_requests
+      : t("profile.details.none", "None")
+  ];
+
+  // Comprehensive amount resolution from all backend structures
+  const rawTotal =
+    bData.total_amount ??
+    bData.total_price ??
+    payment.total_amount ??
+    payment.total_price ??
+    bData.price ??
+    bData.payment_overview?.total_price ??
+    bData.payment_overview?.total_amount ??
+    bData.price_details?.total_amount ??
+    bData.trip?.base_price ??
+    bData.trip?.price ??
+    bData.hotel?.price_per_night ??
+    bData.details?.total_price ??
+    bData.details?.total_amount;
+  const parsedTotal = rawTotal != null ? parseFloat(String(rawTotal)) : NaN;
+  const totalAmount = !isNaN(parsedTotal) && parsedTotal >= 0 ? parsedTotal : 0;
+
   const rawStatus = (bData.request_status || bData.status || searchParams.get("status") || "confirmed").toLowerCase();
   const opStatus = bData.operational_status?.toLowerCase();
   const remStatus = bData.remaining_payment_status?.toLowerCase();
 
   const isCancelled = rawStatus === "cancelled" || rawStatus === "canceled" || opStatus === "cancelled" || opStatus === "canceled";
   const isRejected = rawStatus === "rejected";
+
+  const rawPaid =
+    payment.paid_amount ??
+    bData.paid_amount ??
+    bData.payment_overview?.paid_amount;
+  const parsedPaid = rawPaid != null ? parseFloat(String(rawPaid)) : NaN;
+
+  const rawRemaining =
+    payment.remaining_amount ??
+    bData.remaining_amount ??
+    bData.payment_overview?.remaining_amount;
+  const parsedRemaining = rawRemaining != null ? parseFloat(String(rawRemaining)) : NaN;
+
   const isFullyPaid =
     remStatus === "paid" ||
     bData.payment_status === "paid" ||
-    bData.payment_summary?.payment_status === "paid" ||
-    bData.payment_summary?.remaining_amount === "0.00" ||
+    payment.payment_status === "paid" ||
+    (!isNaN(parsedPaid) && totalAmount > 0 && parsedPaid >= totalAmount) ||
+    parsedRemaining === 0 ||
+    payment.remaining_amount === "0.00" ||
     bData.remaining_amount === "0.00";
-  const isPartiallyPaid = !isFullyPaid && (rawStatus === "partially_paid" || remStatus === "pending" || bData.status === "partially_paid");
+
+  const depositAmount =
+    payment.deposit_amount != null
+      ? parseFloat(String(payment.deposit_amount))
+      : bData.deposit_amount != null
+        ? parseFloat(String(bData.deposit_amount))
+        : totalAmount * 0.3;
+
+  const paidAmount = isFullyPaid
+    ? totalAmount
+    : !isNaN(parsedPaid) && parsedPaid > 0
+      ? parsedPaid
+      : depositAmount;
+
+  const remainingAmount = isFullyPaid
+    ? 0
+    : Math.max(0, totalAmount - paidAmount);
+
+  const isPartiallyPaid = !isFullyPaid;
 
   // Hide the payment-due banner if the trip/check-in date has already passed
   const startDateStr = bData.check_in_date || bData.start_date || bData.pickup_date || "";
@@ -136,16 +196,8 @@ export default function ProfileBookingDetailsPage() {
   const [cancelError, setCancelError] = useState<string | null>(null);
   const isCancelledOrRefunded = isCancelled || isRejected || isRefundInProgress || isRefunded;
   const showCancelAction = !isCancelledOrRefunded;
-  const showPayAction = isPartiallyPaid && !isCancelledOrRefunded && !isStartDatePast;
+  const showPayAction = !isFullyPaid && !isCancelledOrRefunded && !isStartDatePast;
   const showFooter = showCancelAction || showPayAction;
-  const contact = bData.contact || {};
-  const payment = bData.payment_summary || {};
-  const roomsObj = bData.rooms || { single: 0, double: 0, triple: 0 };
-  const specialRequests = [
-    bData.special_requests && bData.special_requests.toLowerCase() !== "none"
-      ? bData.special_requests
-      : t("profile.details.none", "None")
-  ];
 
   const getLocalizedNationality = (codeOrName: string) => {
     if (!codeOrName) return "";
@@ -204,24 +256,6 @@ export default function ProfileBookingDetailsPage() {
     },
   };
 
-  // Comprehensive amount resolution from all backend structures
-  const rawTotal =
-    bData.total_amount ??
-    bData.total_price ??
-    payment.total_amount ??
-    payment.total_price ??
-    bData.price ??
-    bData.payment_overview?.total_price ??
-    bData.payment_overview?.total_amount ??
-    bData.price_details?.total_amount ??
-    bData.trip?.base_price ??
-    bData.trip?.price ??
-    bData.hotel?.price_per_night ??
-    bData.details?.total_price ??
-    bData.details?.total_amount;
-  const parsedTotal = rawTotal != null ? parseFloat(String(rawTotal)) : NaN;
-  const totalAmount = !isNaN(parsedTotal) && parsedTotal >= 0 ? parsedTotal : 0;
-
   const rawDiscount =
     bData.price_details?.discount != null
       ? parseFloat(String(bData.price_details.discount))
@@ -231,33 +265,6 @@ export default function ProfileBookingDetailsPage() {
           ? parseFloat(String(bData.discount))
           : 0;
   const discountAmount = !isNaN(rawDiscount) && rawDiscount > 0 ? rawDiscount : 0;
-
-  const rawPaid =
-    payment.paid_amount ??
-    bData.paid_amount ??
-    payment.deposit_amount ??
-    bData.deposit_amount ??
-    bData.payment_overview?.paid_amount ??
-    bData.payment_overview?.deposit_amount;
-  const parsedPaid = rawPaid != null ? parseFloat(String(rawPaid)) : NaN;
-  const paidAmount = !isNaN(parsedPaid) && parsedPaid >= 0 ? parsedPaid : 0;
-
-  const depositAmount =
-    payment.deposit_amount != null
-      ? parseFloat(String(payment.deposit_amount))
-      : bData.deposit_amount != null
-        ? parseFloat(String(bData.deposit_amount))
-        : totalAmount * 0.3;
-
-  const rawRemaining =
-    payment.remaining_amount ??
-    bData.remaining_amount ??
-    bData.payment_overview?.remaining_amount;
-  const parsedRemaining = rawRemaining != null ? parseFloat(String(rawRemaining)) : NaN;
-  const remainingAmount =
-    !isNaN(parsedRemaining) && parsedRemaining >= 0
-      ? parsedRemaining
-      : Math.max(0, totalAmount - paidAmount);
 
   const rawOverviews: any[] =
     (Array.isArray(bData.details?.room_overview) && bData.details.room_overview.length > 0 ? bData.details.room_overview : null) ||
@@ -353,7 +360,36 @@ export default function ProfileBookingDetailsPage() {
             : undefined,
         };
 
+  const paidPrices: MultiCurrencyPrice = isEgp
+    ? { egp: paidAmount }
+    : isEur
+      ? { eur: paidAmount }
+      : {
+          usd: paidAmount,
+          egp: bData.paymob_total_egp && totalAmount > 0
+            ? Math.round(Number(bData.paymob_total_egp) * (paidAmount / totalAmount) * 100) / 100
+            : undefined,
+        };
+
   const isDepositDue = (payment.payment_due_type === "deposit" || paidAmount <= 0) && depositAmount > 0 && depositAmount < totalAmount;
+
+  const isFullPlan = (
+    payment.payment_plan ||
+    bData.payment_plan ||
+    bData.details?.payment_plan ||
+    ""
+  ).toLowerCase() === "full";
+
+  const payButtonLabel = (() => {
+    if (isPaying) return t("auth.pleaseWait", "Please wait...");
+    if (paidAmount > 0 && paidAmount < totalAmount) {
+      return `${t("profile.details.payRemaining", "Pay Remaining Balance")} ${formatCurrency(remainingPrices)}`;
+    }
+    if (isFullPlan) {
+      return `${t("profile.details.payFull", "Pay Full Amount")} ${formatCurrency(totalPrices)}`;
+    }
+    return `${t("profile.details.payDeposit", "Pay Deposit")} ${formatCurrency(depositPrices)}`;
+  })();
 
   const handlePayRemaining = async () => {
     if (!id || isPaying) return;
@@ -836,8 +872,10 @@ export default function ProfileBookingDetailsPage() {
       totalPrices={totalPrices}
       depositPrices={depositPrices}
       remainingPrices={remainingPrices}
+      paidAmount={paidAmount}
+      paidPrices={paidPrices}
       lineItems={bookingLineItems}
-      isRemainingView={isPartiallyPaid && !isFullyPaid}
+      isRemainingView={!isFullyPaid}
       isFullyPaid={isFullyPaid}
     />
   ) : (
@@ -863,8 +901,10 @@ export default function ProfileBookingDetailsPage() {
       totalPrices={totalPrices}
       depositPrices={depositPrices}
       remainingPrices={remainingPrices}
+      paidAmount={paidAmount}
+      paidPrices={paidPrices}
       lineItems={bookingLineItems}
-      isRemainingView={isPartiallyPaid && !isFullyPaid}
+      isRemainingView={!isFullyPaid}
       isFullyPaid={isFullyPaid}
     />
   );
@@ -901,12 +941,14 @@ export default function ProfileBookingDetailsPage() {
             />
           ) : (
             <section className={styles.card}>
-              {isPartiallyPaid && !isCancelled && !isRejected && !isStartDatePast && (
+              {!isFullyPaid && !isCancelled && !isRejected && !isStartDatePast && (
                 <div className={styles.warningBanner}>
                   <span className={styles.warningDot}>
                     <Image src="/images/info.svg" alt="" width={12} height={12} className={styles.warningDotIcon} />
                   </span>
-                  {t("profile.details.paymentDueWarning", "Final payment due by {date} to keep your booking").replace("{date}", paymentDueDate)}
+                  {paidAmount > 0
+                    ? t("profile.details.paymentDueWarning", "Final payment due by {date} to keep your booking").replace("{date}", paymentDueDate)
+                    : (payment.payment_due_label || t("profile.details.depositDueWarning", "Deposit payment due by {date} to keep your booking").replace("{date}", paymentDueDate))}
                 </div>
               )}
 
@@ -946,7 +988,10 @@ export default function ProfileBookingDetailsPage() {
                   )}
                   {hasSummaryData && (
                     <RefundSummaryCard
-                      data={refundSummaryData}
+                      data={{
+                        ...refundSummaryData,
+                        paid_to_date: refundSummaryData.paid_to_date ?? (paidAmount > 0 ? paidAmount : undefined),
+                      }}
                       receipt={bData.refund_receipt}
                       reason={bData.reason}
                       currency={bookingCurrency}
@@ -975,11 +1020,7 @@ export default function ProfileBookingDetailsPage() {
                         onClick={handlePayRemaining}
                         disabled={isPaying}
                       >
-                        <span>
-                          {isPaying
-                            ? t("auth.pleaseWait", "Please wait...")
-                            : `${t("profile.details.payRemaining", "Pay Remaining Balance")} ${formatCurrency(remainingPrices)}`}
-                        </span>
+                        <span>{payButtonLabel}</span>
                         {!isPaying && <Image src="/images/money-send.svg" alt="" width={24} height={24} aria-hidden />}
                       </button>
                     </>

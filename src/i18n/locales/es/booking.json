@@ -335,6 +335,7 @@
     "vat": "IVA",
     "totalPrice": "Precio Total",
     "totalPaid": "Total Pagado",
+    "paid": "Pagado",
     "total": "Total",
     "depositRequired": "Depósito Requerido",
     "remainingBalance": "Saldo Restante",

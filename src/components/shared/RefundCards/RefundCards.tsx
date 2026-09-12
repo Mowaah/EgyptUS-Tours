@@ -20,6 +20,8 @@ export interface RefundBankDetailsData {
 
 export interface RefundSummaryData {
   package_total?: number | string;
+  paid_to_date?: number | string;
+  paid_amount?: number | string;
   days_before_travel?: number | string;
   policy_applied?: string;
   deduction_percentage?: number | string;
@@ -136,6 +138,7 @@ export function RefundSummaryCard({
   };
 
   const pkgTotal = data.package_total;
+  const paidToDate = data.paid_to_date ?? data.paid_amount;
   const daysBefore = data.days_before_travel;
   const policy = data.policy_applied;
   const deductionPct = data.deduction_percentage ?? data.deduction_percent;
@@ -147,6 +150,9 @@ export function RefundSummaryCard({
 
   if (pkgTotal != null && pkgTotal !== "") {
     rows.push({ label: t("refund.packageTotal", "Package Total"), value: formatAmount(pkgTotal) });
+  }
+  if (paidToDate != null && paidToDate !== "") {
+    rows.push({ label: t("refund.paidToDate", "Paid to Date"), value: formatAmount(paidToDate) });
   }
   if (daysBefore != null && daysBefore !== "") {
     rows.push({ label: t("refund.daysBeforeTravel", "Days Before Travel"), value: `${daysBefore} Days` });
