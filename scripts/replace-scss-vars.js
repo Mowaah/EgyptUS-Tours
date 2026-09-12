@@ -38,7 +38,7 @@ while ((colorMatch = colorRegex.exec(variablesContent)) !== null) {
   }
 }
 
-const fontRegex = /^\$([a-zA-Z0-9-]+):\s*[^;]+;\s*\/\/\s*(\d+)px/gm;
+const fontRegex = /^\$(font-size-[a-zA-Z0-9-]+):\s*[^;]+;\s*\/\/(?:[^\n]*?->\s*)?\s*(\d+)px/gm;
 let fontMatch;
 while ((fontMatch = fontRegex.exec(variablesContent)) !== null) {
   const varName = `$${fontMatch[1]}`;
@@ -75,7 +75,9 @@ function walkSync(dir, filelist = []) {
   return filelist;
 }
 
-const scssFiles = walkSync(srcPath);
+const scssFiles = process.argv.length > 2
+  ? process.argv.slice(2).filter((f) => f.endsWith('.scss') && !f.endsWith('_variables.scss'))
+  : walkSync(srcPath);
 let modifiedCount = 0;
 
 for (const file of scssFiles) {
@@ -103,18 +105,7 @@ for (const file of scssFiles) {
     return match;
   });
 
-  // Replace font sizes
-  content = content.replace(/\b\d+px\b/g, (match) => {
-    // Only replace if it's likely a font-size or spacing, but let's just replace any exact pixel match
-    // since the prompt asked for hard coded colors and font sizes.
-    // Wait, replacing any px might mess up widths/heights if they happen to match.
-    // The user said "change all the hard coded colors and font sizes".
-    // We should probably only replace px if it's following `font-size:`, `line-height:`, `margin`, `padding`, `gap`, etc.?
-    // But they specifically asked for font sizes. We can restrict the regex to font-size context.
-    return match; // Handled below with context
-  });
-
-  // More context-aware font-size replacement:
+  // Context-aware font-size replacement (maps correctly to design tokens):
   content = content.replace(/(font-size\s*:\s*)(\d+px|\d*\.?\d+rem)/g, (match, prefix, val) => {
     if (fontSizeMap.has(val)) {
       return prefix + fontSizeMap.get(val);

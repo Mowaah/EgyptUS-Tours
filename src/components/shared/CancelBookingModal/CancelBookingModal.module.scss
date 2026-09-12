@@ -77,26 +77,26 @@
 
 .title {
   font-weight: $font-weight-bold;
-  font-size: $font-size-28;
+  font-size: $font-size-4xl;
   line-height: 1.2;
   color: $dark;
   margin: 0;
 
   @media (min-width: 640px) {
-    font-size: $font-size-5xl;
+    font-size: $font-size-4xl;
     line-height: 44px;
   }
 }
 
 .subtitle {
   font-weight: $font-weight-normal;
-  font-size: $font-size-lg;
+  font-size: $font-size-xl;
   line-height: 1.4;
   color: $text-lighter;
   margin: 0;
 
   @media (min-width: 640px) {
-    font-size: $font-size-2xl;
+    font-size: $font-size-xl;
     line-height: 28px;
     max-width: 500px;
   }
@@ -160,7 +160,7 @@
 
 .sectionTitle {
   font-weight: $font-weight-medium;
-  font-size: $font-size-lg;
+  font-size: $font-size-base;
   line-height: 24px;
   color: $dark;
   margin: 0 0 12px 0;
@@ -223,7 +223,7 @@
 
 .summaryValue {
   font-weight: $font-weight-medium;
-  font-size: $font-size-lg;
+  font-size: $font-size-base;
   line-height: 22px;
   color: $gray-700;
 }
@@ -236,7 +236,7 @@
   border-radius: 128px;
   color: $secondary;
   font-weight: $font-weight-medium;
-  font-size: $font-size-lg;
+  font-size: $font-size-base;
   line-height: 22px;
 }
 
@@ -262,7 +262,7 @@
 
   .checkboxLabel {
     font-weight: $font-weight-normal;
-    font-size: $font-size-19;
+    font-size: $font-size-lg;
     line-height: 24px;
     color: $text;
     user-select: none;
@@ -322,7 +322,7 @@
   background: $white;
   color: $primary;
   font-weight: $font-weight-medium;
-  font-size: $font-size-lg;
+  font-size: $font-size-base;
   line-height: 22px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -349,7 +349,7 @@
   border-radius: 100px;
   color: $white;
   font-weight: $font-weight-medium;
-  font-size: $font-size-lg;
+  font-size: $font-size-base;
   line-height: 22px;
   cursor: pointer;
   transition: all 0.2s ease;
