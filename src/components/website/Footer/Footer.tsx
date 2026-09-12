@@ -42,6 +42,9 @@ const SOCIALS = [
   },
 ];
 
+const TRIPADVISOR_URL =
+  "https://www.tripadvisor.com/Attraction_Review-g294202-d12995117-Reviews-Egyptus_Tours-Giza_Giza_Governorate.html";
+
 export default function Footer() {
   const { t } = useTranslation("common");
 
@@ -107,27 +110,57 @@ export default function Footer() {
           </div>
 
           <div className={styles.linksGrid}>
-            {Object.entries(navLinks).map(([title, links]) => (
-              <div key={title} className={styles.linkGroup}>
-                <h4 className={styles.linkGroupTitle}>{title}</h4>
-                <ul className={styles.linkList}>
-                  {links.map((link, i) =>
-                    link.href ? (
-                      <li key={i}>
-                        <Link href={link.href} className={styles.link}>
-                          {link.label}
-                        </Link>
-                      </li>
-                    ) : (
-                      <li key={i} className={styles.contactItem}>
-                        <span className={styles.contactLabel}>{link.label}</span>
-                        <span className={styles.contactValue}>{link.value}</span>
-                      </li>
-                    )
+            {Object.entries(navLinks).map(([title, links]) => {
+              const isContact =
+                title === t("footer.contact", "Contact") ||
+                title === "Contact" ||
+                title === "Contacto" ||
+                title === "Contatti";
+              return (
+                <div
+                  key={title}
+                  className={`${styles.linkGroup} ${isContact ? styles.contactGroup : ""}`}
+                >
+                  <div className={isContact ? styles.contactContent : undefined}>
+                    <h4 className={styles.linkGroupTitle}>{title}</h4>
+                    <ul className={styles.linkList}>
+                      {links.map((link, i) =>
+                        link.href ? (
+                          <li key={i}>
+                            <Link href={link.href} className={styles.link}>
+                              {link.label}
+                            </Link>
+                          </li>
+                        ) : (
+                          <li key={i} className={styles.contactItem}>
+                            <span className={styles.contactLabel}>{link.label}</span>
+                            <span className={styles.contactValue}>{link.value}</span>
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  </div>
+
+                  {isContact && (
+                    <a
+                      href={TRIPADVISOR_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.tripAdvisorLink}
+                      aria-label="Tripadvisor"
+                    >
+                      <Image
+                        src="/images/tripadvisor.png"
+                        alt="Tripadvisor"
+                        width={153}
+                        height={63}
+                        className={styles.tripAdvisorImg}
+                      />
+                    </a>
                   )}
-                </ul>
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
         </div>
 
