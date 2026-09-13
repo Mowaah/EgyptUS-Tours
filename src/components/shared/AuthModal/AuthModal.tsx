@@ -52,6 +52,7 @@ export default function AuthModal({
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   
+  const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [globalError, setGlobalError] = useState("");
@@ -64,6 +65,7 @@ export default function AuthModal({
   const handleModeChange = (newMode: "login" | "signup" | "reset") => {
     setMode(newMode);
     setPassword("");
+    setNameError("");
     setEmailError("");
     setPasswordError("");
     setGlobalError("");
@@ -118,7 +120,10 @@ export default function AuthModal({
 
     if (mode === "signup") {
       const nameValidationMsg = validateName(name);
-      if (nameValidationMsg) isValid = false;
+      if (nameValidationMsg) {
+        setNameError(nameValidationMsg);
+        isValid = false;
+      }
     }
 
     if (!isValid) return;
@@ -252,10 +257,14 @@ export default function AuthModal({
             <FormField
               label={t("auth.fullName", "Full name")}
               type="text"
-              className={styles.modalInput}
+              className={`${styles.modalInput} ${nameError ? styles.hasError : ""}`}
               placeholder={t("auth.fullNamePlaceholder", "Enter Your Name")}
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                if (nameError) setNameError("");
+              }}
+              error={nameError}
             />
           )}
 

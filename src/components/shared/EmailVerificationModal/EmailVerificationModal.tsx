@@ -115,7 +115,7 @@ export default function EmailVerificationModal({
     if (onGoHome) {
       onGoHome();
     } else {
-      router.push("/");
+      router.push("/profile");
     }
   };
 
