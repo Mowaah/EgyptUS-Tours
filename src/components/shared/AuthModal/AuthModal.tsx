@@ -10,15 +10,32 @@ import { useAuth } from "@/contexts/AuthContext";
 import { GoogleLogin } from "@react-oauth/google";
 import { loginCustomer, signupCustomer, googleLoginCustomer, resendCustomerEmailVerification } from "@/lib/api";
 import { useTranslation } from "@/hooks/useTranslation";
+import {
+  getGuestAuthEmail,
+  getGuestAuthName,
+  clearPendingGuestRecord,
+  getPendingGuestRecord,
+} from "@/utils/guestBookingAuth";
+import EmailVerificationModal, {
+  type EmailVerificationModalState,
+} from "@/components/shared/EmailVerificationModal/EmailVerificationModal";
 import styles from "./AuthModal.module.scss";
 
 export interface AuthModalProps {
   onClose: () => void;
   onLoginSuccess?: () => void;
   initialMode?: "login" | "signup" | "reset";
+  initialEmail?: string;
+  initialName?: string;
 }
 
-export default function AuthModal({ onClose, onLoginSuccess, initialMode = "login" }: AuthModalProps) {
+export default function AuthModal({
+  onClose,
+  onLoginSuccess,
+  initialMode = "login",
+  initialEmail,
+  initialName,
+}: AuthModalProps) {
   const { t } = useTranslation("common");
   const mounted = useSyncExternalStore(
     subscribeToClientMount,
@@ -26,8 +43,12 @@ export default function AuthModal({ onClose, onLoginSuccess, initialMode = "logi
     getServerSnapshot,
   );
   const [mode, setMode] = useState<"login" | "signup" | "reset">(initialMode);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const pendingRecord = getPendingGuestRecord();
+  const defaultEmail = initialEmail || getGuestAuthEmail();
+  const defaultName = initialName || getGuestAuthName();
+
+  const [name, setName] = useState(defaultName);
+  const [email, setEmail] = useState(defaultEmail);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   
@@ -36,14 +57,13 @@ export default function AuthModal({ onClose, onLoginSuccess, initialMode = "logi
   const [globalError, setGlobalError] = useState("");
   const [globalSuccess, setGlobalSuccess] = useState("");
   const [unverifiedEmail, setUnverifiedEmail] = useState("");
+  const [verificationModalState, setVerificationModalState] = useState<EmailVerificationModalState | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { login } = useAuth();
 
   const handleModeChange = (newMode: "login" | "signup" | "reset") => {
     setMode(newMode);
-    setEmail("");
     setPassword("");
-    setName("");
     setEmailError("");
     setPasswordError("");
     setGlobalError("");
@@ -111,22 +131,35 @@ export default function AuthModal({ onClose, onLoginSuccess, initialMode = "logi
       if (mode === "login") {
         const res = await loginCustomer({ email, password });
         if (res.access && res.refresh) {
+          clearPendingGuestRecord();
           login(res.access, res.refresh, res.customer);
           if (onLoginSuccess) onLoginSuccess();
           onClose();
         }
       } else if (mode === "signup") {
         await signupCustomer({ email, password, full_name: name });
-        setMode("login");
-        setGlobalSuccess("Account created successfully. Please check your email to verify your address before logging in.");
+        if (typeof window !== "undefined") {
+          localStorage.setItem("egyptus_last_signup_email", email.trim());
+        }
         setPassword("");
+        setVerificationModalState("verify_email");
       } else if (mode === "reset") {
         // TODO: Password reset API
       }
     } catch (err: any) {
       if (err.response && err.response.data && err.response.data.detail) {
-        setGlobalError(err.response.data.detail);
-        if (err.response.data.code === 'email_unverified') {
+        if (err.response.data.code === "email_taken") {
+          setMode("login");
+          setGlobalError(
+            t(
+              "auth.emailTakenLoginPrompt",
+              "An account with this email already exists. Please log in with your password to link your booking."
+            )
+          );
+        } else {
+          setGlobalError(err.response.data.detail);
+        }
+        if (err.response.data.code === "email_unverified") {
           setUnverifiedEmail(email);
         }
       } else {
@@ -144,6 +177,7 @@ export default function AuthModal({ onClose, onLoginSuccess, initialMode = "logi
     try {
       const res = await googleLoginCustomer(credentialResponse.credential);
       if (res.access && res.refresh) {
+        clearPendingGuestRecord();
         login(res.access, res.refresh, res.customer);
         if (onLoginSuccess) onLoginSuccess();
         onClose();
@@ -154,6 +188,26 @@ export default function AuthModal({ onClose, onLoginSuccess, initialMode = "logi
       setIsSubmitting(false);
     }
   };
+
+  if (verificationModalState) {
+    return (
+      <EmailVerificationModal
+        isOpen={true}
+        state={verificationModalState}
+        email={email}
+        onClose={onClose}
+        onStateChange={(next) => setVerificationModalState(next)}
+        onBackToSignup={() => {
+          setVerificationModalState(null);
+          setMode("signup");
+        }}
+        onGoHome={() => {
+          setVerificationModalState(null);
+          onClose();
+        }}
+      />
+    );
+  }
 
   const content = (
     <div className={styles.overlay} onClick={onClose} role="dialog" aria-modal="true">
@@ -180,20 +234,20 @@ export default function AuthModal({ onClose, onLoginSuccess, initialMode = "logi
 
         <div className={styles.form}>
           {globalError && (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "12px" }}>
-              <div style={{ color: "var(--red-error)", fontSize: "14px", textAlign: "center" }}>{globalError}</div>
+            <div className={styles.messageContainer}>
+              <div className={styles.errorText}>{globalError}</div>
               {unverifiedEmail && (
                 <button 
-                  onClick={handleResend}
-                  disabled={isSubmitting}
-                  style={{ marginTop: "8px", background: "none", border: "none", color: "var(--primary-color)", fontWeight: "600", cursor: "pointer", fontSize: "14px", textDecoration: "underline" }}
+                  type="button"
+                  onClick={() => setVerificationModalState("verify_email")}
+                  className={styles.resendNoticeBtn}
                 >
-                  {isSubmitting ? t("auth.sending", "Sending...") : t("auth.resendVerification", "Resend Verification Link")}
+                  {t("auth.resendVerification", "Resend Verification Link")}
                 </button>
               )}
             </div>
           )}
-          {globalSuccess && <div style={{ color: "var(--green-success)", fontSize: "14px", marginBottom: "12px", textAlign: "center" }}>{globalSuccess}</div>}
+          {globalSuccess && <div className={styles.successText}>{globalSuccess}</div>}
           {mode === "signup" && (
             <FormField
               label={t("auth.fullName", "Full name")}
@@ -203,6 +257,16 @@ export default function AuthModal({ onClose, onLoginSuccess, initialMode = "logi
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
+          )}
+
+          {pendingRecord && pendingRecord.email && email.trim().toLowerCase() === pendingRecord.email.toLowerCase() && (
+            <div className={styles.guestLinkHint}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+              </svg>
+              <span>{t("auth.guestLinkHint", "Use this email to link your recent booking or request to your account.")}</span>
+            </div>
           )}
 
           <FormField

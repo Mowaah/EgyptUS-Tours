@@ -9,6 +9,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { formatPhoneE164 } from "@/utils/validators";
 import { useState, useMemo } from "react";
 import { saveTransportBookingInfo, resolvePaymentUrl } from "../../BookTransportationPage";
+import { savePendingGuestRecord } from "@/utils/guestBookingAuth";
 
 interface StepPaymentProps {
   formData: TransportationBookingData;
@@ -103,6 +104,14 @@ export default function StepPayment({
       };
 
       const booking = await submitTransportationBooking(payload);
+      savePendingGuestRecord({
+        email: formData.email,
+        name: formData.name,
+        type: "transport",
+        id: booking?.id,
+        title: `${vehicle.type} - ${vehicle.name}`,
+      });
+
       if (booking?.payment_url) {
         saveTransportBookingInfo({
           id: booking.id,

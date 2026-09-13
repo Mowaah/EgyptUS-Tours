@@ -5,12 +5,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Cookies from "js-cookie";
 import { FormField, PhoneInput, NationalitySelect, SuccessModal, PageHeader, Button } from "@/components/shared";
 import { submitB2BProposal, extractApiError, extractFieldErrors, formatUrlForBackend } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { savePendingGuestRecord } from "@/utils/guestBookingAuth";
 import styles from "./B2BRequestProposalPage.module.scss";
 
 export default function B2BRequestProposalPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { isAuthenticated } = useAuth();
   const [isAgentMode, setIsAgentMode] = useState(false);
 
   useEffect(() => {
@@ -104,6 +107,12 @@ export default function B2BRequestProposalPage() {
           setSubmittedId(newId);
           submittedIdRef.current = newId;
         }
+        savePendingGuestRecord({
+          email: formData.email,
+          name: formData.contactPerson,
+          type: "b2b",
+          id: newId,
+        });
       }
       setShowModal(true);
     } catch (err: any) {
@@ -322,10 +331,12 @@ export default function B2BRequestProposalPage() {
             const targetId = submittedIdRef.current || submittedId;
             if (isAgentMode) {
               router.push(targetId ? `/dashboard/requests/b2b-programs/${targetId}` : "/dashboard/requests/b2b-programs");
+            } else if (!isAuthenticated) {
+              router.push(`/profile?tab=requests&type=b2b&auth_prompt=true${targetId ? `&id=${targetId}` : ""}`);
             } else if (targetId) {
               router.push(`/profile/requests-details?type=b2b&id=${targetId}`);
             } else {
-              router.push("/profile?tab=requests");
+              router.push("/profile?tab=requests&type=b2b");
             }
           }}
           onClose={handleReset}

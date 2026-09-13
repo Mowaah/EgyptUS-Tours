@@ -9,12 +9,20 @@ import {
   RefundBankDetailsCard,
   RefundSummaryCard,
   StatusPill,
+  AuthModal,
+  EmptyState,
   type BookingDetailsSection,
   type TripBookingStatus,
 } from "@/components/shared";
 import { getStatusConfig } from "@/utils/statusUtils";
 import { COUNTRIES } from "@/data/countries";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import {
+  getPendingGuestRecord,
+  getGuestAuthEmail,
+  getGuestAuthName,
+} from "@/utils/guestBookingAuth";
 import styles from "./ProfileRequestDetailsPage.module.scss";
 
 const getCountryName = (code: string) => {
@@ -134,17 +142,28 @@ export default function ProfileRequestDetailsPage() {
   const isPlanYourTrip = requestType === "plan_your_trip";
   const isB2B = requestType === "b2b";
 
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const [authModalState, setAuthModalState] = useState<{
+    isOpen: boolean;
+    mode: "login" | "signup";
+    initialEmail?: string;
+    initialName?: string;
+  }>({ isOpen: false, mode: "login" });
+
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<ProfileRequestDetailData | null>(null);
 
   useEffect(() => {
-    if (requestId && requestType) {
+    if (requestId && requestType && isAuthenticated) {
+      setLoading(true);
       getProfileRequestDetail(requestType, requestId)
         .then(setData)
         .catch(console.error)
         .finally(() => setLoading(false));
+    } else if (!isAuthenticated) {
+      setLoading(false);
     }
-  }, [requestId, requestType]);
+  }, [requestId, requestType, isAuthenticated]);
 
   const rawStatus = data?.display_status || data?.request_status || data?.status || searchParams.get("status") || "new";
   const statusConfig = getStatusConfig(rawStatus);
@@ -370,6 +389,83 @@ export default function ProfileRequestDetailsPage() {
   const isRefunded = rawStatus === "refunded" || (data as any)?.workflow_status === "refunded";
   const hasRefundDetails = (isRefundInProgress || isRefunded) && (hasBankData || hasSummaryData);
 
+  if (!isAuthenticated && !authLoading) {
+    const pending = getPendingGuestRecord();
+    return (
+      <div className={styles.page}>
+        <PageHeader
+          breadcrumbs={[
+            { label: t("userMenu.profile", "Profile"), href: "/profile?tab=requests" },
+            { label: t("userMenu.requests", "Requests Details"), isCurrent: true },
+          ]}
+          title={t("profile.headerTitle", "Your Travel Space")}
+          subtitle={t("profile.headerSubtitle", "Easily access all your travel bookings and submitted requests in one organized place, with clear details about your trips, hotel stays, transportation, and upcoming plans.")}
+        />
+        <div style={{ padding: "64px 24px" }}>
+          <EmptyState
+            framedIcon
+            iconSrc="/images/profile-blue2.svg"
+            iconWidth={90}
+            iconHeight={90}
+            title={t("profile.emptyStates.authRequestsTitle", "Create an Account to View Your Requests")}
+            description={
+              pending?.email
+                ? t("profile.emptyStates.authRequestsGuestDesc", `We found a recent request submitted with ${pending.email}. Create an account or log in with this email to access and track it.`)
+                : t("profile.emptyStates.authRequestsDesc", "Sign up or log in to view and track your submitted travel and corporate requests.")
+            }
+            buttonText={t("profile.emptyStates.createAccount", "Create Account")}
+            buttonVariant="primary"
+            buttonStyle={{ width: "100%", maxWidth: "432px" }}
+            onButtonClick={() =>
+              setAuthModalState({
+                isOpen: true,
+                mode: "signup",
+                initialEmail: pending?.email || getGuestAuthEmail(),
+                initialName: pending?.name || getGuestAuthName(),
+              })
+            }
+            footerNode={
+              <p style={{ margin: 0, fontSize: "16px", color: "#9E9E9E", fontFamily: "var(--font-trip-sans)" }}>
+                {t("profile.emptyStates.alreadyHaveAccount", "Already have an Account ?")}{" "}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setAuthModalState({
+                      isOpen: true,
+                      mode: "login",
+                      initialEmail: pending?.email || getGuestAuthEmail(),
+                      initialName: pending?.name || getGuestAuthName(),
+                    })
+                  }
+                  style={{
+                    color: "#2971E6",
+                    fontWeight: 700,
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                    fontFamily: "var(--font-trip-sans)",
+                  }}
+                >
+                  {t("profile.emptyStates.login", "Login")}
+                </button>
+              </p>
+            }
+          />
+        </div>
+        {authModalState.isOpen && (
+          <AuthModal
+            initialMode={authModalState.mode}
+            initialEmail={authModalState.initialEmail}
+            initialName={authModalState.initialName}
+            onClose={() => setAuthModalState({ ...authModalState, isOpen: false })}
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className={styles.page}>
       <PageHeader
@@ -436,6 +532,15 @@ export default function ProfileRequestDetailsPage() {
           )}
         </section>
       </div>
+
+      {authModalState.isOpen && (
+        <AuthModal
+          initialMode={authModalState.mode}
+          initialEmail={authModalState.initialEmail}
+          initialName={authModalState.initialName}
+          onClose={() => setAuthModalState({ ...authModalState, isOpen: false })}
+        />
+      )}
     </div>
   );
 }

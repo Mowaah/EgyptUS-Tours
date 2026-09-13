@@ -592,8 +592,16 @@ export function calculateHotelBookingPrice(
   const totalEgp = Math.max(0, subtotalEgp - discountEgp);
   const totalEur = Math.max(0, subtotalEur - discountEur);
 
-  const depositRate = 0.30;
-  const remainingRate = 0.70;
+  const isDepositFull = (() => {
+    if (!formData.startDate) return false;
+    const startDate = new Date(formData.startDate);
+    const today = new Date();
+    const daysUntil = (startDate.getTime() - today.getTime()) / (1000 * 3600 * 24);
+    return daysUntil <= 30;
+  })();
+
+  const depositRate = isDepositFull ? 1 : 0.30;
+  const remainingRate = isDepositFull ? 0 : 0.70;
 
   return {
     lineItems,
@@ -606,7 +614,7 @@ export function calculateHotelBookingPrice(
     total: totalUsd,
     depositAmount: totalUsd * depositRate,
     remainingAmount: totalUsd * remainingRate,
-    isDepositFull: false,
+    isDepositFull,
     totalPrices: { usd: totalUsd, egp: totalEgp, eur: totalEur },
     depositPrices: { usd: totalUsd * depositRate, egp: totalEgp * depositRate, eur: totalEur * depositRate },
     remainingPrices: { usd: totalUsd * remainingRate, egp: totalEgp * remainingRate, eur: totalEur * remainingRate },

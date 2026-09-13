@@ -13,6 +13,8 @@ import {
   RefundSummaryCard,
   StatusPill,
   SuccessModal,
+  AuthModal,
+  EmptyState,
   type BookingDetailsSection,
 } from "@/components/shared";
 import TransportBookingSummary from "@/components/website/BookTransportationPage/BookingSummary/BookingSummary";
@@ -23,8 +25,14 @@ import { MultiCurrencyPrice } from "@/constants/currency";
 import { calculateRefundSummary } from "@/utils/cancellationPolicy";
 import { getStatusConfig } from "@/utils/statusUtils";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { formatDateDDMMYYYY } from "@/utils/dateFormat";
+import {
+  getPendingGuestRecord,
+  getGuestAuthEmail,
+  getGuestAuthName,
+} from "@/utils/guestBookingAuth";
 import styles from "./ProfileBookingDetailsPage.module.scss";
 
 
@@ -45,6 +53,13 @@ export default function ProfileBookingDetailsPage() {
   const [fallbackTripSlug, setFallbackTripSlug] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const { formatCurrency } = useCurrency();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const [authModalState, setAuthModalState] = useState<{
+    isOpen: boolean;
+    mode: "login" | "signup";
+    initialEmail?: string;
+    initialName?: string;
+  }>({ isOpen: false, mode: "login" });
 
   useEffect(() => {
     if (detailsType === "trip" && bookingDetail) {
@@ -76,16 +91,19 @@ export default function ProfileBookingDetailsPage() {
   }, [detailsType, bookingDetail]);
 
   useEffect(() => {
-    if (id) {
+    if (id && isAuthenticated) {
       setLoading(true);
       getProfileBookingDetail(detailsType, id)
         .then(setBookingDetail)
-        .catch((err) => console.error("Failed to fetch booking:", err))
+        .catch((err) => {
+          console.error("Failed to fetch booking:", err);
+          setBookingDetail(null);
+        })
         .finally(() => setLoading(false));
-    } else {
+    } else if (!id || !isAuthenticated) {
       setLoading(false);
     }
-  }, [id, detailsType]);
+  }, [id, detailsType, isAuthenticated]);
 
   const bData = bookingDetail || {};
   const contact = bData.contact || {};
@@ -456,12 +474,29 @@ export default function ProfileBookingDetailsPage() {
   const getLocalizedRoomTitle = (tName: string) => {
     const raw = (tName || "").toLowerCase().trim();
     if (raw === "any" || raw === "none" || !raw) return t("rooms.standardRoom", "Standard Room");
-    if (raw.includes("single") || raw.includes("individual")) return t("rooms.singleRoom", "Single Room");
-    if (raw.includes("double") || raw.includes("twin") || raw.includes("doble") || raw.includes("doppia")) return t("rooms.doubleRoom", "Double Room");
-    if (raw.includes("triple") || raw.includes("tripla")) return t("rooms.tripleRoom", "Triple Room");
-    if (raw.includes("standard") || raw.includes("estándar") || raw.includes("estandar")) return t("rooms.standardRoom", "Standard Room");
-    if (raw.includes("deluxe")) return t("rooms.deluxeRoom", "Deluxe Room");
+
+    // If the name is a compound (e.g. "Deluxe Double", "Standard Triple"),
+    // capitalize and append "Room" rather than collapsing to just the bed type.
+    const words = raw.split(/\s+/);
+    const bedTypes = ["single", "double", "twin", "triple", "quad", "individual", "doble", "doppia", "tripla"];
+    const categoryWords = ["standard", "deluxe", "suite", "superior", "executive", "premium", "luxury", "classic", "family"];
+    const hasBed = words.some(w => bedTypes.includes(w));
+    const hasCat = words.some(w => categoryWords.includes(w));
+
+    if (hasBed && hasCat) {
+      // Compound name: capitalize each word and ensure "Room" suffix
+      const cap = words.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+      return cap.toLowerCase().endsWith("room") ? cap : `${cap} Room`;
+    }
+
+    // Simple single-category lookups
     if (raw.includes("suite")) return t("rooms.suite", "Suite");
+    if (raw.includes("deluxe")) return t("rooms.deluxeRoom", "Deluxe Room");
+    if (raw.includes("standard") || raw.includes("estándar") || raw.includes("estandar")) return t("rooms.standardRoom", "Standard Room");
+    if (raw.includes("triple") || raw.includes("tripla")) return t("rooms.tripleRoom", "Triple Room");
+    if (raw.includes("double") || raw.includes("twin") || raw.includes("doble") || raw.includes("doppia")) return t("rooms.doubleRoom", "Double Room");
+    if (raw.includes("single") || raw.includes("individual")) return t("rooms.singleRoom", "Single Room");
+
     const cap = tName.charAt(0).toUpperCase() + tName.slice(1);
     return cap.toLowerCase().endsWith("room") ? cap : `${cap} Room`;
   };
@@ -477,7 +512,11 @@ export default function ProfileBookingDetailsPage() {
   const hotelRoomsList = (() => {
     if (rawOverviews.length > 0) {
       return rawOverviews.map((ov: any, idx: number) => {
-        const typeName = ov.room_type || ov.type || ov.roomName || ov.name || "Room";
+        const cat = (ov.category_label || "").trim();
+        const typ = (ov.type_label || "").trim();
+        const typeName = cat && typ
+          ? `${cat} ${typ}`
+          : cat || typ || ov.room_name || ov.room_type || ov.type || ov.roomName || ov.name || "Room";
         const roomTitle = getLocalizedRoomTitle(typeName);
         const rawView = ov.view_label || ov.view || ov.room_view || bData.rooms?.view || "Garden View";
         const view = getLocalizedViewLabel(rawView);
@@ -551,7 +590,11 @@ export default function ProfileBookingDetailsPage() {
   const bookingLineItems = (() => {
     if (rawOverviews.length > 0) {
       return rawOverviews.map((it: any) => {
-        const typeName = it.room_type || it.type || it.roomName || it.name || "Room";
+        const cat = (it.category_label || "").trim();
+        const typ = (it.type_label || "").trim();
+        const typeName = cat && typ
+          ? `${cat} ${typ}`
+          : cat || typ || it.room_name || it.room_type || it.type || it.roomName || it.name || "Room";
         const roomTitle = getLocalizedRoomTitle(typeName);
         const rawView = it.view_label || it.view || it.room_view || bData.rooms?.view || "Garden View";
         const view = getLocalizedViewLabel(rawView);
@@ -917,6 +960,83 @@ export default function ProfileBookingDetailsPage() {
     />
   );
 
+  if (!authLoading && !isAuthenticated) {
+    const pending = getPendingGuestRecord();
+    return (
+      <div className={styles.page}>
+        <PageHeader
+          breadcrumbs={[
+            { label: t("userMenu.profile", "Profile"), href: "/profile" },
+            { label: t("profile.details.breadcrumbDetails", "Booking Details"), isCurrent: true },
+          ]}
+          title={t("profile.headerTitle", "Your Travel Space")}
+          subtitle={t("profile.headerSubtitle", "Easily access all your travel bookings and submitted requests in one organized place, with clear details about your trips, hotel stays, transportation, and upcoming plans.")}
+        />
+        <div style={{ padding: "64px 24px" }}>
+          <EmptyState
+            framedIcon
+            iconSrc="/images/profile-blue2.svg"
+            iconWidth={90}
+            iconHeight={90}
+            title={t("profile.emptyStates.authBookingsTitle", "Create an Account to View Your Bookings")}
+            description={
+              pending?.email
+                ? t("profile.emptyStates.authBookingsGuestDesc", `We found a recent booking submitted with ${pending.email}. Create an account or log in with this email to access and manage it.`)
+                : t("profile.emptyStates.authBookingsDesc", "Sign up or log in to access your bookings, requests, and upcoming trips in one place.")
+            }
+            buttonText={t("profile.emptyStates.createAccount", "Create Account")}
+            buttonVariant="primary"
+            buttonStyle={{ width: "100%", maxWidth: "432px" }}
+            onButtonClick={() =>
+              setAuthModalState({
+                isOpen: true,
+                mode: "signup",
+                initialEmail: pending?.email || getGuestAuthEmail(),
+                initialName: pending?.name || getGuestAuthName(),
+              })
+            }
+            footerNode={
+              <p style={{ margin: 0, fontSize: "16px", color: "#9E9E9E", fontFamily: "var(--font-trip-sans)" }}>
+                {t("profile.emptyStates.alreadyHaveAccount", "Already have an Account ?")}{" "}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setAuthModalState({
+                      isOpen: true,
+                      mode: "login",
+                      initialEmail: pending?.email || getGuestAuthEmail(),
+                      initialName: pending?.name || getGuestAuthName(),
+                    })
+                  }
+                  style={{
+                    color: "#2971E6",
+                    fontWeight: 700,
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                    fontFamily: "var(--font-trip-sans)",
+                  }}
+                >
+                  {t("profile.emptyStates.login", "Login")}
+                </button>
+              </p>
+            }
+          />
+        </div>
+        {authModalState.isOpen && (
+          <AuthModal
+            initialMode={authModalState.mode}
+            initialEmail={authModalState.initialEmail}
+            initialName={authModalState.initialName}
+            onClose={() => setAuthModalState({ ...authModalState, isOpen: false })}
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className={styles.page}>
       <PageHeader
@@ -1132,6 +1252,15 @@ export default function ProfileBookingDetailsPage() {
             { label: t("cancelModal.refundMethod", "Refund Method"), value: t("cancelModal.bankTransfer", "Bank Transfer") },
             { label: t("cancelModal.processingTime", "Estimated Processing Time"), value: t("cancelModal.businessDays", "7 - 10 Business Days") }
           ]}
+        />
+      )}
+
+      {authModalState.isOpen && (
+        <AuthModal
+          initialMode={authModalState.mode}
+          initialEmail={authModalState.initialEmail}
+          initialName={authModalState.initialName}
+          onClose={() => setAuthModalState({ ...authModalState, isOpen: false })}
         />
       )}
     </div>

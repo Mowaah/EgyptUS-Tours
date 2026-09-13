@@ -8,9 +8,11 @@ import { PageHeader, StepIndicator, SuccessModal } from "@/components/shared";
 import { BASE_URL, extractApiError, submitHotelBooking } from "@/lib/api";
 import { formatPhoneE164 } from "@/utils/validators";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { MultiCurrencyPrice } from "@/constants/currency";
 import { calculateHotelBookingPrice } from "@/utils/bookingPricing";
+import { savePendingGuestRecord } from "@/utils/guestBookingAuth";
 import planPageStyles from "../PlanYourTripPage/PlanYourTripPage.module.scss";
 import StepRoomDates from "./steps/RoomDates/StepRoomDates";
 import StepPersonalInfo from "./steps/PersonalInfo/StepPersonalInfo";
@@ -119,6 +121,7 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState<SavedBookingInfo | null>(null);
   const stepIndicatorRef = useRef<HTMLDivElement | null>(null);
+  const { isAuthenticated } = useAuth();
   const [formData, setFormData] = useState<BookingData>(INITIAL_BOOKING_DATA);
 
   // Check for successful payment redirect back to this page
@@ -248,6 +251,14 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
         depositAmount: parseFloat(booking.deposit_amount) || depositAmount,
       });
 
+      savePendingGuestRecord({
+        email: formData.email,
+        name: formData.name,
+        type: "hotel",
+        id: booking.id,
+        title: hotel.name,
+      });
+
       window.location.assign(resolvePaymentUrl(booking.payment_url));
     } catch (error) {
       console.error("Failed to start hotel checkout", error);
@@ -285,10 +296,12 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
     setShowSuccessModal(false);
     const targetId = confirmedBooking?.id;
     clearBookingInfo();
-    if (targetId) {
+    if (!isAuthenticated) {
+      router.push(`/profile?tab=bookings&type=hotel&auth_prompt=true${targetId ? `&id=${targetId}` : ""}`);
+    } else if (targetId) {
       router.push(`/profile/bookings-details?id=${targetId}&type=hotel`);
     } else {
-      router.push("/profile?tab=bookings");
+      router.push("/profile?tab=bookings&type=hotel");
     }
   };
 

@@ -4,13 +4,16 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { SectionHeader, Button, FormField, PhoneInput, NationalitySelect, SuccessModal } from "@/components/shared";
 import { submitB2BProposal, extractApiError, extractFieldErrors } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { savePendingGuestRecord } from "@/utils/guestBookingAuth";
 import Image from "next/image";
 import styles from "./B2BSection.module.scss";
 import formStyles from "@/components/shared/FormField/FormField.module.scss";
 
 export default function B2BSection() {
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const { t } = useTranslation("home");
   const [showModal, setShowModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,6 +76,12 @@ export default function B2BSection() {
         setSubmittedId(newId);
         submittedIdRef.current = newId;
       }
+      savePendingGuestRecord({
+        email: formData.email,
+        name: formData.contactPerson,
+        type: "b2b",
+        id: newId,
+      });
       setShowModal(true);
     } catch (err: any) {
       console.error("Failed to submit B2B proposal:", err);
@@ -315,10 +324,12 @@ export default function B2BSection() {
           buttonText={t("b2bSection.backToHome", "Back to Home")}
           onPrimaryClick={() => {
             const targetId = submittedIdRef.current || submittedId;
-            if (targetId) {
+            if (!isAuthenticated) {
+              router.push(`/profile?tab=requests&type=b2b&auth_prompt=true${targetId ? `&id=${targetId}` : ""}`);
+            } else if (targetId) {
               router.push(`/profile/requests-details?type=b2b&id=${targetId}`);
             } else {
-              router.push("/profile?tab=requests");
+              router.push("/profile?tab=requests&type=b2b");
             }
           }}
           onClose={handleReset}

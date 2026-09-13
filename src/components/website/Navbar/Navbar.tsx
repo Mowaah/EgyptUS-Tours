@@ -6,7 +6,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 import Button from "@/components/shared/Button/Button";
-import { GlassCard, AuthModal } from "@/components/shared";
+import {
+  GlassCard,
+  AuthModal,
+  EmailVerificationModal,
+  type EmailVerificationModalState,
+} from "@/components/shared";
 import UserMenu from "./UserMenu";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
@@ -95,11 +100,58 @@ export default function Navbar({
   const isAuthenticated = (!mounted || authLoading) ? false : authReady;
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [verificationModal, setVerificationModal] = useState<{
+    isOpen: boolean;
+    state: EmailVerificationModalState;
+    email?: string;
+  }>({ isOpen: false, state: "expired" });
+  const [authModalInitialMode, setAuthModalInitialMode] = useState<"login" | "signup">("login");
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const destinationParam = searchParams?.get("destination");
+  const verificationParam = searchParams?.get("verification");
+  const authModeParam = searchParams?.get("auth_mode");
   const isBookingPage = pathname === "/booking";
+
+  useEffect(() => {
+    if (authModeParam === "signup") {
+      setAuthModalInitialMode("signup");
+      setIsAuthModalOpen(true);
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.delete("auth_mode");
+        window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
+      } catch {}
+    }
+  }, [authModeParam]);
+
+  useEffect(() => {
+    if (verificationParam) {
+      if (
+        verificationParam === "expired" ||
+        verificationParam === "already_verified" ||
+        verificationParam === "failed" ||
+        verificationParam === "verify_email"
+      ) {
+        let storedEmail = "";
+        if (typeof window !== "undefined") {
+          storedEmail = localStorage.getItem("egyptus_last_signup_email") || "";
+        }
+        setVerificationModal({
+          isOpen: true,
+          state: verificationParam as EmailVerificationModalState,
+          email: storedEmail,
+        });
+
+        try {
+          const url = new URL(window.location.href);
+          url.searchParams.delete("verification");
+          window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
+        } catch {}
+      }
+    }
+  }, [verificationParam]);
 
   const isLinkActive = (link: { key?: string; label: string; href: string }) => {
     const isToursRoute = pathname.startsWith("/egypttours") || pathname.startsWith("/trips");
@@ -462,8 +514,26 @@ export default function Navbar({
 
       {isAuthModalOpen && (
         <AuthModal
+          initialMode={authModalInitialMode}
           onClose={() => setIsAuthModalOpen(false)}
           onLoginSuccess={() => {}}
+        />
+      )}
+
+      {verificationModal.isOpen && (
+        <EmailVerificationModal
+          isOpen={verificationModal.isOpen}
+          state={verificationModal.state}
+          email={verificationModal.email}
+          onClose={() => setVerificationModal((prev) => ({ ...prev, isOpen: false }))}
+          onBackToSignup={() => {
+            setVerificationModal((prev) => ({ ...prev, isOpen: false }));
+            setAuthModalInitialMode("signup");
+            setIsAuthModalOpen(true);
+          }}
+          onGoHome={() => {
+            setVerificationModal((prev) => ({ ...prev, isOpen: false }));
+          }}
         />
       )}
 

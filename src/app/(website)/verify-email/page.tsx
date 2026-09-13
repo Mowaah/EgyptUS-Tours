@@ -1,25 +1,25 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
 import { verifyCustomerEmail } from "@/lib/api";
-import { SectionHeader } from "@/components/shared";
+import { LoadingSpinner } from "@/components/shared";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  getPendingGuestRecord,
+  clearPendingGuestRecord,
+} from "@/utils/guestBookingAuth";
+import styles from "./VerifyEmailPage.module.scss";
 
 function VerifyEmailContent() {
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
-  const [message, setMessage] = useState("Verifying your email...");
+  const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
-  const router = useRouter();
 
   useEffect(() => {
-    let token = searchParams.get("token");
+    const token = searchParams.get("token");
     if (!token) {
-      setStatus("error");
-      setMessage("Invalid or missing verification token.");
+      router.replace("/?verification=expired");
       return;
     }
 
@@ -27,81 +27,42 @@ function VerifyEmailContent() {
 
     verifyCustomerEmail({ token })
       .then((res) => {
-        if (isMounted) {
-          if (res.access && res.refresh && res.customer) {
-            login(res.access, res.refresh, res.customer);
-          }
-          setStatus("success");
-          setMessage("Your email has been verified! You are now automatically logged in.");
+        if (!isMounted) return;
+
+        if (res.access && res.refresh && res.customer) {
+          login(res.access, res.refresh, res.customer);
+        }
+
+        const pending = getPendingGuestRecord();
+        if (pending) {
+          clearPendingGuestRecord();
+          const tab = pending.kind === "booking" ? "bookings" : "requests";
+          const typeParam = pending.type ? `&type=${pending.type}` : "";
+          router.replace(`/profile?tab=${tab}${typeParam}&verified=true`);
+        } else {
+          router.replace("/profile?verified=true");
         }
       })
       .catch((err) => {
-        if (isMounted) {
-          setStatus("error");
-          if (err.response?.data?.detail) {
-            setMessage(err.response.data.detail);
-          } else {
-            setMessage("An error occurred while verifying your email. Please try again.");
-          }
+        if (!isMounted) return;
+        const code = err?.response?.data?.code;
+        if (code === "already_verified") {
+          router.replace("/?verification=already_verified");
+        } else {
+          router.replace("/?verification=expired");
         }
       });
 
     return () => {
       isMounted = false;
     };
-  }, [searchParams]);
+  }, [searchParams, login, router]);
 
   return (
-    <div style={{ padding: "120px 20px", minHeight: "60vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-      
-      {status === "success" && (
-        <Image 
-          src="/images/dashboard/activate-modal.svg" 
-          alt="Success" 
-          width={80} 
-          height={80} 
-          style={{ marginBottom: "24px" }} 
-        />
-      )}
-
-      {status === "error" && (
-        <Image 
-          src="/images/dashboard/delete-modal.svg" 
-          alt="Error" 
-          width={80} 
-          height={80} 
-          style={{ marginBottom: "24px" }} 
-        />
-      )}
-
-      <SectionHeader 
-        showLabel={false}
-        heading={status === "success" ? "Email Verified" : status === "error" ? "Verification Failed" : "Verifying Email"} 
-      />
-      
-      <div style={{ marginTop: "16px", textAlign: "center", maxWidth: "600px", display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <p style={{ fontSize: "18px", lineHeight: "1.6", color: "var(--text-color)" }}>
-          {message}
-        </p>
-        
-        {status !== "loading" && (
-          <div style={{ marginTop: "40px" }}>
-            <Link 
-              href="/" 
-              style={{
-                display: "inline-block",
-                padding: "12px 32px",
-                backgroundColor: "var(--primary-color)",
-                color: "#fff",
-                borderRadius: "8px",
-                fontWeight: "600",
-                textDecoration: "none"
-              }}
-            >
-              Return Home
-            </Link>
-          </div>
-        )}
+    <div className={styles.page}>
+      <LoadingSpinner size="lg" />
+      <div className={styles.content}>
+        <p className={styles.message}>Verifying your email and preparing your account...</p>
       </div>
     </div>
   );
@@ -109,8 +70,9 @@ function VerifyEmailContent() {
 
 export default function VerifyEmailPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className={styles.page}><LoadingSpinner size="lg" /></div>}>
       <VerifyEmailContent />
     </Suspense>
   );
 }
+

@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Cookies from "js-cookie";
 import { submitEventProposal, extractApiError } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { savePendingGuestRecord } from "@/utils/guestBookingAuth";
 
 import styles from "./EventsRequestProposalPage.module.scss";
 import type { EventProposalData, EventStep } from "./eventsRequestProposalTypes";
@@ -50,6 +52,7 @@ const initialData: EventProposalData = {
 export default function EventsRequestProposalPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { isAuthenticated } = useAuth();
   const [isAgentMode, setIsAgentMode] = useState(false);
 
   useEffect(() => {
@@ -252,11 +255,14 @@ export default function EventsRequestProposalPage() {
         }
       } else {
         const res = await submitEventProposal(proposalData);
-        if (res && res.id) {
-          setSubmittedId(res.id);
-        } else {
-          setSubmittedId(Math.floor(100000 + Math.random() * 900000));
-        }
+        const resolvedId = res && res.id ? res.id : Math.floor(100000 + Math.random() * 900000);
+        setSubmittedId(resolvedId);
+        savePendingGuestRecord({
+          email: proposalData.organization.email,
+          name: proposalData.organization.contactPerson,
+          type: "events",
+          id: resolvedId,
+        });
       }
       setShowModal(true);
     } catch (err: any) {
@@ -392,8 +398,10 @@ export default function EventsRequestProposalPage() {
           onPrimaryClick={() => {
             if (isAgentMode) {
               router.push(submittedId ? `/dashboard/requests/mice-corporate/${submittedId}` : "/dashboard/requests/mice-corporate");
+            } else if (!isAuthenticated) {
+              router.push(`/profile?tab=requests&type=events&auth_prompt=true${submittedId ? `&id=${submittedId}` : ""}`);
             } else {
-              router.push("/profile?tab=requests");
+              router.push("/profile?tab=requests&type=events");
             }
           }}
           onClose={handleReset}

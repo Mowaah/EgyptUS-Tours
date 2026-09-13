@@ -88,4 +88,10 @@ export type { FavoriteButtonProps } from "./FavoriteButton/FavoriteButton";
 export { default as StatusPill, LoadingGlyph } from "./StatusPill/StatusPill";
 export type { StatusPillVariant, StatusPillSize, StatusPillIconType } from "./StatusPill/StatusPill";
 export { RefundBankDetailsCard, RefundSummaryCard } from "./RefundCards/RefundCards";
+export { default as EmailVerificationModal } from "./EmailVerificationModal/EmailVerificationModal";
+export type {
+  EmailVerificationModalProps,
+  EmailVerificationModalState,
+} from "./EmailVerificationModal/EmailVerificationModal";
+
 export type { RefundBankDetailsData, RefundSummaryData } from "./RefundCards/RefundCards";

@@ -8,9 +8,11 @@ import { PageHeader, SuccessModal, StepIndicator } from "@/components/shared";
 import { BASE_URL, extractApiError, submitTripBooking } from "@/lib/api";
 import { formatPhoneE164 } from "@/utils/validators";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { MultiCurrencyPrice } from "@/constants/currency";
 import { calculateTripBookingPrice } from "@/utils/bookingPricing";
+import { savePendingGuestRecord } from "@/utils/guestBookingAuth";
 
 import planPageStyles from "../PlanYourTripPage/PlanYourTripPage.module.scss";
 
@@ -97,6 +99,7 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
   const [confirmedBooking, setConfirmedBooking] = useState<SavedTripBookingInfo | null>(null);
   const stepIndicatorRef = useRef<HTMLDivElement | null>(null);
   const { formatCurrency } = useCurrency();
+  const { isAuthenticated } = useAuth();
 
   const [formData, setFormData] = useState<BookingData>(INITIAL_BOOKING_DATA);
 
@@ -268,6 +271,14 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
         depositAmount: parseFloat(booking.deposit_amount || booking.payment?.amount_due) || depositAmount,
       });
 
+      savePendingGuestRecord({
+        email: formData.email,
+        name: formData.name,
+        type: "trip",
+        id: booking.id,
+        title: trip.title,
+      });
+
       window.location.assign(resolvePaymentUrl(booking.payment_url));
     } catch (error) {
       console.error("Failed to start trip checkout", error);
@@ -290,10 +301,12 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
     setShowSuccessModal(false);
     const targetId = confirmedBooking?.id;
     clearBookingInfo();
-    if (targetId) {
+    if (!isAuthenticated) {
+      router.push(`/profile?tab=bookings&type=trip&auth_prompt=true${targetId ? `&id=${targetId}` : ""}`);
+    } else if (targetId) {
       router.push(`/profile/bookings-details?id=${targetId}&type=trip`);
     } else {
-      router.push("/profile?tab=bookings");
+      router.push("/profile?tab=bookings&type=trip");
     }
   };
 

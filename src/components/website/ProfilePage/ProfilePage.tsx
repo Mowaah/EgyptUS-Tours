@@ -23,6 +23,11 @@ import { useUpcomingTrip } from "@/hooks/useUpcomingTrip";
 import { getFavoriteTrips, getFavoriteHotels, getProfileRequests, getProfileSummary, getProfileBookings, getPaymentReceipt, getFullImageUrl } from "@/lib/api";
 import { getAllHotels } from "@/services/hotelsService";
 import { getStatusConfig } from "@/utils/statusUtils";
+import {
+  getPendingGuestRecord,
+  getGuestAuthEmail,
+  getGuestAuthName,
+} from "@/utils/guestBookingAuth";
 import type { MultiCurrencyPrice } from "@/constants/currency";
 import styles from "./ProfilePage.module.scss";
 
@@ -45,7 +50,13 @@ export default function ProfilePage() {
   );
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [authModalState, setAuthModalState] = useState<{ isOpen: boolean, mode: "login" | "signup" }>({ isOpen: false, mode: "login" });
+  const [authModalState, setAuthModalState] = useState<{
+    isOpen: boolean;
+    mode: "login" | "signup";
+    initialEmail?: string;
+    initialName?: string;
+  }>({ isOpen: false, mode: "login" });
+  const pendingRecord = useMemo(() => getPendingGuestRecord(), [isAuthenticated]);
   const [successBookingRef, setSuccessBookingRef] = useState<string | null>(null);
   const [successAmount, setSuccessAmount] = useState<string | null>(null);
   const [receiptData, setReceiptData] = useState<{
@@ -120,6 +131,49 @@ export default function ProfilePage() {
     ],
     [t]
   );
+
+  useEffect(() => {
+    const typeParam = (searchParams.get("type") || "").toLowerCase();
+    const pendingType = pendingRecord?.type;
+    const targetType = typeParam || (activeTab === "bookings" || activeTab === "requests" ? pendingType : "");
+
+    if (activeTab === "bookings") {
+      if (targetType === "hotel" || targetType === "hotels") {
+        setBookingCategoryIndex(1);
+      } else if (targetType === "transport" || targetType === "transportation") {
+        setBookingCategoryIndex(2);
+      } else if (targetType === "trip" || targetType === "trips") {
+        setBookingCategoryIndex(0);
+      }
+    } else if (activeTab === "requests") {
+      if (targetType === "events" || targetType === "mice") {
+        setRequestCategoryIndex(1);
+      } else if (targetType === "b2b") {
+        setRequestCategoryIndex(2);
+      } else if (targetType === "plan_your_trip" || targetType === "custom_trip") {
+        setRequestCategoryIndex(0);
+      }
+    }
+  }, [searchParams, activeTab, pendingRecord?.type]);
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      const shouldPromptAuth = searchParams.get("auth_prompt") === "true";
+      if (shouldPromptAuth) {
+        setAuthModalState({
+          isOpen: true,
+          mode: "signup",
+          initialEmail: pendingRecord?.email || getGuestAuthEmail(),
+          initialName: pendingRecord?.name || getGuestAuthName(),
+        });
+        try {
+          const url = new URL(window.location.href);
+          url.searchParams.delete("auth_prompt");
+          window.history.replaceState({}, "", url.pathname + url.search);
+        } catch {}
+      }
+    }
+  }, [isLoading, isAuthenticated, searchParams, pendingRecord]);
 
   const [favoriteTrips, setFavoriteTrips] = useState<Trip[]>([]);
   const [favoriteHotels, setFavoriteHotels] = useState<Hotel[]>([]);
@@ -558,7 +612,18 @@ export default function ProfilePage() {
             let secondaryVariant: any = undefined;
             let secondaryIconType: any = undefined;
 
-            if (!isCancelled && !isRejected && remStatus && remStatus !== "paid") {
+            // Whether the primary pill is driven by an active operational status
+            // (e.g. in_hotel, on_trip) rather than a payment status.
+            const isPrimaryOpStatus = !isCancelled && !isRejected && !isRefundInProgress && !isRefunded &&
+              Boolean(opStatus && opStatus !== reqStatus);
+
+            // Show secondary pill for remaining-payment status, EXCEPT when:
+            //  – it's "paid" and the primary is already a payment confirmation (confirmed / paid)
+            //  – i.e. mirroring the Booking Details page rule
+            const showPaidSecondary = remStatus === "paid" && isPrimaryOpStatus;
+            const showRemSecondary = !isCancelled && !isRejected && remStatus && remStatus !== "paid";
+
+            if (showPaidSecondary || showRemSecondary) {
               const remConfig = getStatusConfig(remStatus);
               secondaryLabel = remConfig.label;
               secondaryVariant = remConfig.variant;
@@ -775,17 +840,35 @@ export default function ProfilePage() {
               iconWidth={90}
               iconHeight={90}
               title={t("profile.emptyStates.authBookingsTitle", "Create an Account to View Your Bookings")}
-              description={t("profile.emptyStates.authBookingsDesc", "Sign up or log in to access your bookings, requests, and upcoming trips in one place.")}
+              description={
+                pendingRecord?.email
+                  ? t("profile.emptyStates.authBookingsGuestDesc", `We found a recent booking submitted with ${pendingRecord.email}. Create an account or log in with this email to access and manage it.`)
+                  : t("profile.emptyStates.authBookingsDesc", "Sign up or log in to access your bookings, requests, and upcoming trips in one place.")
+              }
               buttonText={t("profile.emptyStates.createAccount", "Create Account")}
               buttonVariant="primary"
               buttonStyle={{ width: "100%", maxWidth: "432px" }}
-              onButtonClick={() => setAuthModalState({ isOpen: true, mode: "signup" })}
+              onButtonClick={() =>
+                setAuthModalState({
+                  isOpen: true,
+                  mode: "signup",
+                  initialEmail: pendingRecord?.email || getGuestAuthEmail(),
+                  initialName: pendingRecord?.name || getGuestAuthName(),
+                })
+              }
               footerNode={
                 <p style={{ margin: 0, fontSize: "16px", color: "#9E9E9E", fontFamily: "var(--font-trip-sans)" }}>
                   {t("profile.emptyStates.alreadyHaveAccount", "Already have an Account ?")}{" "}
                   <button
                     type="button"
-                    onClick={() => setAuthModalState({ isOpen: true, mode: "login" })}
+                    onClick={() =>
+                      setAuthModalState({
+                        isOpen: true,
+                        mode: "login",
+                        initialEmail: pendingRecord?.email || getGuestAuthEmail(),
+                        initialName: pendingRecord?.name || getGuestAuthName(),
+                      })
+                    }
                     style={{
                       color: "#2971E6",
                       fontWeight: 700,
@@ -869,17 +952,35 @@ export default function ProfilePage() {
               iconWidth={90}
               iconHeight={90}
               title={t("profile.emptyStates.authRequestsTitle", "Create an Account to View Your Requests")}
-              description={t("profile.emptyStates.authRequestsDesc", "Sign up or log in to track your trip requests, view their status, and manage your travel inquiries.")}
+              description={
+                pendingRecord?.email
+                  ? t("profile.emptyStates.authRequestsGuestDesc", `We found a recent request submitted with ${pendingRecord.email}. Create an account or log in with this email to view and track its status.`)
+                  : t("profile.emptyStates.authRequestsDesc", "Sign up or log in to track your trip requests, view their status, and manage your travel inquiries.")
+              }
               buttonText={t("profile.emptyStates.createAccount", "Create Account")}
               buttonVariant="primary"
               buttonStyle={{ width: "100%", maxWidth: "432px" }}
-              onButtonClick={() => setAuthModalState({ isOpen: true, mode: "signup" })}
+              onButtonClick={() =>
+                setAuthModalState({
+                  isOpen: true,
+                  mode: "signup",
+                  initialEmail: pendingRecord?.email || getGuestAuthEmail(),
+                  initialName: pendingRecord?.name || getGuestAuthName(),
+                })
+              }
               footerNode={
                 <p style={{ margin: 0, fontSize: "16px", color: "#9E9E9E", fontFamily: "var(--font-trip-sans)" }}>
                   {t("profile.emptyStates.alreadyHaveAccount", "Already have an Account ?")}{" "}
                   <button
                     type="button"
-                    onClick={() => setAuthModalState({ isOpen: true, mode: "login" })}
+                    onClick={() =>
+                      setAuthModalState({
+                        isOpen: true,
+                        mode: "login",
+                        initialEmail: pendingRecord?.email || getGuestAuthEmail(),
+                        initialName: pendingRecord?.name || getGuestAuthName(),
+                      })
+                    }
                     style={{
                       color: "#2971E6",
                       fontWeight: 700,
@@ -1115,6 +1216,13 @@ export default function ProfilePage() {
       {authModalState.isOpen && (
         <AuthModal
           initialMode={authModalState.mode}
+          initialEmail={authModalState.initialEmail}
+          initialName={authModalState.initialName}
+          onLoginSuccess={() => {
+            getProfileSummary()
+              .then((data) => setSummary(data))
+              .catch(() => {});
+          }}
           onClose={() => setAuthModalState({ ...authModalState, isOpen: false })}
         />
       )}

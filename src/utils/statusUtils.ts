@@ -104,17 +104,23 @@ export function getStatusIconType(status?: string | null): StatusIconType {
     return "check";
   }
 
-  // Pending / In progress states -> Spinner
+  // Active ongoing stay/trip states -> Checkmark (confirmed and checked-in)
   if (
-    s.includes("in progress") ||
-    s.includes("pending") ||
-    s.includes("partially paid") ||
-    s.includes("awaiting") ||
     s.includes("in trip") ||
     s.includes("in stay") ||
     s.includes("in hotel") ||
     s.includes("in transit") ||
     s.includes("on trip")
+  ) {
+    return "check";
+  }
+
+  // Pending / In progress states -> Spinner
+  if (
+    s.includes("in progress") ||
+    s.includes("pending") ||
+    s.includes("partially paid") ||
+    s.includes("awaiting")
   ) {
     return "spinner";
   }

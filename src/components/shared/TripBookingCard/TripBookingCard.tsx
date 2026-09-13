@@ -272,12 +272,24 @@ export default function TripBookingCard(props: TripBookingCardProps) {
     if (!tName) return "";
     const raw = tName.toLowerCase().trim();
     if (raw === "any" || raw === "none") return t("rooms.standardRoom", "Standard Room");
-    if (raw.includes("single")) return t("rooms.singleRoom", "Single Room");
-    if (raw.includes("double") || raw.includes("twin")) return t("rooms.doubleRoom", "Double Room");
-    if (raw.includes("triple")) return t("rooms.tripleRoom", "Triple Room");
-    if (raw.includes("standard")) return t("rooms.standardRoom", "Standard Room");
-    if (raw.includes("deluxe")) return t("rooms.deluxeRoom", "Deluxe Room");
+
+    const words = raw.split(/\s+/);
+    const bedTypes = ["single", "double", "twin", "triple", "quad"];
+    const categoryWords = ["standard", "deluxe", "suite", "superior", "executive", "premium", "luxury", "classic", "family"];
+    const hasBed = words.some(w => bedTypes.includes(w));
+    const hasCat = words.some(w => categoryWords.includes(w));
+
+    if (hasBed && hasCat) {
+      const cap = words.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+      return cap.toLowerCase().endsWith("room") ? cap : `${cap} Room`;
+    }
+
     if (raw.includes("suite")) return t("rooms.suite", "Suite");
+    if (raw.includes("deluxe")) return t("rooms.deluxeRoom", "Deluxe Room");
+    if (raw.includes("standard")) return t("rooms.standardRoom", "Standard Room");
+    if (raw.includes("triple")) return t("rooms.tripleRoom", "Triple Room");
+    if (raw.includes("double") || raw.includes("twin")) return t("rooms.doubleRoom", "Double Room");
+    if (raw.includes("single")) return t("rooms.singleRoom", "Single Room");
     return tName;
   };
 

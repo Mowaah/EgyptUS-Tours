@@ -16,7 +16,9 @@ import StepTravelerInfo from "./steps/TravelerInfo/StepTravelerInfo";
 import StepPreferences from "./steps/Preferences/StepPreferences";
 import StepReview from "./steps/Review/StepReview";
 import { getDestinations, getCategories } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { savePendingGuestRecord } from "@/utils/guestBookingAuth";
 
 const initialTripData: TripData = {
   destinations: [],
@@ -48,6 +50,7 @@ const initialTripData: TripData = {
 export default function PlanYourTripPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { isAuthenticated } = useAuth();
   const [isAgentMode, setIsAgentMode] = useState(false);
   const [currentStep, setCurrentStep] = useState<PlanStep>(1);
   const [showModal, setShowModal] = useState(false);
@@ -230,6 +233,12 @@ export default function PlanYourTripPage() {
         if (newId) {
           setSubmittedId(newId);
         }
+        savePendingGuestRecord({
+          email: tripData.travelerInfo.email,
+          name: tripData.travelerInfo.name,
+          type: "plan_your_trip",
+          id: newId,
+        });
       }
 
       setShowModal(true);
@@ -368,8 +377,10 @@ export default function PlanYourTripPage() {
           onPrimaryClick={() => {
             if (isAgentMode) {
               router.push(submittedId ? `/dashboard/requests/plan-your-trip/${submittedId}` : "/dashboard/requests/plan-your-trip");
+            } else if (!isAuthenticated) {
+              router.push(`/profile?tab=requests&type=plan_your_trip&auth_prompt=true${submittedId ? `&id=${submittedId}` : ""}`);
             } else {
-              router.push("/profile?tab=requests");
+              router.push("/profile?tab=requests&type=plan_your_trip");
             }
           }}
           onClose={handleReset}

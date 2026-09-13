@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { Vehicle, TransportationBookingData, INITIAL_TRANSPORT_BOOKING } from "@/types";
 import { PageHeader, SuccessModal, StepIndicator } from "@/components/shared";
@@ -72,6 +73,7 @@ interface BookTransportationPageProps {
 export default function BookTransportationPage({ vehicle }: BookTransportationPageProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { isAuthenticated } = useAuth();
   const { formatCurrency } = useCurrency();
   const { t } = useTranslation("booking");
   const [currentStep, setCurrentStep] = useState(1);
@@ -224,10 +226,12 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
           onPrimaryClick={() => {
             const targetId = confirmedBooking?.id;
             clearTransportBookingInfo();
-            if (targetId) {
+            if (!isAuthenticated) {
+              router.push(`/profile?tab=bookings&type=transport&auth_prompt=true${targetId ? `&id=${targetId}` : ""}`);
+            } else if (targetId) {
               router.push(`/profile/bookings-details?id=${targetId}&type=transport`);
             } else {
-              router.push("/profile?tab=bookings");
+              router.push("/profile?tab=bookings&type=transport");
             }
           }}
           onClose={() => {
