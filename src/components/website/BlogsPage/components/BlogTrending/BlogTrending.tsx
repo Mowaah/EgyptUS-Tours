@@ -85,9 +85,19 @@ export default function BlogTrending({
           <div style={{ paddingTop: "40px", paddingBottom: "40px" }}>
             <EmptyState
               title={t("blogs.noBlogsTitle", "No Available Blogs")}
-              description={t("blogs.noBlogsDescription", "Sorry, no blogs matched your search. Please explore others or try different subject.")}
-              buttonText={t("blogs.clearSearch", "Clear Search")}
-              onButtonClick={onClearSearch}
+              description={
+                isSearching
+                  ? t(
+                      "blogs.noBlogsDescription",
+                      "Sorry, no blogs matched your search. Please explore others or try different subject."
+                    )
+                  : t(
+                      "blogs.emptyDescription",
+                      "There are no blog articles to show right now. Check back soon for new travel stories."
+                    )
+              }
+              buttonText={isSearching ? t("blogs.clearSearch", "Clear Search") : ""}
+              onButtonClick={isSearching ? onClearSearch : undefined}
             />
           </div>
         ) : (

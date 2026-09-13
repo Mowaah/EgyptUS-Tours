@@ -110,55 +110,68 @@ export default function LatestArticles({
               descriptionMaxWidth="650px"
             />
 
-            {/* Featured Article */}
-            {featured && (
-              <Link href={`/articles/${featured.slug}`} className={styles.featuredCard}>
-                <div className={styles.featuredImageWrap}>
-                  <Image
-                    src={featured.hero_image || featured.featured_image || "/images/home/hero-bg.png"}
-                    alt={featuredTitle}
-                    fill
-                    className={styles.image}
-                    style={{ objectFit: "cover" }}
-                  />
-                  <div className={styles.gradientOverlay}></div>
-                </div>
-                <div className={styles.featuredContent}>
-                  <div className={styles.tag}>{featuredCategory}</div>
-                  <h3 className={styles.featuredTitle}>{featuredTitle}</h3>
-                  <p className={styles.meta}>By {featured.display_author_name} &bull; {new Date(featured.published_at).toLocaleDateString(localeCode, { day: '2-digit', month: 'long', year: 'numeric' })}</p>
-                </div>
-              </Link>
-            )}
-
-            {/* Small Articles Grid */}
-            {remainingArticles.length > 0 && (
-              <div className={styles.grid}>
-                {remainingArticles.map((article) => {
-                  const loc = getBackendLocalizedArticle(article, language);
-                  const title = loc.title || article.title;
-                  const categoryName = getBackendLocalizedName(article.category, language, article.category?.name || "Article");
-                  return (
-                    <Link key={article.id} href={`/articles/${article.slug}`} className={styles.smallCard}>
-                      <div className={styles.smallImageWrap}>
-                        <Image
-                          src={article.featured_image || "/images/home/hero-bg.png"}
-                          alt={title}
-                          fill
-                          className={styles.image}
-                          style={{ objectFit: "cover" }}
-                        />
-                        <div className={styles.gradientOverlay}></div>
-                      </div>
-                      <div className={styles.smallContent}>
-                        <div className={styles.tagSmall}>{categoryName}</div>
-                        <h4 className={styles.smallTitle}>{title}</h4>
-                        <p className={styles.metaSmall}>By {article.display_author_name} &bull; {new Date(article.published_at).toLocaleDateString(localeCode, { day: '2-digit', month: 'long', year: 'numeric' })}</p>
-                      </div>
-                    </Link>
-                  );
-                })}
+            {initialArticles.length === 0 ? (
+              <div className={styles.emptyStateWrap}>
+                <EmptyState
+                  title={t("articles.noArticlesTitle", "No Available Articles")}
+                  description={t(
+                    "articles.emptyDescription",
+                    "There are no articles to show right now. Check back soon for new travel stories."
+                  )}
+                  buttonText=""
+                />
               </div>
+            ) : (
+              <>
+                {featured && (
+                  <Link href={`/articles/${featured.slug}`} className={styles.featuredCard}>
+                    <div className={styles.featuredImageWrap}>
+                      <Image
+                        src={featured.hero_image || featured.featured_image || "/images/home/hero-bg.png"}
+                        alt={featuredTitle}
+                        fill
+                        className={styles.image}
+                        style={{ objectFit: "cover" }}
+                      />
+                      <div className={styles.gradientOverlay}></div>
+                    </div>
+                    <div className={styles.featuredContent}>
+                      <div className={styles.tag}>{featuredCategory}</div>
+                      <h3 className={styles.featuredTitle}>{featuredTitle}</h3>
+                      <p className={styles.meta}>By {featured.display_author_name} &bull; {new Date(featured.published_at).toLocaleDateString(localeCode, { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+                    </div>
+                  </Link>
+                )}
+
+                {remainingArticles.length > 0 && (
+                  <div className={styles.grid}>
+                    {remainingArticles.map((article) => {
+                      const loc = getBackendLocalizedArticle(article, language);
+                      const title = loc.title || article.title;
+                      const categoryName = getBackendLocalizedName(article.category, language, article.category?.name || "Article");
+                      return (
+                        <Link key={article.id} href={`/articles/${article.slug}`} className={styles.smallCard}>
+                          <div className={styles.smallImageWrap}>
+                            <Image
+                              src={article.featured_image || "/images/home/hero-bg.png"}
+                              alt={title}
+                              fill
+                              className={styles.image}
+                              style={{ objectFit: "cover" }}
+                            />
+                            <div className={styles.gradientOverlay}></div>
+                          </div>
+                          <div className={styles.smallContent}>
+                            <div className={styles.tagSmall}>{categoryName}</div>
+                            <h4 className={styles.smallTitle}>{title}</h4>
+                            <p className={styles.metaSmall}>By {article.display_author_name} &bull; {new Date(article.published_at).toLocaleDateString(localeCode, { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
             )}
           </>
         )}
