@@ -29,7 +29,7 @@
   max-width: 1440px;
   height: 247px;
   pointer-events: none;
-  z-index: 110; // Higher than stickyNav (100) to overlap everything
+  z-index: 11; // Above sticky tabs, below the site navbar dropdown
   overflow: visible;
 
   @media (max-width: 1024px) {
@@ -85,7 +85,7 @@
   position: sticky;
   top: 72px;
   background: $white;
-  z-index: 100;
+  z-index: 10; // Below the site navbar (100+) so dropdowns stay on top
   margin-top: 32px;
   padding: 0 20px;
 

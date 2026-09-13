@@ -16,7 +16,7 @@ $nav-desktop: 1150px;
   transition: background $transition-base;
 
   @media (min-width: $nav-desktop) {
-    z-index: 100;
+    z-index: 120;
     transition: background $transition-base;
   }
 
