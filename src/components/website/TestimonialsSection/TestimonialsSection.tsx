@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { SectionHeader, Pagination, TestimonialCard } from "@/components/shared";
+import { SectionHeader, Pagination, TestimonialCard, EmptyState } from "@/components/shared";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { Testimonial } from "@/components/shared/TestimonialCard/TestimonialCard";
 import type { TestimonialData } from "@/services/testimonialsService";
 import { COUNTRIES } from "@/data/countries";
 import styles from "./TestimonialsSection.module.scss";
+
+const ITEMS_PER_PAGE = 4;
 
 export default function TestimonialsSection({
   initialTestimonials = [],
@@ -15,19 +17,27 @@ export default function TestimonialsSection({
 }) {
   const { t } = useTranslation("home");
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.max(1, Math.ceil(initialTestimonials.length / 4) || 15);
 
-  const testimonialsData: Testimonial[] = initialTestimonials.map(t => {
-    const countryEntry = COUNTRIES.find(c => c.code.toUpperCase() === (t.country || '').toUpperCase());
+  const testimonialsData: Testimonial[] = initialTestimonials.map((item) => {
+    const countryEntry = COUNTRIES.find(
+      (c) => c.code.toUpperCase() === (item.country || "").toUpperCase()
+    );
     return {
-      videoUrl: t.video_url || undefined,
-      quote: `"${t.description}"`,
-      name: t.customer_name,
-      location: countryEntry?.name || t.country,
-      countryCode: (t.country || '').toLowerCase(),
-      rating: t.rating,
+      videoUrl: item.video_url || undefined,
+      quote: `"${item.description}"`,
+      name: item.customer_name,
+      location: countryEntry?.name || item.country,
+      countryCode: (item.country || "").toLowerCase(),
+      rating: item.rating,
     };
   });
+
+  const totalPages = Math.ceil(testimonialsData.length / ITEMS_PER_PAGE);
+  const paginatedTestimonials = testimonialsData.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+  const isEmpty = testimonialsData.length === 0;
 
   return (
     <section className={styles.section}>
@@ -40,19 +50,36 @@ export default function TestimonialsSection({
           size="large"
         />
 
-        <div className={styles.cards}>
-          {testimonialsData.map((t, i) => (
-            <TestimonialCard key={i} testimonial={t} />
-          ))}
-        </div>
+        {isEmpty ? (
+          <div className={styles.empty}>
+            <EmptyState
+              title={t("testimonials.emptyTitle", "No Available Testimonials")}
+              description={t(
+                "testimonials.emptyDescription",
+                "There are no traveler stories to show right now. Check back soon."
+              )}
+              buttonText=""
+            />
+          </div>
+        ) : (
+          <>
+            <div className={styles.cards}>
+              {paginatedTestimonials.map((testimonial, i) => (
+                <TestimonialCard key={`${testimonial.name}-${i}`} testimonial={testimonial} />
+              ))}
+            </div>
 
-        <div className={styles.paginationRow}>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
-        </div>
+            {totalPages > 1 && (
+              <div className={styles.paginationRow}>
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                />
+              </div>
+            )}
+          </>
+        )}
       </div>
     </section>
   );

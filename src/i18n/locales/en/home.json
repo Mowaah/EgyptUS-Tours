@@ -158,7 +158,9 @@
   "testimonials": {
     "label": "Testimonial",
     "heading": "What Travelers Say",
-    "description": "Discover real stories, honest feedback, and memorable moments from our travelers"
+    "description": "Discover real stories, honest feedback, and memorable moments from our travelers",
+    "emptyTitle": "No Available Testimonials",
+    "emptyDescription": "There are no traveler stories to show right now. Check back soon."
   },
   "blogsSection": {
     "label": "Blogs",

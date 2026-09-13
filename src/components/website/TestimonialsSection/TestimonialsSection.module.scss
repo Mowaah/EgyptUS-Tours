@@ -12,6 +12,14 @@
   @include container;
 }
 
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+  margin-top: clamp(2rem, 5vw, #{$spacing-3xl});
+}
+
 .cards {
   display: grid;
   grid-auto-flow: column;

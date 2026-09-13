@@ -158,7 +158,9 @@
   "testimonials": {
     "label": "Testimonios",
     "heading": "Lo Que Dicen Nuestros Viajeros",
-    "description": "Descubra historias auténticas, opiniones sinceras y momentos inolvidables vividos por nuestros viajeros"
+    "description": "Descubra historias auténticas, opiniones sinceras y momentos inolvidables vividos por nuestros viajeros",
+    "emptyTitle": "No Hay Testimonios Disponibles",
+    "emptyDescription": "No hay historias de viajeros para mostrar ahora. Vuelve pronto."
   },
   "blogsSection": {
     "label": "Blogs",
