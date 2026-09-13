@@ -264,25 +264,68 @@
   line-height: 1.6;
 
   p {
+    font-size: $font-size-sm;
+    line-height: 1.6;
     margin: 0 0 16px;
+
+    @media (min-width: 640px) {
+      font-size: $font-size-base;
+      line-height: 24px;
+    }
 
     &:last-child {
       margin-bottom: 0;
     }
   }
 
-  ul, ol {
+  h2, h3, h4 {
+    margin: 24px 0 12px;
+  }
+
+  h3 {
+    font-size: $font-size-lg;
+    font-weight: 500;
+  }
+
+  ul {
+    list-style-type: disc !important;
+    list-style-position: outside !important;
     margin: 0 0 16px;
-    padding-left: 1.5rem;
+    padding-left: 1.5rem !important;
   }
 
-  li {
+  ol {
+    list-style-type: decimal !important;
+    list-style-position: outside !important;
+    margin: 0 0 16px;
+    padding-left: 1.5rem !important;
+  }
+
+  ul li, ol li {
+    display: list-item !important;
+    font-size: $font-size-sm;
+    line-height: 1.6;
     margin-bottom: 8px;
+
+    @media (min-width: 640px) {
+      font-size: $font-size-base;
+      line-height: 24px;
+    }
   }
 
-  strong {
-    color: $dark;
-    font-weight: $font-weight-semibold;
+  li > p {
+    margin: 0;
+    display: inline;
+  }
+
+  a {
+    color: $primary;
+    text-decoration: underline;
+  }
+
+  // Keep editor colors (e.g. orange labels) instead of forcing navy on bold text
+  strong, b, em, i, u {
+    color: inherit;
   }
 }
 
