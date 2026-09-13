@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { SectionHeader, PaginationArrows, Button, BlogCard } from "@/components/shared";
+import { SectionHeader, PaginationArrows, Button, BlogCard, EmptyState } from "@/components/shared";
 import { Blog } from "@/types";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -9,62 +9,18 @@ import { getBackendLocalizedArticle, getBackendLocalizedName } from "@/utils/loc
 import Image from "next/image";
 import styles from "./BlogsSection.module.scss";
 
-const BLOGS: Blog[] = [
-  {
-    id: "1",
-    category: "Destinations",
-    categoryColor: "blue",
-    title: "Egypt in Summer vs Winter: When Is the Best Time?",
-    excerpt:
-      "Lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
-    date: "03 March 2026",
-    image: "/images/home/hero-bg.png",
-  },
-  {
-    id: "2",
-    category: "Adventure",
-    categoryColor: "orange",
-    title: "7 Adventures in Egypt That'll Make You Forget Everything Else",
-    excerpt:
-      "Lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
-    date: "03 March 2026",
-    image: "/images/home/hero-bg.png",
-  },
-  {
-    id: "3",
-    category: "History",
-    categoryColor: "blue",
-    title: "The Hidden Temples of Upper Egypt You Haven't Heard Of",
-    excerpt:
-      "Lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
-    date: "10 March 2026",
-    image: "/images/home/hero-bg.png",
-  },
-  {
-    id: "4",
-    category: "Culture",
-    categoryColor: "orange",
-    title: "Egyptian Street Food: A Culinary Journey Through Cairo",
-    excerpt:
-      "Lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
-    date: "15 March 2026",
-    image: "/images/home/hero-bg.png",
-  },
-];
-
 const VISIBLE_COUNT = 2;
 
 interface BlogsSectionProps {
   blogs?: Blog[];
 }
 
-export default function BlogsSection({ blogs }: BlogsSectionProps) {
+export default function BlogsSection({ blogs = [] }: BlogsSectionProps) {
   const { t } = useTranslation("home");
   const { language } = useLanguage();
   const [startIndex, setStartIndex] = useState(0);
 
-  const rawBlogs = blogs && blogs.length > 0 ? blogs : BLOGS;
-  const displayBlogs = rawBlogs.map((b) => {
+  const displayBlogs = blogs.map((b) => {
     const loc = getBackendLocalizedArticle(b, language);
     const categoryName = getBackendLocalizedName(
       { name: b.category, translations: b.categoryTranslations },
@@ -126,26 +82,40 @@ export default function BlogsSection({ blogs }: BlogsSectionProps) {
               </Button>
             </div>
 
-            <div className={styles.nav}>
-              <PaginationArrows
-                layout="inline"
-                size={66}
-                iconWidth={32}
-                iconHeight={32}
-                onPrev={handlePrev}
-                onNext={handleNext}
-                prevDisabled={startIndex === 0}
-                nextDisabled={startIndex >= displayBlogs.length - VISIBLE_COUNT}
-              />
-            </div>
+            {displayBlogs.length > VISIBLE_COUNT && (
+              <div className={styles.nav}>
+                <PaginationArrows
+                  layout="inline"
+                  size={66}
+                  iconWidth={32}
+                  iconHeight={32}
+                  onPrev={handlePrev}
+                  onNext={handleNext}
+                  prevDisabled={startIndex === 0}
+                  nextDisabled={startIndex >= displayBlogs.length - VISIBLE_COUNT}
+                />
+              </div>
+            )}
           </div>
 
-          {/* Right column – blog cards */}
-          <div className={styles.cards}>
-            {visibleBlogs.map((blog) => (
-              <BlogCard key={blog.id} blog={blog} />
-            ))}
-          </div>
+          {displayBlogs.length === 0 ? (
+            <div className={styles.empty}>
+              <EmptyState
+                title={t("blogsSection.emptyTitle", "No Available Blogs")}
+                description={t(
+                  "blogsSection.emptyDescription",
+                  "There are no blog articles to show right now. Check back soon for new travel stories."
+                )}
+                buttonText=""
+              />
+            </div>
+          ) : (
+            <div className={styles.cards}>
+              {visibleBlogs.map((blog) => (
+                <BlogCard key={blog.id} blog={blog} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>

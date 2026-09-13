@@ -159,6 +159,8 @@
     "label": "Blogs",
     "heading": "Nuestros Últimos Blogs",
     "description": "Inspírate con nuestros últimos artículos. Te traemos lo mejor de la historia y los secretos de Egipto para ayudarte a descubrir el país..",
-    "viewAll": "Ver todos"
+    "viewAll": "Ver todos",
+    "emptyTitle": "No Hay Blogs Disponibles",
+    "emptyDescription": "No hay artículos de blog para mostrar ahora. Vuelve pronto para nuevas historias de viaje."
   }
 }
