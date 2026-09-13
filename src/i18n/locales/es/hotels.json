@@ -14,6 +14,11 @@
   "filters": "Filtros",
   "resetFilters": "Restablecer Filtros",
   "showResults": "Mostrar resultados",
+  "emptyTitle": "No Hay Hoteles Disponibles",
+  "emptyDescription": "No hay hoteles para mostrar ahora. Vuelve pronto.",
+  "noHotelsTitle": "No se Encontraron Hoteles",
+  "noHotelsDescription": "No hemos encontrado hoteles que coincidan con tu búsqueda o filtros. Prueba a ajustar tus selecciones.",
+  "viewOtherHotels": "Ver Otros Hoteles",
   "sort": {
     "recommended": "Recomendados",
     "priceLow": "Precio: De Menor a Mayor",

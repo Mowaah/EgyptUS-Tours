@@ -162,6 +162,7 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
 
     const matchesLocation =
       selectedLocation === "All Locations" ||
+      selectedLocation === t("allLocations", "All Locations") ||
       h.location.toLowerCase().includes(selectedLocation.toLowerCase());
 
     const matchesRating =
@@ -378,11 +379,23 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
                   />
                 </div>
               </>
+            ) : hotels.length === 0 ? (
+              <EmptyState
+                title={t("emptyTitle", "No Available Hotels")}
+                description={t(
+                  "emptyDescription",
+                  "There are no hotels to show right now. Check back soon."
+                )}
+                buttonText=""
+              />
             ) : (
               <EmptyState
-                title="Hotel Not Available"
-                description="Sorry, this hotel is currently unavailable. Please explore other hotels or try different dates."
-                buttonText="View Other Hotels"
+                title={t("noHotelsTitle", "No Hotels Found")}
+                description={t(
+                  "noHotelsDescription",
+                  "We couldn't find any hotels matching your search or filters. Try adjusting your selections."
+                )}
+                buttonText={t("viewOtherHotels", "View Other Hotels")}
                 onButtonClick={handleResetSearch}
               />
             )}

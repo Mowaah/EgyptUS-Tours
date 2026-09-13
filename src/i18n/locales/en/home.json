@@ -58,7 +58,12 @@
     "sortRecommended": "Recommended",
     "sortPriceLow": "Price: Low to High",
     "sortPriceHigh": "Price: High to Low",
-    "sortRating": "Rating"
+    "sortRating": "Rating",
+    "emptyTitle": "No Available Hotels",
+    "emptyDescription": "There are no hotels to show right now. Check back soon.",
+    "noHotelsTitle": "No Hotels Found",
+    "noHotelsInLocation": "We couldn't find any hotels in {location}. Try another location.",
+    "clearFilter": "Clear Filter"
   },
   "desert": {
     "label": "Desert",

@@ -14,6 +14,11 @@
   "filters": "Filters",
   "resetFilters": "Reset Filters",
   "showResults": "Show results",
+  "emptyTitle": "No Available Hotels",
+  "emptyDescription": "There are no hotels to show right now. Check back soon.",
+  "noHotelsTitle": "No Hotels Found",
+  "noHotelsDescription": "We couldn't find any hotels matching your search or filters. Try adjusting your selections.",
+  "viewOtherHotels": "View Other Hotels",
   "sort": {
     "recommended": "Recommended",
     "priceLow": "Price: Low to High",

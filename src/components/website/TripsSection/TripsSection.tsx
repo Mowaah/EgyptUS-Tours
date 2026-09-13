@@ -379,8 +379,21 @@ export default function TripsSection({
     );
   };
 
+  const listingTrips = trips.filter((trip) =>
+    isDesert ? hasDesertCategory(trip.tags) : !hasDesertCategory(trip.tags)
+  );
+  const catalogEmpty = listingTrips.length === 0;
+
   const handleResetSearch = () => {
     setSearchQuery("");
+    setDurationFilter("any");
+    setOffersFilter("any");
+    setActiveCategoryIndex(0);
+    setExpanded((prev) => ({
+      ...prev,
+      priceRange: { min: 0, max: maxPriceLimit },
+    }));
+    setCurrentPage(1);
   };
 
   const toggleFilter = (key: "duration" | "offers" | "price") => {
@@ -699,8 +712,25 @@ export default function TripsSection({
                   />
                 </div>
               </>
+            ) : catalogEmpty ? (
+              <EmptyState
+                title={t("emptyTitle", "No Available Trips")}
+                description={t(
+                  "emptyDescription",
+                  "There are no trips to show right now. Check back soon for new journeys."
+                )}
+                buttonText=""
+              />
             ) : (
-              <EmptyState onButtonClick={handleResetSearch} />
+              <EmptyState
+                title={t("noTripsFound", "No Trips Found")}
+                description={t(
+                  "noTripsDescription",
+                  "We couldn't find any trips matching your search or filters. Try adjusting your selections."
+                )}
+                buttonText={t("viewAvailableTrips", "View Available Trips")}
+                onButtonClick={handleResetSearch}
+              />
             )}
           </div>
         </div>

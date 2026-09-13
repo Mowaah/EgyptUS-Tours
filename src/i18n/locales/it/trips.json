@@ -22,6 +22,10 @@
   "showResults": "Mostra risultati",
   "resetFilters": "Reimposta Filtri",
   "noTripsFound": "Nessun Viaggio Trovato",
+  "noTripsDescription": "Non abbiamo trovato viaggi corrispondenti alla ricerca o ai filtri. Prova a modificare le selezioni.",
+  "emptyTitle": "Nessun Viaggio Disponibile",
+  "emptyDescription": "Non ci sono viaggi da mostrare in questo momento. Torna presto per nuove esperienze.",
+  "viewAvailableTrips": "Visualizza i Viaggi Disponibili",
   "sort": {
     "recommended": "Consigliati",
     "priceLow": "Prezzo: Dal Basso all'Alto",

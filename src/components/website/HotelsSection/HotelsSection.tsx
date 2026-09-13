@@ -121,12 +121,27 @@ export default function HotelsSection({ initialHotels = [] }: { initialHotels?: 
             ))
           ) : (
             <div style={{ width: "100%", padding: "20px 0" }}>
-              <EmptyState 
-                title="No Hotels Found" 
-                description={`We couldn't find any hotels in ${activeLocation}. Try another location.`} 
-                buttonText="Clear Filter"
-                onButtonClick={() => setActiveTab(0)}
-              />
+              {hotels.length === 0 ? (
+                <EmptyState
+                  title={t("hotels.emptyTitle", "No Available Hotels")}
+                  description={t(
+                    "hotels.emptyDescription",
+                    "There are no hotels to show right now. Check back soon."
+                  )}
+                  buttonText=""
+                />
+              ) : (
+                <EmptyState
+                  title={t("hotels.noHotelsTitle", "No Hotels Found")}
+                  description={t(
+                    "hotels.noHotelsInLocation",
+                    `We couldn't find any hotels in ${activeLocation}. Try another location.`,
+                    { location: activeLocation }
+                  )}
+                  buttonText={t("hotels.clearFilter", "Clear Filter")}
+                  onButtonClick={() => setActiveTab(0)}
+                />
+              )}
             </div>
           )}
         </div>

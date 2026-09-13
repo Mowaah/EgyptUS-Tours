@@ -30,6 +30,11 @@
     "vehiclesFound": "{count} Vehicles Found",
     "searchPlaceholder": "Search vehicles..."
   },
+  "emptyTitle": "No Available Vehicles",
+  "emptyDescription": "There are no vehicles to show right now. Check back soon.",
+  "noVehiclesTitle": "No Vehicles Found",
+  "noVehiclesDescription": "We couldn't find any vehicles matching your search or category filter. Try adjusting your selections.",
+  "viewAvailableCars": "View Available Cars",
   "sort": {
     "recommended": "Recommended",
     "priceLow": "Price: Low to High",

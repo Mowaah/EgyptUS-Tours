@@ -30,6 +30,11 @@
     "vehiclesFound": "{count} Veicoli Trovati",
     "searchPlaceholder": "Cerca veicoli..."
   },
+  "emptyTitle": "Nessun Veicolo Disponibile",
+  "emptyDescription": "Non ci sono veicoli da mostrare in questo momento. Torna presto.",
+  "noVehiclesTitle": "Nessun Veicolo Trovato",
+  "noVehiclesDescription": "Non abbiamo trovato veicoli corrispondenti alla ricerca o al filtro di categoria. Prova a modificare le selezioni.",
+  "viewAvailableCars": "Visualizza le Auto Disponibili",
   "sort": {
     "recommended": "Consigliati",
     "priceLow": "Prezzo: Dal Basso all'Alto",

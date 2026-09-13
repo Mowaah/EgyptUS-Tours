@@ -58,7 +58,12 @@
     "sortRecommended": "Recomendados",
     "sortPriceLow": "Precio: de menor a mayor",
     "sortPriceHigh": "Precio: de mayor a menor",
-    "sortRating": "Calificación"
+    "sortRating": "Calificación",
+    "emptyTitle": "No Hay Hoteles Disponibles",
+    "emptyDescription": "No hay hoteles para mostrar ahora. Vuelve pronto.",
+    "noHotelsTitle": "No se Encontraron Hoteles",
+    "noHotelsInLocation": "No hemos encontrado hoteles en {location}. Prueba otra ubicación.",
+    "clearFilter": "Limpiar Filtro"
   },
   "desert": {
     "label": "Desierto",

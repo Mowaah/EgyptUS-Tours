@@ -249,11 +249,23 @@ export default function TransportationPage({ vehicles, faqs }: TransportationPag
                 </div>
               )}
             </>
+          ) : vehicles.length === 0 ? (
+            <EmptyState
+              title={t("emptyTitle", "No Available Vehicles")}
+              description={t(
+                "emptyDescription",
+                "There are no vehicles to show right now. Check back soon."
+              )}
+              buttonText=""
+            />
           ) : (
             <EmptyState
-              title="No Vehicles Found"
-              description="We couldn't find any vehicles matching your search or category filter. Try adjusting your selections."
-              buttonText="View Available Cars"
+              title={t("noVehiclesTitle", "No Vehicles Found")}
+              description={t(
+                "noVehiclesDescription",
+                "We couldn't find any vehicles matching your search or category filter. Try adjusting your selections."
+              )}
+              buttonText={t("viewAvailableCars", "View Available Cars")}
               onButtonClick={() => {
                 setActiveTab(0);
                 setSearchQuery("");
