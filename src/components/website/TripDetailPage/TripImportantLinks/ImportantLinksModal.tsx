@@ -5,23 +5,22 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { PolicyId } from "./policyModalTypes";
-import { getTerms, getPrivacy, type LegalSectionData } from "@/services/legalHelpService";
+import { fetchLegalTabs, type LegalTab } from "./legalTabs";
 import styles from "./ImportantLinksModal.module.scss";
 
 interface ImportantLinksModalProps {
   open: boolean;
   initialTab?: PolicyId;
+  initialTabKey?: string;
   onClose: () => void;
 }
 
-/** Flat tab built from a backend section */
-interface LegalTab {
-  key: string; // unique key e.g. "terms-1"
-  label: string;
-  content: string;
-}
-
-export default function ImportantLinksModal({ open, initialTab = "terms", onClose }: ImportantLinksModalProps) {
+export default function ImportantLinksModal({
+  open,
+  initialTab = "terms",
+  initialTabKey,
+  onClose,
+}: ImportantLinksModalProps) {
   const { t, language } = useTranslation("legal");
 
   const [tabs, setTabs] = useState<LegalTab[]>([]);
@@ -40,34 +39,24 @@ export default function ImportantLinksModal({ open, initialTab = "terms", onClos
     setTabs([]);
     setActiveKey("");
 
-    Promise.all([getTerms(language), getPrivacy(language)])
-      .then(([termsData, privacyData]) => {
+    fetchLegalTabs(language)
+      .then((allTabs) => {
         if (cancelled) return;
 
-        const termsTabs: LegalTab[] = termsData.map((s: LegalSectionData) => ({
-          key: `terms-${s.id}`,
-          label: s.title,
-          content: s.content,
-        }));
-
-        const privacyTabs: LegalTab[] = privacyData.map((s: LegalSectionData) => ({
-          key: `privacy-${s.id}`,
-          label: s.title,
-          content: s.content,
-        }));
-
-        const allTabs = [...termsTabs, ...privacyTabs];
         setTabs(allTabs);
 
-        // Pick initial active tab based on initialTab hint
         if (allTabs.length > 0) {
-          if (initialTab === "privacy" || initialTab === "booking" || initialTab === "children") {
-            // Try to open first privacy tab
-            const firstPrivacy = privacyTabs[0];
+          const matchingKey = initialTabKey
+            ? allTabs.find((tab) => tab.key === initialTabKey)?.key
+            : undefined;
+
+          if (matchingKey) {
+            setActiveKey(matchingKey);
+          } else if (initialTab === "privacy" || initialTab === "booking" || initialTab === "children") {
+            const firstPrivacy = allTabs.find((tab) => tab.key.startsWith("privacy-"));
             setActiveKey(firstPrivacy ? firstPrivacy.key : allTabs[0].key);
           } else {
-            // Default: first terms tab
-            const firstTerms = termsTabs[0];
+            const firstTerms = allTabs.find((tab) => tab.key.startsWith("terms-"));
             setActiveKey(firstTerms ? firstTerms.key : allTabs[0].key);
           }
         }
@@ -82,7 +71,7 @@ export default function ImportantLinksModal({ open, initialTab = "terms", onClos
     return () => {
       cancelled = true;
     };
-  }, [open, language, initialTab]);
+  }, [open, language, initialTab, initialTabKey]);
 
   // Close on Escape
   useEffect(() => {

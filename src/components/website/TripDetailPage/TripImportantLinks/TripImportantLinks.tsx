@@ -1,29 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Trip } from "@/types";
 import { useTranslation } from "@/hooks/useTranslation";
 
 import ImportantLinksModal from "./ImportantLinksModal";
-import { getPolicyIdFromLink } from "./getPolicyIdFromLink";
-import type { PolicyId } from "./policyModalTypes";
+import { fetchLegalTabs } from "./legalTabs";
 import styles from "./TripImportantLinks.module.scss";
 
-interface Props {
-  trip: Trip;
-}
-
-export default function TripImportantLinks({ trip }: Props) {
-  const { t } = useTranslation("trips");
-  const links = trip.importantLinks ?? [];
+export default function TripImportantLinks() {
+  const { t, language } = useTranslation("trips");
+  const [tabs, setTabs] = useState<Array<{ key: string; label: string }>>([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [initialTab, setInitialTab] = useState<PolicyId>("terms");
+  const [initialTabKey, setInitialTabKey] = useState<string | undefined>();
 
-  if (!links.length) return null;
+  useEffect(() => {
+    let cancelled = false;
 
-  const openModal = (link: { label: string; href: string }) => {
-    setInitialTab(getPolicyIdFromLink(link));
+    fetchLegalTabs(language)
+      .then((legalTabs) => {
+        if (cancelled) return;
+        setTabs(legalTabs.map(({ key, label }) => ({ key, label })));
+      })
+      .catch((err) => {
+        console.error("Failed to load legal content:", err);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [language]);
+
+  if (!tabs.length) return null;
+
+  const openModal = (tabKey: string) => {
+    setInitialTabKey(tabKey);
     setModalOpen(true);
   };
 
@@ -41,14 +52,14 @@ export default function TripImportantLinks({ trip }: Props) {
         </p>
 
         <div className={styles.pills}>
-          {links.map((link, i) => (
+          {tabs.map((tab) => (
             <button
-              key={`${link.href}-${i}`}
+              key={tab.key}
               type="button"
               className={styles.pill}
-              onClick={() => openModal(link)}
+              onClick={() => openModal(tab.key)}
             >
-              {link.label}
+              {tab.label}
               <Image
                 src="/images/arrows/arrow-diagonal.svg"
                 alt=""
@@ -62,7 +73,11 @@ export default function TripImportantLinks({ trip }: Props) {
         </div>
       </section>
 
-      <ImportantLinksModal open={modalOpen} initialTab={initialTab} onClose={() => setModalOpen(false)} />
+      <ImportantLinksModal
+        open={modalOpen}
+        initialTabKey={initialTabKey}
+        onClose={() => setModalOpen(false)}
+      />
     </>
   );
 }

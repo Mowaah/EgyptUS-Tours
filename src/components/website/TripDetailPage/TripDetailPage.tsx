@@ -221,7 +221,7 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
 
       {/* ── Important Links ── */}
       <div className={styles.container}>
-        <TripImportantLinks trip={trip} />
+        <TripImportantLinks />
       </div>
 
       {/* ── VIP Experiences (hidden) ──
