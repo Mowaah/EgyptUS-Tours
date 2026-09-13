@@ -8,6 +8,7 @@ import DashboardField from "@/components/dashboard/shared/DashboardField/Dashboa
 import { DASHBOARD_CURRENCY } from "@/constants/currency";
 import rootStyles from "./RequestModals.module.scss";
 import styles from "./ApproveRequestModal.module.scss";
+import { formatDateToYMD } from "@/utils/dateFormat";
 
 interface ApproveRequestModalProps {
   open: boolean;
@@ -30,22 +31,6 @@ const formatDateToMDY = (dateString?: string) => {
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const dd = String(d.getDate()).padStart(2, "0");
   return `${mm}/${dd}/${yyyy}`;
-};
-
-const formatDateToYMD = (dateString?: string) => {
-  if (!dateString) return undefined;
-  if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString;
-  const parts = dateString.split("/");
-  if (parts.length === 3) {
-    const [mm, dd, yyyy] = parts;
-    return `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
-  }
-  const d = new Date(dateString);
-  if (isNaN(d.getTime())) return dateString;
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
 };
 
 export default function ApproveRequestModal({

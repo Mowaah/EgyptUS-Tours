@@ -528,7 +528,7 @@ export default function ProfileRequestDetailsPage() {
                         reference: undefined,
                       }}
                       receipt={isRefunded ? (data as any)?.refund_receipt : undefined}
-                      reason={isRefunded ? (data as any)?.reason : undefined}
+                      reason={isRefundInProgress ? (data as any)?.reason : undefined}
                     />
                   )}
                 </div>

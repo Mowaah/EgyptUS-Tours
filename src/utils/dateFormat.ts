@@ -177,3 +177,47 @@ export function formatDateRange(
   return `${sStr} – ${eStr}`;
 }
 
+/**
+ * Formats a given date into "YYYY-MM-DD" for backend APIs / submission.
+ * Timezone-safe: never shifts dates backward or forward due to UTC offsets.
+ *
+ * @param value The date input (string, Date, null, or undefined)
+ * @param fallback Fallback string if missing or invalid (defaults to "")
+ * @returns Date string in "YYYY-MM-DD" or fallback
+ */
+export function formatDateToYMD(
+  value?: string | Date | null,
+  fallback: string = ""
+): string {
+  if (!value) return fallback;
+
+  if (value instanceof Date) {
+    if (isNaN(value.getTime())) return fallback;
+    const yyyy = value.getFullYear();
+    const mm = String(value.getMonth() + 1).padStart(2, "0");
+    const dd = String(value.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  const str = String(value).trim();
+  if (!str || str === "—" || str === "-") return fallback;
+
+  // 1. Already YYYY-MM-DD or ISO timestamp (e.g. "2026-10-10" or "2026-10-10T00:00:00Z")
+  const ymdMatch = str.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+  if (ymdMatch) {
+    const [, y, m, d] = ymdMatch;
+    return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+  }
+
+  // 2. Parse using timezone-safe parseDate
+  const parsed = parseDate(str);
+  if (parsed && !isNaN(parsed.getTime())) {
+    const yyyy = parsed.getFullYear();
+    const mm = String(parsed.getMonth() + 1).padStart(2, "0");
+    const dd = String(parsed.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  return fallback;
+}
+

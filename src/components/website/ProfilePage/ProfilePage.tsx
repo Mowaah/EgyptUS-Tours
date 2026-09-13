@@ -431,8 +431,8 @@ export default function ProfilePage() {
               mappedDetails = {
                 tripName: d.trip_name || bk.title || "",
                 destination: d.destination || bk.destination || "",
-                departureDate: d.departure_date || "",
-                returnDate: d.return_date || "",
+                departureDate: d.departure_date || bk.departure_date || d.start_date || bk.start_date || "",
+                returnDate: d.return_date || bk.return_date || d.end_date || bk.end_date || "",
                 travelType,
                 durationLabel: d.duration_label || "",
                 roomType: d.room_type || "",
@@ -488,8 +488,8 @@ export default function ProfilePage() {
               }
 
               mappedDetails = {
-                checkIn: d.check_in || "",
-                checkOut: d.check_out || "",
+                checkIn: d.check_in || bk.check_in_date || bk.check_in || bk.start_date || "",
+                checkOut: d.check_out || bk.check_out_date || bk.check_out || bk.end_date || "",
                 nights: d.nights || "",
                 roomType: resolvedRoomType,
                 roomExtraCount,
@@ -500,7 +500,7 @@ export default function ProfilePage() {
               mappedDetails = {
                 pickupLocation: d.pickup_location || bk.pickup_location || "",
                 dropoffLocation: d.dropoff_location || bk.dropoff_location || "",
-                pickupDate: d.pickup_date || bk.pickup_date || "",
+                pickupDate: d.pickup_date || bk.pickup_date || bk.start_date || "",
                 pickupTime: d.pickup_time || bk.pickup_time || "",
                 durationLabel: d.duration_label || "",
                 passengersLabel: d.passengers_label || (bk.passengers ? `${bk.passengers} Passengers` : ""),

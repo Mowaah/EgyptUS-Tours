@@ -5,7 +5,7 @@ import { AddTripBookingData } from "../../AddTripBookingModal";
 import { previewTripBooking } from "@/services/admin/adminBookingsService";
 import { DASHBOARD_CURRENCY } from "@/constants/currency";
 import { resolveApplicableSeason } from "@/utils/bookingPricing";
-import { formatDateDDMMYYYY } from "@/utils/dateFormat";
+import { formatDateDDMMYYYY, parseDate, formatDateToYMD } from "@/utils/dateFormat";
 import useSWR from "swr";
 
 interface StepBookingSummaryProps {
@@ -21,18 +21,6 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
   const [error, setError] = useState("");
 
   const activePreview = propPreviewData || localPreviewData;
-
-
-
-  const formatDateToYMD = (dateString?: string) => {
-    if (!dateString) return null;
-    const d = new Date(dateString);
-    if (isNaN(d.getTime())) return dateString;
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-    const dd = String(d.getDate()).padStart(2, "0");
-    return `${yyyy}-${mm}-${dd}`;
-  };
 
   useEffect(() => {
     if (!formData || !formData.tripId) return;
@@ -63,11 +51,11 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
 
     let nights = 1;
     if (formData.startDate && formData.endDate) {
-      const start = new Date(formData.startDate);
-      const end = new Date(formData.endDate);
-      if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+      const start = parseDate(formData.startDate);
+      const end = parseDate(formData.endDate);
+      if (start && end && !isNaN(start.getTime()) && !isNaN(end.getTime())) {
         const diffTime = Math.abs(end.getTime() - start.getTime());
-        nights = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+        nights = Math.max(1, Math.round(diffTime / (1000 * 60 * 60 * 24)));
       }
     }
 
@@ -167,11 +155,11 @@ export default function StepBookingSummary({ formData, previewData: propPreviewD
 
   let nights = 0;
   if (formData && formData.startDate && formData.endDate) {
-    const start = new Date(formData.startDate);
-    const end = new Date(formData.endDate);
-    if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+    const start = parseDate(formData.startDate);
+    const end = parseDate(formData.endDate);
+    if (start && end && !isNaN(start.getTime()) && !isNaN(end.getTime())) {
       const diffTime = Math.abs(end.getTime() - start.getTime());
-      nights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      nights = Math.round(diffTime / (1000 * 60 * 60 * 24));
     }
   }
   const days = nights + 1;

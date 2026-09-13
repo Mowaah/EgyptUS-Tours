@@ -4,7 +4,7 @@ import styles from "./StepBookingSummary.module.scss";
 import { DASHBOARD_CURRENCY, formatPrice } from "@/constants/currency";
 import { AddHotelBookingData } from "../../AddHotelBookingModal";
 import { previewHotelBooking } from "@/services/admin/adminBookingsService";
-import { formatDateDDMMYYYY } from "@/utils/dateFormat";
+import { formatDateDDMMYYYY, formatDateToYMD } from "@/utils/dateFormat";
 
 
 interface StepBookingSummaryProps {
@@ -17,15 +17,7 @@ export default function StepBookingSummary({ formData, onSummaryLoad }: StepBook
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const formatDateToYMD = (dateString: string) => {
-    if (!dateString) return dateString;
-    const d = new Date(dateString);
-    if (isNaN(d.getTime())) return dateString;
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-    const dd = String(d.getDate()).padStart(2, "0");
-    return `${yyyy}-${mm}-${dd}`;
-  };
+
 
   useEffect(() => {
     if (!formData || !formData.specificHotel) return;

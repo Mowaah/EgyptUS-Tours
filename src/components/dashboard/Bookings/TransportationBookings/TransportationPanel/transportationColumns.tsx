@@ -1,6 +1,7 @@
 import type { DataTableColumn } from "@/components/dashboard/DataTable";
 import type { TransportationBookingRow } from "../types";
 import styles from "./TransportationPanel.module.scss";
+import { parseDate } from "@/utils/dateFormat";
 
 import Image from "next/image";
 
@@ -30,7 +31,10 @@ export const getPillStyle = (status: string) => {
 
 const formatDateTime = (dateStr: string, timeStr: string) => {
   if (!dateStr) return "-";
-  const date = new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  const parsed = parseDate(dateStr);
+  const date = parsed
+    ? parsed.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+    : dateStr;
   if (!timeStr) return date;
   return `${date} / ${timeStr.slice(0, 5)}`;
 };

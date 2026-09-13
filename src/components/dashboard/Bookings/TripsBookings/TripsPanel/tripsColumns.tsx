@@ -1,6 +1,7 @@
 import type { DataTableColumn } from "@/components/dashboard/DataTable";
 import type { TripBookingRow } from "../types";
 import styles from "./TripsPanel.module.scss";
+import { formatDateRange } from "@/utils/dateFormat";
 
 import Image from "next/image";
 
@@ -39,14 +40,6 @@ const getImageUrl = (path?: string | null) => {
   if (path.startsWith("http")) return path;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
   return `${apiUrl}${path}`;
-};
-
-const formatDateRange = (start: string, end: string) => {
-  if (!start) return "-";
-  const sDate = new Date(start).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-  if (!end) return sDate;
-  const eDate = new Date(end).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-  return `${sDate} - ${eDate}`;
 };
 
 export const tripsColumns: DataTableColumn<TripBookingRow>[] = [

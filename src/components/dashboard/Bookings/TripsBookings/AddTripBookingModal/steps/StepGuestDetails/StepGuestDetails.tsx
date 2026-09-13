@@ -2,6 +2,7 @@ import { CustomDatePicker, CounterPill, NationalitySelect, SelectDropdown } from
 import { DashboardField, DashboardPhoneField } from "@/components/dashboard/shared";
 import Image from "next/image";
 import { AddTripBookingData } from "../../AddTripBookingModal";
+import { parseDate } from "@/utils/dateFormat";
 
 import styles from "./StepGuestDetails.module.scss";
 
@@ -86,10 +87,12 @@ export default function StepGuestDetails({ formData, onChange, errors = {}, hasF
               onChange={(date) => {
                 onChange({ startDate: date });
                 if (date && durationDays) {
-                  const d = new Date(date);
-                  d.setDate(d.getDate() + durationDays - 1);
-                  const endStr = `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}/${d.getFullYear()}`;
-                  onChange({ startDate: date, endDate: endStr });
+                  const d = parseDate(date);
+                  if (d) {
+                    d.setDate(d.getDate() + durationDays - 1);
+                    const endStr = `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}/${d.getFullYear()}`;
+                    onChange({ startDate: date, endDate: endStr });
+                  }
                 }
               }}
               renderTrigger={(isOpen, setIsOpen, displayTxt) => (

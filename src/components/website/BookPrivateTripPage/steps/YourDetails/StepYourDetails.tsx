@@ -22,6 +22,7 @@ import { isValidEmail, isValidPhone } from "@/utils/validators";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { getRoomSubtitle, ROOM_TYPE_CHILD_CAPACITY, resolveApplicableSeason, normalizeRoomType } from "@/utils/bookingPricing";
+import { parseDate } from "@/utils/dateFormat";
 
 interface StepYourDetailsProps {
   trip: Trip;
@@ -552,9 +553,14 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
                   onChange={(date) => {
                     const updates: Partial<BookingData> = { startDate: date };
                     if (date && trip?.duration?.days) {
-                      const d = new Date(date);
-                      d.setDate(d.getDate() + trip.duration.days);
-                      updates.endDate = d.toISOString().split("T")[0];
+                      const d = parseDate(date);
+                      if (d) {
+                        d.setDate(d.getDate() + trip.duration.days - 1);
+                        const yyyy = d.getFullYear();
+                        const mm = String(d.getMonth() + 1).padStart(2, "0");
+                        const dd = String(d.getDate()).padStart(2, "0");
+                        updates.endDate = `${yyyy}-${mm}-${dd}`;
+                      }
                     }
                     onChange(updates);
                   }}

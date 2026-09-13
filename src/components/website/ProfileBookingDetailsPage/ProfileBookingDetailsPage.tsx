@@ -1124,7 +1124,7 @@ export default function ProfileBookingDetailsPage() {
                         reference: undefined,
                       }}
                       receipt={isRefunded ? bData.refund_receipt : undefined}
-                      reason={isRefunded ? bData.reason : undefined}
+                      reason={isRefundInProgress ? bData.reason : undefined}
                       currency={bookingCurrency}
                     />
                   )}

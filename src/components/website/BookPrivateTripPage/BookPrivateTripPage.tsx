@@ -13,6 +13,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { MultiCurrencyPrice } from "@/constants/currency";
 import { calculateTripBookingPrice } from "@/utils/bookingPricing";
 import { savePendingGuestRecord } from "@/utils/guestBookingAuth";
+import { formatDateToYMD } from "@/utils/dateFormat";
 
 import planPageStyles from "../PlanYourTripPage/PlanYourTripPage.module.scss";
 
@@ -36,17 +37,6 @@ interface SavedTripBookingInfo {
   totalAmount?: number;
   depositAmount?: number;
   timestamp?: number;
-}
-
-function formatDateForBooking(dateStr?: string) {
-  if (!dateStr) return null;
-  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
-  const parts = dateStr.split("/");
-  if (parts.length === 3) {
-    const [month, day, year] = parts;
-    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-  }
-  return dateStr;
 }
 
 function resolvePaymentUrl(paymentUrl: string) {
@@ -232,8 +222,8 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
         email: formData.email.trim(),
         phone: formatPhoneE164(formData.phone),
         nationality: formData.nationality,
-        start_date: formatDateForBooking(formData.startDate),
-        end_date: formatDateForBooking(formData.endDate),
+        start_date: formatDateToYMD(formData.startDate),
+        end_date: formatDateToYMD(formData.endDate),
         adults: formData.adults,
         children: formData.children,
         infants: formData.infants,

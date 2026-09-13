@@ -9,7 +9,7 @@ import { MultiCurrencyPrice } from "@/constants/currency";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { calculateTripBookingPrice, calculateHotelBookingPrice, CHILD_POLICY, normalizeRoomType, resolveApplicableSeason } from "@/utils/bookingPricing";
-import { formatDateDDMMYYYY } from "@/utils/dateFormat";
+import { formatDateDDMMYYYY, parseDate } from "@/utils/dateFormat";
 import styles from "./BookingSidebar.module.scss";
 
 interface BookingSidebarProps {
@@ -180,9 +180,10 @@ export default function BookingSidebar({
   // Night count for hotel
   const nights = (() => {
     if (!isHotel || !formData.startDate || !formData.endDate) return 1;
-    const diff = Math.round(
-      (new Date(formData.endDate).getTime() - new Date(formData.startDate).getTime()) / 86400000
-    );
+    const s = parseDate(formData.startDate);
+    const e = parseDate(formData.endDate);
+    if (!s || !e || isNaN(s.getTime()) || isNaN(e.getTime())) return 1;
+    const diff = Math.round((e.getTime() - s.getTime()) / 86400000);
     return diff > 0 ? diff : 1;
   })();
 

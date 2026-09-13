@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { formatDateToYMD } from "@/utils/dateFormat";
 
 // The base URL defaults to the NEXT_PUBLIC_API_URL environment variable
 // Example: http://127.0.0.1:8000
@@ -203,18 +204,7 @@ export async function getDestinations(params?: Record<string, any>): Promise<any
 
 
 export function formatDateForBackend(dateStr: string) {
-  if (!dateStr) return null;
-  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
-  const parts = dateStr.split('/');
-  if (parts.length === 3) {
-    const [month, day, year] = parts;
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-  }
-  const d = new Date(dateStr);
-  if (!isNaN(d.getTime())) {
-    return d.toISOString().split('T')[0];
-  }
-  return dateStr;
+  return formatDateToYMD(dateStr);
 }
 
 export async function createCustomTripRequest(tripData: any): Promise<any> {

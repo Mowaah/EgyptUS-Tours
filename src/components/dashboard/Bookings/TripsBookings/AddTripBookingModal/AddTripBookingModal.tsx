@@ -19,6 +19,7 @@ import PaymentStep from "@/components/dashboard/shared/PaymentStep/PaymentStep";
 import BookingModalContainer from "../../shared/BookingModalContainer/BookingModalContainer";
 import { isValidEmail, isValidPhone } from "@/utils/validators";
 import { ROOM_TYPE_CHILD_CAPACITY } from "@/utils/bookingPricing";
+import { parseDate, formatDateToYMD } from "@/utils/dateFormat";
 import { BaseGuestDetails } from "../../shared/types";
 
 interface AddTripBookingModalProps {
@@ -150,16 +151,6 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
 
   const amountPaid = paymentPlan === "deposit" ? total * 0.3 : total;
 
-  const formatDateToYMD = (dateString?: string) => {
-    if (!dateString) return null;
-    const d = new Date(dateString);
-    if (isNaN(d.getTime())) return dateString;
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-    const dd = String(d.getDate()).padStart(2, "0");
-    return `${yyyy}-${mm}-${dd}`;
-  };
-
   const hasFixedAvailability = Boolean(
     tripDetail?.availability && tripDetail.availability.length > 0
   );
@@ -211,11 +202,13 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
       if (hasFixedAvailability) {
         if (!formData.departureDateId) newErrors.departureDateId = "Departure date is required";
       } else if (tripDetail?.duration?.days && formData.startDate) {
-        const d = new Date(formData.startDate);
-        d.setDate(d.getDate() + tripDetail.duration.days - 1);
-        const endStr = `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}/${d.getFullYear()}`;
-        if (formData.endDate !== endStr) {
-          setFormData((prev) => ({ ...prev, endDate: endStr }));
+        const d = parseDate(formData.startDate);
+        if (d) {
+          d.setDate(d.getDate() + tripDetail.duration.days - 1);
+          const endStr = `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}/${d.getFullYear()}`;
+          if (formData.endDate !== endStr) {
+            setFormData((prev) => ({ ...prev, endDate: endStr }));
+          }
         }
       }
 
