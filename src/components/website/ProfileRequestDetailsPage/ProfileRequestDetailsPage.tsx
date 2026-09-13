@@ -521,9 +521,14 @@ export default function ProfileRequestDetailsPage() {
                   )}
                   {hasSummaryData && (
                     <RefundSummaryCard
-                      data={refundSummaryData}
-                      receipt={(data as any)?.refund_receipt}
-                      reason={(data as any)?.reason}
+                      data={{
+                        ...refundSummaryData,
+                        // Only expose admin-filled transaction reference when fully refunded
+                        transaction_reference: isRefunded ? (refundSummaryData.transaction_reference || refundSummaryData.reference) : undefined,
+                        reference: undefined,
+                      }}
+                      receipt={isRefunded ? (data as any)?.refund_receipt : undefined}
+                      reason={isRefunded ? (data as any)?.reason : undefined}
                     />
                   )}
                 </div>

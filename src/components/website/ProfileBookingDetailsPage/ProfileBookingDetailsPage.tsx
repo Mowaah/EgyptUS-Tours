@@ -1119,9 +1119,12 @@ export default function ProfileBookingDetailsPage() {
                       data={{
                         ...refundSummaryData,
                         paid_to_date: refundSummaryData.paid_to_date ?? (paidAmount > 0 ? paidAmount : undefined),
+                        // Only expose admin-filled transaction reference when fully refunded
+                        transaction_reference: isRefunded ? (refundSummaryData.transaction_reference || refundSummaryData.reference) : undefined,
+                        reference: undefined,
                       }}
-                      receipt={bData.refund_receipt}
-                      reason={bData.reason}
+                      receipt={isRefunded ? bData.refund_receipt : undefined}
+                      reason={isRefunded ? bData.reason : undefined}
                       currency={bookingCurrency}
                     />
                   )}
