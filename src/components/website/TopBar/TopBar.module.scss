@@ -8,7 +8,8 @@
   color: $white;
   font-size: $font-size-2xs;
   position: relative;
-  z-index: 105;
+  z-index: 130;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -175,7 +176,7 @@
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   padding: 4px;
-  z-index: 100;
+  z-index: 131;
   display: flex;
   flex-direction: column;
   width: max-content;
