@@ -144,7 +144,7 @@ export default function RefundPaymentModal({ open, onClose, onSubmit, refundSumm
           {isRefundable && (
             <>
               <DashboardField
-                label="Transaction Reference"
+                label={<>Transaction Reference <span className={styles.requiredStar}>*</span></>}
                 variant="modal"
                 required
                 id="txn-ref"

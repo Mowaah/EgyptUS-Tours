@@ -28,7 +28,7 @@
   padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
   overflow-y: auto;
 }
 
@@ -39,18 +39,17 @@
 }
 
 .fieldLabel {
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: $font-size-base;
-  line-height: 20px;
-  color: #475467;
+  font-family: 'Trip Sans', sans-serif;
+  font-weight: 500;
+  font-size: $font-size-sm;
+  line-height: 19px;
+  color: $gray-600;
 }
 
 .summarySection {
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-bottom: 24px;
 }
 
 .summaryRow {
@@ -66,14 +65,18 @@
 }
 
 .summaryLabel {
+  font-family: 'Urbanist', sans-serif;
   color: $gray-400-zinc;
   font-size: $font-size-sm;
+  line-height: 17px;
   font-weight: 500;
 }
 
 .summaryValue {
+  font-family: 'Trip Sans', sans-serif;
   color: $gray-700;
   font-size: $font-size-base;
+  line-height: 22px;
   font-weight: 500;
 }
 
@@ -86,12 +89,14 @@
   justify-content: center;
 
   span {
+    font-family: 'Trip Sans', sans-serif;
     color: $secondary;
     font-size: $font-size-base;
+    line-height: 22px;
     font-weight: 500;
   }
 }
 
 .requiredStar {
-  color: $danger;
+  color: inherit;
 }
