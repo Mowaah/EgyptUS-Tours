@@ -29,10 +29,36 @@ const VIEW_CONFIG = [
 export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
   const { formatCurrency } = useCurrency();
   const { t } = useTranslation("hotels");
+
+  const rooms = useMemo(() => hotel.hotelRooms ?? [], [hotel.hotelRooms]);
+
+  // Normalize every room price to USD (the unit the slider is displayed in):
+  // prefer the explicit USD price, else convert the EGP figure using the same
+  // implied rate the site uses for the slider label (EGP = USD * 50).
+  const getRoomUsdPrice = (room: HotelRoom): number => {
+    const usd = room.prices?.usd;
+    if (usd != null && Number.isFinite(Number(usd))) return Number(usd);
+    if (room.pricePerNightEgp != null && Number.isFinite(room.pricePerNightEgp) && room.pricePerNightEgp > 0) {
+      return room.pricePerNightEgp / 50;
+    }
+    if (room.pricePerNight > 0) return room.pricePerNight;
+    return 0;
+  };
+
+  // Derive the price slider bounds from the actual backend room prices
+  const priceBounds = useMemo(() => {
+    if (rooms.length === 0) return { min: 1, max: 12000 };
+    const prices = rooms.map(getRoomUsdPrice).filter(p => p > 0);
+    if (prices.length === 0) return { min: 1, max: 12000 };
+    const min = Math.max(Math.floor(Math.min(...prices)), 1);
+    const max = Math.max(Math.ceil(Math.max(...prices) / 1000) * 1000, min + 1000);
+    return { min, max };
+  }, [rooms]);
+
   const [roomCategory, setRoomCategory] = useState("All");
   const [roomType, setRoomType] = useState("All");
   const [roomView, setRoomView] = useState("All");
-  const [priceRange, setPriceRange] = useState({ min: 1, max: 12000 });
+  const [priceRange, setPriceRange] = useState({ min: priceBounds.min, max: priceBounds.max });
 
   const [expanded, setExpanded] = useState({
     category: true,
@@ -46,30 +72,29 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
     if (roomCategory !== "All") count++;
     if (roomType !== "All") count++;
     if (roomView !== "All") count++;
-    if (priceRange.min !== 1 || priceRange.max !== 12000) count++;
+    if (priceRange.min !== priceBounds.min || priceRange.max !== priceBounds.max) count++;
     return count;
-  }, [roomCategory, roomType, roomView, priceRange]);
+  }, [roomCategory, roomType, roomView, priceRange, priceBounds]);
 
   const handleReset = () => {
     setRoomCategory("All");
     setRoomType("All");
     setRoomView("All");
-    setPriceRange({ min: 1, max: 12000 });
+    setPriceRange({ min: priceBounds.min, max: priceBounds.max });
   };
 
-  const rooms = hotel.hotelRooms ?? [];
-
   // Price filter only applies once the user changes it from the untouched default
-  const isPriceFilterActive = priceRange.min !== 1 || priceRange.max !== 12000;
+  const isPriceFilterActive =
+    priceRange.min !== priceBounds.min || priceRange.max !== priceBounds.max;
 
   // Filtering logic
   const filteredRooms = rooms.filter(room => {
     const matchesCategory = roomCategory === "All" || room.category === roomCategory;
     const matchesType = roomType === "All" || room.type === roomType;
     const matchesView = roomView === "All" || room.view === roomView;
+    const usdPrice = getRoomUsdPrice(room);
     const matchesPrice =
-      !isPriceFilterActive ||
-      (room.pricePerNight >= priceRange.min && room.pricePerNight <= priceRange.max);
+      !isPriceFilterActive || (usdPrice >= priceRange.min && usdPrice <= priceRange.max);
     return matchesCategory && matchesType && matchesView && matchesPrice;
   });
 
@@ -166,10 +191,10 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
             onToggle={() => toggleExpand("price")}
           >
             <PriceRangeFilter
-              min={1}
-              max={12000}
+              min={priceBounds.min}
+              max={priceBounds.max}
               valueMin={priceRange.min}
-              valueMax={priceRange.max}
+              valueMax={Math.min(priceRange.max, priceBounds.max)}
               onChange={(newMin, newMax) => setPriceRange({ min: newMin, max: newMax })}
               formatValue={(val) => formatCurrency({ usd: val, eur: val, egp: val * 50 })}
             />

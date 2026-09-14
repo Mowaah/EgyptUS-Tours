@@ -86,10 +86,21 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
     };
   }), [initialHotels]);
 
+  // Normalize every hotel price to USD (the unit the slider is displayed in):
+  // prefer the explicit USD price, else the discounted backend price.
+  const getHotelUsdPrice = (hotel: Hotel): number => {
+    const usd = hotel.prices?.usd;
+    if (usd != null && Number.isFinite(Number(usd))) return Number(usd);
+    if (hotel.pricePerNight > 0) return hotel.pricePerNight;
+    return 0;
+  };
+
   const maxHotelPriceLimit = useMemo(() => {
     if (mappedHotels.length === 0) return 50000;
-    const max = Math.max(...mappedHotels.map((h) => h.pricePerNight || 0));
-    return Math.max(Math.ceil(max / 1000) * 1000, 12000);
+    const prices = mappedHotels.map(getHotelUsdPrice).filter(p => p > 0);
+    if (prices.length === 0) return 1000;
+    const max = Math.max(...prices);
+    return Math.max(Math.ceil(max / 1000) * 1000, 1000);
   }, [mappedHotels]);
 
   const sortOptions = useMemo(() => [
@@ -168,8 +179,9 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
     const matchesRating =
       ratingFilter === "any" || h.rating >= parseFloat(ratingFilter);
 
+    const usdPrice = getHotelUsdPrice(h);
     const matchesPrice =
-      h.pricePerNight >= priceRange.min && h.pricePerNight <= priceRange.max;
+      usdPrice >= priceRange.min && usdPrice <= priceRange.max;
 
     return matchesSearch && matchesLocation && matchesRating && matchesPrice;
   });

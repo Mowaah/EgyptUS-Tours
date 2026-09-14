@@ -240,11 +240,25 @@ export default function TripsSection({
     setActiveCategoryIndex(categoryFromUrl);
   }, [categoryFromUrl]);
 
+  // Normalize every trip price to USD (the unit the slider is displayed in):
+  // prefer the explicit USD price, else the discounted backend price.
+  const getTripUsdPrice = (trip: Trip): number => {
+    const usd = trip.prices?.usd;
+    if (usd != null && Number.isFinite(Number(usd))) return Number(usd);
+    if (trip.price > 0) return trip.price;
+    return 0;
+  };
+
+  // Derive the price slider max from the actual backend trip prices (USD).
+  // Rounding up to the next clean $1,000 — no fixed EGP-scale floor, so a few
+  // expensive trips don't stretch the slider to an inflated max.
   const maxPriceLimit = useMemo(() => {
     const src = trips.length > 0 ? trips : initialTrips;
     if (src.length === 0) return 50000;
-    const max = Math.max(...src.map((t) => t.price || 0));
-    return Math.max(Math.ceil(max / 1000) * 1000, 12000);
+    const prices = src.map(getTripUsdPrice).filter(p => p > 0);
+    if (prices.length === 0) return 1000;
+    const max = Math.max(...prices);
+    return Math.max(Math.ceil(max / 1000) * 1000, 1000);
   }, [trips, initialTrips]);
 
   useEffect(() => {
@@ -313,7 +327,10 @@ export default function TripsSection({
 
   // 2. Filter by Price
   processedTrips = processedTrips.filter(
-    (trip) => trip.price >= expanded.priceRange.min && trip.price <= expanded.priceRange.max
+    (trip) => {
+      const usdPrice = getTripUsdPrice(trip);
+      return usdPrice >= expanded.priceRange.min && usdPrice <= expanded.priceRange.max;
+    }
   );
 
   // 3. Filter by Duration
