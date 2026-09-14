@@ -46,10 +46,13 @@ export default function RefundPaymentModal({ open, onClose, onSubmit, refundSumm
   }, [refundSummary?.currency]);
 
   const formatMoney = (val?: number | string) => {
-    if (val === undefined || val === null || val === "") return "0.00";
+    if (val === undefined || val === null || val === "") return "0";
     const num = typeof val === "string" ? parseFloat(val) : val;
-    if (isNaN(num)) return "0.00";
-    return num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    if (isNaN(num)) return "0";
+    return num.toLocaleString("en-US", {
+      minimumFractionDigits: num % 1 !== 0 ? 2 : 0,
+      maximumFractionDigits: 2,
+    });
   };
 
   if (!open) return null;
