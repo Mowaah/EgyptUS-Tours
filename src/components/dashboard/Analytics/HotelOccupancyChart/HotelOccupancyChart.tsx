@@ -12,9 +12,26 @@ interface HotelOccupancyChartProps {
 
 const Y_AXIS_LABELS = ["100%", "75%", "50%", "25%", "0%"];
 
+function occupancyLegendYears(data: HotelOccupancy[]) {
+  const calendarYear = new Date().getFullYear();
+  const apiCurrent = data[0]?.current_year;
+  const apiPrevious = data[0]?.previous_year;
+  const currentLooksValid =
+    typeof apiCurrent === "number" &&
+    apiCurrent >= calendarYear - 20 &&
+    apiCurrent <= calendarYear;
+
+  const currentYear = currentLooksValid ? apiCurrent : calendarYear;
+  const previousYear =
+    typeof apiPrevious === "number" && apiPrevious === currentYear - 1
+      ? apiPrevious
+      : currentYear - 1;
+
+  return { currentYear, previousYear };
+}
+
 export default function HotelOccupancyChart({ data = [], actions }: HotelOccupancyChartProps) {
-  const currentYear = data[0]?.current_year || new Date().getFullYear();
-  const previousYear = data[0]?.previous_year || currentYear - 1;
+  const { currentYear, previousYear } = occupancyLegendYears(data);
 
   const chartData: DoubleBarData[] = useMemo(() => {
     if (!data.length) return [];
