@@ -93,38 +93,13 @@ export default function ExchangeRates({ initialData }: ExchangeRatesProps) {
         <div className={styles.sectionHeader}>
           <span className={styles.sectionIcon} aria-hidden="true">
             <Image
-              src="/images/dashboard/sidebar/finance.svg"
+              src="/images/dashboard/sidebar/financial-reports.svg"
               alt=""
               width={20}
               height={20}
             />
           </span>
           <h2 id="exchange-rates-title">Currency Exchange Rates</h2>
-        </div>
-
-        <div className={styles.infoBox}>
-          <div className={styles.infoIcon} aria-hidden="true">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="16" x2="12" y2="12" />
-              <line x1="12" y1="8" x2="12.01" y2="8" />
-            </svg>
-          </div>
-          <p>
-            Catalog prices in the dashboard are sourced in <strong>USD ($)</strong>.
-            The rates defined below are used to automatically calculate and convert prices
-            into <strong>EGP (E£)</strong> and <strong>EUR (€)</strong> across all published trips,
-            hotels, and transportation packages. Saving changes will trigger an automatic recalculation of catalog pricing.
-          </p>
         </div>
 
         <div className={styles.fieldGrid}>
