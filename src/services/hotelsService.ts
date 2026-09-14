@@ -129,8 +129,8 @@ export function mapHotelDetailToHotel(hotelDetail: HotelDetail): import("@/types
     },
     facilities: hotelDetail.facilities || [],
     mapEmbedUrl: hotelDetail.map_embed_url || undefined,
-    hotelRooms: (hotelDetail.hotel_rooms || []).map(r => ({
-      id: r.id.toString(),
+    hotelRooms: (hotelDetail.hotel_rooms || []).map((r, i) => ({
+      id: r.id != null ? String(r.id) : `room-${hotelDetail.slug}-${i}`,
       name: r.name,
       description: r.description,
       category: r.category_label || "",

@@ -59,12 +59,17 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
 
   const rooms = hotel.hotelRooms ?? [];
 
+  // Price filter only applies once the user changes it from the untouched default
+  const isPriceFilterActive = priceRange.min !== 1 || priceRange.max !== 12000;
+
   // Filtering logic
   const filteredRooms = rooms.filter(room => {
     const matchesCategory = roomCategory === "All" || room.category === roomCategory;
     const matchesType = roomType === "All" || room.type === roomType;
     const matchesView = roomView === "All" || room.view === roomView;
-    const matchesPrice = room.pricePerNight >= priceRange.min && room.pricePerNight <= priceRange.max;
+    const matchesPrice =
+      !isPriceFilterActive ||
+      (room.pricePerNight >= priceRange.min && room.pricePerNight <= priceRange.max);
     return matchesCategory && matchesType && matchesView && matchesPrice;
   });
 
@@ -173,17 +178,26 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
 
         {/* ── Rooms List ── */}
         <div className={styles.roomsList}>
-          {filteredRooms.length > 0 ? (
+          {rooms.length === 0 ? (
+            <div style={{ paddingTop: "40px", paddingBottom: "40px" }}>
+              <EmptyState
+                title={t("roomTypes.noRoomsTitle", "No Available Rooms")}
+                description={t("roomTypes.noRoomsAvailableDesc", "There are no rooms available for this hotel right now. Check back soon for new room options.")}
+              />
+            </div>
+          ) : filteredRooms.length > 0 ? (
             filteredRooms.map(room => (
               <RoomCard key={room.id} room={room} />
             ))
           ) : (
-            <EmptyState 
-              title={t("roomTypes.noRoomsFound", "No rooms found")}
-              description={t("roomTypes.noRoomsDesc", "Try adjusting your filters to find available rooms.")}
-              onButtonClick={handleReset}
-              buttonText={t("roomTypes.resetAll", "Reset all filters")}
-            />
+            <div style={{ paddingTop: "40px", paddingBottom: "40px" }}>
+              <EmptyState 
+                title={t("roomTypes.noRoomsFound", "No rooms found")}
+                description={t("roomTypes.noRoomsDesc", "Try adjusting your filters to find available rooms.")}
+                onButtonClick={handleReset}
+                buttonText={t("roomTypes.resetAll", "Reset all filters")}
+              />
+            </div>
           )}
         </div>
       </div>
@@ -194,12 +208,13 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
 function RoomCard({ room }: { room: HotelRoom }) {
   const { formatCurrency } = useCurrency();
   const { t } = useTranslation("hotels");
+  const title = [room.category, room.type, room.view].filter(Boolean).join(" - ") || room.name || "Hotel Room";
 
   return (
     <div className={styles.roomCard}>
       {/* ── Image ── */}
       <div className={styles.roomGallery}>
-        <Image src={room.images?.[0] || "/images/dashboard/catalog/hotels/roomtype.jpg"} alt={room.name} fill className={styles.roomImg} />
+        <Image src={room.images?.[0] || "/images/dashboard/catalog/hotels/roomtype.jpg"} alt={title} fill className={styles.roomImg} />
 
         {/* Gradient overlay */}
         <div className={styles.roomGradient} />
@@ -224,7 +239,7 @@ function RoomCard({ room }: { room: HotelRoom }) {
       <div className={styles.roomInfo}>
         {/* Title + desc */}
         <div className={styles.roomHead}>
-          <h3 className={styles.roomName}>{room.name}</h3>
+          <h3 className={styles.roomName}>{title}</h3>
           <p className={styles.roomDesc}>{room.description}</p>
         </div>
 
