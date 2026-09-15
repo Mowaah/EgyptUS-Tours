@@ -19,7 +19,7 @@ import { ReassignModal } from "@/components/dashboard/shared";
 
 const filterOptions = {
   paymentStatus: ["All", "Paid", "Pending", "Overdue"],
-  status: ["All", "Upcoming", "In Hotel", "Completed", "Cancelled"],
+  status: ["All", "Upcoming", "In Hotel", "Completed", "Cancelled", "Refunded"],
   source: ["All", "Website", "Agent"],
 };
 
@@ -60,6 +60,7 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
         "In Stay": "in_stay",
         Completed: "completed",
         Cancelled: "cancelled",
+        Refunded: "refunded",
       };
       params.operational_status = statusMap[appliedFilters.status] ?? appliedFilters.status.toLowerCase().replace(" ", "_");
     }
@@ -131,7 +132,7 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
           columns={hotelsColumns}
           getRowId={(row) => String(row.id)}
           selectable
-          rowActions={(row) => hotelsRowActions(async (action, r) => {
+          rowActions={(row) => hotelsRowActions(row, async (action, r) => {
             if (action === "View") {
               router.push(`/dashboard/bookings/hotels/${r.id}`);
             } else if (action === "Re-Assign To" || action === "Assign To" || action === "Assign" || action === "Reassign") {

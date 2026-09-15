@@ -21,7 +21,7 @@ const filterOptions = {
   vehicleClass: ["All", "Mercedes V-Class", "Toyota Coaster", "Bus (50 Seats)", "Hyundai H1"],
   tripType: ["All", "One Way", "Round Trip"],
   paymentStatus: ["All", "Paid", "Pending", "Overdue"],
-  status: ["All", "Upcoming", "In Transit", "Completed", "Cancelled"],
+  status: ["All", "Upcoming", "In Transit", "Completed", "Cancelled", "Refunded"],
   source: ["All", "Website", "Agent"],
 };
 
@@ -68,6 +68,7 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
         "In Transit": "in_transit",
         Completed: "completed",
         Cancelled: "cancelled",
+        Refunded: "refunded",
       };
       params.operational_status = statusMap[appliedFilters.status] ?? appliedFilters.status.toLowerCase().replace(" ", "_");
     }
@@ -136,7 +137,7 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
           columns={transportationColumns}
           getRowId={(row) => String(row.id)}
           selectable
-          rowActions={(row) => transportationRowActions(async (action, r) => {
+          rowActions={(row) => transportationRowActions(row, async (action, r) => {
             if (action === "View") {
               router.push(`/dashboard/bookings/transportation/${r.id}`);
             } else if (action === "Re-Assign To" || action === "Assign To" || action === "Assign" || action === "Reassign") {

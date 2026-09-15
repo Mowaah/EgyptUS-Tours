@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useImperativeHandle, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -381,11 +381,13 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
     .filter((id): id is number => !!id);
   const unresolvedDestinations = (data.destinations || []).filter((destination) => !resolveId(destination, destinationRecords));
 
-  if (!tagId) {
-    throw new Error("The selected category does not exist in the backend yet.");
-  }
-  if (unresolvedDestinations.length) {
-    throw new Error(`These destinations do not exist in the backend yet: ${unresolvedDestinations.join(", ")}`);
+  if (intent === "publish") {
+    if (!tagId) {
+      throw new Error("The selected category does not exist in the backend yet.");
+    }
+    if (unresolvedDestinations.length) {
+      throw new Error(`These destinations do not exist in the backend yet: ${unresolvedDestinations.join(", ")}`);
+    }
   }
 
   const durationStr = typeof data.duration === 'string' ? data.duration : "";
@@ -648,7 +650,11 @@ const getErrorStepIndex = (errors: any) => {
   return -1;
 };
 
-export function CreateTrip({ tripId, onDirtyChange, onSavingChange }: { tripId?: string; onDirtyChange?: (isDirty: boolean) => void; onSavingChange?: (isSaving: boolean) => void }) {
+export interface CreateTripFormHandle {
+  saveDraft: () => Promise<void>;
+}
+
+export function CreateTrip({ tripId, onDirtyChange, onSavingChange, ref }: { tripId?: string; onDirtyChange?: (isDirty: boolean) => void; onSavingChange?: (isSaving: boolean) => void; ref?: React.Ref<CreateTripFormHandle> }) {
   const router = useRouter();
   const [isPublishedModalOpen, setIsPublishedModalOpen] = useState(false);
   const [savedTripId, setSavedTripId] = useState<string | number | undefined>(tripId);
@@ -772,6 +778,16 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange }: { tripId?:
       setIsSaving(false);
     }
   };
+
+  const handleSaveDraft = async () => {
+    const data = methods.getValues();
+    await onSubmit(data as CreateTripValues, { intent: "draft" });
+    router.push("/dashboard/catalog/trips?draft=true");
+  };
+
+  useImperativeHandle(ref, () => ({
+    saveDraft: handleSaveDraft,
+  }));
 
   const {
     currentStep,

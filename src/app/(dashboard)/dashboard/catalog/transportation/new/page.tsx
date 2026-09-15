@@ -1,8 +1,8 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CreateVehicle } from "@/components/dashboard/Catalog/Transportation/CreateVehicle/CreateVehicle";
+import { CreateVehicle, CreateVehicleFormHandle } from "@/components/dashboard/Catalog/Transportation/CreateVehicle/CreateVehicle";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import { DashboardConfirmationModal } from "@/components/dashboard/shared";
 import styles from "../page.module.scss";
@@ -12,10 +12,11 @@ export default function CreateVehiclePage() {
   const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false);
   const [isDraftModalOpen, setIsDraftModalOpen] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
+  const formRef = useRef<CreateVehicleFormHandle>(null);
 
   const handleSaveDraft = () => {
     setIsDraftModalOpen(false);
-    router.push("/dashboard/catalog/transportation?draft=true");
+    formRef.current?.saveDraft();
   };
 
   return (
@@ -35,7 +36,7 @@ export default function CreateVehiclePage() {
         onPrimaryAction={() => setIsDraftModalOpen(true)}
       />
       <Suspense fallback={<div>Loading...</div>}>
-        <CreateVehicle onDirtyChange={setIsDirty} />
+        <CreateVehicle ref={formRef} onDirtyChange={setIsDirty} />
       </Suspense>
 
       <DashboardConfirmationModal

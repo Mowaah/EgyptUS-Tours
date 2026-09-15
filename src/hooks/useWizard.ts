@@ -7,7 +7,7 @@ export interface WizardStepConfig {
   fieldsToValidate?: string[]; // Array of dot-notation field paths, or empty array if none
 }
 
-export type WizardSubmitIntent = "save" | "publish";
+export type WizardSubmitIntent = "save" | "publish" | "draft";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface UseWizardOptions<TFormValues extends Record<string, any>> {

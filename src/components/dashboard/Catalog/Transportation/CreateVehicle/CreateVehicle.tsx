@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useImperativeHandle } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -270,7 +270,11 @@ function mapVehicleToFormValues(vehicle: any): CreateVehicleValues {
   };
 }
 
-export function CreateVehicle({ vehicleId, onDirtyChange, onSavingChange }: { vehicleId?: string; onDirtyChange?: (isDirty: boolean) => void; onSavingChange?: (isSaving: boolean) => void }) {
+export interface CreateVehicleFormHandle {
+  saveDraft: () => Promise<void>;
+}
+
+export function CreateVehicle({ vehicleId, onDirtyChange, onSavingChange, ref }: { vehicleId?: string; onDirtyChange?: (isDirty: boolean) => void; onSavingChange?: (isSaving: boolean) => void; ref?: React.Ref<CreateVehicleFormHandle> }) {
   const router = useRouter();
   const [isPublishedModalOpen, setIsPublishedModalOpen] = useState(false);
   const [savedVehicleId, setSavedVehicleId] = useState<string | number | undefined>(vehicleId);
@@ -351,6 +355,16 @@ export function CreateVehicle({ vehicleId, onDirtyChange, onSavingChange }: { ve
       setIsSaving(false);
     }
   };
+
+  const handleSaveDraft = async () => {
+    const data = methods.getValues();
+    await onSubmit(data as CreateVehicleValues, { intent: "draft" });
+    router.push("/dashboard/catalog/transportation?draft=true");
+  };
+
+  useImperativeHandle(ref, () => ({
+    saveDraft: handleSaveDraft,
+  }));
 
 const getErrorStepIndex = (errors: any) => {
   if (errors.vehicleName || errors.category || errors.make || errors.model || errors.year || errors.description || errors.passengerCapacity || errors.luggageCapacity || errors.doors || errors.transmission || errors.features || errors.cancellationPolicy) return 0;

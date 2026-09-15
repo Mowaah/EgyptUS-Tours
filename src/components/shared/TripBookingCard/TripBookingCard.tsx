@@ -689,7 +689,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
           ) : props.variant === "mice" || (props.variant as string) === "events" ? (() => {
             const d = props.details as MiceRequestDetails;
             return (
-              <div className={styles.detailGrid}>
+              <div className={styles.miceDetailGrid}>
                 <DetailCell
                   icon={MICE_ICONS.organization}
                   label={t("profile.card.organization", "Organization")}
@@ -719,16 +719,6 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                   icon={MICE_ICONS.endDate}
                   label={t("profile.card.endDate", "End Date")}
                   value={formatLocalizedDate(d.endDate)}
-                />
-                <DetailCell
-                  icon={MICE_ICONS.eventTime}
-                  label={t("profile.card.eventTime", "Event Time")}
-                  value={d.eventTime}
-                />
-                <DetailCell
-                  icon={MICE_ICONS.duration}
-                  label={t("profile.details.duration", "Duration")}
-                  value={formatLocalizedDuration(d.durationLabel)}
                 />
               </div>
             );

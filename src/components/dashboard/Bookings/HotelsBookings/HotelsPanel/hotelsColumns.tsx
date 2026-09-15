@@ -1,13 +1,62 @@
 import Image from "next/image";
-import { type DataTableColumn } from "@/components/dashboard/DataTable/types";
+import { type DataTableColumn, type DataTableRowAction } from "@/components/dashboard/DataTable/types";
 import { HotelBookingRow } from "../types";
 import StatusPill from "@/components/shared/StatusPill/StatusPill";
 
-export const hotelsRowActions = (onAction: (action: string, row: HotelBookingRow) => void) => [
-  { label: "View", iconSrc: "/images/dashboard/view.svg", onClick: (r: HotelBookingRow) => onAction("View", r) },
-  { label: "Assign To", iconSrc: "/images/dashboard/assign.svg", onClick: (r: HotelBookingRow) => onAction("Assign To", r) },
-  { label: "Send Email Reminder", iconSrc: "/images/dashboard/booking/trips/notification-bing.svg", onClick: (r: HotelBookingRow) => onAction("Send Email Reminder", r) },
-];
+export const hotelsRowActions = (
+  row: HotelBookingRow,
+  onAction?: (action: string, row: HotelBookingRow) => void
+): DataTableRowAction<HotelBookingRow>[] => {
+  const actions: DataTableRowAction<HotelBookingRow>[] = [
+    {
+      label: "View",
+      iconSrc: "/images/dashboard/view.svg",
+      onClick: (r: HotelBookingRow) => {
+        if (onAction) onAction("View", r);
+      },
+    },
+  ];
+
+  const op = row.operational_status?.toLowerCase();
+  const isCompleted = op === "completed";
+  const isRefunded =
+    op === "refunded" ||
+    op === "no_refund" ||
+    op === "no_refunded" ||
+    op === "no_refunded_amount" ||
+    row.remaining_payment_status?.toLowerCase() === "refunded" ||
+    row.payment_status?.toLowerCase() === "refunded";
+  const isInProgress =
+    op === "in_hotel" ||
+    op === "in_stay" ||
+    op === "on_trip" ||
+    op === "in_trip" ||
+    op === "in hotel" ||
+    op === "in stay" ||
+    op === "in_transit" ||
+    op === "in transit";
+
+  if (!isCompleted && !isRefunded && !isInProgress) {
+    actions.push(
+      {
+        label: "Assign To",
+        iconSrc: "/images/dashboard/assign.svg",
+        onClick: (r: HotelBookingRow) => {
+          if (onAction) onAction("Assign To", r);
+        },
+      },
+      {
+        label: "Send Email Reminder",
+        iconSrc: "/images/dashboard/booking/trips/notification-bing.svg",
+        onClick: (r: HotelBookingRow) => {
+          if (onAction) onAction("Send Email Reminder", r);
+        },
+      }
+    );
+  }
+
+  return actions;
+};
 
 const getImageUrl = (path?: string | null) => {
   if (!path) return "";
@@ -30,12 +79,20 @@ export const hotelsColumns: DataTableColumn<HotelBookingRow>[] = [
   {
     id: "checkIn",
     header: "Check-in",
-    render: (row) => <span style={{ color: "#4B5563" }}>{row.check_in_date}</span>,
+    render: (row) => {
+      if (!row.check_in_date) return <span style={{ color: "#4B5563" }}>-</span>;
+      const [y, m, d] = row.check_in_date.split("-");
+      return <span style={{ color: "#4B5563" }}>{`${d}/${m}/${y}`}</span>;
+    },
   },
   {
     id: "checkOut",
     header: "Check-out",
-    render: (row) => <span style={{ color: "#4B5563" }}>{row.check_out_date}</span>,
+    render: (row) => {
+      if (!row.check_out_date) return <span style={{ color: "#4B5563" }}>-</span>;
+      const [y, m, d] = row.check_out_date.split("-");
+      return <span style={{ color: "#4B5563" }}>{`${d}/${m}/${y}`}</span>;
+    },
   },
   {
     id: "roomsCount",
@@ -69,8 +126,13 @@ export const hotelsColumns: DataTableColumn<HotelBookingRow>[] = [
     id: "dateTime",
     header: "Date / Time",
     render: (row) => {
+      if (!row.created_at) return <span style={{ color: "#4B5563" }}>-</span>;
       const d = new Date(row.created_at);
-      return <span style={{ color: "#4B5563" }}>{d.toLocaleDateString()} {d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>;
+      const day = String(d.getDate()).padStart(2, "0");
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const year = d.getFullYear();
+      const time = d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+      return <span style={{ color: "#4B5563" }}>{`${day}/${month}/${year} ${time}`}</span>;
     },
   },
   {

@@ -1,8 +1,8 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CreateTrip } from "@/components/dashboard/Catalog/Trips/CreateTrip";
+import { CreateTrip, CreateTripFormHandle } from "@/components/dashboard/Catalog/Trips/CreateTrip";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import { DashboardConfirmationModal } from "@/components/dashboard/shared";
 import styles from "../page.module.scss";
@@ -12,13 +12,11 @@ export default function CreateTripPage() {
   const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false);
   const [isDraftModalOpen, setIsDraftModalOpen] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
+  const formRef = useRef<CreateTripFormHandle>(null);
 
   const handleSaveDraft = () => {
     setIsDraftModalOpen(false);
-    const form = document.getElementById("create-trip-form") as HTMLFormElement;
-    if (form) {
-      form.requestSubmit();
-    }
+    formRef.current?.saveDraft();
   };
 
   return (
@@ -38,7 +36,7 @@ export default function CreateTripPage() {
         onPrimaryAction={() => setIsDraftModalOpen(true)}
       />
       <Suspense fallback={<div>Loading...</div>}>
-        <CreateTrip onDirtyChange={setIsDirty} />
+        <CreateTrip ref={formRef} onDirtyChange={setIsDirty} />
       </Suspense>
 
       <DashboardConfirmationModal

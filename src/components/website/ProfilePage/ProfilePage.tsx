@@ -23,6 +23,7 @@ import { useUpcomingTrip } from "@/hooks/useUpcomingTrip";
 import { getFavoriteTrips, getFavoriteHotels, getProfileRequests, getProfileSummary, getProfileBookings, getPaymentReceipt, getFullImageUrl } from "@/lib/api";
 import { getAllHotels } from "@/services/hotelsService";
 import { getStatusConfig } from "@/utils/statusUtils";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import {
   getPendingGuestRecord,
   getGuestAuthEmail,
@@ -283,8 +284,6 @@ export default function ProfilePage() {
                 expectedAttendees: req.details?.expected_attendees || "",
                 startDate: req.details?.start_date || "",
                 endDate: req.details?.end_date || "",
-                eventTime: req.details?.event_time || "",
-                durationLabel: req.details?.duration_label || "",
               };
             } else if (req.type === "b2b") {
               mappedDetails = {
@@ -300,6 +299,83 @@ export default function ProfilePage() {
             const rawStatus = req.display_status || req.request_status || req.status || "new";
             const statusConfig = getStatusConfig(rawStatus);
             const normStatus = (rawStatus || "").toLowerCase().replace(/[-_]/g, " ").trim();
+            const isCancelled = normStatus.includes("cancelled") || normStatus.includes("canceled");
+            const showsCancellationMeta =
+              isCancelled ||
+              normStatus === "refunded" ||
+              normStatus === "refund completed" ||
+              normStatus === "refund in progress";
+
+            const actorLower = (req.cancelled_by || req.canceled_by || "").toLowerCase();
+            const reasonLower = (
+              req.cancellation_reason ||
+              req.cancel_reason ||
+              req.details?.cancellation_reason ||
+              req.details?.cancel_reason ||
+              ""
+            ).toLowerCase();
+            const rawCancelledLabel = (req.cancelled_label || req.canceled_label || "").toLowerCase();
+            const requestType = req.type || "";
+            const isUserCancelledStored =
+              typeof window !== "undefined" &&
+              (localStorage.getItem(`cancelled_by_user_${requestType}_${req.id}`) === "true" ||
+                localStorage.getItem(`cancelled_by_user_plan_your_trip_${req.id}`) === "true" ||
+                localStorage.getItem(`cancelled_by_user_custom_trip_${req.id}`) === "true" ||
+                localStorage.getItem(`cancelled_by_user_events_${req.id}`) === "true" ||
+                localStorage.getItem(`cancelled_by_user_mice_${req.id}`) === "true" ||
+                localStorage.getItem(`cancelled_by_user_b2b_${req.id}`) === "true");
+
+            const hasUserRefundBankDetails = !!(
+              req.refund_bank_details ||
+              req.bank_details ||
+              req.details?.refund_bank_details ||
+              req.details?.bank_details ||
+              (typeof req.details === "object" && req.details && "refund_bank_details" in req.details)
+            );
+
+            const isUserCancelled =
+              isUserCancelledStored ||
+              hasUserRefundBankDetails ||
+              actorLower === "user" ||
+              actorLower === "customer" ||
+              actorLower.includes("by you") ||
+              actorLower.includes("by customer") ||
+              rawCancelledLabel.includes("by you") ||
+              rawCancelledLabel.includes("customer") ||
+              reasonLower.includes("by customer") ||
+              reasonLower.includes("[customer]") ||
+              reasonLower.includes("[user]");
+
+            const isAdminCancelled =
+              actorLower.includes("admin") ||
+              actorLower.includes("egypt us") ||
+              actorLower.includes("egyptus") ||
+              rawCancelledLabel.includes("egypt us") ||
+              rawCancelledLabel.includes("admin") ||
+              reasonLower.includes("[admin]") ||
+              reasonLower.includes("by admin");
+
+            const cancelledBy: "user" | "admin" =
+              isCancelled && isUserCancelled && !isAdminCancelled ? "user" : "admin";
+            const rawCancelledDate =
+              req.cancelled_at ||
+              req.canceled_at ||
+              req.cancelled_on ||
+              req.canceled_on ||
+              req.cancellation_date ||
+              req.details?.cancelled_at ||
+              req.details?.canceled_at ||
+              req.details?.cancelled_on ||
+              req.details?.canceled_on ||
+              req.details?.cancellation_date ||
+              (showsCancellationMeta ? req.updated_at : "");
+            const cancelledDate = formatDateDDMMYYYY(rawCancelledDate, "");
+            const existingCancelledLabel = req.cancelled_label || req.canceled_label || "";
+            const cancelledLabelHasDate = /[—-]\s*.+$/.test(existingCancelledLabel);
+            const resolvedCancelledLabel =
+              showsCancellationMeta && cancelledDate && !cancelledLabelHasDate
+                ? `${existingCancelledLabel || (cancelledBy === "admin" ? "Cancelled by Egypt US" : "Cancelled by You")} — ${cancelledDate}`
+                : existingCancelledLabel;
 
             let defaultInfoMessage = t("profile.card.proposalExpected", "Proposal expected within 24-48 hrs");
             if (normStatus === "in trip" || normStatus === "on trip") {
@@ -346,13 +422,15 @@ export default function ProfilePage() {
               variant: (req.type === "events" ? "mice" : req.type) as any,
               showImage: false,
               tripTitle: cardTitle,
-              status: rawStatus as any,
-              statusLabel: statusConfig.label,
+              status: (isCancelled ? "cancelled" : rawStatus) as any,
+              statusLabel: isCancelled ? t("profile.status.cancelled", "Cancelled") : statusConfig.label,
               statusVariant: statusConfig.variant,
+              cancelledLabel: resolvedCancelledLabel,
+              cancelledBy,
               infoMessage: req.info_message || defaultInfoMessage,
               details: mappedDetails as any,
               primaryLabel: t("buttons.viewDetails", "View Details"),
-              primaryHref: `/profile/requests-details?type=${req.type}&id=${req.id}&status=${rawStatus}`,
+              primaryHref: `/profile/requests-details?type=${req.type}&id=${req.id}&status=${isCancelled ? "cancelled" : rawStatus}`,
             };
           };
 

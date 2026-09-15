@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useImperativeHandle } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -184,7 +184,11 @@ function validateBeforePublish(data: CreateHotelValues, intent: WizardSubmitInte
   return errors;
 }
 
-export function CreateHotel({ hotelId, onDirtyChange, onSavingChange }: { hotelId?: string; onDirtyChange?: (isDirty: boolean) => void; onSavingChange?: (isSaving: boolean) => void }) {
+export interface CreateHotelFormHandle {
+  saveDraft: () => Promise<void>;
+}
+
+export function CreateHotel({ hotelId, onDirtyChange, onSavingChange, ref }: { hotelId?: string; onDirtyChange?: (isDirty: boolean) => void; onSavingChange?: (isSaving: boolean) => void; ref?: React.Ref<CreateHotelFormHandle> }) {
   const router = useRouter();
   const [isPublishedModalOpen, setIsPublishedModalOpen] = useState(false);
   const [savedHotelId, setSavedHotelId] = useState<string | null>(null);
@@ -396,6 +400,16 @@ export function CreateHotel({ hotelId, onDirtyChange, onSavingChange }: { hotelI
       setIsSaving(false);
     }
   };
+
+  const handleSaveDraft = async () => {
+    const data = methods.getValues();
+    await onSubmit(data as CreateHotelValues, { intent: "draft" });
+    router.push("/dashboard/catalog/hotels?draft=true");
+  };
+
+  useImperativeHandle(ref, () => ({
+    saveDraft: handleSaveDraft,
+  }));
 
 const getErrorStepIndex = (errors: any) => {
   if (errors.hotelName || errors.cityLocation || errors.starRating || errors.totalRooms || errors.description || errors.facilities) return 0;

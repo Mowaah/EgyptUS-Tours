@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Image from "next/image";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
-import profileStyles from "@/components/dashboard/shared/ProfileHeader/ProfileHeader.module.scss";
 import styles from "./ViewHotel.module.scss";
 
 // Re-using the same sections as ViewTrip since they share a lot of structure
@@ -15,12 +14,10 @@ import PaymentOverview from "@/components/dashboard/Bookings/TripsBookings/ViewT
 import PriceDetails from "@/components/dashboard/Bookings/TripsBookings/ViewTrip/PriceDetails";
 import ActivityTimeline from "@/components/dashboard/Bookings/TripsBookings/ViewTrip/ActivityTimeline";
 
-import type { HotelBookingRow } from "../types";
 import { getTripsPillStyle } from "@/components/dashboard/Bookings/TripsBookings/TripsPanel/tripsColumns";
 import ActionNoteModal, { ActionNoteModalConfig } from "@/components/dashboard/LeadsInquiries/ActionNoteModal/ActionNoteModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import { RefundModal } from "@/components/dashboard/shared";
-import type { RefundData } from "@/components/dashboard/shared/RefundSummary/RefundSummary";
 import { calculateRefundSummary } from "@/utils/cancellationPolicy";
 
 interface ViewHotelProps {
@@ -38,7 +35,6 @@ const cancelBookingConfig: ActionNoteModalConfig = {
 
 import { getHotelBookingById, cancelHotelBooking, sendHotelBookingReminder, refundHotelBooking } from "@/services/admin/adminBookingsService";
 import useSWR from "swr";
-import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 
 
 export default function ViewHotel({ bookingId }: ViewHotelProps) {
@@ -54,12 +50,25 @@ export default function ViewHotel({ bookingId }: ViewHotelProps) {
   );
 
   const payload = hotelData;
+  const opStatus = payload?.operational_status?.toLowerCase();
   const isRefunded = 
-    payload?.operational_status === "refunded" || 
-    payload?.operational_status === "no_refund" || 
-    payload?.operational_status === "no_refunded" || 
-    payload?.operational_status === "no_refunded_amount";
-  const isCancelled = payload?.operational_status === "cancelled";
+    opStatus === "refunded" || 
+    opStatus === "no_refund" || 
+    opStatus === "no_refunded" || 
+    opStatus === "no_refunded_amount" ||
+    payload?.remaining_payment_status?.toLowerCase() === "refunded" ||
+    payload?.payment_status?.toLowerCase() === "refunded";
+  const isCancelled = opStatus === "cancelled";
+  const isCompleted = opStatus === "completed";
+  const isInProgress =
+    opStatus === "in_hotel" ||
+    opStatus === "in_stay" ||
+    opStatus === "on_trip" ||
+    opStatus === "in_trip" ||
+    opStatus === "in hotel" ||
+    opStatus === "in stay" ||
+    opStatus === "in transit" ||
+    opStatus === "in_transit";
   const displayId = payload?.booking_code || `BK-${String(bookingId).padStart(6, "0")}`;
 
   const refundSummary = React.useMemo(() => {
@@ -115,7 +124,7 @@ export default function ViewHotel({ bookingId }: ViewHotelProps) {
       if (total === 0) {
         total = Number(payload.total_price || payload.total_amount || 0);
       }
-      let totalPaid = Number(payload.payment_overview?.total_paid || payload.amount_paid || payload.paid_amount || 0);
+      const totalPaid = Number(payload.payment_overview?.total_paid || payload.amount_paid || payload.paid_amount || 0);
       
       if (total > 0 && totalPaid > 0 && totalPaid < total) {
         const pct = Math.round(((total - totalPaid) / total) * 100);
@@ -189,7 +198,7 @@ export default function ViewHotel({ bookingId }: ViewHotelProps) {
     }
   };
 
-  const actionButtons = isRefunded ? null : isCancelled ? (
+  const actionButtons = isRefunded || isInProgress ? null : isCancelled ? (
     <button 
       className={styles.primaryActionButton} 
       type="button"
@@ -198,7 +207,7 @@ export default function ViewHotel({ bookingId }: ViewHotelProps) {
       Refund Payment
       <Image src="/images/money-send.svg" alt="" width={20} height={20} />
     </button>
-  ) : (
+  ) : isCompleted ? null : (
     <>
       <button 
         className={styles.dangerActionButton} 
@@ -214,7 +223,6 @@ export default function ViewHotel({ bookingId }: ViewHotelProps) {
         type="button"
         onClick={handleSendReminder}
         disabled={isSendingReminder}
-        style={{ opacity: isSendingReminder ? 0.7 : 1 }}
       >
         {isSendingReminder ? "Sending..." : "Send Email Reminder"}
         <Image src="/images/dashboard/booking/trips/view/reminder.svg" alt="" width={20} height={20} />
@@ -343,7 +351,12 @@ export default function ViewHotel({ bookingId }: ViewHotelProps) {
           } catch (err: any) {
             console.error("Failed to cancel hotel booking:", err);
             setBannerVariant("error");
-            setBannerMessage(err?.response?.data?.message || "Failed to cancel booking. Please try again.");
+            setBannerMessage(
+              err?.response?.data?.message || 
+              err?.response?.data?.detail || 
+              err?.response?.data?.cancellation_reason?.[0] || 
+              "Failed to cancel booking. Please try again."
+            );
             setIsCancelModalOpen(false);
           }
         }} 

@@ -1,4 +1,4 @@
-import type { DataTableColumn } from "@/components/dashboard/DataTable";
+import type { DataTableColumn, DataTableRowAction } from "@/components/dashboard/DataTable";
 import type { TripBookingRow } from "../types";
 import styles from "./TripsPanel.module.scss";
 import { formatDateRange } from "@/utils/dateFormat";
@@ -149,8 +149,59 @@ export const tripsColumns: DataTableColumn<TripBookingRow>[] = [
   },
 ];
 
-export const tripsRowActions = (onAction?: (action: string, row: TripBookingRow) => void): any[] => [
-  { label: "View", iconSrc: "/images/dashboard/view.svg", onClick: (r: TripBookingRow) => { if (onAction) onAction("View", r); } },
-  { label: "Assign To", iconSrc: "/images/dashboard/assign.svg", onClick: (r: TripBookingRow) => { if (onAction) onAction("Assign To", r); } },
-  { label: "Send Email Reminder", iconSrc: "/images/dashboard/booking/trips/notification-bing.svg", onClick: (r: TripBookingRow) => { if (onAction) onAction("Send Email Reminder", r); } },
-];
+export const tripsRowActions = (
+  row: TripBookingRow,
+  onAction?: (action: string, row: TripBookingRow) => void
+): DataTableRowAction<TripBookingRow>[] => {
+  const actions: DataTableRowAction<TripBookingRow>[] = [
+    {
+      label: "View",
+      iconSrc: "/images/dashboard/view.svg",
+      onClick: (r: TripBookingRow) => {
+        if (onAction) onAction("View", r);
+      },
+    },
+  ];
+
+  const op = row.operational_status?.toLowerCase();
+  const isCompleted = op === "completed";
+  const isRefunded =
+    op === "refunded" ||
+    op === "no_refund" ||
+    op === "no_refunded" ||
+    op === "no_refunded_amount" ||
+    row.remaining_payment_status?.toLowerCase() === "refunded" ||
+    row.payment_status?.toLowerCase() === "refunded";
+  const isInProgress =
+    op === "on_trip" ||
+    op === "in_trip" ||
+    op === "on trip" ||
+    op === "in trip" ||
+    op === "in_hotel" ||
+    op === "in_stay" ||
+    op === "in hotel" ||
+    op === "in stay" ||
+    op === "in_transit" ||
+    op === "in transit";
+
+  if (!isCompleted && !isRefunded && !isInProgress) {
+    actions.push(
+      {
+        label: "Assign To",
+        iconSrc: "/images/dashboard/assign.svg",
+        onClick: (r: TripBookingRow) => {
+          if (onAction) onAction("Assign To", r);
+        },
+      },
+      {
+        label: "Send Email Reminder",
+        iconSrc: "/images/dashboard/booking/trips/notification-bing.svg",
+        onClick: (r: TripBookingRow) => {
+          if (onAction) onAction("Send Email Reminder", r);
+        },
+      }
+    );
+  }
+
+  return actions;
+};

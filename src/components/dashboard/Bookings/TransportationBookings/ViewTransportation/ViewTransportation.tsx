@@ -4,7 +4,6 @@ import React from "react";
 import Image from "next/image";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
-import profileStyles from "@/components/dashboard/shared/ProfileHeader/ProfileHeader.module.scss";
 import styles from "./ViewTransportation.module.scss";
 
 import PassengerInformation from "./PassengerInformation";
@@ -12,12 +11,10 @@ import TransferDetails from "./TransferDetails";
 import PaymentOverview from "./PaymentOverview";
 import TransportationPriceDetails from "./TransportationPriceDetails";
 import ActivityTimeline from "./ActivityTimeline";
-import type { TransportationBookingRow } from "../types";
 import { getPillStyle } from "../TransportationPanel/transportationColumns";
 import ActionNoteModal, { ActionNoteModalConfig } from "@/components/dashboard/LeadsInquiries/ActionNoteModal/ActionNoteModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import { RefundModal } from "@/components/dashboard/shared";
-import type { RefundData } from "@/components/dashboard/shared/RefundSummary/RefundSummary";
 import { calculateRefundSummary } from "@/utils/cancellationPolicy";
 
 interface ViewTransportationProps {
@@ -49,12 +46,23 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
   );
 
   const payload = transportData;
+  const opStatus = payload?.operational_status?.toLowerCase();
   const isRefunded = 
-    payload?.operational_status === "refunded" || 
-    payload?.operational_status === "no_refund" || 
-    payload?.operational_status === "no_refunded" || 
-    payload?.operational_status === "no_refunded_amount";
-  const isCancelled = payload?.operational_status === "cancelled";
+    opStatus === "refunded" || 
+    opStatus === "no_refund" || 
+    opStatus === "no_refunded" || 
+    opStatus === "no_refunded_amount" ||
+    payload?.remaining_payment_status?.toLowerCase() === "refunded" ||
+    payload?.payment_status?.toLowerCase() === "refunded";
+  const isCancelled = opStatus === "cancelled";
+  const isCompleted = opStatus === "completed";
+  const isInProgress =
+    opStatus === "in_transit" ||
+    opStatus === "in transit" ||
+    opStatus === "on_trip" ||
+    opStatus === "in_trip" ||
+    opStatus === "on trip" ||
+    opStatus === "in trip";
   const displayId = payload?.booking_code || `BK-${String(id).padStart(6, "0")}`;
 
   const refundSummary = React.useMemo(() => {
@@ -117,7 +125,7 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
       if (total === 0) {
         total = Number(payload.total_price || payload.total_amount || 0);
       }
-      let totalPaid = Number(payload.payment_overview?.total_paid || payload.amount_paid || payload.paid_amount || 0);
+      const totalPaid = Number(payload.payment_overview?.total_paid || payload.amount_paid || payload.paid_amount || 0);
       
       if (total > 0 && totalPaid > 0 && totalPaid < total) {
         const pct = Math.round(((total - totalPaid) / total) * 100);
@@ -188,7 +196,7 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
     }
   };
 
-  const actionButtons = isRefunded ? null : isCancelled ? (
+  const actionButtons = isRefunded || isInProgress ? null : isCancelled ? (
     <button 
       className={styles.primaryActionButton} 
       type="button"
@@ -197,7 +205,7 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
       Refund Payment
       <Image src="/images/money-send.svg" alt="" width={20} height={20} />
     </button>
-  ) : (
+  ) : isCompleted ? null : (
     <>
       <button 
         className={styles.dangerActionButton}
@@ -212,7 +220,6 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
         type="button"
         onClick={handleSendReminder}
         disabled={isSendingReminder}
-        style={{ opacity: isSendingReminder ? 0.7 : 1 }}
       >
         {isSendingReminder ? "Sending..." : "Send Email Reminder"}
         <Image src="/images/dashboard/booking/trips/view/reminder.svg" alt="" width={20} height={20} />
@@ -325,7 +332,12 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
           } catch (err: any) {
             console.error("Failed to cancel transportation booking:", err);
             setBannerVariant("error");
-            setBannerMessage(err?.response?.data?.message || "Failed to cancel booking. Please try again.");
+            setBannerMessage(
+              err?.response?.data?.message || 
+              err?.response?.data?.detail || 
+              err?.response?.data?.cancellation_reason?.[0] || 
+              "Failed to cancel booking. Please try again."
+            );
             setIsCancelModalOpen(false);
           }
         }} 

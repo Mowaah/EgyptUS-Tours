@@ -1,8 +1,8 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CreateHotel } from "@/components/dashboard/Catalog/Hotels/CreateHotel/CreateHotel";
+import { CreateHotel, CreateHotelFormHandle } from "@/components/dashboard/Catalog/Hotels/CreateHotel/CreateHotel";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import { DashboardConfirmationModal } from "@/components/dashboard/shared";
 import styles from "../page.module.scss";
@@ -12,10 +12,11 @@ export default function CreateHotelPage() {
   const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false);
   const [isDraftModalOpen, setIsDraftModalOpen] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
+  const formRef = useRef<CreateHotelFormHandle>(null);
 
   const handleSaveDraft = () => {
     setIsDraftModalOpen(false);
-    router.push("/dashboard/catalog/hotels?draft=true");
+    formRef.current?.saveDraft();
   };
 
   return (
@@ -35,7 +36,7 @@ export default function CreateHotelPage() {
         onPrimaryAction={() => setIsDraftModalOpen(true)}
       />
       <Suspense fallback={<div>Loading...</div>}>
-        <CreateHotel onDirtyChange={setIsDirty} />
+        <CreateHotel ref={formRef} onDirtyChange={setIsDirty} />
       </Suspense>
 
       <DashboardConfirmationModal

@@ -1,4 +1,4 @@
-import type { DataTableColumn } from "@/components/dashboard/DataTable";
+import type { DataTableColumn, DataTableRowAction } from "@/components/dashboard/DataTable";
 import type { TransportationBookingRow } from "../types";
 import styles from "./TransportationPanel.module.scss";
 import { parseDate } from "@/utils/dateFormat";
@@ -147,8 +147,55 @@ export const transportationColumns: DataTableColumn<TransportationBookingRow>[] 
   },
 ];
 
-export const transportationRowActions = (onAction: (action: string, row: TransportationBookingRow) => void) => [
-  { label: "View", iconSrc: "/images/dashboard/view.svg", onClick: (r: TransportationBookingRow) => onAction("View", r) },
-  { label: "Assign To", iconSrc: "/images/dashboard/assign.svg", onClick: (r: TransportationBookingRow) => onAction("Assign To", r) },
-  { label: "Send Email Reminder", iconSrc: "/images/dashboard/booking/trips/notification-bing.svg", onClick: (r: TransportationBookingRow) => onAction("Send Email Reminder", r) },
-];
+export const transportationRowActions = (
+  row: TransportationBookingRow,
+  onAction?: (action: string, row: TransportationBookingRow) => void
+): DataTableRowAction<TransportationBookingRow>[] => {
+  const actions: DataTableRowAction<TransportationBookingRow>[] = [
+    {
+      label: "View",
+      iconSrc: "/images/dashboard/view.svg",
+      onClick: (r: TransportationBookingRow) => {
+        if (onAction) onAction("View", r);
+      },
+    },
+  ];
+
+  const op = row.operational_status?.toLowerCase();
+  const isCompleted = op === "completed";
+  const isRefunded =
+    op === "refunded" ||
+    op === "no_refund" ||
+    op === "no_refunded" ||
+    op === "no_refunded_amount" ||
+    row.remaining_payment_status?.toLowerCase() === "refunded" ||
+    row.payment_status?.toLowerCase() === "refunded";
+  const isInProgress =
+    op === "in_transit" ||
+    op === "in transit" ||
+    op === "on_trip" ||
+    op === "in_trip" ||
+    op === "on trip" ||
+    op === "in trip";
+
+  if (!isCompleted && !isRefunded && !isInProgress) {
+    actions.push(
+      {
+        label: "Assign To",
+        iconSrc: "/images/dashboard/assign.svg",
+        onClick: (r: TransportationBookingRow) => {
+          if (onAction) onAction("Assign To", r);
+        },
+      },
+      {
+        label: "Send Email Reminder",
+        iconSrc: "/images/dashboard/booking/trips/notification-bing.svg",
+        onClick: (r: TransportationBookingRow) => {
+          if (onAction) onAction("Send Email Reminder", r);
+        },
+      }
+    );
+  }
+
+  return actions;
+};

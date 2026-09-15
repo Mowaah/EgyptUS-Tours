@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Image from "next/image";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
-import profileStyles from "@/components/dashboard/shared/ProfileHeader/ProfileHeader.module.scss";
 import styles from "./ViewTrip.module.scss";
 
 import GuestDetails from "./GuestDetails";
@@ -13,14 +12,13 @@ import RoomSelection from "./RoomSelection";
 import PaymentOverview from "./PaymentOverview";
 import PriceDetails from "./PriceDetails";
 import ActivityTimeline from "./ActivityTimeline";
-import type { TripBookingRow } from "../types";
 import { getTripsPillStyle } from "../TripsPanel/tripsColumns";
 import ActionNoteModal, { ActionNoteModalConfig } from "@/components/dashboard/LeadsInquiries/ActionNoteModal/ActionNoteModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import useSWR from "swr";
 import { getTripBookingById, cancelTripBooking, sendTripBookingReminder, refundTripBooking } from "@/services/admin/adminBookingsService";
 import { RefundModal } from "@/components/dashboard/shared";
-import { calculateRefundSummary, RefundSummary } from "@/utils/cancellationPolicy";
+import { calculateRefundSummary } from "@/utils/cancellationPolicy";
 
 interface ViewTripProps {
   tripId: string;
@@ -47,12 +45,27 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
   );
 
   const payload = tripData;
+  const opStatus = payload?.operational_status?.toLowerCase();
   const isRefunded = 
-    payload?.operational_status === "refunded" || 
-    payload?.operational_status === "no_refund" || 
-    payload?.operational_status === "no_refunded" || 
-    payload?.operational_status === "no_refunded_amount";
-  const isCancelled = payload?.operational_status === "cancelled";
+    opStatus === "refunded" || 
+    opStatus === "no_refund" || 
+    opStatus === "no_refunded" || 
+    opStatus === "no_refunded_amount" ||
+    payload?.remaining_payment_status?.toLowerCase() === "refunded" ||
+    payload?.payment_status?.toLowerCase() === "refunded";
+  const isCancelled = opStatus === "cancelled";
+  const isCompleted = opStatus === "completed";
+  const isInProgress = 
+    opStatus === "on_trip" || 
+    opStatus === "in_trip" || 
+    opStatus === "on trip" || 
+    opStatus === "in trip" || 
+    opStatus === "in_hotel" || 
+    opStatus === "in_stay" || 
+    opStatus === "in hotel" || 
+    opStatus === "in stay" || 
+    opStatus === "in_transit" || 
+    opStatus === "in transit";
   const displayId = payload?.booking_code || `BK-${String(tripId).padStart(6, "0")}`;
 
   const refundSummary = React.useMemo(() => {
@@ -108,7 +121,7 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
       if (total === 0) {
         total = Number(payload.total_price || payload.total_amount || 0);
       }
-      let totalPaid = Number(payload.payment_overview?.total_paid || payload.amount_paid || payload.paid_amount || 0);
+      const totalPaid = Number(payload.payment_overview?.total_paid || payload.amount_paid || payload.paid_amount || 0);
       
       if (total > 0 && totalPaid > 0 && totalPaid < total) {
         const pct = Math.round(((total - totalPaid) / total) * 100);
@@ -179,7 +192,7 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
     }
   };
 
-  const actionButtons = isRefunded ? null : isCancelled ? (
+  const actionButtons = isRefunded || isInProgress ? null : isCancelled ? (
     <button 
       className={styles.primaryActionButton} 
       type="button"
@@ -188,7 +201,7 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
       Refund Payment
       <Image src="/images/money-send.svg" alt="" width={20} height={20} />
     </button>
-  ) : (
+  ) : isCompleted ? null : (
     <>
       <button 
         className={styles.dangerActionButton} 
@@ -204,7 +217,6 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
         type="button"
         onClick={handleSendReminder}
         disabled={isSendingReminder}
-        style={{ opacity: isSendingReminder ? 0.7 : 1 }}
       >
         {isSendingReminder ? "Sending..." : "Send Email Reminder"}
         <Image src="/images/dashboard/booking/trips/view/reminder.svg" alt="" width={20} height={20} />
@@ -288,7 +300,12 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
           } catch (err: any) {
             console.error("Failed to cancel booking:", err);
             setBannerVariant("error");
-            setBannerMessage(err?.response?.data?.message || "Failed to cancel booking. Please try again.");
+            setBannerMessage(
+              err?.response?.data?.message || 
+              err?.response?.data?.detail || 
+              err?.response?.data?.cancellation_reason?.[0] || 
+              "Failed to cancel booking. Please try again."
+            );
             setIsCancelModalOpen(false);
           }
         }} 

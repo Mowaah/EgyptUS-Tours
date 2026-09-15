@@ -63,7 +63,7 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
         "On Trip": "on_trip",
         Completed: "completed",
         Cancelled: "cancelled",
-        Refunded: "cancelled",
+        Refunded: "refunded",
       };
       params.operational_status = statusMap[appliedFilters.status] ?? appliedFilters.status.toLowerCase().replace(" ", "_");
     }
@@ -136,7 +136,7 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
           columns={tripsColumns}
           getRowId={(row) => String(row.id)}
           selectable
-          rowActions={(row) => tripsRowActions(async (action, r) => {
+          rowActions={(row) => tripsRowActions(row, async (action, r) => {
             if (action === "View") {
               router.push(`/dashboard/bookings/trips/${r.id}`);
             } else if (action === "Re-Assign To" || action === "Assign To" || action === "Assign" || action === "Reassign") {
