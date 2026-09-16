@@ -17,6 +17,7 @@ import ActionNoteModal, { ActionNoteModalConfig } from "@/components/dashboard/L
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import { RefundModal } from "@/components/dashboard/shared";
 import { calculateRefundSummary } from "@/utils/cancellationPolicy";
+import { RefundBankDetailsCard, RefundSummaryCard } from "@/components/shared/RefundCards/RefundCards";
 
 interface ViewTransportationProps {
   id: string;
@@ -49,13 +50,20 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
 
   const payload = transportData;
   const opStatus = payload?.operational_status?.toLowerCase();
+  const hasRefundRecord = Boolean(
+    payload?.refund != null ||
+    (Array.isArray((payload as any)?.refunds) && (payload as any).refunds.length > 0) ||
+    (payload?.refunded_amount != null && Number(payload.refunded_amount) > 0) ||
+    (payload?.payment_overview?.refunded_amount != null && Number(payload.payment_overview.refunded_amount) > 0)
+  );
   const isRefunded = 
     opStatus === "refunded" || 
     opStatus === "no_refund" || 
     opStatus === "no_refunded" || 
     opStatus === "no_refunded_amount" ||
     payload?.remaining_payment_status?.toLowerCase() === "refunded" ||
-    payload?.payment_status?.toLowerCase() === "refunded";
+    payload?.payment_status?.toLowerCase() === "refunded" ||
+    hasRefundRecord;
   const isCancelled = opStatus === "cancelled";
   const isCompleted = opStatus === "completed";
   const isInProgress =
@@ -116,18 +124,28 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
   }, [payload]);
 
   const remainingPaymentLabel = React.useMemo(() => {
-    if (!payload) return "-";
+    if (!payload || isRefunded || isCancelled) return "-";
     const rem = payload.remaining_payment_status?.toLowerCase();
     if (rem === "paid" || payload.payment_status === "paid") return "Paid";
     if (rem === "overdue") return "Overdue";
     if (rem === "refunded") return "Refunded";
 
     if (rem === "pending" || payload.payment_status === "pending" || payload.payment_status === "partially_paid") {
-      let total = Number(payload.payment_overview?.total || 0);
-      if (total === 0) {
-        total = Number(payload.total_price || payload.total_amount || 0);
-      }
-      const totalPaid = Number(payload.payment_overview?.total_paid || payload.amount_paid || payload.paid_amount || 0);
+      let total = Number(
+        payload.payment_overview?.total_package ||
+        payload.payment_overview?.total ||
+        payload.total_price ||
+        payload.total_amount ||
+        payload.booking?.total_price ||
+        0
+      );
+      const totalPaid = Number(
+        payload.payment_overview?.paid_to_date ||
+        payload.payment_overview?.total_paid ||
+        payload.amount_paid ||
+        payload.paid_amount ||
+        0
+      );
       
       if (total > 0 && totalPaid > 0 && totalPaid < total) {
         const pct = Math.round(((total - totalPaid) / total) * 100);
@@ -142,7 +160,7 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
     return payload.remaining_payment_status
       ? payload.remaining_payment_status.charAt(0).toUpperCase() + payload.remaining_payment_status.slice(1)
       : "-";
-  }, [payload]);
+  }, [payload, isRefunded, isCancelled]);
 
   const operationalStatusLabel = React.useMemo(() => {
     if (!payload?.operational_status) return "-";
@@ -304,6 +322,34 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
               <PassengerInformation guest={guestData} />
               <TransferDetails transfer={payload?.transfer} />
               <PaymentOverview overview={payload?.payment_overview} payload={payload} />
+              {isRefunded && payload?.refund && (
+                <>
+                  <RefundBankDetailsCard
+                    data={{
+                      account_holder_name: payload.refund.account_holder_name,
+                      bank_name: payload.refund.bank_name,
+                      bank_country: payload.refund.bank_country,
+                      account_number: payload.refund.account_number,
+                      iban: payload.refund.iban,
+                      swift: payload.refund.swift_bic,
+                    }}
+                  />
+                  <RefundSummaryCard
+                    data={{
+                      package_total: payload.refund.package_cost,
+                      days_before_travel: payload.refund.days_before_travel,
+                      policy_applied: payload.refund.policy_label,
+                      deduction_percent: payload.refund.deduction_percent,
+                      deduction_amount: payload.refund.deduction_amount,
+                      refund_amount: payload.refund.refund_amount,
+                      transaction_reference: payload.refund.transaction_reference,
+                    }}
+                    receipt={payload.refund.receipt_file}
+                    reason={payload.refund.notes}
+                    currency={payload.currency}
+                  />
+                </>
+              )}
             </div>
             
             <div className={styles.rightColumn}>

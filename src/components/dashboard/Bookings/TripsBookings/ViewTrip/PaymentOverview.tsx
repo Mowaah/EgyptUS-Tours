@@ -55,14 +55,6 @@ export default function PaymentOverview({ overview, payload }: PaymentOverviewPr
   const paymentPlanDisplay = overview?.payment_plan_label || (isDeposit ? `Deposit (${depositPercentage}%)` : "Full Payment");
   const paymentMethodDisplay = formatLabel(overview?.payment_method || payload?.payment_method || "-");
 
-  const isRefunded = 
-    payload?.operational_status === "refunded" || 
-    payload?.operational_status === "no_refund" || 
-    payload?.operational_status === "no_refunded" || 
-    payload?.operational_status === "no_refunded_amount";
-
-  const refunded = Number(overview?.refunded_amount || payload?.refunded_amount || 0);
-
   return (
     <div className={styles.card}>
       <div className={styles.cardTitle}>
@@ -117,23 +109,6 @@ export default function PaymentOverview({ overview, payload }: PaymentOverviewPr
           </div>
         )}
 
-        {isRefunded && (
-          <div className={styles.infoRow}>
-            <span className={styles.infoLabel}>Refunded Amount</span>
-            <span className={`${styles.infoValue} ${styles.refundedAmount}`}>
-              {refunded > 0 ? `${currencySymbol}${formatMoney(refunded)}` : "No Refunded Amount"}
-            </span>
-          </div>
-        )}
-
-        {!isRefunded && refunded > 0 && (
-          <div className={styles.infoRow}>
-            <span className={styles.infoLabel}>Refunded Amount</span>
-            <span className={`${styles.infoValue} ${styles.refundedAmount}`}>
-              {currencySymbol}{formatMoney(refunded)}
-            </span>
-          </div>
-        )}
       </div>
     </div>
   );
