@@ -190,6 +190,10 @@ export default function EventsRequestProposalPage() {
         newErrors.endDate = t("proposal.errors.endDateBeforeStartDate", "End Date cannot be before Start Date.");
       }
 
+      if (!evt.description?.trim()) {
+        newErrors.description = t("proposal.errors.description", "Event Description is required.");
+      }
+
       if (Object.keys(newErrors).length > 0) {
         setFieldErrors(newErrors);
         return;

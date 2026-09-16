@@ -208,12 +208,12 @@
       "venueType": "Preferred Venue Type",
       "selectVenueType": "Select Preferred Venue",
       "additionalServices": "Additional Services Needed",
-      "additionalRequirements": "Special Requests & Requirements",
+      "additionalRequirements": "Additional Requirements",
       "additionalRequirementsPlaceholder": "Any specific setups, dietary requirements, VIP protocols, or AV needs..."
     },
     "budget": {
       "title": "Budget & Submission",
-      "estimatedBudget": "Estimated Budget (Total)",
+      "estimatedBudget": "Estimated Budget In USD",
       "selectBudget": "Select Budget Range",
       "budgetFlexibility": "Budget Flexibility",
       "hearAboutUs": "How did you hear about us?",
@@ -247,6 +247,7 @@
       "endDate": "End Date is required.",
       "endDatePast": "End Date cannot be in the past.",
       "endDateBeforeStartDate": "End Date cannot be before Start Date.",
+      "description": "Event Description is required.",
       "venueType": "Preferred Venue Type is required.",
       "estimatedBudget": "Estimated Budget is required.",
       "budgetFlexibility": "Budget Flexibility is required."

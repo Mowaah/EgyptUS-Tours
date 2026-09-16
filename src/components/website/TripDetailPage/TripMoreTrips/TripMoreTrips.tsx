@@ -27,6 +27,7 @@ export default function TripMoreTrips({ relatedTrips = [] }: TripMoreTripsProps)
         <Button
           variant="primary"
           size="md"
+          href="/egypttours"
           icon={
             <Image
               src="/images/arrows/arrow-right.svg"

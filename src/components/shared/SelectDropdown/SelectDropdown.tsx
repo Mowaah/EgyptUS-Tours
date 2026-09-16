@@ -43,7 +43,10 @@ export default function SelectDropdown<T extends SelectOption = SelectOption>({
   error,
   placeholder,
 }: SelectDropdownProps<T>) {
-  const selectedOption = options.find((o) => o.value === value);
+  const isSelected = Boolean(value && value !== "");
+  const selectedOption = isSelected ? options.find((o) => o.value === value) : undefined;
+  const placeholderOption = options.find((o) => o.value === "");
+  const placeholderText = placeholder || placeholderOption?.label || options[0]?.label || label || "";
 
   return (
     <CheckboxDropdown
@@ -83,12 +86,14 @@ export default function SelectDropdown<T extends SelectOption = SelectOption>({
             }
           }}
         >
-          {renderValue && value ? (
+          {renderValue && isSelected ? (
             renderValue(value)
-          ) : (
-            <span className={selectedOption ? styles.dropdownValue : styles.placeholder}>
-              {selectedOption ? selectedOption.label : (placeholder || options[0]?.label || "")}
+          ) : isSelected ? (
+            <span className={styles.dropdownValue}>
+              {selectedOption ? selectedOption.label : value}
             </span>
+          ) : (
+            <span className={styles.placeholder}>{placeholderText}</span>
           )}
           <svg
             className={`${styles.multiSelectChevron} ${isOpen ? styles.multiSelectChevronOpen : ""}`}

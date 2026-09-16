@@ -349,7 +349,7 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
             { label: t("sidebar.checkIn", "Check-in"), value: confirmedBooking?.startDate || formData.startDate || "—" },
             { label: t("sidebar.checkOut", "Check-out"), value: confirmedBooking?.endDate || formData.endDate || "—" },
             { label: t("sidebar.totalPrice", "Total Price"), value: confirmedBooking?.totalAmount ? formatCurrency({ usd: Number(confirmedBooking.totalAmount) }) : formatCurrency(totalPrices), valueColor: "#FF6600" },
-            { label: t("sidebar.payNow", "Paid Now"), value: confirmedBooking?.depositAmount ? formatCurrency({ usd: Number(confirmedBooking.depositAmount) }) : formatCurrency(depositPrices), valueColor: "#FF6600" },
+            { label: t("sidebar.paidNow", "Paid now"), value: confirmedBooking?.depositAmount ? formatCurrency({ usd: Number(confirmedBooking.depositAmount) }) : formatCurrency(depositPrices), valueColor: "#FF6600" },
           ]}
         />
       )}

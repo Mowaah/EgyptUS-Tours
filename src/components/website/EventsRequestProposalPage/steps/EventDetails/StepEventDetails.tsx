@@ -120,6 +120,8 @@ export default function StepEventDetails({
           <FormField
             id="evt-desc"
             label={t("proposal.eventDetails.description", "Event Description")}
+            required
+            error={errors.description}
             isTextarea
             wrapperClassName={pageStyles.formGroupFull}
             className={pageStyles.formInput}

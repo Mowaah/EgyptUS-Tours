@@ -52,7 +52,7 @@ export default function StepBudget({
 
       <div className={pageStyles.stepFormCardScroll}>
         <div className={pageStyles.formGrid}>
-          <FormField label={t("proposal.budget.estimatedBudget", "Estimated Budget")} required error={errors.estimatedBudget}>
+          <FormField label={t("proposal.budget.estimatedBudget", "Estimated Budget In USD")} required error={errors.estimatedBudget}>
             <SelectDropdown
               id="bud-est"
               label={t("proposal.budget.selectBudget", "Select Type")}

@@ -213,7 +213,7 @@
     },
     "budget": {
       "title": "Presupuesto y Envío",
-      "estimatedBudget": "Presupuesto Estimado (Total)",
+      "estimatedBudget": "Presupuesto Estimado En USD",
       "selectBudget": "Seleccionar Rango de Presupuesto",
       "budgetFlexibility": "Flexibilidad Presupuestaria",
       "hearAboutUs": "¿Cómo nos conoció?",
@@ -247,6 +247,7 @@
       "endDate": "La fecha de fin es obligatoria.",
       "endDatePast": "La fecha de fin no puede ser en el pasado.",
       "endDateBeforeStartDate": "La fecha de fin no puede ser anterior a la de inicio.",
+      "description": "La descripción del evento es obligatoria.",
       "venueType": "El tipo de sede es obligatorio.",
       "estimatedBudget": "El presupuesto estimado es obligatorio.",
       "budgetFlexibility": "La flexibilidad presupuestaria es obligatoria."

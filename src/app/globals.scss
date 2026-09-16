@@ -111,7 +111,11 @@ button[class*="option"],
 button[class*="menuItem"],
 button[class*="MenuItem"],
 button[class*="arrow"],
-button[class*="Arrow"] {
+button[class*="Arrow"],
+[class*="faq"] button,
+[class*="Faq"] button,
+[class*="accordion"] button,
+[class*="Accordion"] button {
   scale: 1 !important;
   transition: none !important;
 

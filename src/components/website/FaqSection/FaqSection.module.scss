@@ -71,6 +71,9 @@
   min-height: 48px;
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
+  scale: 1 !important;
+  transform: none !important;
+  transition: none !important;
 
   @media (min-width: 640px) {
     align-items: flex-start;
@@ -83,6 +86,7 @@
   }
 
   &:hover {
+    scale: 1 !important;
     transform: none !important;
     .icon {
       background: $background-blue;
@@ -90,6 +94,7 @@
   }
   
   &:active {
+    scale: 1 !important;
     transform: none !important;
   }
 }
