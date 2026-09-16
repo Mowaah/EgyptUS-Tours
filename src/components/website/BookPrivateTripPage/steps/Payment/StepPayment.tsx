@@ -5,6 +5,7 @@ import { BookingData } from "../../BookPrivateTripPage";
 import { Trip } from "@/types";
 import { submitTripBooking } from "@/lib/api";
 import { formatPhoneE164 } from "@/utils/validators";
+import { formatDateToYMD } from "@/utils/dateFormat";
 import { useState } from "react";
 
 interface StepPaymentProps {
@@ -32,24 +33,14 @@ export default function StepPayment({
 
     setIsSubmitting(true);
     try {
-      // Helper to convert MM/DD/YYYY to YYYY-MM-DD
-      const formatDate = (dateStr: string) => {
-        if (!dateStr) return null;
-        const parts = dateStr.split("/");
-        if (parts.length === 3) {
-          return `${parts[2]}-${parts[0]}-${parts[1]}`;
-        }
-        return dateStr;
-      };
-
       const payload = {
         name: formData.name,
         trip_slug: trip.id,
         email: formData.email,
         phone: formatPhoneE164(formData.phone),
         nationality: formData.nationality,
-        start_date: formatDate(formData.startDate),
-        end_date: formatDate(formData.endDate),
+        start_date: formatDateToYMD(formData.startDate),
+        end_date: formatDateToYMD(formData.endDate),
         adults: formData.adults,
         children: formData.children,
         infants: formData.infants,

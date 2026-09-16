@@ -7,6 +7,7 @@ import formStyles from "@/components/shared/FormField/FormField.module.scss";
 import type { EventProposalData } from "../../eventsRequestProposalTypes";
 import { EVENT_TYPES, ATTENDEE_RANGES, CITIES } from "../../eventsRequestProposalData";
 import { useTranslation } from "@/hooks/useTranslation";
+import { parseDate } from "@/utils/dateFormat";
 
 interface StepEventDetailsProps {
   data: EventProposalData["eventDetails"];
@@ -32,7 +33,7 @@ export default function StepEventDetails({
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const minEndDate = data.startDate ? new Date(data.startDate) : today;
+  const minEndDate = data.startDate ? (parseDate(data.startDate) || today) : today;
 
   return (
     <div className={pageStyles.stepFormCard}>

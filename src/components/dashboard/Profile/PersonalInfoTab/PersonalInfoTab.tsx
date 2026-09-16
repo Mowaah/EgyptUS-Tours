@@ -8,6 +8,7 @@ import styles from "./PersonalInfoTab.module.scss";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { updateAdminProfile } from "@/lib/adminCoreApi";
 import { fileToBase64 } from "@/utils/imageUtils";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 
 export function PersonalInfoTab() {
   const { adminUser, updateAdminUser } = useAdminAuth();
@@ -107,7 +108,7 @@ export function PersonalInfoTab() {
   );
 
   const formattedDate = adminUser?.updated_at
-    ? new Date(adminUser.updated_at).toLocaleDateString('en-GB')
+    ? formatDateDDMMYYYY(adminUser.updated_at)
     : "Never";
 
   return (

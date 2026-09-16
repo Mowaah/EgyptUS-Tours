@@ -17,6 +17,7 @@ import { createCatalogVehicle, updateCatalogVehicle, publishCatalogVehicle } fro
 import { useVehicleCategories, useCatalogVehicleDetail } from "@/hooks/useCatalogVehicles";
 import { fileToBase64 } from "@/utils/imageUtils";
 import { DASHBOARD_CURRENCY } from "@/constants/currency";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import styles from "./CreateVehicle.module.scss";
 
 const STEPS: WizardStepConfig[] = [
@@ -318,10 +319,7 @@ export function CreateVehicle({ vehicleId, onDirtyChange, onSavingChange, ref }:
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updated = (vehicleData as any)?.updated_at;
     if (updated) {
-      const dateObj = new Date(updated);
-      if (!Number.isNaN(dateObj.getTime())) {
-        return `${dateObj.getMonth() + 1}/${dateObj.getDate()}/${dateObj.getFullYear()}`;
-      }
+      return formatDateDDMMYYYY(updated);
     }
     return undefined;
   }, [vehicleData]);

@@ -5,41 +5,29 @@ import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CustomDatePicker, CheckboxIndicator } from "@/components/shared";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
+import { formatDateDDMMYYYY, formatDateToYMD, parseDate } from "@/utils/dateFormat";
 import styles from "./FinanceDateFilter.module.scss";
 
 type QuickRange = "today" | "this_week" | "this_month";
 
 function toPickerValue(isoStr: string): string {
   if (!isoStr) return "";
-  if (isoStr.includes("/")) return isoStr;
-  const parts = isoStr.split("-");
-  if (parts.length === 3) {
-    const [yyyy, mm, dd] = parts;
-    return `${mm}/${dd}/${yyyy}`;
-  }
-  return isoStr;
+  return formatDateDDMMYYYY(isoStr);
 }
 
 function toIsoDate(pickerStr: string): string {
   if (!pickerStr) return "";
-  if (pickerStr.includes("-")) return pickerStr;
-  const parts = pickerStr.split("/");
-  if (parts.length === 3) {
-    const [mm, dd, yyyy] = parts;
-    return `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
-  }
-  return pickerStr;
+  return formatDateToYMD(pickerStr);
 }
 
 function formatDateLabel(dateStr: string): string {
   if (!dateStr) return "";
   try {
-    const iso = toIsoDate(dateStr);
-    const date = new Date(iso + "T00:00:00");
-    if (isNaN(date.getTime())) return dateStr;
+    const date = parseDate(dateStr);
+    if (!date || isNaN(date.getTime())) return dateStr;
     return date.toLocaleDateString("en-US", {
-      month: "short",
       day: "numeric",
+      month: "short",
       year: "numeric",
     });
   } catch {

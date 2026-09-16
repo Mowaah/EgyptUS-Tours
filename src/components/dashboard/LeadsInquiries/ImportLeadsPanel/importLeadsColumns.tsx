@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { DataTableColumn } from "@/components/dashboard/DataTable";
 import type { TeamType } from "../types";
 import type { AdminLeadImportBatch } from "@/types/adminLeadTypes";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import styles from "./ImportLeadsPanel.module.scss";
 
 const teamClass: Record<TeamType, string> = {
@@ -28,7 +29,7 @@ export const importLeadsColumns: DataTableColumn<AdminLeadImportBatch>[] = [
   {
     id: "importDate",
     header: "Import Date",
-    render: (row) => new Date(row.import_date).toLocaleDateString(),
+    render: (row) => formatDateDDMMYYYY(row.import_date, "-"),
   },
   {
     id: "importedBy",

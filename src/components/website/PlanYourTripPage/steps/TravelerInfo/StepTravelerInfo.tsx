@@ -5,6 +5,7 @@ import Image from "next/image";
 import { BookingStepFooter, FormField, CustomDatePicker, NationalitySelect, CounterPill, PhoneInput } from "@/components/shared";
 import { isValidEmail, isValidPhone } from "@/utils/validators";
 import { useTranslation } from "@/hooks/useTranslation";
+import { parseDate } from "@/utils/dateFormat";
 
 import pageStyles from "../../PlanYourTripPage.module.scss";
 import styles from "./StepTravelerInfo.module.scss";
@@ -42,17 +43,15 @@ export default function StepTravelerInfo({
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const isStartDateInPast = travelerInfo.startDate
-    ? new Date(travelerInfo.startDate) < today
-    : false;
+  const parsedStartDate = travelerInfo.startDate ? parseDate(travelerInfo.startDate) : null;
+  if (parsedStartDate) parsedStartDate.setHours(0, 0, 0, 0);
 
-  const isEndDateInPast = travelerInfo.endDate
-    ? new Date(travelerInfo.endDate) < today
-    : false;
+  const parsedEndDate = travelerInfo.endDate ? parseDate(travelerInfo.endDate) : null;
+  if (parsedEndDate) parsedEndDate.setHours(0, 0, 0, 0);
 
-  const isDateInvalid = travelerInfo.startDate && travelerInfo.endDate
-    ? new Date(travelerInfo.endDate) < new Date(travelerInfo.startDate)
-    : false;
+  const isStartDateInPast = parsedStartDate ? parsedStartDate < today : false;
+  const isEndDateInPast = parsedEndDate ? parsedEndDate < today : false;
+  const isDateInvalid = parsedStartDate && parsedEndDate ? parsedEndDate < parsedStartDate : false;
 
   const emailValid = isValidEmail(travelerInfo.email);
   const phoneValid = isValidPhone(travelerInfo.phone);
@@ -186,7 +185,7 @@ export default function StepTravelerInfo({
               className={`${formStyles.input} ${pageStyles.dateInput} ${showErrors && (!isEndDateFilled || isEndDateInPast || isDateInvalid) ? formStyles.inputInvalid : ""}`}
               value={travelerInfo.endDate}
               onChange={(date) => onTravelerChange("endDate", date)}
-              minDate={travelerInfo.startDate ? new Date(travelerInfo.startDate) : today}
+              minDate={parsedStartDate || today}
             />
           </FormField>
 

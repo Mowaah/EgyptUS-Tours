@@ -8,7 +8,7 @@ import DashboardField from "@/components/dashboard/shared/DashboardField/Dashboa
 import { DASHBOARD_CURRENCY } from "@/constants/currency";
 import rootStyles from "./RequestModals.module.scss";
 import styles from "./ApproveRequestModal.module.scss";
-import { formatDateToYMD } from "@/utils/dateFormat";
+import { formatDateToYMD, parseDate } from "@/utils/dateFormat";
 
 interface ApproveRequestModalProps {
   open: boolean;
@@ -18,19 +18,19 @@ interface ApproveRequestModalProps {
   defaultEndDate?: string;
 }
 
-const formatDateToMDY = (dateString?: string) => {
+const formatDateToDMY = (dateString?: string) => {
   if (!dateString) return "";
   if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) return dateString;
   if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
     const [yyyy, mm, dd] = dateString.split("-");
-    return `${mm}/${dd}/${yyyy}`;
+    return `${dd}/${mm}/${yyyy}`;
   }
-  const d = new Date(dateString);
-  if (isNaN(d.getTime())) return dateString;
+  const d = parseDate(dateString);
+  if (!d || isNaN(d.getTime())) return dateString;
   const yyyy = d.getFullYear();
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const dd = String(d.getDate()).padStart(2, "0");
-  return `${mm}/${dd}/${yyyy}`;
+  return `${dd}/${mm}/${yyyy}`;
 };
 
 export default function ApproveRequestModal({
@@ -56,8 +56,8 @@ export default function ApproveRequestModal({
   useEffect(() => {
     if (!open) return;
     
-    setStartDate(defaultStartDate ? formatDateToMDY(defaultStartDate) : "");
-    setEndDate(defaultEndDate ? formatDateToMDY(defaultEndDate) : "");
+    setStartDate(defaultStartDate ? formatDateToDMY(defaultStartDate) : "");
+    setEndDate(defaultEndDate ? formatDateToDMY(defaultEndDate) : "");
     setErrors({});
     
     const prev = document.body.style.overflow;
@@ -168,7 +168,7 @@ export default function ApproveRequestModal({
                       }
                       value={startDate}
                       readOnly
-                      placeholder="mm/dd/yyyy"
+                      placeholder="DD/MM/YYYY"
                       error={errors.startDate}
                       style={{ cursor: "pointer" }}
                     />
@@ -188,7 +188,7 @@ export default function ApproveRequestModal({
                     setErrors((prev) => ({ ...prev, endDate: undefined }));
                   }
                 }}
-                minDate={startDate ? new Date(startDate) : null}
+                minDate={startDate ? (parseDate(startDate) || null) : null}
                 renderTrigger={(isOpen, setIsOpen) => (
                   <div onClick={() => setIsOpen(!isOpen)} className={styles.datePickerTrigger}>
                     <DashboardField
@@ -201,7 +201,7 @@ export default function ApproveRequestModal({
                       }
                       value={endDate}
                       readOnly
-                      placeholder="mm/dd/yyyy"
+                      placeholder="DD/MM/YYYY"
                       error={errors.endDate}
                       style={{ cursor: "pointer" }}
                     />

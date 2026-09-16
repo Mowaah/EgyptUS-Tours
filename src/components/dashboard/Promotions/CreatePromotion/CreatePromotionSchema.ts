@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { parseDate } from "@/utils/dateFormat";
 
 export const appliesToItemSchema = z.object({
   id: z.string(), // for mapping array keys
@@ -25,9 +26,9 @@ export const createPromotionSchema = z.object({
   }),
 }).superRefine((data, ctx) => {
   if (data.startDate && data.endDate) {
-    const start = new Date(data.startDate);
-    const end = new Date(data.endDate);
-    if (end < start) {
+    const start = parseDate(data.startDate);
+    const end = parseDate(data.endDate);
+    if (start && end && end < start) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "End Date cannot be before Start Date",

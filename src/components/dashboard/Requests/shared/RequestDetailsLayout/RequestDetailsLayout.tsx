@@ -25,6 +25,7 @@ import {
 } from "@/components/dashboard/Requests/shared/Modals";
 import StatusPill from "@/components/shared/StatusPill/StatusPill";
 import { getStatusVariant } from "../../PlanYourTrip/planYourTripColumns";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import styles from "./RequestDetailsLayout.module.scss";
 
 const ADD_NOTE_CONFIG: ActionNoteModalConfig = {
@@ -250,7 +251,7 @@ export default function RequestDetailsLayout({
         {!hideFooter && status !== "New" && canEditRequests && (
           <div className={styles.footer}>
             <div className={styles.footerDate}>
-              Last Update: <br/> <strong>{lastUpdated ? (() => { const d = new Date(lastUpdated); return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`; })() : "—"}</strong>
+              Last Update: <br/> <strong>{formatDateDDMMYYYY(lastUpdated, "—")}</strong>
             </div>
             <div className={styles.footerActions}>
               {status === "Negotiation" ? (

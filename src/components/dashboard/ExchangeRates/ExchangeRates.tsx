@@ -13,6 +13,7 @@ import {
   updateExchangeRates,
   type ExchangeRatesData,
 } from "@/services/admin/adminExchangeRatesService";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import styles from "./ExchangeRates.module.scss";
 
 interface ExchangeRatesProps {
@@ -156,7 +157,7 @@ export default function ExchangeRates({ initialData }: ExchangeRatesProps) {
       <DashboardFooter
         lastUpdateDate={
           initialData?.updated_at
-            ? new Date(initialData.updated_at).toLocaleDateString()
+            ? formatDateDDMMYYYY(initialData.updated_at)
             : ""
         }
         isSubmit={true}

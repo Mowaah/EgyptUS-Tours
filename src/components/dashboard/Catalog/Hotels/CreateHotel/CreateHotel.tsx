@@ -15,6 +15,7 @@ import { useWizard, WizardStepConfig, WizardSubmitIntent } from "@/hooks/useWiza
 import { createCatalogHotel, updateCatalogHotel, publishCatalogHotel, archiveCatalogHotel, unpublishCatalogHotel } from "@/services/admin/adminCatalogHotelsService";
 import { useCatalogHotelDetail, useCatalogHotelLocations } from "@/hooks/useCatalogHotels";
 import { fileToBase64 } from "@/utils/imageUtils";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import styles from "./CreateHotel.module.scss";
 
 const STEPS: WizardStepConfig[] = [
@@ -209,10 +210,7 @@ export function CreateHotel({ hotelId, onDirtyChange, onSavingChange, ref }: { h
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updated = (hotel as any)?.updated_at;
     if (updated) {
-      const dateObj = new Date(updated);
-      if (!Number.isNaN(dateObj.getTime())) {
-        return `${dateObj.getMonth() + 1}/${dateObj.getDate()}/${dateObj.getFullYear()}`;
-      }
+      return formatDateDDMMYYYY(updated);
     }
     return undefined;
   }, [hotel]);

@@ -11,6 +11,7 @@ import PaymentStep from "@/components/dashboard/shared/PaymentStep/PaymentStep";
 import BookingModalContainer from "../../shared/BookingModalContainer/BookingModalContainer";
 import { BaseGuestDetails } from "../../shared/types";
 import { isValidEmail, isValidPhone } from "@/utils/validators";
+import { formatDateToYMD } from "@/utils/dateFormat";
 import { createTransportationBooking } from "@/services/admin/adminBookingsService";
 import { triggerToast } from "@/components/dashboard/shared/GlobalToastContainer/GlobalToastContainer";
 import { mutate } from "swr";
@@ -125,15 +126,6 @@ export default function AddTransportationBookingModal({ open, onClose }: AddTran
     } else {
       try {
         setIsSubmitting(true);
-        const formatDateToYMD = (dateString: string) => {
-          if (!dateString) return dateString;
-          const d = new Date(dateString);
-          if (isNaN(d.getTime())) return dateString;
-          const yyyy = d.getFullYear();
-          const mm = String(d.getMonth() + 1).padStart(2, "0");
-          const dd = String(d.getDate()).padStart(2, "0");
-          return `${yyyy}-${mm}-${dd}`;
-        };
 
         const formatTime = (timeStr: string) => {
           if (!timeStr) return null;

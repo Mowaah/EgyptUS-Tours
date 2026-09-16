@@ -8,6 +8,7 @@ import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHe
 import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/DashboardTabs";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import { DashboardFooter, DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import dashboardStyles from "../../../page.module.scss";
 import styles from "./layout.module.scss";
 import { useCatalogHotelDetail } from "@/hooks/useCatalogHotels";
@@ -268,7 +269,7 @@ export default function HotelLayout({
           {children}
         </div>
 
-        <DashboardFooter lastUpdateDate={hotel?.updated_at ? new Date(hotel.updated_at).toLocaleDateString() : "N/A"} hideActions className={styles.customFooter} />
+        <DashboardFooter lastUpdateDate={hotel?.updated_at ? formatDateDDMMYYYY(hotel.updated_at) : "N/A"} hideActions className={styles.customFooter} />
 
         <DashboardConfirmationModal
           open={isDeleteModalOpen}

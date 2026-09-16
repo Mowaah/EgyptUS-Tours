@@ -19,6 +19,7 @@ import { WizardLayout } from "@/components/dashboard/shared";
 import { useWizard, WizardStepConfig, WizardSubmitIntent } from "@/hooks/useWizard";
 import { fileToBase64 } from "@/utils/imageUtils";
 import { DASHBOARD_CURRENCY } from "@/constants/currency";
+import { formatDateToYMD, formatDateDDMMYYYY } from "@/utils/dateFormat";
 import {
   createCatalogTrip,
   getCatalogTripDetail,
@@ -155,9 +156,8 @@ function parseDuration(value: string): { days: number; nights: number } {
 function normalizeDate(value: string): string | undefined {
   const text = value.trim();
   if (!text) return undefined;
-  const date = new Date(text);
-  if (Number.isNaN(date.getTime())) return undefined;
-  return date.toISOString().slice(0, 10);
+  const res = formatDateToYMD(text);
+  return res || undefined;
 }
 
 function parseDateRange(value: string): { start_date?: string; end_date?: string; label: string } {
@@ -336,17 +336,8 @@ function mapTripToFormValues(trip: any): CreateTripValues {
     datesAvailability: {
       enabled: !!trip?.availability_enabled,
       dates: asList(trip?.availability_slots).map((slot) => {
-        const formatYMD = (val?: string) => {
-          if (!val) return "";
-          const parts = val.split("-").map(Number);
-          if (parts.length === 3 && parts.every((n) => !Number.isNaN(n))) {
-            const [y, m, d] = parts;
-            return `${String(m).padStart(2, "0")}/${String(d).padStart(2, "0")}/${y}`;
-          }
-          return val;
-        };
-        const sDate = formatYMD(slot?.start_date);
-        const eDate = formatYMD(slot?.end_date);
+        const sDate = slot?.start_date ? formatDateDDMMYYYY(slot.start_date) : "";
+        const eDate = slot?.end_date ? formatDateDDMMYYYY(slot.end_date) : "";
         return {
           id: slot?.id,
           dateRange: [sDate, eDate].filter(Boolean).join(" - "),
@@ -687,10 +678,7 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange, ref }: { tri
         if (!ignore) {
           methods.reset(mapTripToFormValues(trip));
           if (trip?.updated_at) {
-            const dateObj = new Date(trip.updated_at);
-            if (!Number.isNaN(dateObj.getTime())) {
-              setLastUpdateDate(`${dateObj.getMonth() + 1}/${dateObj.getDate()}/${dateObj.getFullYear()}`);
-            }
+            setLastUpdateDate(formatDateDDMMYYYY(trip.updated_at));
           }
         }
       })

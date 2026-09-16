@@ -205,7 +205,7 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
         const d = parseDate(formData.startDate);
         if (d) {
           d.setDate(d.getDate() + tripDetail.duration.days - 1);
-          const endStr = `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}/${d.getFullYear()}`;
+          const endStr = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
           if (formData.endDate !== endStr) {
             setFormData((prev) => ({ ...prev, endDate: endStr }));
           }

@@ -14,6 +14,7 @@ import PaymentStep from "@/components/dashboard/shared/PaymentStep/PaymentStep";
 import BookingModalContainer from "../../shared/BookingModalContainer/BookingModalContainer";
 import { BaseGuestDetails } from "../../shared/types";
 import { isValidEmail, isValidPhone } from "@/utils/validators";
+import { formatDateToYMD } from "@/utils/dateFormat";
 import { ROOM_TYPE_CHILD_CAPACITY } from "@/utils/bookingPricing";
 import { 
   createHotelBooking,
@@ -302,16 +303,6 @@ export default function AddHotelBookingModal({ open, onClose }: AddHotelBookingM
             }
           });
         });
-
-        const formatDateToYMD = (dateString: string) => {
-          if (!dateString) return dateString;
-          const d = new Date(dateString);
-          if (isNaN(d.getTime())) return dateString;
-          const yyyy = d.getFullYear();
-          const mm = String(d.getMonth() + 1).padStart(2, "0");
-          const dd = String(d.getDate()).padStart(2, "0");
-          return `${yyyy}-${mm}-${dd}`;
-        };
 
         const payload = {
           hotel_id: parseInt(formData.specificHotel),

@@ -9,6 +9,7 @@ import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHe
 import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/DashboardTabs";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import { DashboardFooter, DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import dashboardStyles from "../../../page.module.scss";
 import styles from "./layout.module.scss";
 import { useCatalogVehicleDetail } from "@/hooks/useCatalogVehicles";
@@ -197,7 +198,7 @@ export default function TransportationLayout({
           <LanguageTabs active={activeLang} onChange={setActiveLang} variant="white" />
           {children}
         </div>
-        <DashboardFooter lastUpdateDate={vehicle?.updated_at ? new Date(vehicle.updated_at).toLocaleDateString() : "N/A"} hideActions className={styles.customFooter} />
+        <DashboardFooter lastUpdateDate={vehicle?.updated_at ? formatDateDDMMYYYY(vehicle.updated_at) : "N/A"} hideActions className={styles.customFooter} />
 
         <DashboardConfirmationModal
           open={isArchiveModalOpen}

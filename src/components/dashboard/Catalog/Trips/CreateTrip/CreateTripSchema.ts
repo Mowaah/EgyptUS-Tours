@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { requiredLocalizedStringSchema, localizedSlugSchema } from "@/components/dashboard/shared/i18n";
+import { formatDateToYMD } from "@/utils/dateFormat";
 
 function normalizeDateRangeKey(value: string): string {
   // Must have both start and end separated by " - "
@@ -10,22 +11,8 @@ function normalizeDateRangeKey(value: string): string {
   // Incomplete range (end not picked yet)
   if (!startRaw || !endRaw) return "";
 
-  const parseSingle = (s: string) => {
-    // YYYY-MM-DD
-    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-    // MM/DD/YYYY
-    const slashParts = s.split("/");
-    if (slashParts.length === 3) {
-      const [m, d, y] = slashParts.map(Number);
-      if (!Number.isNaN(m) && !Number.isNaN(d) && !Number.isNaN(y)) {
-        return `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-      }
-    }
-    return "";
-  };
-
-  const start = parseSingle(startRaw);
-  const end = parseSingle(endRaw);
+  const start = formatDateToYMD(startRaw);
+  const end = formatDateToYMD(endRaw);
   if (!start || !end) return "";
   return `${start}|${end}`;
 }

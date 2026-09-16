@@ -8,6 +8,7 @@ import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHe
 import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/DashboardTabs";
 import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import { DashboardFooter, DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import dashboardStyles from "../../../page.module.scss";
 import styles from "./layout.module.scss";
 import { useCatalogTripDetail } from "@/hooks/useCatalogTrips";
@@ -237,7 +238,7 @@ export default function TripLayout({
         {children}
       </div>
 
-      <DashboardFooter lastUpdateDate={trip?.updated_at ? new Date(trip.updated_at).toLocaleDateString() : "N/A"} hideActions className={styles.customFooter} />
+      <DashboardFooter lastUpdateDate={trip?.updated_at ? formatDateDDMMYYYY(trip.updated_at) : "N/A"} hideActions className={styles.customFooter} />
 
       <DashboardConfirmationModal
         open={isDeleteModalOpen}

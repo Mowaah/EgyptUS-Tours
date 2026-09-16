@@ -7,6 +7,7 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import { MultiCurrencyPrice } from "@/constants/currency";
 import { useTranslation } from "@/hooks/useTranslation";
 import { formatPhoneE164 } from "@/utils/validators";
+import { formatDateToYMD, parseDate } from "@/utils/dateFormat";
 import { useState, useMemo } from "react";
 import { saveTransportBookingInfo, resolvePaymentUrl } from "../../BookTransportationPage";
 import { savePendingGuestRecord } from "@/utils/guestBookingAuth";
@@ -30,7 +31,8 @@ export default function StepPayment({
 
   const isDepositFull = useMemo(() => {
     if (!formData.pickupDate) return false;
-    const start = new Date(formData.pickupDate);
+    const start = parseDate(formData.pickupDate);
+    if (!start || isNaN(start.getTime())) return false;
     const today = new Date();
     const daysUntil = (start.getTime() - today.getTime()) / (1000 * 3600 * 24);
     return daysUntil <= 30;
@@ -57,16 +59,6 @@ export default function StepPayment({
 
     setIsSubmitting(true);
     try {
-      // Helper to convert MM/DD/YYYY to YYYY-MM-DD
-      const formatDate = (dateStr: string) => {
-        if (!dateStr) return null;
-        const parts = dateStr.split("/");
-        if (parts.length === 3) {
-          return `${parts[2]}-${parts[0]}-${parts[1]}`;
-        }
-        return dateStr;
-      };
-
       // Helper to convert 12-hour time (e.g. "12:42 AM") to 24-hour time for DRF (e.g. "00:42:00")
       const formatTime = (timeStr: string) => {
         if (!timeStr) return "12:00:00";
@@ -90,7 +82,7 @@ export default function StepPayment({
         dropoff_location: formData.dropoffLocation,
         trip_type: formData.tripType,
         distance_km: "25.00",
-        pickup_date: formatDate(formData.pickupDate),
+        pickup_date: formatDateToYMD(formData.pickupDate),
         pickup_time: formatTime(formData.pickupTime),
         passengers: formData.passengers,
         luggage: String(formData.luggage),

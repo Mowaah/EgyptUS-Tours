@@ -11,13 +11,14 @@ import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import { useContentManager } from "@/hooks/useContentManager";
 import { getAdminTermsSections, createAdminTermsSection, updateAdminTermsSection, deleteAdminTermsSection, type AdminLegalSection } from "@/services/admin/adminLegalService";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 
 const mapSectionToContentItem = (section: AdminLegalSection): ContentItem => ({
   id: section.id.toString(),
   title: section.translations?.en?.title || "",
   content: section.translations?.en?.content || "",
   status: section.is_active ? "Published" : "Unpublished",
-  lastUpdated: new Date(section.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+  lastUpdated: formatDateDDMMYYYY(section.updated_at),
   rawTranslations: section.translations,
 });
 

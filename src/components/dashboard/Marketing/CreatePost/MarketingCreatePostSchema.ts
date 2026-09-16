@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { parseDate } from "@/utils/dateFormat";
 
 const localizedFieldsSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -47,8 +48,8 @@ export const marketingCreatePostSchema = z.object({
         message: "Scheduled date is required when auto apply is off",
       });
     } else {
-      const date = new Date(data.scheduledDate);
-      if (isNaN(date.getTime())) {
+      const date = parseDate(data.scheduledDate);
+      if (!date || isNaN(date.getTime())) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["scheduledDate"], message: "Invalid date" });
       } else {
         const today = new Date();

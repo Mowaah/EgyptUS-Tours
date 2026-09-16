@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { PasswordToggleButton } from "@/components/shared";
 import { DashboardField, DashboardFooter, DashboardStatusBanner } from "@/components/dashboard/shared";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import styles from "./SecurityTab.module.scss";
 import { changeAdminPassword } from "@/lib/adminCoreApi";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
@@ -74,7 +75,7 @@ export function SecurityTab() {
   const isDirty = currentPassword !== "" || newPassword !== "" || confirmPassword !== "";
 
   const formattedDate = adminUser?.updated_at 
-    ? new Date(adminUser.updated_at).toLocaleDateString('en-GB') 
+    ? formatDateDDMMYYYY(adminUser.updated_at) 
     : "Never";
 
   return (

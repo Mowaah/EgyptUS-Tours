@@ -7,6 +7,7 @@ import { submitEventProposal, extractApiError } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { savePendingGuestRecord } from "@/utils/guestBookingAuth";
+import { parseDate } from "@/utils/dateFormat";
 
 import styles from "./EventsRequestProposalPage.module.scss";
 import type { EventProposalData, EventStep } from "./eventsRequestProposalTypes";
@@ -118,7 +119,9 @@ export default function EventsRequestProposalPage() {
       if (patch.startDate !== undefined || patch.endDate !== undefined) {
         const s = patch.startDate !== undefined ? patch.startDate : proposalData.eventDetails.startDate;
         const e = patch.endDate !== undefined ? patch.endDate : proposalData.eventDetails.endDate;
-        if (s && e && new Date(e) >= new Date(s) && next.endDate) {
+        const sDate = s ? parseDate(s) : null;
+        const eDate = e ? parseDate(e) : null;
+        if (sDate && eDate && eDate >= sDate && next.endDate) {
           delete next.endDate;
           changed = true;
         }
@@ -167,17 +170,23 @@ export default function EventsRequestProposalPage() {
       if (!evt.expectedAttendees) newErrors.expectedAttendees = t("proposal.errors.expectedAttendees", "Expected Attendees is required.");
       if (!evt.preferredCity) newErrors.preferredCity = t("proposal.errors.preferredCity", "Preferred City is required.");
 
+      const sDate = evt.startDate ? parseDate(evt.startDate) : null;
+      if (sDate) sDate.setHours(0, 0, 0, 0);
+
+      const eDate = evt.endDate ? parseDate(evt.endDate) : null;
+      if (eDate) eDate.setHours(0, 0, 0, 0);
+
       if (!evt.startDate) {
         newErrors.startDate = t("proposal.errors.startDate", "Start Date is required.");
-      } else if (new Date(evt.startDate) < today) {
+      } else if (sDate && sDate < today) {
         newErrors.startDate = t("proposal.errors.startDatePast", "Start Date cannot be in the past.");
       }
 
       if (!evt.endDate) {
         newErrors.endDate = t("proposal.errors.endDate", "End Date is required.");
-      } else if (new Date(evt.endDate) < today) {
+      } else if (eDate && eDate < today) {
         newErrors.endDate = t("proposal.errors.endDatePast", "End Date cannot be in the past.");
-      } else if (evt.startDate && new Date(evt.endDate) < new Date(evt.startDate)) {
+      } else if (sDate && eDate && eDate < sDate) {
         newErrors.endDate = t("proposal.errors.endDateBeforeStartDate", "End Date cannot be before Start Date.");
       }
 

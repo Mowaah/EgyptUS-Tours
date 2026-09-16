@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { createPortal } from "react-dom";
+import { parseDate } from "@/utils/dateFormat";
 import styles from "./CustomDatePicker.module.scss";
 import formStyles from "../FormField/FormField.module.scss";
 
@@ -35,19 +36,7 @@ const getFirstDayOfMonth = (year: number, month: number) => new Date(year, month
 
 const parseDateString = (val: string) => {
   if (!val) return null;
-
-  // 1. Try standard Date parsing (works for "12/25/2024", etc)
-  const d = new Date(val);
-  if (!Number.isNaN(d.getTime())) return d;
-
-  // 2. Fallback to exact split for MM/DD/YYYY
-  const parts = val.split("/").map(Number);
-  if (parts.length === 3 && parts.every((n) => !Number.isNaN(n))) {
-    return new Date(parts[2], parts[0] - 1, parts[1]);
-  }
-
-  // 3. Fallback to null if they are mid-typing invalid strings without crashing viewDate
-  return null;
+  return parseDate(val);
 };
 
 export default function CustomDatePicker({
@@ -150,13 +139,16 @@ export default function CustomDatePicker({
     const yyyy = d.getFullYear();
     const mm = String(d.getMonth() + 1).padStart(2, "0");
     const dd = String(d.getDate()).padStart(2, "0");
-    const dStr = `${mm}/${dd}/${yyyy}`;
+    const dStr = `${dd}/${mm}/${yyyy}`;
 
     if (selectsRange) {
       if (fixedDurationDays && fixedDurationDays > 0) {
         const endDate = new Date(d);
         endDate.setDate(endDate.getDate() + fixedDurationDays - 1);
-        const endStr = `${String(endDate.getMonth() + 1).padStart(2, "0")}/${String(endDate.getDate()).padStart(2, "0")}/${endDate.getFullYear()}`;
+        const endYyyy = endDate.getFullYear();
+        const endMm = String(endDate.getMonth() + 1).padStart(2, "0");
+        const endDd = String(endDate.getDate()).padStart(2, "0");
+        const endStr = `${endDd}/${endMm}/${endYyyy}`;
         onChange(`${dStr} - ${endStr}`);
         setIsOpen(false);
         return;
@@ -164,7 +156,7 @@ export default function CustomDatePicker({
 
       if (value && value.includes(" - ") && value.split(" - ")[1] === "") {
         const startStr = value.split(" - ")[0];
-        const start = new Date(startStr);
+        const start = parseDate(startStr) || new Date(startStr);
         if (d < start) {
           onChange(`${dStr} - `);
         } else {
@@ -223,12 +215,12 @@ export default function CustomDatePicker({
   const formattedPickup = (() => {
     if (!selectedDateObj || Number.isNaN(selectedDateObj.getTime())) return { main: placeholder || "Select date", year: "" };
 
+    const weekday = selectedDateObj.toLocaleDateString("en-US", { weekday: "short" });
+    const monthName = selectedDateObj.toLocaleDateString("en-US", { month: "short" });
+    const day = String(selectedDateObj.getDate()).padStart(2, "0");
+
     return {
-      main: selectedDateObj.toLocaleDateString("en-US", {
-        weekday: "short",
-        day: "2-digit",
-        month: "short",
-      }),
+      main: `${weekday}, ${day} ${monthName}`,
       year: selectedDateObj.getFullYear().toString(),
     };
   })();
@@ -244,37 +236,39 @@ export default function CustomDatePicker({
             let raw = e.target.value.replace(/\D/g, "");
             if (raw.length > 8) raw = raw.slice(0, 8);
 
-            // 2. Extract segments
-            let mm = raw.slice(0, 2);
-            let dd = raw.slice(2, 4);
+            // 2. Extract segments: Day (DD), Month (MM), Year (YYYY)
+            let dd = raw.slice(0, 2);
+            let mm = raw.slice(2, 4);
             let yyyy = raw.slice(4, 8);
 
-            // 3. Clamp Month to (01-12)
-            if (mm.length === 1 && parseInt(mm) > 1) mm = `0${mm}`;
-            if (mm.length === 2 && parseInt(mm) > 12) mm = "12";
-            if (mm.length === 2 && parseInt(mm) === 0) mm = "01";
-
-            // 4. Clamp Day to (01-31)
+            // 3. Clamp Day to (01-31)
             if (dd.length === 1 && parseInt(dd) > 3) dd = `0${dd}`;
             if (dd.length === 2 && parseInt(dd) > 31) dd = "31";
             if (dd.length === 2 && parseInt(dd) === 0) dd = "01";
 
+            // 4. Clamp Month to (01-12)
+            if (mm.length === 1 && parseInt(mm) > 1) mm = `0${mm}`;
+            if (mm.length === 2 && parseInt(mm) > 12) mm = "12";
+            if (mm.length === 2 && parseInt(mm) === 0) mm = "01";
+
             // 5. Rebuild with slashes
-            let formatted = mm;
-            if (dd.length > 0) formatted += `/${dd}`;
+            let formatted = dd;
+            if (mm.length > 0) formatted += `/${mm}`;
             if (yyyy.length > 0) formatted += `/${yyyy}`;
 
             onChange(formatted);
 
             // Jump calendar if valid
-            const parsed = new Date(formatted);
-            if (!Number.isNaN(parsed.getTime()) && raw.length === 8) {
-              setViewDate(new Date(parsed.getFullYear(), parsed.getMonth(), 1));
+            if (raw.length === 8) {
+              const parsed = parseDate(formatted);
+              if (parsed && !Number.isNaN(parsed.getTime())) {
+                setViewDate(new Date(parsed.getFullYear(), parsed.getMonth(), 1));
+              }
             }
           }}
           onClick={() => setIsOpen(true)}
           className={`${className || ""} ${error ? formStyles.inputInvalid : ""}`}
-          placeholder="MM/DD/YYYY"
+          placeholder={placeholder || "DD/MM/YYYY"}
         />
       ) : variant === "custom" && renderTrigger ? (
         renderTrigger(
@@ -286,11 +280,12 @@ export default function CustomDatePicker({
               const sDate = parseDateString(parts[0]);
               const eDate = parseDateString(parts[1]);
               if (!sDate) return "";
-              const formatOptions: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" };
-              const sFormatted = sDate.toLocaleDateString("en-US", formatOptions);
-              if (!eDate) return `${sFormatted} - `;
-              const eFormatted = eDate.toLocaleDateString("en-US", formatOptions);
-              return `${sFormatted} - ${eFormatted}`;
+              const sDay = String(sDate.getDate()).padStart(2, "0");
+              const sMonth = sDate.toLocaleDateString("en-US", { month: "short" });
+              if (!eDate) return `${sDay} ${sMonth} - `;
+              const eDay = String(eDate.getDate()).padStart(2, "0");
+              const eMonth = eDate.toLocaleDateString("en-US", { month: "short" });
+              return `${sDay} ${sMonth} - ${eDay} ${eMonth}`;
             })()
           : (!selectedDateObj || Number.isNaN(selectedDateObj.getTime()) ? "" : `${String(selectedDateObj.getDate()).padStart(2, '0')} - ${String(selectedDateObj.getMonth() + 1).padStart(2, '0')} - ${selectedDateObj.getFullYear()}`)
         )

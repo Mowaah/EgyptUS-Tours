@@ -10,6 +10,7 @@ import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import { useContentManager } from "@/hooks/useContentManager";
 import { getAdminPrivacySections, createAdminPrivacySection, updateAdminPrivacySection, deleteAdminPrivacySection, type AdminLegalSection } from "@/services/admin/adminLegalService";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import styles from "../../page.module.scss";
 
 const mapSectionToContentItem = (section: AdminLegalSection): ContentItem => ({
@@ -17,7 +18,7 @@ const mapSectionToContentItem = (section: AdminLegalSection): ContentItem => ({
   title: section.translations?.en?.title || "",
   content: section.translations?.en?.content || "",
   status: section.is_active ? "Published" : "Unpublished",
-  lastUpdated: new Date(section.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+  lastUpdated: formatDateDDMMYYYY(section.updated_at),
   rawTranslations: section.translations,
 });
 

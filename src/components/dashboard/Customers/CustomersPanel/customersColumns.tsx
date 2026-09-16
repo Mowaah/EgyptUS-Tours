@@ -1,6 +1,7 @@
 import type { DataTableColumn } from "@/components/dashboard/DataTable";
 import type { AdminCustomer } from "@/types/adminCustomerTypes";
 import { COUNTRIES } from "@/data/countries";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import styles from "./CustomersPanel.module.scss";
 
 const statusClass: Record<string, string> = {
@@ -58,7 +59,7 @@ export const customersColumns: DataTableColumn<AdminCustomer>[] = [
   {
     id: "lastActivity",
     header: "Last Activity",
-    render: (row) => row.last_activity_at ? new Date(row.last_activity_at).toLocaleDateString() : "-",
+    render: (row) => formatDateDDMMYYYY(row.last_activity_at, "-"),
   },
   {
     id: "status",

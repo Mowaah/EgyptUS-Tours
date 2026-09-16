@@ -10,6 +10,7 @@ import { FormSection } from "@/components/dashboard/FormFields";
 import SEOSettingsSection from "@/components/dashboard/shared/SEOSettingsSection/SEOSettingsSection";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { seoConfigurationSchema, type SEOConfigurationValues } from "./SEOConfigurationSchema";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import styles from "./SEOConfiguration.module.scss";
 import { useAdminSeo } from "@/hooks/useAdminSeo";
 import { fileToBase64, SeoConfigPayload } from "@/services/admin/adminSeoService";
@@ -235,7 +236,7 @@ export default function SEOConfigurationForm({ pageKey, onSuccess }: SEOConfigur
       </div>
 
       <DashboardFooter
-        lastUpdateDate={data?.updated_at ? new Date(data.updated_at).toLocaleDateString() : ""}
+        lastUpdateDate={data?.updated_at ? formatDateDDMMYYYY(data.updated_at) : ""}
         isSubmit={true}
         hideActions={!canEdit("seo")}
         isSaveDisabled={!isDirty || isSubmitting}

@@ -11,13 +11,14 @@ import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import { useContentManager } from "@/hooks/useContentManager";
 import { getAdminFaqs, createAdminFaq, updateAdminFaq, deleteAdminFaq, type AdminSiteFaq } from "@/services/admin/adminLegalService";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 
 const mapFaqToContentItem = (faq: AdminSiteFaq): ContentItem => ({
   id: faq.id.toString(),
   title: faq.translations?.en?.question || "",
   content: faq.translations?.en?.answer || "",
   status: faq.is_active ? "Published" : "Unpublished",
-  lastUpdated: new Date(faq.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+  lastUpdated: formatDateDDMMYYYY(faq.updated_at),
   rawTranslations: faq.translations,
 });
 

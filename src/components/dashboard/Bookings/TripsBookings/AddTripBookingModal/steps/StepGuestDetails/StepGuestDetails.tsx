@@ -90,7 +90,7 @@ export default function StepGuestDetails({ formData, onChange, errors = {}, hasF
                   const d = parseDate(date);
                   if (d) {
                     d.setDate(d.getDate() + durationDays - 1);
-                    const endStr = `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}/${d.getFullYear()}`;
+                    const endStr = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
                     onChange({ startDate: date, endDate: endStr });
                   }
                 }

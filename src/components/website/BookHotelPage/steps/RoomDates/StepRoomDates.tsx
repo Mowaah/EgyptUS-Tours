@@ -11,6 +11,7 @@ import {
 import type { SelectOption } from "@/components/shared";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { parseDate } from "@/utils/dateFormat";
 import { getRoomSubtitle, normalizeRoomType, ROOM_TYPE_CHILD_CAPACITY } from "@/utils/bookingPricing";
 import planPage from "../../../PlanYourTripPage/PlanYourTripPage.module.scss";
 import travelerStyles from "../../../PlanYourTripPage/steps/TravelerInfo/StepTravelerInfo.module.scss";
@@ -380,21 +381,25 @@ export default function StepRoomDates({
     today.setHours(0, 0, 0, 0);
 
     if (formData.startDate) {
-      const checkInDate = new Date(formData.startDate);
-      checkInDate.setHours(0, 0, 0, 0);
-      if (checkInDate < today) {
-        newErrors.startDate = t("hotelBooking.roomDates.checkInPast", "Check-in date cannot be in the past.");
+      const checkInDate = parseDate(formData.startDate);
+      if (checkInDate) {
+        checkInDate.setHours(0, 0, 0, 0);
+        if (checkInDate < today) {
+          newErrors.startDate = t("hotelBooking.roomDates.checkInPast", "Check-in date cannot be in the past.");
+        }
       }
     }
 
     if (formData.startDate && formData.endDate) {
-      const checkInDate = new Date(formData.startDate);
-      checkInDate.setHours(0, 0, 0, 0);
-      const checkOutDate = new Date(formData.endDate);
-      checkOutDate.setHours(0, 0, 0, 0);
+      const checkInDate = parseDate(formData.startDate);
+      const checkOutDate = parseDate(formData.endDate);
+      if (checkInDate && checkOutDate) {
+        checkInDate.setHours(0, 0, 0, 0);
+        checkOutDate.setHours(0, 0, 0, 0);
 
-      if (checkOutDate <= checkInDate) {
-        newErrors.endDate = t("hotelBooking.roomDates.checkOutBeforeCheckIn", "Check-out date must be after check-in date.");
+        if (checkOutDate <= checkInDate) {
+          newErrors.endDate = t("hotelBooking.roomDates.checkOutBeforeCheckIn", "Check-out date must be after check-in date.");
+        }
       }
     }
 
@@ -485,7 +490,7 @@ export default function StepRoomDates({
               variant="input"
               className={`${formStyles.input} ${planPage.dateInput} ${errors.endDate ? formStyles.inputInvalid : ""}`}
               value={formData.endDate}
-              minDate={formData.startDate ? new Date(formData.startDate) : undefined}
+              minDate={formData.startDate ? (parseDate(formData.startDate) || undefined) : undefined}
               onChange={(date) => {
                 onChange({ endDate: date });
                 if (errors.endDate) setErrors((e) => ({ ...e, endDate: "" }));

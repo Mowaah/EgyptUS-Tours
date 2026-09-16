@@ -21,6 +21,7 @@ import {
   useConvertLead, 
   useReopenLead 
 } from "@/hooks/useLeads";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import type { AdminLead } from "@/types/adminLeadTypes";
 
 const MODAL_CONFIGS: Record<string, ActionNoteModalConfig> = {
@@ -115,7 +116,7 @@ export default function ViewLead({ leadId }: ViewLeadProps) {
               lead.status === "converted" ? "green" :
               lead.status === "closed" ? "red" : "blue"
             }
-            subtitleElements={[`Created on ${new Date(lead.created_at).toLocaleDateString()}`]}
+            subtitleElements={[`Created on ${formatDateDDMMYYYY(lead.created_at)}`]}
             actionButtons={
               <>
                 {canEditLeads && (lead.status === "new" || lead.status === "contacted" || lead.status === "qualified") && (

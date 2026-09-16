@@ -559,7 +559,7 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
                         const yyyy = d.getFullYear();
                         const mm = String(d.getMonth() + 1).padStart(2, "0");
                         const dd = String(d.getDate()).padStart(2, "0");
-                        updates.endDate = `${yyyy}-${mm}-${dd}`;
+                        updates.endDate = `${dd}/${mm}/${yyyy}`;
                       }
                     }
                     onChange(updates);

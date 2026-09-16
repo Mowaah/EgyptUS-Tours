@@ -22,6 +22,7 @@ import { LocalizedImageUploadSection } from "@/components/dashboard/shared";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import { marketingCreatePostSchema, type MarketingCreatePostValues } from "./MarketingCreatePostSchema";
 import SEOSettingsSection from "@/components/dashboard/shared/SEOSettingsSection/SEOSettingsSection";
+import { parseDate } from "@/utils/dateFormat";
 import styles from "./MarketingCreatePost.module.scss";
 import type { ContentType } from "../types";
 import {
@@ -169,11 +170,20 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange, onStat
             imageFile: getFullImageUrl(data.featured_image),
             autoApply: normalizedStatus.toLowerCase() === "published",
             scheduledDate: data.scheduled_at
-              ? new Date(data.scheduled_at).toISOString().split('T')[0]
+              ? (() => {
+                  const d = new Date(data.scheduled_at);
+                  return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+                })()
               : (normalizedStatus.toLowerCase() === "published"
-                ? new Date().toISOString().split('T')[0]
+                ? (() => {
+                    const d = new Date();
+                    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+                  })()
                 : (data.status?.toLowerCase() === "scheduled" && data.published_at
-                  ? new Date(data.published_at).toISOString().split('T')[0]
+                  ? (() => {
+                      const d = new Date(data.published_at);
+                      return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+                    })()
                   : "")),
             translations: {
               en: buildLang("en"),
@@ -216,8 +226,8 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange, onStat
 
       let formattedScheduledAt: string | null = null;
       if (data.scheduledDate) {
-        const d = new Date(data.scheduledDate);
-        if (!Number.isNaN(d.getTime())) {
+        const d = parseDate(data.scheduledDate);
+        if (d && !Number.isNaN(d.getTime())) {
           formattedScheduledAt = d.toISOString();
         }
       }
@@ -456,7 +466,7 @@ export function MarketingCreatePost({ contentType, postId, onDirtyChange, onStat
                           label="Scheduled Date"
                           value={displayTxt || field.value || ""}
                           readOnly
-                          placeholder="MM/DD/YYYY"
+                          placeholder="DD/MM/YYYY"
                           error={errors.scheduledDate?.message}
                           endAdornment={<Image src="/images/calendar3.svg" alt="calendar icon" width={20} height={20} aria-hidden className={styles.iconOverlay} />}
                           className={styles.iconOverlay}

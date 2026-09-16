@@ -8,6 +8,7 @@ import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { updateSystemConfig } from "@/services/admin/adminSystemConfigService";
 import type { SystemConfigResponse } from "@/services/admin/adminSystemConfigService";
 import { fileToBase64 } from "@/utils/imageUtils";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import styles from "./SystemConfiguration.module.scss";
 
 interface ConfigurationValues {
@@ -410,7 +411,7 @@ export default function SystemConfiguration({ initialConfig }: SystemConfigurati
       */}
 
       <DashboardFooter 
-        lastUpdateDate={initialConfig?.updated_at ? new Date(initialConfig.updated_at).toLocaleDateString() : ""} 
+        lastUpdateDate={initialConfig?.updated_at ? formatDateDDMMYYYY(initialConfig.updated_at) : ""} 
         isSubmit={true} 
         hideActions={!userCanEdit}
         onDiscard={handleDiscard}

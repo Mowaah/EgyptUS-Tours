@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import styles from "./DashboardFooter.module.scss";
 
 interface DashboardFooterProps {
@@ -24,11 +25,13 @@ export function DashboardFooter({
   isSaving = false,
   className = "",
 }: DashboardFooterProps) {
+  const formattedDate = lastUpdateDate ? formatDateDDMMYYYY(lastUpdateDate) || lastUpdateDate : "";
+
   return (
     <footer className={`${styles.actionBar} ${className}`}>
-      {lastUpdateDate ? (
+      {formattedDate ? (
         <p>
-          Last Update: <strong>{lastUpdateDate}</strong>
+          Last Update: <strong>{formattedDate}</strong>
         </p>
       ) : (
         <div /> /* Empty div to keep flex alignment if no date */

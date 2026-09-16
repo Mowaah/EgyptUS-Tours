@@ -18,6 +18,7 @@ import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardC
 import { createPromotionSchema, type CreatePromotionValues } from "./CreatePromotionSchema";
 import { getAdminPromotionById, createAdminPromotion, updateAdminPromotion } from "@/services/admin/adminMarketingService";
 import { apiClient, fetchAllPages } from "@/lib/api";
+import { formatDateToYMD } from "@/utils/dateFormat";
 import styles from "./CreatePromotion.module.scss";
 
 export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange }: { promotionId?: string, onDirtyChange?: (isDirty: boolean) => void, onSubmittingChange?: (isSubmitting: boolean) => void }) {
@@ -107,12 +108,11 @@ export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange
           let formattedEndDate = "";
           if (data.valid_from) {
             const dateObj = new Date(data.valid_from);
-            // Needs MM/DD/YYYY
-            formattedStartDate = `${String(dateObj.getMonth() + 1).padStart(2, '0')}/${String(dateObj.getDate()).padStart(2, '0')}/${dateObj.getFullYear()}`;
+            formattedStartDate = `${String(dateObj.getDate()).padStart(2, '0')}/${String(dateObj.getMonth() + 1).padStart(2, '0')}/${dateObj.getFullYear()}`;
           }
           if (data.valid_to) {
             const dateObj = new Date(data.valid_to);
-            formattedEndDate = `${String(dateObj.getMonth() + 1).padStart(2, '0')}/${String(dateObj.getDate()).padStart(2, '0')}/${dateObj.getFullYear()}`;
+            formattedEndDate = `${String(dateObj.getDate()).padStart(2, '0')}/${String(dateObj.getMonth() + 1).padStart(2, '0')}/${dateObj.getFullYear()}`;
           }
 
           reset({
@@ -221,17 +221,8 @@ export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange
   const onSubmit = async (data: CreatePromotionValues, isDraft: boolean = false) => {
     try {
       if (onSubmittingChange) onSubmittingChange(true);
-      let formattedStartDate = null;
-      if (data.startDate) {
-        const d = new Date(data.startDate);
-        if (!Number.isNaN(d.getTime())) formattedStartDate = d.toISOString().split('T')[0];
-      }
-      
-      let formattedEndDate = null;
-      if (data.endDate) {
-        const d = new Date(data.endDate);
-        if (!Number.isNaN(d.getTime())) formattedEndDate = d.toISOString().split('T')[0];
-      }
+      const formattedStartDate = data.startDate ? formatDateToYMD(data.startDate) : null;
+      const formattedEndDate = data.endDate ? formatDateToYMD(data.endDate) : null;
 
       const payload = {
         status: isDraft ? "draft" : (data.isActive ? "active" : "inactive"),
@@ -505,7 +496,7 @@ export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange
                           label="Start Date"
                           value={displayTxt || field.value || ""}
                           readOnly
-                          placeholder="mm/dd/yyyy"
+                          placeholder="DD/MM/YYYY"
                           error={errors.startDate?.message}
                           endAdornment={<Image src="/images/calendar3.svg" alt="calendar icon" width={20} height={20} aria-hidden className={styles.iconOverlay} />}
                         />
@@ -528,7 +519,7 @@ export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange
                           label="End Date"
                           value={displayTxt || field.value || ""}
                           readOnly
-                          placeholder="mm/dd/yyyy"
+                          placeholder="DD/MM/YYYY"
                           error={errors.endDate?.message}
                           endAdornment={<Image src="/images/calendar3.svg" alt="calendar icon" width={20} height={20} aria-hidden className={styles.iconOverlay} />}
                         />

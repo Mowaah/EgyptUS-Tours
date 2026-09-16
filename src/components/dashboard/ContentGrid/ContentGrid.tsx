@@ -8,6 +8,7 @@ import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyStat
 import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import { LanguageTabs, type Language } from "@/components/shared";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
+import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import styles from "./ContentGrid.module.scss";
 
 export interface ContentItem {
@@ -258,7 +259,7 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
 
                 {/* Card Footer */}
                 <div className={styles.cardFooter}>
-                  <span className={styles.lastUpdated}>Last Updated: {item.lastUpdated}</span>
+                  <span className={styles.lastUpdated}>Last Updated: {formatDateDDMMYYYY(item.lastUpdated) || item.lastUpdated}</span>
                   <div
                     className={`${styles.statusBadge} ${item.status === "Published" ? styles.statusPublished : styles.statusUnpublished
                       }`}
