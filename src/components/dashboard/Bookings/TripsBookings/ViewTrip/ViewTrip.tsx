@@ -297,38 +297,38 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
               <RoomSelection selections={payload?.booking?.room_selections} booking={payload?.booking} />
               <PaymentOverview overview={payload?.payment_overview} payload={payload} />
               {isRefunded && payload?.refund && (
-                <>
-                  <RefundBankDetailsCard
-                    data={{
-                      account_holder_name: payload.refund.account_holder_name,
-                      bank_name: payload.refund.bank_name,
-                      bank_country: payload.refund.bank_country,
-                      account_number: payload.refund.account_number,
-                      iban: payload.refund.iban,
-                      swift: payload.refund.swift_bic,
-                    }}
-                  />
-                  <RefundSummaryCard
-                    data={{
-                      package_total: payload.refund.package_cost,
-                      days_before_travel: payload.refund.days_before_travel,
-                      policy_applied: payload.refund.policy_label,
-                      deduction_percent: payload.refund.deduction_percent,
-                      deduction_amount: payload.refund.deduction_amount,
-                      refund_amount: payload.refund.refund_amount,
-                      transaction_reference: payload.refund.transaction_reference,
-                    }}
-                    receipt={payload.refund.receipt_file}
-                    reason={payload.refund.notes}
-                    currency={payload.currency}
-                  />
-                </>
+                <RefundBankDetailsCard
+                  data={{
+                    account_holder_name: payload.refund.account_holder_name,
+                    bank_name: payload.refund.bank_name,
+                    bank_country: payload.refund.bank_country,
+                    account_number: payload.refund.account_number,
+                    iban: payload.refund.iban,
+                    swift: payload.refund.swift_bic,
+                  }}
+                />
               )}
             </div>
             
             <div className={styles.rightColumn}>
               <PriceDetails details={payload?.price_details} overview={payload?.payment_overview} booking={payload?.booking} />
               <ActivityTimeline events={payload?.events || []} />
+              {isRefunded && payload?.refund && (
+                <RefundSummaryCard
+                  data={{
+                    package_total: payload.refund.package_cost,
+                    days_before_travel: payload.refund.days_before_travel,
+                    policy_applied: payload.refund.policy_label,
+                    deduction_percent: payload.refund.deduction_percent,
+                    deduction_amount: payload.refund.deduction_amount,
+                    refund_amount: payload.refund.refund_amount,
+                    transaction_reference: payload.refund.transaction_reference,
+                  }}
+                  receipt={payload.refund.receipt_file}
+                  reason={payload.refund.notes}
+                  currency={payload.currency}
+                />
+              )}
             </div>
           </div>
         )}
