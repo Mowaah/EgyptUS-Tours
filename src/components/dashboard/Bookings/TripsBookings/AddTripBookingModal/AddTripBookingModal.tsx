@@ -19,7 +19,7 @@ import PaymentStep from "@/components/dashboard/shared/PaymentStep/PaymentStep";
 import BookingModalContainer from "../../shared/BookingModalContainer/BookingModalContainer";
 import { isValidEmail, isValidPhone } from "@/utils/validators";
 import { ROOM_TYPE_CHILD_CAPACITY } from "@/utils/bookingPricing";
-import { parseDate, formatDateToYMD } from "@/utils/dateFormat";
+import { parseDate, formatDateToYMD, isDateWithinFullPaymentWindow } from "@/utils/dateFormat";
 import { BaseGuestDetails } from "../../shared/types";
 
 interface AddTripBookingModalProps {
@@ -149,7 +149,9 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
     ? parseFloat(previewData.price_breakdown.total)
     : 0;
 
-  const amountPaid = paymentPlan === "deposit" ? total * 0.3 : total;
+  const isWithin30Days = isDateWithinFullPaymentWindow(formData.startDate);
+  const effectivePaymentPlan = isWithin30Days ? "full" : paymentPlan;
+  const amountPaid = effectivePaymentPlan === "deposit" ? total * 0.3 : total;
 
   const hasFixedAvailability = Boolean(
     tripDetail?.availability && tripDetail.availability.length > 0
@@ -355,7 +357,7 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
           rooms_triple: calculatedTriple,
           room_selections: roomSelections.length > 0 ? roomSelections : undefined,
           special_requests: formData.specialRequests || "",
-          payment_plan: paymentPlan,
+          payment_plan: effectivePaymentPlan,
           payment_method: paymentMethod,
           terms_accepted: true,
         };
@@ -541,8 +543,10 @@ export default function AddTripBookingModal({ open, onClose, tourType, tripId }:
       {currentStep === 3 && (
         <PaymentStep
           total={total}
-          paymentPlan={paymentPlan}
+          paymentPlan={effectivePaymentPlan}
           onChangePlan={setPaymentPlan}
+          disableDeposit={isWithin30Days}
+          depositDisabledReason="Full payment is required within 30 days of trip departure."
           paymentMethod={paymentMethod}
           onChangeMethod={setPaymentMethod}
           onGenerateLink={() => handleNext(true)}

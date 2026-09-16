@@ -7,6 +7,8 @@ export interface PaymentStepProps {
   total: number;
   paymentPlan?: "deposit" | "full";
   onChangePlan?: (plan: "deposit" | "full") => void;
+  disableDeposit?: boolean;
+  depositDisabledReason?: string;
   paymentMethod?: "cash" | "paymob";
   onChangeMethod?: (method: "cash" | "paymob") => void;
   onGenerateLink?: () => void;
@@ -19,6 +21,8 @@ export default function PaymentStep({
   total,
   paymentPlan: propPlan,
   onChangePlan,
+  disableDeposit = false,
+  depositDisabledReason,
   paymentMethod: propMethod,
   onChangeMethod,
   onGenerateLink,
@@ -30,10 +34,12 @@ export default function PaymentStep({
   const [internalMethod, setInternalMethod] = useState<"cash" | "paymob">("cash");
   const [copied, setCopied] = useState(false);
 
-  const paymentPlan = propPlan ?? internalPlan;
+  const rawPaymentPlan = propPlan ?? internalPlan;
+  const paymentPlan = disableDeposit ? "full" : rawPaymentPlan;
   const paymentMethod = propMethod ?? internalMethod;
 
   const handlePlanChange = (p: "deposit" | "full") => {
+    if (disableDeposit && p === "deposit") return;
     setInternalPlan(p);
     onChangePlan?.(p);
   };
@@ -54,8 +60,10 @@ export default function PaymentStep({
         <div className={styles.optionsRow}>
           <button
             type="button"
-            className={`${styles.optionCard} ${paymentPlan === "deposit" ? styles.selected : ""}`}
+            className={`${styles.optionCard} ${paymentPlan === "deposit" ? styles.selected : ""} ${disableDeposit ? styles.disabled : ""}`}
             onClick={() => handlePlanChange("deposit")}
+            disabled={disableDeposit}
+            title={disableDeposit ? (depositDisabledReason || "Full payment required within 30 days of trip start") : undefined}
           >
             <div className={styles.radioCircle}>
               {paymentPlan === "deposit" && (

@@ -7,7 +7,7 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import { MultiCurrencyPrice } from "@/constants/currency";
 import { useTranslation } from "@/hooks/useTranslation";
 import { formatPhoneE164 } from "@/utils/validators";
-import { formatDateToYMD, parseDate } from "@/utils/dateFormat";
+import { formatDateToYMD, parseDate, isDateWithinFullPaymentWindow } from "@/utils/dateFormat";
 import { useState, useMemo } from "react";
 import { saveTransportBookingInfo, resolvePaymentUrl } from "../../BookTransportationPage";
 import { savePendingGuestRecord } from "@/utils/guestBookingAuth";
@@ -30,12 +30,7 @@ export default function StepPayment({
   const basePrice = parseFloat((vehicle.price ?? "0").replace(/[^0-9.]/g, "")) || 0;
 
   const isDepositFull = useMemo(() => {
-    if (!formData.pickupDate) return false;
-    const start = parseDate(formData.pickupDate);
-    if (!start || isNaN(start.getTime())) return false;
-    const today = new Date();
-    const daysUntil = (start.getTime() - today.getTime()) / (1000 * 3600 * 24);
-    return daysUntil <= 30;
+    return isDateWithinFullPaymentWindow(formData.pickupDate);
   }, [formData.pickupDate]);
 
   const depositFactor = isDepositFull ? 1 : 0.3;

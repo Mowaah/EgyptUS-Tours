@@ -221,3 +221,33 @@ export function formatDateToYMD(
   return fallback;
 }
 
+export const FULL_PAYMENT_WINDOW_DAYS = 30;
+
+/**
+ * Checks whether a given start/check-in/pickup date is within the full payment window (default: 30 days).
+ * Handles DD/MM/YYYY, YYYY-MM-DD, and Date objects safely.
+ * Returns true if the target date is today, in the past, or <= windowDays from today.
+ */
+export function isDateWithinFullPaymentWindow(
+  value?: string | Date | null,
+  windowDays: number = FULL_PAYMENT_WINDOW_DAYS
+): boolean {
+  if (!value) return false;
+  const targetDate = parseDate(value);
+  if (!targetDate || isNaN(targetDate.getTime())) return false;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const normalizedTarget = new Date(
+    targetDate.getFullYear(),
+    targetDate.getMonth(),
+    targetDate.getDate()
+  );
+
+  const diffDays = Math.ceil(
+    (normalizedTarget.getTime() - today.getTime()) / (1000 * 3600 * 24)
+  );
+  return diffDays <= windowDays;
+}
+
+

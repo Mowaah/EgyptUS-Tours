@@ -27,7 +27,7 @@ import { getStatusConfig } from "@/utils/statusUtils";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
-import { formatDateDDMMYYYY } from "@/utils/dateFormat";
+import { formatDateDDMMYYYY, isDateWithinFullPaymentWindow } from "@/utils/dateFormat";
 import {
   getPendingGuestRecord,
   getGuestAuthEmail,
@@ -105,6 +105,25 @@ export default function ProfileBookingDetailsPage() {
     }
   }, [id, detailsType, isAuthenticated]);
 
+  useEffect(() => {
+    if (searchParams.get("payment_success") === "true") {
+      setShowSuccess(true);
+      if (typeof window !== "undefined") {
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.delete("payment_success");
+        window.history.replaceState({}, "", newUrl.toString());
+      }
+      if (id && isAuthenticated) {
+        const timer = setTimeout(() => {
+          getProfileBookingDetail(detailsType, id)
+            .then(setBookingDetail)
+            .catch(() => undefined);
+        }, 1500);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [searchParams, id, detailsType, isAuthenticated]);
+
   const bData = bookingDetail || {};
   const contact = bData.contact || {};
   const payment = bData.payment_summary || {};
@@ -162,13 +181,7 @@ export default function ProfileBookingDetailsPage() {
     bData.remaining_amount === "0.00";
 
   const startDateRaw = bData.check_in_date || bData.start_date || bData.pickup_date || "";
-  const isStartDateWithin30Days = (() => {
-    if (!startDateRaw) return false;
-    const sDate = new Date(startDateRaw);
-    if (isNaN(sDate.getTime())) return false;
-    const diffMs = sDate.getTime() - Date.now();
-    return diffMs <= 30 * 24 * 60 * 60 * 1000;
-  })();
+  const isStartDateWithin30Days = isDateWithinFullPaymentWindow(startDateRaw);
 
   const isFullPlan =
     (

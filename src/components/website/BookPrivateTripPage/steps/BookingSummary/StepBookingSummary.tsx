@@ -145,6 +145,7 @@ export default function StepBookingSummary({
           depositAmount={depositAmount}
           totalPrices={totalPrices}
           depositPrices={depositPrices}
+          remainingPrices={pricingSummary.remainingPrices}
         />
       </div>
 

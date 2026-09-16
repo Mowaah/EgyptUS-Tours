@@ -9,7 +9,7 @@ import { MultiCurrencyPrice } from "@/constants/currency";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { calculateTripBookingPrice, calculateHotelBookingPrice, CHILD_POLICY, normalizeRoomType, resolveApplicableSeason } from "@/utils/bookingPricing";
-import { formatDateDDMMYYYY, parseDate } from "@/utils/dateFormat";
+import { formatDateDDMMYYYY, parseDate, isDateWithinFullPaymentWindow } from "@/utils/dateFormat";
 import styles from "./BookingSidebar.module.scss";
 
 interface BookingSidebarProps {
@@ -110,7 +110,13 @@ export default function BookingSidebar({
     return hasPositivePrice || hasPositiveLineItem;
   }, [pricingSummary]);
 
+  const isWithin30Days = React.useMemo(() => {
+    const rawDate = formData?.startDate || (formData as any)?.checkInDate || (formData as any)?.pickupDate;
+    return isDateWithinFullPaymentWindow(rawDate);
+  }, [formData?.startDate, (formData as any)?.checkInDate, (formData as any)?.pickupDate]);
+
   const isDepositFull = React.useMemo(() => {
+    if (isWithin30Days) return true;
     if (depositPrices && totalPrices) {
       return (
         (depositPrices.usd != null && totalPrices.usd != null && Number(depositPrices.usd) >= Number(totalPrices.usd)) ||
@@ -119,7 +125,7 @@ export default function BookingSidebar({
     }
     if (hasValidPricingSummary && pricingSummary) return pricingSummary.isDepositFull;
     return depositAmount >= finalTotal;
-  }, [depositPrices, totalPrices, hasValidPricingSummary, pricingSummary, depositAmount, finalTotal]);
+  }, [isWithin30Days, depositPrices, totalPrices, hasValidPricingSummary, pricingSummary, depositAmount, finalTotal]);
 
   const resolvedTotal: MultiCurrencyPrice | number = React.useMemo(() => {
     if (totalPrices) return totalPrices;
@@ -128,12 +134,17 @@ export default function BookingSidebar({
   }, [totalPrices, hasValidPricingSummary, pricingSummary, finalTotal]);
 
   const resolvedDeposit: MultiCurrencyPrice | number = React.useMemo(() => {
+    if (isDepositFull) return resolvedTotal;
     if (depositPrices) return depositPrices;
     if (hasValidPricingSummary && pricingSummary) return pricingSummary.depositPrices;
     return depositPrices || depositAmount;
-  }, [depositPrices, hasValidPricingSummary, pricingSummary, depositAmount]);
+  }, [isDepositFull, resolvedTotal, depositPrices, hasValidPricingSummary, pricingSummary, depositAmount]);
 
   const resolvedRemaining: MultiCurrencyPrice | number = React.useMemo(() => {
+    if (isDepositFull) {
+      if (typeof resolvedTotal === "number") return 0;
+      return { usd: 0, egp: 0, eur: 0 };
+    }
     if (remainingPrices) return remainingPrices;
     if (totalPrices && depositPrices) {
       return {
@@ -144,7 +155,7 @@ export default function BookingSidebar({
     }
     if (hasValidPricingSummary && pricingSummary) return pricingSummary.remainingPrices;
     return Math.max(0, finalTotal - depositAmount);
-  }, [remainingPrices, totalPrices, depositPrices, hasValidPricingSummary, pricingSummary, finalTotal, depositAmount]);
+  }, [isDepositFull, resolvedTotal, remainingPrices, totalPrices, depositPrices, hasValidPricingSummary, pricingSummary, finalTotal, depositAmount]);
 
   const resolvedPaid: MultiCurrencyPrice | number = React.useMemo(() => {
     if (paidPrices) return paidPrices;

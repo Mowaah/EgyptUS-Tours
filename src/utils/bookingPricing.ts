@@ -1,7 +1,7 @@
 import { Trip, Hotel, HotelRoom } from "@/types";
 import { BookingData } from "@/types";
 import { MultiCurrencyPrice } from "@/constants/currency";
-import { parseDate } from "./dateFormat";
+import { parseDate, isDateWithinFullPaymentWindow } from "./dateFormat";
 
 export const CHILD_POLICY = {
   freeThroughAge: 2,
@@ -366,13 +366,7 @@ export function calculateTripBookingPrice(
   const totalEgp = Math.max(0, subtotalEgp - discountEgp);
   const totalEur = Math.max(0, subtotalEur - discountEur);
 
-  const isDepositFull = (() => {
-    if (!formData.startDate) return false;
-    const startDate = new Date(formData.startDate);
-    const today = new Date();
-    const daysUntil = (startDate.getTime() - today.getTime()) / (1000 * 3600 * 24);
-    return daysUntil <= 30;
-  })();
+  const isDepositFull = isDateWithinFullPaymentWindow(formData.startDate);
 
   const depositRate = isDepositFull ? 1 : 0.30;
   const remainingRate = isDepositFull ? 0 : 0.70;
@@ -594,13 +588,9 @@ export function calculateHotelBookingPrice(
   const totalEgp = Math.max(0, subtotalEgp - discountEgp);
   const totalEur = Math.max(0, subtotalEur - discountEur);
 
-  const isDepositFull = (() => {
-    if (!formData.startDate) return false;
-    const startDate = new Date(formData.startDate);
-    const today = new Date();
-    const daysUntil = (startDate.getTime() - today.getTime()) / (1000 * 3600 * 24);
-    return daysUntil <= 30;
-  })();
+  const isDepositFull = isDateWithinFullPaymentWindow(
+    formData.startDate || (formData as any).checkInDate
+  );
 
   const depositRate = isDepositFull ? 1 : 0.30;
   const remainingRate = isDepositFull ? 0 : 0.70;

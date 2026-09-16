@@ -9,7 +9,7 @@ import { apiClient } from "@/lib/api";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { MultiCurrencyPrice } from "@/constants/currency";
 import { useTranslation } from "@/hooks/useTranslation";
-import { parseDate } from "@/utils/dateFormat";
+import { parseDate, isDateWithinFullPaymentWindow } from "@/utils/dateFormat";
 import styles from "./BookingSummary.module.scss";
 
 const fetcher = (url: string) => apiClient.get(url).then((res: any) => res.results || res);
@@ -58,12 +58,7 @@ export default function BookingSummary({ vehicle, formData, isRemainingView = fa
   }), [vehicle, selectedServices]);
 
   const isDepositFull = useMemo(() => {
-    if (!formData.pickupDate) return false;
-    const start = parseDate(formData.pickupDate);
-    if (!start || isNaN(start.getTime())) return false;
-    const today = new Date();
-    const daysUntil = (start.getTime() - today.getTime()) / (1000 * 3600 * 24);
-    return daysUntil <= 30;
+    return isDateWithinFullPaymentWindow(formData.pickupDate);
   }, [formData.pickupDate]);
 
   const depositFactor = isDepositFull ? 1 : 0.3;
