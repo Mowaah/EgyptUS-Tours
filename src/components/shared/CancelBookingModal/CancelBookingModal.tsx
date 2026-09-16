@@ -170,6 +170,7 @@ export default function CancelBookingModal({
     onSubmit({
       reason,
       detailedReason: detailedReason.trim(),
+      refund_summary: refundSummary,
       bankDetails: {
         accountName: accountName.trim(),
         bankName: bankName.trim(),

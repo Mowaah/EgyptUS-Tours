@@ -68,12 +68,23 @@ export function calculateRefundSummary(
 }
 
 export const POLICY_LABEL_KEYS: Record<string, string> = {
+  "More than 30 days before travel": "cancelModal.policies.moreThan30Days",
+  "More than 30 days before start": "cancelModal.policies.moreThan30Days",
   "More than 30 days before service": "cancelModal.policies.moreThan30Days",
+  "30 days before travel": "cancelModal.policies.30Days",
+  "30 days before start": "cancelModal.policies.30Days",
   "30 days before service": "cancelModal.policies.30Days",
+  "15–29 days before travel": "cancelModal.policies.29To15Days",
+  "15 to 29 days before start": "cancelModal.policies.29To15Days",
   "29-15 days before service": "cancelModal.policies.29To15Days",
+  "10–14 days before travel": "cancelModal.policies.14To10Days",
+  "10 to 14 days before start": "cancelModal.policies.14To10Days",
   "14-10 days before service": "cancelModal.policies.14To10Days",
+  "6–9 days before travel": "cancelModal.policies.9To6Days",
   "09-06 days before service": "cancelModal.policies.9To6Days",
+  "2–5 days before travel": "cancelModal.policies.5DaysTo48Hrs",
   "05 days to 48 hrs before service": "cancelModal.policies.5DaysTo48Hrs",
+  "Less than 48 hours before travel or no-show": "cancelModal.policies.48HrsToDay",
   "Between 48 hours to the day of service": "cancelModal.policies.48HrsToDay",
   "No Show / After service started": "cancelModal.policies.noShow",
 };
@@ -84,6 +95,7 @@ export function getLocalizedPolicyLabel(
 ): string {
   if (!policy) return "N/A";
   const trimmed = policy.trim();
-  const key = POLICY_LABEL_KEYS[trimmed];
-  return key ? t(key, trimmed) : policy;
+  const baseLabel = trimmed.replace(/\s*\(\d+%\)$/, "").trim();
+  const key = POLICY_LABEL_KEYS[baseLabel] || POLICY_LABEL_KEYS[trimmed];
+  return key ? t(key, baseLabel) : trimmed;
 }

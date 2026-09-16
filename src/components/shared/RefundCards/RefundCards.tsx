@@ -141,7 +141,7 @@ export function RefundSummaryCard({
   const pkgTotal = data.package_total;
   const paidToDate = data.paid_to_date ?? data.paid_amount;
   const daysBefore = data.days_before_travel;
-  const policy = data.policy_applied;
+  const policy = data.policy_applied || (data as any).cancellation_policy;
   const deductionPct = data.deduction_percentage ?? data.deduction_percent;
   const deductionAmt = data.deduction_amount;
   const refundAmt = data.refund_amount;

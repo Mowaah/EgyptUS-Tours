@@ -161,24 +161,43 @@ export default function ProfileBookingDetailsPage() {
     payment.remaining_amount === "0.00" ||
     bData.remaining_amount === "0.00";
 
+  const startDateRaw = bData.check_in_date || bData.start_date || bData.pickup_date || "";
+  const isStartDateWithin30Days = (() => {
+    if (!startDateRaw) return false;
+    const sDate = new Date(startDateRaw);
+    if (isNaN(sDate.getTime())) return false;
+    const diffMs = sDate.getTime() - Date.now();
+    return diffMs <= 30 * 24 * 60 * 60 * 1000;
+  })();
+
+  const isFullPlan =
+    (
+      payment.payment_plan ||
+      bData.payment_plan ||
+      bData.details?.payment_plan ||
+      ""
+    ).toLowerCase() === "full" || isStartDateWithin30Days;
+
   const depositAmount =
     payment.deposit_amount != null
       ? parseFloat(String(payment.deposit_amount))
       : bData.deposit_amount != null
         ? parseFloat(String(bData.deposit_amount))
-        : totalAmount * 0.3;
+        : isFullPlan
+          ? totalAmount
+          : totalAmount * 0.3;
 
   const paidAmount = isFullyPaid
     ? totalAmount
     : !isNaN(parsedPaid) && parsedPaid > 0
       ? parsedPaid
-      : depositAmount;
+      : 0;
 
   const remainingAmount = isFullyPaid
     ? 0
     : Math.max(0, totalAmount - paidAmount);
 
-  const isPartiallyPaid = !isFullyPaid;
+  const isPartiallyPaid = !isFullyPaid && paidAmount > 0;
 
   // Hide the payment-due banner if the trip/check-in date has already passed
   const startDateStr = bData.check_in_date || bData.start_date || bData.pickup_date || "";
@@ -397,14 +416,7 @@ export default function ProfileBookingDetailsPage() {
             : undefined,
         };
 
-  const isDepositDue = (payment.payment_due_type === "deposit" || paidAmount <= 0) && depositAmount > 0 && depositAmount < totalAmount;
-
-  const isFullPlan = (
-    payment.payment_plan ||
-    bData.payment_plan ||
-    bData.details?.payment_plan ||
-    ""
-  ).toLowerCase() === "full";
+  const isDepositDue = (payment.payment_due_type === "deposit" || paidAmount <= 0) && depositAmount > 0 && depositAmount < totalAmount && !isFullPlan;
 
   const payButtonLabel = (() => {
     if (isPaying) return t("auth.pleaseWait", "Please wait...");
@@ -451,6 +463,8 @@ export default function ProfileBookingDetailsPage() {
           ...updated,
           operational_status: updated.operational_status || "refund_in_progress",
           cancelled_by: "user",
+          refund_summary: updated.refund_summary || cancelData?.refund_summary || refundSummary,
+          refund_bank_details: updated.refund_bank_details || cancelData?.bank_details,
         });
       } else {
         setBookingDetail((prev: any) => ({
@@ -459,6 +473,8 @@ export default function ProfileBookingDetailsPage() {
           request_status: "cancelled",
           operational_status: "refund_in_progress",
           cancelled_by: "user",
+          refund_summary: cancelData?.refund_summary || refundSummary,
+          refund_bank_details: cancelData?.bank_details,
         }));
       }
       setShowCancelModal(false);
@@ -783,10 +799,73 @@ export default function ProfileBookingDetailsPage() {
     refundBankData.account_number ||
     refundBankData.iban
   );
+
+  // Reconcile backend refund summary with client-calculated refundSummary
+  const rawPaidToDate = refundSummaryData.paid_to_date ?? refundSummaryData.paid_amount;
+  const parsedPaidToDate = rawPaidToDate != null && rawPaidToDate !== "" ? parseFloat(String(rawPaidToDate)) : NaN;
+  const effectivePaidToDate = !isNaN(parsedPaidToDate) && parsedPaidToDate > 0
+    ? parsedPaidToDate
+    : (refundSummary.paid_amount ?? paidAmount);
+
+  const rawPackageTotal = refundSummaryData.package_total;
+  const parsedPackageTotal = rawPackageTotal != null && rawPackageTotal !== "" ? parseFloat(String(rawPackageTotal)) : NaN;
+  const effectivePackageTotal = !isNaN(parsedPackageTotal) && parsedPackageTotal > 0
+    ? parsedPackageTotal
+    : (refundSummary.package_total || totalAmount);
+
+  const rawDeductionPct = refundSummaryData.deduction_percentage ?? refundSummaryData.deduction_percent;
+  const parsedDeductionPct = rawDeductionPct != null && rawDeductionPct !== "" ? parseFloat(String(rawDeductionPct)) : NaN;
+  const effectiveDeductionPct = !isNaN(parsedDeductionPct) && parsedDeductionPct > 0
+    ? parsedDeductionPct
+    : refundSummary.deduction_percentage;
+
+  const rawDeductionAmt = refundSummaryData.deduction_amount;
+  const parsedDeductionAmt = rawDeductionAmt != null && rawDeductionAmt !== "" ? parseFloat(String(rawDeductionAmt)) : NaN;
+  const effectiveDeductionAmt = !isNaN(parsedDeductionAmt) && parsedDeductionAmt > 0
+    ? parsedDeductionAmt
+    : ((effectiveDeductionPct >= 0 && effectivePackageTotal > 0)
+        ? (effectivePackageTotal * effectiveDeductionPct) / 100
+        : refundSummary.deduction_amount);
+
+  const rawRefundAmt = refundSummaryData.refund_amount;
+  const parsedRefundAmt = rawRefundAmt != null && rawRefundAmt !== "" ? parseFloat(String(rawRefundAmt)) : NaN;
+  const effectiveRefundAmt = !isNaN(parsedRefundAmt) && parsedRefundAmt > 0
+    ? parsedRefundAmt
+    : (effectiveDeductionPct >= 100
+        ? 0
+        : Math.max(0, effectivePaidToDate - effectiveDeductionAmt));
+
+  const effectivePolicyApplied =
+    (refundSummaryData.policy_applied && !refundSummaryData.policy_applied.includes("(0%)"))
+      ? refundSummaryData.policy_applied
+      : (refundSummaryData.cancellation_policy && !refundSummaryData.cancellation_policy.includes("(0%)"))
+        ? refundSummaryData.cancellation_policy
+        : refundSummary.policy_applied;
+
+  const effectiveDaysBefore =
+    refundSummaryData.days_before_travel != null && refundSummaryData.days_before_travel !== ""
+      ? refundSummaryData.days_before_travel
+      : refundSummary.days_before_travel;
+
+  const resolvedRefundSummary = {
+    ...refundSummaryData,
+    package_total: effectivePackageTotal,
+    paid_to_date: effectivePaidToDate,
+    days_before_travel: effectiveDaysBefore,
+    policy_applied: effectivePolicyApplied,
+    deduction_percentage: effectiveDeductionPct,
+    deduction_amount: effectiveDeductionAmt,
+    refund_amount: effectiveRefundAmt,
+    transaction_reference: isRefunded ? (refundSummaryData.transaction_reference || refundSummaryData.reference) : undefined,
+    reference: undefined,
+  };
+
   const hasSummaryData = Boolean(
-    refundSummaryData.refund_amount ||
-    refundSummaryData.package_total ||
-    refundSummaryData.deduction_amount ||
+    isRefundInProgress ||
+    isRefunded ||
+    resolvedRefundSummary.refund_amount ||
+    resolvedRefundSummary.package_total ||
+    resolvedRefundSummary.deduction_amount ||
     bData.reason ||
     bData.refund_receipt
   );
@@ -892,7 +971,7 @@ export default function ProfileBookingDetailsPage() {
       }}
       itemHref={vehicleHref}
       formData={safeFormData as any}
-      isRemainingView
+      isRemainingView={!isFullyPaid && paidAmount > 0 && paidAmount < totalAmount}
     />
   ) : isHotel ? (
     <BookingSidebar
@@ -926,7 +1005,7 @@ export default function ProfileBookingDetailsPage() {
       paidAmount={paidAmount}
       paidPrices={paidPrices}
       lineItems={bookingLineItems}
-      isRemainingView={!isFullyPaid}
+      isRemainingView={!isFullyPaid && paidAmount > 0 && paidAmount < totalAmount}
       isFullyPaid={isFullyPaid}
     />
   ) : (
@@ -955,7 +1034,7 @@ export default function ProfileBookingDetailsPage() {
       paidAmount={paidAmount}
       paidPrices={paidPrices}
       lineItems={bookingLineItems}
-      isRemainingView={!isFullyPaid}
+      isRemainingView={!isFullyPaid && paidAmount > 0 && paidAmount < totalAmount}
       isFullyPaid={isFullyPaid}
     />
   );
@@ -1116,13 +1195,7 @@ export default function ProfileBookingDetailsPage() {
                   )}
                   {hasSummaryData && (
                     <RefundSummaryCard
-                      data={{
-                        ...refundSummaryData,
-                        paid_to_date: refundSummaryData.paid_to_date ?? (paidAmount > 0 ? paidAmount : undefined),
-                        // Only expose admin-filled transaction reference when fully refunded
-                        transaction_reference: isRefunded ? (refundSummaryData.transaction_reference || refundSummaryData.reference) : undefined,
-                        reference: undefined,
-                      }}
+                      data={resolvedRefundSummary}
                       receipt={isRefunded ? bData.refund_receipt : undefined}
                       reason={isRefundInProgress ? bData.reason : undefined}
                       currency={bookingCurrency}
