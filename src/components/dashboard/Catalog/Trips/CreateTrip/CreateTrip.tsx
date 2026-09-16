@@ -518,7 +518,7 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
     rating_avg: data.starRating ? parseFloat(data.starRating) : undefined,
     currency_code: DASHBOARD_CURRENCY.code,
     availability_enabled: !!data.datesAvailability?.enabled,
-    force_draft: intent !== "publish",
+    force_draft: intent === "draft" || (!isEdit && intent !== "publish"),
     inclusions: (data.inclusions || []).map(inc => ({
       text: inc.en || "", // Fallback
       translations: {

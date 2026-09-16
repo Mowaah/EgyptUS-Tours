@@ -19,7 +19,7 @@ import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatus
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 const staticFilterOptions = {
-  price: ["All", "Under £1,000", "£1,000 - 2,000", "Over £2,000"],
+  price: ["All", "Under $1,000", "$1,000 - $2,000", "Over $2,000"],
   status: ["All", "Published", "Archived", "Draft"],
 };
 
@@ -58,9 +58,9 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
     }
     
     if (appliedFilters.price !== "All") {
-      if (appliedFilters.price === "Under £1,000") { params.max_price = 1000; }
-      else if (appliedFilters.price === "£1,000 - 2,000") { params.min_price = 1000; params.max_price = 2000; }
-      else if (appliedFilters.price === "Over £2,000") { params.min_price = 2000; }
+      if (appliedFilters.price === "Under $1,000" || appliedFilters.price === "Under £1,000") { params.max_price = 1000; }
+      else if (appliedFilters.price === "$1,000 - $2,000" || appliedFilters.price === "$1,000 - 2,000" || appliedFilters.price === "£1,000 - 2,000") { params.min_price = 1000; params.max_price = 2000; }
+      else if (appliedFilters.price === "Over $2,000" || appliedFilters.price === "Over £2,000") { params.min_price = 2000; }
     }
     
     return params;
@@ -80,7 +80,7 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
   const filterFields = (
     [
       ["category", "Category", categoryOptions],
-      ["price", "Price", staticFilterOptions.price],
+      ["price", "Starting From", staticFilterOptions.price],
       ["status", "Status", staticFilterOptions.status],
     ] as const
   ).map(([id, label, options]) => ({

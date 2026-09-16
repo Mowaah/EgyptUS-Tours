@@ -3,7 +3,7 @@ import { requiredLocalizedStringSchema, localizedSlugSchema } from "@/components
 
 export const createVehicleSchema = z.object({
   vehicleName: requiredLocalizedStringSchema("Vehicle Name is required"),
-  model: z.string().min(1, "Model Year is required"),
+  model: z.string().min(1, "Model is required"),
   category: z.string().min(1, "Category is required"),
   duration: z.string().optional(),
   passengerCapacity: z.string().min(1, "Passenger Capacity is required"),

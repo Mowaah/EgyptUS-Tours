@@ -8,10 +8,10 @@
   background: $gray-50;
   border-radius: 32px;
   align-self: flex-start;
-}
 
-.langTabsWhite {
-  background: $background;
+  &.langTabsWhite {
+    background: $background;
+  }
 }
 
 .langTab {

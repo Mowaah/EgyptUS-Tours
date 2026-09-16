@@ -204,7 +204,7 @@ async function buildPayload(data: CreateVehicleValues, intent: WizardSubmitInten
     price_per_km: money(data.pricePerKm) || undefined,
     media_items: photos.filter(Boolean),
     replace_media_items: true,
-    force_draft: intent !== "publish",
+    force_draft: intent === "draft" || (!isEdit && intent !== "publish"),
   };
 }
 

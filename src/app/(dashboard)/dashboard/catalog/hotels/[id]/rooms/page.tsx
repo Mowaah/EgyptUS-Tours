@@ -5,17 +5,20 @@ import Image from "next/image";
 import { DASHBOARD_CURRENCY, formatPrice } from "@/constants/currency";
 import { TablePanelFilterBar } from "@/components/dashboard/TablePanel";
 import { getLangKey } from "@/components/dashboard/shared/i18n";
+import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
+import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
+import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import { useHotelDetailContext } from "../layout";
 import styles from "./page.module.scss";
 
 const filterOptions = {
-  type: ["All", "Single", "Double Room", "Superior Room", "Deluxe Room"],
-  category: ["All", "Standard", "Premium", "Suite"],
-  view: ["All", "Sea View", "Partial Sea View", "Nile View", "Pool View", "City View"],
+  type: ["All", "Single", "Double Room", "Triple Room"],
+  category: ["All", "Standard", "Deluxe", "Premium", "Suite"],
+  view: ["All", "Sea View", "Pool View", "Garden View", "City View"],
   price: [
     "All",
     `Under ${DASHBOARD_CURRENCY.symbol}1,000`,
-    `${DASHBOARD_CURRENCY.symbol}1,000 - 2,000`,
+    `${DASHBOARD_CURRENCY.symbol}1,000 - ${DASHBOARD_CURRENCY.symbol}2,000`,
     `Over ${DASHBOARD_CURRENCY.symbol}2,000`,
   ],
 };
@@ -30,6 +33,7 @@ export default function HotelRoomsPage() {
     price: "All",
   };
 
+  const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
 
@@ -73,6 +77,17 @@ export default function HotelRoomsPage() {
   });
 
   const filteredRooms = rooms.filter((room) => {
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      const matchSearch =
+        room.title.toLowerCase().includes(q) ||
+        room.description.toLowerCase().includes(q) ||
+        room.rawCategory.toLowerCase().includes(q) ||
+        room.rawType.toLowerCase().includes(q) ||
+        room.rawView.toLowerCase().includes(q) ||
+        room.facilities.some((f: string) => f.toLowerCase().includes(q));
+      if (!matchSearch) return false;
+    }
     if (appliedFilters.type !== "All" && !room.rawType.toLowerCase().includes(appliedFilters.type.toLowerCase())) {
       return false;
     }
@@ -83,9 +98,9 @@ export default function HotelRoomsPage() {
       return false;
     }
     const numPrice = parseFloat(room.price);
-    if (appliedFilters.price === `Under ${DASHBOARD_CURRENCY.symbol}1,000` && numPrice >= 1000) return false;
-    if (appliedFilters.price === `${DASHBOARD_CURRENCY.symbol}1,000 - 2,000` && (numPrice < 1000 || numPrice > 2000)) return false;
-    if (appliedFilters.price === `Over ${DASHBOARD_CURRENCY.symbol}2,000` && numPrice <= 2000) return false;
+    if (appliedFilters.price.startsWith("Under") && numPrice >= 1000) return false;
+    if (appliedFilters.price.includes("1,000 -") && (numPrice < 1000 || numPrice > 2000)) return false;
+    if (appliedFilters.price.startsWith("Over") && numPrice <= 2000) return false;
 
     return true;
   });
@@ -93,6 +108,7 @@ export default function HotelRoomsPage() {
   const resetFilters = () => {
     setFilters(defaultFilters);
     setAppliedFilters(defaultFilters);
+    setSearchQuery("");
   };
 
   const applyFilters = () => {
@@ -117,10 +133,21 @@ export default function HotelRoomsPage() {
   return (
     <div className={styles.roomsLayout}>
       <div className={styles.titleRow}>
-        <div className={styles.iconWrap}>
-          <Image src="/images/dashboard/catalog/hotels/basic.svg" alt="" width={20} height={20} />
+        <div className={styles.titleLeft}>
+          <div className={styles.iconWrap}>
+            <Image src="/images/dashboard/catalog/hotels/basic.svg" alt="" width={20} height={20} />
+          </div>
+          <h2>Room & Pricing</h2>
         </div>
-        <h2>Room & Pricing</h2>
+        <div className={styles.searchBox}>
+          <Image src="/images/dashboard/navbar/search.svg" alt="" width={20} height={20} aria-hidden />
+          <input
+            type="search"
+            placeholder="Search rooms..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
 
       <TablePanelFilterBar 
@@ -130,9 +157,21 @@ export default function HotelRoomsPage() {
       />
 
       {filteredRooms.length === 0 ? (
-        <div style={{ padding: "40px 0", textAlign: "center", color: "#6b7280" }}>
-          No rooms available matching the selected filters.
-        </div>
+        searchQuery.trim() ? (
+          <DashboardSearchEmptyState onClearSearch={() => setSearchQuery("")} />
+        ) : Object.values(appliedFilters).some((v) => v !== "All") ? (
+          <DashboardFilterEmptyState
+            onClearFilters={resetFilters}
+            title="No Results Found"
+            subtitle="No rooms match the selected filters."
+          />
+        ) : (
+          <DashboardEmptyState
+            title="No Rooms Found"
+            subtitle="Hotel rooms will appear here once they are added."
+            imageSrc="/images/dashboard/empty.png"
+          />
+        )
       ) : (
         <div className={styles.roomsGrid}>
           {filteredRooms.map((room) => (

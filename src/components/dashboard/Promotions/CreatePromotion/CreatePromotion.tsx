@@ -325,7 +325,7 @@ export function CreatePromotion({ promotionId, onDirtyChange, onSubmittingChange
       <div className={styles.mainColumn}>
         <FormSection title="Offer Details" iconSrc="/images/dashboard/promotions/offer-details.svg">
           <FormSpec>
-            <LanguageTabs active={detailsLang} onChange={setDetailsLang} className={styles.whiteTabs} />
+            <LanguageTabs active={detailsLang} onChange={setDetailsLang} variant="white" />
             <React.Fragment key={detailsLang}>
               <DashboardField
                 label="Title"

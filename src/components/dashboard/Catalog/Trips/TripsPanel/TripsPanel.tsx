@@ -19,7 +19,7 @@ import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 const staticFilterOptions = {
   duration: ["All", "1-3 Days", "4-7 Days", "8-14 Days", "15+ Days"],
-  startingFrom: ["All", "Under £1,000", "£1,000 - 2,000", "Over £2,000"],
+  startingFrom: ["All", "Under $1,000", "$1,000 - $2,000", "Over $2,000"],
   status: ["All", "Published", "Archived", "Draft"],
 };
 
@@ -77,9 +77,9 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
     }
     
     if (appliedFilters.startingFrom !== "All") {
-      if (appliedFilters.startingFrom === "Under £1,000") { params.max_price = 1000; }
-      else if (appliedFilters.startingFrom === "£1,000 - 2,000") { params.min_price = 1000; params.max_price = 2000; }
-      else if (appliedFilters.startingFrom === "Over £2,000") { params.min_price = 2000; }
+      if (appliedFilters.startingFrom === "Under $1,000" || appliedFilters.startingFrom === "Under £1,000") { params.max_price = 1000; }
+      else if (appliedFilters.startingFrom === "$1,000 - $2,000" || appliedFilters.startingFrom === "$1,000 - 2,000" || appliedFilters.startingFrom === "£1,000 - 2,000") { params.min_price = 1000; params.max_price = 2000; }
+      else if (appliedFilters.startingFrom === "Over $2,000" || appliedFilters.startingFrom === "Over £2,000") { params.min_price = 2000; }
     }
     
     return params;

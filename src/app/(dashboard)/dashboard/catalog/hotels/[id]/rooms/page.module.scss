@@ -14,7 +14,16 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
   gap: 16px;
+  flex-wrap: wrap;
+
+  .titleLeft {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
 
   .iconWrap {
     display: flex;
@@ -31,6 +40,37 @@
     font-size: $font-size-28;
     color: #11263b;
     margin: 0;
+  }
+}
+
+.searchBox {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid $border-strong;
+  border-radius: $radius-full;
+  background: $white;
+  gap: 8px;
+  width: 100%;
+  max-width: 320px;
+  transition: border-color 0.2s ease;
+
+  &:focus-within {
+    border-color: $primary;
+  }
+
+  input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: $font-size-base;
+    color: $dark;
+
+    &::placeholder {
+      color: $text-muted;
+    }
   }
 }
 

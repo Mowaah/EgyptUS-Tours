@@ -68,24 +68,11 @@ export function OverviewStep() {
                 error={errors.vehicleName?.[getLangKey(basicLang)]?.message}
                 {...register(`vehicleName.${getLangKey(basicLang)}` as const)}
               />
-              <Controller
-                name="model"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <DashboardField
-                    {...field}
-                    label="Model"
-                    placeholder="Select model"
-                    control="select"
-                    options={[
-                      { label: "2022", value: "2022" },
-                      { label: "2023", value: "2023" },
-                      { label: "2024", value: "2024" },
-                      { label: "2025", value: "2025" },
-                    ]}
-                    error={fieldState.error?.message}
-                  />
-                )}
+              <DashboardField
+                label="Model"
+                placeholder="e.g. 2024"
+                error={errors.model?.message}
+                {...register("model")}
               />
             </div>
 

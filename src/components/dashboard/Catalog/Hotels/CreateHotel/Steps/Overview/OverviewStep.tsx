@@ -69,7 +69,7 @@ export function OverviewStep() {
           className={styles.card}
         >
           <FormSpec>
-            <LanguageTabs active={basicLang} onChange={setBasicLang} className={styles.whiteTabs} />
+            <LanguageTabs active={basicLang} onChange={setBasicLang} variant="white" />
             <div className={styles.inputRow}>
               <DashboardField 
                 key={`hotelName-${basicLang}`}
@@ -163,7 +163,7 @@ export function OverviewStep() {
           className={styles.card}
         >
           <FormSpec>
-            <LanguageTabs active={facilitiesLang} onChange={setFacilitiesLang} className={styles.whiteTabs} />
+            <LanguageTabs active={facilitiesLang} onChange={setFacilitiesLang} variant="white" />
             
             <div className={styles.inputGroup}>
               <div className={styles.facilityInputWrapper}>
@@ -221,7 +221,7 @@ export function OverviewStep() {
           className={styles.card}
         >
           <FormSpec>
-            <LanguageTabs active={contentLang} onChange={setContentLang} className={styles.whiteTabs} />
+            <LanguageTabs active={contentLang} onChange={setContentLang} variant="white" />
             <DashboardField 
               key={`description-${contentLang}`}
               label="Description" 

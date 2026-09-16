@@ -1,5 +1,4 @@
 import { adminDataClient } from '@/lib/adminCoreApi';
-import { apiClient as publicDataClient } from '@/lib/api';
 
 type QueryParams = Record<string, unknown>;
 type CatalogTripPayload = Record<string, unknown>;
@@ -61,7 +60,7 @@ export async function getCategories(params?: QueryParams): Promise<ApiResponse> 
       let page = 1;
       const allResults: Record<string, unknown>[] = [];
       while (true) {
-        const res: Record<string, unknown> = await publicDataClient.get('/categories/', { params: { ...params, page } });
+        const res: Record<string, unknown> = await adminDataClient.get('/catalog/trip-categories/', { params: { ...params, page } });
         const items = (Array.isArray(res?.results) ? res.results : Array.isArray(res?.data) ? res.data : []) as Record<string, unknown>[];
         allResults.push(...items);
         const total = Number(res?.count ?? allResults.length);
@@ -72,27 +71,10 @@ export async function getCategories(params?: QueryParams): Promise<ApiResponse> 
       }
       return { count: allResults.length, results: allResults };
     } catch {
-      try {
-        let page = 1;
-        const allResults: Record<string, unknown>[] = [];
-        while (true) {
-          const res: Record<string, unknown> = await publicDataClient.get('/tags/', { params: { ...params, page } });
-          const items = (Array.isArray(res?.results) ? res.results : Array.isArray(res?.data) ? res.data : []) as Record<string, unknown>[];
-          allResults.push(...items);
-          const total = Number(res?.count ?? allResults.length);
-          if (!res?.next || items.length === 0 || allResults.length >= total) {
-            break;
-          }
-          page++;
-        }
-        return { count: allResults.length, results: allResults };
-      } catch {
-        return await publicDataClient.get('/categories/', { params });
-      }
+      return await adminDataClient.get('/catalog/trip-categories/', { params });
     }
   }
-  // Using public client for categories since it's a public endpoint
-  return await publicDataClient.get('/categories/', { params });
+  return await adminDataClient.get('/catalog/trip-categories/', { params });
 }
 
 
@@ -102,7 +84,7 @@ export async function getDestinations(params?: QueryParams): Promise<ApiResponse
       let page = 1;
       const allResults: Record<string, unknown>[] = [];
       while (true) {
-        const res: Record<string, unknown> = await publicDataClient.get('/destinations/', { params: { ...params, page } });
+        const res: Record<string, unknown> = await adminDataClient.get('/catalog/destinations/', { params: { ...params, page } });
         const items = (Array.isArray(res?.results) ? res.results : Array.isArray(res?.data) ? res.data : []) as Record<string, unknown>[];
         allResults.push(...items);
         const total = Number(res?.count ?? allResults.length);
@@ -113,10 +95,10 @@ export async function getDestinations(params?: QueryParams): Promise<ApiResponse
       }
       return { count: allResults.length, results: allResults };
     } catch {
-      return await publicDataClient.get('/destinations/', { params });
+      return await adminDataClient.get('/catalog/destinations/', { params });
     }
   }
-  return await publicDataClient.get('/destinations/', { params });
+  return await adminDataClient.get('/catalog/destinations/', { params });
 }
 
 export async function archiveCatalogTrip(id: string | number): Promise<ApiResponse> {

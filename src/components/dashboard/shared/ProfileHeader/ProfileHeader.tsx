@@ -79,7 +79,7 @@ export default function ProfileHeader({
             <div className={styles.subtitleRow}>
               {subtitleElements.map((element, index) => (
                 <React.Fragment key={index}>
-                  <span>{element}</span>
+                  <span title={typeof element === "string" ? element : undefined}>{element}</span>
                   {index < subtitleElements.length - 1 && (
                     <span className={styles.dot}>•</span>
                   )}

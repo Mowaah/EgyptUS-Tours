@@ -73,7 +73,7 @@ function MediaUploadBlock({
       </div>
       
       <FormSpec>
-        <LanguageTabs active={lang} onChange={setLang} className={styles.whiteTabs} />
+        <LanguageTabs active={lang} onChange={setLang} variant="white" />
         <div className={styles.fieldRow}>
           <DashboardField key={`title-${index}-${lang}`} label={titleLabel} placeholder={titlePlaceholder} {...register(`photos.${index}.title.${getLangKey(lang)}` as never)} />
           <DashboardField key={`alt-${index}-${lang}`} label={altLabel} placeholder="Comma-separated tags (e.g. egypt, travel, cairo)" {...register(`photos.${index}.alt.${getLangKey(lang)}` as never)} />

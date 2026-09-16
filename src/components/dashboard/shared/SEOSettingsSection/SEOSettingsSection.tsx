@@ -5,7 +5,6 @@ import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/Languag
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import { FormSection, FormSpec, KeywordsField } from "@/components/dashboard/FormFields";
 import { getLangKey } from "@/components/dashboard/shared/i18n";
-import styles from "./SEOSettingsSection.module.scss";
 
 interface SEOSettingsSectionProps<T extends FieldValues> {
   seoLang: Language;
@@ -46,7 +45,7 @@ export default function SEOSettingsSection<T extends FieldValues>({
   return (
     <FormSection title={title} iconSrc="/images/dashboard/fields/seo-settings.svg">
       <FormSpec>
-        <LanguageTabs active={seoLang} onChange={setSeoLang} className={styles.whiteTabs} />
+        <LanguageTabs active={seoLang} onChange={setSeoLang} variant="white" />
         <DashboardField
           key={`metaTitle-${langKey}`}
           label="Meta Title"

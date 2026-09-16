@@ -176,7 +176,7 @@ function validateBeforePublish(data: CreateHotelValues, intent: WizardSubmitInte
     } else {
       const hasPricedRoom = data.rooms.some(r => parseFloat(String(r.pricePerNightEgp || r.pricePerNight || 0)) > 0);
       if (!hasPricedRoom) {
-        errors.push("Rooms: at least one room must have an £ price before publishing.");
+        errors.push("Rooms: at least one room must have a price before publishing.");
       }
     }
   }
@@ -371,7 +371,7 @@ export function CreateHotel({ hotelId, onDirtyChange, onSavingChange, ref }: { h
         replace_media_items: true,
         media_items: mediaItems,
         rooms: roomsPayload,
-        force_draft: intent !== "publish",
+        force_draft: intent === "draft" || (isCreate && intent !== "publish"),
       };
 
       let currentHotelId = targetId;
