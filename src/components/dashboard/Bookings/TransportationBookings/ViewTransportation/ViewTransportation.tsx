@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
 import styles from "./ViewTransportation.module.scss";
 
@@ -34,6 +35,7 @@ import { getTransportationBookingById, cancelTransportationBooking, sendTranspor
 import useSWR from "swr";
 
 export default function ViewTransportation({ id }: ViewTransportationProps) {
+  const { canEdit } = useAdminAuth();
   const [isCancelModalOpen, setIsCancelModalOpen] = React.useState(false);
   const [isRefundModalOpen, setIsRefundModalOpen] = React.useState(false);
   const [bannerMessage, setBannerMessage] = React.useState("");
@@ -282,7 +284,7 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
           title={customerName}
           subtitleElements={[`${displayId}`, formattedDate, formattedTime]}
           customPills={customPills}
-          actionButtons={payload ? actionButtons : null}
+          actionButtons={payload && canEdit("bookings") ? actionButtons : null}
         />
       </DashboardNavbar>
       <div className={styles.contentWrapper}>

@@ -71,26 +71,29 @@ export const promotionsColumns: DataTableColumn<PromotionRow>[] = [
 
 export const usePromotionRowActions = (
   onDelete: (row: PromotionRow) => void,
-  onToggleStatus: (row: PromotionRow) => void
+  onToggleStatus: (row: PromotionRow) => void,
+  canEdit: boolean = true
 ) => {
   const router = useRouter();
   
   return (row: PromotionRow) => {
     const actions = [];
-    if (row.status === "Active") {
-      actions.push({
-        label: "Inactive",
-        iconSrc: "/images/dashboard/unpublish.svg",
-        variant: "warning" as const,
-        onClick: () => onToggleStatus(row)
-      });
-    } else if (row.status === "Inactive") {
-      actions.push({
-        label: "Activate",
-        iconSrc: "/images/dashboard/publish.svg",
-        variant: "success" as const,
-        onClick: () => onToggleStatus(row)
-      });
+    if (canEdit) {
+      if (row.status === "Active") {
+        actions.push({
+          label: "Inactive",
+          iconSrc: "/images/dashboard/unpublish.svg",
+          variant: "warning" as const,
+          onClick: () => onToggleStatus(row)
+        });
+      } else if (row.status === "Inactive") {
+        actions.push({
+          label: "Activate",
+          iconSrc: "/images/dashboard/publish.svg",
+          variant: "success" as const,
+          onClick: () => onToggleStatus(row)
+        });
+      }
     }
     
     actions.push({ 
@@ -98,17 +101,21 @@ export const usePromotionRowActions = (
       iconSrc: "/images/dashboard/view.svg",
       onClick: () => router.push(`/dashboard/marketing/promotions/${row.id}`)
     });
-    actions.push({ 
-      label: "Edit", 
-      iconSrc: "/images/dashboard/edit.svg",
-      onClick: () => router.push(`/dashboard/marketing/promotions/${row.id}/edit?from=list`)
-    });
-    actions.push({ 
-      label: "Delete Offer", 
-      iconSrc: "/images/dashboard/delete.svg", 
-      variant: "danger" as const,
-      onClick: () => onDelete(row)
-    });
+
+    if (canEdit) {
+      actions.push({ 
+        label: "Edit", 
+        iconSrc: "/images/dashboard/edit.svg",
+        onClick: () => router.push(`/dashboard/marketing/promotions/${row.id}/edit?from=list`)
+      });
+      actions.push({ 
+        label: "Delete Offer", 
+        iconSrc: "/images/dashboard/delete.svg", 
+        variant: "danger" as const,
+        onClick: () => onDelete(row)
+      });
+    }
+
     return actions;
   };
 };

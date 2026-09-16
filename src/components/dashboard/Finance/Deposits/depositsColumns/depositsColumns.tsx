@@ -88,7 +88,17 @@ export const depositsColumns: DataTableColumn<DepositRow>[] = [
   },
 ];
 
-export const depositRowActions = (onAction?: (action: { label: string }, row: any) => void) => (row: DepositRow): DataTableRowAction<DepositRow>[] => [
-  { label: "View Booking", iconSrc: "/images/dashboard/view.svg", onClick: (r: any) => onAction?.({ label: "View Booking" }, r) },
-  { label: "Send reminder", iconSrc: "/images/dashboard/finance/payment/reminder.svg", onClick: (r: any) => onAction?.({ label: "Send reminder" }, r) },
-];
+export const depositRowActions = (
+  onAction?: (action: { label: string }, row: any) => void,
+  canEdit: boolean = true
+) => (row: DepositRow): DataTableRowAction<DepositRow>[] => {
+  const actions: DataTableRowAction<DepositRow>[] = [
+    { label: "View Booking", iconSrc: "/images/dashboard/view.svg", onClick: (r: any) => onAction?.({ label: "View Booking" }, r) },
+  ];
+
+  if (canEdit) {
+    actions.push({ label: "Send reminder", iconSrc: "/images/dashboard/finance/payment/reminder.svg", onClick: (r: any) => onAction?.({ label: "Send reminder" }, r) });
+  }
+
+  return actions;
+};

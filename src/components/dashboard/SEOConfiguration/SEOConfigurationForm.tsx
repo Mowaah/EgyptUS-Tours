@@ -8,6 +8,7 @@ import { Language } from "@/components/shared/LanguageTabs/LanguageTabs";
 import { DashboardFooter, LocalizedImageUploadSection, DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";
 import { FormSection } from "@/components/dashboard/FormFields";
 import SEOSettingsSection from "@/components/dashboard/shared/SEOSettingsSection/SEOSettingsSection";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { seoConfigurationSchema, type SEOConfigurationValues } from "./SEOConfigurationSchema";
 import styles from "./SEOConfiguration.module.scss";
 import { useAdminSeo } from "@/hooks/useAdminSeo";
@@ -20,6 +21,7 @@ interface SEOConfigurationFormProps {
 }
 
 export default function SEOConfigurationForm({ pageKey, onSuccess }: SEOConfigurationFormProps) {
+  const { canEdit } = useAdminAuth();
   const { data, loading, updateConfig } = useAdminSeo(pageKey);
   const [imageLang, setImageLang] = useState<Language>("English");
   const [seoLang, setSeoLang] = useState<Language>("English");
@@ -235,6 +237,7 @@ export default function SEOConfigurationForm({ pageKey, onSuccess }: SEOConfigur
       <DashboardFooter
         lastUpdateDate={data?.updated_at ? new Date(data.updated_at).toLocaleDateString() : ""}
         isSubmit={true}
+        hideActions={!canEdit("seo")}
         isSaveDisabled={!isDirty || isSubmitting}
         isDiscardDisabled={!isDirty || isSubmitting}
         onDiscard={() => setIsDiscardModalOpen(true)}

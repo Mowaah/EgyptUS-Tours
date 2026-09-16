@@ -4,7 +4,14 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { getAdminProfile, logoutAdmin } from "@/lib/adminCoreApi";
 
-interface AdminUser {
+import type { AdminRolePermissions } from "@/components/dashboard/AccessControl/types";
+import {
+  checkAdminPermission,
+  type AdminModuleKey,
+  type AdminActionKey,
+} from "@/utils/adminPermissions";
+
+export interface AdminUser {
   id: number;
   email: string;
   full_name: string;
@@ -15,6 +22,8 @@ interface AdminUser {
   role: string;
   role_label?: string;
   is_active: boolean;
+  is_super_admin?: boolean;
+  permissions?: AdminRolePermissions;
   totp_enabled?: boolean;
   profile_picture?: string | null;
   last_login?: string | null;
@@ -25,6 +34,11 @@ interface AdminAuthContextType {
   adminUser: AdminUser | null;
   isAdminAuthenticated: boolean;
   isLoadingAdmin: boolean;
+  isSuperAdmin: boolean;
+  hasPermission: (module: AdminModuleKey, action: AdminActionKey) => boolean;
+  canView: (module: AdminModuleKey) => boolean;
+  canCreate: (module: AdminModuleKey) => boolean;
+  canEdit: (module: AdminModuleKey) => boolean;
   loginAdminTokens: (access: string, refresh: string, userData: AdminUser) => void;
   logoutAdminTokens: () => void;
   updateAdminUser: (userData: AdminUser) => void;
@@ -77,12 +91,35 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     setAdminUser(userData);
   };
 
+  const isSuperAdmin = Boolean(adminUser?.is_super_admin || adminUser?.role === "super_admin");
+
+  const hasPermission = (module: AdminModuleKey, action: AdminActionKey): boolean => {
+    return checkAdminPermission(adminUser, module, action);
+  };
+
+  const canView = (module: AdminModuleKey): boolean => {
+    return checkAdminPermission(adminUser, module, "view");
+  };
+
+  const canCreate = (module: AdminModuleKey): boolean => {
+    return checkAdminPermission(adminUser, module, "create");
+  };
+
+  const canEdit = (module: AdminModuleKey): boolean => {
+    return checkAdminPermission(adminUser, module, "edit");
+  };
+
   return (
     <AdminAuthContext.Provider 
       value={{ 
         adminUser, 
         isAdminAuthenticated: !!adminUser, 
         isLoadingAdmin, 
+        isSuperAdmin,
+        hasPermission,
+        canView,
+        canCreate,
+        canEdit,
         loginAdminTokens, 
         logoutAdminTokens,
         updateAdminUser

@@ -149,7 +149,8 @@ export const transportationColumns: DataTableColumn<TransportationBookingRow>[] 
 
 export const transportationRowActions = (
   row: TransportationBookingRow,
-  onAction?: (action: string, row: TransportationBookingRow) => void
+  onAction?: (action: string, row: TransportationBookingRow) => void,
+  canEdit: boolean = true
 ): DataTableRowAction<TransportationBookingRow>[] => {
   const actions: DataTableRowAction<TransportationBookingRow>[] = [
     {
@@ -160,6 +161,10 @@ export const transportationRowActions = (
       },
     },
   ];
+
+  if (!canEdit) {
+    return actions;
+  }
 
   const op = row.operational_status?.toLowerCase();
   const isCompleted = op === "completed";

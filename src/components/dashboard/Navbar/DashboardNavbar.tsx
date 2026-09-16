@@ -7,6 +7,8 @@ import NotificationDropdown from "./NotificationDropdown/NotificationDropdown";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import pageCopyByPath, { type BreadcrumbSegment } from "./navbarPageCopy";
 import styles from "./DashboardNavbar.module.scss";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
+import { resolveModuleFromPathname } from "@/utils/adminPermissions";
 
 
 interface ActionConfig {
@@ -84,6 +86,7 @@ export default function DashboardNavbar({
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { canCreate, canEdit } = useAdminAuth();
 
   const handleSearchChange = (val: string) => {
     if (onSearchChange) {
@@ -114,6 +117,8 @@ export default function DashboardNavbar({
     };
   }, [pathname]);
 
+  const currentModule = resolveModuleFromPathname(pathname);
+
   const visibleTitle = title ?? pageCopy.title;
   const visibleSubtitle = subtitle ?? pageCopy.subtitle;
   const visibleTrail = breadcrumbTrail ?? pageCopy.breadcrumbTrail;
@@ -124,7 +129,19 @@ export default function DashboardNavbar({
     searchPlaceholder ?? pageCopy.searchPlaceholder ?? "Search bookings, customers...";
   const isFilterHidden = hideFilterButton ?? pageCopy.hideFilterButton;
   const isSearchHidden = hideSearch ?? pageCopy.hideSearch;
-  const isPrimaryActionHidden = hidePrimaryAction ?? false;
+
+  const lacksPermissionForPrimary = useMemo(() => {
+    if (!currentModule) return false;
+    const actionLabel = (visiblePrimaryAction?.label ?? "").toLowerCase();
+    const isEditOrSaveAction =
+      actionLabel.includes("save") || actionLabel.includes("update") || actionLabel.includes("apply");
+    if (isEditOrSaveAction) {
+      return !canEdit(currentModule) && !canCreate(currentModule);
+    }
+    return !canCreate(currentModule);
+  }, [currentModule, visiblePrimaryAction, canCreate, canEdit]);
+
+  const isPrimaryActionHidden = hidePrimaryAction ?? lacksPermissionForPrimary;
 
   return (
     <header className={styles.navbar}>

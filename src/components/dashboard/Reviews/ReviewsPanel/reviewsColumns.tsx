@@ -118,21 +118,26 @@ export const getReviewsColumns = (onTogglePublished: (row: ReviewRow, val: boole
   },
 ];
 
-export const reviewRowActions = (onAction?: (action: { label: string }, row: any) => void) => (row: ReviewRow) => {
+export const reviewRowActions = (
+  onAction?: (action: { label: string }, row: any) => void,
+  canEdit: boolean = true
+) => (row: ReviewRow) => {
   const baseActions: DataTableRowAction<ReviewRow>[] = [
     { label: "View", iconSrc: "/images/dashboard/view.svg", onClick: (r: any) => onAction?.({ label: "View" }, r) },
   ];
 
-  if (row.status !== "Replied") {
+  if (canEdit) {
+    if (row.status !== "Replied") {
+      baseActions.push(
+        { label: "Reply", iconSrc: "/images/dashboard/reply.svg", onClick: (r: any) => onAction?.({ label: "Reply" }, r) },
+        { label: "Change Status", iconSrc: "/images/dashboard/convert.svg", onClick: (r: any) => onAction?.({ label: "Change Status" }, r) }
+      );
+    }
+
     baseActions.push(
-      { label: "Reply", iconSrc: "/images/dashboard/reply.svg", onClick: (r: any) => onAction?.({ label: "Reply" }, r) },
-      { label: "Change Status", iconSrc: "/images/dashboard/convert.svg", onClick: (r: any) => onAction?.({ label: "Change Status" }, r) }
+      { label: "Delete", iconSrc: "/images/dashboard/delete.svg", variant: "danger" as const, onClick: (r: any) => onAction?.({ label: "Delete" }, r) }
     );
   }
-
-  baseActions.push(
-    { label: "Delete", iconSrc: "/images/dashboard/delete.svg", variant: "danger" as const, onClick: (r: any) => onAction?.({ label: "Delete" }, r) }
-  );
 
   return baseActions;
 };
@@ -204,8 +209,20 @@ export const getAdminTestimonialsColumns = (onTogglePublished: (row: AdminTestim
   },
 ];
 
-export const adminTestimonialRowActions = (onAction?: (action: { label: string }, row: any) => void) => (row: AdminTestimonialRow) => [
-  { label: "View", iconSrc: "/images/dashboard/view.svg", onClick: (r: any) => onAction?.({ label: "View" }, r) },
-  { label: "Edit", iconSrc: "/images/dashboard/edit.svg", onClick: (r: any) => onAction?.({ label: "Edit" }, r) },
-  { label: "Delete", iconSrc: "/images/dashboard/delete.svg", variant: "danger" as const, onClick: (r: any) => onAction?.({ label: "Delete" }, r) },
-];
+export const adminTestimonialRowActions = (
+  onAction?: (action: { label: string }, row: any) => void,
+  canEdit: boolean = true
+) => (row: AdminTestimonialRow) => {
+  const actions: DataTableRowAction<AdminTestimonialRow>[] = [
+    { label: "View", iconSrc: "/images/dashboard/view.svg", onClick: (r: any) => onAction?.({ label: "View" }, r) },
+  ];
+
+  if (canEdit) {
+    actions.push(
+      { label: "Edit", iconSrc: "/images/dashboard/edit.svg", onClick: (r: any) => onAction?.({ label: "Edit" }, r) },
+      { label: "Delete", iconSrc: "/images/dashboard/delete.svg", variant: "danger" as const, onClick: (r: any) => onAction?.({ label: "Delete" }, r) }
+    );
+  }
+
+  return actions;
+};

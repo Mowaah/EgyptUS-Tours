@@ -16,6 +16,7 @@ import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardC
 import { useAdminCustomers } from "@/hooks/useCustomers";
 import { updateCustomer, blockCustomer } from "@/services/admin/adminCustomersService";
 import type { AdminCustomerFilters, AdminCustomer } from "@/types/adminCustomerTypes";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 const filterOptions = {
   nationality: ["All", "Egyptian", "American", "Spanish", "Japanese"],
@@ -29,6 +30,7 @@ interface CustomersPanelProps {
 }
 
 export default function CustomersPanel({ searchQuery = "", onClearSearch }: CustomersPanelProps) {
+  const { canEdit } = useAdminAuth();
   const defaultFilters = {
     nationality: "All",
     bookings: "High to low",
@@ -128,7 +130,7 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
         data={filteredCustomers}
         columns={customersColumns}
         getRowId={(row) => row.id.toString()}
-        rowActions={customerRowActions(handleAction)}
+        rowActions={customerRowActions(handleAction, canEdit("customers"))}
         serverSidePagination={true}
         totalCount={customers?.count || 0}
         pageIndex={page - 1}

@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import type { DataTableColumn } from "@/components/dashboard/DataTable";
+import type { DataTableColumn, DataTableRowAction } from "@/components/dashboard/DataTable";
 import type { MarketingPostRow, ContentType } from "../types";
 import styles from "./MarketingContentPanel.module.scss";
 
@@ -66,27 +66,37 @@ export const getMarketingColumns = (): DataTableColumn<MarketingPostRow>[] => [
 
 export const useMarketingRowActions = (
   contentType: ContentType,
-  onDelete: (row: MarketingPostRow) => void
+  onDelete: (row: MarketingPostRow) => void,
+  canEdit: boolean = true
 ) => {
   const router = useRouter();
   const basePath = `/dashboard/marketing/${contentType}`;
 
-  return (row: MarketingPostRow) => [
-    {
-      label: "View",
-      iconSrc: "/images/dashboard/view.svg",
-      onClick: () => router.push(`${basePath}/${row.id || row.postId}`),
-    },
-    {
-      label: "Edit",
-      iconSrc: "/images/dashboard/edit.svg",
-      onClick: () => router.push(`${basePath}/${row.id || row.postId}/edit?from=list`),
-    },
-    {
-      label: "Delete",
-      iconSrc: "/images/dashboard/delete.svg",
-      variant: "danger" as const,
-      onClick: () => onDelete(row),
-    },
-  ];
+  return (row: MarketingPostRow) => {
+    const actions: DataTableRowAction<MarketingPostRow>[] = [
+      {
+        label: "View",
+        iconSrc: "/images/dashboard/view.svg",
+        onClick: () => router.push(`${basePath}/${row.id || row.postId}`),
+      },
+    ];
+
+    if (canEdit) {
+      actions.push(
+        {
+          label: "Edit",
+          iconSrc: "/images/dashboard/edit.svg",
+          onClick: () => router.push(`${basePath}/${row.id || row.postId}/edit?from=list`),
+        },
+        {
+          label: "Delete",
+          iconSrc: "/images/dashboard/delete.svg",
+          variant: "danger" as const,
+          onClick: () => onDelete(row),
+        }
+      );
+    }
+
+    return actions;
+  };
 };

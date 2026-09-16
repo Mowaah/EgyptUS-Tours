@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
 import phStyles from "@/components/dashboard/shared/ProfileHeader/ProfileHeader.module.scss";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
@@ -87,6 +88,9 @@ export default function ViewLead({ leadId }: ViewLeadProps) {
   const convertLeadMutation = useConvertLead();
   const reopenLeadMutation = useReopenLead();
 
+  const { canEdit } = useAdminAuth();
+  const canEditLeads = canEdit("leads");
+
   if (isLoading || !lead) {
     return <div>Loading lead...</div>;
   }
@@ -114,7 +118,7 @@ export default function ViewLead({ leadId }: ViewLeadProps) {
             subtitleElements={[`Created on ${new Date(lead.created_at).toLocaleDateString()}`]}
             actionButtons={
               <>
-                {(lead.status === "new" || lead.status === "contacted" || lead.status === "qualified") && (
+                {canEditLeads && (lead.status === "new" || lead.status === "contacted" || lead.status === "qualified") && (
                   <>
                     <button className={phStyles.dangerActionButton} type="button" onClick={() => setActiveModalKey("close_lead")}>
                       <Image src="/images/dashboard/inquiries/close_lead.svg" alt="" width={20} height={20} />
@@ -156,7 +160,7 @@ export default function ViewLead({ leadId }: ViewLeadProps) {
                   </button>
                 )}
 
-                {lead.status === "closed" && (
+                {canEditLeads && lead.status === "closed" && (
                   <>
                     <button className={phStyles.secondaryActionButton} type="button" onClick={() => setActiveModalKey("add_note")}>
                       <Image src="/images/dashboard/inquiries/add_note.svg" alt="" width={20} height={20} />

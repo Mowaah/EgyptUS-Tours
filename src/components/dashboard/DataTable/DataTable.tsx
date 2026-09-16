@@ -1,7 +1,7 @@
 "use client";
 
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import TablePagination from "../shared/TablePagination/TablePagination";
 import DashboardSearchEmptyState from "../DashboardEmptyState/DashboardSearchEmptyState";
@@ -187,7 +187,14 @@ export default function DataTable<T>({
   const visibleRows = isServerSide 
     ? data 
     : data.slice((safePage - 1) * currentRowsPerPage, safePage * currentRowsPerPage);
-  const hasActions = Boolean(rowActions);
+  const hasActions = useMemo(() => {
+    if (!rowActions) return false;
+    if (visibleRows.length === 0) return true;
+    return visibleRows.some((row) => {
+      const acts = rowActions(row);
+      return Boolean(acts && acts.length > 0);
+    });
+  }, [rowActions, visibleRows]);
 
   const toggleRow = (id: string) => {
     const isCurrentlySelected = selectedRows.includes(id);
@@ -274,7 +281,7 @@ export default function DataTable<T>({
                       {column.render(row)}
                     </td>
                   ))}
-                  {hasActions && actions ? (
+                  {hasActions && actions && actions.length > 0 ? (
                     <ActionsCell
                       row={row}
                       rowId={rowId}

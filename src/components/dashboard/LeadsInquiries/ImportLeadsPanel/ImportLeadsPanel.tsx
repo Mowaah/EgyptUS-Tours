@@ -7,6 +7,7 @@ import { ViewAssignedMembersModal } from "../ViewAssignedMembersModal";
 import { useLeadImportBatches, useDeleteLeadImportBatch, useReassignLeadImportBatch } from "@/hooks/useLeadImportBatches";
 import { useAdminUsers } from "@/hooks/useAdminUsers";
 import type { AdminLeadImportBatch } from "@/types/adminLeadTypes";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
@@ -24,13 +25,14 @@ interface ImportLeadsPanelProps {
   onImportLead?: () => void;
 }
 
-export function ImportLeadsPanel({ 
+export default function ImportLeadsPanel({ 
   searchQuery = "", 
   onClearSearch, 
   onReassignSuccess, 
   onDeleteSuccess, 
   onImportLead 
 }: ImportLeadsPanelProps) {
+  const { canEdit } = useAdminAuth();
   const defaultFilters = {
     batchId: "All",
     team: "All",
@@ -172,7 +174,7 @@ export function ImportLeadsPanel({
             setSelectedBatch(row as any);
             setDeleteModalOpen(true);
           }
-        })}
+        }, canEdit("leads"))}
         isLoading={isLoading}
       />
 

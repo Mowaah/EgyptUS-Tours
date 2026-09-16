@@ -16,6 +16,7 @@ import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyStat
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 const staticFilterOptions = {
   price: ["All", "Under £1,000", "£1,000 - 2,000", "Over £2,000"],
@@ -29,6 +30,7 @@ interface TransportationPanelProps {
 
 export default function TransportationPanel({ searchQuery = "", onClearSearch }: TransportationPanelProps) {
   const router = useRouter();
+  const { canEdit } = useAdminAuth();
   
   const defaultFilters = {
     category: "All",
@@ -133,17 +135,21 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch }:
         onPageSizeChange={setPageSize}
         defaultPageSize={10}
         rowActions={(row) =>
-          transportationRowActions(row, (action, r) => {
-            if (action === "View") {
-              router.push(`/dashboard/catalog/transportation/${r.id}/overview`);
-            } else if (action === "Edit") {
-              router.push(`/dashboard/catalog/transportation/${r.id}/edit`);
-            } else if (action === "Archive") {
-              setConfirmModal({ open: true, action: "Archive", row: r });
-            } else if (action === "Delete") {
-              setConfirmModal({ open: true, action: "Delete", row: r });
-            }
-          })
+          transportationRowActions(
+            row,
+            (action, r) => {
+              if (action === "View") {
+                router.push(`/dashboard/catalog/transportation/${r.id}/overview`);
+              } else if (action === "Edit") {
+                router.push(`/dashboard/catalog/transportation/${r.id}/edit`);
+              } else if (action === "Archive") {
+                setConfirmModal({ open: true, action: "Archive", row: r });
+              } else if (action === "Delete") {
+                setConfirmModal({ open: true, action: "Delete", row: r });
+              }
+            },
+            canEdit("catalog")
+          )
         }
         isLoading={vehiclesLoading}
         onClearSearch={onClearSearch || resetFilters}

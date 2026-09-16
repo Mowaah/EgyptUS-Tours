@@ -3,25 +3,28 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState, useRef, useLayoutEffect, useEffect } from "react";
+import { useState, useRef, useLayoutEffect, useEffect, useMemo } from "react";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import styles from "./DashboardSidebar.module.scss";
 import { useSidebarContext } from "@/contexts/SidebarContext";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
+import type { AdminModuleKey } from "@/utils/adminPermissions";
 
 interface NavItem {
   label: string;
   href?: string;
   active?: boolean;
   defaultOpen?: boolean;
+  module?: AdminModuleKey;
   children?: NavItem[];
 }
 
 const navItems: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Lead Management", href: "/dashboard/leads" },
+  { label: "Dashboard", href: "/dashboard", module: "dashboard" },
+  { label: "Lead Management", href: "/dashboard/leads", module: "leads" },
   {
     label: "Bookings",
+    module: "bookings",
     children: [
       { label: "Trips", href: "/dashboard/bookings/trips" },
       { label: "Transportation", href: "/dashboard/bookings/transportation" },
@@ -30,6 +33,7 @@ const navItems: NavItem[] = [
   },
   {
     label: "Requests",
+    module: "requests",
     children: [
       { label: "Plan Your Trip", href: "/dashboard/requests/plan-your-trip" },
       { label: "B2B Programs", href: "/dashboard/requests/b2b-programs" },
@@ -37,9 +41,10 @@ const navItems: NavItem[] = [
       { label: "Contact Us", href: "/dashboard/requests/contact-us" },
     ],
   },
-  { label: "Customers", href: "/dashboard/customers" },
+  { label: "Customers", href: "/dashboard/customers", module: "customers" },
   {
     label: "Catalog",
+    module: "catalog",
     children: [
       { label: "Trips", href: "/dashboard/catalog/trips" },
       { label: "Transportation", href: "/dashboard/catalog/transportation" },
@@ -48,24 +53,26 @@ const navItems: NavItem[] = [
   },
   {
     label: "Finance",
+    module: "finance",
     children: [
       { label: "Payments", href: "/dashboard/finance/payments" },
       { label: "Deposits", href: "/dashboard/finance/deposits" },
-      // { label: "Financial Reports", href: "/dashboard/finance/reports" },
     ],
   },
   {
     label: "Marketing",
+    module: "marketing",
     children: [
       { label: "Blog", href: "/dashboard/marketing/blog" },
       { label: "Articles", href: "/dashboard/marketing/articles" },
       { label: "Promotions", href: "/dashboard/marketing/promotions" },
     ],
   },
-  { label: "Reviews", href: "/dashboard/reviews" },
-  { label: "Reports & Analytics", href: "/dashboard/analytics" },
+  { label: "Reviews", href: "/dashboard/reviews", module: "reviews" },
+  { label: "Reports & Analytics", href: "/dashboard/analytics", module: "reports" },
   {
     label: "Settings",
+    module: "settings",
     children: [
       { label: "User Management", href: "/dashboard/settings/user-management" },
       { label: "Access Control", href: "/dashboard/settings/access-control" },
@@ -75,13 +82,14 @@ const navItems: NavItem[] = [
   },
   {
     label: "Legal & Help Center",
+    module: "legal_help_center",
     children: [
       { label: "FAQ Management", href: "/dashboard/settings/faq-management" },
       { label: "Terms & Conditions", href: "/dashboard/settings/terms-conditions" },
       { label: "Privacy Policy", href: "/dashboard/settings/privacy-policy" },
     ],
   },
-  { label: "SEO Configuration", href: "/dashboard/seo" },
+  { label: "SEO Configuration", href: "/dashboard/seo", module: "seo" },
 ];
 
 const toKebabCase = (value: string) =>
@@ -188,8 +196,33 @@ export default function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { openGroups, toggleGroup } = useSidebarContext();
-  const { adminUser, logoutAdminTokens } = useAdminAuth();
+  const { adminUser, logoutAdminTokens, canView } = useAdminAuth();
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const visibleNavItems = useMemo(() => {
+    return navItems
+      .map((item) => {
+        const itemModule = item.module;
+        if (itemModule && !canView(itemModule)) {
+          return null;
+        }
+        if (item.children) {
+          const visibleChildren = item.children.filter((child) => {
+            const childModule = child.module || itemModule;
+            return childModule ? canView(childModule) : true;
+          });
+          if (visibleChildren.length === 0) {
+            return null;
+          }
+          return {
+            ...item,
+            children: visibleChildren,
+          };
+        }
+        return item;
+      })
+      .filter((item): item is NavItem => item !== null);
+  }, [canView]);
 
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
@@ -224,7 +257,7 @@ export default function DashboardSidebar() {
 
           <nav className={styles.nav}>
             <ul className={styles.navList}>
-              {navItems.map((item) => {
+              {visibleNavItems.map((item) => {
                 const hasChildren = Boolean(item.children?.length);
                 const isOpen = Boolean(openGroups[item.label]);
                 const subnavId = `dashboard-sidebar-${toKebabCase(item.label)}`;

@@ -18,6 +18,7 @@ import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyStat
 import { useReviewsPanel } from "@/hooks/useReviewsPanel";
 import { replyToAdminUserReview, updateAdminTestimonial, updateAdminUserReview, deleteAdminTestimonial, deleteAdminUserReview } from "@/services/admin/adminReviewsService";
 import { downloadBlobAsCSV } from "@/lib/utils";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import styles from "./ReviewsPanel.module.scss";
 
 const filterOptions = {
@@ -52,6 +53,7 @@ export function ReviewsPanel({
   customerId,
   onDataChange,
 }: ReviewsPanelProps & { onDataChange?: () => void }) {
+  const { canEdit } = useAdminAuth();
   const defaultFilters = {
     category: "All",
     rating: "All",
@@ -247,7 +249,7 @@ export function ReviewsPanel({
         <DataTable
           data={data}
           columns={baseColumns}
-          rowActions={type === "admin" ? adminTestimonialRowActions(handleAction) as any : reviewRowActions(handleAction) as any}
+          rowActions={type === "admin" ? adminTestimonialRowActions(handleAction, canEdit("reviews")) as any : reviewRowActions(handleAction, canEdit("reviews")) as any}
           getRowId={(row: any) => String(row.id)}
           serverSidePagination={true}
           totalCount={totalCount}

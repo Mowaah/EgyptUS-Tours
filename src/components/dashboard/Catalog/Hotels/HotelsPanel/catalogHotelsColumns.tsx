@@ -83,7 +83,8 @@ export const catalogHotelsColumns: DataTableColumn<CatalogHotelRow>[] = [
 
 export const catalogHotelsRowActions = (
   row: CatalogHotelRow,
-  onAction: (action: string, row: CatalogHotelRow) => void
+  onAction: (action: string, row: CatalogHotelRow) => void,
+  canEdit: boolean = true
 ): DataTableRowAction<CatalogHotelRow>[] => {
   const actions: DataTableRowAction<CatalogHotelRow>[] = [
     {
@@ -91,27 +92,30 @@ export const catalogHotelsRowActions = (
       iconSrc: "/images/dashboard/view.svg",
       onClick: (r) => onAction("View", r),
     },
-    {
+  ];
+
+  if (canEdit) {
+    actions.push({
       label: "Edit",
       iconSrc: "/images/dashboard/edit.svg",
       onClick: (r) => onAction("Edit", r),
-    },
-  ];
+    });
 
-  if (row.status !== "archived" && row.status !== "Archived") {
+    if (row.status !== "archived" && row.status !== "Archived") {
+      actions.push({
+        label: "Archive",
+        iconSrc: "/images/dashboard/catalog/trips/archive.svg",
+        onClick: (r) => onAction("Archive", r),
+      });
+    }
+
     actions.push({
-      label: "Archive",
-      iconSrc: "/images/dashboard/catalog/trips/archive.svg",
-      onClick: (r) => onAction("Archive", r),
+      label: "Delete",
+      iconSrc: "/images/dashboard/delete.svg",
+      variant: "danger",
+      onClick: (r) => onAction("Delete", r),
     });
   }
-
-  actions.push({
-    label: "Delete",
-    iconSrc: "/images/dashboard/delete.svg",
-    variant: "danger",
-    onClick: (r) => onAction("Delete", r),
-  });
 
   return actions;
 };

@@ -12,6 +12,7 @@ import { createAdminUserRowActions, adminUsersColumns } from "./adminUsersColumn
 import { exportAdminUsers, getAdminUsers } from "@/services/admin/adminUsersService";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 interface AdminUsersPanelProps {
   roles: AdminRoleRow[];
@@ -90,8 +91,12 @@ export default function AdminUsersPanel({
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
 
+  const { canEdit } = useAdminAuth();
+
   const rowActions = (row: AdminUserRow) =>
-    createAdminUserRowActions(row, onEditUser, onToggleUserStatus, onDeleteUser);
+    canEdit("settings")
+      ? createAdminUserRowActions(row, onEditUser, onToggleUserStatus, onDeleteUser)
+      : [];
 
   const handleExport = async () => {
     try {

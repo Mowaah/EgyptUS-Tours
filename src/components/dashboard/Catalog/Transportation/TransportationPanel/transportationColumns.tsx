@@ -91,7 +91,8 @@ export const transportationColumns: DataTableColumn<any>[] = [
 
 export const transportationRowActions = (
   row: any,
-  onAction: (action: string, row: any) => void
+  onAction: (action: string, row: any) => void,
+  canEdit: boolean = true
 ): DataTableRowAction<any>[] => {
   const actions: DataTableRowAction<any>[] = [
     {
@@ -99,27 +100,30 @@ export const transportationRowActions = (
       iconSrc: "/images/dashboard/view.svg",
       onClick: (r) => onAction("View", r),
     },
-    {
+  ];
+
+  if (canEdit) {
+    actions.push({
       label: "Edit",
       iconSrc: "/images/dashboard/edit.svg",
       onClick: (r) => onAction("Edit", r),
-    },
-  ];
+    });
 
-  if (row.status !== "archived" && row.status !== "Archived") {
+    if (row.status !== "archived" && row.status !== "Archived") {
+      actions.push({
+        label: "Archive",
+        iconSrc: "/images/dashboard/catalog/trips/archive.svg",
+        onClick: (r) => onAction("Archive", r),
+      });
+    }
+
     actions.push({
-      label: "Archive",
-      iconSrc: "/images/dashboard/catalog/trips/archive.svg",
-      onClick: (r) => onAction("Archive", r),
+      label: "Delete",
+      iconSrc: "/images/dashboard/delete.svg",
+      variant: "danger",
+      onClick: (r) => onAction("Delete", r),
     });
   }
-
-  actions.push({
-    label: "Delete",
-    iconSrc: "/images/dashboard/delete.svg",
-    variant: "danger",
-    onClick: (r) => onAction("Delete", r),
-  });
 
   return actions;
 };

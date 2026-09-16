@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
 import phStyles from "@/components/dashboard/shared/ProfileHeader/ProfileHeader.module.scss";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
@@ -93,10 +94,11 @@ export default function RequestDetailsLayout({
   tripStartDate,
   tripEndDate,
 }: RequestDetailsLayoutProps) {
+  const { canEdit } = useAdminAuth();
+  const canEditRequests = canEdit("requests");
   const [activeModalKey, setActiveModalKey] = useState<string | null>(null);
   const [bannerMessage, setBannerMessage] = useState("");
   
-  console.log("Current Status in Layout:", status);
   const [agents, setAgents] = useState<any[]>([]);
 
   React.useEffect(() => {
@@ -196,32 +198,34 @@ export default function RequestDetailsLayout({
           }
           subtitleElements={[date]}
           actionButtons={
-            <>
-              {typeof prependActionButtons === 'function' ? prependActionButtons(setActiveModalKey) : prependActionButtons}
-              {!hideDefaultActions && (
-                <>
-                  <button 
-                    className={phStyles.secondaryActionButton} 
-                    type="button" 
-                    onClick={() => setActiveModalKey("add_note")}
-                  >
-                    <Image src="/images/dashboard/inquiries/add_note.svg" alt="" width={20} height={20} />
-                    Add note
-                  </button>
-                  {status === "New" && (
+            canEditRequests ? (
+              <>
+                {typeof prependActionButtons === 'function' ? prependActionButtons(setActiveModalKey) : prependActionButtons}
+                {!hideDefaultActions && (
+                  <>
                     <button 
                       className={phStyles.secondaryActionButton} 
                       type="button" 
-                      onClick={() => setActiveModalKey("assign")}
+                      onClick={() => setActiveModalKey("add_note")}
                     >
-                      <Image src="/images/dashboard/user-add.svg" alt="" width={20} height={20} />
-                      Assign to Employee
+                      <Image src="/images/dashboard/inquiries/add_note.svg" alt="" width={20} height={20} />
+                      Add note
                     </button>
-                  )}
-                </>
-              )}
-              {typeof appendActionButtons === 'function' ? appendActionButtons(setActiveModalKey) : appendActionButtons}
-            </>
+                    {status === "New" && (
+                      <button 
+                        className={phStyles.secondaryActionButton} 
+                        type="button" 
+                        onClick={() => setActiveModalKey("assign")}
+                      >
+                        <Image src="/images/dashboard/user-add.svg" alt="" width={20} height={20} />
+                        Assign to Employee
+                      </button>
+                    )}
+                  </>
+                )}
+                {typeof appendActionButtons === 'function' ? appendActionButtons(setActiveModalKey) : appendActionButtons}
+              </>
+            ) : null
           }
         />
       </DashboardNavbar>
@@ -243,7 +247,7 @@ export default function RequestDetailsLayout({
           </div>
         </div>
 
-        {!hideFooter && status !== "New" && (
+        {!hideFooter && status !== "New" && canEditRequests && (
           <div className={styles.footer}>
             <div className={styles.footerDate}>
               Last Update: <br/> <strong>{lastUpdated ? (() => { const d = new Date(lastUpdated); return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`; })() : "—"}</strong>

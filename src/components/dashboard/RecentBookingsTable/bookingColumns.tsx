@@ -57,7 +57,10 @@ export const bookingColumns: DataTableColumn<BookingRow>[] = [
   },
 ];
 
-export const bookingRowActions = () => [
-  { label: "View details" },
-  { label: "Send update" },
-];
+export const bookingRowActions = (canEdit: boolean = true) => () => {
+  const actions = [{ label: "View details" }];
+  if (canEdit) {
+    actions.push({ label: "Send update" });
+  }
+  return actions;
+};

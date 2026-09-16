@@ -2,6 +2,7 @@
 
 import { useState, createContext, useContext } from "react";
 import { useRouter, usePathname, useParams } from "next/navigation";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
 import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/DashboardTabs";
@@ -85,6 +86,9 @@ export default function TripLayout({
   
   const { trip, loading, refetch } = useCatalogTripDetail(id);
   
+  const { canEdit } = useAdminAuth();
+  const canEditCatalog = canEdit("catalog");
+
   const [activeLang, setActiveLang] = useState<Language>("English");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false);
@@ -138,31 +142,18 @@ export default function TripLayout({
                 </span>
               ) : undefined
             }
-            secondaryAction={{
-              label: "Edit",
-              icon: "/images/dashboard/edit.svg",
-              onClick: () => router.push(`/dashboard/catalog/trips/${id}/edit`),
-            }}
-            primaryAction={
-              isDraft
+            secondaryAction={
+              canEditCatalog
                 ? {
-                    label: isActionPending ? "Publishing..." : "Publish",
-                    icon: "/images/send.svg",
-                    onClick: async () => {
-                      if (!trip || isActionPending) return;
-                      setIsActionPending(true);
-                      try {
-                        await publishCatalogTrip(trip.id);
-                        showBanner("Trip published successfully!");
-                        refetch();
-                      } catch (err) {
-                        showBanner(formatBlockers(err), "warning");
-                      } finally {
-                        setIsActionPending(false);
-                      }
-                    },
+                    label: "Edit",
+                    icon: "/images/dashboard/edit.svg",
+                    onClick: () => router.push(`/dashboard/catalog/trips/${id}/edit`),
                   }
-                : isArchived
+                : undefined
+            }
+            primaryAction={
+              canEditCatalog
+                ? isDraft
                   ? {
                       label: isActionPending ? "Publishing..." : "Publish",
                       icon: "/images/send.svg",
@@ -170,7 +161,6 @@ export default function TripLayout({
                         if (!trip || isActionPending) return;
                         setIsActionPending(true);
                         try {
-                          await unpublishCatalogTrip(trip.id);
                           await publishCatalogTrip(trip.id);
                           showBanner("Trip published successfully!");
                           refetch();
@@ -181,10 +171,30 @@ export default function TripLayout({
                         }
                       },
                     }
-                  : undefined
+                  : isArchived
+                    ? {
+                        label: isActionPending ? "Publishing..." : "Publish",
+                        icon: "/images/send.svg",
+                        onClick: async () => {
+                          if (!trip || isActionPending) return;
+                          setIsActionPending(true);
+                          try {
+                            await unpublishCatalogTrip(trip.id);
+                            await publishCatalogTrip(trip.id);
+                            showBanner("Trip published successfully!");
+                            refetch();
+                          } catch (err) {
+                            showBanner(formatBlockers(err), "warning");
+                          } finally {
+                            setIsActionPending(false);
+                          }
+                        },
+                      }
+                    : undefined
+                : undefined
             }
             archiveAction={
-              !isArchived && !isDraft
+              canEditCatalog && !isArchived && !isDraft
                 ? {
                   label: "Archive",
                   icon: (
@@ -199,7 +209,7 @@ export default function TripLayout({
               : undefined
           }
           dangerAction={
-            !isArchived && !isDraft
+            canEditCatalog && !isArchived && !isDraft
               ? {
                   label: "Delete",
                   icon: "/images/dashboard/delete.svg",

@@ -14,6 +14,7 @@ import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/Dash
 import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import { promotionsColumns, usePromotionRowActions } from "./promotionsColumns";
 import { getAdminPromotions, AdminPromotionList, updateAdminPromotion, deleteAdminPromotion } from "@/services/admin/adminMarketingService";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import type { PromotionRow } from "../types";
 
 interface PromotionsPanelProps {
@@ -23,6 +24,7 @@ interface PromotionsPanelProps {
 
 export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsPanelProps) {
   const router = useRouter();
+  const { canCreate, canEdit } = useAdminAuth();
   const defaultFilters = {
     appliesTo: "All",
     validFrom: "All",
@@ -104,7 +106,7 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
     }
   };
 
-  const rowActions = usePromotionRowActions(handleDeleteRow, handleToggleStatus);
+  const rowActions = usePromotionRowActions(handleDeleteRow, handleToggleStatus, canEdit("marketing"));
 
   const filteredPromotions = useMemo(() => {
     return promotions.filter((promotion) => {
@@ -201,9 +203,9 @@ export function PromotionsPanel({ searchQuery = "", onClearSearch }: PromotionsP
             <DashboardEmptyState
               title="No Promotions Yet"
               subtitle="There are no Promotions available at the moment."
-              actionLabel="Create Your First Promotion"
+              actionLabel={canCreate("marketing") ? "Create Your First Promotion" : undefined}
               imageSrc="/images/dashboard/empty.png"
-              onAction={() => router.push("/dashboard/marketing/promotions/create")}
+              onAction={canCreate("marketing") ? () => router.push("/dashboard/marketing/promotions/create") : undefined}
             />
           ) : !searchQuery && (appliedFilters.appliesTo !== "All" || appliedFilters.status !== "All" || appliedFilters.validFrom !== "All") ? (
             <DashboardFilterEmptyState

@@ -1,11 +1,14 @@
 "use client";
 
 import { useMemo } from "react";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { bookingColumns, bookingRowActions } from "./bookingColumns";
 import { mockBookings } from "./mockBookings";
 
 export default function RecentBookingsTable() {
+  const { canEdit } = useAdminAuth();
+
   const rows = useMemo(
     () =>
       Array.from({ length: 15 }, (_, index) => {
@@ -26,8 +29,7 @@ export default function RecentBookingsTable() {
       data={rows}
       columns={bookingColumns}
       getRowId={(row) => row.id}
-      
-      rowActions={bookingRowActions}
+      rowActions={bookingRowActions(canEdit("bookings"))}
     />
   );
 }

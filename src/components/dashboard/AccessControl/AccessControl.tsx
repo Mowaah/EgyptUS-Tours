@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { FilterSelect, TablePanel } from "@/components/dashboard/TablePanel";
 import { DashboardConfirmationModal, DashboardStatusBanner } from "@/components/dashboard/shared";
 import type { AdminRole, AdminRoleModule, AdminRolePermissions } from "./types";
@@ -36,7 +37,6 @@ function PermissionToggle({
       aria-label={label}
       onClick={onChange}
       disabled={disabled}
-      style={{ opacity: disabled ? 0.5 : 1, cursor: disabled ? "not-allowed" : "pointer" }}
     >
       <span aria-hidden />
     </button>
@@ -110,6 +110,9 @@ export default function AccessControl({
     }
   };
 
+  const { canEdit } = useAdminAuth();
+  const canEditSettings = canEdit("settings");
+
   const isDeleteDisabled = !visibleRole || visibleRole.is_system || visibleRole.users_count > 0;
   const isSuperAdmin = visibleRole?.is_super_admin;
 
@@ -165,40 +168,40 @@ export default function AccessControl({
                 }}
               />
 
-              <div className={styles.toolbarActions}>
-                <button
-                  type="button"
-                  className={styles.deleteButton}
-                  onClick={() => setDeleteModalOpen(true)}
-                  disabled={isDeleteDisabled || isDeleting}
-                  style={{ opacity: isDeleteDisabled ? 0.5 : 1, cursor: isDeleteDisabled ? "not-allowed" : "pointer" }}
-                >
-                  {isDeleting ? "Deleting..." : "Delete Role"}
-                  <Image
-                    src="/images/dashboard/delete.svg"
-                    alt=""
-                    width={20}
-                    height={20}
-                    aria-hidden
-                  />
-                </button>
-                <button
-                  type="button"
-                  className={styles.saveButton}
-                  onClick={handleSavePermissions}
-                  disabled={isSaving || isSuperAdmin || !hasUnsavedChanges}
-                  style={{ opacity: (isSuperAdmin || !hasUnsavedChanges) ? 0.5 : 1, cursor: (isSuperAdmin || !hasUnsavedChanges) ? "not-allowed" : "pointer" }}
-                >
-                  {isSaving ? "Saving..." : "Save Permissions"}
-                  <Image
-                    src="/images/dashboard/save.svg"
-                    alt=""
-                    width={22}
-                    height={22}
-                    aria-hidden
-                  />
-                </button>
-              </div>
+              {canEditSettings && (
+                <div className={styles.toolbarActions}>
+                  <button
+                    type="button"
+                    className={styles.deleteButton}
+                    onClick={() => setDeleteModalOpen(true)}
+                    disabled={isDeleteDisabled || isDeleting}
+                  >
+                    {isDeleting ? "Deleting..." : "Delete Role"}
+                    <Image
+                      src="/images/dashboard/delete.svg"
+                      alt=""
+                      width={20}
+                      height={20}
+                      aria-hidden
+                    />
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.saveButton}
+                    onClick={handleSavePermissions}
+                    disabled={isSaving || isSuperAdmin || !hasUnsavedChanges}
+                  >
+                    {isSaving ? "Saving..." : "Save Permissions"}
+                    <Image
+                      src="/images/dashboard/save.svg"
+                      alt=""
+                      width={22}
+                      height={22}
+                      aria-hidden
+                    />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         }
@@ -227,10 +230,10 @@ export default function AccessControl({
                             checked={isChecked}
                             label={`${actionKey} ${mod.label}`}
                             onChange={() => togglePermission(mod.key, actionKey)}
-                            disabled={isSuperAdmin}
+                            disabled={isSuperAdmin || !canEditSettings}
                           />
                         ) : (
-                          <span style={{ color: "#999" }}>-</span>
+                          <span className={styles.emptyDash}>-</span>
                         )}
                       </td>
                     );

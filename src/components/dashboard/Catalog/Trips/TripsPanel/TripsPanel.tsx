@@ -15,6 +15,7 @@ import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardC
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import { useCatalogTrips, useCatalogFilters } from "@/hooks/useCatalogTrips";
 import { archiveCatalogTrip, deleteCatalogTrip, updateCatalogTrip } from "@/services/admin/adminCatalogTripsService";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 const staticFilterOptions = {
   duration: ["All", "1-3 Days", "4-7 Days", "8-14 Days", "15+ Days"],
@@ -29,6 +30,7 @@ interface TripsPanelProps {
 
 export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPanelProps) {
   const router = useRouter();
+  const { canEdit } = useAdminAuth();
 
   const { categories, destinations, loading: filtersLoading } = useCatalogFilters();
   
@@ -167,17 +169,21 @@ export default function TripsPanel({ searchQuery = "", onClearSearch }: TripsPan
         onPageSizeChange={setPageSize}
         defaultPageSize={10}
         rowActions={(row) =>
-          catalogTripsRowActions(row, (action, r) => {
-            if (action === "View") {
-              router.push(`/dashboard/catalog/trips/${r.id}`);
-            } else if (action === "Edit") {
-              router.push(`/dashboard/catalog/trips/${r.id}/edit`);
-            } else if (action === "Archive") {
-              setConfirmModal({ open: true, action: "Archive", row: r });
-            } else if (action === "Delete") {
-              setConfirmModal({ open: true, action: "Delete", row: r });
-            }
-          })
+          catalogTripsRowActions(
+            row,
+            (action, r) => {
+              if (action === "View") {
+                router.push(`/dashboard/catalog/trips/${r.id}`);
+              } else if (action === "Edit") {
+                router.push(`/dashboard/catalog/trips/${r.id}/edit`);
+              } else if (action === "Archive") {
+                setConfirmModal({ open: true, action: "Archive", row: r });
+              } else if (action === "Delete") {
+                setConfirmModal({ open: true, action: "Delete", row: r });
+              }
+            },
+            canEdit("catalog")
+          )
         }
         isLoading={tripsLoading}
         onClearSearch={onClearSearch || resetFilters}

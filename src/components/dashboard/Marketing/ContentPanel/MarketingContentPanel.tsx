@@ -11,6 +11,7 @@ import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/Dash
 import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import { useRouter, usePathname } from "next/navigation";
 import { exportAdminBlogsCSV, exportAdminArticlesCSV, getAdminMarketingCategories } from "@/services/admin/adminMarketingService";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { getMarketingColumns, useMarketingRowActions } from "./MarketingColumns";
 import type { MarketingPostRow, ContentType } from "../types";
 import { useMarketingPanel } from "@/hooks/useMarketingPanel";
@@ -76,12 +77,14 @@ export function MarketingContentPanel({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState<MarketingPostRow | null>(null);
 
+  const { canCreate, canEdit } = useAdminAuth();
+
   const handleDeleteRow = (row: MarketingPostRow) => {
     setPostToDelete(row);
     setIsDeleteModalOpen(true);
   };
 
-  const rowActions = useMarketingRowActions(contentType, handleDeleteRow);
+  const rowActions = useMarketingRowActions(contentType, handleDeleteRow, canEdit("marketing"));
 
   const handleConfirmDelete = async () => {
     if (postToDelete) {
@@ -162,8 +165,8 @@ export function MarketingContentPanel({
               <DashboardEmptyState
                 title={`No ${pluralName} Yet`}
                 subtitle={`There are no ${pluralName.toLowerCase()} available at the moment.`}
-                actionLabel={`Create Your First ${itemName}`}
-                onAction={() => router.push(`/dashboard/marketing/${contentType}/create`)}
+                actionLabel={canCreate("marketing") ? `Create Your First ${itemName}` : undefined}
+                onAction={canCreate("marketing") ? () => router.push(`/dashboard/marketing/${contentType}/create`) : undefined}
                 imageSrc="/images/dashboard/empty.png"
               />
             ) : !searchQuery && (categoryFilter || statusFilter) ? (

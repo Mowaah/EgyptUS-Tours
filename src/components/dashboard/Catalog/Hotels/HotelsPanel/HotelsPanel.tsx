@@ -15,6 +15,7 @@ import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyStat
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 const staticFilterOptions = {
   rating: ["All", "5", "4", "3", "2", "1", "Unrated"],
@@ -41,6 +42,7 @@ interface HotelsPanelProps {
 
 export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsPanelProps) {
   const router = useRouter();
+  const { canEdit } = useAdminAuth();
   
   const defaultFilters = {
     destination: "All",
@@ -170,17 +172,21 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch }: HotelsP
         onPageSizeChange={setPageSize}
         defaultPageSize={10}
         rowActions={(row) =>
-          catalogHotelsRowActions(row, (action, r) => {
-            if (action === "View") {
-              router.push(`/dashboard/catalog/hotels/${r.id}`);
-            } else if (action === "Edit") {
-              router.push(`/dashboard/catalog/hotels/${r.id}/edit`);
-            } else if (action === "Archive") {
-              setConfirmModal({ open: true, action: "Archive", row: r });
-            } else if (action === "Delete") {
-              setConfirmModal({ open: true, action: "Delete", row: r });
-            }
-          })
+          catalogHotelsRowActions(
+            row,
+            (action, r) => {
+              if (action === "View") {
+                router.push(`/dashboard/catalog/hotels/${r.id}`);
+              } else if (action === "Edit") {
+                router.push(`/dashboard/catalog/hotels/${r.id}/edit`);
+              } else if (action === "Archive") {
+                setConfirmModal({ open: true, action: "Archive", row: r });
+              } else if (action === "Delete") {
+                setConfirmModal({ open: true, action: "Delete", row: r });
+              }
+            },
+            canEdit("catalog")
+          )
         }
         isLoading={hotelsLoading}
         onClearSearch={onClearSearch || resetFilters}

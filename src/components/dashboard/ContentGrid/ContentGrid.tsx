@@ -7,6 +7,7 @@ import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/Dash
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import { LanguageTabs, type Language } from "@/components/shared";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import styles from "./ContentGrid.module.scss";
 
 export interface ContentItem {
@@ -62,6 +63,9 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
   onDeleteItem,
 }, ref) => {
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const { canCreate, canEdit } = useAdminAuth();
+  const userCanCreate = canCreate("legal_help_center");
+  const userCanEdit = canEdit("legal_help_center");
 
   const [isBannerVisible, setIsBannerVisible] = useState(false);
   const [bannerMessage, setBannerMessage] = useState("");
@@ -127,8 +131,8 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
       <DashboardEmptyState
         title={emptyStateTitle}
         subtitle={emptyStateSubtitle}
-        actionLabel={emptyStateActionLabel}
-        onAction={onAdd}
+        actionLabel={userCanCreate ? emptyStateActionLabel : undefined}
+        onAction={userCanCreate ? onAdd : undefined}
       />
     );
   }
@@ -192,45 +196,49 @@ const ContentGrid = forwardRef<ContentGridRef, ContentGridProps>(({
                           <span>View</span>
                         </button>
 
-                        <button
-                          className={styles.menuAction}
-                          onClick={() => {
-                            setOpenDropdownId(null);
-                            onEditItem(item);
-                          }}
-                        >
-                          <span className={styles.actionIcon} style={{ maskImage: `url(/images/dashboard/edit.svg)`, WebkitMaskImage: `url(/images/dashboard/edit.svg)` }} aria-hidden />
-                          <span>Edit</span>
-                        </button>
+                        {userCanEdit && (
+                          <>
+                            <button
+                              className={styles.menuAction}
+                              onClick={() => {
+                                setOpenDropdownId(null);
+                                onEditItem(item);
+                              }}
+                            >
+                              <span className={styles.actionIcon} style={{ maskImage: `url(/images/dashboard/edit.svg)`, WebkitMaskImage: `url(/images/dashboard/edit.svg)` }} aria-hidden />
+                              <span>Edit</span>
+                            </button>
 
-                        {item.status === "Published" ? (
-                          <button className={styles.menuActionUnpublish} onClick={() => {
-                            setOpenDropdownId(null);
-                            onUnpublishItem(item);
-                          }}>
-                            <span className={styles.actionIcon} style={{ maskImage: `url(/images/dashboard/unpublish.svg)`, WebkitMaskImage: `url(/images/dashboard/unpublish.svg)` }} aria-hidden />
-                            <span>Unpublish</span>
-                          </button>
-                        ) : (
-                          <button className={styles.menuActionPublish} onClick={() => {
-                            setOpenDropdownId(null);
-                            onPublishItem(item);
-                          }}>
-                            <span className={styles.actionIcon} style={{ maskImage: `url(/images/dashboard/publish.svg)`, WebkitMaskImage: `url(/images/dashboard/publish.svg)` }} aria-hidden />
-                            <span>Publish</span>
-                          </button>
+                            {item.status === "Published" ? (
+                              <button className={styles.menuActionUnpublish} onClick={() => {
+                                setOpenDropdownId(null);
+                                onUnpublishItem(item);
+                              }}>
+                                <span className={styles.actionIcon} style={{ maskImage: `url(/images/dashboard/unpublish.svg)`, WebkitMaskImage: `url(/images/dashboard/unpublish.svg)` }} aria-hidden />
+                                <span>Unpublish</span>
+                              </button>
+                            ) : (
+                              <button className={styles.menuActionPublish} onClick={() => {
+                                setOpenDropdownId(null);
+                                onPublishItem(item);
+                              }}>
+                                <span className={styles.actionIcon} style={{ maskImage: `url(/images/dashboard/publish.svg)`, WebkitMaskImage: `url(/images/dashboard/publish.svg)` }} aria-hidden />
+                                <span>Publish</span>
+                              </button>
+                            )}
+
+                            <button
+                              className={styles.menuActionDanger}
+                              onClick={() => {
+                                setOpenDropdownId(null);
+                                onDeleteItem(item);
+                              }}
+                            >
+                              <span className={styles.actionIcon} style={{ maskImage: `url(/images/dashboard/delete.svg)`, WebkitMaskImage: `url(/images/dashboard/delete.svg)` }} aria-hidden />
+                              <span>Delete</span>
+                            </button>
+                          </>
                         )}
-
-                        <button
-                          className={styles.menuActionDanger}
-                          onClick={() => {
-                            setOpenDropdownId(null);
-                            onDeleteItem(item);
-                          }}
-                        >
-                          <span className={styles.actionIcon} style={{ maskImage: `url(/images/dashboard/delete.svg)`, WebkitMaskImage: `url(/images/dashboard/delete.svg)` }} aria-hidden />
-                          <span>Delete</span>
-                        </button>
                       </div>
                     )}
                   </div>

@@ -72,10 +72,23 @@ export const customersColumns: DataTableColumn<AdminCustomer>[] = [
   },
 ];
 
-export const customerRowActions = (onAction?: (action: { label: string }, row: AdminCustomer) => void) => (row: AdminCustomer) => [
-  { label: "View", iconSrc: "/images/dashboard/view.svg", onClick: (r: any) => onAction?.({ label: "View" }, r) },
-  { label: "Edit", iconSrc: "/images/dashboard/edit.svg", onClick: (r: any) => onAction?.({ label: "Edit" }, r) },
-  { 
+export const customerRowActions = (
+  onAction?: (action: { label: string }, row: AdminCustomer) => void,
+  canEdit: boolean = true
+) => (row: AdminCustomer) => {
+  const actions: any[] = [
+    { label: "View", iconSrc: "/images/dashboard/view.svg", onClick: (r: any) => onAction?.({ label: "View" }, r) },
+  ];
+
+  if (canEdit) {
+    actions.push({
+      label: "Edit",
+      iconSrc: "/images/dashboard/edit.svg",
+      onClick: (r: any) => onAction?.({ label: "Edit" }, r),
+    });
+  }
+
+  actions.push({ 
     label: "Send Email", 
     iconSrc: "/images/dashboard/send.svg", 
     onClick: (r: any) => {
@@ -85,6 +98,16 @@ export const customerRowActions = (onAction?: (action: { label: string }, row: A
         window.location.href = `mailto:${r.email}`;
       }
     } 
-  },
-  { label: row.status === "blocked" ? "Unblock User" : "Block User", iconSrc: "/images/dashboard/block.svg", variant: "danger" as const, onClick: (r: any) => onAction?.({ label: "Block User" }, r) },
-];
+  });
+
+  if (canEdit) {
+    actions.push({
+      label: row.status === "blocked" ? "Unblock User" : "Block User",
+      iconSrc: "/images/dashboard/block.svg",
+      variant: "danger" as const,
+      onClick: (r: any) => onAction?.({ label: "Block User" }, r),
+    });
+  }
+
+  return actions;
+};

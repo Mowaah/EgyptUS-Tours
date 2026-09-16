@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent, type SVGProps } from "react";
 import Image from "next/image";
 import { mutate } from "swr";
-import { DashboardField, DashboardStatusBanner, DashboardFooter } from "@/components/dashboard/shared";;
+import { DashboardField, DashboardStatusBanner, DashboardFooter } from "@/components/dashboard/shared";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { updateSystemConfig } from "@/services/admin/adminSystemConfigService";
 import type { SystemConfigResponse } from "@/services/admin/adminSystemConfigService";
 import { fileToBase64 } from "@/utils/imageUtils";
@@ -56,6 +57,9 @@ function SectionHeader({
 }
 
 export default function SystemConfiguration({ initialConfig }: SystemConfigurationProps) {
+  const { canEdit } = useAdminAuth();
+  const userCanEdit = canEdit("settings");
+
   const initialValues: ConfigurationValues = {
     companyName: initialConfig?.company_name || "",
     contactEmail: initialConfig?.contact_email || "",
@@ -249,47 +253,50 @@ export default function SystemConfiguration({ initialConfig }: SystemConfigurati
               <span>Max size 400x400 px</span>
             </div>
           </div>
-
-          <input
-            ref={logoInputRef}
-            className={styles.fileInput}
-            type="file"
-            accept="image/png,image/jpeg,image/webp,image/svg+xml"
-            aria-label="Upload new company logo"
-            onChange={handleLogoUpload}
-          />
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button
-              type="button"
-              className={styles.uploadButton}
-              onClick={() => logoInputRef.current?.click()}
-            >
-              Upload New
-              <Image
-                src="/images/dashboard/arrow-up.svg"
-                alt=""
-                width={20}
-                height={20}
-                className={styles.buttonIcon}
+          {userCanEdit && (
+            <>
+              <input
+                ref={logoInputRef}
+                className={styles.fileInput}
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                aria-label="Upload new company logo"
+                onChange={handleLogoUpload}
               />
-            </button>
-            {logo.src && (
-              <button
-                type="button"
-                className={styles.removeButton}
-                onClick={() => setLogo({ name: "", src: "", file: null, removed: true })}
-              >
-                Remove
-                <Image
-                  src="/images/dashboard/delete.svg"
-                  alt=""
-                  width={20}
-                  height={20}
-                  className={styles.buttonIcon}
-                />
-              </button>
-            )}
-          </div>
+              <div className={styles.logoActions}>
+                <button
+                  type="button"
+                  className={styles.uploadButton}
+                  onClick={() => logoInputRef.current?.click()}
+                >
+                  Upload New
+                  <Image
+                    src="/images/dashboard/arrow-up.svg"
+                    alt=""
+                    width={20}
+                    height={20}
+                    className={styles.buttonIcon}
+                  />
+                </button>
+                {logo.src && (
+                  <button
+                    type="button"
+                    className={styles.removeButton}
+                    onClick={() => setLogo({ name: "", src: "", file: null, removed: true })}
+                  >
+                    Remove
+                    <Image
+                      src="/images/dashboard/delete.svg"
+                      alt=""
+                      width={20}
+                      height={20}
+                      className={styles.buttonIcon}
+                    />
+                  </button>
+                )}
+              </div>
+            </>
+          )}
         </div>
 
         <div className={styles.fieldPanel}>
@@ -298,6 +305,7 @@ export default function SystemConfiguration({ initialConfig }: SystemConfigurati
             variant="modal"
             label="Company name"
             value={values.companyName}
+            disabled={!userCanEdit}
             onChange={(e) => updateValue("companyName", e.target.value)}
             placeholder="Enter Company name"
             className={styles.fieldInput}
@@ -313,6 +321,7 @@ export default function SystemConfiguration({ initialConfig }: SystemConfigurati
             label="Contact email"
             type="email"
             value={values.contactEmail}
+            disabled={!userCanEdit}
             onChange={(e) => updateValue("contactEmail", e.target.value)}
             placeholder="Enter Contact email"
             className={styles.fieldInput}
@@ -330,6 +339,7 @@ export default function SystemConfiguration({ initialConfig }: SystemConfigurati
             label="Phone"
             type="tel"
             value={values.phone}
+            disabled={!userCanEdit}
             onChange={(e) => updateValue("phone", e.target.value.replace(/[^\d\s\-\+]/g, ''))}
             placeholder="+20 123 456 7890"
             className={styles.fieldInput}
@@ -346,6 +356,7 @@ export default function SystemConfiguration({ initialConfig }: SystemConfigurati
             variant="modal"
             label="Address"
             value={values.address}
+            disabled={!userCanEdit}
             onChange={(e) => updateValue("address", e.target.value)}
             placeholder="Type your Location..."
             className={styles.fieldInput}
@@ -401,6 +412,7 @@ export default function SystemConfiguration({ initialConfig }: SystemConfigurati
       <DashboardFooter 
         lastUpdateDate={initialConfig?.updated_at ? new Date(initialConfig.updated_at).toLocaleDateString() : ""} 
         isSubmit={true} 
+        hideActions={!userCanEdit}
         onDiscard={handleDiscard}
         isSaveDisabled={isSaving || !hasUnsavedChanges}
         isDiscardDisabled={isSaving || !hasUnsavedChanges}

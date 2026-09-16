@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { LanguageTabs, type Language } from "@/components/shared";
-import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";;
+import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import styles from "./FaqViewModal.module.scss";
-
 
 import { getLangKey } from "@/components/dashboard/shared/i18n";
 
@@ -35,6 +35,7 @@ export default function FaqViewModal({
   onClose,
   onEdit,
 }: FaqViewModalProps) {
+  const { canEdit } = useAdminAuth();
   const [activeLang, setActiveLang] = useState<Language>("English");
 
   const langKey = getLangKey(activeLang);
@@ -112,6 +113,7 @@ export default function FaqViewModal({
           secondaryOnClick={onClose}
           primaryLabel="Edit"
           primaryOnClick={onEdit}
+          hidePrimaryButton={!canEdit("legal_help_center")}
         />
       </section>
     </div>

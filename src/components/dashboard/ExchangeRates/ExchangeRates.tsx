@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import Image from "next/image";
 import { mutate } from "swr";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import {
   DashboardField,
   DashboardStatusBanner,
@@ -22,6 +23,9 @@ const SUCCESS_MESSAGE =
   "Exchange rates updated successfully. Catalog prices have been recalculated.";
 
 export default function ExchangeRates({ initialData }: ExchangeRatesProps) {
+  const { canEdit } = useAdminAuth();
+  const userCanEdit = canEdit("settings");
+
   const initialEgp = initialData?.usd_to_egp_rate
     ? String(parseFloat(initialData.usd_to_egp_rate))
     : "50.00";
@@ -108,6 +112,7 @@ export default function ExchangeRates({ initialData }: ExchangeRatesProps) {
             variant="modal"
             label="USD to EGP Rate (1 USD = X EGP)"
             value={usdToEgp}
+            disabled={!userCanEdit}
             onChange={(e) => {
               setUsdToEgp(e.target.value);
               if (apiError) setApiError("");
@@ -126,6 +131,7 @@ export default function ExchangeRates({ initialData }: ExchangeRatesProps) {
             variant="modal"
             label="USD to EUR Rate (1 USD = X EUR)"
             value={usdToEur}
+            disabled={!userCanEdit}
             onChange={(e) => {
               setUsdToEur(e.target.value);
               if (apiError) setApiError("");
@@ -141,7 +147,7 @@ export default function ExchangeRates({ initialData }: ExchangeRatesProps) {
         </div>
 
         {apiError && (
-          <p style={{ color: "#ef4444", fontSize: "0.875rem", margin: 0 }}>
+          <p className={styles.apiError}>
             {apiError}
           </p>
         )}
@@ -154,6 +160,7 @@ export default function ExchangeRates({ initialData }: ExchangeRatesProps) {
             : ""
         }
         isSubmit={true}
+        hideActions={!userCanEdit}
         onDiscard={handleDiscard}
         isSaveDisabled={isSaving || !hasUnsavedChanges}
         isDiscardDisabled={isSaving || !hasUnsavedChanges}

@@ -244,6 +244,11 @@
   stroke-width: 1.5;
 }
 
+.logoActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
 @media (max-width: 900px) {
   .card {
     padding: 1rem;

@@ -7,6 +7,7 @@ import { depositsColumns, depositRowActions } from "../depositsColumns/depositsC
 import { useDepositsPanel } from "@/hooks/useDepositsPanel";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 interface DepositsTableProps {
   searchQuery?: string;
@@ -16,6 +17,7 @@ interface DepositsTableProps {
 }
 
 export default function DepositsTable({ searchQuery = "", onClearSearch, date_from, date_to }: DepositsTableProps) {
+  const { canEdit } = useAdminAuth();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -83,7 +85,7 @@ export default function DepositsTable({ searchQuery = "", onClearSearch, date_fr
       <DataTable
         data={data}
         columns={depositsColumns}
-        rowActions={depositRowActions(handleAction)}
+        rowActions={depositRowActions(handleAction, canEdit("finance"))}
         getRowId={(row) => `${row.booking_type}-${row.booking_id}`}
         serverSidePagination={true}
         totalCount={totalCount}

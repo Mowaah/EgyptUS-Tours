@@ -92,22 +92,32 @@ export const importRowActions = (
     onView?: (row: AdminLeadImportBatch) => void;
     onReassign?: (row: AdminLeadImportBatch) => void;
     onDelete?: (row: AdminLeadImportBatch) => void;
+  },
+  canEdit: boolean = true
+): DataTableRowAction<AdminLeadImportBatch>[] => {
+  const actions: DataTableRowAction<AdminLeadImportBatch>[] = [
+    { 
+      label: "View", 
+      iconSrc: "/images/dashboard/view.svg",
+      onClick: handlers?.onView 
+    },
+  ];
+
+  if (canEdit) {
+    actions.push(
+      { 
+        label: "Reassign Leads", 
+        iconSrc: "/images/dashboard/assign.svg",
+        onClick: handlers?.onReassign 
+      },
+      { 
+        label: "Delete Batch", 
+        iconSrc: "/images/dashboard/delete.svg", 
+        variant: "danger",
+        onClick: handlers?.onDelete
+      }
+    );
   }
-): DataTableRowAction<AdminLeadImportBatch>[] => [
-  { 
-    label: "View", 
-    iconSrc: "/images/dashboard/view.svg",
-    onClick: handlers?.onView 
-  },
-  { 
-    label: "Reassign Leads", 
-    iconSrc: "/images/dashboard/assign.svg",
-    onClick: handlers?.onReassign 
-  },
-  { 
-    label: "Delete Batch", 
-    iconSrc: "/images/dashboard/delete.svg", 
-    variant: "danger",
-    onClick: handlers?.onDelete
-  },
-];
+
+  return actions;
+};

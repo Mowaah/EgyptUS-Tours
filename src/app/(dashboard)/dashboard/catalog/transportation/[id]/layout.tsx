@@ -2,6 +2,7 @@
 
 import { useState, createContext, useContext } from "react";
 import { useRouter, usePathname, useParams } from "next/navigation";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import Image from "next/image";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
@@ -51,6 +52,8 @@ export default function TransportationLayout({
   const pathname = usePathname();
   
   const { data: vehicle, loading, refetch } = useCatalogVehicleDetail(id);
+  const { canEdit } = useAdminAuth();
+  const canEditCatalog = canEdit("catalog");
   const [activeLang, setActiveLang] = useState<Language>("English");
   
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -102,53 +105,59 @@ export default function TransportationLayout({
                 </span>
               ) : undefined
             }
-            secondaryAction={{
-              label: "Edit",
-              icon: "/images/dashboard/edit.svg",
-              onClick: () => router.push(`/dashboard/catalog/transportation/${id}/edit`),
-            }}
-            primaryAction={
-              isDraft
+            secondaryAction={
+              canEditCatalog
                 ? {
-                    label: isActionPending ? "Publishing..." : "Publish",
-                    icon: "/images/send.svg",
-                    onClick: async () => {
-                      if (!vehicle || isActionPending) return;
-                      setIsActionPending(true);
-                      try {
-                        await publishCatalogVehicle(id);
-                        await refetch();
-                        showBanner("Vehicle published successfully.");
-                      } catch (err: any) {
-                        showBanner(getErrorMessage(err, "Failed to publish vehicle"), "warning");
-                      } finally {
-                        setIsActionPending(false);
-                      }
-                    },
-                  }
-                : isArchived
-                ? {
-                    label: isActionPending ? "Publishing..." : "Publish",
-                    icon: "/images/send.svg",
-                    onClick: async () => {
-                      if (!vehicle || isActionPending) return;
-                      setIsActionPending(true);
-                      try {
-                        await unpublishCatalogVehicle(id);
-                        await publishCatalogVehicle(id);
-                        await refetch();
-                        showBanner("Vehicle published successfully.");
-                      } catch (err: any) {
-                        showBanner(getErrorMessage(err, "Failed to publish vehicle"), "warning");
-                      } finally {
-                        setIsActionPending(false);
-                      }
-                    },
+                    label: "Edit",
+                    icon: "/images/dashboard/edit.svg",
+                    onClick: () => router.push(`/dashboard/catalog/transportation/${id}/edit`),
                   }
                 : undefined
             }
+            primaryAction={
+              canEditCatalog
+                ? isDraft
+                  ? {
+                      label: isActionPending ? "Publishing..." : "Publish",
+                      icon: "/images/send.svg",
+                      onClick: async () => {
+                        if (!vehicle || isActionPending) return;
+                        setIsActionPending(true);
+                        try {
+                          await publishCatalogVehicle(id);
+                          await refetch();
+                          showBanner("Vehicle published successfully.");
+                        } catch (err: any) {
+                          showBanner(getErrorMessage(err, "Failed to publish vehicle"), "warning");
+                        } finally {
+                          setIsActionPending(false);
+                        }
+                      },
+                    }
+                  : isArchived
+                  ? {
+                      label: isActionPending ? "Publishing..." : "Publish",
+                      icon: "/images/send.svg",
+                      onClick: async () => {
+                        if (!vehicle || isActionPending) return;
+                        setIsActionPending(true);
+                        try {
+                          await unpublishCatalogVehicle(id);
+                          await publishCatalogVehicle(id);
+                          await refetch();
+                          showBanner("Vehicle published successfully.");
+                        } catch (err: any) {
+                          showBanner(getErrorMessage(err, "Failed to publish vehicle"), "warning");
+                        } finally {
+                          setIsActionPending(false);
+                        }
+                      },
+                    }
+                  : undefined
+                : undefined
+            }
             archiveAction={
-              !isArchived && !isDraft
+              canEditCatalog && !isArchived && !isDraft
                 ? {
                     label: "Archive",
                     icon: (
@@ -163,7 +172,7 @@ export default function TransportationLayout({
                 : undefined
             }
             dangerAction={
-              !isArchived && !isDraft
+              canEditCatalog && !isArchived && !isDraft
                 ? {
                     label: "Delete",
                     icon: <Image src="/images/dashboard/delete.svg" alt="" width={16} height={16} style={{ filter: 'brightness(0) saturate(100%) invert(29%) sepia(93%) saturate(3507%) hue-rotate(345deg) brightness(98%) contrast(98%)' }} />,

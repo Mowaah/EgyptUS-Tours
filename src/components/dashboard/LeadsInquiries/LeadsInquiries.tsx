@@ -6,7 +6,7 @@ import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { InquiriesPanel } from "./InquiriesPanel";
-import { ImportLeadsPanel } from "./ImportLeadsPanel/ImportLeadsPanel";
+import ImportLeadsPanel from "./ImportLeadsPanel/ImportLeadsPanel";
 import { LeadSummaryGrid } from "./LeadSummaryGrid";
 import { AddNewLeadModal } from "./AddNewLeadModal";
 import { ImportLeadsModal } from "./ImportLeadsPanel/ImportLeadsModal";

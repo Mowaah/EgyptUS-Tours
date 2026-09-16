@@ -5,7 +5,8 @@ import StatusPill from "@/components/shared/StatusPill/StatusPill";
 
 export const hotelsRowActions = (
   row: HotelBookingRow,
-  onAction?: (action: string, row: HotelBookingRow) => void
+  onAction?: (action: string, row: HotelBookingRow) => void,
+  canEdit: boolean = true
 ): DataTableRowAction<HotelBookingRow>[] => {
   const actions: DataTableRowAction<HotelBookingRow>[] = [
     {
@@ -16,6 +17,10 @@ export const hotelsRowActions = (
       },
     },
   ];
+
+  if (!canEdit) {
+    return actions;
+  }
 
   const op = row.operational_status?.toLowerCase();
   const isCompleted = op === "completed";

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { DataTable } from "@/components/dashboard/DataTable";
 import {
   TablePanel,
@@ -30,6 +31,7 @@ interface HotelsPanelProps {
 }
 
 export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBooking }: HotelsPanelProps) {
+  const { canCreate, canEdit } = useAdminAuth();
   const defaultFilters = {
     paymentStatus: "All",
     status: "All",
@@ -148,7 +150,7 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
             } else {
               console.log(`Action ${action} triggered for row`, r);
             }
-          })}
+          }, canEdit("bookings"))}
           serverSidePagination={true}
           totalCount={totalCount}
           pageIndex={pageIndex}
@@ -163,8 +165,8 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
               <DashboardEmptyState
                 title="No Bookings Found"
                 subtitle="Hotels bookings will appear here once they are added."
-                actionLabel="New Booking"
-                onAction={onNewBooking}
+                actionLabel={canCreate("bookings") ? "New Booking" : undefined}
+                onAction={canCreate("bookings") ? onNewBooking : undefined}
                 imageSrc="/images/dashboard/empty.png"
               />
             ) : !searchQuery && Object.values(appliedFilters).some((v) => v !== "All") ? (

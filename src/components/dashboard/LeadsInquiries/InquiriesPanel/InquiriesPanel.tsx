@@ -15,6 +15,7 @@ import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyStat
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import { ReassignModal } from "@/components/dashboard/shared";
 import { useAdminUsers } from "@/hooks/useAdminUsers";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 const filterOptions = {
   batchId: ["All", "LD-001", "LD-002", "LD-003"],
@@ -33,6 +34,7 @@ interface InquiriesPanelProps {
 
 export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEditLead, onAddLead }: InquiriesPanelProps) {
   const router = useRouter();
+  const { canEdit } = useAdminAuth();
   
   const defaultFilters = {
     batchId: "All",
@@ -157,16 +159,21 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
         data={leadsList}
         columns={inquiriesColumns}
         getRowId={(row) => row.id.toString()}
-        rowActions={() => leadRowActions((action, r) => {
-          if (action === "Edit" && onEditLead) {
-            onEditLead(r);
-          } else if (action === "View") {
-            router.push(`/dashboard/leads/${r.id}`);
-          } else if (action === "Assign to Lead") {
-            setSelectedLead(r);
-            setAssignModalOpen(true);
-          }
-        })}
+        rowActions={() =>
+          leadRowActions(
+            (action, r) => {
+              if (action === "Edit" && onEditLead) {
+                onEditLead(r);
+              } else if (action === "View") {
+                router.push(`/dashboard/leads/${r.id}`);
+              } else if (action === "Assign to Lead") {
+                setSelectedLead(r);
+                setAssignModalOpen(true);
+              }
+            },
+            canEdit("leads")
+          )
+        }
         serverSidePagination={true}
         totalCount={totalCount}
         pageIndex={pageIndex}

@@ -57,3 +57,9 @@
 .fieldInput {
   width: 100%;
 }
+
+.apiError {
+  color: $danger;
+  font-size: $font-size-sm;
+  margin: 0;
+}

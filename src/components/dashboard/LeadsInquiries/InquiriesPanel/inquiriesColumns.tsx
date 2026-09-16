@@ -99,8 +99,20 @@ export const inquiriesColumns: DataTableColumn<AdminLead>[] = [
   },
 ];
 
-export const leadRowActions = (onAction?: (action: string, row: AdminLead) => void): any[] => [
-  { label: "View", iconSrc: "/images/dashboard/view.svg", onClick: (row: AdminLead) => { if (onAction) onAction("View", row); } },
-  { label: "Edit", iconSrc: "/images/dashboard/edit.svg", onClick: (row: AdminLead) => { if (onAction) onAction("Edit", row); } },
-  { label: "Assign to Lead", iconSrc: "/images/dashboard/assign.svg", onClick: (row: AdminLead) => { if (onAction) onAction("Assign to Lead", row); } },
-];
+export const leadRowActions = (
+  onAction?: (action: string, row: AdminLead) => void,
+  canEdit: boolean = true
+): any[] => {
+  const actions: any[] = [
+    { label: "View", iconSrc: "/images/dashboard/view.svg", onClick: (row: AdminLead) => { if (onAction) onAction("View", row); } },
+  ];
+
+  if (canEdit) {
+    actions.push(
+      { label: "Edit", iconSrc: "/images/dashboard/edit.svg", onClick: (row: AdminLead) => { if (onAction) onAction("Edit", row); } },
+      { label: "Assign to Lead", iconSrc: "/images/dashboard/assign.svg", onClick: (row: AdminLead) => { if (onAction) onAction("Assign to Lead", row); } }
+    );
+  }
+
+  return actions;
+};

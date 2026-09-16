@@ -12,6 +12,7 @@ import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHe
 import pageStyles from "@/app/(dashboard)/dashboard/page.module.scss";
 import styles from "./CustomerProfile.module.scss";
 import { useAdminCustomer } from "@/hooks/useCustomers";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { updateCustomer, blockCustomer } from "@/services/admin/adminCustomersService";
 import EditCustomerModal from "@/components/dashboard/Customers/CustomersPanel/EditCustomerModal/EditCustomerModal";
 import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
@@ -73,6 +74,9 @@ function CustomerProfileContent({ customerId }: CustomerProfileProps) {
     return <div style={{ padding: 40, textAlign: "center" }}>Customer not found</div>;
   }
 
+  const { canEdit } = useAdminAuth();
+  const canEditCustomers = canEdit("customers");
+
   return (
     <div className={styles.page}>
         <DashboardNavbar
@@ -103,15 +107,19 @@ function CustomerProfileContent({ customerId }: CustomerProfileProps) {
                   <input type="search" placeholder="Search ........" />
                 </label>
 
-                <button className={styles.editButton} type="button" onClick={() => setIsEditModalOpen(true)}>
-                  <Image src="/images/dashboard/edit.svg" alt="" width={20} height={20} />
-                  Edit Profile
-                </button>
+                {canEditCustomers && (
+                  <>
+                    <button className={styles.editButton} type="button" onClick={() => setIsEditModalOpen(true)}>
+                      <Image src="/images/dashboard/edit.svg" alt="" width={20} height={20} />
+                      Edit Profile
+                    </button>
 
-                <button className={styles.blockButton} type="button" onClick={() => setIsBlockModalOpen(true)}>
-                  <Image src="/images/dashboard/block.svg" alt="" width={20} height={20} />
-                  {customer.status === "blocked" ? "Unblock User" : "Block User"}
-                </button>
+                    <button className={styles.blockButton} type="button" onClick={() => setIsBlockModalOpen(true)}>
+                      <Image src="/images/dashboard/block.svg" alt="" width={20} height={20} />
+                      {customer.status === "blocked" ? "Unblock User" : "Block User"}
+                    </button>
+                  </>
+                )}
               </>
             }
           />

@@ -65,6 +65,16 @@
   }
 }
 
+.deleteButton:disabled,
+.saveButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.emptyDash {
+  color: $gray-400;
+}
+
 .tableWrap {
   width: 100%;
   overflow-x: auto;
@@ -136,6 +146,11 @@
 
   &:focus-visible {
     box-shadow: 0 0 0 3px rgba(255, 111, 71, 0.2);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 

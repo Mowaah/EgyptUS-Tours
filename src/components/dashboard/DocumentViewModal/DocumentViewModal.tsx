@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { LanguageTabs, type Language } from "@/components/shared";
-import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";;
+import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import styles from "./DocumentViewModal.module.scss";
 
 import { getLangKey } from "@/components/dashboard/shared/i18n";
@@ -19,6 +20,7 @@ interface DocumentViewModalProps {
 
 
 export default function DocumentViewModal({ open, title, content, rawTranslations, modalSubtitle, onClose, onEdit }: DocumentViewModalProps) {
+  const { canEdit } = useAdminAuth();
   const [activeLang, setActiveLang] = useState<Language>("English");
 
   const langKey = getLangKey(activeLang);
@@ -88,6 +90,7 @@ export default function DocumentViewModal({ open, title, content, rawTranslation
           secondaryOnClick={onClose}
           primaryLabel="Edit"
           primaryOnClick={onEdit}
+          hidePrimaryButton={!canEdit("legal_help_center")}
         />
       </section>
     </div>

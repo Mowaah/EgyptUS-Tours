@@ -13,6 +13,7 @@ import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/Dash
 import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import useSWR from "swr";
 import { fetchAuditLogs, deleteAuditLog, exportAuditLogs } from "@/services/admin/adminAuditLogService";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import styles from "./AuditLog.module.scss";
 
 // Removed actionClass, handled directly in column render
@@ -200,6 +201,7 @@ interface AuditLogProps {
 }
 
 export default function AuditLog({ searchQuery = "", onClearSearch }: AuditLogProps) {
+  const { canEdit } = useAdminAuth();
   const defaultFilters = { module: "All", dateRange: "All", action: "All" };
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
@@ -319,17 +321,20 @@ export default function AuditLog({ searchQuery = "", onClearSearch }: AuditLogPr
     },
   ];
 
-  const rowActions = () => [
-    {
-      label: "Delete Log",
-      variant: "danger" as const,
-      iconSrc: "/images/dashboard/delete.svg",
-      onClick: (item: any) => {
-        setDeleteItem(item);
-        setDeleteModalOpen(true);
+  const rowActions = () => {
+    if (!canEdit("settings")) return [];
+    return [
+      {
+        label: "Delete Log",
+        variant: "danger" as const,
+        iconSrc: "/images/dashboard/delete.svg",
+        onClick: (item: any) => {
+          setDeleteItem(item);
+          setDeleteModalOpen(true);
+        },
       },
-    },
-  ];
+    ];
+  };
 
   const confirmDelete = async () => {
     setDeleteModalOpen(false);

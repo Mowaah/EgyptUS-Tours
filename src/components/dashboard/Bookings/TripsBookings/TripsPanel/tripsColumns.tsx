@@ -151,7 +151,8 @@ export const tripsColumns: DataTableColumn<TripBookingRow>[] = [
 
 export const tripsRowActions = (
   row: TripBookingRow,
-  onAction?: (action: string, row: TripBookingRow) => void
+  onAction?: (action: string, row: TripBookingRow) => void,
+  canEdit: boolean = true
 ): DataTableRowAction<TripBookingRow>[] => {
   const actions: DataTableRowAction<TripBookingRow>[] = [
     {
@@ -162,6 +163,10 @@ export const tripsRowActions = (
       },
     },
   ];
+
+  if (!canEdit) {
+    return actions;
+  }
 
   const op = row.operational_status?.toLowerCase();
   const isCompleted = op === "completed";

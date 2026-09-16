@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
 import styles from "./ViewHotel.module.scss";
 
@@ -38,6 +39,7 @@ import useSWR from "swr";
 
 
 export default function ViewHotel({ bookingId }: ViewHotelProps) {
+  const { canEdit } = useAdminAuth();
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isRefundModalOpen, setIsRefundModalOpen] = useState(false);
   const [bannerMessage, setBannerMessage] = useState("");
@@ -306,7 +308,7 @@ export default function ViewHotel({ bookingId }: ViewHotelProps) {
           title={customerName}
           customPills={customPills}
           subtitleElements={[`${displayId}`, formattedDate, formattedTime]}
-          actionButtons={payload ? actionButtons : null}
+          actionButtons={payload && canEdit("bookings") ? actionButtons : null}
         />
       </DashboardNavbar>
 

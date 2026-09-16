@@ -2,6 +2,7 @@
 
 import { useState, createContext, useContext } from "react";
 import { useRouter, usePathname, useParams } from "next/navigation";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
 import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/DashboardTabs";
@@ -72,6 +73,8 @@ export default function HotelLayout({
   const pathname = usePathname();
 
   const { hotel, loading, refetch } = useCatalogHotelDetail(id);
+  const { canEdit } = useAdminAuth();
+  const canEditCatalog = canEdit("catalog");
 
   const [activeLang, setActiveLang] = useState<Language>("English");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -172,53 +175,59 @@ export default function HotelLayout({
                 </span>
               ) : undefined
             }
-            secondaryAction={{
-              label: "Edit",
-              icon: "/images/dashboard/edit.svg",
-              onClick: () => router.push(`/dashboard/catalog/hotels/${id}/edit`),
-            }}
-            primaryAction={
-              isDraft
+            secondaryAction={
+              canEditCatalog
                 ? {
-                    label: isActionPending ? "Publishing..." : "Publish",
-                    icon: "/images/send.svg",
-                    onClick: async () => {
-                      if (!hotel || isActionPending) return;
-                      setIsActionPending(true);
-                      try {
-                        await publishCatalogHotel(id);
-                        showBanner("Hotel published successfully!");
-                        refetch();
-                      } catch (err) {
-                        showBanner(formatBlockers(err), "warning");
-                      } finally {
-                        setIsActionPending(false);
-                      }
-                    },
-                  }
-                : isArchived
-                ? {
-                    label: isActionPending ? "Publishing..." : "Publish",
-                    icon: "/images/send.svg",
-                    onClick: async () => {
-                      if (!hotel || isActionPending) return;
-                      setIsActionPending(true);
-                      try {
-                        await unpublishCatalogHotel(id);
-                        await publishCatalogHotel(id);
-                        showBanner("Hotel published successfully!");
-                        refetch();
-                      } catch (err) {
-                        showBanner(formatBlockers(err), "warning");
-                      } finally {
-                        setIsActionPending(false);
-                      }
-                    },
+                    label: "Edit",
+                    icon: "/images/dashboard/edit.svg",
+                    onClick: () => router.push(`/dashboard/catalog/hotels/${id}/edit`),
                   }
                 : undefined
             }
+            primaryAction={
+              canEditCatalog
+                ? isDraft
+                  ? {
+                      label: isActionPending ? "Publishing..." : "Publish",
+                      icon: "/images/send.svg",
+                      onClick: async () => {
+                        if (!hotel || isActionPending) return;
+                        setIsActionPending(true);
+                        try {
+                          await publishCatalogHotel(id);
+                          showBanner("Hotel published successfully!");
+                          refetch();
+                        } catch (err) {
+                          showBanner(formatBlockers(err), "warning");
+                        } finally {
+                          setIsActionPending(false);
+                        }
+                      },
+                    }
+                  : isArchived
+                  ? {
+                      label: isActionPending ? "Publishing..." : "Publish",
+                      icon: "/images/send.svg",
+                      onClick: async () => {
+                        if (!hotel || isActionPending) return;
+                        setIsActionPending(true);
+                        try {
+                          await unpublishCatalogHotel(id);
+                          await publishCatalogHotel(id);
+                          showBanner("Hotel published successfully!");
+                          refetch();
+                        } catch (err) {
+                          showBanner(formatBlockers(err), "warning");
+                        } finally {
+                          setIsActionPending(false);
+                        }
+                      },
+                    }
+                  : undefined
+                : undefined
+            }
             archiveAction={
-              !isArchived && !isDraft
+              canEditCatalog && !isArchived && !isDraft
                 ? {
                     label: "Archive",
                     icon: (
@@ -233,7 +242,7 @@ export default function HotelLayout({
                 : undefined
             }
             dangerAction={
-              !isArchived && !isDraft
+              canEditCatalog && !isArchived && !isDraft
                 ? {
                     label: "Delete",
                     icon: "/images/dashboard/delete.svg",
