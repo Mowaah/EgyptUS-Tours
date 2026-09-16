@@ -176,7 +176,7 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
 
   const customPills = payload ? (
     <div className={styles.customPills}>
-      {!isRefunded && (
+      {!isRefunded && !isCancelled && remainingPaymentLabel && remainingPaymentLabel !== "-" && (
         <span className={getTripsPillStyle(payload.remaining_payment_status)}>
           <i aria-hidden></i>
           {remainingPaymentLabel}

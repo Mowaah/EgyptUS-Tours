@@ -144,6 +144,10 @@ export const hotelsColumns: DataTableColumn<HotelBookingRow>[] = [
     id: "paymentStatus",
     header: "Payment",
     render: (row) => {
+      const op = row.operational_status?.toLowerCase();
+      if (op === "cancelled" || op === "refunded" || !row.remaining_payment_status) {
+        return <span style={{ color: "#9CA3AF" }}>-</span>;
+      }
       const rem = row.remaining_payment_status?.toLowerCase();
       let variant: "green" | "orange" | "red" | "pink" | "blue" = "orange";
       if (rem === "paid") variant = "green";

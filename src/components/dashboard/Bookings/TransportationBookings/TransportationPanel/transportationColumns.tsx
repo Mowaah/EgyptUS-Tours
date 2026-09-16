@@ -81,12 +81,18 @@ export const transportationColumns: DataTableColumn<TransportationBookingRow>[] 
   {
     id: "paymentStatus",
     header: "Payment",
-    render: (row) => (
-      <span className={getPillStyle(row.remaining_payment_status)}>
-        <i aria-hidden />
-        {row.remaining_payment_status ? row.remaining_payment_status.charAt(0).toUpperCase() + row.remaining_payment_status.slice(1) : "-"}
-      </span>
-    ),
+    render: (row) => {
+      const op = row.operational_status?.toLowerCase();
+      if (op === "cancelled" || op === "refunded" || !row.remaining_payment_status) {
+        return <span style={{ color: "#9CA3AF" }}>-</span>;
+      }
+      return (
+        <span className={getPillStyle(row.remaining_payment_status)}>
+          <i aria-hidden />
+          {row.remaining_payment_status.charAt(0).toUpperCase() + row.remaining_payment_status.slice(1)}
+        </span>
+      );
+    },
   },
   {
     id: "operationalStatus",

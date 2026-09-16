@@ -180,7 +180,7 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
 
   const customPills = payload ? (
     <div className={styles.customPills}>
-      {!isRefunded && (
+      {!isRefunded && !isCancelled && remainingPaymentLabel && remainingPaymentLabel !== "-" && (
         <span className={getPillStyle(payload.remaining_payment_status)}>
           <i aria-hidden></i>
           {remainingPaymentLabel}

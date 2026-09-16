@@ -83,12 +83,18 @@ export const tripsColumns: DataTableColumn<TripBookingRow>[] = [
   {
     id: "paymentStatus",
     header: "Remaining 70%",
-    render: (row) => (
-      <span className={getTripsPillStyle(row.remaining_payment_status)}>
-        <i aria-hidden />
-        {row.remaining_payment_status ? row.remaining_payment_status.charAt(0).toUpperCase() + row.remaining_payment_status.slice(1) : "-"}
-      </span>
-    ),
+    render: (row) => {
+      const op = row.operational_status?.toLowerCase();
+      if (op === "cancelled" || op === "refunded" || !row.remaining_payment_status) {
+        return <span style={{ color: "#9CA3AF" }}>-</span>;
+      }
+      return (
+        <span className={getTripsPillStyle(row.remaining_payment_status)}>
+          <i aria-hidden />
+          {row.remaining_payment_status.charAt(0).toUpperCase() + row.remaining_payment_status.slice(1)}
+        </span>
+      );
+    },
   },
   {
     id: "operationalStatus",
