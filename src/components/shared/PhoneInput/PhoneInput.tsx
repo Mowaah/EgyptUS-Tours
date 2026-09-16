@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import PhonePrefixSelect from "../PhonePrefixSelect/PhonePrefixSelect";
+import { extractDialAndNational, parsePhoneInput } from "@/utils/phoneUtils";
 import styles from "./PhoneInput.module.scss";
 import formStyles from "../FormField/FormField.module.scss";
 
@@ -51,8 +52,8 @@ export default function PhoneInput({
   error,
   hasError,
 }: PhoneInputProps) {
-  // Extract just the digits for the text input so the prefix isn't duplicated
-  const displayValue = value.replace(/^(\+\d+\s*)/, "");
+  const extracted = extractDialAndNational(value);
+  const displayValue = extracted.nationalNumber;
   const isInvalid = !!error || !!hasError;
 
   return (
@@ -71,15 +72,9 @@ export default function PhoneInput({
           className={`${formStyles.input} ${styles.inputPhone} ${isInvalid ? formStyles.inputInvalid : ""}`}
           value={displayValue}
           onChange={(e) => {
-            const sanitized = e.target.value.replace(/[^0-9+\-()\s]/g, "");
-            if (sanitized.startsWith("+")) {
-              // User pasted a full number with country code, replace the whole thing
-              onChange(sanitized);
-            } else {
-              // Extract the current prefix from the full value, or default to +1
-              const prefix = value.match(/^(\+\d+\s*)/)?.[1] || "+1 ";
-              onChange(prefix + sanitized);
-            }
+            const raw = e.target.value;
+            const parsed = parsePhoneInput(raw, extracted.dial, extracted.countryCode);
+            onChange(parsed.full);
           }}
           placeholder={placeholder}
           style={{ width: "100%" }}

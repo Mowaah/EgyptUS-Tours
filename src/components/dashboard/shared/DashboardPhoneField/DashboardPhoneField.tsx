@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { PhonePrefixSelect } from "@/components/shared";
+import { extractDialAndNational, parsePhoneInput } from "@/utils/phoneUtils";
 
 import styles from "./DashboardPhoneField.module.scss";
 
@@ -32,6 +33,13 @@ export default function DashboardPhoneField({
 }: DashboardPhoneFieldProps) {
   const errorId = error && id ? `${id}-error` : undefined;
   
+  const displayPhone = React.useMemo(() => {
+    if (phoneValue && (phoneValue.startsWith("+") || phoneValue.startsWith("00"))) {
+      return extractDialAndNational(phoneValue, prefixValue).nationalNumber;
+    }
+    return phoneValue;
+  }, [phoneValue, prefixValue]);
+
   const fieldClassName =
     variant === "modal" ? `${styles.field} ${styles.modalField}` : styles.field;
     
@@ -60,12 +68,18 @@ export default function DashboardPhoneField({
           autoComplete="tel"
           className={styles.phoneInput}
           placeholder="000-0000"
-          value={phoneValue}
+          value={displayPhone}
           disabled={disabled}
           aria-describedby={errorId}
           onChange={(e) => {
-            const val = e.target.value.replace(/[^0-9+\-()\s]/g, "");
-            onPhoneChange(val);
+            const raw = e.target.value;
+            const parsed = parsePhoneInput(raw, prefixValue);
+            if (parsed.hasCountryCode) {
+              onPrefixChange(parsed.dial);
+              onPhoneChange(parsed.nationalNumber);
+            } else {
+              onPhoneChange(parsed.nationalNumber);
+            }
           }}
         />
       </div>

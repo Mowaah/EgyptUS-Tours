@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { PhonePrefixSelect } from "@/components/shared";
-import { ModalHeader, ModalFooter, DashboardField } from "@/components/dashboard/shared";
+import { ModalHeader, ModalFooter, DashboardField, DashboardPhoneField } from "@/components/dashboard/shared";
 import { useCreateLead, useUpdateLead } from "@/hooks/useLeads";
 import { formatUrlForBackend } from "@/lib/api";
 import { COUNTRIES } from "@/data/countries";
@@ -225,29 +224,16 @@ export function AddNewLeadModal({ open, onClose, onSuccess, isEdit, initialData 
               error={errors.email}
             />
 
-            <div className={styles.phoneField}>
-              <label className={styles.phoneLabel}>Phone Number *</label>
-              <div className={`${styles.phoneInputWrapper} ${errors.phone ? styles.phoneInputWrapperError : ""}`}>
-                <PhonePrefixSelect 
-                  variant="ghost" 
-                  phoneValue={formData.phonePrefix}
-                  onPhoneChange={(val) => handleFieldChange("phonePrefix", val)}
-                />
-                <input
-                  type="text"
-                  className={styles.phoneInput}
-                  placeholder="000-0000"
-                  value={formData.phone}
-                  onChange={(e) => handleFieldChange("phone", e.target.value)}
-                />
-              </div>
-              {errors.phone && (
-                <span className={styles.errorText}>
-                  <img src="/images/dashboard/alert-circle.svg" alt="" width={16} height={16} />
-                  {errors.phone}
-                </span>
-              )}
-            </div>
+            <DashboardPhoneField
+              id="lead-phone"
+              label="Phone Number *"
+              variant="modal"
+              phoneValue={formData.phone}
+              prefixValue={formData.phonePrefix || "+1"}
+              onPhoneChange={(val) => handleFieldChange("phone", val)}
+              onPrefixChange={(val) => handleFieldChange("phonePrefix", val)}
+              error={errors.phone}
+            />
 
             <DashboardField
               id="lead-source"

@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect, KeyboardEvent } from "react";
 import styles from "./PhonePrefixSelect.module.scss";
 
-import { COUNTRIES } from "@/data/countries";
+import { COUNTRIES, CountryInfo } from "@/data/countries";
+import { extractDialAndNational, findCountry } from "@/utils/phoneUtils";
 
 const PHONE_CODES = COUNTRIES;
 
@@ -12,11 +13,24 @@ interface PhonePrefixSelectProps {
   onPhoneChange?: (val: string) => void;
   variant?: "default" | "ghost";
   error?: boolean;
+  selectedCountryCode?: string;
 }
 
-export default function PhonePrefixSelect({ phoneValue = "", onPhoneChange, variant = "default", error }: PhonePrefixSelectProps) {
+export default function PhonePrefixSelect({
+  phoneValue = "",
+  onPhoneChange,
+  variant = "default",
+  error,
+  selectedCountryCode,
+}: PhonePrefixSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState(PHONE_CODES[0]);
+  const [selected, setSelected] = useState(() => {
+    if (selectedCountryCode) {
+      const found = findCountry(selectedCountryCode);
+      if (found) return found;
+    }
+    return PHONE_CODES[0];
+  });
   const [typedChars, setTypedChars] = useState("");
   const typeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -54,20 +68,24 @@ export default function PhonePrefixSelect({ phoneValue = "", onPhoneChange, vari
   }, []);
 
   useEffect(() => {
-    if (!phoneValue) return;
-
-    const match = [...PHONE_CODES]
-      .sort((a, b) => b.dial.length - a.dial.length)
-      .find(c => phoneValue.startsWith(c.dial));
-
-    if (match) {
-      // Only auto-switch if the newly matched dial code is DIFFERENT from the currently selected one.
-      // If they share the same dial code (e.g., US and Canada both have +1), respect the user's current selection.
-      if (match.dial !== selected.dial) {
-        setSelected(match);
+    if (selectedCountryCode) {
+      const found = findCountry(selectedCountryCode);
+      if (found && found.code !== selected.code) {
+        setSelected(found);
+        return;
       }
     }
-  }, [phoneValue, selected.dial]);
+
+    if (!phoneValue) return;
+
+    const extracted = extractDialAndNational(phoneValue, selected.dial, selected.code);
+    if (extracted.dial && extracted.dial !== selected.dial) {
+      const found = findCountry(extracted.countryCode) || findCountry(extracted.dial);
+      if (found) {
+        setSelected(found);
+      }
+    }
+  }, [phoneValue, selectedCountryCode, selected.dial, selected.code]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -89,19 +107,13 @@ export default function PhonePrefixSelect({ phoneValue = "", onPhoneChange, vari
 
       const matchedIndex = PHONE_CODES.findIndex(c => c.name.toLowerCase().startsWith(newChars));
       if (matchedIndex !== -1) {
+        const newMatch = PHONE_CODES[matchedIndex];
         if (!isOpen) {
-          const newMatch = PHONE_CODES[matchedIndex];
           setSelected(newMatch);
           if (onPhoneChange) {
-            const currentPrefix = [...PHONE_CODES]
-              .sort((a, b) => b.dial.length - a.dial.length)
-              .find(code => phoneValue.startsWith(code.dial));
-
-            if (currentPrefix) {
-              onPhoneChange(phoneValue.replace(currentPrefix.dial, newMatch.dial));
-            } else {
-              onPhoneChange(`${newMatch.dial} ${phoneValue}`);
-            }
+            const extracted = extractDialAndNational(phoneValue, selected.dial, selected.code);
+            const remainder = extracted.nationalNumber;
+            onPhoneChange(`${newMatch.dial}${remainder ? ` ${remainder}` : " "}`);
           }
         } else {
           // If the menu is open, smoothly scroll down to it and focus it
@@ -156,16 +168,9 @@ export default function PhonePrefixSelect({ phoneValue = "", onPhoneChange, vari
                   setSelected(c);
                   setIsOpen(false);
                   if (onPhoneChange) {
-                    const currentPrefix = [...PHONE_CODES]
-                      .sort((a, b) => b.dial.length - a.dial.length)
-                      .find(code => phoneValue.startsWith(code.dial));
-
-                    if (currentPrefix) {
-                      onPhoneChange(phoneValue.replace(currentPrefix.dial, c.dial));
-                    } else {
-                      // Keep whatever letters they typed, just prepend the dial code
-                      onPhoneChange(`${c.dial} ${phoneValue}`);
-                    }
+                    const extracted = extractDialAndNational(phoneValue, selected.dial, selected.code);
+                    const remainder = extracted.nationalNumber;
+                    onPhoneChange(`${c.dial}${remainder ? ` ${remainder}` : " "}`);
                   }
                 }}
               >
