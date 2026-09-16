@@ -371,6 +371,7 @@ export function CreateHotel({ hotelId, onDirtyChange, onSavingChange, ref }: { h
         replace_media_items: true,
         media_items: mediaItems,
         rooms: roomsPayload,
+        force_draft: intent !== "publish",
       };
 
       let currentHotelId = targetId;
