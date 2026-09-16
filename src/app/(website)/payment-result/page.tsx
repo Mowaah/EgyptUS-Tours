@@ -94,7 +94,8 @@ function PaymentResultContent() {
         console.error("Failed to read booking info from storage", e);
       }
 
-      const bookingIdParam = savedBookingId || sanitizeId(urlParams.get("id") || urlParams.get("order") || "");
+      let confirmedBookingId: string | null = null;
+      let confirmedBookingType: string | null = null;
 
       if (success) {
         try {
@@ -102,10 +103,16 @@ function PaymentResultContent() {
           urlParams.forEach((val, key) => {
             redirectPayload[key] = val;
           });
-          if (bookingIdParam) {
-            redirectPayload.booking_id = bookingIdParam;
+          if (savedBookingId) {
+            redirectPayload.booking_id = savedBookingId;
           }
-          await confirmPaymobPaymentRedirect(redirectPayload);
+          const confirmRes = await confirmPaymobPaymentRedirect(redirectPayload);
+          if (confirmRes?.booking_id) {
+            confirmedBookingId = String(confirmRes.booking_id);
+          }
+          if (confirmRes?.booking_type) {
+            confirmedBookingType = String(confirmRes.booking_type);
+          }
         } catch (err) {
           console.warn("Backend payment confirmation warning:", err);
         }
@@ -113,22 +120,25 @@ function PaymentResultContent() {
 
       if (isCancelled) return;
 
-      if (targetType === "trip" && savedTripSlug) {
+      const finalBookingId = confirmedBookingId || savedBookingId;
+      const finalType = confirmedBookingType || targetType || "trip";
+
+      if (finalType === "trip" && savedTripSlug) {
         const bookPath = isGroupTrip ? "book-group" : "book-private";
         if (success) {
-          router.replace(`/egypttours/${savedTripSlug}/${bookPath}?booking_success=true&booking_id=${bookingIdParam}`);
+          router.replace(`/egypttours/${savedTripSlug}/${bookPath}?booking_success=true${finalBookingId ? `&booking_id=${finalBookingId}` : ""}`);
         } else {
           router.replace(`/egypttours/${savedTripSlug}/${bookPath}?payment_failed=true`);
         }
-      } else if (targetType === "hotel" && savedHotelSlug) {
+      } else if (finalType === "hotel" && savedHotelSlug) {
         if (success) {
-          router.replace(`/hotels/${savedHotelSlug}/book?booking_success=true&booking_id=${bookingIdParam}`);
+          router.replace(`/hotels/${savedHotelSlug}/book?booking_success=true${finalBookingId ? `&booking_id=${finalBookingId}` : ""}`);
         } else {
           router.replace(`/hotels/${savedHotelSlug}/book?payment_failed=true`);
         }
-      } else if (targetType === "transport" && savedVehicleSlug) {
+      } else if (finalType === "transport" && savedVehicleSlug) {
         if (success) {
-          router.replace(`/transportation/${savedVehicleSlug}/book?booking_success=true&booking_id=${bookingIdParam}`);
+          router.replace(`/transportation/${savedVehicleSlug}/book?booking_success=true${finalBookingId ? `&booking_id=${finalBookingId}` : ""}`);
         } else {
           router.replace(`/transportation/${savedVehicleSlug}/book?payment_failed=true`);
         }
@@ -145,10 +155,10 @@ function PaymentResultContent() {
             extraParams += `&ref=${cleanRef}`;
           }
 
-          if (bookingIdParam && /^\d+$/.test(bookingIdParam)) {
-            router.replace(`/profile/bookings-details?id=${bookingIdParam}&type=${targetType || "trip"}&payment_success=true`);
+          if (finalBookingId) {
+            router.replace(`/profile/bookings-details?id=${finalBookingId}&type=${finalType}&payment_success=true`);
           } else {
-            router.replace(`/profile?booking_success=true&booking_id=${bookingIdParam}${extraParams}`);
+            router.replace(`/profile?booking_success=true&payment_success=true${extraParams}`);
           }
         } else {
           router.replace("/egypttours");
