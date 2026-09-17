@@ -33,7 +33,9 @@ export function useDepositsPanel({
       if (s === "trips") params.service = "trip";
       else if (s === "hotels") params.service = "hotel";
       else if (s === "transportation") params.service = "transport";
-      else if (s === "b2b" || s === "mice" || s === "custom trip") params.service = "custom_trip";
+      else if (s === "custom trip") params.service = "custom_trip";
+      else if (s === "b2b") params.service = "b2b_proposal";
+      else if (s === "mice") params.service = "event_proposal";
       else params.service = s;
     }
     if (appliedFilters.status && appliedFilters.status !== "All") params.deposit_status = appliedFilters.status.toLowerCase();

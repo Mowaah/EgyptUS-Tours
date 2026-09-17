@@ -3,11 +3,16 @@ import styles from "../DepositsPage/DepositsPage.module.scss";
 import Image from "next/image";
 
 export default function DepositStatusDonut({ chartData }: { chartData?: Record<string, number> }) {
-  const totalCount = Object.values(chartData || {}).reduce((a, b) => a + b, 0) || 1;
+  const pendingCount = chartData?.pending || 0;
+  const overdueCount = chartData?.overdue || 0;
+  const totalCount = pendingCount + overdueCount;
+
+  const pendingPct = totalCount > 0 ? Math.round((pendingCount / totalCount) * 100) : 0;
+  const overduePct = totalCount > 0 ? 100 - pendingPct : 0;
+
   const mappedData = [
-    { label: "Paid", value: Math.round(((chartData?.collected || 0) / totalCount) * 100), color: "#A1CCFF" },
-    { label: "Pending", value: Math.round(((chartData?.pending || 0) / totalCount) * 100), color: "#E9BDFF" },
-    { label: "Overdue", value: Math.round(((chartData?.overdue || 0) / totalCount) * 100), color: "#FFC6A0" },
+    { label: "Pending", value: pendingPct, color: "#E9BDFF" },
+    { label: "Overdue", value: overduePct, color: "#FFC6A0" },
   ];
 
   return (

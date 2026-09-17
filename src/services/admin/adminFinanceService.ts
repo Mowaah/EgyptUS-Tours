@@ -12,6 +12,10 @@ export async function getFinanceReport(params?: any): Promise<any> {
   return await adminDataClient.get('/finance/reports/', { params });
 }
 
+export async function getPaymentReceipt(id: string | number): Promise<any> {
+  return await adminDataClient.get(`/finance/payments/${id}/receipt/`);
+}
+
 export async function getAllPayments(params: any = {}): Promise<any[]> {
   const firstPage = await getPayments(params);
   const results = firstPage.results ? [...firstPage.results] : (Array.isArray(firstPage) ? [...firstPage] : []);

@@ -3,20 +3,24 @@ import styles from "../PaymentsTable/PaymentsTable.module.scss";
 
 export interface PaymentRow {
   id: string;
+  rawId?: number | string;
   bookingId: string;
+  bookingType?: string;
   customer: string;
   service: string;
   dates: string;
   method: string;
   status: string;
+  rawStatus?: string;
 }
 
-const serviceClass: Record<PaymentRow["service"], string> = {
+const serviceClass: Record<string, string> = {
   Trips: styles.serviceTrips,
   Transportation: styles.serviceTransport,
   Hotels: styles.serviceHotels,
   B2B: styles.serviceB2B,
   MICE: styles.serviceMice,
+  "Custom Trip": styles.serviceB2B,
 };
 
 export const paymentsColumns: DataTableColumn<PaymentRow>[] = [

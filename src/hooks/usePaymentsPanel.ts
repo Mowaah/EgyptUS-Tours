@@ -87,19 +87,26 @@ export function usePaymentsPanel({
     return results.map((item: any) => {
       let serviceStr = "Trips";
       if (item.booking_type === "hotel") serviceStr = "Hotels";
-      if (item.booking_type === "transport") serviceStr = "Transportation";
-      if (item.booking_type === "custom_trip") {
-         serviceStr = item.booking_title?.toLowerCase().includes("b2b") ? "B2B" : "MICE";
+      else if (item.booking_type === "transport") serviceStr = "Transportation";
+      else if (item.booking_type === "b2b_proposal" || item.booking_type === "b2b") serviceStr = "B2B";
+      else if (item.booking_type === "event_proposal" || item.booking_type === "mice") serviceStr = "MICE";
+      else if (item.booking_type === "custom_trip") {
+        if (item.booking_title?.toLowerCase().includes("b2b")) serviceStr = "B2B";
+        else if (item.booking_title?.toLowerCase().includes("mice")) serviceStr = "MICE";
+        else serviceStr = "Custom Trip";
       }
 
       return {
         id: item.payment_number,
+        rawId: item.id,
         bookingId: item.booking_id,
+        bookingType: item.booking_type,
         customer: item.customer_name,
         service: serviceStr,
-        dates: item.paid_at ? new Date(item.paid_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "",
+        dates: item.paid_at ? new Date(item.paid_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—",
         method: item.method_label,
         status: item.status_label,
+        rawStatus: item.status,
       };
     });
   }, [res]);

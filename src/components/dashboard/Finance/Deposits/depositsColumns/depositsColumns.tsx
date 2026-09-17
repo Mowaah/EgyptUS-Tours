@@ -9,6 +9,10 @@ const serviceClass: Record<string, string> = {
   transport: styles.serviceTransport,
   hotel: styles.serviceHotels,
   custom_trip: styles.serviceB2B,
+  mice: styles.serviceMice,
+  event_proposal: styles.serviceMice,
+  b2b: styles.serviceB2B,
+  b2b_proposal: styles.serviceB2B,
 };
 
 const serviceNames: Record<string, string> = {
@@ -16,6 +20,10 @@ const serviceNames: Record<string, string> = {
   transport: "Transportation",
   hotel: "Hotels",
   custom_trip: "Custom Trip",
+  mice: "MICE",
+  event_proposal: "MICE",
+  b2b: "B2B",
+  b2b_proposal: "B2B",
 };
 
 export const depositsColumns: DataTableColumn<DepositRow>[] = [
