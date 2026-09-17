@@ -108,7 +108,7 @@
   flex-grow: 1;
   height: 100%;
   position: relative;
-  border-radius: 50px;
+  border-radius: 0 50px 50px 0;
   z-index: 1;
 }
 
@@ -118,7 +118,7 @@
   top: 0;
   bottom: 0;
   background: $background-blue;
-  border-radius: 50px;
+  border-radius: 0 50px 50px 0;
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   cursor: pointer;
 }
@@ -131,7 +131,7 @@
   bottom: 0;
   width: 0%;
   background: $primary;
-  border-radius: 50px;
+  border-radius: 0 50px 50px 0;
   transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -189,4 +189,29 @@
   font-weight: 800;
   color: #353e5c;
   line-height: 1;
+}
+
+.barEmpty {
+  width: 20px;
+  height: 100%;
+  border-radius: 0 50px 50px 0;
+  background: #E8F1FD;
+  position: relative;
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+
+.row:hover .barEmpty,
+.row.active .barEmpty {
+  background: #D0E3FC;
+}
+
+.tooltipEmpty {
+  right: auto;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+}
+
+.tooltipEmpty.tooltipVisible {
+  transform: translateX(-50%) translateY(0);
 }

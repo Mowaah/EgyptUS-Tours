@@ -46,7 +46,7 @@ export default function OverdueDepositsChart({ chartData }: OverdueDepositsChart
       label: item.label,
       value: item.value > 0 ? Math.min(100, Math.max(pct, 5)) : 0,
       color: item.color,
-      displayValue: item.value > 0 ? pctDisplay : "",
+      displayValue: item.value > 0 ? pctDisplay : "0",
     };
   });
 

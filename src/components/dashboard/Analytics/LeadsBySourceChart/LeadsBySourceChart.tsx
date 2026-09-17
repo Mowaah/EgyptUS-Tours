@@ -15,29 +15,43 @@ const COLORS = [
   "#FECDD3",
 ];
 
+const DEFAULT_LEAD_SOURCES: LeadSourceItem[] = [
+  { source: "website", label: "Website", count: 0, percentage: 0 },
+  { source: "social_media", label: "Social Media", count: 0, percentage: 0 },
+  { source: "referral", label: "Referral", count: 0, percentage: 0 },
+  { source: "phone_call", label: "Phone", count: 0, percentage: 0 },
+  { source: "email", label: "Email", count: 0, percentage: 0 },
+  { source: "other", label: "Other", count: 0, percentage: 0 },
+];
+
 interface LeadsBySourceChartProps {
   data?: LeadSourceItem[];
   actions?: React.ReactNode;
 }
 
 export default function LeadsBySourceChart({ data = [], actions }: LeadsBySourceChartProps) {
+  const displayData = useMemo(() => {
+    if (data && data.length > 0) {
+      return data;
+    }
+    return DEFAULT_LEAD_SOURCES;
+  }, [data]);
+
   const maxY = useMemo(() => {
-    if (!data || data.length === 0) return 10;
-    const maxVal = Math.max(...data.map((d) => d.count), 0);
+    const maxVal = Math.max(...displayData.map((d) => d.count), 0);
     if (maxVal === 0) return 10;
     const magnitude = Math.pow(10, Math.floor(Math.log10(maxVal)));
     return Math.ceil((maxVal * 1.2) / magnitude) * magnitude || 10;
-  }, [data]);
+  }, [displayData]);
 
   const distribution = useMemo(() => {
-    if (!data || data.length === 0) return [];
-    return data.map((item, index) => ({
+    return displayData.map((item, index) => ({
       label: item.label,
       value: maxY > 0 ? (item.count / maxY) * 100 : 0,
       displayValue: item.count.toString(),
       color: COLORS[index % COLORS.length],
     }));
-  }, [data, maxY]);
+  }, [displayData, maxY]);
 
   const yAxisLabels = useMemo(() => {
     const step = maxY / 5;

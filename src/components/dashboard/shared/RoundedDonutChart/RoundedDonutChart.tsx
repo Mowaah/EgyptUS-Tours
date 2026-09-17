@@ -68,16 +68,43 @@ function roundedSegmentPath(
   ].join(" ");
 }
 
+const DEFAULT_EMPTY_WEIGHTS: Record<number, number[]> = {
+  1: [100],
+  2: [65, 35],
+  3: [45, 32, 23],
+  4: [38, 28, 20, 14],
+  5: [34, 26, 18, 14, 8],
+  6: [30, 24, 18, 13, 9, 6],
+};
+
 export default function RoundedDonutChart({ data, centerValue, centerLabel, size = DEFAULT_SIZE }: RoundedDonutChartProps) {
-  const total = data.reduce((s, d) => s + d.value, 0);
+  const hasData = data && data.length > 0;
+  const isAllZero = hasData && data.every((d) => d.value === 0);
+  const chartItems = !hasData 
+    ? [
+        { label: "Segment 1", value: 0, color: "#E9BDFF" },
+        { label: "Segment 2", value: 0, color: "#FFC6A0" }
+      ]
+    : data;
+
+  const fallbackWeights = DEFAULT_EMPTY_WEIGHTS[chartItems.length] || chartItems.map((_, i) => Math.max(10, 50 - i * 8));
+  const fallbackTotal = fallbackWeights.reduce((s, w) => s + w, 0);
+
+  const shouldShowDummy = !hasData || isAllZero;
+  const total = shouldShowDummy ? 100 : chartItems.reduce((s, d) => s + d.value, 0);
+
   const cx = size / 2;
   const cy = size / 2;
   let cursor = 0;
 
-  const segments = data.map((d) => {
-    const startDeg = (cursor / total) * 360;
-    cursor += d.value;
-    const endDeg = (cursor / total) * 360;
+  const segments = chartItems.map((d, index) => {
+    const effectiveValue = shouldShowDummy
+      ? (fallbackWeights[index] / fallbackTotal) * 100
+      : d.value;
+
+    const startDeg = total > 0 ? (cursor / total) * 360 : 0;
+    cursor += effectiveValue;
+    const endDeg = total > 0 ? (cursor / total) * 360 : 0;
     return { ...d, startDeg, endDeg };
   });
 

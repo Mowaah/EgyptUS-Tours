@@ -12,12 +12,11 @@ interface ServiceRevenueChartProps {
 
 export default function ServiceRevenueChart({ data, actions }: ServiceRevenueChartProps) {
   const distribution = useMemo(() => {
-    if (!data) return [];
-    const tripVal = parseFloat(data.trip as string) || 0;
-    const hotelVal = parseFloat(data.hotel as string) || 0;
-    const transportVal = parseFloat(data.transport as string) || 0;
-    const miceVal = parseFloat(data.mice as string) || 0;
-    const othersVal = (parseFloat(data.b2b as string) || 0) + (parseFloat(data.custom_trip as string) || 0);
+    const tripVal = parseFloat(data?.trip as string) || 0;
+    const hotelVal = parseFloat(data?.hotel as string) || 0;
+    const transportVal = parseFloat(data?.transport as string) || 0;
+    const miceVal = parseFloat(data?.mice as string) || 0;
+    const othersVal = (parseFloat(data?.b2b as string) || 0) + (parseFloat(data?.custom_trip as string) || 0);
 
     const values = [tripVal, hotelVal, transportVal, miceVal, othersVal];
     const maxVal = Math.max(10, ...values);

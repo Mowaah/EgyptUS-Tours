@@ -8,24 +8,39 @@ interface MiceRevenueByEventTypeProps {
   actions?: ReactNode;
 }
 
+const DEFAULT_EVENT_TYPES = [
+  { event_type: "Conference", proposal_count: 0 },
+  { event_type: "Meeting", proposal_count: 0 },
+  { event_type: "Incentive Travel", proposal_count: 0 },
+  { event_type: "Exhibition", proposal_count: 0 },
+  { event_type: "Corporate Retreat", proposal_count: 0 },
+];
+
 export default function MiceRevenueByEventType({ data = [], actions }: MiceRevenueByEventTypeProps) {
   const colors = ["#A1CCFF", "#FFC6A0", "#FFD6DD", "#E9BDFF", "#8DC1FF"];
 
-  const maxY = useMemo(() => {
-    if (!data.length) return 5;
-    const max = Math.max(...data.map((d) => d.proposal_count));
-    const step = Math.ceil(max / 5) || 1;
-    return step * 5;
+  const displayData = useMemo(() => {
+    if (data && data.length > 0) {
+      return data;
+    }
+    return DEFAULT_EVENT_TYPES;
   }, [data]);
 
+  const maxY = useMemo(() => {
+    const max = Math.max(...displayData.map((d) => d.proposal_count), 0);
+    if (max === 0) return 5;
+    const step = Math.ceil(max / 5) || 1;
+    return step * 5;
+  }, [displayData]);
+
   const distribution = useMemo(() => {
-    return data.map((item, index) => ({
+    return displayData.map((item, index) => ({
       label: item.event_type,
       value: maxY > 0 ? (item.proposal_count / maxY) * 100 : 0,
       displayValue: item.proposal_count.toString(),
       color: colors[index % colors.length],
     }));
-  }, [data, maxY]);
+  }, [displayData, maxY]);
 
   const yAxisLabels = useMemo(() => {
     const step = maxY / 5;

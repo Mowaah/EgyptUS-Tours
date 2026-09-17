@@ -235,7 +235,7 @@
   flex-shrink: 0;
 
   &:hover {
-    background: darken($primary, 5%);
+    background: $primary-hover;
     box-shadow: 0 4px 12px rgba($primary, 0.25);
   }
 

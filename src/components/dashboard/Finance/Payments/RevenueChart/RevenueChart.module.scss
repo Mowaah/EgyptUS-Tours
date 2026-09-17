@@ -1,0 +1,235 @@
+@use "@/styles/variables" as *;
+
+.revenueChartCard {
+  background: $white;
+  border-radius: 24px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.iconBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: $dashboard-expandable-hover;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: $font-size-28;
+  font-weight: 600;
+  line-height: 1.2;
+  color: $dark;
+}
+
+.cardSubtitle {
+  margin: 4px 0 0 0;
+  font-size: $font-size-sm;
+  line-height: 1.4;
+  color: $gray-400;
+}
+
+.barChartContainer {
+  position: relative;
+  flex: 1;
+  display: flex;
+  min-height: 300px;
+  margin-top: 16px;
+}
+
+.yAxis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-right: 16px;
+  color: $gray-400;
+  font-size: $font-size-sm;
+  line-height: 20px;
+  text-align: right;
+  flex-shrink: 0;
+  width: 56px;
+}
+
+.yAxisLine {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 20px;
+}
+
+.gridLines {
+  position: absolute;
+  top: 10px;
+  left: 56px;
+  right: 0;
+  bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.gridLine {
+  height: 1px;
+  width: 100%;
+  border-top: 1px dashed #E8EDF5;
+
+  &:last-child {
+    display: none;
+  }
+}
+
+.chartArea {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
+}
+
+.chartBars {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex: 1;
+  padding: 0 8px;
+  position: relative;
+  z-index: 1;
+  padding-bottom: 8px;
+}
+
+.barColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+  justify-content: flex-end;
+  flex: 1;
+  max-width: 48px;
+  position: relative;
+  cursor: pointer;
+
+  &:hover .xAxisLabel {
+    color: $dark;
+    font-weight: 600;
+  }
+
+  &:hover .barEmpty {
+    background: #D0E3FC;
+  }
+}
+
+.barWrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+}
+
+.barFill {
+  width: 28px;
+  background: $background-blue;
+  border-radius: 50px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  min-height: 8px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0%;
+    background: $primary;
+    border-radius: 50px;
+    transition: height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+}
+
+.barFillActive {
+  transform: scaleX(1.08);
+
+  &::before {
+    height: 100%;
+  }
+}
+
+.barEmpty {
+  width: 28px;
+  height: 7px;
+  border-radius: 999px;
+  background: #E8F1FD;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.xAxisLabel {
+  color: $gray-400;
+  font-size: $font-size-10;
+  font-weight: 500;
+  line-height: 20px;
+  text-align: center;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.tooltip {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: $white;
+  box-shadow: 0px 4px 14px rgba(25, 33, 61, 0.08);
+  border-radius: 6px;
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: $font-size-xs;
+  line-height: 18px;
+  color: #1E293B;
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 8px;
+    height: 8px;
+    background: $white;
+    box-shadow: 1px 1px 2px rgba(25, 33, 61, 0.04);
+  }
+}
+
+.barColumn:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}

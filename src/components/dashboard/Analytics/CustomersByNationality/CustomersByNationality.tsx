@@ -12,6 +12,17 @@ import styles from "./CustomersByNationality.module.scss";
 const COLORS = ["#8DC1FF", "#FDBA74", "#FFD1DE", "#E9BDFF", "#FDE68A", "#C4B5FD", "#D1D5DB", "#86EFAC"];
 const PAGE_SIZE_OPTIONS = [4, 8, 12];
 
+const DEFAULT_EMPTY_NATIONALITIES = [
+  { nationality: "American", nationalityLabel: "American", customer_count: 0, pct: 0 },
+  { nationality: "British", nationalityLabel: "British", customer_count: 0, pct: 0 },
+  { nationality: "German", nationalityLabel: "German", customer_count: 0, pct: 0 },
+  { nationality: "Spanish", nationalityLabel: "Spanish", customer_count: 0, pct: 0 },
+  { nationality: "French", nationalityLabel: "French", customer_count: 0, pct: 0 },
+  { nationality: "Italian", nationalityLabel: "Italian", customer_count: 0, pct: 0 },
+  { nationality: "Canadian", nationalityLabel: "Canadian", customer_count: 0, pct: 0 },
+  { nationality: "Australian", nationalityLabel: "Australian", customer_count: 0, pct: 0 },
+];
+
 interface CustomersByNationalityProps {
   data?: CustomersByNationalityType[];
   actions?: React.ReactNode;
@@ -30,6 +41,10 @@ export default function CustomersByNationality({
 
   // Map full dataset to nationalities, aggregate duplicates, and compute percentages
   const allDistribution = useMemo(() => {
+    if (!data || data.length === 0) {
+      return DEFAULT_EMPTY_NATIONALITIES;
+    }
+
     const countByLabel = new Map<string, number>();
 
     data.forEach((item) => {
@@ -84,7 +99,7 @@ export default function CustomersByNationality({
       return {
         label: item.nationalityLabel,
         value: roundedMax > 0 ? (item.pct / roundedMax) * 100 : 0,
-        displayValue: `${item.pct}%`,
+        displayValue: item.pct > 0 ? `${item.pct}%` : "0",
         color: COLORS[globalIndex % COLORS.length],
       };
     });
@@ -107,15 +122,9 @@ export default function CustomersByNationality({
         actions={actions}
       />
 
-      {data.length === 0 ? (
-        <div className={styles.emptyMessage}>
-          No nationality data recorded for this period.
-        </div>
-      ) : (
-        <div className={styles.chartWrapper}>
-          <HatchedBarChart data={chartData} yAxisLabels={yAxisLabels} />
-        </div>
-      )}
+      <div className={styles.chartWrapper}>
+        <HatchedBarChart data={chartData} yAxisLabels={yAxisLabels} />
+      </div>
 
       <div className={styles.paginationWrapper}>
         <TablePagination

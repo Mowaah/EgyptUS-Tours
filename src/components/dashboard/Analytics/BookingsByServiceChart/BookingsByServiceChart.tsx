@@ -12,12 +12,11 @@ interface BookingsByServiceChartProps {
 
 export default function BookingsByServiceChart({ data, actions }: BookingsByServiceChartProps) {
   const distribution = useMemo(() => {
-    if (!data) return [];
-    const trip = Number(data.trip) || 0;
-    const hotel = Number(data.hotel) || 0;
-    const transport = Number(data.transport) || 0;
-    const mice = Number(data.mice) || 0;
-    const b2b = Number(data.b2b) || 0;
+    const trip = Number(data?.trip) || 0;
+    const hotel = Number(data?.hotel) || 0;
+    const transport = Number(data?.transport) || 0;
+    const mice = Number(data?.mice) || 0;
+    const b2b = Number(data?.b2b) || 0;
 
     const values = [trip, hotel, transport, mice, b2b];
     const maxVal = Math.max(10, ...values);
