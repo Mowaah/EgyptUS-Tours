@@ -150,6 +150,8 @@ export function ImportLeadsModal({ open, onClose, onSuccess }: ImportLeadsModalP
               <div className={styles.uploadArea}>
                 <UploadDropzone
                   value={file}
+                  title="Click to upload an Excel File"
+                  subtitle="CSV up to 10MB"
                   onFileSelect={(selected) => {
                     if (!selected) {
                       setFile(undefined);
