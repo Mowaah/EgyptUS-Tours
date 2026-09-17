@@ -45,6 +45,20 @@ export default function RecordDepositPaymentModal({ open, onClose, onSubmit, pay
     onClose();
   };
 
+  const currencySymbol = paymentOverview?.currency?.toUpperCase() === "EUR" ? "€" : paymentOverview?.currency?.toUpperCase() === "GBP" ? "£" : "$";
+  const totalPrice = paymentOverview?.total_price ? parseFloat(paymentOverview.total_price) : 0;
+  const depositAmount = paymentOverview?.deposit_amount ? parseFloat(paymentOverview.deposit_amount) : 0;
+  const remainingBalance = paymentOverview?.remaining_balance && parseFloat(paymentOverview.remaining_balance) < totalPrice
+    ? parseFloat(paymentOverview.remaining_balance)
+    : Math.max(0, totalPrice - depositAmount);
+
+  const remainingBalanceDisplay = paymentOverview?.total_price
+    ? `${currencySymbol}${remainingBalance.toLocaleString()}`
+    : "N/A";
+  const depositDisplay = paymentOverview?.deposit_amount
+    ? `${currencySymbol}${depositAmount.toLocaleString()}`
+    : "N/A";
+
   return (
     <div className={rootStyles.overlay} onMouseDown={onClose}>
       <div className={rootStyles.modal} style={{ width: "647px" }} onMouseDown={(e) => e.stopPropagation()}>
@@ -63,7 +77,7 @@ export default function RecordDepositPaymentModal({ open, onClose, onSubmit, pay
               label=""
               id="total-trip-cost"
               variant="modal"
-              value={paymentOverview?.total_price ? `$${parseFloat(paymentOverview.total_price).toLocaleString()}` : "N/A"}
+              value={paymentOverview?.total_price ? `${currencySymbol}${parseFloat(paymentOverview.total_price).toLocaleString()}` : "N/A"}
               disabled
               onChange={() => {}}
             />
@@ -84,12 +98,12 @@ export default function RecordDepositPaymentModal({ open, onClose, onSubmit, pay
 
           <div className={styles.summaryBox}>
             <div className={styles.summaryCol}>
-              <span className={styles.summaryTitle}>Deposit Amount</span>
-              <span className={styles.summaryValue}>{paymentOverview?.deposit_amount ? `$${parseFloat(paymentOverview.deposit_amount).toLocaleString()}` : "N/A"}</span>
+              <span className={styles.summaryTitle}>Remaining Balance</span>
+              <span className={styles.summaryValue}>{remainingBalanceDisplay}</span>
             </div>
             <div className={styles.summaryCol}>
-              <span className={styles.summaryTitle}>Remaining Balance</span>
-              <span className={styles.summaryValue}>{paymentOverview?.remaining_balance ? `$${parseFloat(paymentOverview.remaining_balance).toLocaleString()}` : "N/A"}</span>
+              <span className={styles.summaryTitle}>Deposit Paid</span>
+              <span className={styles.summaryValue}>{depositDisplay}</span>
             </div>
           </div>
           

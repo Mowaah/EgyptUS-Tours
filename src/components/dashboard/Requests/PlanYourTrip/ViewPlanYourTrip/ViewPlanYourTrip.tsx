@@ -9,6 +9,7 @@ import RequestDetailsLayout from "../../shared/RequestDetailsLayout/RequestDetai
 import RefundSummary from "@/components/dashboard/shared/RefundSummary/RefundSummary";
 import { calculateRefundSummary } from "@/utils/cancellationPolicy";
 import { formatStatusLabel } from "../planYourTripColumns";
+import { formatBudgetRange } from "@/utils/formatMetric";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function ViewPlanYourTrip({ requestId }: { requestId: string }) {
@@ -149,9 +150,11 @@ export default function ViewPlanYourTrip({ requestId }: { requestId: string }) {
                 || requestData.trip_preferences.trip_category?.join(", ")
                 || "-",
               duration: requestData.trip_details.number_of_days ? `${requestData.trip_details.number_of_days} Days` : "-",
-              budget: requestData.trip_details.budget_min 
-                ? (requestData.trip_details.budget_max ? `$${requestData.trip_details.budget_min} - $${requestData.trip_details.budget_max}` : `$${requestData.trip_details.budget_min}+`) 
-                : (requestData.trip_preferences.budget || "-"),
+              budget: formatBudgetRange(
+                requestData.trip_details?.budget_min,
+                requestData.trip_details?.budget_max,
+                requestData.trip_preferences?.budget
+              ),
               hotelCategory: parseInt(requestData.trip_preferences.hotel_category) || 0,
               roomType: requestData.trip_preferences.room_types?.length > 0
                 ? requestData.trip_preferences.room_types.join(", ")

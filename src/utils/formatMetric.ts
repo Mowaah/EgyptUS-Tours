@@ -109,3 +109,35 @@ export function formatThousandsMetric(
   return `${sign}${prefix}${Math.round(abs).toLocaleString("en-US")}`;
 }
 
+/**
+ * Formats a budget range with currency symbol, thousands commas, and NO decimals.
+ * Examples:
+ *   formatBudgetRange("3000.00", "5000.00") => "$3,000 - $5,000"
+ *   formatBudgetRange("3000.00", null) => "$3,000+"
+ *   formatBudgetRange(null, null, "$3000.00 - $5000.00") => "$3,000 - $5,000"
+ */
+export function formatBudgetRange(
+  min?: number | string | null,
+  max?: number | string | null,
+  fallback?: string | null,
+  currencySymbol: string = "$"
+): string {
+  if (min !== undefined && min !== null && min !== "") {
+    const formattedMin = formatCurrencyAmount(min, currencySymbol);
+    if (max !== undefined && max !== null && max !== "") {
+      const formattedMax = formatCurrencyAmount(max, currencySymbol);
+      return `${formattedMin} - ${formattedMax}`;
+    }
+    return `${formattedMin}+`;
+  }
+
+  if (fallback && fallback !== "-") {
+    return fallback.replace(/\$?\s*(\d+(?:\.\d+)?)/g, (_, numStr) => {
+      const num = parseFloat(numStr);
+      return isNaN(num) ? numStr : `${currencySymbol}${Math.round(num).toLocaleString("en-US")}`;
+    });
+  }
+
+  return fallback || "-";
+}
+
