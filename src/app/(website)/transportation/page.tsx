@@ -61,10 +61,10 @@ export default async function Page() {
       : v.duration_hours_max
       ? `${v.duration_hours_max}`
       : undefined,
-    description: "",
-    rating: parseFloat(v.rating_avg) || 0,
-    reviews: v.review_count,
-    features: v.features || [],
+      description: (v as any).short_description || (v as any).description || "",
+      rating: parseFloat(v.rating_avg) || 0,
+      reviews: v.review_count,
+      features: v.features || [],
   };
   });
 
