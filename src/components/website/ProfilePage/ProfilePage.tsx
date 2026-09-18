@@ -24,6 +24,7 @@ import { getFavoriteTrips, getFavoriteHotels, getProfileRequests, getProfileSumm
 import { getAllHotels } from "@/services/hotelsService";
 import { getStatusConfig } from "@/utils/statusUtils";
 import { formatDateDDMMYYYY } from "@/utils/dateFormat";
+import { formatExpectedAttendees, formatPreferredCity, formatEventType } from "@/utils/formatMetric";
 import {
   getPendingGuestRecord,
   getGuestAuthEmail,
@@ -279,9 +280,9 @@ export default function ProfilePage() {
             } else if (req.type === "events") {
               mappedDetails = {
                 organization: req.details?.organization || "",
-                preferredCity: req.details?.preferred_city || "",
-                eventType: req.details?.event_type || "",
-                expectedAttendees: req.details?.expected_attendees || "",
+                preferredCity: formatPreferredCity(req.details?.preferred_city),
+                eventType: formatEventType(req.details?.event_type),
+                expectedAttendees: formatExpectedAttendees(req.details?.expected_attendees),
                 startDate: req.details?.start_date || "",
                 endDate: req.details?.end_date || "",
               };

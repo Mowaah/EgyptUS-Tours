@@ -8,6 +8,7 @@ import StatusPill from "@/components/shared/StatusPill/StatusPill";
 import styles from "./MiceBookingsDetail.module.scss";
 import type { MiceProposal } from "@/services/admin/adminReportsService";
 import { getStatusVariant, formatStatusLabel } from "@/components/dashboard/Requests/MICE/miceColumns";
+import { formatPreferredCity, formatEventType } from "@/utils/formatMetric";
 
 interface MiceBookingsDetailProps {
   proposals?: MiceProposal[];
@@ -29,7 +30,7 @@ export default function MiceBookingsDetail({ proposals = [], actions }: MiceBook
     {
       id: "city",
       header: "City",
-      render: (row: MiceProposal) => <span className={styles.cellText}>{row.preferred_city}</span>,
+      render: (row: MiceProposal) => <span className={styles.cellText}>{formatPreferredCity(row.preferred_city)}</span>,
     },
     {
       id: "dates",
@@ -43,7 +44,7 @@ export default function MiceBookingsDetail({ proposals = [], actions }: MiceBook
     {
       id: "type",
       header: "Event Type",
-      render: (row: MiceProposal) => <span className={styles.cellText}>{row.event_type}</span>,
+      render: (row: MiceProposal) => <span className={styles.cellText}>{formatEventType(row.event_type)}</span>,
     },
     {
       id: "status",

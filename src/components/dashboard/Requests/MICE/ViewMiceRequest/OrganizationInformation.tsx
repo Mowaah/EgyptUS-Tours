@@ -1,5 +1,6 @@
 import React from "react";
 import { InfoCard, InfoCardData } from "@/components/dashboard/shared";
+import { formatIndustry } from "@/utils/formatMetric";
 
 interface OrganizationInformationProps {
   request: {
@@ -17,7 +18,7 @@ interface OrganizationInformationProps {
 export default function OrganizationInformation({ request }: OrganizationInformationProps) {
   const data: InfoCardData[] = [
     { label: "Organization Name", value: request.organization_name },
-    { label: "Industry", value: request.industry },
+    { label: "Industry", value: formatIndustry(request.industry) },
     { label: "Country", value: request.country },
     { label: "Website", value: request.website },
     { label: "Contact Person", value: request.contact_person },

@@ -207,7 +207,7 @@
       "title": "Requisitos del Evento",
       "venueType": "Tipo de Sede Preferida",
       "selectVenueType": "Seleccionar Sede Preferida",
-      "additionalServices": "Servicios Adicionales Necesarios",
+      "additionalServices": "Servicios Adicionales",
       "additionalRequirements": "Peticiones Especiales y Requisitos",
       "additionalRequirementsPlaceholder": "Montajes específicos, necesidades dietéticas, protocolos VIP o equipos audiovisuales..."
     },
@@ -249,6 +249,7 @@
       "endDateBeforeStartDate": "La fecha de fin no puede ser anterior a la de inicio.",
       "description": "La descripción del evento es obligatoria.",
       "venueType": "El tipo de sede es obligatorio.",
+      "additionalServices": "Seleccione al menos un servicio adicional.",
       "estimatedBudget": "El presupuesto estimado es obligatorio.",
       "budgetFlexibility": "La flexibilidad presupuestaria es obligatoria."
     }

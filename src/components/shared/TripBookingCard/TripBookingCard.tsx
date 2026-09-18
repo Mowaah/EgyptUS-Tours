@@ -508,7 +508,9 @@ export default function TripBookingCard(props: TripBookingCardProps) {
 
       const match = cancelledLabel.match(/[—\-]\s*(.+)$/);
       if (match) {
-        dateStr = match[1].trim();
+        dateStr = match[1]
+          .replace(/\s+by\s+(egypt\s*us|you|customer|admin)$/i, "")
+          .trim();
       }
     }
 

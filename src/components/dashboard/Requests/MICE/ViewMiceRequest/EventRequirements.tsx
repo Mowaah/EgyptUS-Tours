@@ -1,5 +1,6 @@
 import React from "react";
 import { InfoCard, InfoCardData } from "@/components/dashboard/shared";
+import { formatVenueType, formatAdditionalServices } from "@/utils/formatMetric";
 
 interface EventRequirementsProps {
   request: {
@@ -11,8 +12,8 @@ interface EventRequirementsProps {
 
 export default function EventRequirements({ request }: EventRequirementsProps) {
   const data: InfoCardData[] = [
-    { label: "Venue Type", value: request.venue_type },
-    { label: "Additional Services", value: request.additional_services },
+    { label: "Venue Type", value: formatVenueType(request.venue_type) },
+    { label: "Additional Services", value: formatAdditionalServices(request.additional_services) },
     { label: "Additional Requirements", value: request.additional_requirements, isColumn: true },
   ];
 

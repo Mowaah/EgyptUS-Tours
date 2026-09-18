@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { BookingStepFooter, FormField, CheckboxIndicator } from "@/components/shared";
 import SelectDropdown from "@/components/shared/SelectDropdown/SelectDropdown";
 import pageStyles from "../../EventsRequestProposalPage.module.scss";
@@ -67,7 +68,7 @@ export default function StepRequirements({
 
           <div className={styles.additionalServicesRow}>
             <label className={formStyles.fieldLabel}>
-              {t("proposal.requirements.additionalServices", "Additional Services")} <span style={{ color: "#0E2851" }}>*</span>
+              {t("proposal.requirements.additionalServices", "Additional Services")} <span className={formStyles.required}>*</span>
             </label>
             <div className={styles.serviceGrid}>
               {ADDITIONAL_SERVICES.map((service) => {
@@ -92,6 +93,12 @@ export default function StepRequirements({
                 );
               })}
             </div>
+            {errors.additionalServices && (
+              <div className={formStyles.errorMessage}>
+                <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+                <span>{errors.additionalServices}</span>
+              </div>
+            )}
           </div>
 
           <FormField

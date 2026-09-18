@@ -22,11 +22,9 @@
 
 .item {
   display: flex;
-  align-items: flex-start;
-  color: $text-heading;
-  font-weight: $font-weight-medium;
-  display: flex;
   align-items: center;
+  color: $text-heading;
+  font-weight: $font-weight-normal;
   gap: 12px;
 }
 

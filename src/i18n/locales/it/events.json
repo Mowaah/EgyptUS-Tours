@@ -207,7 +207,7 @@
       "title": "Requisiti dell'Evento",
       "venueType": "Tipo di Location Preferito",
       "selectVenueType": "Seleziona Location Preferita",
-      "additionalServices": "Servizi Aggiuntivi Richiesti",
+      "additionalServices": "Servizi Aggiuntivi",
       "additionalRequirements": "Richieste e Requisiti Speciali",
       "additionalRequirementsPlaceholder": "Allestimenti specifici, esigenze alimentari, protocolli VIP o necessità audio/video..."
     },
@@ -249,6 +249,7 @@
       "endDateBeforeStartDate": "La data di fine non può essere precedente alla data di inizio.",
       "description": "La descrizione dell'evento è obbligatoria.",
       "venueType": "Il tipo di location è obbligatorio.",
+      "additionalServices": "Seleziona almeno un servizio aggiuntivo.",
       "estimatedBudget": "Il budget stimato è obbligatorio.",
       "budgetFlexibility": "La flessibilità del budget è obbligatoria."
     }

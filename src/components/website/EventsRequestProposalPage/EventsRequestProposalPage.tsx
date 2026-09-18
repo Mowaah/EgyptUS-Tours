@@ -205,6 +205,9 @@ export default function EventsRequestProposalPage() {
       const req = proposalData.requirements;
       const newErrors: Record<string, string> = {};
       if (!req.venueType) newErrors.venueType = t("proposal.errors.venueType", "Preferred Venue Type is required.");
+      if (!req.additionalServices || req.additionalServices.length === 0) {
+        newErrors.additionalServices = t("proposal.errors.additionalServices", "Please select at least one additional service.");
+      }
       if (Object.keys(newErrors).length > 0) {
         setFieldErrors(newErrors);
         return;

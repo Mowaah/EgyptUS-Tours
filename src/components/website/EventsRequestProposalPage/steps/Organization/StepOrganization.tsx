@@ -1,6 +1,6 @@
 "use client";
 
-import { BookingStepFooter, FormField, PhoneInput } from "@/components/shared";
+import { BookingStepFooter, FormField, PhoneInput, NationalitySelect } from "@/components/shared";
 import SelectDropdown from "@/components/shared/SelectDropdown/SelectDropdown";
 import pageStyles from "../../EventsRequestProposalPage.module.scss";
 import type { EventProposalData } from "../../eventsRequestProposalTypes";
@@ -64,17 +64,14 @@ export default function StepOrganization({
             />
           </FormField>
 
-          <FormField
-            id="org-country"
-            label={t("proposal.organization.country", "Country")}
-            className={pageStyles.formInput}
-            type="text"
-            required
-            placeholder={t("proposal.organization.country", "Country")}
-            value={data.country}
-            onChange={(e) => onChange({ country: e.target.value })}
-            error={errors.country}
-          />
+          <FormField label={t("proposal.organization.country", "Country")} required error={errors.country}>
+            <NationalitySelect
+              useCountryName={true}
+              value={data.country}
+              onChange={(val) => onChange({ country: val })}
+              error={!!errors.country}
+            />
+          </FormField>
 
           <FormField
             id="org-website"

@@ -15,6 +15,14 @@ import {
   type TripBookingStatus,
 } from "@/components/shared";
 import { getStatusConfig } from "@/utils/statusUtils";
+import {
+  formatExpectedAttendees,
+  formatPreferredCity,
+  formatEventType,
+  formatVenueType,
+  formatAdditionalServices,
+  formatBudgetRangeLabel,
+} from "@/utils/formatMetric";
 import { COUNTRIES } from "@/data/countries";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -338,10 +346,10 @@ export default function ProfileRequestDetailsPage() {
         icon: "/images/profile/detail/event-details.svg",
         fieldsColumns: 3,
         fields: [
-          { label: "Event Type", value: data.event?.event_type || "" },
+          { label: "Event Type", value: formatEventType(data.event?.event_type) },
           { label: "Event Name", value: data.event?.event_name || "" },
-          { label: "Expected Attendees", value: data.event?.expected_attendees || "" },
-          { label: "Preferred City", value: data.event?.preferred_city || "" },
+          { label: "Expected Attendees", value: formatExpectedAttendees(data.event?.expected_attendees) },
+          { label: "Preferred City", value: formatPreferredCity(data.event?.preferred_city) },
           { label: "Start Date", value: data.event?.start_date || "" },
           { label: "End Date", value: data.event?.end_date || "" },
         ],
@@ -353,8 +361,8 @@ export default function ProfileRequestDetailsPage() {
         icon: "/images/profile/detail/event-requirements.svg",
         fieldsColumns: 2,
         fields: [
-          { label: "Venue Type", value: data.event?.venue_type || "" },
-          { label: "Additional Services", value: (data.event?.additional_services || []).join(" , ") },
+          { label: "Venue Type", value: formatVenueType(data.event?.venue_type) },
+          { label: "Additional Services", value: formatAdditionalServices(data.event?.additional_services) },
         ],
         descriptionLabel: "Additional Requirements",
         description: data.additional_requirements || "",
@@ -364,7 +372,7 @@ export default function ProfileRequestDetailsPage() {
         icon: "/images/profile/detail/budget-info.svg",
         fieldsColumns: 3,
         fields: [
-          { label: "Estimated Budget", value: data.event?.estimated_budget_range || "" },
+          { label: "Estimated Budget", value: formatBudgetRangeLabel(data.event?.estimated_budget_range) },
         ],
       },
     ];

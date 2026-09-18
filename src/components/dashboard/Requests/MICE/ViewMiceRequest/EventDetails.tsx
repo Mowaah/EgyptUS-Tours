@@ -1,5 +1,6 @@
 import React from "react";
 import { InfoCard, InfoCardData } from "@/components/dashboard/shared";
+import { formatExpectedAttendees, formatPreferredCity, formatEventType } from "@/utils/formatMetric";
 
 interface EventDetailsProps {
   request: {
@@ -15,10 +16,10 @@ interface EventDetailsProps {
 
 export default function EventDetails({ request }: EventDetailsProps) {
   const data: InfoCardData[] = [
-    { label: "Event Type", value: request.event_type },
+    { label: "Event Type", value: formatEventType(request.event_type) },
     { label: "Event Name", value: request.event_name },
-    { label: "Expected Attendees", value: request.expected_attendees },
-    { label: "Preferred City", value: request.preferred_city },
+    { label: "Expected Attendees", value: formatExpectedAttendees(request.expected_attendees) },
+    { label: "Preferred City", value: formatPreferredCity(request.preferred_city) },
     { label: "Start Date", value: request.start_date },
     { label: "End Date", value: request.end_date },
     { label: "Event Description", value: request.description, isColumn: true },

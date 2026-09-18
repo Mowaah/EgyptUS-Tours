@@ -207,7 +207,7 @@
       "title": "Event Requirements",
       "venueType": "Preferred Venue Type",
       "selectVenueType": "Select Preferred Venue",
-      "additionalServices": "Additional Services Needed",
+      "additionalServices": "Additional Services",
       "additionalRequirements": "Additional Requirements",
       "additionalRequirementsPlaceholder": "Any specific setups, dietary requirements, VIP protocols, or AV needs..."
     },
@@ -249,6 +249,7 @@
       "endDateBeforeStartDate": "End Date cannot be before Start Date.",
       "description": "Event Description is required.",
       "venueType": "Preferred Venue Type is required.",
+      "additionalServices": "Please select at least one additional service.",
       "estimatedBudget": "Estimated Budget is required.",
       "budgetFlexibility": "Budget Flexibility is required."
     }
