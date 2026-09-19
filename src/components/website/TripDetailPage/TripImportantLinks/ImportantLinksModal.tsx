@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { PolicyId } from "./policyModalTypes";
 import { fetchLegalTabs, type LegalTab } from "./legalTabs";
+import { LoadingSpinner } from "@/components/shared";
 import styles from "./ImportantLinksModal.module.scss";
 
 interface ImportantLinksModalProps {
@@ -52,6 +53,19 @@ export default function ImportantLinksModal({
 
           if (matchingKey) {
             setActiveKey(matchingKey);
+          } else if (initialTab === "cancellation") {
+            const cancellationTab = allTabs.find((tab) => {
+              const lowerLabel = tab.label.toLowerCase();
+              const lowerKey = tab.key.toLowerCase();
+              return (
+                lowerLabel.includes("cancel") ||
+                lowerLabel.includes("cancell") ||
+                lowerLabel.includes("إلغاء") ||
+                lowerKey.includes("cancel")
+              );
+            });
+            const firstTerms = allTabs.find((tab) => tab.key.startsWith("terms-"));
+            setActiveKey(cancellationTab ? cancellationTab.key : (firstTerms ? firstTerms.key : allTabs[0].key));
           } else if (initialTab === "privacy" || initialTab === "booking" || initialTab === "children") {
             const firstPrivacy = allTabs.find((tab) => tab.key.startsWith("privacy-"));
             setActiveKey(firstPrivacy ? firstPrivacy.key : allTabs[0].key);
@@ -73,14 +87,27 @@ export default function ImportantLinksModal({
     };
   }, [open, language, initialTab, initialTabKey]);
 
-  // Close on Escape
+  // Scroll active tab into view when active tab changes
+  useEffect(() => {
+    if (!activeKey) return;
+    const activeBtn = document.getElementById(`policy-tab-${activeKey}`);
+    if (activeBtn) {
+      activeBtn.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    }
+  }, [activeKey]);
+
+  // Close on Escape with capture phase to avoid closing parent modals
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        onClose();
+      }
     };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    document.addEventListener("keydown", onKey, true);
+    return () => document.removeEventListener("keydown", onKey, true);
   }, [open, onClose]);
 
   // Lock scroll
@@ -98,7 +125,14 @@ export default function ImportantLinksModal({
   const activeTab = tabs.find((t) => t.key === activeKey);
 
   return createPortal(
-    <div className={styles.overlay} onClick={onClose} role="presentation">
+    <div
+      className={styles.overlay}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClose();
+      }}
+      role="presentation"
+    >
       <div
         className={styles.dialog}
         role="dialog"
@@ -111,7 +145,7 @@ export default function ImportantLinksModal({
           <div className={styles.headerText}>
             <h2 id="policy-modal-title" className={styles.modalTitle}>
               {loading
-                ? t("loading", "Loading...")
+                ? "\u00A0"
                 : activeTab?.label ?? t("noContent", "No content available")}
             </h2>
           </div>
@@ -145,7 +179,7 @@ export default function ImportantLinksModal({
         <div className={styles.body} role="tabpanel" aria-labelledby={`policy-tab-${activeKey}`}>
           {loading ? (
             <div className={styles.loadingWrapper}>
-              <p>{t("loading", "Loading...")}</p>
+              <LoadingSpinner size="md" label="" />
             </div>
           ) : !activeTab ? (
             <div className={styles.emptyState}>

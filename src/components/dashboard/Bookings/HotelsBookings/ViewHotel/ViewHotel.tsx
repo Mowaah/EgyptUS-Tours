@@ -20,6 +20,7 @@ import ActionNoteModal, { ActionNoteModalConfig } from "@/components/dashboard/L
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import { RefundModal } from "@/components/dashboard/shared";
 import { calculateRefundSummary } from "@/utils/cancellationPolicy";
+import { LoadingSpinner } from "@/components/shared";
 import { RefundBankDetailsCard, RefundSummaryCard } from "@/components/shared/RefundCards/RefundCards";
 
 interface ViewHotelProps {
@@ -339,7 +340,7 @@ export default function ViewHotel({ bookingId }: ViewHotelProps) {
           className={styles.toastBanner}
         />
         {isLoading ? (
-          <div style={{ padding: "40px", textAlign: "center", color: "#6B7280" }}>Loading booking details...</div>
+          <LoadingSpinner size="lg" variant="fullPage" label="" />
         ) : (
           <div className={styles.gridContainer}>
             <div className={styles.leftColumn}>

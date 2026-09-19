@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import styles from "./CancelBookingModal.module.scss";
 import SelectDropdown from "@/components/shared/SelectDropdown/SelectDropdown";
 import NationalitySelect from "@/components/shared/NationalitySelect/NationalitySelect";
 import FormField from "@/components/shared/FormField/FormField";
 import CheckboxIndicator from "@/components/shared/CheckboxIndicator/CheckboxIndicator";
+import ImportantLinksModal from "@/components/website/TripDetailPage/TripImportantLinks/ImportantLinksModal";
 import { RefundSummary, getLocalizedPolicyLabel } from "@/utils/cancellationPolicy";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useCurrency } from "@/contexts/CurrencyContext";
@@ -41,6 +43,13 @@ export default function CancelBookingModal({
     if (bookingCurr === "EUR" || bookingCurr === "€") return { eur: amt };
     return { usd: amt };
   };
+  const [mounted, setMounted] = useState(false);
+  const [showPolicyModal, setShowPolicyModal] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const [reason, setReason] = useState("");
   const [detailedReason, setDetailedReason] = useState("");
   const [accountName, setAccountName] = useState("");
@@ -63,6 +72,12 @@ export default function CancelBookingModal({
     { label: t("cancelModal.reasons.other", "Other"), value: "Other" },
   ];
 
+  const showPolicyModalRef = React.useRef(showPolicyModal);
+  useEffect(() => {
+    showPolicyModalRef.current = showPolicyModal;
+  }, [showPolicyModal]);
+
+  // Reset form fields ONLY when open becomes true
   useEffect(() => {
     if (!open) return;
     setReason("");
@@ -75,14 +90,23 @@ export default function CancelBookingModal({
     setCountry("Egypt");
     setAgreed(false);
     setHasSubmitted(false);
+    setShowPolicyModal(false);
+  }, [open]);
+
+  // Handle body overflow and Escape key
+  useEffect(() => {
+    if (!open) return;
 
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        if (showPolicyModalRef.current) return;
+        onClose();
+      }
     };
-    
+
     document.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = prev;
@@ -90,7 +114,14 @@ export default function CancelBookingModal({
     };
   }, [open, onClose]);
 
-  if (!open) return null;
+  // Keep body overflow hidden whenever CancelBookingModal is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    }
+  }, [open, showPolicyModal]);
+
+  if (!mounted || !open) return null;
 
   const isOther = reason === "Other";
   const refundAmount = refundSummary?.refund_amount != null ? Number(refundSummary.refund_amount) : 0;
@@ -99,15 +130,17 @@ export default function CancelBookingModal({
   const getErrors = () => {
     const errs: Record<string, string> = {};
 
-    if (!reason) {
-      errs.reason = t("cancelModal.errors.reasonRequired", "Please select a cancellation reason.");
-    }
+    if (hasRefund) {
+      if (!reason) {
+        errs.reason = t("cancelModal.errors.reasonRequired", "Please select a cancellation reason.");
+      }
 
-    if (isOther) {
-      if (!detailedReason.trim()) {
-        errs.detailedReason = t("cancelModal.errors.detailedReasonRequired", "Please provide details for your cancellation.");
-      } else if (detailedReason.trim().length < 5) {
-        errs.detailedReason = t("cancelModal.errors.detailedReasonMin", "Please provide at least 5 characters.");
+      if (isOther) {
+        if (!detailedReason.trim()) {
+          errs.detailedReason = t("cancelModal.errors.detailedReasonRequired", "Please provide details for your cancellation.");
+        } else if (detailedReason.trim().length < 5) {
+          errs.detailedReason = t("cancelModal.errors.detailedReasonMin", "Please provide at least 5 characters.");
+        }
       }
     }
 
@@ -172,8 +205,8 @@ export default function CancelBookingModal({
     if (!isFormValid) return;
 
     onSubmit({
-      reason,
-      detailedReason: detailedReason.trim(),
+      reason: hasRefund ? reason : "",
+      detailedReason: hasRefund ? detailedReason.trim() : "",
       refund_summary: refundSummary,
       bankDetails: hasRefund ? {
         accountName: accountName.trim(),
@@ -186,8 +219,9 @@ export default function CancelBookingModal({
     });
   };
 
-  return (
-    <div className={styles.overlay} onMouseDown={onClose}>
+  return createPortal(
+    <>
+      <div className={styles.overlay} onMouseDown={onClose}>
       <div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}>
         <div className={styles.scrollableContent}>
           
@@ -205,39 +239,43 @@ export default function CancelBookingModal({
           </div>
 
           <form onSubmit={handleSubmit} noValidate>
-            {/* Cancellation Reason */}
-            <div className={styles.formGroup}>
-              <label className={styles.label}>{t("cancelModal.reasonLabel", "Cancellation Reason")} *</label>
-              <SelectDropdown
-                options={cancellationReasons}
-                value={reason}
-                onChange={(val) => {
-                  setReason(val);
-                  if (val !== "Other") {
-                    setDetailedReason("");
-                  }
-                }}
-                error={Boolean(getFieldError("reason"))}
-              />
-              {getFieldError("reason") && (
-                <div className={styles.fieldError}>
-                  <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
-                  <span>{getFieldError("reason")}</span>
+            {/* Cancellation Reason - only when there is a refund */}
+            {hasRefund && (
+              <>
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>{t("cancelModal.reasonLabel", "Cancellation Reason")} *</label>
+                  <SelectDropdown
+                    options={cancellationReasons}
+                    value={reason}
+                    onChange={(val) => {
+                      setReason(val);
+                      if (val !== "Other") {
+                        setDetailedReason("");
+                      }
+                    }}
+                    error={Boolean(getFieldError("reason"))}
+                  />
+                  {getFieldError("reason") && (
+                    <div className={styles.fieldError}>
+                      <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+                      <span>{getFieldError("reason")}</span>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
 
-            {isOther && (
-              <FormField
-                isTextarea
-                wrapperClassName={styles.formGroup}
-                label={t("cancelModal.otherReasonLabel", "Reason:")}
-                placeholder={t("cancelModal.otherReasonPlaceholder", "Please provide your reason...")}
-                value={detailedReason}
-                onChange={(e) => setDetailedReason(e.target.value)}
-                error={getFieldError("detailedReason")}
-                required
-              />
+                {isOther && (
+                  <FormField
+                    isTextarea
+                    wrapperClassName={styles.formGroup}
+                    label={t("cancelModal.otherReasonLabel", "Reason:")}
+                    placeholder={t("cancelModal.otherReasonPlaceholder", "Please provide your reason...")}
+                    value={detailedReason}
+                    onChange={(e) => setDetailedReason(e.target.value)}
+                    error={getFieldError("detailedReason")}
+                    required
+                  />
+                )}
+              </>
             )}
 
             {/* Refund Summary */}
@@ -367,18 +405,21 @@ export default function CancelBookingModal({
                 <CheckboxIndicator variant="square" size="md" selected={agreed} aria-hidden />
                 <span className={styles.checkboxLabel}>
                   {t("cancelModal.agreePrefix", "I have read and agree to the")}{" "}
-                  <a
-                    href="/terms"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
                     className={styles.policyLink}
                     onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setShowPolicyModal(true);
+                    }}
+                    onMouseDown={(e) => {
                       e.stopPropagation();
                     }}
                   >
-                    {t("cancelModal.cancellationPolicyLink", "Cancellation")}
-                  </a>{" "}
-                  {t("cancelModal.policySuffix", "Policy.")}
+                    {t("cancelModal.cancellationPolicyLink", "Cancellation Policy")}
+                  </button>
+                  {t("cancelModal.policySuffix", ".")}
                 </span>
               </label>
               {getFieldError("agreed") && (
@@ -414,5 +455,13 @@ export default function CancelBookingModal({
         </div>
       </div>
     </div>
-  );
+
+    <ImportantLinksModal
+      open={showPolicyModal}
+      initialTab="cancellation"
+      onClose={() => setShowPolicyModal(false)}
+    />
+  </>,
+  document.body
+);
 }

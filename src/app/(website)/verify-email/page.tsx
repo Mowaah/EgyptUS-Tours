@@ -60,7 +60,7 @@ function VerifyEmailContent() {
 
   return (
     <div className={styles.page}>
-      <LoadingSpinner size="lg" />
+      <LoadingSpinner size="lg" label="" />
       <div className={styles.content}>
         <p className={styles.message}>Verifying your email and preparing your account...</p>
       </div>
@@ -70,7 +70,7 @@ function VerifyEmailContent() {
 
 export default function VerifyEmailPage() {
   return (
-    <Suspense fallback={<div className={styles.page}><LoadingSpinner size="lg" /></div>}>
+    <Suspense fallback={<div className={styles.page}><LoadingSpinner size="lg" label="" /></div>}>
       <VerifyEmailContent />
     </Suspense>
   );

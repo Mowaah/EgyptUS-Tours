@@ -11,6 +11,7 @@ import {
   StatusPill,
   AuthModal,
   EmptyState,
+  LoadingSpinner,
   type BookingDetailsSection,
   type TripBookingStatus,
 } from "@/components/shared";
@@ -515,9 +516,7 @@ export default function ProfileRequestDetailsPage() {
           </header>
 
           {loading ? (
-            <div style={{ padding: "4rem", textAlign: "center", color: "#666" }}>
-              Loading request details...
-            </div>
+            <LoadingSpinner size="lg" variant="fullPage" label="" />
           ) : (
             <>
               <BookingDetailsSections sections={sections} className={styles.sections} />

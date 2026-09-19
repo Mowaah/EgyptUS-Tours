@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import EventsRequestProposalPage from "@/components/website/EventsRequestProposalPage/EventsRequestProposalPage";
+import { LoadingSpinner } from "@/components/shared";
 
 export const metadata = {
   title: "Request a Custom Proposal | Egypt-Us",
@@ -7,7 +8,7 @@ export const metadata = {
 
 export default function Page() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<LoadingSpinner size="lg" variant="fullPage" label="" />}>
       <EventsRequestProposalPage />
     </Suspense>
   );

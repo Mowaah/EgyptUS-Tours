@@ -5,7 +5,7 @@
   position: fixed;
   inset: 0;
   background: rgba(16, 24, 40, 0.4);
-  z-index: 1000;
+  z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -280,9 +280,20 @@
       font-family: inherit;
       cursor: pointer;
       text-decoration: none;
+      vertical-align: baseline;
+      text-align: left;
+      position: relative;
+      z-index: 2;
+      pointer-events: auto;
 
       &:hover {
         text-decoration: underline;
+      }
+
+      &:focus-visible {
+        outline: 2px solid $primary;
+        outline-offset: 2px;
+        border-radius: 2px;
       }
     }
   }

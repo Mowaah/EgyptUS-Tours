@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import TripsSectionFetcher from "@/components/website/TripsSection/TripsSectionFetcher";
 import FaqSectionFetcher from "@/components/website/FaqSection/FaqSectionFetcher";
 import BlogsSectionFetcher from "@/components/website/BlogsSection/BlogsSectionFetcher";
+import { LoadingSpinner } from "@/components/shared";
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateSeoMetadata({
@@ -49,27 +50,15 @@ export default async function TripsPage({ searchParams }: TripsPageProps) {
 
   return (
     <>
-      <Suspense fallback={
-        <div style={{ padding: "10rem 2rem", textAlign: "center", color: "#666" }}>
-          Loading trips...
-        </div>
-      }>
+      <Suspense fallback={<LoadingSpinner size="lg" label="" />}>
         <TripsSectionFetcher apiParams={apiParams} searchParams={params} />
       </Suspense>
 
-      <Suspense fallback={
-        <div style={{ padding: "4rem 2rem", textAlign: "center", color: "#666" }}>
-          Loading FAQs...
-        </div>
-      }>
+      <Suspense fallback={<LoadingSpinner size="lg" label="" />}>
         <FaqSectionFetcher />
       </Suspense>
 
-      <Suspense fallback={
-        <div style={{ padding: "4rem 2rem", textAlign: "center", color: "#666" }}>
-          Loading Blogs...
-        </div>
-      }>
+      <Suspense fallback={<LoadingSpinner size="lg" label="" />}>
         <BlogsSectionFetcher />
       </Suspense>
     </>

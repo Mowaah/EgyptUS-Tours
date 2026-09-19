@@ -3,6 +3,7 @@
 import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { confirmPaymobPaymentRedirect } from "@/lib/api";
+import { LoadingSpinner } from "@/components/shared";
 
 function isPaymobSuccess(params: URLSearchParams): boolean {
   const successVal = (params.get("success") || "").toLowerCase();
@@ -174,43 +175,13 @@ function PaymentResultContent() {
   }, [router, searchParams]);
 
   return (
-    <main
-      style={{
-        minHeight: "60vh",
-        padding: "120px 20px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        textAlign: "center",
-      }}
-    >
-      <div style={{ fontSize: "18px", color: "var(--text-color, #4b5563)" }}>
-        Processing your booking confirmation...
-      </div>
-    </main>
+    <LoadingSpinner size="lg" variant="fullPage" label="" />
   );
 }
 
 export default function PaymentResultPage() {
   return (
-    <Suspense
-      fallback={
-        <main
-          style={{
-            minHeight: "60vh",
-            padding: "120px 20px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <div style={{ fontSize: "18px", color: "var(--text-color, #4b5563)" }}>
-            Processing payment result...
-          </div>
-        </main>
-      }
-    >
+    <Suspense fallback={<LoadingSpinner size="lg" variant="fullPage" label="" />}>
       <PaymentResultContent />
     </Suspense>
   );

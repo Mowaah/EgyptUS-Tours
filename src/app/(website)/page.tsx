@@ -16,6 +16,7 @@ import HomeTripsFetcher from "@/components/website/HomeFetchers/HomeTripsFetcher
 import HomeHotelsFetcher from "@/components/website/HomeFetchers/HomeHotelsFetcher";
 import HomeTransportationFetcher from "@/components/website/HomeFetchers/HomeTransportationFetcher";
 import HomeTestimonialsFetcher from "@/components/website/HomeFetchers/HomeTestimonialsFetcher";
+import { LoadingSpinner } from "@/components/shared";
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateSeoMetadata({
@@ -31,11 +32,11 @@ export default function Home() {
       <HeroSection />
       <StatsBar />
       
-      <Suspense fallback={<div style={{ padding: "4rem 2rem", textAlign: "center", color: "#666" }}>Loading trips...</div>}>
+      <Suspense fallback={<LoadingSpinner size="lg" label="" />}>
         <HomeTripsFetcher />
       </Suspense>
       
-      <Suspense fallback={<div style={{ padding: "4rem 2rem", textAlign: "center", color: "#666" }}>Loading hotels...</div>}>
+      <Suspense fallback={<LoadingSpinner size="lg" label="" />}>
         <HomeHotelsFetcher />
       </Suspense>
       
@@ -44,7 +45,7 @@ export default function Home() {
       <CtaBanner />
       <StatsSection />
       
-      <Suspense fallback={<div style={{ padding: "4rem 2rem", textAlign: "center", color: "#666" }}>Loading transportation...</div>}>
+      <Suspense fallback={<LoadingSpinner size="lg" label="" />}>
         <HomeTransportationFetcher />
       </Suspense>
       
@@ -52,7 +53,7 @@ export default function Home() {
       <DesertBannerSection />
       <WhyChooseUsSection />
       
-      <Suspense fallback={<div style={{ padding: "4rem 2rem", textAlign: "center", color: "#666" }}>Loading testimonials...</div>}>
+      <Suspense fallback={<LoadingSpinner size="lg" label="" />}>
         <HomeTestimonialsFetcher />
       </Suspense>
       

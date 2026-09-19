@@ -15,6 +15,7 @@ import {
   SuccessModal,
   AuthModal,
   EmptyState,
+  LoadingSpinner,
   type BookingDetailsSection,
 } from "@/components/shared";
 import TransportBookingSummary from "@/components/website/BookTransportationPage/BookingSummary/BookingSummary";
@@ -107,7 +108,7 @@ export default function ProfileBookingDetailsPage() {
 
   useEffect(() => {
     if (searchParams.get("payment_success") === "true") {
-      setShowSuccess(true);
+      setShowPaymentSuccess(true);
       if (typeof window !== "undefined") {
         const newUrl = new URL(window.location.href);
         newUrl.searchParams.delete("payment_success");
@@ -264,7 +265,8 @@ export default function ProfileBookingDetailsPage() {
     ? getStatusConfig(remStatus)
     : null;
 
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
+  const [showCancelSuccess, setShowCancelSuccess] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [isPaying, setIsPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
@@ -521,7 +523,7 @@ export default function ProfileBookingDetailsPage() {
         }));
       }
       setShowCancelModal(false);
-      setShowSuccess(true);
+      setShowCancelSuccess(true);
     } catch (err: any) {
       const msg = err?.response?.data?.detail || "Failed to cancel booking. Please try again or contact support.";
       setCancelError(msg);
@@ -1172,7 +1174,7 @@ export default function ProfileBookingDetailsPage() {
 
       {loading ? (
         <div className={styles.container}>
-          <div className={styles.loading}>Loading booking details...</div>
+          <LoadingSpinner size="lg" variant="fullPage" label="" />
         </div>
       ) : !bookingDetail ? (
         <div className={styles.container}>
@@ -1186,7 +1188,7 @@ export default function ProfileBookingDetailsPage() {
               onChange={() => undefined}
               confirmLabel={`Confirm & Pay $${(isHotel ? hotelDepositAmount : depositAmount).toLocaleString()} ${(isHotel ? hotelDepositAmount : depositAmount) === totalAmount ? "(Full amount)" : "Deposit"}`}
               onPrevious={() => router.push(buildDetailsHref())}
-              onConfirm={() => setShowSuccess(true)}
+              onConfirm={() => setShowPaymentSuccess(true)}
               sidebar={paymentSidebar}
             />
           ) : (
@@ -1279,7 +1281,7 @@ export default function ProfileBookingDetailsPage() {
         </div>
       )}
 
-      {showSuccess && (
+      {showPaymentSuccess && (
         <SuccessModal
           title="Booking Confirmed!"
           message={
@@ -1292,7 +1294,7 @@ export default function ProfileBookingDetailsPage() {
           primaryButtonText="View Booking"
           buttonText="Back to Home"
           onPrimaryClick={() => {
-            setShowSuccess(false);
+            setShowPaymentSuccess(false);
             if (id) {
               getProfileBookingDetail(detailsType, id)
                 .then(setBookingDetail)
@@ -1346,32 +1348,19 @@ export default function ProfileBookingDetailsPage() {
         onSubmit={handleCancelBooking}
       />
 
-      {showSuccess && (
+      {showCancelSuccess && (
         <SuccessModal
           title={t("cancelModal.successTitle", "Cancellation Request Submitted")}
-          message={t("cancelModal.successMessage", "Your cancellation request has been received successfully.")}
+          message={t("cancelModal.successMessage", "Your cancellation request has been received successfully")}
           buttonText={t("cancelModal.backToHome", "Back to Home")}
+          buttonVariant="primary"
           onClose={() => {
-            setShowSuccess(false);
+            setShowCancelSuccess(false);
             router.push("/profile?tab=bookings");
           }}
           metadata={
             (isNoRefund || Number(refundSummary.refund_amount) <= 0)
-              ? [
-                  { label: t("cancelModal.bookingReference", "Booking Reference"), value: `#BK${bData.id || "53602205"}` },
-                  {
-                    label: t("cancelModal.estimatedRefund", "Refund Amount"),
-                    value: formatCurrency(
-                      isEgp
-                        ? { egp: 0 }
-                        : isEur
-                          ? { eur: 0 }
-                          : { usd: 0 }
-                    ),
-                    valueColor: "#FF6600",
-                  },
-                  { label: t("cancelModal.status", "Status"), value: t("cancelModal.noRefundAmount", "No Refunded Amount") },
-                ]
+              ? undefined
               : [
                   { label: t("cancelModal.bookingReference", "Booking Reference"), value: `#BK${bData.id || "53602205"}` },
                   {

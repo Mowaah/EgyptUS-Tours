@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import ContactPage from "@/components/website/ContactPage/ContactPage";
+import { LoadingSpinner } from "@/components/shared";
 
 export const metadata = {
   title: "Contact Us | Egypt-Us",
@@ -8,7 +9,7 @@ export const metadata = {
 
 export default function Page() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<LoadingSpinner size="lg" variant="fullPage" label="" />}>
       <ContactPage />
     </Suspense>
   );

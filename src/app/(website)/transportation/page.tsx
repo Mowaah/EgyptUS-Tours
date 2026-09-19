@@ -4,7 +4,7 @@ import { generateSeoMetadata } from "@/lib/seoUtils";
 import TransportationPage from "@/components/website/TransportationPage/TransportationPage";
 import { getAllVehicles } from "@/services/transportationService";
 import { getFaqs } from "@/services/legalHelpService";
-import { Vehicle } from "@/components/shared";
+import { Vehicle, LoadingSpinner } from "@/components/shared";
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateSeoMetadata({
@@ -69,7 +69,7 @@ export default async function Page() {
   });
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<LoadingSpinner size="lg" variant="fullPage" label="" />}>
       <TransportationPage vehicles={vehicles} faqs={faqs} />
     </Suspense>
   );

@@ -7,6 +7,7 @@ export interface SuccessModalProps {
   title?: string;
   message?: string;
   buttonText?: string;
+  buttonVariant?: "primary" | "secondary";
   hideSecondaryButton?: boolean;
   onClose: () => void;
   primaryButtonText?: string;
@@ -20,6 +21,7 @@ export default function SuccessModal({
   title = "Message Sent Successfully",
   message = "Thank you for contacting us. Our team will review your message and get back to you as soon as possible.",
   buttonText = "Back to Home",
+  buttonVariant,
   hideSecondaryButton = false,
   onClose,
   primaryButtonText,
@@ -84,7 +86,19 @@ export default function SuccessModal({
 
         <div className={styles.modalActions}>
           {!hideSecondaryButton && (
-            <button className={styles.modalSecondaryButton} onClick={onClose} type="button">
+            <button
+              className={
+                buttonVariant === "primary"
+                  ? styles.modalPrimaryButton
+                  : buttonVariant === "secondary"
+                  ? styles.modalSecondaryButton
+                  : primaryButtonText && onPrimaryClick
+                  ? styles.modalSecondaryButton
+                  : styles.modalPrimaryButton
+              }
+              onClick={onClose}
+              type="button"
+            >
               {buttonText}
             </button>
           )}

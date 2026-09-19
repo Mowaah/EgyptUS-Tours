@@ -14,6 +14,7 @@ import {
   UpcomingTripBanner,
   SuccessModal,
   AuthModal,
+  LoadingSpinner,
 } from "@/components/shared";
 import type { TabType, TripBookingCardProps } from "@/components/shared";
 import { Trip, Hotel } from "@/types";
@@ -836,7 +837,7 @@ export default function ProfilePage() {
     switch (activeTab) {
       case "favorites":
         if (favoritesLoading) {
-          return <div className={styles.loading}>Loading favorites...</div>;
+          return <LoadingSpinner size="lg" label="" />;
         }
 
         if (favoriteCategoryIndex === 0) {
@@ -901,7 +902,7 @@ export default function ProfilePage() {
         }
       case "bookings":
         if (bookingsLoading) {
-          return <div className={styles.loading}>Loading bookings...</div>;
+          return <LoadingSpinner size="lg" label="" />;
         }
 
         let bookingItems: TripBookingCardProps[] = [];
@@ -1014,7 +1015,7 @@ export default function ProfilePage() {
         );
       case "requests":
         if (requestsLoading) {
-          return <div className={styles.loading}>Loading requests...</div>;
+          return <LoadingSpinner size="lg" label="" />;
         }
         let items: TripBookingCardProps[] = [];
         let emptyIcon = "";

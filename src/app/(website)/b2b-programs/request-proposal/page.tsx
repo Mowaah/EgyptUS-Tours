@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import B2BRequestProposalPage from "@/components/website/B2BRequestProposalPage/B2BRequestProposalPage";
+import { LoadingSpinner } from "@/components/shared";
 
 export const metadata = {
   title: "Request a Corporate Proposal | Egypt-Us",
@@ -8,7 +9,7 @@ export const metadata = {
 
 export default function RequestProposal() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<LoadingSpinner size="lg" variant="fullPage" label="" />}>
       <B2BRequestProposalPage />
     </Suspense>
   );
