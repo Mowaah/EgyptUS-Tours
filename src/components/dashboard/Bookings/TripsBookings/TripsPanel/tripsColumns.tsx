@@ -189,6 +189,11 @@ export const tripsRowActions = (
 
   const op = row.operational_status?.toLowerCase();
   const isCompleted = op === "completed";
+  const isCancelled =
+    op === "cancelled" ||
+    op === "canceled" ||
+    row.status?.toLowerCase() === "cancelled" ||
+    row.status?.toLowerCase() === "canceled";
   const isRefunded =
     op === "refunded" ||
     op === "no_refund" ||
@@ -209,22 +214,23 @@ export const tripsRowActions = (
     op === "in transit";
 
   if (!isCompleted && !isRefunded && !isInProgress) {
-    actions.push(
-      {
-        label: "Assign To",
-        iconSrc: "/images/dashboard/assign.svg",
-        onClick: (r: TripBookingRow) => {
-          if (onAction) onAction("Assign To", r);
-        },
+    actions.push({
+      label: "Assign To",
+      iconSrc: "/images/dashboard/assign.svg",
+      onClick: (r: TripBookingRow) => {
+        if (onAction) onAction("Assign To", r);
       },
-      {
+    });
+
+    if (!isCancelled) {
+      actions.push({
         label: "Send Email Reminder",
         iconSrc: "/images/dashboard/booking/trips/notification-bing.svg",
         onClick: (r: TripBookingRow) => {
           if (onAction) onAction("Send Email Reminder", r);
         },
-      }
-    );
+      });
+    }
   }
 
   return actions;
