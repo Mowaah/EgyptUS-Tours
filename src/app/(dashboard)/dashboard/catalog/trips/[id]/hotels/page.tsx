@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { IncludedHotelCard } from "@/components/shared";
+import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import styles from "./page.module.scss";
 import { useTripDetailContext } from "../layout";
 
@@ -25,7 +26,11 @@ export default function TripHotelsPage() {
       </div>
 
       {hotels.length === 0 ? (
-        <p style={{ color: "#9ca3af", fontSize: "14px", padding: "24px 0" }}>No hotels have been added to this trip.</p>
+        <DashboardEmptyState
+          title="No Hotels Found"
+          subtitle="Hotels available for this trip will appear here once they are added."
+          imageSrc="/images/dashboard/empty.png"
+        />
       ) : (
         <div className={styles.grid}>
           {hotels.map((hotel: any, i: number) => (

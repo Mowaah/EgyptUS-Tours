@@ -164,7 +164,7 @@ export const createTripSchema = z
       .optional(),
 
     // Hotels Step
-    hotels: z.array(z.string()).min(1, "At least one hotel is required"),
+    hotels: z.array(z.string()),
 
     // Media Step
     photos: z

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import styles from "./page.module.scss";
 import { useTripDetailContext } from "../layout";
 
@@ -55,7 +56,11 @@ export default function TripDatesPage() {
       </div>
 
       {slots.length === 0 ? (
-        <p style={{ color: "#9ca3af", fontSize: "14px", padding: "24px 0" }}>No availability slots have been added yet.</p>
+        <DashboardEmptyState
+          title="No Availability Slots Found"
+          subtitle="Departure dates and availability will appear here once they are added."
+          imageSrc="/images/dashboard/empty.png"
+        />
       ) : (
         <div className={styles.grid}>
           {slots.map((slot) => {

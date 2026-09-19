@@ -88,7 +88,7 @@
   }
 
   .value {
-    font-weight: 600;
+    font-weight: $font-weight-medium;
     font-size: $font-size-base;
     color: $gray-700;
     display: flex;
@@ -146,7 +146,7 @@
     border-radius: 12px;
 
     .specText {
-      font-weight: 600;
+      font-weight: $font-weight-normal;
       font-size: $font-size-sm;
       line-height: 20px;
       color: $gray-500-zinc;

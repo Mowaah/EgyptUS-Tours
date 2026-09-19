@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import styles from "./page.module.scss";
 import { useTripDetailContext } from "../layout";
 import { getLangKey } from "@/components/dashboard/shared/i18n";
@@ -117,7 +118,11 @@ export default function TripItineraryPage() {
       </div>
 
       {itineraryDays.length === 0 ? (
-        <p style={{ color: "#9ca3af", fontSize: "14px", padding: "24px 0" }}>No itinerary days have been added yet.</p>
+        <DashboardEmptyState
+          title="No Itinerary Days Found"
+          subtitle="Itinerary days will appear here once they are added."
+          imageSrc="/images/dashboard/empty.png"
+        />
       ) : (
         <div className={styles.daysGrid}>
           {itineraryDays.map((day) => (

@@ -348,18 +348,39 @@ export default function ViewHotel({ bookingId }: ViewHotelProps) {
               <BookingInformation booking={mergedBooking} />
               <RoomSelection selections={roomSelections} booking={mergedBooking} />
               <PaymentOverview overview={payload?.payment_overview} payload={payload} />
-              {isRefunded && payload?.refund && (
-                <RefundBankDetailsCard
-                  data={{
-                    account_holder_name: payload.refund.account_holder_name,
-                    bank_name: payload.refund.bank_name,
-                    bank_country: payload.refund.bank_country,
-                    account_number: payload.refund.account_number,
-                    iban: payload.refund.iban,
-                    swift: payload.refund.swift_bic,
-                  }}
-                />
-              )}
+              {(() => {
+                const refundBankData =
+                  (payload as any)?.refund_bank_details ||
+                  payload?.refund ||
+                  (mergedBooking as any)?.refund_bank_details ||
+                  (payload as any)?.price_breakdown?.refund_bank_details;
+
+                const hasBankData = Boolean(
+                  refundBankData &&
+                    (refundBankData.account_holder_name ||
+                      refundBankData.accountName ||
+                      refundBankData.bank_name ||
+                      refundBankData.bankName ||
+                      refundBankData.account_number ||
+                      refundBankData.accountNumber ||
+                      refundBankData.iban)
+                );
+
+                if (!hasBankData) return null;
+
+                return (
+                  <RefundBankDetailsCard
+                    data={{
+                      account_holder_name: refundBankData.account_holder_name || refundBankData.accountName,
+                      bank_name: refundBankData.bank_name || refundBankData.bankName,
+                      bank_country: refundBankData.bank_country || refundBankData.country,
+                      account_number: refundBankData.account_number || refundBankData.accountNumber,
+                      iban: refundBankData.iban,
+                      swift: refundBankData.swift || refundBankData.swift_bic || refundBankData.swift_code,
+                    }}
+                  />
+                );
+              })()}
             </div>
             
             <div className={styles.rightColumn}>

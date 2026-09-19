@@ -27,11 +27,6 @@ export const transportationColumns: DataTableColumn<any>[] = [
     render: (row) => row.luggage_capacity?.toString() || "0",
   },
   {
-    id: "rating",
-    header: "Rating",
-    render: (row) => row.rating_avg || "0",
-  },
-  {
     id: "startingFrom",
     header: "Starting From",
     render: (row) =>

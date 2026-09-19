@@ -82,7 +82,7 @@
   }
 
   .value {
-    font-weight: 600;
+    font-weight: $font-weight-medium;
     font-size: $font-size-lg;
     line-height: 19px;
     color: $gray-700;
@@ -115,7 +115,7 @@
   border-radius: 21px;
 
   span {
-    font-weight: 400;
+    font-weight: $font-weight-medium;
     font-size: $font-size-sm;
     letter-spacing: 0.01em;
     color: $primary;
@@ -150,7 +150,7 @@
   }
 
   span {
-    font-weight: 700;
+    font-weight: $font-weight-medium;
     font-size: $font-size-xs;
     color: $secondary;
   }
@@ -176,7 +176,7 @@
   }
 
   span {
-    font-weight: 700;
+    font-weight: $font-weight-medium;
     font-size: $font-size-xs;
     color: #16a34a;
   }
@@ -331,7 +331,7 @@
     border-radius: 12px;
 
     .specText {
-      font-weight: 600;
+      font-weight: $font-weight-normal;
       font-size: $font-size-sm;
       line-height: 1.43;
       color: $gray-500-zinc;
@@ -339,7 +339,7 @@
     }
 
     &.boldText .specText {
-      font-weight: 700;
+      font-weight: 600;
     }
   }
 }
