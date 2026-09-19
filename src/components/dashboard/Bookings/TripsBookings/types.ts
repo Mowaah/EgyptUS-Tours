@@ -17,7 +17,7 @@ export interface TripBookingRow {
   end_date: string;
   adults: number;
   tour_type: "private" | "group";
-  operational_status: "upcoming" | "on_trip" | "completed" | "cancelled" | "refunded";
+  operational_status: "upcoming" | "on_trip" | "completed" | "cancelled" | "refunded" | "no_refunded_amount";
   payment_display: string;
   source: "website" | "admin";
   assigned_to: { id: number; full_name: string; profile_picture: string | null } | null;
@@ -25,6 +25,7 @@ export interface TripBookingRow {
   payment_status: "pending" | "partially_paid" | "paid";
   remaining_payment_status: "paid" | "pending" | "overdue";
   total_price: string;
+  refunded_amount?: string | null;
   currency: string;
   created_at: string;
 }

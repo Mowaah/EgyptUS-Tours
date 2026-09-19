@@ -145,7 +145,14 @@ export const hotelsColumns: DataTableColumn<HotelBookingRow>[] = [
     header: "Payment",
     render: (row) => {
       const op = row.operational_status?.toLowerCase();
-      if (op === "cancelled" || op === "refunded" || !row.remaining_payment_status) {
+      if (
+        op === "cancelled" ||
+        op === "refunded" ||
+        op === "no_refund" ||
+        op === "no_refunded" ||
+        op === "no_refunded_amount" ||
+        !row.remaining_payment_status
+      ) {
         return <span style={{ color: "#9CA3AF" }}>-</span>;
       }
       const rem = row.remaining_payment_status?.toLowerCase();
@@ -163,7 +170,12 @@ export const hotelsColumns: DataTableColumn<HotelBookingRow>[] = [
     render: (row) => {
       const status = row.operational_status;
       const op = status?.toLowerCase();
-      const isNoRefund = op === "no_refund" || op === "no_refunded" || op === "no_refunded_amount";
+      const refAmt = Number(row.refunded_amount);
+      const isNoRefund =
+        op === "no_refund" ||
+        op === "no_refunded" ||
+        op === "no_refunded_amount" ||
+        (op === "refunded" && !isNaN(refAmt) && refAmt === 0 && row.refunded_amount != null);
       const isInHotel = op === "in_stay" || op === "in_hotel" || op === "in stay" || op === "in hotel" || op === "on_trip";
 
       const variant = status === "upcoming"
@@ -172,7 +184,9 @@ export const hotelsColumns: DataTableColumn<HotelBookingRow>[] = [
         ? "green"
         : isInHotel
         ? "orange"
-        : (op === "refunded" || isNoRefund)
+        : isNoRefund
+        ? "gray"
+        : op === "refunded"
         ? "pink"
         : "red";
 

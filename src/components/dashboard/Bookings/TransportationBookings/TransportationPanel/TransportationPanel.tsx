@@ -22,7 +22,7 @@ const filterOptions = {
   vehicleClass: ["All", "Mercedes V-Class", "Toyota Coaster", "Bus (50 Seats)", "Hyundai H1"],
   tripType: ["All", "One Way", "Round Trip"],
   paymentStatus: ["All", "Paid", "Pending", "Overdue"],
-  status: ["All", "Upcoming", "In Transit", "Completed", "Cancelled", "Refunded"],
+  status: ["All", "Upcoming", "In Transit", "Completed", "Cancelled", "Refunded", "No Refunded Amount"],
   source: ["All", "Website", "Agent"],
 };
 
@@ -71,6 +71,7 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
         Completed: "completed",
         Cancelled: "cancelled",
         Refunded: "refunded",
+        "No Refunded Amount": "no_refunded_amount",
       };
       params.operational_status = statusMap[appliedFilters.status] ?? appliedFilters.status.toLowerCase().replace(" ", "_");
     }

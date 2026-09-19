@@ -187,7 +187,7 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
           {remainingPaymentLabel}
         </span>
       )}
-      <span className={getPillStyle(payload.operational_status)}>
+      <span className={getPillStyle(operationalStatusLabel === "No Refunded Amount" ? "no_refunded_amount" : payload.operational_status)}>
         <i aria-hidden></i>
         {operationalStatusLabel}
       </span>

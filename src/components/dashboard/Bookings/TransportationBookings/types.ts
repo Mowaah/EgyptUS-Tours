@@ -10,7 +10,7 @@ export interface TransportationBookingRow {
   pickup_date: string;
   pickup_time: string;
   trip_type: "one_way" | "round_trip";
-  operational_status: "upcoming" | "completed" | "cancelled" | "refunded";
+  operational_status: "upcoming" | "completed" | "cancelled" | "refunded" | "in_transit" | "no_refunded_amount";
   payment_display: string;
   source: "website" | "admin";
   assigned_to: { id: number; full_name: string; profile_picture: string | null } | null;
@@ -18,6 +18,7 @@ export interface TransportationBookingRow {
   payment_status: "pending" | "partially_paid" | "paid";
   remaining_payment_status: "paid" | "pending" | "overdue";
   total_price: string;
+  refunded_amount?: string | null;
   currency: string;
   created_at: string;
 }

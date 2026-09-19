@@ -117,6 +117,11 @@
   background: rgba(206, 109, 255, 0.1);
   i { background: #CE6DFF; }
 }
+.pillNoRefund {
+  color: $text-light;
+  background: $gray-50-tailwind;
+  i { background: $text-light; }
+}
 .pillOnTrip {
   color: #EA580C;
   background: #FFEDD5;

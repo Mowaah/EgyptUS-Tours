@@ -58,6 +58,8 @@ interface RequestDetailsLayoutProps {
     deposit_amount: string;
     remaining_balance: string;
     currency: string;
+    paid_to_date?: string;
+    payment_plan?: string;
   };
   refundSummary?: {
     package_total: string;
@@ -361,6 +363,64 @@ export default function RequestDetailsLayout({
                     <Image src="/images/dashboard/requests/footer/record-deposit-payment.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
                     Record Full Payment
                   </button>
+                </>
+              ) : status === "Overdue" || status.toLowerCase().includes("overdue") ? (
+                <>
+                  <button
+                    className={styles.reassignBtn}
+                    type="button"
+                    onClick={() => setActiveModalKey("assign")}
+                  >
+                    <Image src="/images/dashboard/requests/footer/re-assign.svg" alt="" width={20} height={20} />
+                    Re-Assign to Employee
+                  </button>
+                  <button
+                    className={styles.reassignBtn}
+                    type="button"
+                    onClick={() => setActiveModalKey("mark_rejected")}
+                  >
+                    <Image src="/images/dashboard/requests/footer/mark-as-rejected.svg" alt="" width={20} height={20} />
+                    Mark as Rejected
+                  </button>
+                  <button
+                    className={styles.reassignBtn}
+                    type="button"
+                    onClick={() => {
+                      const isDeposit = (paymentOverview?.paid_to_date ? Number(paymentOverview.paid_to_date) : 0) < (paymentOverview?.deposit_amount ? Number(paymentOverview.deposit_amount) : 0);
+                      handleActionClick("send_payment_reminder", { reminder_type: isDeposit ? "deposit" : "remaining" }, "Email reminder sent");
+                    }}
+                  >
+                    <Image src="/images/dashboard/requests/footer/send-email-remainder.svg" alt="" width={20} height={20} />
+                    Send Email Reminder
+                  </button>
+                  {paymentOverview && Number(paymentOverview.paid_to_date || 0) >= Number(paymentOverview.deposit_amount || 0) && Number(paymentOverview.deposit_amount || 0) > 0 ? (
+                    <button
+                      className={styles.createProposalBtn}
+                      type="button"
+                      onClick={() => setActiveModalKey("record_remaining")}
+                    >
+                      <Image src="/images/dashboard/requests/footer/record-deposit-payment.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
+                      Record Remaining Payment
+                    </button>
+                  ) : paymentOverview && (paymentOverview as any).payment_plan === "full" ? (
+                    <button
+                      className={styles.createProposalBtn}
+                      type="button"
+                      onClick={() => setActiveModalKey("record_remaining")}
+                    >
+                      <Image src="/images/dashboard/requests/footer/record-deposit-payment.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
+                      Record Full Payment
+                    </button>
+                  ) : (
+                    <button
+                      className={styles.createProposalBtn}
+                      type="button"
+                      onClick={() => setActiveModalKey("record_deposit")}
+                    >
+                      <Image src="/images/dashboard/requests/footer/record-deposit-payment.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
+                      Record Deposit Payment
+                    </button>
+                  )}
                 </>
               ) : status === "Deposit Paid" ? (
                 <>

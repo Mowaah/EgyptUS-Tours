@@ -15,11 +15,11 @@ export const getPillStyle = (status: string) => {
     cancelled: styles.pillCanceled,
     canceled: styles.pillCanceled,
     refunded: styles.pillRefunded,
-    no_refund: styles.pillRefunded,
-    no_refunded: styles.pillRefunded,
-    no_refunded_amount: styles.pillRefunded,
-    "no refund": styles.pillRefunded,
-    "no refunded amount": styles.pillRefunded,
+    no_refund: styles.pillNoRefund,
+    no_refunded: styles.pillNoRefund,
+    no_refunded_amount: styles.pillNoRefund,
+    "no refund": styles.pillNoRefund,
+    "no refunded amount": styles.pillNoRefund,
     on_trip: styles.pillOnTrip,
     completed: styles.pillCompleted,
     overdue: styles.pillOverdue,
@@ -83,7 +83,14 @@ export const transportationColumns: DataTableColumn<TransportationBookingRow>[] 
     header: "Payment",
     render: (row) => {
       const op = row.operational_status?.toLowerCase();
-      if (op === "cancelled" || op === "refunded" || !row.remaining_payment_status) {
+      if (
+        op === "cancelled" ||
+        op === "refunded" ||
+        op === "no_refund" ||
+        op === "no_refunded" ||
+        op === "no_refunded_amount" ||
+        !row.remaining_payment_status
+      ) {
         return <span style={{ color: "#9CA3AF" }}>-</span>;
       }
       return (
@@ -103,12 +110,18 @@ export const transportationColumns: DataTableColumn<TransportationBookingRow>[] 
         ? row.operational_status.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
         : "-";
 
-      if (op === "no_refund" || op === "no_refunded" || op === "no_refunded_amount") {
+      const refAmt = Number(row.refunded_amount);
+      if (
+        op === "no_refund" ||
+        op === "no_refunded" ||
+        op === "no_refunded_amount" ||
+        (op === "refunded" && !isNaN(refAmt) && refAmt === 0 && row.refunded_amount != null)
+      ) {
         label = "No Refunded Amount";
       }
 
       return (
-        <span className={getPillStyle(row.operational_status)}>
+        <span className={getPillStyle(label === "No Refunded Amount" ? "no_refunded_amount" : row.operational_status)}>
           <i aria-hidden />
           {label}
         </span>

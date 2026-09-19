@@ -183,7 +183,7 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
           {remainingPaymentLabel}
         </span>
       )}
-      <span className={getTripsPillStyle(payload.operational_status)}>
+      <span className={getTripsPillStyle(operationalStatusLabel === "No Refunded Amount" ? "no_refunded_amount" : payload.operational_status)}>
         <i aria-hidden></i>
         {operationalStatusLabel}
       </span>

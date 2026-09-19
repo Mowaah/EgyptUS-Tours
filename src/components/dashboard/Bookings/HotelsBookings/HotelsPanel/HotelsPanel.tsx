@@ -20,7 +20,7 @@ import { ReassignModal } from "@/components/dashboard/shared";
 
 const filterOptions = {
   paymentStatus: ["All", "Paid", "Pending", "Overdue"],
-  status: ["All", "Upcoming", "In Hotel", "Completed", "Cancelled", "Refunded"],
+  status: ["All", "Upcoming", "In Hotel", "Completed", "Cancelled", "Refunded", "No Refunded Amount"],
   source: ["All", "Website", "Agent"],
 };
 
@@ -63,6 +63,7 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
         Completed: "completed",
         Cancelled: "cancelled",
         Refunded: "refunded",
+        "No Refunded Amount": "no_refunded_amount",
       };
       params.operational_status = statusMap[appliedFilters.status] ?? appliedFilters.status.toLowerCase().replace(" ", "_");
     }

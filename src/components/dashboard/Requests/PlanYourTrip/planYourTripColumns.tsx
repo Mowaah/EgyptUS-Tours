@@ -44,6 +44,7 @@ export const getStatusVariant = (status: string): StatusPillVariant => {
   if (s.includes("in trip")) return "magenta";
   if (s.includes("completed")) return "blueDark";
   if (s.includes("refund")) return "darkBlue";
+  if (s.includes("overdue")) return "orangeDark";
   return "gray";
 };
 
