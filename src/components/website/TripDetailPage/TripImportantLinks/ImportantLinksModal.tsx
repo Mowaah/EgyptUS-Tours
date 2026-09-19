@@ -106,6 +106,20 @@ export default function ImportantLinksModal({
         aria-labelledby="policy-modal-title"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Header — section title + close button */}
+        <div className={styles.headerRow}>
+          <div className={styles.headerText}>
+            <h2 id="policy-modal-title" className={styles.modalTitle}>
+              {loading
+                ? t("loading", "Loading...")
+                : activeTab?.label ?? t("noContent", "No content available")}
+            </h2>
+          </div>
+          <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Close dialog">
+            <Image src="/images/x-modal.svg" alt="" width={20} height={20} />
+          </button>
+        </div>
+
         {/* Tab row — each backend section is a tab */}
         {!loading && tabs.length > 0 && (
           <div className={styles.tabRow} role="tablist" aria-label="Legal sections">
@@ -125,21 +139,7 @@ export default function ImportantLinksModal({
           </div>
         )}
 
-        {/* Header — just the active section title, no subtitle */}
-        <div className={styles.headerRow}>
-          <div className={styles.headerText}>
-            <h2 id="policy-modal-title" className={styles.modalTitle}>
-              {loading
-                ? t("loading", "Loading...")
-                : activeTab?.label ?? t("noContent", "No content available")}
-            </h2>
-          </div>
-          <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Close dialog">
-            <Image src="/images/x-modal.svg" alt="" width={24} height={24} />
-          </button>
-        </div>
-
-        <hr className={styles.divider} />
+        {(loading || tabs.length === 0) && <hr className={styles.divider} />}
 
         {/* Content */}
         <div className={styles.body} role="tabpanel" aria-labelledby={`policy-tab-${activeKey}`}>

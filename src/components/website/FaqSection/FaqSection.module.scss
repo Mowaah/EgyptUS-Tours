@@ -61,7 +61,7 @@
 .question {
   width: 100%;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px 12px;
   padding: 14px 14px 14px 16px;
   background: transparent;
@@ -76,7 +76,7 @@
   transition: none !important;
 
   @media (min-width: 640px) {
-    align-items: flex-start;
+    align-items: center;
     gap: 16px;
     padding: 18px 20px;
   }
@@ -100,6 +100,8 @@
 }
 
 .number {
+  display: inline-flex;
+  align-items: center;
   font-size: $font-size-15;
   font-weight: $font-weight-bold;
   color: $dark-navy-deep;
@@ -111,8 +113,13 @@
     line-height: 1.4;
   }
 
+  @media (min-width: 1024px) {
+    font-size: $font-size-2xl;
+    line-height: 1.4;
+  }
+
   @media (max-width: 1500px) {
-    font-size: $font-size-19;
+    font-size: $font-size-2xl;
     line-height: 1.4;
   }
 

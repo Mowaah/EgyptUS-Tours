@@ -35,6 +35,16 @@
   box-shadow: 0 25px 80px rgba(15, 23, 42, 0.12), 0 0 1px rgba(15, 23, 42, 0.08);
   animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
+
+  @media (max-width: 768px) {
+    border-radius: 24px;
+    max-height: calc(100vh - 60px);
+  }
+
+  @media (max-width: 480px) {
+    border-radius: 20px;
+    max-height: calc(100vh - 40px);
+  }
 }
 
 @keyframes slideUp {
@@ -52,8 +62,9 @@
 .tabRow {
   display: flex;
   flex-wrap: nowrap;
-  gap: 0;
-  padding: 14px 16px 0;
+  gap: 24px;
+  padding: 0 28px;
+  border-bottom: 1px solid $border-strong;
   overflow-x: auto;
   scrollbar-width: none;
   flex-shrink: 0;
@@ -61,33 +72,49 @@
   &::-webkit-scrollbar {
     display: none;
   }
+
+  @media (max-width: 768px) {
+    padding: 0 24px;
+    gap: 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0 16px;
+    gap: 16px;
+  }
 }
 
 .tab {
   flex: 0 0 auto;
   position: relative;
-  padding: 16px 12px 14px;
+  padding: 0 0 14px;
   border: none;
-  border-bottom: 1px solid $border-strong;
   background: transparent;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   font-family: inherit;
-  color: $dark;
+  color: $gray-500;
   cursor: pointer;
   white-space: nowrap;
-  transition: color $transition-fast, border-color $transition-fast;
+  transition: color $transition-fast;
 
   &:hover {
     color: $dark;
-    opacity: 0.8;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0 0 12px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0 0 10px;
+    font-size: $font-size-13;
   }
 }
 
 .tabActive {
   color: $dark;
   font-weight: $font-weight-semibold;
-  border-bottom-color: transparent;
 
   &::after {
     content: "";
@@ -96,18 +123,28 @@
     left: 0;
     right: 0;
     height: 3px;
-    border-radius: 3px;
+    border-radius: 3px 3px 0 0;
     background: $primary;
+    z-index: 1;
   }
 }
 
 .headerRow {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
   padding: 24px 28px 20px;
   flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    padding: 20px 24px 16px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 16px 16px 12px;
+    gap: 12px;
+  }
 }
 
 .headerText {
@@ -115,11 +152,19 @@
 }
 
 .modalTitle {
-  margin: 0 0 8px;
+  margin: 0;
   font-size: $font-size-2xl;
   font-weight: $font-weight-bold;
   color: $dark;
   line-height: 1.25;
+
+  @media (max-width: 768px) {
+    font-size: $font-size-xl;
+  }
+
+  @media (max-width: 480px) {
+    font-size: $font-size-lg;
+  }
 }
 
 .modalSubtitle {
@@ -135,14 +180,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   padding: 0;
   border: 1px solid $border-strong;
   border-radius: 50%;
   background: $white;
   cursor: pointer;
-  transition: background $transition-fast, border-color $transition-fast;
+  transition: background $transition-fast, border-color $transition-fast, width $transition-fast, height $transition-fast;
 
   &:hover {
     background: $background-alt;
@@ -156,6 +201,28 @@
 
   img {
     display: block;
+    width: 20px;
+    height: 20px;
+  }
+
+  @media (max-width: 768px) {
+    width: 36px;
+    height: 36px;
+
+    img {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    width: 32px;
+    height: 32px;
+
+    img {
+      width: 16px;
+      height: 16px;
+    }
   }
 }
 
@@ -175,6 +242,14 @@
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   transform: translateZ(0);
+
+  @media (max-width: 768px) {
+    padding: 20px 24px 24px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 16px 16px 20px;
+  }
 
   &::-webkit-scrollbar {
     width: 8px;
