@@ -26,6 +26,13 @@ export function formatStatusLabel(rawStatus?: string | null): string {
       return "Refunded";
     case "refund_completed":
       return "Refund Completed";
+    case "no_refund":
+    case "no_refunded":
+    case "no_refunded_amount":
+    case "no refund":
+    case "no refunded":
+    case "no refunded amount":
+      return "No Refunded Amount";
     case "partially_paid":
       return "Partially Paid";
     case "fully_paid":
@@ -66,6 +73,7 @@ export function getStatusVariant(status?: string | null): StatusPillVariant {
   if (!status) return "gray";
   const s = status.toLowerCase().replace(/[-_]/g, " ").trim();
 
+  if (s.includes("no refund") || s.includes("no refunded")) return "gray";
   if (s.includes("refund")) return "darkBlue";
   if (s === "new") return "green";
   if (s.includes("in progress")) return "orangeDark";
@@ -95,6 +103,11 @@ export function getStatusVariant(status?: string | null): StatusPillVariant {
 export function getStatusIconType(status?: string | null): StatusIconType {
   if (!status) return "dot";
   const s = status.toLowerCase().replace(/[-_]/g, " ").trim();
+
+  // No refund states
+  if (s.includes("no refund") || s.includes("no refunded")) {
+    return "x";
+  }
 
   // Refund states
   if (s.includes("refund in progress") || s === "refund_in_progress") {

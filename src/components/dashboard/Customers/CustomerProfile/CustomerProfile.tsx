@@ -58,13 +58,16 @@ function CustomerProfileContent({ customerId }: CustomerProfileProps) {
   const [isBlockBannerOpen, setIsBlockBannerOpen] = useState(false);
   const [isUnblockBannerOpen, setIsUnblockBannerOpen] = useState(false);
 
+  const { canEdit } = useAdminAuth();
+  const canEditCustomers = canEdit("customers");
+
+  const { customer, isLoading, refetch } = useAdminCustomer(customerId);
+
   const handleTabChange = (tabId: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("tab", tabId);
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
-
-  const { customer, isLoading, refetch } = useAdminCustomer(customerId);
 
   if (isLoading) {
     return <div style={{ padding: 40, textAlign: "center" }}>Loading customer profile...</div>;
@@ -73,9 +76,6 @@ function CustomerProfileContent({ customerId }: CustomerProfileProps) {
   if (!customer) {
     return <div style={{ padding: 40, textAlign: "center" }}>Customer not found</div>;
   }
-
-  const { canEdit } = useAdminAuth();
-  const canEditCustomers = canEdit("customers");
 
   return (
     <div className={styles.page}>
@@ -95,32 +95,19 @@ function CustomerProfileContent({ customerId }: CustomerProfileProps) {
               getCountryName(customer.nationality),
             ]}
             actionButtons={
-              <>
-                <label className={styles.searchBox}>
-                  <Image
-                    src="/images/dashboard/navbar/search.svg"
-                    alt=""
-                    width={24}
-                    height={24}
-                    aria-hidden
-                  />
-                  <input type="search" placeholder="Search ........" />
-                </label>
+              canEditCustomers ? (
+                <>
+                  <button className={styles.editButton} type="button" onClick={() => setIsEditModalOpen(true)}>
+                    <Image src="/images/dashboard/edit.svg" alt="" width={20} height={20} />
+                    Edit Profile
+                  </button>
 
-                {canEditCustomers && (
-                  <>
-                    <button className={styles.editButton} type="button" onClick={() => setIsEditModalOpen(true)}>
-                      <Image src="/images/dashboard/edit.svg" alt="" width={20} height={20} />
-                      Edit Profile
-                    </button>
-
-                    <button className={styles.blockButton} type="button" onClick={() => setIsBlockModalOpen(true)}>
-                      <Image src="/images/dashboard/block.svg" alt="" width={20} height={20} />
-                      {customer.status === "blocked" ? "Unblock User" : "Block User"}
-                    </button>
-                  </>
-                )}
-              </>
+                  <button className={styles.blockButton} type="button" onClick={() => setIsBlockModalOpen(true)}>
+                    <Image src="/images/dashboard/block.svg" alt="" width={20} height={20} />
+                    {customer.status === "blocked" ? "Unblock User" : "Block User"}
+                  </button>
+                </>
+              ) : undefined
             }
           />
         </DashboardNavbar>

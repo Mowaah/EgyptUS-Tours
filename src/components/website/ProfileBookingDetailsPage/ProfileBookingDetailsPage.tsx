@@ -217,11 +217,37 @@ export default function ProfileBookingDetailsPage() {
   const isStartDatePast = startDateStr ? new Date(startDateStr) < new Date() : false;
 
   // Refund status flags
-  const isRefundInProgress = opStatus === "refund_in_progress" || rawStatus === "refund_in_progress";
-  const isRefunded = opStatus === "refunded" || rawStatus === "refunded";
+  const rawRefundAmtVal = Number(
+    bData.refund_summary?.refund_amount ??
+    bData.refund_amount ??
+    bData.payment_overview?.refunded_amount ??
+    bData.price_breakdown?.refund_summary?.refund_amount ??
+    bData.details?.price_breakdown?.refund_summary?.refund_amount
+  );
+  const isZeroRefundAmount = !isNaN(rawRefundAmtVal) && rawRefundAmtVal === 0 && (
+    bData.refund_summary?.refund_amount !== undefined ||
+    bData.refund_amount !== undefined ||
+    bData.payment_overview?.refunded_amount !== undefined ||
+    bData.price_breakdown?.refund_summary?.refund_amount !== undefined ||
+    bData.details?.price_breakdown?.refund_summary?.refund_amount !== undefined
+  );
+
+  const isNoRefund =
+    opStatus === "no_refund" ||
+    opStatus === "no_refunded" ||
+    opStatus === "no_refunded_amount" ||
+    rawStatus === "no_refund" ||
+    rawStatus === "no_refunded" ||
+    rawStatus === "no_refunded_amount" ||
+    ((isCancelled || opStatus === "refunded" || rawStatus === "refunded") && isZeroRefundAmount);
+
+  const isRefundInProgress = !isNoRefund && (opStatus === "refund_in_progress" || rawStatus === "refund_in_progress");
+  const isRefunded = !isNoRefund && (opStatus === "refunded" || rawStatus === "refunded");
 
   let primaryStatus = rawStatus;
-  if (isRefunded) {
+  if (isNoRefund) {
+    primaryStatus = "no_refunded_amount";
+  } else if (isRefunded) {
     primaryStatus = "refunded";
   } else if (isRefundInProgress) {
     primaryStatus = "refund_in_progress";
@@ -234,7 +260,7 @@ export default function ProfileBookingDetailsPage() {
   }
 
   const primaryConfig = getStatusConfig(primaryStatus);
-  const secondaryConfig = !isCancelled && !isRejected && !isRefundInProgress && !isRefunded && remStatus && remStatus !== primaryStatus && !(remStatus === "paid" && (primaryStatus === "confirmed" || primaryStatus === "paid"))
+  const secondaryConfig = !isCancelled && !isRejected && !isRefundInProgress && !isRefunded && !isNoRefund && remStatus && remStatus !== primaryStatus && !(remStatus === "paid" && (primaryStatus === "confirmed" || primaryStatus === "paid"))
     ? getStatusConfig(remStatus)
     : null;
 
@@ -244,7 +270,7 @@ export default function ProfileBookingDetailsPage() {
   const [payError, setPayError] = useState<string | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
   const [cancelError, setCancelError] = useState<string | null>(null);
-  const isCancelledOrRefunded = isCancelled || isRejected || isRefundInProgress || isRefunded;
+  const isCancelledOrRefunded = isCancelled || isRejected || isRefundInProgress || isRefunded || isNoRefund;
   const showCancelAction = !isCancelledOrRefunded;
   const showPayAction = !isFullyPaid && !isCancelledOrRefunded && !isStartDatePast;
   const showFooter = showCancelAction || showPayAction;
@@ -471,23 +497,27 @@ export default function ProfileBookingDetailsPage() {
           localStorage.setItem(`cancelled_by_user_${detailsType}_${id}`, "true");
         } catch {}
       }
+      const refAmtNum = Number(cancelData?.refund_summary?.refund_amount ?? refundSummary?.refund_amount ?? 0);
+      const isZeroRefund = refAmtNum <= 0;
+      const defaultOpStatus = isZeroRefund ? "no_refunded_amount" : "refund_in_progress";
+
       if (updated) {
         setBookingDetail({
           ...updated,
-          operational_status: updated.operational_status || "refund_in_progress",
+          operational_status: updated.operational_status || defaultOpStatus,
           cancelled_by: "user",
           refund_summary: updated.refund_summary || cancelData?.refund_summary || refundSummary,
-          refund_bank_details: updated.refund_bank_details || cancelData?.bank_details,
+          refund_bank_details: isZeroRefund ? undefined : (updated.refund_bank_details || cancelData?.bank_details),
         });
       } else {
         setBookingDetail((prev: any) => ({
           ...prev,
           status: "cancelled",
           request_status: "cancelled",
-          operational_status: "refund_in_progress",
+          operational_status: defaultOpStatus,
           cancelled_by: "user",
           refund_summary: cancelData?.refund_summary || refundSummary,
-          refund_bank_details: cancelData?.bank_details,
+          refund_bank_details: isZeroRefund ? undefined : cancelData?.bank_details,
         }));
       }
       setShowCancelModal(false);
@@ -882,7 +912,7 @@ export default function ProfileBookingDetailsPage() {
     bData.reason ||
     bData.refund_receipt
   );
-  const hasRefundDetails = (isRefundInProgress || isRefunded) && (hasBankData || hasSummaryData);
+  const hasRefundDetails = (isRefundInProgress || isRefunded || isNoRefund) && (hasBankData || hasSummaryData);
 
   const bookingCurrency = (
     bData.currency ||
@@ -1203,7 +1233,7 @@ export default function ProfileBookingDetailsPage() {
 
               {hasRefundDetails && (
                 <div className={styles.refundContainer}>
-                  {hasBankData && (
+                  {hasBankData && !isNoRefund && (
                     <RefundBankDetailsCard data={refundBankData} />
                   )}
                   {hasSummaryData && (
@@ -1325,22 +1355,40 @@ export default function ProfileBookingDetailsPage() {
             setShowSuccess(false);
             router.push("/profile?tab=bookings");
           }}
-          metadata={[
-            { label: t("cancelModal.bookingReference", "Booking Reference"), value: `#BK${bData.id || "53602205"}` },
-            {
-              label: t("cancelModal.estimatedRefund", "Refund Amount"),
-              value: formatCurrency(
-                isEgp
-                  ? { egp: refundSummary.refund_amount }
-                  : isEur
-                    ? { eur: refundSummary.refund_amount }
-                    : { usd: refundSummary.refund_amount }
-              ),
-              valueColor: "#FF6600",
-            },
-            { label: t("cancelModal.refundMethod", "Refund Method"), value: t("cancelModal.bankTransfer", "Bank Transfer") },
-            { label: t("cancelModal.processingTime", "Estimated Processing Time"), value: t("cancelModal.businessDays", "7 - 10 Business Days") }
-          ]}
+          metadata={
+            (isNoRefund || Number(refundSummary.refund_amount) <= 0)
+              ? [
+                  { label: t("cancelModal.bookingReference", "Booking Reference"), value: `#BK${bData.id || "53602205"}` },
+                  {
+                    label: t("cancelModal.estimatedRefund", "Refund Amount"),
+                    value: formatCurrency(
+                      isEgp
+                        ? { egp: 0 }
+                        : isEur
+                          ? { eur: 0 }
+                          : { usd: 0 }
+                    ),
+                    valueColor: "#FF6600",
+                  },
+                  { label: t("cancelModal.status", "Status"), value: t("cancelModal.noRefundAmount", "No Refunded Amount") },
+                ]
+              : [
+                  { label: t("cancelModal.bookingReference", "Booking Reference"), value: `#BK${bData.id || "53602205"}` },
+                  {
+                    label: t("cancelModal.estimatedRefund", "Refund Amount"),
+                    value: formatCurrency(
+                      isEgp
+                        ? { egp: refundSummary.refund_amount }
+                        : isEur
+                          ? { eur: refundSummary.refund_amount }
+                          : { usd: refundSummary.refund_amount }
+                    ),
+                    valueColor: "#FF6600",
+                  },
+                  { label: t("cancelModal.refundMethod", "Refund Method"), value: t("cancelModal.bankTransfer", "Bank Transfer") },
+                  { label: t("cancelModal.processingTime", "Estimated Processing Time"), value: t("cancelModal.businessDays", "7 - 10 Business Days") },
+                ]
+          }
         />
       )}
 

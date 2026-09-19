@@ -133,7 +133,11 @@ export default function ViewB2BRequest({ requestId }: { requestId: string }) {
       refundSummary={computedRefundSummary}
       leftColumnContent={
         <>
-          <CompanyInformation request={requestData.company_information} />
+          <CompanyInformation
+            request={requestData.company_information}
+            startDate={requestData.start_date || requestData.program_start_date}
+            endDate={requestData.end_date}
+          />
           {requestData.proposal_files && requestData.proposal_files.length > 0 && (
             <ProposalFile files={requestData.proposal_files} />
           )}

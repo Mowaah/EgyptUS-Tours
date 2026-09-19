@@ -391,7 +391,9 @@
     "refundMethod": "Refund Method",
     "bankTransfer": "Bank Transfer",
     "processingTime": "Estimated Processing Time",
-    "businessDays": "7 - 10 Business Days"
+    "businessDays": "7 - 10 Business Days",
+    "status": "Status",
+    "noRefundAmount": "No Refunded Amount"
   },
   "rooms": {
     "singleRoom": "Single Room",

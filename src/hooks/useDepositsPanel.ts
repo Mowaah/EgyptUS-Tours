@@ -66,7 +66,7 @@ export function useDepositsPanel({
     
     const exportRows = data.map((item: any) => ({
       "Booking Type": item.booking_type || "",
-      "Booking ID": item.booking_id || "",
+      "Booking ID": item.booking_code || (item.booking_id ? (String(item.booking_id).startsWith("#") ? item.booking_id : `#${item.booking_id}`) : ""),
       "Customer": item.customer_name || "",
       "Total Price": item.total_price || "",
       "Deposit Amount": item.deposit_amount || "",

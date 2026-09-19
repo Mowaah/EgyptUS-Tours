@@ -36,10 +36,19 @@ export interface AdminCustomerOverview {
   bookings_count: number;
   requests_count: number;
   reviews_count: number;
-  total_spent_by_currency: Record<string, string | number>;
+  total_spent?: string | number;
+  total_spent_by_currency: Array<{ currency: string; amount?: string | number; amount_usd?: string | number }> | Record<string, string | number>;
   last_activity_at: string | null;
-  service_breakdown: Record<string, number>;
-  destinations_breakdown: Record<string, number>;
+  service_breakdown: Array<{
+    service: string;
+    bookings_count: number;
+    revenue_by_currency?: Array<{ currency: string; amount?: string | number; amount_usd?: string | number }>;
+  }> | Record<string, number>;
+  destinations_breakdown: Array<{
+    destination: string;
+    bookings_count: number;
+    pct?: string | number;
+  }> | Record<string, number>;
 }
 
 export interface AdminCustomerFilters {

@@ -93,6 +93,8 @@ export default function CancelBookingModal({
   if (!open) return null;
 
   const isOther = reason === "Other";
+  const refundAmount = refundSummary?.refund_amount != null ? Number(refundSummary.refund_amount) : 0;
+  const hasRefund = refundAmount > 0;
 
   const getErrors = () => {
     const errs: Record<string, string> = {};
@@ -109,43 +111,45 @@ export default function CancelBookingModal({
       }
     }
 
-    if (!accountName.trim()) {
-      errs.accountName = t("cancelModal.errors.accountNameRequired", "Account holder name is required.");
-    } else if (accountName.trim().length < 3) {
-      errs.accountName = t("cancelModal.errors.accountNameMin", "Account holder name must be at least 3 characters.");
-    } else if (!/^[\p{L}\s.'-]+$/u.test(accountName.trim())) {
-      errs.accountName = t("cancelModal.errors.accountNameInvalid", "Please enter a valid name.");
-    }
+    if (hasRefund) {
+      if (!accountName.trim()) {
+        errs.accountName = t("cancelModal.errors.accountNameRequired", "Account holder name is required.");
+      } else if (accountName.trim().length < 3) {
+        errs.accountName = t("cancelModal.errors.accountNameMin", "Account holder name must be at least 3 characters.");
+      } else if (!/^[\p{L}\s.'-]+$/u.test(accountName.trim())) {
+        errs.accountName = t("cancelModal.errors.accountNameInvalid", "Please enter a valid name.");
+      }
 
-    if (!bankName.trim()) {
-      errs.bankName = t("cancelModal.errors.bankNameRequired", "Bank name is required.");
-    } else if (bankName.trim().length < 2) {
-      errs.bankName = t("cancelModal.errors.bankNameMin", "Bank name must be at least 2 characters.");
-    }
+      if (!bankName.trim()) {
+        errs.bankName = t("cancelModal.errors.bankNameRequired", "Bank name is required.");
+      } else if (bankName.trim().length < 2) {
+        errs.bankName = t("cancelModal.errors.bankNameMin", "Bank name must be at least 2 characters.");
+      }
 
-    const cleanAcc = accountNumber.replace(/[\s-]/g, "");
-    if (!accountNumber.trim()) {
-      errs.accountNumber = t("cancelModal.errors.accountNumberRequired", "Account number is required.");
-    } else if (cleanAcc.length < 6 || cleanAcc.length > 34 || !/^[A-Za-z0-9]+$/.test(cleanAcc)) {
-      errs.accountNumber = t("cancelModal.errors.accountNumberInvalid", "Please enter a valid account number (6–34 characters).");
-    }
+      const cleanAcc = accountNumber.replace(/[\s-]/g, "");
+      if (!accountNumber.trim()) {
+        errs.accountNumber = t("cancelModal.errors.accountNumberRequired", "Account number is required.");
+      } else if (cleanAcc.length < 6 || cleanAcc.length > 34 || !/^[A-Za-z0-9]+$/.test(cleanAcc)) {
+        errs.accountNumber = t("cancelModal.errors.accountNumberInvalid", "Please enter a valid account number (6–34 characters).");
+      }
 
-    const cleanIban = iban.replace(/\s/g, "").toUpperCase();
-    if (!iban.trim()) {
-      errs.iban = t("cancelModal.errors.ibanRequired", "IBAN is required.");
-    } else if (!/^[A-Z]{2}[0-9A-Z]{13,32}$/.test(cleanIban)) {
-      errs.iban = t("cancelModal.errors.ibanInvalid", "Please enter a valid IBAN format.");
-    }
+      const cleanIban = iban.replace(/\s/g, "").toUpperCase();
+      if (!iban.trim()) {
+        errs.iban = t("cancelModal.errors.ibanRequired", "IBAN is required.");
+      } else if (!/^[A-Z]{2}[0-9A-Z]{13,32}$/.test(cleanIban)) {
+        errs.iban = t("cancelModal.errors.ibanInvalid", "Please enter a valid IBAN format.");
+      }
 
-    const cleanSwift = swift.replace(/\s/g, "").toUpperCase();
-    if (!swift.trim()) {
-      errs.swift = t("cancelModal.errors.swiftRequired", "SWIFT / BIC code is required.");
-    } else if (!/^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/.test(cleanSwift)) {
-      errs.swift = t("cancelModal.errors.swiftInvalid", "Please enter a valid SWIFT/BIC code (8 or 11 characters).");
-    }
+      const cleanSwift = swift.replace(/\s/g, "").toUpperCase();
+      if (!swift.trim()) {
+        errs.swift = t("cancelModal.errors.swiftRequired", "SWIFT / BIC code is required.");
+      } else if (!/^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/.test(cleanSwift)) {
+        errs.swift = t("cancelModal.errors.swiftInvalid", "Please enter a valid SWIFT/BIC code (8 or 11 characters).");
+      }
 
-    if (!country || !country.trim()) {
-      errs.country = t("cancelModal.errors.countryRequired", "Please select a bank country.");
+      if (!country || !country.trim()) {
+        errs.country = t("cancelModal.errors.countryRequired", "Please select a bank country.");
+      }
     }
 
     if (!agreed) {
@@ -171,14 +175,14 @@ export default function CancelBookingModal({
       reason,
       detailedReason: detailedReason.trim(),
       refund_summary: refundSummary,
-      bankDetails: {
+      bankDetails: hasRefund ? {
         accountName: accountName.trim(),
         bankName: bankName.trim(),
         accountNumber: accountNumber.trim(),
         iban: iban.replace(/\s/g, "").toUpperCase(),
         swift: swift.replace(/\s/g, "").toUpperCase(),
         country: country.trim(),
-      },
+      } : undefined,
     });
   };
 
@@ -279,72 +283,76 @@ export default function CancelBookingModal({
               </div>
             </div>
 
-            {/* Refund Bank Details */}
-            <h3 className={styles.sectionTitle}>{t("cancelModal.bankInfo", "Refund Bank Details")}</h3>
-            <div className={`${styles.summaryCard} ${styles.bankDetailsCard}`}>
-              <FormField
-                label={t("cancelModal.accountName", "Account Holder Name")}
-                placeholder={t("cancelModal.accountName", "Account Holder Name")}
-                value={accountName}
-                onChange={(e) => setAccountName(e.target.value)}
-                error={getFieldError("accountName")}
-                required
-              />
+            {/* Refund Bank Details - only when refund is > 0 */}
+            {hasRefund && (
+              <>
+                <h3 className={styles.sectionTitle}>{t("cancelModal.bankInfo", "Refund Bank Details")}</h3>
+                <div className={`${styles.summaryCard} ${styles.bankDetailsCard}`}>
+                  <FormField
+                    label={t("cancelModal.accountName", "Account Holder Name")}
+                    placeholder={t("cancelModal.accountName", "Account Holder Name")}
+                    value={accountName}
+                    onChange={(e) => setAccountName(e.target.value)}
+                    error={getFieldError("accountName")}
+                    required
+                  />
 
-              <FormField
-                label={t("cancelModal.bankName", "Bank Name")}
-                placeholder={t("cancelModal.bankName", "Bank Name")}
-                value={bankName}
-                onChange={(e) => setBankName(e.target.value)}
-                error={getFieldError("bankName")}
-                required
-              />
+                  <FormField
+                    label={t("cancelModal.bankName", "Bank Name")}
+                    placeholder={t("cancelModal.bankName", "Bank Name")}
+                    value={bankName}
+                    onChange={(e) => setBankName(e.target.value)}
+                    error={getFieldError("bankName")}
+                    required
+                  />
 
-              <FormField
-                label={t("cancelModal.accountNumber", "Bank Account Number")}
-                placeholder={t("cancelModal.accountNumber", "Bank Account Number")}
-                value={accountNumber}
-                onChange={(e) => setAccountNumber(e.target.value)}
-                error={getFieldError("accountNumber")}
-                required
-              />
+                  <FormField
+                    label={t("cancelModal.accountNumber", "Bank Account Number")}
+                    placeholder={t("cancelModal.accountNumber", "Bank Account Number")}
+                    value={accountNumber}
+                    onChange={(e) => setAccountNumber(e.target.value)}
+                    error={getFieldError("accountNumber")}
+                    required
+                  />
 
-              <FormField
-                label={t("cancelModal.iban", "IBAN")}
-                placeholder="EG12 XXXX XXXX XXXX XXXX XXXX"
-                value={iban}
-                onChange={(e) => setIban(e.target.value)}
-                error={getFieldError("iban")}
-                required
-              />
+                  <FormField
+                    label={t("cancelModal.iban", "IBAN")}
+                    placeholder="EG12 XXXX XXXX XXXX XXXX XXXX"
+                    value={iban}
+                    onChange={(e) => setIban(e.target.value)}
+                    error={getFieldError("iban")}
+                    required
+                  />
 
-              <FormField
-                label={t("cancelModal.swift", "SWIFT Code")}
-                placeholder="CIBEEGCX"
-                value={swift}
-                onChange={(e) => setSwift(e.target.value)}
-                error={getFieldError("swift")}
-                required
-              />
+                  <FormField
+                    label={t("cancelModal.swift", "SWIFT Code")}
+                    placeholder="CIBEEGCX"
+                    value={swift}
+                    onChange={(e) => setSwift(e.target.value)}
+                    error={getFieldError("swift")}
+                    required
+                  />
 
-              <div className={styles.formGroup} style={{ marginBottom: 0 }}>
-                <label className={styles.label}>{t("cancelModal.country", "Bank Country")} *</label>
-                <NationalitySelect
-                  useCountryName={true}
-                  value={country}
-                  onChange={setCountry}
-                  error={Boolean(getFieldError("country"))}
-                  placeholder={t("forms.selectCountry", "Select Country")}
-                  placement="top"
-                />
-                {getFieldError("country") && (
-                  <div className={styles.fieldError}>
-                    <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
-                    <span>{getFieldError("country")}</span>
+                  <div className={styles.formGroup} style={{ marginBottom: 0 }}>
+                    <label className={styles.label}>{t("cancelModal.country", "Bank Country")} *</label>
+                    <NationalitySelect
+                      useCountryName={true}
+                      value={country}
+                      onChange={setCountry}
+                      error={Boolean(getFieldError("country"))}
+                      placeholder={t("forms.selectCountry", "Select Country")}
+                      placement="top"
+                    />
+                    {getFieldError("country") && (
+                      <div className={styles.fieldError}>
+                        <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+                        <span>{getFieldError("country")}</span>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </div>
+                </div>
+              </>
+            )}
 
             {/* Terms Checkbox */}
             <div className={styles.checkboxContainer}>

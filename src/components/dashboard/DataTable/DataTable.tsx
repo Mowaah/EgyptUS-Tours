@@ -233,69 +233,71 @@ export default function DataTable<T>({
 
   return (
     <div className={wrapClassName}>
-      <table>
-        <thead>
-          <tr>
-            {selectable ? <th aria-label="Select visible rows" /> : null}
-            {columns.map((column) => (
-              <th key={column.id} aria-label={column.headerAriaLabel}>
-                {column.header}
-              </th>
-            ))}
-            {hasActions ? <th aria-label="Actions" /> : null}
-          </tr>
-        </thead>
-        <tbody>
-          {visibleRows.length === 0 && !isLoading ? (
+      <div className={styles.tableScroll}>
+        <table>
+          <thead>
             <tr>
-              <td colSpan={columns.length + (selectable ? 1 : 0) + (hasActions ? 1 : 0)}>
-                <div style={{ padding: "40px 0" }}>
-                  {emptyState ?? <DashboardSearchEmptyState onClearSearch={onClearSearch} />}
-                </div>
-              </td>
+              {selectable ? <th aria-label="Select visible rows" /> : null}
+              {columns.map((column) => (
+                <th key={column.id} aria-label={column.headerAriaLabel}>
+                  {column.header}
+                </th>
+              ))}
+              {hasActions ? <th aria-label="Actions" /> : null}
             </tr>
-          ) : (
-            visibleRows.map((row, index) => {
-              const rowId = getRowId(row);
-              const isSelected = selectedRows.includes(rowId);
-              const actions = rowActions?.(row);
+          </thead>
+          <tbody>
+            {visibleRows.length === 0 && !isLoading ? (
+              <tr>
+                <td colSpan={columns.length + (selectable ? 1 : 0) + (hasActions ? 1 : 0)}>
+                  <div style={{ padding: "40px 0" }}>
+                    {emptyState ?? <DashboardSearchEmptyState onClearSearch={onClearSearch} />}
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              visibleRows.map((row, index) => {
+                const rowId = getRowId(row);
+                const isSelected = selectedRows.includes(rowId);
+                const actions = rowActions?.(row);
 
-              return (
-                <tr
-                  key={rowId}
-                  className={isSelected && selectionType === "checkbox" ? styles.selectedRow : undefined}
-                >
-                  {selectable ? (
-                    <td>
-                      <input
-                        type="checkbox"
-                        className={selectionType === "star" ? styles.starCheckbox : undefined}
-                        checked={isSelected}
-                        onChange={() => toggleRow(rowId)}
-                        aria-label={`Select row ${rowId}`}
+                return (
+                  <tr
+                    key={rowId}
+                    className={isSelected && selectionType === "checkbox" ? styles.selectedRow : undefined}
+                  >
+                    {selectable ? (
+                      <td>
+                        <input
+                          type="checkbox"
+                          className={selectionType === "star" ? styles.starCheckbox : undefined}
+                          checked={isSelected}
+                          onChange={() => toggleRow(rowId)}
+                          aria-label={`Select row ${rowId}`}
+                        />
+                      </td>
+                    ) : null}
+                    {columns.map((column) => (
+                      <td key={column.id} className={column.cellClassName}>
+                        {column.render(row)}
+                      </td>
+                    ))}
+                    {hasActions && actions && actions.length > 0 ? (
+                      <ActionsCell
+                        row={row}
+                        rowId={rowId}
+                        openRowId={openRowId}
+                        setOpenRowId={setOpenRowId}
+                        actions={actions}
                       />
-                    </td>
-                  ) : null}
-                  {columns.map((column) => (
-                    <td key={column.id} className={column.cellClassName}>
-                      {column.render(row)}
-                    </td>
-                  ))}
-                  {hasActions && actions && actions.length > 0 ? (
-                    <ActionsCell
-                      row={row}
-                      rowId={rowId}
-                      openRowId={openRowId}
-                      setOpenRowId={setOpenRowId}
-                      actions={actions}
-                    />
-                  ) : null}
-                </tr>
-              );
-            })
-          )}
-        </tbody>
-      </table>
+                    ) : null}
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
 
       <TablePagination
         page={currentPage}

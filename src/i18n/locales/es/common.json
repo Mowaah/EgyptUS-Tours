@@ -391,7 +391,9 @@
     "refundMethod": "Método de Reembolso",
     "bankTransfer": "Transferencia Bancaria",
     "processingTime": "Tiempo Estimado de Procesamiento",
-    "businessDays": "7 - 10 Días Hábiles"
+    "businessDays": "7 - 10 Días Hábiles",
+    "status": "Estado",
+    "noRefundAmount": "Sin Monto de Reembolso"
   },
   "rooms": {
     "singleRoom": "Habitación Individual",

@@ -391,7 +391,9 @@
     "refundMethod": "Metodo di Rimborso",
     "bankTransfer": "Bonifico Bancario",
     "processingTime": "Tempo di Elaborazione Stimato",
-    "businessDays": "7 - 10 Giorni Lavorativi"
+    "businessDays": "7 - 10 Giorni Lavorativi",
+    "status": "Stato",
+    "noRefundAmount": "Nessun Importo Rimborsato"
   },
   "rooms": {
     "singleRoom": "Camera Singola",

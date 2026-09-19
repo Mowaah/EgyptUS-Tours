@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { UploadDropzone } from "@/components/dashboard/FormFields/UploadDropzone";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import { IconStepper } from "@/components/shared";
 import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";
 import { useAdminUsers } from "@/hooks/useAdminUsers";
+import { useAdminRoles } from "@/hooks/useAdminRoles";
+import type { AdminUserRow } from "@/components/dashboard/UserManagement/types";
 import { importAdminLeads } from "@/services/admin/adminLeadsService";
 import { mutate as globalMutate } from "swr";
 import styles from "./ImportLeadsModal.module.scss";
@@ -32,25 +34,42 @@ export function ImportLeadsModal({ open, onClose, onSuccess }: ImportLeadsModalP
   const [validationSummary, setValidationSummary] = useState<ValidationSummary | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
 
-  // Step 2 — assign
-  const [assignTo, setAssignTo] = useState<string[]>(["Sales"]);
-  const [teamSales, setTeamSales] = useState<string[]>(["All"]);
-  const [teamOps, setTeamOps] = useState<string[]>(["All"]);
-
+  // Dynamic roles & users from backend
+  const { roles } = useAdminRoles();
   const { data: usersData } = useAdminUsers({ limit: 100 });
-  const users = usersData?.results || [];
+  const users: AdminUserRow[] = usersData?.results || [];
 
-  const salesUsers = users.filter((u: any) => u.role_label?.toLowerCase().includes("sales"));
-  const opsUsers = users.filter((u: any) => u.role_label?.toLowerCase().includes("operation"));
+  const availableRoleOptions = useMemo(() => {
+    if (roles && roles.length > 0) {
+      return roles.map((r) => ({ label: r.name, value: r.name }));
+    }
+    const userRoles = Array.from(
+      new Set(users.map((u) => u.role_label).filter(Boolean))
+    );
+    if (userRoles.length > 0) {
+      return userRoles.map((name) => ({ label: name, value: name }));
+    }
+    return [
+      { label: "Sales", value: "Sales" },
+      { label: "Marketing", value: "Marketing" },
+      { label: "Operations", value: "Operations" },
+    ];
+  }, [roles, users]);
+
+  // Step 2 — assign
+  const [assignTo, setAssignTo] = useState<string[]>([]);
+  const [teamSelections, setTeamSelections] = useState<Record<string, string[]>>({});
 
   useEffect(() => {
     if (!open) return;
     setFile(undefined);
     setFileError(null);
     setCurrentStep(0);
-    setAssignTo(["Sales"]);
-    setTeamSales(["All"]);
-    setTeamOps(["All"]);
+    const salesOpt = availableRoleOptions.find((opt) =>
+      opt.value.toLowerCase().includes("sales")
+    );
+    setAssignTo([salesOpt ? salesOpt.value : availableRoleOptions[0]?.value || "Sales"]);
+    setTeamSelections({});
     setIsSubmitting(false);
     setValidationSummary(null);
     setImportError(null);
@@ -67,19 +86,52 @@ export function ImportLeadsModal({ open, onClose, onSuccess }: ImportLeadsModalP
       document.body.style.overflow = prev;
       document.removeEventListener("keydown", onKey);
     };
-  }, [open, onClose]);
+  }, [open, onClose, availableRoleOptions]);
+
+  const getRoleUsers = (roleName: string): AdminUserRow[] => {
+    const roleObj = roles.find((r) => r.name.toLowerCase() === roleName.toLowerCase());
+    return users.filter((u) => {
+      if (roleObj && u.role_id === roleObj.id) return true;
+      if (u.role_label && u.role_label.toLowerCase() === roleName.toLowerCase()) return true;
+      if (u.role && u.role.toLowerCase() === roleName.toLowerCase()) return true;
+      return false;
+    });
+  };
+
+  const handleTeamMemberChange = (roleName: string, newValues: string[]) => {
+    const prevValues = teamSelections[roleName] || ["All"];
+    let updated: string[];
+
+    if (!prevValues.includes("All") && newValues.includes("All")) {
+      updated = ["All"];
+    } else if (prevValues.includes("All") && newValues.length > 1) {
+      updated = newValues.filter((v) => v !== "All");
+    } else if (newValues.length === 0) {
+      updated = [];
+    } else {
+      updated = newValues;
+    }
+
+    setTeamSelections((prev) => ({
+      ...prev,
+      [roleName]: updated,
+    }));
+  };
 
   const buildAssigneeIds = (): number[] => {
     let assignees: number[] = [];
-    if (teamSales.includes("All")) {
-      assignees = [...assignees, ...salesUsers.map((u: any) => u.id)];
-    } else {
-      assignees = [...assignees, ...teamSales.map((id) => parseInt(id))];
-    }
-    if (teamOps.includes("All")) {
-      assignees = [...assignees, ...opsUsers.map((u: any) => u.id)];
-    } else {
-      assignees = [...assignees, ...teamOps.map((id) => parseInt(id))];
+    for (const roleName of assignTo) {
+      const roleUsers = getRoleUsers(roleName);
+      const selected = teamSelections[roleName] || ["All"];
+      if (selected.includes("All")) {
+        assignees.push(...roleUsers.map((u) => u.id));
+      } else {
+        assignees.push(
+          ...selected
+            .map((id) => parseInt(id, 10))
+            .filter((id) => !isNaN(id))
+        );
+      }
     }
     return Array.from(new Set(assignees));
   };
@@ -91,11 +143,15 @@ export function ImportLeadsModal({ open, onClose, onSuccess }: ImportLeadsModalP
     } else if (currentStep === 1) {
       // Assign step → call API, then show validation
       if (!file) return;
+      const assignees = buildAssigneeIds();
+      if (assignees.length === 0) {
+        setImportError("Please select at least one team member to assign leads to.");
+        return;
+      }
       setIsSubmitting(true);
       setImportError(null);
       try {
-        const assignees = buildAssigneeIds();
-        const result = await importAdminLeads(file, assignees.length > 0 ? assignees : [-1]);
+        const result = await importAdminLeads(file, assignees);
         setValidationSummary(result.validation);
         // Revalidate import batches list in background
         globalMutate((key: any) => Array.isArray(key) && key[0] === "adminLeadImportBatches", undefined, { revalidate: true });
@@ -187,37 +243,40 @@ export function ImportLeadsModal({ open, onClose, onSuccess }: ImportLeadsModalP
                 multiple
                 label="Assign To"
                 value={assignTo}
-                options={[
-                  { label: "Sales", value: "Sales" },
-                  { label: "Marketing", value: "Marketing" },
-                  { label: "Operations", value: "Operations" },
-                ]}
-                onChange={(e) => setAssignTo(e.target.value as unknown as string[])}
+                options={availableRoleOptions}
+                onChange={(e) => {
+                  const newRoles = e.target.value as unknown as string[];
+                  setAssignTo(newRoles);
+                }}
               />
-              <DashboardField
-                control="select"
-                variant="modal"
-                multiple
-                label="Team Members ( Sales )"
-                value={teamSales}
-                options={[
-                  { label: "All", value: "All" },
-                  ...salesUsers.map((u: any) => ({ label: u.full_name, value: u.id.toString() }))
-                ]}
-                onChange={(e) => setTeamSales(e.target.value as unknown as string[])}
-              />
-              <DashboardField
-                control="select"
-                variant="modal"
-                multiple
-                label="Team Members ( Operation )"
-                value={teamOps}
-                options={[
-                  { label: "All", value: "All" },
-                  ...opsUsers.map((u: any) => ({ label: u.full_name, value: u.id.toString() }))
-                ]}
-                onChange={(e) => setTeamOps(e.target.value as unknown as string[])}
-              />
+              {assignTo.map((roleName) => {
+                const roleUsers = getRoleUsers(roleName);
+                const selected = teamSelections[roleName] || ["All"];
+
+                return (
+                  <DashboardField
+                    key={roleName}
+                    control="select"
+                    variant="modal"
+                    multiple
+                    label={`Team Members ( ${roleName} )`}
+                    value={selected}
+                    options={[
+                      { label: "All", value: "All" },
+                      ...roleUsers.map((u) => ({
+                        label: u.full_name || u.email,
+                        value: u.id.toString(),
+                      })),
+                    ]}
+                    onChange={(e) =>
+                      handleTeamMemberChange(
+                        roleName,
+                        e.target.value as unknown as string[]
+                      )
+                    }
+                  />
+                );
+              })}
               <div className={styles.infoAlert}>
                 <div className={styles.infoAlertIcon}>!</div>
                 <span className={styles.infoAlertText}>Leads will be distributed equally among selected team members.</span>

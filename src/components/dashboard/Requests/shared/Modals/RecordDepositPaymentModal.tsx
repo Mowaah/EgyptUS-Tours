@@ -98,12 +98,12 @@ export default function RecordDepositPaymentModal({ open, onClose, onSubmit, pay
 
           <div className={styles.summaryBox}>
             <div className={styles.summaryCol}>
-              <span className={styles.summaryTitle}>Remaining Balance</span>
-              <span className={styles.summaryValue}>{remainingBalanceDisplay}</span>
+              <span className={styles.summaryTitle}>Deposit Amount</span>
+              <span className={styles.summaryValue}>{depositDisplay}</span>
             </div>
             <div className={styles.summaryCol}>
-              <span className={styles.summaryTitle}>Deposit Paid</span>
-              <span className={styles.summaryValue}>{depositDisplay}</span>
+              <span className={styles.summaryTitle}>Remaining Balance</span>
+              <span className={styles.summaryValue}>{remainingBalanceDisplay}</span>
             </div>
           </div>
           

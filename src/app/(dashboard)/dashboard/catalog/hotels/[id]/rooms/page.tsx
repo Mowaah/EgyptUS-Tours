@@ -14,7 +14,7 @@ import styles from "./page.module.scss";
 const filterOptions = {
   type: ["All", "Single", "Double Room", "Triple Room"],
   category: ["All", "Standard", "Deluxe", "Premium", "Suite"],
-  view: ["All", "Sea View", "Pool View", "Garden View", "City View"],
+  view: ["All", "Sea View", "Pool View", "Garden View"],
   price: [
     "All",
     `Under ${DASHBOARD_CURRENCY.symbol}1,000`,

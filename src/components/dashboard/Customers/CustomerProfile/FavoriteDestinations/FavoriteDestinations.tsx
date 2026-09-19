@@ -1,16 +1,65 @@
 import Image from "next/image";
 import styles from "./FavoriteDestinations.module.scss";
 
-export default function FavoriteDestinations({ data = {} }: { data?: Record<string, number> }) {
-  const total = Object.values(data).reduce((a, b) => a + b, 0);
+interface FavoriteDestinationsProps {
+  data?: Record<string, number> | Array<{
+    destination?: string;
+    name?: string;
+    bookings_count?: number;
+    count?: number;
+    pct?: string | number;
+    [key: string]: any;
+  }>;
+}
+
+export default function FavoriteDestinations({ data = {} }: FavoriteDestinationsProps) {
+  const styleClasses = [styles.dotBlue, styles.dotPurple, styles.dotOrange, styles.dotDarkBlue];
+
+  let destinations: { destination: string; count: number; pct: number }[] = [];
+
+  if (Array.isArray(data)) {
+    const totalCount = data.reduce(
+      (sum, item) => sum + Number(item.bookings_count ?? item.count ?? 0),
+      0
+    );
+    destinations = data
+      .map((item) => {
+        const count = Number(item.bookings_count ?? item.count ?? 0);
+        const pct =
+          item.pct !== undefined
+            ? Math.round(Number(item.pct))
+            : totalCount > 0
+            ? Math.round((count / totalCount) * 100)
+            : 0;
+        return {
+          destination: item.destination || item.name || "Unknown",
+          count,
+          pct,
+        };
+      })
+      .filter((item) => item.count > 0)
+      .sort((a, b) => b.count - a.count);
+  } else if (data && typeof data === "object") {
+    const totalCount = Object.values(data).reduce(
+      (a: number, b: any) => a + Number(b || 0),
+      0
+    );
+    destinations = Object.entries(data)
+      .map(([destination, countVal]) => {
+        const count = Number(countVal || 0);
+        const pct = totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
+        return {
+          destination,
+          count,
+          pct,
+        };
+      })
+      .filter((item) => item.count > 0)
+      .sort((a, b) => b.count - a.count);
+  }
 
   // Take top 4 destinations for the legend
-  const topDestinations = Object.entries(data)
-    .filter(([_, value]) => value > 0)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 4);
-
-  const styleClasses = [styles.dotBlue, styles.dotPurple, styles.dotOrange, styles.dotDarkBlue];
+  const topDestinations = destinations.slice(0, 4);
 
   return (
     <div className={styles.card}>
@@ -36,15 +85,17 @@ export default function FavoriteDestinations({ data = {} }: { data?: Record<stri
       </div>
 
       <div className={styles.legend}>
-        {topDestinations.length > 0 ? topDestinations.map(([destination, count], idx) => (
-          <div className={styles.legendItem} key={destination}>
-            <div className={`${styles.dot} ${styleClasses[idx % styleClasses.length]}`} />
-            <div className={styles.text}>
-              <strong>{total > 0 ? Math.round((count / total) * 100) : 0}%</strong>
-              <span>{destination}</span>
+        {topDestinations.length > 0 ? (
+          topDestinations.map((item, idx) => (
+            <div className={styles.legendItem} key={item.destination}>
+              <div className={`${styles.dot} ${styleClasses[idx % styleClasses.length]}`} />
+              <div className={styles.text}>
+                <strong>{item.pct}%</strong>
+                <span>{item.destination}</span>
+              </div>
             </div>
-          </div>
-        )) : (
+          ))
+        ) : (
           <div className={styles.legendItem}>
             <div className={styles.text}>
               <span>No destinations booked yet</span>

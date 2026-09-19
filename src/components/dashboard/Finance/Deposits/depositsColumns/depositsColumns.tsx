@@ -30,7 +30,13 @@ export const depositsColumns: DataTableColumn<DepositRow>[] = [
   {
     id: "bookingId",
     header: "Booking ID",
-    render: (row) => `${row.booking_title || ''} #${row.booking_id}`,
+    cellClassName: styles.idCell,
+    render: (row) => {
+      const code = row.booking_code || row.booking_reference || row.display_id;
+      if (code) return code;
+      if (!row.booking_id) return "---";
+      return String(row.booking_id).startsWith("#") ? row.booking_id : `#${row.booking_id}`;
+    },
   },
   {
     id: "customer",
