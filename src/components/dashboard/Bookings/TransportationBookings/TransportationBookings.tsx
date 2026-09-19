@@ -24,7 +24,7 @@ export default function TransportationBookings({ searchQuery = "", onClearSearch
 
   return (
     <div className={styles.page}>
-      <DashboardNavbar onPrimaryAction={handleNewBooking} />
+      <DashboardNavbar hidePrimaryAction onPrimaryAction={handleNewBooking} />
       <TransportationSummaryGrid />
       <TransportationPanel
         searchQuery={searchQuery}

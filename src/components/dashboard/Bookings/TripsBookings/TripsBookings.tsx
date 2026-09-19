@@ -42,7 +42,7 @@ export default function TripsBookings({ searchQuery = "", onClearSearch, onNewBo
 
   return (
     <div className={styles.page}>
-      <DashboardNavbar onPrimaryAction={handleNewBooking} />
+      <DashboardNavbar hidePrimaryAction onPrimaryAction={handleNewBooking} />
       <TripsSummaryGrid />
       <TripsPanel
         searchQuery={searchQuery}

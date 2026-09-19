@@ -175,8 +175,8 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
               <DashboardEmptyState
                 title="No Bookings Found"
                 subtitle="Transportation bookings will appear here once they are added."
-                actionLabel="New Booking"
-                onAction={onNewBooking}
+                // actionLabel="New Booking"
+                // onAction={onNewBooking}
                 imageSrc="/images/dashboard/empty.png"
               />
             ) : !searchQuery && Object.values(appliedFilters).some((v) => v !== "All") ? (

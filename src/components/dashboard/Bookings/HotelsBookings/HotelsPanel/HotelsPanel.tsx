@@ -166,8 +166,8 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
               <DashboardEmptyState
                 title="No Bookings Found"
                 subtitle="Hotels bookings will appear here once they are added."
-                actionLabel={canCreate("bookings") ? "New Booking" : undefined}
-                onAction={canCreate("bookings") ? onNewBooking : undefined}
+                // actionLabel={canCreate("bookings") ? "New Booking" : undefined}
+                // onAction={canCreate("bookings") ? onNewBooking : undefined}
                 imageSrc="/images/dashboard/empty.png"
               />
             ) : !searchQuery && Object.values(appliedFilters).some((v) => v !== "All") ? (

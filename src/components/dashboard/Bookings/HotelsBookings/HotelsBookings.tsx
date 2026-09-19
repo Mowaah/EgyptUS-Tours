@@ -23,7 +23,7 @@ export default function HotelsBookings({ searchQuery = "", onClearSearch, onNewB
 
   return (
     <div className={styles.page}>
-      <DashboardNavbar onPrimaryAction={handleNewBooking} />
+      <DashboardNavbar hidePrimaryAction onPrimaryAction={handleNewBooking} />
       <HotelsSummaryGrid />
       <HotelsPanel 
         searchQuery={searchQuery} 
