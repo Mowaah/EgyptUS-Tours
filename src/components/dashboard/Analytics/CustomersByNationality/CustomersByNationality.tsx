@@ -71,7 +71,7 @@ export default function CustomersByNationality({
   }, [allDistribution]);
 
   const roundedMax = useMemo(() => {
-    return Math.ceil(maxPercent / 20) * 20 || 100;
+    return Math.ceil(maxPercent / 20) * 20 || 80;
   }, [maxPercent]);
 
   const yAxisLabels = useMemo(() => {

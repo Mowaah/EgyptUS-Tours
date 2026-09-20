@@ -62,15 +62,19 @@ export default function LeadsBySourceChart({ data = [], actions }: LeadsBySource
     return labels;
   }, [maxY]);
 
+  const isEmpty = useMemo(() => {
+    return !data || data.length === 0 || data.every((d) => d.count === 0);
+  }, [data]);
+
   return (
     <article className={parentStyles.chartCard}>
       <PanelHeader
         icon="reports/leads_by_source"
         title="Leads by Source"
-        subtitle="Overview of lead acquisition channels"
+        subtitle={isEmpty ? undefined : "Overview of lead acquisition channels"}
         actions={actions}
       />
-
+      
       <HatchedBarChart data={distribution} yAxisLabels={yAxisLabels} />
     </article>
   );

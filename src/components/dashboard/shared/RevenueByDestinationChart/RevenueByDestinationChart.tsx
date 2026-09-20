@@ -76,7 +76,7 @@ export default function RevenueByDestinationChart({
       <PanelHeader
         icon={icon}
         title={title}
-        subtitle={subtitle}
+        subtitle={isEmpty ? undefined : subtitle}
         actions={actions}
       />
 

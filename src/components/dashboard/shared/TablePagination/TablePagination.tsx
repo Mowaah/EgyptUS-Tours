@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { buildPageList } from "./buildPageList";
 import styles from "./TablePagination.module.scss";
@@ -25,6 +28,36 @@ export default function TablePagination({
 }: TablePaginationProps) {
   const safePage = Math.min(page, pageCount);
   const pageList = buildPageList(safePage, pageCount);
+
+  const [activeEllipsisIndex, setActiveEllipsisIndex] = useState<number | null>(null);
+  const [goToPageValue, setGoToPageValue] = useState("");
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (activeEllipsisIndex !== null) {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    }
+  }, [activeEllipsisIndex]);
+
+  const handleApplyPage = () => {
+    const parsed = parseInt(goToPageValue, 10);
+    if (!isNaN(parsed) && parsed >= 1 && parsed <= pageCount) {
+      onChangePage(parsed);
+    }
+    setActiveEllipsisIndex(null);
+    setGoToPageValue("");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleApplyPage();
+    } else if (e.key === "Escape") {
+      setActiveEllipsisIndex(null);
+      setGoToPageValue("");
+    }
+  };
 
   return (
     <div className={`${styles.footer} ${className || ""}`.trim()}>
@@ -69,15 +102,41 @@ export default function TablePagination({
             height={16}
             className={styles.arrowLeft}
           />
-          Previous
+          <span className={styles.navText}>Previous</span>
         </button>
 
         <div className={styles.pagesList}>
           {pageList.map((p, i) =>
             p === "..." ? (
-              <span key={`ellipsis-${i}`} className={styles.pageEllipsis}>
-                ...
-              </span>
+              activeEllipsisIndex === i ? (
+                <input
+                  key={`ellipsis-input-${i}`}
+                  ref={inputRef}
+                  type="number"
+                  min={1}
+                  max={pageCount}
+                  className={styles.pageInput}
+                  value={goToPageValue}
+                  onChange={(e) => setGoToPageValue(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  onBlur={handleApplyPage}
+                  aria-label="Enter page number"
+                />
+              ) : (
+                <button
+                  type="button"
+                  key={`ellipsis-${i}`}
+                  className={styles.pageEllipsis}
+                  onClick={() => {
+                    setActiveEllipsisIndex(i);
+                    setGoToPageValue("");
+                  }}
+                  title="Click to enter page number"
+                  aria-label="Click to enter page number"
+                >
+                  ...
+                </button>
+              )
             ) : (
               <button
                 type="button"
@@ -99,7 +158,7 @@ export default function TablePagination({
           onClick={() => onChangePage(Math.min(pageCount, page + 1))}
           aria-label="Next page"
         >
-          Next
+          <span className={styles.navText}>Next</span>
           <Image
             src="/images/dashboard/arrow-right.svg"
             alt=""

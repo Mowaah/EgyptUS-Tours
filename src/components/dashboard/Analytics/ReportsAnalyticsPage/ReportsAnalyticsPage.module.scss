@@ -81,7 +81,9 @@
 
 .customerBottomGrid .leftColumn > *,
 .customerBottomGrid .rightColumn > * {
+  height: 462px;
   min-height: 462px !important;
+  max-height: 462px;
 }
 
 .chartCard {

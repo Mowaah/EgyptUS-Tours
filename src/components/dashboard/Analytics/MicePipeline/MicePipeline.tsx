@@ -25,12 +25,14 @@ export default function MicePipeline({ pipeline = [], actions }: MicePipelinePro
     color: colors[index % colors.length],
   }));
 
+  const isEmpty = total === 0;
+
   return (
     <article className={parentStyles.chartCard}>
       <PanelHeader
         icon="finance/payment/chart"
         title="MICE Pipeline"
-        subtitle="RFPs Received → Proposals Sent → Contracts Signed"
+        subtitle={isEmpty ? undefined : "RFPs Received → Proposals Sent → Contracts Signed"}
         actions={actions}
       />
 

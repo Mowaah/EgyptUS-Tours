@@ -29,12 +29,14 @@ export default function NewVsReturningCustomers({
       points: data ? data.series.map(s => s.returning) : [0],
     },
   ];
+  const isEmpty = !data || !data.series || data.series.length === 0 || data.series.every((s) => (s.new ?? 0) === 0 && (s.returning ?? 0) === 0);
+
   return (
     <article className={`${parentStyles.chartCard} ${styles.fullWidthCard}`}>
       <PanelHeader
         icon="reports/profile_grey"
         title="New vs. Returning Customers"
-        subtitle={data?.rule || "Based on total bookings (≤3 = New)"}
+        subtitle={isEmpty ? undefined : (data?.rule || "Based on total bookings (≤3 = New)")}
         actions={actions}
       />
       

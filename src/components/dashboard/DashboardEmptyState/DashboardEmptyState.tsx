@@ -6,12 +6,14 @@ import styles from "./DashboardEmptyState.module.scss";
 
 export interface DashboardEmptyStateProps {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   actionLabel?: string;
   onAction?: () => void;
   imageSrc?: string;
   actionIconSrc?: string;
   hideActionIcon?: boolean;
+  className?: string;
+  compact?: boolean;
 }
 
 export default function DashboardEmptyState({
@@ -22,17 +24,24 @@ export default function DashboardEmptyState({
   imageSrc = "/images/dashboard/empty.png",
   actionIconSrc,
   hideActionIcon = false,
+  className,
+  compact = false,
 }: DashboardEmptyStateProps) {
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${compact ? styles.compact : ""} ${className || ""}`.trim()}>
       <div className={styles.innerWrapper}>
         <div className={styles.graphicContainer}>
-          <Image src={imageSrc} alt={title} width={210} height={210} />
+          <Image 
+            src={imageSrc} 
+            alt={title} 
+            width={compact ? 130 : 210} 
+            height={compact ? 130 : 210} 
+          />
         </div>
 
         <div className={styles.textContainer}>
           <h2 className={styles.title}>{title}</h2>
-          <p className={styles.subtitle}>{subtitle}</p>
+          {subtitle ? <p className={styles.subtitle}>{subtitle}</p> : null}
         </div>
 
         {actionLabel && onAction && (

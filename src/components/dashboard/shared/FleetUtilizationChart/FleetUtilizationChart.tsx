@@ -72,12 +72,14 @@ export default function FleetUtilizationChart({
     });
   }, []);
 
+  const isEmpty = activeFleetData.length === 0;
+
   return (
     <article className={styles.card}>
       <PanelHeader
         icon="finance/payment/fleet"
         title={title}
-        subtitle={subtitle}
+        subtitle={isEmpty ? undefined : subtitle}
         actions={actions}
       />
 

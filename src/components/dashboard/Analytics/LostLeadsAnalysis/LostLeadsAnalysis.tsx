@@ -46,13 +46,14 @@ export default function LostLeadsAnalysis({ data, actions }: LostLeadsAnalysisPr
   }, [chartData]);
 
   const totalLost = data?.total_lost !== undefined ? data.total_lost.toString() : "0";
+  const isEmpty = !data?.by_reason_count || data.by_reason_count.length === 0 || (data.total_lost ?? 0) === 0;
 
   return (
     <article className={parentStyles.chartCard}>
       <PanelHeader
         icon="reports/lost_leads"
         title="Lost Leads Analysis"
-        subtitle="Reasons for lost leads"
+        subtitle={isEmpty ? undefined : "Reasons for lost leads"}
         actions={actions}
       />
       

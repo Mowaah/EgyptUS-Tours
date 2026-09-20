@@ -1,8 +1,9 @@
+import React from "react";
 import parentStyles from "../ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
-import ExportButtons from "@/components/shared/ExportButtons/ExportButtons";
 import DataTable from "@/components/dashboard/DataTable/DataTable";
 import ViewButton from "@/components/shared/ViewButton/ViewButton";
+import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import styles from "./TopCustomersByRevenueTable.module.scss";
 import { formatCurrencyAmount } from "@/utils/formatMetric";
 
@@ -15,6 +16,8 @@ export default function TopCustomersByRevenueTable({
   data?: TopCustomer[]; 
   actions?: React.ReactNode; 
 }) {
+  const isEmpty = !data || data.length === 0;
+
   const columns = [
     {
       id: "customer",
@@ -50,17 +53,24 @@ export default function TopCustomersByRevenueTable({
         actions={actions}
       />
       
-      <div className={styles.tableWrapper}>
-        <DataTable
-          className={styles.compactTable}
-          data={data || []}
-          columns={columns}
-          getRowId={(row) => row.email}
-          
-          defaultPageSize={4}
-          pageSizeOptions={[4, 10, 20]}
+      {isEmpty ? (
+        <DashboardEmptyState
+          compact
+          className={styles.emptyState}
+          title="No customer revenue yet"
         />
-      </div>
+      ) : (
+        <div className={styles.tableWrapper}>
+          <DataTable
+            className={styles.compactTable}
+            data={data}
+            columns={columns}
+            getRowId={(row) => row.email}
+            defaultPageSize={4}
+            pageSizeOptions={[4, 10, 20]}
+          />
+        </div>
+      )}
     </article>
   );
 }
