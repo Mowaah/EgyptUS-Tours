@@ -235,13 +235,15 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
         <TripReviews reviews={testimonials.map(t => {
           const countryEntry = COUNTRIES.find(c => c.code.toUpperCase() === (t.country || '').toUpperCase());
           return {
+            title: t.title,
             name: t.customer_name,
             location: countryEntry?.name || t.country || 'Unknown',
             countryCode: (t.country || '').toLowerCase(),
             rating: t.rating || 5,
-            quote: `"${t.description}"`,
+            quote: t.description,
             videoUrl: t.video_url || '',
             image: '',
+            date: t.created_at,
           };
         })} />
       </div>

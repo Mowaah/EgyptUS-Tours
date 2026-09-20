@@ -20,7 +20,7 @@ export default function TripReviews({ reviews = [] }: TripReviewsProps) {
       <h2 className={styles.heading}>{t("reviews.heading", "Traveler Reviews")}</h2>
       <ReviewGrid 
         items={reviews} 
-        pageSize={8} 
+        pageSize={6} 
         gridClassName={styles.grid}
         renderItem={(review, i) => <TestimonialCard key={i} testimonial={review} />} 
       />

@@ -12,7 +12,7 @@ interface B2BTestimonialsProps {
   testimonials?: TestimonialData[];
 }
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 6;
 
 export default function B2BTestimonials({ testimonials = [] }: B2BTestimonialsProps) {
   const { t } = useTranslation("b2b");
@@ -24,13 +24,15 @@ export default function B2BTestimonials({ testimonials = [] }: B2BTestimonialsPr
   const mappedTestimonials: Testimonial[] = testimonials.map(item => {
     const countryEntry = COUNTRIES.find(c => c.code.toUpperCase() === (item.country || '').toUpperCase());
     return {
+      title: item.title,
       name: item.customer_name,
       location: countryEntry?.name || item.country || 'Guest',
       countryCode: (item.country || '').toLowerCase(),
       rating: item.rating || 5,
-      quote: `"${item.description}"`,
+      quote: item.description,
       videoUrl: item.video_url || '',
       image: '',
+      date: item.created_at,
     };
   });
 

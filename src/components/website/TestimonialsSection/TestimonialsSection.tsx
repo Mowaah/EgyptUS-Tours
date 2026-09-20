@@ -8,7 +8,7 @@ import type { TestimonialData } from "@/services/testimonialsService";
 import { COUNTRIES } from "@/data/countries";
 import styles from "./TestimonialsSection.module.scss";
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 3;
 
 export default function TestimonialsSection({
   initialTestimonials = [],
@@ -23,12 +23,14 @@ export default function TestimonialsSection({
       (c) => c.code.toUpperCase() === (item.country || "").toUpperCase()
     );
     return {
+      title: item.title,
       videoUrl: item.video_url || undefined,
-      quote: `"${item.description}"`,
+      quote: item.description,
       name: item.customer_name,
       location: countryEntry?.name || item.country,
       countryCode: (item.country || "").toLowerCase(),
       rating: item.rating,
+      date: item.created_at,
     };
   });
 

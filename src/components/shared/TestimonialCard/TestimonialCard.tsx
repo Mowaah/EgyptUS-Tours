@@ -10,9 +10,12 @@ export interface Testimonial {
   videoUrl?: string;
   quote: string;
   name: string;
-  location: string;
+  location?: string;
   countryCode?: string;
   rating: number;
+  title?: string;
+  date?: string;
+  avatar?: string;
 }
 
 interface Props {
@@ -30,27 +33,85 @@ const getEmbedUrl = (url: string) => {
       return `https://www.youtube.com/embed/${id}?autoplay=1`;
     }
     return url;
-  } catch (e) {
+  } catch {
     return url;
   }
 };
 
+function formatReviewDate(dateStr?: string): string | null {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return dateStr;
+  return d.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 export default function TestimonialCard({ testimonial }: Props) {
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const hasVideo = Boolean(testimonial.videoUrl);
-  const ytId = hasVideo ? (
-    testimonial.videoUrl!.includes("youtube.com/watch") 
-      ? new URL(testimonial.videoUrl!).searchParams.get("v") 
-      : testimonial.videoUrl!.includes("youtu.be/") 
-        ? testimonial.videoUrl!.split("youtu.be/")[1]?.split("?")[0] 
-        : null
-  ) : null;
+  const hasVideo = Boolean(testimonial.videoUrl && testimonial.videoUrl.trim() !== "");
+
+  // ── If No Video: Render Traveler Reviews Design (matching transportation) ──
+  if (!hasVideo) {
+    const cleanQuote = testimonial.quote
+      ? testimonial.quote.replace(/^["“”]/, "").replace(/["“”]$/, "")
+      : "";
+    const displayTitle = testimonial.title || "Traveler Review";
+    const dateStr = formatReviewDate(testimonial.date);
+    const avatarSrc = testimonial.avatar || testimonial.image;
+
+    return (
+      <div className={styles.reviewCard}>
+        <div className={styles.cardHeader}>
+          <h3 className={styles.authorTitle}>{displayTitle}</h3>
+          <div className={styles.ratingBox}>
+            <Image src="/images/star-yellow3.svg" alt="" width={12} height={12} />
+            <span>{testimonial.rating || 5}</span>
+          </div>
+        </div>
+
+        <p className={styles.reviewContent}>{cleanQuote}</p>
+
+        <div className={styles.cardFooter}>
+          <div className={styles.reviewerInfo}>
+            <div className={styles.avatar}>
+              {avatarSrc ? (
+                <Image
+                  src={avatarSrc}
+                  alt={testimonial.name}
+                  width={36}
+                  height={36}
+                  className={styles.avatarImg}
+                />
+              ) : (
+                <div className={styles.avatarPlaceholder} />
+              )}
+            </div>
+
+            <div className={styles.reviewerText}>
+              <p className={styles.reviewAuthorName}>{testimonial.name}</p>
+              {dateStr && <p className={styles.reviewDate}>{dateStr}</p>}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── If Has Video: Render Video Testimonial Card ──
+  const ytId = testimonial.videoUrl!.includes("youtube.com/watch")
+    ? new URL(testimonial.videoUrl!).searchParams.get("v")
+    : testimonial.videoUrl!.includes("youtu.be/")
+      ? testimonial.videoUrl!.split("youtu.be/")[1]?.split("?")[0]
+      : null;
   const isEmbed = Boolean(ytId);
 
   // Use YouTube thumbnail if it's YouTube, otherwise fallback to the provided image or nothing
-  const thumbnailSrc = ytId 
-    ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` 
+  const thumbnailSrc = ytId
+    ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`
     : testimonial.image;
 
   return (
@@ -65,31 +126,28 @@ export default function TestimonialCard({ testimonial }: Props) {
               sizes="(max-width: 768px) 100vw, 280px"
               className={styles.thumbImg}
             />
-          ) : hasVideo && !isEmbed ? (
+          ) : !isEmbed ? (
             <video
               src={testimonial.videoUrl}
-              className={styles.thumbImg}
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              className={styles.videoPlayer}
               preload="metadata"
             />
           ) : (
-            <div className={styles.thumbImg} style={{ background: "#000", width: "100%", height: "100%" }} />
+            <div className={styles.thumbPlaceholder} />
           )}
 
-          {isPlaying && hasVideo && (
+          {isPlaying && (
             isEmbed ? (
               <iframe
                 src={getEmbedUrl(testimonial.videoUrl!)}
-                className={styles.thumbImg}
-                style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none", zIndex: 1 }}
+                className={styles.videoEmbed}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
             ) : (
               <video
                 src={testimonial.videoUrl}
-                className={styles.thumbImg}
-                style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 1 }}
+                className={styles.videoActive}
                 controls
                 autoPlay
               />
@@ -103,11 +161,10 @@ export default function TestimonialCard({ testimonial }: Props) {
           <Image src="/images/quotation.svg" alt="" width={29} height={17} />
         </div>
 
-        {hasVideo && !isPlaying && (
-          <button 
-            className={styles.playBtn} 
-            aria-label="Play video" 
-            style={{ backdropFilter: "blur(16px) saturate(180%)", WebkitBackdropFilter: "blur(16px) saturate(180%)", zIndex: 2 }}
+        {!isPlaying && (
+          <button
+            className={styles.playBtn}
+            aria-label="Play video"
             onClick={() => setIsPlaying(true)}
           >
             <Image src="/images/playbtn.svg" alt="" width={20} height={20} />
@@ -124,14 +181,14 @@ export default function TestimonialCard({ testimonial }: Props) {
               {(testimonial.countryCode || testimonial.location) && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={`https://hatscripts.github.io/circle-flags/flags/${(testimonial.countryCode || testimonial.location).toLowerCase()}.svg`}
-                  alt={testimonial.location}
+                  src={`https://hatscripts.github.io/circle-flags/flags/${(testimonial.countryCode || testimonial.location)!.toLowerCase()}.svg`}
+                  alt={testimonial.location || ""}
                   width={18}
                   height={18}
                   className={styles.flagImg}
                 />
               )}
-              <span className={styles.reviewerLocation}>{testimonial.location}</span>
+              {testimonial.location && <span className={styles.reviewerLocation}>{testimonial.location}</span>}
             </div>
             <StarRating value={testimonial.rating} />
           </div>
