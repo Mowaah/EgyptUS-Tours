@@ -17,6 +17,7 @@ import HomeHotelsFetcher from "@/components/website/HomeFetchers/HomeHotelsFetch
 import HomeTransportationFetcher from "@/components/website/HomeFetchers/HomeTransportationFetcher";
 import HomeTestimonialsFetcher from "@/components/website/HomeFetchers/HomeTestimonialsFetcher";
 import { LoadingSpinner } from "@/components/shared";
+import { ReviewModalHandler } from "@/components/website/ReviewModal";
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateSeoMetadata({
@@ -58,6 +59,9 @@ export default function Home() {
       </Suspense>
       
       <ContactSection />
+      <Suspense fallback={null}>
+        <ReviewModalHandler />
+      </Suspense>
     </>
   );
 }
