@@ -42,7 +42,7 @@ export default async function HotelDetailRoutePage({ params }: PageProps) {
           name: h.name,
           location: h.location_text || "",
           image: h.hero_image || "/images/pyramids.jpg",
-          stars: h.stars,
+          stars: typeof h.stars === "number" ? h.stars : (parseFloat(String(h.stars)) || 0),
           rating: parseFloat(h.rating_avg) || 0,
           rooms: h.rooms,
           pricePerNight: baseUsd,

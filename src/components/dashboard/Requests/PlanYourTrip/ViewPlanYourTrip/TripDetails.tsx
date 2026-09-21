@@ -25,7 +25,7 @@ export default function TripDetails({ request }: TripDetailsProps) {
     { label: "Budget", value: request.budget },
     { 
       label: "Hotel Category", 
-      value: <StarRating value={request.hotelCategory} formatDisplayValue={(v) => v.toFixed(1)} />
+      value: <StarRating value={request.hotelCategory} formatDisplayValue={(v) => (v % 1 === 0 ? String(Math.round(v)) : v.toFixed(1))} />
     },
     { label: "Ideal Room Type", value: request.roomType },
     { label: "Transportation Preferences", value: request.transportation },

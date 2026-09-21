@@ -22,16 +22,25 @@ export default function StarRating({
   size = 14,
   className = "",
 }: StarRatingProps) {
-  const ratingValue = filled ?? value ?? 0;
+  const rawRating = filled ?? value ?? 0;
+  const ratingValue = typeof rawRating === "number" ? rawRating : (Number(rawRating) || 0);
   const fullStars = Math.floor(ratingValue);
   const hasHalfStar = ratingValue % 1 >= 0.5;
   const emptyStars = Math.max(0, 5 - fullStars - (hasHalfStar ? 1 : 0));
   
   const displayValue = value ?? filled;
-  const valueLabel =
-    formatDisplayValue && typeof displayValue === "number"
-      ? formatDisplayValue(displayValue)
+  const numericDisplay = typeof displayValue === "number" ? displayValue : Number(displayValue);
+  const defaultLabel =
+    !isNaN(numericDisplay) && displayValue !== undefined && displayValue !== null
+      ? numericDisplay % 1 === 0
+        ? String(Math.round(numericDisplay))
+        : String(numericDisplay)
       : displayValue;
+
+  const valueLabel =
+    formatDisplayValue && typeof numericDisplay === "number" && !isNaN(numericDisplay)
+      ? formatDisplayValue(numericDisplay)
+      : defaultLabel;
 
   return (
     <span className={`${styles.stars} ${className}`}>

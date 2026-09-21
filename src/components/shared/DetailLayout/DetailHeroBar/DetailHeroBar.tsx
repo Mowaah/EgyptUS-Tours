@@ -40,7 +40,13 @@ export default function DetailHeroBar({
         <div className={styles.topRow}>
           <div className={styles.meta}>
             <div className={styles.ratingGroup}>
-              <span className={styles.rating}>{rating}</span>
+              <span className={styles.rating}>
+                {!isNaN(Number(rating))
+                  ? Number(rating) % 1 === 0
+                    ? String(Math.round(Number(rating)))
+                    : String(Number(rating))
+                  : rating}
+              </span>
               <Image src="/images/rating-star.svg" alt="star" width={24.94} height={23} className={styles.star} />
             </div>
             {showReviews && <span className={styles.reviews}>({reviewCount.toLocaleString()} reviews)</span>}

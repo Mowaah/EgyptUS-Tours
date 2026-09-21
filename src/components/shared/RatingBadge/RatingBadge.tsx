@@ -15,6 +15,12 @@ export default function RatingBadge({
   className = "",
 }: RatingBadgeProps) {
   const iconSize = size === "md" ? 18 : 14;
+  const numRating = Number(rating);
+  const formattedRating = !isNaN(numRating)
+    ? numRating % 1 === 0
+      ? String(Math.round(numRating))
+      : String(numRating)
+    : rating;
 
   return (
     <div className={`${styles.badge} ${styles[`size-${size}`]} ${className}`.trim()}>
@@ -25,7 +31,7 @@ export default function RatingBadge({
         height={iconSize}
         aria-hidden="true"
       />
-      <span>{rating}</span>
+      <span>{formattedRating}</span>
       {reviews !== undefined && (
         <span className={styles.reviewCount}>({reviews.toLocaleString()})</span>
       )}

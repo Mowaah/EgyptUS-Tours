@@ -18,7 +18,7 @@ export default async function HomeHotelsFetcher() {
         name: h.name,
         location: h.location_text || "Egypt",
         image: h.hero_image || "/images/pyramids.jpg",
-        stars: h.stars,
+        stars: typeof h.stars === "number" ? h.stars : (parseFloat(String(h.stars)) || 0),
         rating: parseFloat(h.rating_avg) || 0,
         rooms: h.rooms,
         pricePerNight: discountedPrice,

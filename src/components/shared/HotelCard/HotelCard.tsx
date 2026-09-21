@@ -41,6 +41,13 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
     if (onFavoriteToggle) onFavoriteToggle(hotel.id);
   };
 
+  const starNumber = Number(hotel.stars);
+  const formattedStars = isNaN(starNumber)
+    ? String(hotel.stars ?? "")
+    : starNumber % 1 === 0
+      ? String(Math.round(starNumber))
+      : String(starNumber);
+
   return (
     <div className={`${styles.card} ${isList ? styles.listCard : ""}`}>
       {/* ── Image ── */}
@@ -76,9 +83,9 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
       <div className={`${styles.content} ${isList ? styles.listContent : ""}`}>
         <div className={styles.ratingRow}>
           <span className={styles.starLabel}>
-            {t("units.starLuxuryHotel", "{stars}-Star Luxury Hotel").replace("{stars}", String(hotel.stars))}
+            {t("units.starLuxuryHotel", "{stars}-Star Luxury Hotel").replace("{stars}", formattedStars)}
           </span>
-          <StarRating filled={hotel.stars} value={hotel.stars} className={styles.starRating} />
+          <StarRating filled={starNumber} value={starNumber} className={styles.starRating} />
         </div>
 
         <div className={styles.stats}>

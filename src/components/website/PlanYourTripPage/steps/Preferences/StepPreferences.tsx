@@ -160,7 +160,7 @@ export default function StepPreferences({
                     className={styles.hotelCategoryStarRating}
                     filled={stars}
                     value={stars}
-                    formatDisplayValue={(n) => n.toFixed(1)}
+                    formatDisplayValue={(n) => (n % 1 === 0 ? String(Math.round(n)) : n.toFixed(1))}
                     valueClassName={styles.hotelCategoryValue}
                     size={14}
                   />
@@ -175,7 +175,7 @@ export default function StepPreferences({
                       <StarRating
                         filled={opt.starCount}
                         value={opt.starCount}
-                        formatDisplayValue={(n) => n.toFixed(1)}
+                        formatDisplayValue={(n) => (n % 1 === 0 ? String(Math.round(n)) : n.toFixed(1))}
                         showValue
                         valueClassName={styles.hotelCategoryValue}
                         size={12}

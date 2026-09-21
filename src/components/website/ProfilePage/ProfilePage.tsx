@@ -236,7 +236,7 @@ export default function ProfilePage() {
               name: h.name,
               location: h.location_text,
               image: h.hero_image || h.image || "/images/pyramids.jpg",
-              stars: h.stars,
+              stars: typeof h.stars === "number" ? h.stars : (parseFloat(String(h.stars)) || 0),
               rating: h.rating_avg,
               reviews: h.review_count,
               rooms: h.rooms,

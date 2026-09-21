@@ -101,7 +101,7 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding: $spacing-lg $spacing-lg $spacing-xs;
+  padding: $spacing-lg 0 0;
 }
 
 .ratingRow {
@@ -148,13 +148,15 @@
 .separator {
   height: 1px;
   background: $border-card;
-  margin: 0 -#{$spacing-md} $spacing-md;
+  margin: 0 0 $spacing-md;
+  width: 100%;
 }
 
 .footer {
   @include flex-between;
   padding: 8px 16px;
-  margin: 0 -20px 0 -20px;
+  margin: 0;
+  width: 100%;
   border-radius: 24px;
   background: rgba(234, 241, 253, 0.4);
   border: 1px solid $border-card;

@@ -79,7 +79,7 @@ export function mapHotelDetailToHotel(hotelDetail: HotelDetail): import("@/types
       hotelDetail.hero_image || "/images/pyramids.jpg",
       ...(hotelDetail.gallery_images || [])
     ].filter(Boolean) as string[],
-    stars: hotelDetail.stars,
+    stars: typeof hotelDetail.stars === "number" ? hotelDetail.stars : (parseFloat(String(hotelDetail.stars)) || 0),
     rating: parseFloat(hotelDetail.rating_avg) || 0,
     rooms: hotelDetail.rooms,
     pricePerNight: (() => {
