@@ -30,6 +30,7 @@ export interface AdminLead {
   close_reason?: string;
   reopen_reason?: string;
   converted_custom_trip_request_id?: number;
+  converted_b2b_proposal_request_id?: number;
   converted_at?: string;
   created_by?: AdminLeadCreatedBy | null;
   updated_at?: string;

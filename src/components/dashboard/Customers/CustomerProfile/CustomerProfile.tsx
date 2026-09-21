@@ -9,6 +9,7 @@ import BookingHistoryPanel from "./BookingHistory/BookingHistoryPanel";
 import CustomTripRequestsPanel from "./CustomTripRequests/CustomTripRequestsPanel";
 import { ReviewsPanel } from "@/components/dashboard/Reviews/ReviewsPanel/ReviewsPanel";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
+import phStyles from "@/components/dashboard/shared/ProfileHeader/ProfileHeader.module.scss";
 import pageStyles from "@/app/(dashboard)/dashboard/page.module.scss";
 import styles from "./CustomerProfile.module.scss";
 import { useAdminCustomer } from "@/hooks/useCustomers";
@@ -97,12 +98,12 @@ function CustomerProfileContent({ customerId }: CustomerProfileProps) {
             actionButtons={
               canEditCustomers ? (
                 <>
-                  <button className={styles.editButton} type="button" onClick={() => setIsEditModalOpen(true)}>
+                  <button className={phStyles.secondaryActionButton} type="button" onClick={() => setIsEditModalOpen(true)}>
                     <Image src="/images/dashboard/edit.svg" alt="" width={20} height={20} />
                     Edit Profile
                   </button>
 
-                  <button className={styles.blockButton} type="button" onClick={() => setIsBlockModalOpen(true)}>
+                  <button className={phStyles.dangerActionButton} type="button" onClick={() => setIsBlockModalOpen(true)}>
                     <Image src="/images/dashboard/block.svg" alt="" width={20} height={20} />
                     {customer.status === "blocked" ? "Unblock User" : "Block User"}
                   </button>

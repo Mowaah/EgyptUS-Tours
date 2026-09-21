@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
@@ -76,11 +77,26 @@ interface ViewLeadProps {
 }
 
 export default function ViewLead({ leadId }: ViewLeadProps) {
+  const router = useRouter();
   const numericId = parseInt(leadId, 10);
   const { data: lead, isLoading } = useLead(numericId);
   
   const [activeModalKey, setActiveModalKey] = React.useState<string | null>(null);
   const [bannerMessage, setBannerMessage] = React.useState("");
+
+  const handleViewRequest = () => {
+    if (!lead) return;
+    const targetRequestId =
+      lead.converted_b2b_proposal_request_id ??
+      lead.converted_custom_trip_request_id ??
+      (lead as any).converted_request_id;
+
+    if (targetRequestId) {
+      router.push(`/dashboard/requests/b2b-programs/${targetRequestId}`);
+    } else {
+      router.push("/dashboard/requests/b2b-programs");
+    }
+  };
 
   const addNoteMutation = useAddLeadNote();
   const closeLeadMutation = useCloseLead();
@@ -155,7 +171,11 @@ export default function ViewLead({ leadId }: ViewLeadProps) {
                 )}
 
                 {lead.status === "converted" && (
-                  <button className={phStyles.primaryActionButton} type="button">
+                  <button 
+                    className={phStyles.primaryActionButton} 
+                    type="button"
+                    onClick={handleViewRequest}
+                  >
                     View Request
                     <Image src="/images/dashboard/fields/eye.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
                   </button>
