@@ -123,7 +123,7 @@ export default function CustomersByNationality({
       />
 
       <div className={styles.chartWrapper}>
-        <HatchedBarChart data={chartData} yAxisLabels={yAxisLabels} />
+        <HatchedBarChart data={chartData} yAxisLabels={yAxisLabels} className={styles.chart} />
       </div>
 
       <div className={styles.paginationWrapper}>

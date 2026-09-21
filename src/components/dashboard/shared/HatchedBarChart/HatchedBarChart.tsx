@@ -9,14 +9,15 @@ export interface HatchedBarChartProps {
   }[];
   yAxisLabels: string[];
   barWidth?: number;
+  className?: string;
 }
 
-export default function HatchedBarChart({ data, yAxisLabels, barWidth }: HatchedBarChartProps) {
+export default function HatchedBarChart({ data, yAxisLabels, barWidth, className }: HatchedBarChartProps) {
   const lineCount = yAxisLabels.length;
   const gapCount = Math.max(1, lineCount - 1);
 
   return (
-    <div className={styles.wrap}>
+    <div className={`${styles.wrap} ${className || ""}`.trim()}>
       <div className={styles.yAxis}>
         {yAxisLabels.map((label, index) => (
           <span 

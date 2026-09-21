@@ -17,7 +17,7 @@ const NOTIFICATION_TABS: TabConfig[] = [
   { id: "all", label: "All", iconSrc: "/images/dashboard/notifications/all.svg" },
   { id: "booking", label: "Booking", iconSrc: "/images/dashboard/notifications/booking.svg" },
   { id: "request", label: "Request", iconSrc: "/images/dashboard/notifications/request.svg" },
-  { id: "payment", label: "Payment", iconSrc: "/images/dashboard/notifications/payment.svg" },
+  // { id: "payment", label: "Payment", iconSrc: "/images/dashboard/notifications/payment.svg" },
 ];
 
 const PAGE_SIZE_OPTIONS = [3, 5, 10, 15];

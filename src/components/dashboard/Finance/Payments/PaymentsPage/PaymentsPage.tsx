@@ -15,10 +15,10 @@ import { downloadBlobAsCSV } from "@/lib/utils";
 import { formatCompactMetric, formatCountWithCommas, formatTrendPct } from "@/utils/formatMetric";
 
 const CATEGORY_COLORS: Record<string, string> = {
-  Trip: "#A1CCFF",
+  Trip: "#8DC1FF",
   Hotel: "#FFC6A0",
-  Transport: "#E9BDFF",
-  "Custom trip": "#D8F3DC",
+  Transport: "#FFD1DE",
+  "Custom trip": "#E9BDFF",
 };
 
 const exportFinanceReportToCSV = (data: any, statsData?: any) => {
@@ -41,7 +41,7 @@ const exportFinanceReportToCSV = (data: any, statsData?: any) => {
   lines.push("Month,Revenue");
   const heatmap = data?.seasonal_heatmap || [];
   heatmap.forEach((m: any) => {
-    const totalRev = parseFloat(m.trip) + parseFloat(m.hotel) + parseFloat(m.transport) + parseFloat(m.custom_trip);
+    const totalRev = (parseFloat(m.trip) || 0) + (parseFloat(m.hotel) || 0) + (parseFloat(m.transport) || 0) + (parseFloat(m.custom_trip) || 0);
     lines.push(`"${m.month}",$${totalRev.toFixed(2)}`);
   });
 
@@ -60,20 +60,46 @@ export default function PaymentsPage() {
       : undefined
   );
 
-  const revenueByCatMap = data?.revenue_by_category || {};
-  const categoryData = Object.keys(revenueByCatMap)
-    .filter((key) => ["trip", "hotel", "transport"].includes(key))
-    .map((key) => {
-      const valStr = revenueByCatMap[key];
-      const valNum = parseFloat(valStr);
-      const labelMap: Record<string, string> = { trip: "Trips", hotel: "Hotels", transport: "Transportation" };
-      const colorMap: Record<string, string> = { trip: "Trip", hotel: "Hotel", transport: "Transport" };
-      return {
-        label: labelMap[key] || key,
-        value: valNum,
-        color: CATEGORY_COLORS[colorMap[key]] || "#ccc",
-      };
-    });
+  const revenueByCatMap: Record<string, any> = data?.revenue_by_category || statsData?.revenue_by_category || {};
+
+  const getCatValue = (category: string): number => {
+    if (category === "custom_trip") {
+      const val =
+        revenueByCatMap.custom_trip ??
+        revenueByCatMap.custom_trips ??
+        revenueByCatMap.custom ??
+        revenueByCatMap.plan_your_trip ??
+        revenueByCatMap["Custom trip"] ??
+        revenueByCatMap["Custom Trips"];
+      return parseFloat(val || "0") || 0;
+    }
+    if (category === "transport") {
+      const val = revenueByCatMap.transport ?? revenueByCatMap.transportation;
+      return parseFloat(val || "0") || 0;
+    }
+    if (category === "trip") {
+      const val = revenueByCatMap.trip ?? revenueByCatMap.trips;
+      return parseFloat(val || "0") || 0;
+    }
+    if (category === "hotel") {
+      const val = revenueByCatMap.hotel ?? revenueByCatMap.hotels;
+      return parseFloat(val || "0") || 0;
+    }
+    return parseFloat(revenueByCatMap[category] || "0") || 0;
+  };
+
+  const ORDERED_CATEGORIES = [
+    { key: "trip", label: "Trips", color: CATEGORY_COLORS.Trip },
+    { key: "hotel", label: "Hotels", color: CATEGORY_COLORS.Hotel },
+    { key: "transport", label: "Transportation", color: CATEGORY_COLORS.Transport },
+    { key: "custom_trip", label: "Custom Trip", color: CATEGORY_COLORS["Custom trip"] },
+  ];
+
+  const categoryData = ORDERED_CATEGORIES.map(({ key, label, color }) => ({
+    label,
+    value: getCatValue(key),
+    color,
+  }));
   
   const totalCatVal = categoryData.reduce((acc: number, curr: any) => acc + curr.value, 0);
   const chartDataNormalized = categoryData.map((c: any) => ({
@@ -85,7 +111,7 @@ export default function PaymentsPage() {
   const heatmapData = heatmapRaw.map(d => {
     const dateObj = new Date(d.month);
     const label = dateObj.toLocaleString('en-US', { month: 'short' });
-    const totalRev = parseFloat(d.trip) + parseFloat(d.hotel) + parseFloat(d.transport) + parseFloat(d.custom_trip);
+    const totalRev = (parseFloat(d.trip) || 0) + (parseFloat(d.hotel) || 0) + (parseFloat(d.transport) || 0) + (parseFloat(d.custom_trip) || 0);
     return {
       label,
       value: totalRev
