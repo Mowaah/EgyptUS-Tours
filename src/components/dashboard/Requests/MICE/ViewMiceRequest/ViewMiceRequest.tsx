@@ -38,9 +38,10 @@ export default function ViewMiceRequest({ requestId }: { requestId: string }) {
     const total = Number(requestData.payment_overview.total_price || 0);
     const remaining = Number(requestData.payment_overview.remaining_balance || 0);
     const totalPaid = total - remaining;
-    const travelDate = requestData.event_details?.start_date || new Date().toISOString();
+    const travelDate = requestData.event_details?.start_date || requestData.start_date || new Date().toISOString();
+    const cancellationDate = requestData.cancelled_at || new Date().toISOString();
 
-    const summary = calculateRefundSummary(total, totalPaid, travelDate);
+    const summary = calculateRefundSummary(total, totalPaid, travelDate, cancellationDate);
     return {
       package_total: summary.package_total.toString(),
       paid_amount: (summary.paid_amount ?? totalPaid).toString(),

@@ -58,6 +58,7 @@ export interface DashboardCards {
 export interface RevenueOverviewRow {
   date?: string;
   month?: string;
+  year?: string;
   hour?: string;
   trip: string;
   hotel: string;
@@ -69,10 +70,11 @@ export interface RevenueOverviewRow {
 export interface DomesticOverviewRow {
   date?: string;
   month?: string;
+  year?: string;
   hour?: string;
   domestic: number;
   international: number;
-  unknown: number;
+  unknown?: number;
 }
 
 export interface BookingDestinationRow {

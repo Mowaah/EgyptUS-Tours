@@ -147,7 +147,10 @@ export default function DashboardNavbar({
     <header className={styles.navbar}>
       <div className={styles.topRow}>
         <nav className={styles.breadcrumb} aria-label="Breadcrumb">
-          <Link href="/dashboard" className={styles.breadcrumbLink}>
+          <Link
+            href="/dashboard"
+            className={`${styles.breadcrumbLink} ${visibleTrail.length === 0 ? styles.breadcrumbCurrent : ""}`.trim()}
+          >
             <Image
               src="/images/dashboard/navbar/home.svg"
               alt=""

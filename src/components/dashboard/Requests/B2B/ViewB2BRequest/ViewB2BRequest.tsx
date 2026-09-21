@@ -35,10 +35,14 @@ export default function ViewB2BRequest({ requestId }: { requestId: string }) {
     const total = Number(requestData.payment_overview.total_price || 0);
     const remaining = Number(requestData.payment_overview.remaining_balance || 0);
     const totalPaid = total - remaining;
-    // B2B requests might not have a specific travel date, fallback to now
-    const travelDate = new Date().toISOString();
+    const travelDate =
+      requestData.start_date ||
+      requestData.program_start_date ||
+      requestData.company_information?.start_date ||
+      new Date().toISOString();
+    const cancellationDate = requestData.cancelled_at || new Date().toISOString();
 
-    const summary = calculateRefundSummary(total, totalPaid, travelDate);
+    const summary = calculateRefundSummary(total, totalPaid, travelDate, cancellationDate);
     return {
       package_total: summary.package_total.toString(),
       paid_amount: (summary.paid_amount ?? totalPaid).toString(),

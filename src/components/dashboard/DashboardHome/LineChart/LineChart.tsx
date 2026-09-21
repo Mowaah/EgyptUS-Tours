@@ -25,8 +25,8 @@ export default function LineChart({
     if (p > computedMax) computedMax = p;
   }));
 
-  let maxValue = 12000;
-  let step = 2400;
+  let maxValue = 10;
+  let step = 2;
 
   if (computedMax > 0) {
     const paddedMax = computedMax * 1.05;

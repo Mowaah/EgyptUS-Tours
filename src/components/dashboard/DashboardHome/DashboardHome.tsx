@@ -139,15 +139,25 @@ function getYearlyLabels(): string[] {
 const MONTH_NAMES = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
 function extractLabels(
-  rows: Array<{ date?: string; month?: string; hour?: string }> | Record<string, number> | undefined,
+  rows: Array<{ date?: string; month?: string; year?: string; hour?: string }> | Record<string, number> | undefined,
   range: DashboardRange
 ): string[] {
   if (!Array.isArray(rows) || rows.length === 0) {
     return range === "Yearly" ? getYearlyLabels() : months;
   }
   return rows.map((r) => {
-    const raw = r.month || r.date || r.hour || "";
+    const raw = r.year || r.month || r.date || r.hour || "";
     if (!raw) return "";
+
+    if (range === "Yearly") {
+      if (r.year) return r.year;
+      const parts = raw.split("-");
+      if (parts.length >= 1 && parts[0].length === 4) {
+        return parts[0];
+      }
+      const d = new Date(raw);
+      return !isNaN(d.getTime()) ? d.getFullYear().toString() : raw;
+    }
 
     if (r.month || range === "Monthly") {
       const parts = raw.split("-");
@@ -157,15 +167,6 @@ function extractLabels(
           return MONTH_NAMES[monthNum - 1];
         }
       }
-    }
-
-    if (range === "Yearly") {
-      const parts = raw.split("-");
-      if (parts.length >= 1 && parts[0].length === 4) {
-        return parts[0];
-      }
-      const d = new Date(raw);
-      return !isNaN(d.getTime()) ? d.getFullYear().toString() : raw;
     }
 
     const d = new Date(raw);
@@ -178,8 +179,18 @@ function extractLabels(
 function mapDomesticLines(rows: DomesticOverviewRow[] | Record<string, number> | undefined): ChartLine[] {
   if (!Array.isArray(rows)) return DEFAULT_DOMESTIC_LINES;
   return [
-    { name: "inside Egypt", color: "#3894FF", areaColor: "#3894FF", points: rows.map((r) => r.domestic ?? 0) },
-    { name: "International", color: "#FFAA70", areaColor: "#FFAA70", points: rows.map((r) => r.international ?? 0) },
+    {
+      name: "inside Egypt",
+      color: "#3894FF",
+      areaColor: "#3894FF",
+      points: rows.map((r) => Number(r.domestic ?? 0) + Number(r.unknown ?? 0)),
+    },
+    {
+      name: "International",
+      color: "#FFAA70",
+      areaColor: "#FFAA70",
+      points: rows.map((r) => Number(r.international ?? 0)),
+    },
   ];
 }
 
