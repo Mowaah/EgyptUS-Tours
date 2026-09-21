@@ -1,4 +1,5 @@
 @use "@/styles/variables" as *;
+@use "@/styles/breakpoints" as *;
 
 .idCell {
   font-weight: 700;
@@ -146,7 +147,34 @@
 .agentCell {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 12px;
+  white-space: nowrap;
+
+  img,
+  .agentAvatarImg {
+    width: 39px;
+    height: 39px;
+    min-width: 39px;
+    min-height: 39px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    aspect-ratio: 1 / 1;
+
+    @media (max-width: $breakpoint-2xl) {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      min-height: 32px;
+    }
+
+    @media (max-width: $breakpoint-md) {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      min-height: 28px;
+    }
+  }
 
   span {
     color: $gray-900;
@@ -154,8 +182,10 @@
 }
 
 .agentAvatar {
-  width: 2rem;
-  height: 2rem;
+  width: 39px;
+  height: 39px;
+  min-width: 39px;
+  min-height: 39px;
   border-radius: 50%;
   background: $gray-200;
   display: flex;
@@ -164,16 +194,31 @@
   font-size: $font-size-base;
   font-weight: 700;
   color: $gray-600;
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
+
+  @media (max-width: $breakpoint-2xl) {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    font-size: $font-size-sm;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+    font-size: $font-size-xs;
+  }
 }
 
-.assignedToCell { 
-  display: flex; 
-  align-items: center; 
-  gap: 0.5rem; 
-  width: max-content;
-  white-space: nowrap;
-} 
-.avatar { 
-  border-radius: 50%; 
-  object-fit: cover; 
+.unassigned {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.emptyDash {
+  color: $gray-400;
 }

@@ -112,7 +112,6 @@ export function ViewAssignedMembersModal({ open, onClose, onReassign, batchId }:
                         width={32} 
                         height={32} 
                         className={styles.teamMemberImage} 
-                        style={{ objectFit: "cover" }}
                       />
                       <span className={styles.teamMemberName}>{member.full_name}</span>
                     </div>

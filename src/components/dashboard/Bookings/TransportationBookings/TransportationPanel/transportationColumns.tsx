@@ -91,7 +91,7 @@ export const transportationColumns: DataTableColumn<TransportationBookingRow>[] 
         op === "no_refunded_amount" ||
         !row.remaining_payment_status
       ) {
-        return <span style={{ color: "#9CA3AF" }}>-</span>;
+        return <span className={styles.emptyDash}>-</span>;
       }
       return (
         <span className={getPillStyle(row.remaining_payment_status)}>
@@ -152,14 +152,20 @@ export const transportationColumns: DataTableColumn<TransportationBookingRow>[] 
         {row.assigned_to ? (
           <>
             {row.assigned_to.profile_picture ? (
-              <Image src={getImageUrl(row.assigned_to.profile_picture)} alt="" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+              <Image
+                src={getImageUrl(row.assigned_to.profile_picture)}
+                alt=""
+                width={39}
+                height={39}
+                className={styles.agentAvatarImg}
+              />
             ) : (
               <div className={styles.agentAvatar}>{row.assigned_to.full_name.charAt(0)}</div>
             )}
             <span>{row.assigned_to.full_name}</span>
           </>
         ) : (
-          <span style={{ color: "#94a3b8", fontWeight: 400 }}>Unassigned</span>
+          <span className={styles.unassigned}>Unassigned</span>
         )}
       </div>
     ),

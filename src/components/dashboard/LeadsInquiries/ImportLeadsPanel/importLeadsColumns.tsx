@@ -41,12 +41,7 @@ export const importLeadsColumns: DataTableColumn<AdminLeadImportBatch>[] = [
           alt={row.imported_by?.full_name || "Unknown"}
           width={39}
           height={39}
-          style={{
-            borderRadius: "32px",
-            objectFit: "cover",
-            background: row.imported_by?.profile_picture ? "transparent" : "#F0F1F3",
-            padding: row.imported_by?.profile_picture ? "0px" : "8px"
-          }}
+          className={row.imported_by?.profile_picture ? styles.avatar : styles.avatarPlaceholder}
         />
         <span className={styles.name}>{row.imported_by?.full_name || "Unknown"}</span>
       </div>

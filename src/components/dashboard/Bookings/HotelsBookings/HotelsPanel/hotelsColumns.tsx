@@ -2,6 +2,7 @@ import Image from "next/image";
 import { type DataTableColumn, type DataTableRowAction } from "@/components/dashboard/DataTable/types";
 import { HotelBookingRow } from "../types";
 import StatusPill from "@/components/shared/StatusPill/StatusPill";
+import styles from "./HotelsPanel.module.scss";
 
 export const hotelsRowActions = (
   row: HotelBookingRow,
@@ -80,29 +81,29 @@ export const hotelsColumns: DataTableColumn<HotelBookingRow>[] = [
   {
     id: "booking_code",
     header: "Booking ID",
-    render: (row) => <span style={{ fontWeight: 700, color: "#111827" }}>{row.booking_code}</span>,
+    render: (row) => <span className={styles.idCell}>{row.booking_code}</span>,
   },
   {
     id: "customerName",
     header: "Customer",
-    render: (row) => <span style={{ color: "#4B5563" }}>{row.customer_name}</span>,
+    render: (row) => <span className={styles.textCell}>{row.customer_name}</span>,
   },
   {
     id: "checkIn",
     header: "Check-in",
     render: (row) => {
-      if (!row.check_in_date) return <span style={{ color: "#4B5563" }}>-</span>;
+      if (!row.check_in_date) return <span className={styles.emptyDash}>-</span>;
       const [y, m, d] = row.check_in_date.split("-");
-      return <span style={{ color: "#4B5563" }}>{`${d}/${m}/${y}`}</span>;
+      return <span className={styles.textCell}>{`${d}/${m}/${y}`}</span>;
     },
   },
   {
     id: "checkOut",
     header: "Check-out",
     render: (row) => {
-      if (!row.check_out_date) return <span style={{ color: "#4B5563" }}>-</span>;
+      if (!row.check_out_date) return <span className={styles.emptyDash}>-</span>;
       const [y, m, d] = row.check_out_date.split("-");
-      return <span style={{ color: "#4B5563" }}>{`${d}/${m}/${y}`}</span>;
+      return <span className={styles.textCell}>{`${d}/${m}/${y}`}</span>;
     },
   },
   {
@@ -111,22 +112,7 @@ export const hotelsColumns: DataTableColumn<HotelBookingRow>[] = [
     render: (row) => {
       const count = row.rooms_count;
       return (
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "4px",
-            padding: "4px 8px",
-            background: "#E5F0FF",
-            color: "#0E5FD9",
-            borderRadius: "100px",
-            fontSize: "12px",
-            fontWeight: 700,
-            whiteSpace: "nowrap",
-            width: "max-content",
-            flexShrink: 0,
-          }}
-        >
+        <span className={styles.roomsBadge}>
           <Image src="/images/dashboard/booking/hotels/rooms.svg" alt="" width={16} height={16} />
           {count} Rooms
         </span>
@@ -137,13 +123,13 @@ export const hotelsColumns: DataTableColumn<HotelBookingRow>[] = [
     id: "dateTime",
     header: "Date / Time",
     render: (row) => {
-      if (!row.created_at) return <span style={{ color: "#4B5563" }}>-</span>;
+      if (!row.created_at) return <span className={styles.emptyDash}>-</span>;
       const d = new Date(row.created_at);
       const day = String(d.getDate()).padStart(2, "0");
       const month = String(d.getMonth() + 1).padStart(2, "0");
       const year = d.getFullYear();
       const time = d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
-      return <span style={{ color: "#4B5563" }}>{`${day}/${month}/${year} ${time}`}</span>;
+      return <span className={styles.textCell}>{`${day}/${month}/${year} ${time}`}</span>;
     },
   },
   {
@@ -159,7 +145,7 @@ export const hotelsColumns: DataTableColumn<HotelBookingRow>[] = [
         op === "no_refunded_amount" ||
         !row.remaining_payment_status
       ) {
-        return <span style={{ color: "#9CA3AF" }}>-</span>;
+        return <span className={styles.emptyDash}>-</span>;
       }
       const rem = row.remaining_payment_status?.toLowerCase();
       let variant: "green" | "orange" | "red" | "pink" | "blue" = "orange";
@@ -213,7 +199,7 @@ export const hotelsColumns: DataTableColumn<HotelBookingRow>[] = [
       const variant = source === "website" ? "blue" : "pink";
       const icon = source === "website" ? "/images/dashboard/customers/custom/website.svg" : "/images/dashboard/customers/custom/agent.svg";
       const label = (
-        <span style={{ display: "flex", alignItems: "center", gap: "6px", textTransform: "capitalize" }}>
+        <span className={styles.sourceLabel}>
           <Image src={icon} alt="" width={14} height={14} aria-hidden />
           {source === "admin" ? "Agent" : source}
         </span>
@@ -225,20 +211,24 @@ export const hotelsColumns: DataTableColumn<HotelBookingRow>[] = [
     id: "assignedAgent",
     header: "Assigned Agent",
     render: (row) => (
-      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      <div className={styles.agentCell}>
         {row.assigned_to ? (
           <>
             {row.assigned_to.profile_picture ? (
-              <Image src={getImageUrl(row.assigned_to.profile_picture)} alt="" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+              <Image
+                src={getImageUrl(row.assigned_to.profile_picture)}
+                alt=""
+                width={39}
+                height={39}
+                className={styles.agentAvatarImg}
+              />
             ) : (
-              <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#E2E8F0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", fontWeight: 700, color: "#475569", flexShrink: 0 }}>
-                {row.assigned_to.full_name.charAt(0)}
-              </div>
+              <div className={styles.agentAvatar}>{row.assigned_to.full_name.charAt(0)}</div>
             )}
-            <span style={{ color: "#111827" }}>{row.assigned_to.full_name}</span>
+            <span>{row.assigned_to.full_name}</span>
           </>
         ) : (
-          <span style={{ color: "#94a3b8" }}>Unassigned</span>
+          <span className={styles.unassigned}>Unassigned</span>
         )}
       </div>
     ),

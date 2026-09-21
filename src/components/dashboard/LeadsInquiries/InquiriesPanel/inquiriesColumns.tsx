@@ -77,22 +77,17 @@ export const inquiriesColumns: DataTableColumn<AdminLead>[] = [
     render: (row) => {
       const agent = row.assigned_to?.full_name || "Unassigned";
       return (
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <div className={styles.assignedCell}>
           {agent !== "Unassigned" && (
             <Image
               src={getImageUrl(row.assigned_to?.profile_picture)}
               alt={agent}
               width={39}
               height={39}
-              style={{ 
-                borderRadius: "32px", 
-                objectFit: "cover",
-                background: row.assigned_to?.profile_picture ? "transparent" : "#F0F1F3",
-                padding: row.assigned_to?.profile_picture ? "0px" : "8px"
-              }}
+              className={row.assigned_to?.profile_picture ? styles.assignedAvatar : styles.assignedAvatarPlaceholder}
             />
           )}
-          <span style={{ color: "#4B5563", fontSize: "14px", fontWeight: 400 }}>{agent}</span>
+          <span className={styles.assignedName}>{agent}</span>
         </div>
       );
     },

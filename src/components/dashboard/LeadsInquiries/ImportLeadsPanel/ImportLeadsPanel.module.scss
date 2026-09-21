@@ -1,4 +1,5 @@
 @use "@/styles/variables" as *;
+@use "@/styles/breakpoints" as *;
 
 .idCell {
   font-weight: 700;
@@ -55,9 +56,59 @@
   color: $gray-600;
   font-size: $font-size-sm;
   font-weight: 400;
+  white-space: nowrap;
+}
 
-  img {
-    border-radius: 32px;
-    object-fit: cover;
+.avatar {
+  width: 39px;
+  height: 39px;
+  min-width: 39px;
+  min-height: 39px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
+
+  @media (max-width: $breakpoint-2xl) {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+  }
+}
+
+.avatarPlaceholder {
+  width: 39px;
+  height: 39px;
+  min-width: 39px;
+  min-height: 39px;
+  border-radius: 50%;
+  object-fit: contain;
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
+  background: #F0F1F3;
+  padding: 6px;
+
+  @media (max-width: $breakpoint-2xl) {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    padding: 5px;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+    padding: 4px;
   }
 }

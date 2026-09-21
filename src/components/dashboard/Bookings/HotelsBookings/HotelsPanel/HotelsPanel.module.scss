@@ -1,0 +1,112 @@
+@use "@/styles/variables" as *;
+@use "@/styles/breakpoints" as *;
+
+.idCell {
+  font-weight: 700;
+  color: $gray-900;
+}
+
+.textCell {
+  color: $gray-600;
+}
+
+.roomsBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #E5F0FF;
+  color: #0E5FD9;
+  border-radius: 100px;
+  font-size: $font-size-12;
+  font-weight: 700;
+  white-space: nowrap;
+  width: max-content;
+  flex-shrink: 0;
+}
+
+.emptyDash {
+  color: $gray-400;
+}
+
+.sourceLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: capitalize;
+}
+
+.agentCell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+
+  img,
+  .agentAvatarImg {
+    width: 39px;
+    height: 39px;
+    min-width: 39px;
+    min-height: 39px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    aspect-ratio: 1 / 1;
+
+    @media (max-width: $breakpoint-2xl) {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      min-height: 32px;
+    }
+
+    @media (max-width: $breakpoint-md) {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      min-height: 28px;
+    }
+  }
+
+  span {
+    color: $gray-900;
+  }
+}
+
+.agentAvatar {
+  width: 39px;
+  height: 39px;
+  min-width: 39px;
+  min-height: 39px;
+  border-radius: 50%;
+  background: $gray-blue-200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-sm;
+  font-weight: 700;
+  color: #475569;
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
+
+  @media (max-width: $breakpoint-2xl) {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    font-size: $font-size-sm;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+    font-size: $font-size-xs;
+  }
+}
+
+.unassigned {
+  color: #94a3b8;
+  font-weight: 400;
+}
