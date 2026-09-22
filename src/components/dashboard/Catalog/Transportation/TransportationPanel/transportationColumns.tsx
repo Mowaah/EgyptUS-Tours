@@ -26,14 +26,7 @@ export const transportationColumns: DataTableColumn<any>[] = [
     header: "Luggage",
     render: (row) => row.luggage_capacity?.toString() || "0",
   },
-  {
-    id: "startingFrom",
-    header: "Starting From",
-    render: (row) =>
-      row.starting_from
-        ? `$${Number(row.starting_from).toLocaleString("en-US", { maximumFractionDigits: 0 })}`
-        : "$0",
-  },
+
   {
     id: "status",
     header: "Status",

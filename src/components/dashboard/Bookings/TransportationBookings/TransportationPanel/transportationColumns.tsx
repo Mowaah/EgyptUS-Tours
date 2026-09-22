@@ -73,11 +73,7 @@ export const transportationColumns: DataTableColumn<TransportationBookingRow>[] 
     header: "Route",
     render: (row) => row.route,
   },
-  {
-    id: "tripType",
-    header: "Trip Type",
-    render: (row) => row.trip_type === "one_way" ? "One Way" : row.trip_type === "round_trip" ? "Round Trip" : "-",
-  },
+
   {
     id: "paymentStatus",
     header: "Payment",
@@ -131,6 +127,7 @@ export const transportationColumns: DataTableColumn<TransportationBookingRow>[] 
   {
     id: "source",
     header: "Source",
+    hidden: true,
     render: (row) => (
       <span className={getPillStyle(row.source)}>
         {row.source === "website" ? (

@@ -20,7 +20,6 @@ import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 const filterOptions = {
   vehicleClass: ["All", "Mercedes V-Class", "Toyota Coaster", "Bus (50 Seats)", "Hyundai H1"],
-  tripType: ["All", "One Way", "Round Trip"],
   paymentStatus: ["All", "Paid", "Pending", "Overdue"],
   status: ["All", "Upcoming", "In Transit", "Completed", "Cancelled", "Refunded", "No Refunded Amount"],
   source: ["All", "Website", "Agent"],
@@ -35,7 +34,6 @@ interface TransportationPanelProps {
 export default function TransportationPanel({ searchQuery = "", onClearSearch, onNewBooking }: TransportationPanelProps) {
   const defaultFilters = {
     vehicleClass: "All",
-    tripType: "All",
     paymentStatus: "All",
     status: "All",
     source: "All",
@@ -56,10 +54,6 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
     };
     if (searchQuery) params.search = searchQuery;
     if (appliedFilters.vehicleClass !== "All") params.vehicle_class = appliedFilters.vehicleClass;
-    if (appliedFilters.tripType !== "All") {
-      const tripTypeMap: Record<string, string> = { "One Way": "one_way", "Round Trip": "round_trip" };
-      params.trip_type = tripTypeMap[appliedFilters.tripType] ?? appliedFilters.tripType.toLowerCase().replace(" ", "_");
-    }
     if (appliedFilters.paymentStatus !== "All") {
       const payMap: Record<string, string> = { Paid: "paid", Pending: "pending", Overdue: "overdue" };
       params.remaining_payment_status = payMap[appliedFilters.paymentStatus] ?? appliedFilters.paymentStatus.toLowerCase();
@@ -108,15 +102,15 @@ export default function TransportationPanel({ searchQuery = "", onClearSearch, o
 
   const filterFields = [
     { id: "vehicleClass", label: "Vehicle Class", options: filterOptions.vehicleClass },
-    { id: "tripType", label: "Trip Type", options: filterOptions.tripType },
     { id: "paymentStatus", label: "Payment Status", options: filterOptions.paymentStatus },
     { id: "status", label: "Status", options: filterOptions.status },
-    { id: "source", label: "Source", options: filterOptions.source },
-  ].map(({ id, label, options }) => ({
+    { id: "source", label: "Source", options: filterOptions.source, hidden: true },
+  ].map(({ id, label, options, hidden }) => ({
     id,
     label,
     value: filters[id as keyof typeof filters],
     options,
+    hidden,
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
 

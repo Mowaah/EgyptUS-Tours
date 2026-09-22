@@ -97,6 +97,12 @@ export default function ViewMiceRequest({ requestId }: { requestId: string }) {
         case "mark_closed":
           await eventsActions.completeTrip(requestId);
           break;
+        case "send_payment_reminder":
+          await eventsActions.sendPaymentReminder(requestId, payload.reminder_type);
+          break;
+        case "send_trip_reminder":
+          await eventsActions.sendTripReminder(requestId);
+          break;
       }
 
       await fetchDetails();

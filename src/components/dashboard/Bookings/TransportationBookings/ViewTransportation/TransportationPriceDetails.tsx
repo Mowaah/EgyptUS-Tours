@@ -116,12 +116,7 @@ export default function TransportationPriceDetails({
       maximumFractionDigits: 2,
     })}`;
 
-  const tripType = transfer?.trip_type || payload?.trip_type;
-  const tripTypeLabel = tripType
-    ? tripType === "round_trip"
-      ? "Round Trip Transfer"
-      : "One Way Transfer"
-    : "Private Transfer";
+  const tripTypeLabel = "Private Transfer";
 
   const routeSubtitle =
     transfer?.route ||

@@ -766,7 +766,6 @@ export default function ProfileBookingDetailsPage() {
         fields: [
           { label: t("profile.details.pickupLocation", "Pickup Location"), value: bData.pickup_location || bData.details?.pickup_location || "" },
           { label: t("profile.details.dropoffLocation", "Drop-off Location"), value: bData.dropoff_location || bData.details?.dropoff_location || "" },
-          { label: t("profile.details.tripType", "Trip Type"), value: bData.trip_type || bData.details?.trip_type || "" },
           { label: t("profile.details.pickupTime", "Pickup Time"), value: bData.pickup_time || bData.details?.pickup_time || "" },
           { label: t("profile.details.pickupDate", "Pickup Date"), value: formatDateDDMMYYYY(bData.pickup_date || bData.details?.pickup_date || "") || "" },
           { label: t("profile.details.passengers", "Passengers"), value: bData.details?.passengers_label || `${bData.passengers || 0} Passengers` },

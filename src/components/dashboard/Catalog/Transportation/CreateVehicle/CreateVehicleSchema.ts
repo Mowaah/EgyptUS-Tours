@@ -5,7 +5,6 @@ export const createVehicleSchema = z.object({
   vehicleName: requiredLocalizedStringSchema("Vehicle Name is required"),
   model: z.string().min(1, "Model is required"),
   category: z.string().min(1, "Category is required"),
-  duration: z.string().optional(),
   passengerCapacity: z.string().min(1, "Passenger Capacity is required"),
   luggageCapacity: z.string().optional(),
   starRating: z.string().optional().refine((val) => {
@@ -21,8 +20,8 @@ export const createVehicleSchema = z.object({
   description: requiredLocalizedStringSchema("Description is required"),
 
   // Pricing
-  basePrice: z.string().min(1, "Base Price is required"),
-  pricePerKm: z.string().min(1, "Price Per KM is required"),
+  basePrice: z.string().optional(),
+  pricePerKm: z.string().optional(),
   additionalServices: z.array(z.string()).default([]),
 
   // Media

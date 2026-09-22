@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createVehicleSchema, type CreateVehicleValues } from "./CreateVehicleSchema";
 import { IconStepper } from "@/components/shared";
 import { OverviewStep } from "./Steps/Overview/OverviewStep";
-import { PricingStep } from "./Steps/Pricing/PricingStep";
 import { WizardMediaStep } from "@/components/dashboard/shared";
 import { SEOStep } from "./Steps/SEO/SEOStep";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
@@ -22,7 +21,6 @@ import styles from "./CreateVehicle.module.scss";
 
 const STEPS: WizardStepConfig[] = [
   { label: "Overview", iconSrc: "/images/dashboard/catalog/trips/overview.svg", fieldsToValidate: ["vehicleName", "model", "category", "passengerCapacity"] },
-  { label: "Pricing", iconSrc: "/images/dashboard/catalog/trips/pricing.svg", fieldsToValidate: ["basePrice", "pricePerKm"] },
   { label: "Media", iconSrc: "/images/dashboard/catalog/trips/media.svg", fieldsToValidate: ["photos"] },
   { label: "SEO", iconSrc: "/images/dashboard/catalog/trips/seo.svg", fieldsToValidate: ["seoTitle", "seoDescription", "seoKeywords", "seoSlug"] },
 ];
@@ -31,7 +29,6 @@ const EMPTY_VALUES: CreateVehicleValues = {
   vehicleName: { en: "", it: "", es: "" },
   model: "",
   category: "",
-  duration: "",
   passengerCapacity: "",
   luggageCapacity: "",
   starRating: "",
@@ -84,38 +81,6 @@ function slugify(value: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-function parseDurationHours(durationStr?: string): { duration_hours_min: number | null; duration_hours_max: number | null } {
-  if (!durationStr) return { duration_hours_min: null, duration_hours_max: null };
-  const lower = durationStr.trim().toLowerCase();
-  if (lower.includes("full day") || lower === "24") {
-    return { duration_hours_min: 24, duration_hours_max: 24 };
-  }
-  const matchRange = durationStr.match(/(\d+)\s*-\s*(\d+)/);
-  if (matchRange) {
-    return {
-      duration_hours_min: parseInt(matchRange[1], 10),
-      duration_hours_max: parseInt(matchRange[2], 10),
-    };
-  }
-  const matchSingle = durationStr.match(/(\d+)/);
-  if (matchSingle) {
-    const hours = parseInt(matchSingle[1], 10);
-    return {
-      duration_hours_min: hours,
-      duration_hours_max: hours,
-    };
-  }
-  return { duration_hours_min: null, duration_hours_max: null };
-}
-
-function formatDurationHours(minHours?: number | null, maxHours?: number | null): string {
-  if (!minHours && !maxHours) return "";
-  if (minHours === 24 || maxHours === 24) return "Full Day";
-  if (minHours && maxHours && minHours !== maxHours) return `${minHours}-${maxHours} Hours`;
-  const hours = minHours || maxHours;
-  if (!hours) return "";
-  return hours === 1 ? "1 Hour" : `${hours} Hours`;
-}
 
 async function buildPayload(data: CreateVehicleValues, intent: WizardSubmitIntent, isEdit: boolean = false, categories: any[]) {
   const categoryId = categories.find(c => c.name === data.category || String(c.id) === data.category)?.id;
@@ -157,7 +122,6 @@ async function buildPayload(data: CreateVehicleValues, intent: WizardSubmitInten
     }
   }
 
-  const { duration_hours_min, duration_hours_max } = parseDurationHours(data.duration);
   const userSlugEn = data.slug?.en ? slugify(data.slug.en) : "";
   const baseSlugEn = slugify(data.vehicleName?.en || "vehicle");
   const slugEn = userSlugEn || (isEdit ? baseSlugEn : `${baseSlugEn}-${Math.random().toString(36).substring(2, 6)}`);
@@ -194,8 +158,6 @@ async function buildPayload(data: CreateVehicleValues, intent: WizardSubmitInten
     },
     category_id: categoryId,
     model_year: intValue(data.model) || undefined,
-    duration_hours_min,
-    duration_hours_max,
     passengers: intValue(data.passengerCapacity) || 1,
     luggage_capacity: intValue(data.luggageCapacity) || 0,
     rating_avg: data.starRating ? parseFloat(data.starRating) : undefined,
@@ -246,7 +208,6 @@ function mapVehicleToFormValues(vehicle: any): CreateVehicleValues {
     vehicleName: { en: asText(tEn.name || vehicle.name), it: asText(tIt.name), es: asText(tEs.name) },
     model: asText(vehicle.model_year),
     category: asText(vehicle.category?.name),
-    duration: formatDurationHours(vehicle.duration_hours_min, vehicle.duration_hours_max),
     passengerCapacity: asText(vehicle.passengers),
     luggageCapacity: asText(vehicle.luggage_capacity),
     starRating: vehicle.rating_avg ? String(vehicle.rating_avg) : "",
@@ -366,9 +327,8 @@ export function CreateVehicle({ vehicleId, onDirtyChange, onSavingChange, ref }:
 
 const getErrorStepIndex = (errors: any) => {
   if (errors.vehicleName || errors.category || errors.make || errors.model || errors.year || errors.description || errors.passengerCapacity || errors.luggageCapacity || errors.doors || errors.transmission || errors.features || errors.cancellationPolicy) return 0;
-  if (errors.basePrice || errors.pricePerKm || errors.additionalServices) return 1;
-  if (errors.photos) return 2;
-  if (errors.metaTitle || errors.metaDescription || errors.metaKeywords || errors.slug) return 3;
+  if (errors.photos) return 1;
+  if (errors.metaTitle || errors.metaDescription || errors.metaKeywords || errors.slug) return 2;
   return -1;
 };
 
@@ -387,9 +347,8 @@ const getErrorStepIndex = (errors: any) => {
   const renderStep = () => {
     switch (currentStep) {
       case 0: return <OverviewStep />;
-      case 1: return <PricingStep />;
-      case 2: return <WizardMediaStep />;
-      case 3: return <SEOStep />;
+      case 1: return <WizardMediaStep />;
+      case 2: return <SEOStep />;
       default: return null;
     }
   };

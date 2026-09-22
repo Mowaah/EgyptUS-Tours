@@ -117,8 +117,6 @@ export default function TransportationDetailPage({ vehicleDetail }: Transportati
               luggage={vehicleDetail.luggage}
               luggageCapacity={vehicleDetail.luggage_capacity}
               passengers={vehicleDetail.passengers}
-              durationHoursMin={vehicleDetail.duration_hours_min}
-              durationHoursMax={vehicleDetail.duration_hours_max}
             />
             <TransportationFeatures features={vehicleDetail.features || []} />
           </div>

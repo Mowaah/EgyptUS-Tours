@@ -401,9 +401,9 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     padding-bottom: 12px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: flex-start;
-    gap: 16px;
+    gap: 48px;
 
     .specItem {
       display: flex;

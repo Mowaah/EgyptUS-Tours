@@ -582,9 +582,7 @@ export default function ProfilePage() {
                 dropoffLocation: d.dropoff_location || bk.dropoff_location || "",
                 pickupDate: d.pickup_date || bk.pickup_date || bk.start_date || "",
                 pickupTime: d.pickup_time || bk.pickup_time || "",
-                durationLabel: d.duration_label || "",
                 passengersLabel: d.passengers_label || (bk.passengers ? `${bk.passengers} Passengers` : ""),
-                tripType: d.trip_type || bk.trip_type || "",
                 luggageLabel: d.luggage_label || (bk.luggage !== undefined ? `${bk.luggage} Bags` : ""),
               };
             }

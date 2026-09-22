@@ -7,6 +7,7 @@ export interface DataTableColumn<T> {
   headerAriaLabel?: string;
   cellClassName?: string;
   render: (row: T) => ReactNode;
+  hidden?: boolean;
 }
 
 export interface DataTableRowAction<T> {

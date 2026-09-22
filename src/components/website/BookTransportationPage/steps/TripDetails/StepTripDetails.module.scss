@@ -145,62 +145,6 @@
   }
 }
 
-// ─── Trip-type selector ───────────────────────────────────────────────────────
-.typeSelector {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-}
-
-.typeChoices {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  width: 100%;
-}
-
-.typeBtn {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0 10px 0 12px;
-  gap: 8px;
-  min-height: 44px;
-  border: 1px solid $border-strong;
-  border-radius: 14px;
-  background: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  @media (min-width: 640px) {
-    padding: 0 16px 0 22px;
-    gap: 22px;
-    min-height: 52px;
-    border-radius: 16px;
-  }
-
-  &.active {
-    border-color: $secondary;
-  }
-
-  &:hover {
-    border-color: $secondary;
-  }
-}
-
-.typeLabel {
-  font-weight: 500;
-  font-size: $font-size-13;
-  line-height: 1.4;
-  color: $dark;
-
-  @media (min-width: 640px) {
-    font-size: $font-size-base;
-    line-height: 24px;
-  }
-}
 
 // ─── Additional Services ──────────────────────────────────────────────────────
 .servicesSection {

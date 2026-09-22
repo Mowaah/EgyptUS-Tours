@@ -14,7 +14,7 @@ interface CatalogHotelRow {
 export const catalogHotelsColumns: DataTableColumn<CatalogHotelRow>[] = [
   {
     id: "hotel_code",
-    header: "Hotel Code",
+    header: "Hotel ID",
     render: (row) => <span style={{ fontWeight: 600, color: "#1f2937" }}>{row.hotel_code || row.id}</span>,
   },
   {

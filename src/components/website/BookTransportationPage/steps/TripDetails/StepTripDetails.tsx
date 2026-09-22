@@ -22,43 +22,6 @@ interface StepTripDetailsProps {
 }
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
-function TripTypeSelector({
-  value,
-  onChange,
-}: {
-  value: "One Way" | "Round Trip";
-  onChange: (v: "One Way" | "Round Trip") => void;
-}) {
-  const { t } = useTranslation("booking");
-  const options = [
-    { type: "One Way" as const, label: t("transportBooking.rideDetails.oneWay", "One Way") },
-    { type: "Round Trip" as const, label: t("transportBooking.rideDetails.roundTrip", "Round Trip") },
-  ];
-
-  return (
-    <FormField label={t("transportBooking.rideDetails.tripType", "Trip Type")} required>
-      <div className={styles.typeChoices}>
-        {options.map(({ type, label }) => (
-          <button
-            key={type}
-            type="button"
-            className={`${styles.typeBtn} ${value === type ? styles.active : ""}`}
-            onClick={() => onChange(type)}
-          >
-            <CheckboxIndicator
-              variant="radio"
-              size="lg"
-              selected={value === type}
-              aria-hidden
-            />
-            <span className={styles.typeLabel}>{label}</span>
-          </button>
-        ))}
-      </div>
-    </FormField>
-  );
-}
-
 function ServiceItem({
   label,
   price,
@@ -247,11 +210,6 @@ export default function StepTripDetails({
           error={errors.dropoffLocation}
         />
 
-        {/* Trip Type */}
-        <TripTypeSelector
-          value={formData.tripType}
-          onChange={(v) => onChange({ tripType: v })}
-        />
 
         {/* Date & Time */}
         <div className={styles.twoColumn}>

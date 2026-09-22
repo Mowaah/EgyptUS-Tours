@@ -101,29 +101,24 @@ export function OverviewStep() {
                 )}
               />
               <Controller
-                name="duration"
+                name="starRating"
                 control={control}
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <DashboardField
                     {...field}
-                    label="Duration"
-                    placeholder="Select duration"
-                    control="select"
-                    options={[
-                      { label: "1 Hour", value: "1 Hour" },
-                      { label: "2 Hours", value: "2 Hours" },
-                      { label: "3 Hours", value: "3 Hours" },
-                      { label: "4 Hours", value: "4 Hours" },
-                      { label: "5 Hours", value: "5 Hours" },
-                      { label: "6 Hours", value: "6 Hours" },
-                      { label: "7 Hours", value: "7 Hours" },
-                      { label: "8 Hours", value: "8 Hours" },
-                      { label: "9 Hours", value: "9 Hours" },
-                      { label: "10 Hours", value: "10 Hours" },
-                      { label: "11 Hours", value: "11 Hours" },
-                      { label: "12 Hours", value: "12 Hours" },
-                      { label: "Full Day", value: "Full Day" },
-                    ]}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      if (val > 5) e.target.value = "5";
+                      if (val < 0) e.target.value = "0";
+                      field.onChange(e);
+                    }}
+                    label="Star Rating"
+                    placeholder="Enter rating (0 - 5)"
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="5"
+                    error={fieldState.error?.message}
                   />
                 )}
               />
@@ -172,29 +167,6 @@ export function OverviewStep() {
                 )}
               />
             </div>
-
-            <Controller
-              name="starRating"
-              control={control}
-              render={({ field, fieldState }) => (
-                <DashboardField
-                  {...field}
-                  onChange={(e) => {
-                    const val = parseFloat(e.target.value);
-                    if (val > 5) e.target.value = "5";
-                    if (val < 0) e.target.value = "0";
-                    field.onChange(e);
-                  }}
-                  label="Star Rating"
-                  placeholder="Enter rating (0 - 5)"
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  max="5"
-                  error={fieldState.error?.message}
-                />
-              )}
-            />
           </FormSpec>
         </FormSection>
 

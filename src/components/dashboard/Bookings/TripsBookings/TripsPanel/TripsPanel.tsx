@@ -104,18 +104,17 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
     setAppliedFilters(filters);
   };
 
-  const filterFields = (
-    [
-      ["tourType", "Tour Type", filterOptions.tourType],
-      ["paymentStatus", "Payment Status", filterOptions.paymentStatus],
-      ["status", "Status", filterOptions.status],
-      ["source", "Source", filterOptions.source],
-    ] as const
-  ).map(([id, label, options]) => ({
+  const filterFields = [
+    { id: "tourType", label: "Tour Type", options: filterOptions.tourType },
+    { id: "paymentStatus", label: "Payment Status", options: filterOptions.paymentStatus },
+    { id: "status", label: "Status", options: filterOptions.status },
+    { id: "source", label: "Source", options: filterOptions.source, hidden: true },
+  ].map(({ id, label, options, hidden }) => ({
     id,
     label,
     value: filters[id as keyof typeof filters],
     options,
+    hidden,
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
 

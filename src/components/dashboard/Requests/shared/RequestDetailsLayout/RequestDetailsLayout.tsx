@@ -8,7 +8,7 @@ import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHe
 import phStyles from "@/components/dashboard/shared/ProfileHeader/ProfileHeader.module.scss";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import ActionNoteModal, { ActionNoteModalConfig } from "@/components/dashboard/LeadsInquiries/ActionNoteModal/ActionNoteModal";
-import { ReassignModal } from "@/components/dashboard/shared";
+import { ReassignModal, triggerToast } from "@/components/dashboard/shared";
 import { 
   CreateProposalModal, 
   MarkProposalSentModal, 
@@ -103,6 +103,25 @@ export default function RequestDetailsLayout({
   const [bannerMessage, setBannerMessage] = useState("");
   
   const [agents, setAgents] = useState<any[]>([]);
+  const [loadingAction, setLoadingAction] = useState<string | null>(null);
+
+  const extractErrorMessage = (err: any, fallback: string): string => {
+    if (err?.response?.data) {
+      const data = err.response.data;
+      if (typeof data === "string") return data;
+      if (typeof data.message === "string" && data.message) return data.message;
+      if (typeof data.detail === "string" && data.detail) return data.detail;
+      if (typeof data.error === "string" && data.error) return data.error;
+      if (Array.isArray(data.payment) && typeof data.payment[0] === "string") return data.payment[0];
+      if (Array.isArray(data.non_field_errors) && typeof data.non_field_errors[0] === "string") return data.non_field_errors[0];
+      for (const key of Object.keys(data)) {
+        const val = data[key];
+        if (Array.isArray(val) && typeof val[0] === "string") return `${key}: ${val[0]}`;
+        if (typeof val === "string") return val;
+      }
+    }
+    return err?.message || fallback;
+  };
 
   React.useEffect(() => {
     if (activeModalKey === "assign") {
@@ -161,24 +180,37 @@ export default function RequestDetailsLayout({
         successMessage = "The Trip Cancelled Successfully";
       }
       
-      setBannerMessage(successMessage);
+      if (successMessage) {
+        setBannerMessage(successMessage);
+        triggerToast(successMessage, "success");
+      }
       setActiveModalKey(null);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Action failed:", err);
-      // Optional: set an error banner
+      const errorMsg = extractErrorMessage(err, "Action failed. Please try again.");
+      triggerToast(errorMsg, "error");
     }
   };
 
   const handleActionClick = async (action: string, payload?: any, successMsg?: string) => {
+    if (loadingAction) return;
     if (onActionSubmit) {
       try {
+        setLoadingAction(action);
         await onActionSubmit(action, payload);
-        if (successMsg) setBannerMessage(successMsg);
-      } catch (error) {
-        console.error(error);
+        const msg = successMsg || "Action completed successfully";
+        setBannerMessage(msg);
+        triggerToast(msg, "success");
+      } catch (error: any) {
+        console.error("Action failed:", error);
+        const errorMsg = extractErrorMessage(error, "Failed to perform action. Please try again.");
+        triggerToast(errorMsg, "error");
+      } finally {
+        setLoadingAction(null);
       }
     } else if (successMsg) {
       setBannerMessage(successMsg);
+      triggerToast(successMsg, "success");
     }
   };
 
@@ -315,10 +347,11 @@ export default function RequestDetailsLayout({
                   <button
                     className={styles.reassignBtn}
                     type="button"
-                    onClick={() => handleActionClick("send_payment_reminder", { reminder_type: "deposit" }, "Email reminder sent")}
+                    disabled={!!loadingAction}
+                    onClick={() => handleActionClick("send_payment_reminder", { reminder_type: "deposit" }, "Email reminder sent successfully")}
                   >
                     <Image src="/images/dashboard/requests/footer/send-email-remainder.svg" alt="" width={20} height={20} />
-                    Send Email Reminder
+                    {loadingAction === "send_payment_reminder" ? "Sending..." : "Send Email Reminder"}
                   </button>
                   <button
                     className={styles.createProposalBtn}
@@ -350,10 +383,11 @@ export default function RequestDetailsLayout({
                   <button
                     className={styles.reassignBtn}
                     type="button"
-                    onClick={() => handleActionClick("send_payment_reminder", { reminder_type: "remaining" }, "Email reminder sent")}
+                    disabled={!!loadingAction}
+                    onClick={() => handleActionClick("send_payment_reminder", { reminder_type: "remaining" }, "Email reminder sent successfully")}
                   >
                     <Image src="/images/dashboard/requests/footer/send-email-remainder.svg" alt="" width={20} height={20} />
-                    Send Email Reminder
+                    {loadingAction === "send_payment_reminder" ? "Sending..." : "Send Email Reminder"}
                   </button>
                   <button
                     className={styles.createProposalBtn}
@@ -385,13 +419,14 @@ export default function RequestDetailsLayout({
                   <button
                     className={styles.reassignBtn}
                     type="button"
+                    disabled={!!loadingAction}
                     onClick={() => {
                       const isDeposit = (paymentOverview?.paid_to_date ? Number(paymentOverview.paid_to_date) : 0) < (paymentOverview?.deposit_amount ? Number(paymentOverview.deposit_amount) : 0);
-                      handleActionClick("send_payment_reminder", { reminder_type: isDeposit ? "deposit" : "remaining" }, "Email reminder sent");
+                      handleActionClick("send_payment_reminder", { reminder_type: isDeposit ? "deposit" : "remaining" }, "Email reminder sent successfully");
                     }}
                   >
                     <Image src="/images/dashboard/requests/footer/send-email-remainder.svg" alt="" width={20} height={20} />
-                    Send Email Reminder
+                    {loadingAction === "send_payment_reminder" ? "Sending..." : "Send Email Reminder"}
                   </button>
                   {paymentOverview && Number(paymentOverview.paid_to_date || 0) >= Number(paymentOverview.deposit_amount || 0) && Number(paymentOverview.deposit_amount || 0) > 0 ? (
                     <button
@@ -443,10 +478,11 @@ export default function RequestDetailsLayout({
                   <button
                     className={styles.reassignBtn}
                     type="button"
-                    onClick={() => handleActionClick("send_payment_reminder", { reminder_type: "remaining" }, "Remaining payment reminder sent")}
+                    disabled={!!loadingAction}
+                    onClick={() => handleActionClick("send_payment_reminder", { reminder_type: "remaining" }, "Remaining payment reminder sent successfully")}
                   >
                     <Image src="/images/dashboard/requests/footer/send-email-remainder.svg" alt="" width={20} height={20} />
-                    Send Remaining Payment Reminder
+                    {loadingAction === "send_payment_reminder" ? "Sending..." : "Send Remaining Payment Reminder"}
                   </button>
                   <button
                     className={styles.createProposalBtn}
@@ -478,10 +514,11 @@ export default function RequestDetailsLayout({
                   <button
                     className={styles.createProposalBtn}
                     type="button"
+                    disabled={!!loadingAction}
                     onClick={() => handleActionClick("send_trip_reminder", undefined, "The Trip Reminder sent via email Successfully")}
                   >
                     <Image src="/images/dashboard/requests/footer/send-email-remainder.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
-                    Send Email Reminder
+                    {loadingAction === "send_trip_reminder" ? "Sending..." : "Send Email Reminder"}
                   </button>
                 </>
               ) : status === "In Trip" || status === "Refund Completed" ? (

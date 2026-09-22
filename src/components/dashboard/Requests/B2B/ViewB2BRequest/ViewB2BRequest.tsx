@@ -107,6 +107,12 @@ export default function ViewB2BRequest({ requestId }: { requestId: string }) {
         case "mark_closed":
           await b2bActions.completeTrip(requestId);
           break;
+        case "send_payment_reminder":
+          await b2bActions.sendPaymentReminder(requestId, payload.reminder_type);
+          break;
+        case "send_trip_reminder":
+          await b2bActions.sendTripReminder(requestId);
+          break;
       }
 
       await fetchDetails();

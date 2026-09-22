@@ -8,6 +8,7 @@ export interface TablePanelFilterField {
   value: string;
   options: string[];
   onChange: (value: string) => void;
+  hidden?: boolean;
 }
 
 interface TablePanelFilterBarProps {
@@ -30,7 +31,7 @@ export default function TablePanelFilterBar({
   return (
     <div className={styles.filterBar}>
       <div className={styles.filterFields}>
-        {fields.map((field) => (
+        {fields.filter((field) => !field.hidden).map((field) => (
           <FilterSelect
             key={field.id}
             id={field.id}

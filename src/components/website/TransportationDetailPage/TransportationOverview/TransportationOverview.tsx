@@ -8,8 +8,6 @@ interface TransportationOverviewProps {
   luggage?: string;
   luggageCapacity?: number;
   passengers: number;
-  durationHoursMin?: number;
-  durationHoursMax?: number;
 }
 
 export default function TransportationOverview({
@@ -17,33 +15,8 @@ export default function TransportationOverview({
   luggage,
   luggageCapacity,
   passengers,
-  durationHoursMin,
-  durationHoursMax
 }: TransportationOverviewProps) {
   const { t } = useTranslation('transportation');
-
-  let durationText: string | null = null;
-  if (durationHoursMin !== undefined && durationHoursMin !== null) {
-    if (durationHoursMin === 24 || durationHoursMax === 24) {
-      durationText = t('overview.fullDay', 'Full Day');
-    } else if (durationHoursMax && durationHoursMax !== durationHoursMin) {
-      durationText = t('overview.hoursRange', '{min}-{max} hours')
-        .replace('{min}', String(durationHoursMin))
-        .replace('{max}', String(durationHoursMax));
-    } else {
-      durationText = durationHoursMin === 1
-        ? t('overview.oneHour', '1 hour')
-        : t('overview.hours', '{count} hours').replace('{count}', String(durationHoursMin));
-    }
-  } else if (durationHoursMax !== undefined && durationHoursMax !== null) {
-    if (durationHoursMax === 24) {
-      durationText = t('overview.fullDay', 'Full Day');
-    } else {
-      durationText = durationHoursMax === 1
-        ? t('overview.oneHour', '1 hour')
-        : t('overview.hours', '{count} hours').replace('{count}', String(durationHoursMax));
-    }
-  }
 
   let luggageText = luggage || t('overview.standard', 'Standard');
   if (luggageCapacity !== undefined && luggageCapacity !== null && luggageCapacity > 0) {
@@ -82,16 +55,6 @@ export default function TransportationOverview({
           <p className={styles.statValue}>{passengerText}</p>
           <p className={styles.statLabel}>{t('overview.comfortableSeating', 'Comfortable seating')}</p>
         </div>
-
-        {durationText && (
-          <div className={styles.statItem}>
-            <div className={`${styles.iconWrap} ${styles.blue}`}>
-              <Image src="/images/clock2-blue.svg" alt="" width={24} height={24} />
-            </div>
-            <p className={styles.statValue}>{durationText}</p>
-            <p className={styles.statLabel}>{t('overview.estimatedDuration', 'Estimated duration')}</p>
-          </div>
-        )}
       </div>
     </section>
   );

@@ -229,6 +229,7 @@ export default function DataTable<T>({
     setOpenRowId(null);
   };
 
+  const visibleColumns = useMemo(() => columns.filter((col) => !col.hidden), [columns]);
   const wrapClassName = className ? `${styles.wrap} ${className}` : styles.wrap;
 
   return (
@@ -238,7 +239,7 @@ export default function DataTable<T>({
           <thead>
             <tr>
               {selectable ? <th aria-label="Select visible rows" /> : null}
-              {columns.map((column) => (
+              {visibleColumns.map((column) => (
                 <th key={column.id} aria-label={column.headerAriaLabel}>
                   {column.header}
                 </th>
@@ -249,7 +250,7 @@ export default function DataTable<T>({
           <tbody>
             {visibleRows.length === 0 && !isLoading ? (
               <tr>
-                <td colSpan={columns.length + (selectable ? 1 : 0) + (hasActions ? 1 : 0)}>
+                <td colSpan={visibleColumns.length + (selectable ? 1 : 0) + (hasActions ? 1 : 0)}>
                   <div style={{ padding: "40px 0" }}>
                     {emptyState ?? <DashboardSearchEmptyState onClearSearch={onClearSearch} />}
                   </div>
@@ -277,7 +278,7 @@ export default function DataTable<T>({
                         />
                       </td>
                     ) : null}
-                    {columns.map((column) => (
+                    {visibleColumns.map((column) => (
                       <td key={column.id} className={column.cellClassName}>
                         {column.render(row)}
                       </td>

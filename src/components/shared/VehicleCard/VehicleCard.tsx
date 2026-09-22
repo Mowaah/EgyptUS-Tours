@@ -39,12 +39,6 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
   const isList = view === "list";
   const vehicleDetailsHref = `/transportation/${vehicle.id}`;
 
-  const formatDuration = (val?: string) => {
-    if (!val) return "";
-    const clean = val.replace(/^(\d+)-\1$/, "$1");
-    return `${clean} ${clean === "1" ? t("units.hour", "hour") : t("units.hours", "hours")}`;
-  };
-
   const formatLuggage = (luggage: string) => {
     if (!luggage) return "";
     const match = luggage.match(/^(\d+)\s*large suitcase/i);
@@ -92,12 +86,6 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
                 <span className={styles.specLabel}>{t("units.luggage", "Luggage")}</span>
                 <span className={styles.specValue}>{formatLuggage(vehicle.luggage)}</span>
               </div>
-              {vehicle.durationHours && (
-                <div className={styles.specItem}>
-                  <span className={styles.specLabel}>{t("units.duration", "Duration")}</span>
-                  <span className={styles.specValue}>{formatDuration(vehicle.durationHours)}</span>
-                </div>
-              )}
             </div>
 
             {vehicle.features && vehicle.features.length > 0 && (
@@ -202,12 +190,6 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
             <span className={styles.specLabel}>{t("units.luggage", "Luggage")}</span>
             <span className={styles.specValue}>{formatLuggage(vehicle.luggage)}</span>
           </div>
-          {vehicle.durationHours && (
-            <div className={styles.specItem}>
-              <span className={styles.specLabel}>{t("units.duration", "Duration")}</span>
-              <span className={styles.specValue}>{formatDuration(vehicle.durationHours)}</span>
-            </div>
-          )}
         </div>
 
         {vehicle.features && vehicle.features.length > 0 && (

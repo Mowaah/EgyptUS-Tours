@@ -39,10 +39,6 @@ export default function TransferDetails({ transfer }: TransferDetailsProps) {
           </span>
         </div>
 
-        <div className={styles.infoRow}>
-          <span className={styles.infoLabel}>Trip Type</span>
-          <span className={styles.infoValue}>{transfer?.trip_type ? transfer.trip_type.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) : "One Way"}</span>
-        </div>
 
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Passengers / Bags</span>

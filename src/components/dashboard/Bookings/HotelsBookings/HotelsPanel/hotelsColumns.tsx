@@ -194,6 +194,7 @@ export const hotelsColumns: DataTableColumn<HotelBookingRow>[] = [
   {
     id: "source",
     header: "Source",
+    hidden: true,
     render: (row) => {
       const source = row.source;
       const variant = source === "website" ? "blue" : "pink";

@@ -48,19 +48,10 @@ export default async function Page() {
       } : undefined,
       discountTitle: v.discount_title || undefined,
       discountValue: v.discount_value ? `${parseFloat(v.discount_value)}% Off` : undefined,
-    passengers: v.passengers,
-    luggage: (v.luggage_capacity !== undefined && v.luggage_capacity !== null && v.luggage_capacity > 0)
-      ? `${v.luggage_capacity} large suitcase${v.luggage_capacity > 1 ? "s" : ""}`
-      : v.luggage || "Standard",
-    durationHours: v.duration_hours_min && v.duration_hours_max
-      ? v.duration_hours_min === v.duration_hours_max
-        ? `${v.duration_hours_min}`
-        : `${v.duration_hours_min}-${v.duration_hours_max}`
-      : v.duration_hours_min
-      ? `${v.duration_hours_min}`
-      : v.duration_hours_max
-      ? `${v.duration_hours_max}`
-      : undefined,
+      passengers: v.passengers,
+      luggage: (v.luggage_capacity !== undefined && v.luggage_capacity !== null && v.luggage_capacity > 0)
+        ? `${v.luggage_capacity} large suitcase${v.luggage_capacity > 1 ? "s" : ""}`
+        : v.luggage || "Standard",
       description: (v as any).short_description || (v as any).description || "",
       rating: parseFloat(v.rating_avg) || 0,
       reviews: v.review_count,

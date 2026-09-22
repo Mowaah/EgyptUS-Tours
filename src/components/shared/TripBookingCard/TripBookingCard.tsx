@@ -63,15 +63,15 @@ export interface HotelBookingDetails {
   guests: string;
 }
 
-/** Transportation booking grid (4Ã—2) */
+/** Transportation booking grid (3×2) */
 export interface TransportBookingDetails {
   pickupLocation: string;
   dropoffLocation: string;
   pickupDate: string;
   pickupTime: string;
-  durationLabel: string;
+  durationLabel?: string;
   passengersLabel: string;
-  tripType: string;
+  tripType?: string;
   luggageLabel: string;
 }
 
@@ -638,7 +638,7 @@ export default function TripBookingCard(props: TripBookingCardProps) {
               />
             </div>
           ) : props.variant === "transport" ? (
-            <div className={styles.detailGrid}>
+            <div className={styles.detailGridHotel}>
               <DetailCell
                 icon={TRANSPORT_ICONS.location}
                 label={t("profile.details.pickupLocation", "Pick up Location")}
@@ -664,21 +664,9 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                 iconSize={16}
               />
               <DetailCell
-                icon={TRANSPORT_ICONS.duration}
-                label={t("profile.details.duration", "Duration")}
-                value={formatLocalizedDuration(props.details.durationLabel)}
-                iconSize={16}
-              />
-              <DetailCell
                 icon={TRANSPORT_ICONS.passengers}
                 label={t("profile.details.passengers", "Passengers")}
                 value={props.details.passengersLabel}
-                iconSize={16}
-              />
-              <DetailCell
-                icon={TRANSPORT_ICONS.clock}
-                label={t("profile.details.tripType", "Trip Type")}
-                value={props.details.tripType}
                 iconSize={16}
               />
               <DetailCell

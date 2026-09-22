@@ -133,6 +133,7 @@ export const tripsColumns: DataTableColumn<TripBookingRow>[] = [
   {
     id: "source",
     header: "Source",
+    hidden: true,
     render: (row) => (
       <span className={getTripsPillStyle(row.source)}>
         {row.source === "website" ? (
