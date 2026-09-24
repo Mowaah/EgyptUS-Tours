@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useFormContext, Controller } from "react-hook-form";
 import { FormSection, FormSpec } from "@/components/dashboard/FormFields";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
@@ -40,7 +41,13 @@ export function OverviewStep() {
       else if (errors.secondDescription.it) setContentLang("Italian");
       else if (errors.secondDescription.es) setContentLang("Spanish");
     }
-  }, [errors.hotelName, errors.subtitle, errors.description, errors.secondDescription]);
+
+    if (errors.facilities) {
+      if (errors.facilities.en) setFacilitiesLang("English");
+      else if (errors.facilities.it) setFacilitiesLang("Italian");
+      else if (errors.facilities.es) setFacilitiesLang("Spanish");
+    }
+  }, [errors.hotelName, errors.subtitle, errors.description, errors.secondDescription, errors.facilities]);
 
   const { locations } = useCatalogHotelLocations();
   const locationOptions = locations.map((loc: any) => ({
@@ -208,6 +215,13 @@ export function OverviewStep() {
                     </div>
                   ))}
                 </div>
+              )}
+
+              {errors.facilities?.[langKey]?.message && (
+                <span className={styles.facilityError}>
+                  <Image src="/images/information-fill.svg" alt="" width={14} height={14} aria-hidden="true" />
+                  {errors.facilities[langKey]?.message}
+                </span>
               )}
             </div>
           </FormSpec>

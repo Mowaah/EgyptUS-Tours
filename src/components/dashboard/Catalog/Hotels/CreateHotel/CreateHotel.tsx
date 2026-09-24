@@ -73,7 +73,7 @@ const EMPTY_VALUES: CreateHotelValues = {
     pricePerNight: "",
     pricePerNightEgp: "",
     description: { en: "", it: "", es: "" },
-    facilities: [],
+    facilities: { en: [], it: [], es: [] },
     photos: []
   }],
   photos: [
@@ -111,6 +111,11 @@ function mapHotelToFormValues(hotel: any): CreateHotelValues {
     });
 
   const rooms = (hotel?.rooms || []).map((room: any) => {
+    const rEn = room.translations?.en || {};
+    const rIt = room.translations?.it || {};
+    const rEs = room.translations?.es || {};
+    const fallbackFeatures = Array.isArray(room.features) ? room.features : Array.isArray(room.facilities) ? room.facilities : [];
+
     return {
       id: room.id,
       category: room.category_label || "",
@@ -118,11 +123,15 @@ function mapHotelToFormValues(hotel: any): CreateHotelValues {
       view: room.view_label || "",
       pricePerNight: room.price_per_night || "",
       description: {
-        en: room.translations?.en?.description || room.description || "",
-        it: room.translations?.it?.description || "",
-        es: room.translations?.es?.description || "",
+        en: rEn.description || room.description || "",
+        it: rIt.description || "",
+        es: rEs.description || "",
       },
-      facilities: room.features || [],
+      facilities: {
+        en: Array.isArray(rEn.features) && rEn.features.length > 0 ? rEn.features : fallbackFeatures,
+        it: Array.isArray(rIt.features) ? rIt.features : [],
+        es: Array.isArray(rEs.features) ? rEs.features : [],
+      },
       photos: (room.images || room.photos || []).map((img: any) => ({
         id: img.id,
         file: img.image_url || img.image || img.file || img,
@@ -299,6 +308,10 @@ export function CreateHotel({ hotelId, onDirtyChange, onSavingChange, ref }: { h
 
           const roomPriceEgp = cleanNumber(r.pricePerNightEgp) || cleanNumber(r.pricePerNight);
 
+          const enFeatures = Array.isArray(r.facilities?.en) ? r.facilities.en : Array.isArray(r.facilities) ? r.facilities : [];
+          const itFeatures = Array.isArray(r.facilities?.it) ? r.facilities.it : [];
+          const esFeatures = Array.isArray(r.facilities?.es) ? r.facilities.es : [];
+
           return {
             id: r.id,
             category_label: r.category,
@@ -306,12 +319,21 @@ export function CreateHotel({ hotelId, onDirtyChange, onSavingChange, ref }: { h
             view_label: r.view,
             price_per_night: r.pricePerNight ? parseFloat(String(r.pricePerNight).replace(/[^0-9.]/g, "")) : undefined,
             description: r.description?.en || "", // Fallback
-            features: r.facilities,
+            features: enFeatures,
             images: validImages,
             translations: {
-              en: { description: r.description?.en || "" },
-              it: { description: r.description?.it || "" },
-              es: { description: r.description?.es || "" },
+              en: {
+                description: r.description?.en || "",
+                features: enFeatures,
+              },
+              it: {
+                description: r.description?.it || "",
+                features: itFeatures,
+              },
+              es: {
+                description: r.description?.es || "",
+                features: esFeatures,
+              },
             },
           };
         })

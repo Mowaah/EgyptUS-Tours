@@ -350,3 +350,15 @@
   color: $primary;
   margin: 0;
 }
+
+.facilityError {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Trip Sans', sans-serif;
+  font-size: $font-size-xs;
+  line-height: 16px;
+  color: #C11515;
+  margin-top: 6px;
+}

@@ -120,7 +120,7 @@ export function RoomsStep() {
       view: "",
       pricePerNight: "",
       description: { en: "", it: "", es: "" },
-      facilities: [],
+      facilities: { en: [], it: [], es: [] },
       photos: [],
     });
   };
@@ -169,10 +169,15 @@ function RoomItem({ field, index, remove }: { field: any, index: number, remove:
 
   useEffect(() => {
     const roomErrors = (errors.rooms as any)?.[index]?.description;
+    const roomFacErrors = (errors.rooms as any)?.[index]?.facilities;
     if (roomErrors) {
       if (roomErrors.en) setRoomsLang("English");
       else if (roomErrors.it) setRoomsLang("Italian");
       else if (roomErrors.es) setRoomsLang("Spanish");
+    } else if (roomFacErrors) {
+      if (roomFacErrors.en) setRoomsLang("English");
+      else if (roomFacErrors.it) setRoomsLang("Italian");
+      else if (roomFacErrors.es) setRoomsLang("Spanish");
     }
   }, [errors.rooms, index]);
 
@@ -297,14 +302,24 @@ function RoomItem({ field, index, remove }: { field: any, index: number, remove:
 
           <div className={styles.facilitiesField}>
             <Controller
-              name={`rooms.${index}.facilities`}
+              name={`rooms.${index}.facilities.${getLangKey(roomsLang)}` as const}
               control={control}
-              render={({ field: { value, onChange } }) => (
+              render={({ field: { value, onChange }, fieldState }) => (
                 <>
                   <div className={styles.facilitiesHeader}>
                     <p className={styles.facilitiesLabel}>Facilities</p>
                   </div>
-                  <FacilitiesSelector value={value || []} onChange={onChange} />
+                  <FacilitiesSelector
+                    key={`roomFac-${index}-${roomsLang}`}
+                    value={Array.isArray(value) ? value : []}
+                    onChange={onChange}
+                  />
+                  {fieldState.error?.message && (
+                    <span className={styles.facilityError}>
+                      <Image src="/images/information-fill.svg" alt="" width={14} height={14} aria-hidden="true" />
+                      {fieldState.error.message}
+                    </span>
+                  )}
                 </>
               )}
             />

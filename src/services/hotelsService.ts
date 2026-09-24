@@ -146,7 +146,9 @@ export function mapHotelDetailToHotel(hotelDetail: HotelDetail): import("@/types
       },
       discountPercent: r.discount_percent,
       features: r.features || [],
-      images: (r.images || []).map(img => img.image)
+      images: (r.images || [])
+        .map((img: any) => (typeof img === "string" ? img : img?.image || img?.image_url || img?.file || ""))
+        .filter(Boolean)
     })),
     hotelReviews: (hotelDetail.hotel_reviews || []).map(r => ({
       title: r.title,

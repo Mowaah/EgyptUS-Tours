@@ -55,7 +55,15 @@ export default function HotelRoomsPage() {
     const title = [category, type, view].filter(Boolean).join(" - ") || "Hotel Room";
     
     const description = translations.description || enTranslations.description || room.description || "Comfortable guest room with modern amenities.";
-    const facilities: string[] = Array.isArray(room.features) ? room.features : Array.isArray(room.facilities) ? room.facilities : [];
+    const facilities: string[] = Array.isArray(translations.features) && translations.features.length > 0
+      ? translations.features
+      : Array.isArray(enTranslations.features) && enTranslations.features.length > 0
+      ? enTranslations.features
+      : Array.isArray(room.features)
+      ? room.features
+      : Array.isArray(room.facilities)
+      ? room.facilities
+      : [];
     const price = room.price_per_night ? String(room.price_per_night) : room.pricePerNight ? String(room.pricePerNight) : room.price_per_night_egp ? String(room.price_per_night_egp) : "0";
     const images: string[] = Array.isArray(room.images)
       ? room.images.map((img: any) => img.image_url || img.image || img.file || img).filter(Boolean)
@@ -69,7 +77,7 @@ export default function HotelRoomsPage() {
       description,
       facilities,
       price,
-      images: images.length > 0 ? images : ["/images/dashboard/catalog/hotels/roomtype.jpg"],
+      images: images.length > 0 ? images : ["/images/dashboard/catalog/hotels/roomtype.png"],
       rawCategory: category,
       rawType: type,
       rawView: view,

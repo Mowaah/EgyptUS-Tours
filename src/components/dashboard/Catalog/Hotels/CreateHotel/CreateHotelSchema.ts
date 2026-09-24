@@ -1,6 +1,21 @@
 import { z } from "zod";
 import { localizedStringSchema, requiredLocalizedStringSchema, localizedSlugSchema } from "@/components/dashboard/shared/i18n";
 
+export const requiredLocalizedListSchema = (requiredMessage: string) =>
+  z.preprocess(
+    (val) => {
+      if (Array.isArray(val)) {
+        return { en: val, it: [], es: [] };
+      }
+      return val;
+    },
+    z.object({
+      en: z.array(z.string()).min(1, requiredMessage),
+      it: z.array(z.string()).min(1, requiredMessage),
+      es: z.array(z.string()).min(1, requiredMessage),
+    })
+  );
+
 export const roomSchema = z.object({
   id: z.union([z.string(), z.number()]).optional(),
   category: z.string().min(1, "Category is required"),
@@ -9,7 +24,7 @@ export const roomSchema = z.object({
   pricePerNight: z.string().min(1, "Price is required"),
   pricePerNightEgp: z.string().optional(),
   description: requiredLocalizedStringSchema("Room Description is required"),
-  facilities: z.array(z.string()).default([]),
+  facilities: requiredLocalizedListSchema("Facilities are required"),
   photos: z.array(z.any()).default([]),
 });
 
@@ -23,11 +38,7 @@ export const createHotelSchema = z.object({
     const num = parseFloat(val);
     return !isNaN(num) && num >= 0 && num <= 5;
   }, "Star Rating must be a number between 0 and 5"),
-  facilities: z.object({
-    en: z.array(z.string()).default([]),
-    it: z.array(z.string()).default([]),
-    es: z.array(z.string()).default([]),
-  }),
+  facilities: requiredLocalizedListSchema("Facilities are required"),
   description: requiredLocalizedStringSchema("Description is required"),
   secondDescription: requiredLocalizedStringSchema("Second Description is required"),
   

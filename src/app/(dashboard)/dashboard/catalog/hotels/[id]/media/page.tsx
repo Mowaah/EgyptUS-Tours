@@ -25,7 +25,7 @@ export default function HotelMediaPage() {
     const mediaTranslations = item?.translations?.[langKey] || item?.translations?.en || {};
     const title = isHero ? "Thumbnail" : `Photo Gallery ${index}`;
     const attachmentInfo = isHero ? "Attachment (303 x 202)" : "Attachment (1100 x 552)";
-    const imageSrc = item?.image_url || item?.image || item?.file || "/images/dashboard/catalog/hotels/roomtype.jpg";
+    const imageSrc = item?.image_url || item?.image || item?.file || "/images/dashboard/catalog/hotels/roomtype.png";
     const imgTitleValue = mediaTranslations.title || item?.caption || "";
     const imgAltValue = mediaTranslations.alt || "";
 

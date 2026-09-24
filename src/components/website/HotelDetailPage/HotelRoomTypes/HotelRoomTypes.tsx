@@ -233,31 +233,70 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
 function RoomCard({ room }: { room: HotelRoom }) {
   const { formatCurrency } = useCurrency();
   const { t } = useTranslation("hotels");
+  const [currentImgIndex, setCurrentImgIndex] = useState(0);
+
+  const images = useMemo(() => {
+    const list = (room.images || []).filter(Boolean);
+    return list.length > 0 ? list : ["/images/dashboard/catalog/hotels/roomtype.png"];
+  }, [room.images]);
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImgIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const handlePrev = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImgIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const currentImage = images[currentImgIndex % images.length];
   const title = [room.category, room.type, room.view].filter(Boolean).join(" - ") || room.name || "Hotel Room";
+  const features = room.features || [];
 
   return (
     <div className={styles.roomCard}>
       {/* ── Image ── */}
       <div className={styles.roomGallery}>
-        <Image src={room.images?.[0] || "/images/dashboard/catalog/hotels/roomtype.jpg"} alt={title} fill className={styles.roomImg} />
+        <Image
+          src={currentImage}
+          alt={title}
+          fill
+          className={styles.roomImg}
+          unoptimized={currentImage.startsWith("http") || currentImage.startsWith("data:")}
+        />
 
         {/* Gradient overlay */}
         <div className={styles.roomGradient} />
 
         {/* Discount badge */}
-        {room.discountPercent && (
+        {room.discountPercent ? (
           <div className={styles.discountBadge}>{room.discountPercent}% {t("roomTypes.off", "off")}</div>
-        )}
+        ) : null}
 
         {/* Navigation arrows */}
-        <div className={styles.galleryArrows}>
-          <button className={styles.galleryArrow}>
-            <Image src="/images/arrows/arrow-right-white.svg" alt="Previous" width={24} height={24} style={{ transform: "rotate(180deg)" }} />
-          </button>
-          <button className={styles.galleryArrow}>
-            <Image src="/images/arrows/arrow-right-white.svg" alt="Next" width={24} height={24} style={{ transform: "rotate(0deg)" }} />
-          </button>
-        </div>
+        {images.length > 1 && (
+          <div className={styles.galleryArrows}>
+            <button
+              type="button"
+              className={styles.galleryArrow}
+              onClick={handlePrev}
+              aria-label="Previous image"
+            >
+              <Image src="/images/arrows/arrow-right-white.svg" alt="" width={24} height={24} style={{ transform: "rotate(180deg)" }} />
+            </button>
+            <button
+              type="button"
+              className={styles.galleryArrow}
+              onClick={handleNext}
+              aria-label="Next image"
+            >
+              <Image src="/images/arrows/arrow-right-white.svg" alt="" width={24} height={24} style={{ transform: "rotate(0deg)" }} />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ── Info ── */}
@@ -269,14 +308,16 @@ function RoomCard({ room }: { room: HotelRoom }) {
         </div>
 
         {/* Features */}
-        <div className={styles.roomDetails}>
-          <h4 className={styles.detailsLabel}>{t("roomTypes.details", "Details")}</h4>
-          <div className={styles.featurePills}>
-            {room.features.map(feat => (
-              <span key={feat} className={styles.featurePill}>{feat}</span>
-            ))}
+        {features.length > 0 && (
+          <div className={styles.roomDetails}>
+            <h4 className={styles.detailsLabel}>{t("roomTypes.details", "Details")}</h4>
+            <div className={styles.featurePills}>
+              {features.map((feat) => (
+                <span key={feat} className={styles.featurePill}>{feat}</span>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* ── Price ── */}
