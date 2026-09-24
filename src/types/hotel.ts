@@ -43,6 +43,7 @@ export interface Hotel {
   secondDescription?: string;
   description?: string;
   isFavorite?: boolean;
+  isFeatured?: boolean;
   discountValue?: string;
   discountTitle?: string;
   originalPrice?: number;

@@ -13,12 +13,16 @@ import { Hotel } from "@/types";
 import styles from "./HotelsSection.module.scss";
 import Image from "next/image";
 
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export default function HotelsSection({ initialHotels = [] }: { initialHotels?: Hotel[] }) {
   const { t } = useTranslation("home");
   const [hotels, setHotels] = useState<Hotel[]>(initialHotels);
+
+  useEffect(() => {
+    setHotels(initialHotels);
+  }, [initialHotels]);
   const [activeTab, setActiveTab] = useState(0);
   const [sortOption, setSortOption] = useState("recommended");
   const sliderRef = useRef<HTMLDivElement>(null);

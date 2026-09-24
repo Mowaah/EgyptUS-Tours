@@ -19,7 +19,7 @@ export default function IncludedHotelCard({ hotel, selected, onClick }: Included
       style={onClick ? { cursor: "pointer" } : undefined}
     >
       <div className={styles.imageWrap}>
-        <div style={{ width: '100%', height: '100%', background: '#E2E8F0', display: 'block', position: 'relative' }}>
+        <div className={styles.imageInner}>
           <Image
             src={imageSrc}
             alt={hotel.name}

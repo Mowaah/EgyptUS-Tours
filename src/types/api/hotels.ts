@@ -42,6 +42,7 @@ export interface HotelList {
   price_per_night_eur?: string | null;
   currency_code: string;
   is_favorite: boolean;
+  is_featured?: boolean;
   discount_value?: string | null;
   discount_title?: string | null;
 }

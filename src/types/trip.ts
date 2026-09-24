@@ -30,6 +30,7 @@ export interface Trip {
   };
   countries?: number;
   isFavorite?: boolean;
+  isFeatured?: boolean;
   discountLabel?: string;
   discountTitle?: string;
   discountValue?: string;

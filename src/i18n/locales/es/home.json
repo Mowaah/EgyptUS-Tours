@@ -48,7 +48,9 @@
     "headingPart3": "Múltiples",
     "headingPart4": "Culturas",
     "description": "¿Por qué conformarse con un solo destino si su viaje puede recorrer distintas culturas, paisajes e historias milenarias? Nuestros tours combinados reúnen vivencias cuidadosamente seleccionadas para una aventura irrepetible.",
-    "exploreTours": "Explorar Tours"
+    "exploreTours": "Explorar Tours",
+    "emptyTitle": "No hay tours disponibles",
+    "emptyDescription": "No hay tours multipaís para mostrar en este momento. Vuelva pronto para descubrir nuevos viajes."
   },
   "hotels": {
     "label": "Hoteles",

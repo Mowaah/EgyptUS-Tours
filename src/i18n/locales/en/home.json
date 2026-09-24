@@ -48,7 +48,9 @@
     "headingPart3": "Multiple",
     "headingPart4": "Cultures",
     "description": "Why choose one destination when your journey can take you across cultures, landscapes, and stories? Our multi-destination tours bring carefully selected experiences together, making every stop part of one seamless, unforgettable adventure.",
-    "exploreTours": "Explore Tours"
+    "exploreTours": "Explore Tours",
+    "emptyTitle": "No Available Tours",
+    "emptyDescription": "There are no multi-country tours to show right now. Check back soon for new journeys."
   },
   "hotels": {
     "label": "Hotels",

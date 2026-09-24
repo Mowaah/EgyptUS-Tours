@@ -127,6 +127,23 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [isLg, setIsLg] = useState(false);
 
+  useEffect(() => {
+    setHotels(mappedHotels);
+  }, [mappedHotels]);
+
+  useEffect(() => {
+    setPriceRange((prev) => {
+      if (prev.max > maxHotelPriceLimit || prev.max === 50000 || prev.max === 12000) {
+        return { min: prev.min, max: maxHotelPriceLimit };
+      }
+      return prev;
+    });
+  }, [maxHotelPriceLimit]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [ratingFilter, priceRange.min, priceRange.max, searchQuery, selectedLocation]);
+
   const handleFavoriteToggle = (id: string) => {
     setHotels((prev) =>
       prev.map((hotel) =>
@@ -176,8 +193,15 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
       selectedLocation === t("allLocations", "All Locations") ||
       h.location.toLowerCase().includes(selectedLocation.toLowerCase());
 
+    const target = parseFloat(ratingFilter);
+    const hotelStars = typeof h.stars === "number" ? h.stars : (parseFloat(String(h.stars)) || 0);
+    const hotelRating = typeof h.rating === "number" ? h.rating : (parseFloat(String(h.rating)) || 0);
+    const effectiveRating = hotelStars > 0 ? hotelStars : hotelRating;
+
     const matchesRating =
-      ratingFilter === "any" || h.rating >= parseFloat(ratingFilter);
+      ratingFilter === "any" ||
+      Math.round(effectiveRating) === target ||
+      (effectiveRating >= target && effectiveRating < target + 1);
 
     const usdPrice = getHotelUsdPrice(h);
     const matchesPrice =
@@ -190,7 +214,11 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
   const sortedHotels = [...filteredHotels].sort((a, b) => {
     if (sortOption === "price-low") return a.pricePerNight - b.pricePerNight;
     if (sortOption === "price-high") return b.pricePerNight - a.pricePerNight;
-    if (sortOption === "rating") return b.rating - a.rating;
+    if (sortOption === "rating") {
+      const scoreA = (typeof a.stars === "number" && a.stars > 0 ? a.stars : a.rating) || 0;
+      const scoreB = (typeof b.stars === "number" && b.stars > 0 ? b.stars : b.rating) || 0;
+      return scoreB - scoreA;
+    }
     return 0;
   });
 
@@ -204,7 +232,7 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
   const handleResetSearch = () => {
     setSearchQuery("");
     setRatingFilter("any");
-    setPriceRange({ min: 1, max: maxHotelPriceLimit });
+    setPriceRange({ min: 0, max: maxHotelPriceLimit });
     setSelectedLocation("All Locations");
     setSortOption("recommended");
     setCurrentPage(1);

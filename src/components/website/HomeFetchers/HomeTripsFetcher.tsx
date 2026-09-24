@@ -43,6 +43,7 @@ export default async function HomeTripsFetcher() {
         rating: parseFloat(t.rating_avg) || 0,
         reviewCount: t.review_count,
         isFavorite: t.is_favorite,
+        isFeatured: Boolean(t.is_featured),
         priceLabel: t.price_label,
         discountLabel: t.discount_value ? (t.discount_title ? `${t.discount_title} - ${parseFloat(t.discount_value)}% Off` : `${parseFloat(t.discount_value)}% Off`) : undefined,
         discountTitle: t.discount_title || undefined,
@@ -67,13 +68,17 @@ export default async function HomeTripsFetcher() {
         })) ||
         (t.location || "").toLowerCase().includes("egypt")
       );
-      return hasEgypt && !hasDesertCategory(t.tags);
+      return hasEgypt && !hasDesertCategory(t.tags) && Boolean(t.isFeatured);
     });
+
+    const multiCountryTrips = initialTrips
+      .filter((t) => t.tags?.some((tag) => tag.toLowerCase().includes("multi country")) && Boolean(t.isFeatured))
+      .slice(0, 6);
 
     return (
       <>
         <TripsSection initialTrips={egyptTrips} initialPromotions={promotions} />
-        <MultiCountrySection initialTrips={initialTrips.filter(t => t.tags?.some(tag => tag.toLowerCase().includes("multi country"))).slice(0, 6)} />
+        <MultiCountrySection initialTrips={multiCountryTrips} />
       </>
     );
   } catch (error) {

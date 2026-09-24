@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { Button, SectionHeader, TripCard, PaginationArrows } from "@/components/shared";
+import { Button, SectionHeader, TripCard, PaginationArrows, EmptyState } from "@/components/shared";
 import { useTranslation } from "@/hooks/useTranslation";
 import { Trip } from "@/types";
 import Image from "next/image";
@@ -110,23 +110,38 @@ export default function MultiCountrySection({ initialTrips = [] }: MultiCountryS
                   {t("multiCountry.exploreTours", "Explore Tours")}
                 </Button>
 
-                <div className={styles.arrows}>
-                  <PaginationArrows
-                    layout="inline"
-                    onPrev={scrollLeft}
-                    onNext={scrollRight}
-                    prevDisabled={!canScrollLeft}
-                    nextDisabled={!canScrollRight}
-                  />
-                </div>
+                {initialTrips.length > 0 && (
+                  <div className={styles.arrows}>
+                    <PaginationArrows
+                      layout="inline"
+                      onPrev={scrollLeft}
+                      onNext={scrollRight}
+                      prevDisabled={!canScrollLeft}
+                      nextDisabled={!canScrollRight}
+                    />
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className={styles.grid} ref={sliderRef} onScroll={checkScroll}>
-              {initialTrips.map((trip) => (
-                <TripCard key={trip.id} trip={trip} />
-              ))}
-            </div>
+            {initialTrips.length > 0 ? (
+              <div className={styles.grid} ref={sliderRef} onScroll={checkScroll}>
+                {initialTrips.map((trip) => (
+                  <TripCard key={trip.id} trip={trip} />
+                ))}
+              </div>
+            ) : (
+              <div className={styles.emptyContainer}>
+                <EmptyState
+                  title={t("multiCountry.emptyTitle", "No Available Tours")}
+                  description={t(
+                    "multiCountry.emptyDescription",
+                    "There are no multi-country tours to show right now. Check back soon for new journeys."
+                  )}
+                  buttonText=""
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

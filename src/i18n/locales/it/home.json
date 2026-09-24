@@ -48,7 +48,9 @@
     "headingPart3": "Molteplici",
     "headingPart4": "Culture",
     "description": "Perché scegliere una sola destinazione quando il tuo itinerario può farti attraversare culture, paesaggi e storie millenarie? I nostri tour combinati uniscono esperienze selezionate, rendendo ogni tappa parte di un'avventura straordinaria.",
-    "exploreTours": "Esplora i Tour"
+    "exploreTours": "Esplora i Tour",
+    "emptyTitle": "Nessun tour disponibile",
+    "emptyDescription": "Al momento non ci sono tour multi-paese da mostrare. Torna presto per scoprire nuovi viaggi."
   },
   "hotels": {
     "label": "Hotel",

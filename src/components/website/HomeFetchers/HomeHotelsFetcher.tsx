@@ -39,10 +39,13 @@ export default async function HomeHotelsFetcher() {
         discountValue: h.discount_value ? `${parseFloat(h.discount_value)}% Off` : undefined,
         reviews: h.review_count,
         isFavorite: h.is_favorite || false,
+        isFeatured: Boolean(h.is_featured),
       };
     });
 
-    return <HotelsSection initialHotels={initialHotels} />;
+    const featuredHotels = initialHotels.filter((h) => Boolean(h.isFeatured));
+
+    return <HotelsSection initialHotels={featuredHotels} />;
   } catch (error) {
     console.error("Failed to fetch hotels:", error);
     return null;

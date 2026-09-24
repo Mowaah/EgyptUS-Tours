@@ -10,12 +10,12 @@ interface PriceRangeFilterProps {
   formatValue?: (value: number) => string;
 }
 
-export default function PriceRangeFilter({ min, max, valueMin, valueMax, onChange, step = 500, formatValue }: PriceRangeFilterProps) {
+export default function PriceRangeFilter({ min, max, valueMin, valueMax, onChange, step = 1, formatValue }: PriceRangeFilterProps) {
   const rangeWidth = max - min;
   
   // Calculate percentage positions for the filled track
-  const leftPercent = ((valueMin - min) / rangeWidth) * 100;
-  const widthPercent = ((valueMax - valueMin) / rangeWidth) * 100;
+  const leftPercent = rangeWidth > 0 ? Math.max(0, Math.min(100, ((valueMin - min) / rangeWidth) * 100)) : 0;
+  const widthPercent = rangeWidth > 0 ? Math.max(0, Math.min(100 - leftPercent, ((valueMax - valueMin) / rangeWidth) * 100)) : 100;
 
   return (
     <div className={styles.priceRange}>
@@ -38,7 +38,7 @@ export default function PriceRangeFilter({ min, max, valueMin, valueMax, onChang
             const val = Math.min(Number(e.target.value), valueMax - step);
             onChange(val, valueMax);
           }}
-          className={styles.rangeInput}
+          className={`${styles.rangeInput} ${valueMin > max - 100 ? styles.minThumbOver : ""}`}
         />
         <input
           type="range"
