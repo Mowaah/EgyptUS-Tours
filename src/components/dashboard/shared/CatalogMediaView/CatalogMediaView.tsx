@@ -56,7 +56,7 @@ function MediaCard({
               unoptimized
             />
           ) : (
-            <div style={{ width: 698, height: 352, display: "flex", alignItems: "center", justifyContent: "center", background: "#f3f4f6", borderRadius: "8px", color: "#9ca3af" }}>
+            <div className={styles.noImagePlaceholder}>
               No Image Uploaded
             </div>
           )}
@@ -67,15 +67,15 @@ function MediaCard({
         <div className={styles.fieldsRow}>
           <div className={styles.fieldGroup}>
             <span className={styles.fieldLabel}>{resolvedTitleLabel}</span>
-            <div className={styles.fieldValue}>
-              {imgTitleValue || "-"}
+            <div className={styles.fieldValue} title={imgTitleValue || "-"}>
+              <span>{imgTitleValue || "-"}</span>
             </div>
           </div>
 
           <div className={styles.fieldGroup}>
             <span className={styles.fieldLabel}>{resolvedAltLabel}</span>
-            <div className={styles.fieldValue}>
-              {imgAltValue || "-"}
+            <div className={styles.fieldValue} title={imgAltValue || "-"}>
+              <span>{imgAltValue || "-"}</span>
             </div>
           </div>
         </div>
@@ -100,7 +100,7 @@ export function CatalogMediaView({
       </div>
 
       {mediaItems.length === 0 ? (
-        <div style={{ padding: "40px 0", textAlign: "center", color: "#6b7280" }}>
+        <div className={styles.emptyState}>
           {emptyMessage}
         </div>
       ) : (

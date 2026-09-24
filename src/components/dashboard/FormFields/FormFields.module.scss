@@ -1,6 +1,7 @@
 @use "@/styles/variables" as *;
 
 .section {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -9,6 +10,8 @@
   background: $white;
   border-radius: 1.5rem;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .sectionHeader {
@@ -45,6 +48,7 @@
 }
 
 .specItem {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -53,6 +57,8 @@
   background: $gray-50;
   border-radius: 1rem;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .field {
@@ -178,10 +184,13 @@
 }
 
 .uploadContainer {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .fileItem {
@@ -192,10 +201,13 @@
   padding: 1rem;
   gap: 1rem;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
   background: $white;
   border: 1px solid $border-strong;
   border-radius: 1.5rem;
   position: relative;
+  overflow: hidden;
 }
 
 .fileIconWrapper {
@@ -210,9 +222,12 @@
 .fileInfo {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   gap: 0.5rem;
-  flex-grow: 1;
+  flex: 1 1 0%;
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
 }
 
 .fileName {
@@ -223,7 +238,10 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  width: 100%;
+  min-width: 0;
   max-width: 100%;
+  display: block;
 }
 
 .fileMeta {
@@ -232,18 +250,22 @@
   align-items: center;
   gap: 0.5rem;
   width: 100%;
+  min-width: 0;
 }
 
 .fileSize {
   font-weight: 400;
   font-size: $font-size-13;
   color: $text-muted;
+  white-space: nowrap;
+  flex: none;
 }
 
 .fileDivider {
   width: 1px;
   height: 0.75rem;
   background: $gray-150-alt;
+  flex: none;
 }
 
 .fileStatus {
@@ -253,6 +275,8 @@
   font-weight: 400;
   font-size: $font-size-13;
   color: #079455;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 .fileProgressWrapper {
@@ -261,10 +285,12 @@
   align-items: center;
   gap: 0.75rem;
   width: 100%;
+  min-width: 0;
 }
 
 .fileProgressBar {
-  flex-grow: 1;
+  flex: 1 1 0%;
+  min-width: 0;
   height: 0.5rem;
   background: $gray-50-tailwind;
   border-radius: 0.5rem;
@@ -288,6 +314,7 @@
   font-size: $font-size-13;
   color: $text-muted;
   min-width: 2rem;
+  flex: none;
 }
 
 .fileDeleteBtn {

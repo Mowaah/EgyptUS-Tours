@@ -120,11 +120,16 @@ export function UploadDropzone({
           </div>
           
           <div className={styles.fileInfo}>
-            <p className={styles.fileName}>
-              {typeof value === 'string' 
-                ? (value.startsWith('data:') ? 'Uploaded Image' : decodeURIComponent(value.split('/').pop()?.split('?')[0] || '')) 
-                : value.name}
-            </p>
+            {(() => {
+              const displayFileName = typeof value === 'string'
+                ? (value.startsWith('data:') ? 'Uploaded Image' : decodeURIComponent(value.split('/').pop()?.split('?')[0] || ''))
+                : value.name;
+              return (
+                <p className={styles.fileName} title={displayFileName}>
+                  {displayFileName}
+                </p>
+              );
+            })()}
             <div className={styles.fileMeta}>
               {typeof value === 'string' ? (
                 <>
