@@ -67,6 +67,82 @@
   }
 }
 
+// Empty State Specific Grid Lines
+.emptyGridLine {
+  stroke: #e1e4ed;
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+
+.emptyGridLineSolid {
+  stroke: #e1e4ed;
+  stroke-width: 1;
+}
+
+// Empty State Marker & Tooltip
+.emptyMarker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyMarkerOuter {
+  width: 16px;
+  height: 16px;
+  background: $background;
+  border-radius: 50%;
+  border-width: 1.5px;
+  border-style: solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyMarkerInner {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.emptyTooltip {
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: $background;
+  border: 1px solid #e1e4ed;
+  box-shadow: 0px 1px 4px rgba(25, 33, 61, 0.08);
+  border-radius: 4px;
+  min-width: 26px;
+  height: 32px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: $font-size-sm;
+  color: #353e5c;
+  pointer-events: none;
+  white-space: nowrap;
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: -5px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 8px;
+    height: 8px;
+    background: $background;
+    border-top: 1px solid #e1e4ed;
+    border-right: 1px solid #e1e4ed;
+  }
+}
+
 @media (max-width: 760px) {
   .wrap {
     grid-template-columns: 1.75rem minmax(34rem, 1fr);
