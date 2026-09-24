@@ -84,14 +84,6 @@
   border-radius: 0;
 }
 
-.roomGradient {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 40%, rgba(0, 0, 0, 0) 100%);
-  z-index: 1;
-  pointer-events: none;
-}
-
 .discountBadge {
   position: absolute;
   top: 16px;
@@ -131,6 +123,10 @@
 
   &:hover {
     background: rgba(0, 0, 0, 0.75);
+  }
+
+  &.prevArrow img {
+    transform: rotate(180deg);
   }
 }
 

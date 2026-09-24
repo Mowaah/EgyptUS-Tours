@@ -268,9 +268,6 @@ function RoomCard({ room }: { room: HotelRoom }) {
           unoptimized={currentImage.startsWith("http") || currentImage.startsWith("data:")}
         />
 
-        {/* Gradient overlay */}
-        <div className={styles.roomGradient} />
-
         {/* Discount badge */}
         {room.discountPercent ? (
           <div className={styles.discountBadge}>{room.discountPercent}% {t("roomTypes.off", "off")}</div>
@@ -281,11 +278,11 @@ function RoomCard({ room }: { room: HotelRoom }) {
           <div className={styles.galleryArrows}>
             <button
               type="button"
-              className={styles.galleryArrow}
+              className={`${styles.galleryArrow} ${styles.prevArrow}`}
               onClick={handlePrev}
               aria-label="Previous image"
             >
-              <Image src="/images/arrows/arrow-right-white.svg" alt="" width={24} height={24} style={{ transform: "rotate(180deg)" }} />
+              <Image src="/images/arrows/arrow-right-white.svg" alt="" width={24} height={24} />
             </button>
             <button
               type="button"
@@ -293,7 +290,7 @@ function RoomCard({ room }: { room: HotelRoom }) {
               onClick={handleNext}
               aria-label="Next image"
             >
-              <Image src="/images/arrows/arrow-right-white.svg" alt="" width={24} height={24} style={{ transform: "rotate(0deg)" }} />
+              <Image src="/images/arrows/arrow-right-white.svg" alt="" width={24} height={24} />
             </button>
           </div>
         )}
