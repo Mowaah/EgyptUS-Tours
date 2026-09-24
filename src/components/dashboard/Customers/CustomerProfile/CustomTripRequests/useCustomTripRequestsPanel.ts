@@ -34,6 +34,8 @@ const STATUS_OPTIONS = [
   "Completed",
   "Rejected",
   "Cancelled",
+  "Refund Completed",
+  "No Refunded Amount",
 ];
 
 const normalize = (str: string) => (str || "").toLowerCase().replace(/[-_]/g, " ").trim();
@@ -68,13 +70,37 @@ const matchesStatus = (item: any, filterStatus: string): boolean => {
     return true;
   }
 
+  if (target === "no refunded amount" || target === "refund completed") {
+    if (
+      rawStatus === "refunded" ||
+      rawStatus === "no_refunded_amount" ||
+      formatted === "refund completed" ||
+      formatted === "no refunded amount"
+    ) {
+      return true;
+    }
+  }
+
   return false;
 };
 
 export function useCustomTripRequestsPanel(customerId: string) {
   const [page, setPage] = useState(1);
   const { data: pageData, isLoading } = useAdminCustomerRequests(customerId, page);
-  const data = useMemo(() => pageData?.results || [], [pageData?.results]);
+  const data = useMemo(() => {
+    const raw = pageData?.results || [];
+    return raw.filter((item: any) => {
+      const reqType = (item.request_type || "").toLowerCase();
+      if (reqType) {
+        return reqType === "plan_your_trip" || reqType === "custom_trip";
+      }
+      return Boolean(
+        item.destinations ||
+        item.request_code?.startsWith("REQ-CTP") ||
+        item.request_code?.startsWith("CTP")
+      );
+    });
+  }, [pageData?.results]);
 
   const [filters, setFilters] = useState<CustomTripRequestFilters>(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState<CustomTripRequestFilters>(defaultFilters);

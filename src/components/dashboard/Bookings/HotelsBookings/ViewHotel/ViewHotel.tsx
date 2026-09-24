@@ -193,14 +193,16 @@ export default function ViewHotel({ bookingId }: ViewHotelProps) {
         <i aria-hidden></i>
         {operationalStatusLabel}
       </span>
-      <span className={getTripsPillStyle(payload.stay?.source)}>
-        {payload.stay?.source === "website" ? (
-          <Image src="/images/dashboard/customers/custom/website.svg" alt="website" width={14} height={14} />
-        ) : (payload.stay?.source === "agent" || payload.stay?.source === "admin") ? (
-          <Image src="/images/dashboard/customers/custom/agent.svg" alt="agent" width={14} height={14} />
-        ) : null}
-        {payload.stay?.source ? (payload.stay?.source === "admin" ? "Agent" : payload.stay.source.charAt(0).toUpperCase() + payload.stay.source.slice(1)) : "-"}
-      </span>
+      {false && (
+        <span className={getTripsPillStyle(payload.stay?.source)}>
+          {payload.stay?.source === "website" ? (
+            <Image src="/images/dashboard/customers/custom/website.svg" alt="website" width={14} height={14} />
+          ) : (payload.stay?.source === "agent" || payload.stay?.source === "admin") ? (
+            <Image src="/images/dashboard/customers/custom/agent.svg" alt="agent" width={14} height={14} />
+          ) : null}
+          {payload.stay?.source ? (payload.stay?.source === "admin" ? "Agent" : payload.stay.source.charAt(0).toUpperCase() + payload.stay.source.slice(1)) : "-"}
+        </span>
+      )}
     </div>
   ) : null;
 

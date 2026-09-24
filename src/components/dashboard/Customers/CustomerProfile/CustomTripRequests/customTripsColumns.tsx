@@ -9,6 +9,9 @@ import { useRouter } from "next/navigation";
 export const formatLabel = (str: string) => {
   if (!str) return '';
   if (str === 'awaiting_deposit') return '30% Pending Payment';
+  if (str === 'awaiting_payment') return '100% Pending Payment';
+  if (str === 'refunded') return 'Refund Completed';
+  if (str === 'no_refunded_amount') return 'No Refunded Amount';
   return str.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
 };
 

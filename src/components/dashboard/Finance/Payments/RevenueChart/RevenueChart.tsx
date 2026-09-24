@@ -19,7 +19,7 @@ const EMPTY_Y_AXIS_LABELS = ["$450k", "$350k", "$250k", "$150k", "$0k"];
 
 export default function RevenueChart({
   chartData,
-  title = "Revenue",
+  title = "Revenue Overview",
   subtitle = "Monthly revenue breakdown",
 }: RevenueChartProps) {
   const isEmpty = !chartData || chartData.length === 0 || chartData.every((d) => d.value === 0);

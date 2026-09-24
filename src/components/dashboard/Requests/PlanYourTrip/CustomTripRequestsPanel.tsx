@@ -75,6 +75,7 @@ export default function CustomTripRequestsPanel({ searchQuery }: CustomTripReque
           "Completed",
           "Cancelled",
           "Refund Completed",
+          "No Refunded Amount",
         ],
         onChange: (val: string) => setStatusFilter(val),
       },

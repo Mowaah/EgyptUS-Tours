@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { useRouter } from "next/navigation";
 import parentStyles from "../ReportsAnalyticsPage/ReportsAnalyticsPage.module.scss";
 import PanelHeader from "@/components/dashboard/DashboardHome/PanelHeader/PanelHeader";
 import DataTable from "@/components/dashboard/DataTable/DataTable";
@@ -16,7 +19,15 @@ export default function TopCustomersByRevenueTable({
   data?: TopCustomer[]; 
   actions?: React.ReactNode; 
 }) {
+  const router = useRouter();
   const isEmpty = !data || data.length === 0;
+
+  const handleView = (row: TopCustomer) => {
+    const customerId = row.customer_id ?? row.id;
+    if (customerId) {
+      router.push(`/dashboard/customers/${customerId}`);
+    }
+  };
 
   const columns = [
     {
@@ -41,7 +52,9 @@ export default function TopCustomersByRevenueTable({
     {
       id: "action",
       header: "Action",
-      render: (row: TopCustomer) => <ViewButton />,
+      render: (row: TopCustomer) => (
+        <ViewButton onClick={() => handleView(row)} />
+      ),
     },
   ];
 

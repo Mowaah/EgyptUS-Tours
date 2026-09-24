@@ -187,14 +187,16 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
         <i aria-hidden></i>
         {operationalStatusLabel}
       </span>
-      <span className={getTripsPillStyle(payload.booking?.source)}>
-        {payload.booking?.source === "website" ? (
-          <Image src="/images/dashboard/customers/custom/website.svg" alt="website" width={14} height={14} />
-        ) : (payload.booking?.source === "agent" || payload.booking?.source === "admin") ? (
-          <Image src="/images/dashboard/customers/custom/agent.svg" alt="agent" width={14} height={14} />
-        ) : null}
-        {payload.booking?.source ? (payload.booking?.source === "admin" ? "Agent" : payload.booking.source.charAt(0).toUpperCase() + payload.booking.source.slice(1)) : "-"}
-      </span>
+      {false && (
+        <span className={getTripsPillStyle(payload.booking?.source)}>
+          {payload.booking?.source === "website" ? (
+            <Image src="/images/dashboard/customers/custom/website.svg" alt="website" width={14} height={14} />
+          ) : (payload.booking?.source === "agent" || payload.booking?.source === "admin") ? (
+            <Image src="/images/dashboard/customers/custom/agent.svg" alt="agent" width={14} height={14} />
+          ) : null}
+          {payload.booking?.source ? (payload.booking?.source === "admin" ? "Agent" : payload.booking.source.charAt(0).toUpperCase() + payload.booking.source.slice(1)) : "-"}
+        </span>
+      )}
     </div>
   ) : null;
 

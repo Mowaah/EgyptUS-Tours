@@ -72,8 +72,7 @@ export default function MiceRevenueByEventType({ data = [], actions }: MiceReven
 
   const barWidth = useMemo(() => {
     const count = chartData.length;
-    if (count <= 3) return 100;
-    if (count <= 4) return 92;
+    if (count <= 4) return 68;
     if (count <= 6) return 60;
     if (count <= 8) return 46;
     return 32;

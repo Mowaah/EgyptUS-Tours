@@ -1,25 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { TablePanel, TablePanelFilterBar } from "@/components/dashboard/TablePanel";
-import { depositsColumns, depositRowActions } from "../depositsColumns/depositsColumns";
+import { depositsColumns } from "../depositsColumns/depositsColumns";
 import { useDepositsPanel } from "@/hooks/useDepositsPanel";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardEmptyState";
 import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
-import { useAdminAuth } from "@/contexts/AdminAuthContext";
-import { triggerToast } from "@/components/dashboard/shared/GlobalToastContainer/GlobalToastContainer";
-import {
-  sendTripBookingReminder,
-  sendHotelBookingReminder,
-  sendTransportationBookingReminder,
-} from "@/services/admin/adminBookingsService";
-import {
-  planYourTripActions,
-  b2bActions,
-  eventsActions,
-} from "@/services/admin/adminRequestsService";
 
 interface DepositsTableProps {
   searchQuery?: string;
@@ -29,8 +16,6 @@ interface DepositsTableProps {
 }
 
 export default function DepositsTable({ searchQuery = "", onClearSearch, date_from, date_to }: DepositsTableProps) {
-  const router = useRouter();
-  const { canEdit } = useAdminAuth();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -45,55 +30,6 @@ export default function DepositsTable({ searchQuery = "", onClearSearch, date_fr
     handleExport,
     totalCount,
   } = useDepositsPanel({ searchQuery, page, pageSize, date_from, date_to });
-
-  const handleAction = async (action: { label: string }, row: any) => {
-    const type = row.booking_type;
-    const id = row.booking_id;
-
-    if (action.label === "View Booking") {
-      if (type === "trip") {
-        router.push(`/dashboard/bookings/trips/${id}`);
-      } else if (type === "hotel") {
-        router.push(`/dashboard/bookings/hotels/${id}`);
-      } else if (type === "transport" || type === "transportation") {
-        router.push(`/dashboard/bookings/transportation/${id}`);
-      } else if (type === "custom_trip") {
-        router.push(`/dashboard/requests/plan-your-trip/${id}`);
-      } else if (type === "b2b" || type === "b2b_proposal") {
-        router.push(`/dashboard/requests/b2b-programs/${id}`);
-      } else if (type === "mice" || type === "event_proposal") {
-        router.push(`/dashboard/requests/mice-corporate/${id}`);
-      } else {
-        router.push(`/dashboard/bookings/trips/${id}`);
-      }
-    } else if (action.label === "Send reminder") {
-      try {
-        if (type === "trip") {
-          await sendTripBookingReminder(id);
-        } else if (type === "hotel") {
-          await sendHotelBookingReminder(id);
-        } else if (type === "transport" || type === "transportation") {
-          await sendTransportationBookingReminder(id);
-        } else if (type === "custom_trip") {
-          await planYourTripActions.sendPaymentReminder(id, "deposit");
-        } else if (type === "b2b" || type === "b2b_proposal") {
-          await b2bActions.sendPaymentReminder(id, "deposit");
-        } else if (type === "mice" || type === "event_proposal") {
-          await eventsActions.sendPaymentReminder(id, "deposit");
-        } else {
-          await sendTripBookingReminder(id);
-        }
-        triggerToast("Deposit reminder sent successfully.", "success");
-      } catch (err: any) {
-        triggerToast(
-          err?.response?.data?.payment?.[0] ||
-          err?.response?.data?.detail ||
-          err?.response?.data?.message ||
-          "Failed to send deposit reminder."
-        );
-      }
-    }
-  };
 
   const handleClearAll = () => {
     handleClean();
@@ -143,8 +79,7 @@ export default function DepositsTable({ searchQuery = "", onClearSearch, date_fr
       <DataTable
         data={data}
         columns={depositsColumns}
-        rowActions={depositRowActions(handleAction, canEdit("finance") || canEdit("bookings"))}
-        getRowId={(row) => `${row.booking_type}-${row.booking_id}`}
+        getRowId={(row) => `${row.booking_type}-${row.booking_pk ?? row.booking_id}`}
         serverSidePagination={true}
         totalCount={totalCount}
         pageIndex={page - 1}

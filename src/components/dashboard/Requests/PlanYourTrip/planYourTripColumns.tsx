@@ -9,6 +9,7 @@ export const formatStatusLabel = (rawStatus: string): string => {
   if (rawStatus === "awaiting_deposit") return "30% Pending Payment";
   if (rawStatus === "awaiting_payment") return "100% Pending Payment";
   if (rawStatus === "refunded") return "Refund Completed";
+  if (rawStatus === "no_refunded_amount") return "No Refunded Amount";
   
   return rawStatus
     .split('_')

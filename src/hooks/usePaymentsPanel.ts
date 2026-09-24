@@ -100,6 +100,7 @@ export function usePaymentsPanel({
         id: item.payment_number,
         rawId: item.id,
         bookingId: item.booking_id,
+        bookingPk: item.booking_pk,
         bookingType: item.booking_type,
         customer: item.customer_name,
         service: serviceStr,

@@ -21,7 +21,7 @@ export function buildRequestFilterParams(
   
   if (appliedStatusFilter && appliedStatusFilter !== "All") {
     let apiStatus = appliedStatusFilter.toLowerCase().replace(/ /g, "_");
-    if (apiStatus === "refund_completed") apiStatus = "refunded";
+    if (apiStatus === "refund_completed" || apiStatus === "no_refunded_amount") apiStatus = "refunded";
     if (apiStatus === "pending_payment" || apiStatus === "30%_pending_payment") apiStatus = "awaiting_payment";
     if (apiStatus === "replied") apiStatus = "in_progress";
     params.status = apiStatus;

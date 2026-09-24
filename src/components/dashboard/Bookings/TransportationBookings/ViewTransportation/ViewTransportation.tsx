@@ -191,14 +191,16 @@ export default function ViewTransportation({ id }: ViewTransportationProps) {
         <i aria-hidden></i>
         {operationalStatusLabel}
       </span>
-      <span className={getPillStyle(payload.transfer?.source)}>
-        {payload.transfer?.source === "website" ? (
-          <Image src="/images/dashboard/customers/custom/website.svg" alt="website" width={14} height={14} />
-        ) : (payload.transfer?.source === "agent" || payload.transfer?.source === "admin") ? (
-          <Image src="/images/dashboard/customers/custom/agent.svg" alt="agent" width={14} height={14} />
-        ) : null}
-        {payload.transfer?.source ? (payload.transfer?.source === "admin" ? "Agent" : payload.transfer.source.charAt(0).toUpperCase() + payload.transfer.source.slice(1)) : "-"}
-      </span>
+      {false && (
+        <span className={getPillStyle(payload.transfer?.source)}>
+          {payload.transfer?.source === "website" ? (
+            <Image src="/images/dashboard/customers/custom/website.svg" alt="website" width={14} height={14} />
+          ) : (payload.transfer?.source === "agent" || payload.transfer?.source === "admin") ? (
+            <Image src="/images/dashboard/customers/custom/agent.svg" alt="agent" width={14} height={14} />
+          ) : null}
+          {payload.transfer?.source ? (payload.transfer?.source === "admin" ? "Agent" : payload.transfer.source.charAt(0).toUpperCase() + payload.transfer.source.slice(1)) : "-"}
+        </span>
+      )}
     </div>
   ) : null;
 

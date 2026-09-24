@@ -1,8 +1,12 @@
-import type { DataTableColumn, DataTableRowAction } from "@/components/dashboard/DataTable";
+"use client";
+
+import { useRouter } from "next/navigation";
+import type { DataTableColumn } from "@/components/dashboard/DataTable";
+import ViewButton from "@/components/shared/ViewButton/ViewButton";
 import styles from "./depositsColumns.module.scss";
 import { formatCurrencyAmount } from "@/utils/formatMetric";
 
-export type DepositRow = any; // Just use any or a proper type if desired
+export type DepositRow = any;
 
 const serviceClass: Record<string, string> = {
   trip: styles.serviceTrips,
@@ -25,6 +29,33 @@ const serviceNames: Record<string, string> = {
   b2b: "B2B",
   b2b_proposal: "B2B",
 };
+
+function ViewAction({ row }: { row: DepositRow }) {
+  const router = useRouter();
+
+  const handleView = () => {
+    const type = row.booking_type;
+    const id = row.booking_pk;
+
+    if (!id) return;
+
+    if (type === "trip") {
+      router.push(`/dashboard/bookings/trips/${id}`);
+    } else if (type === "hotel") {
+      router.push(`/dashboard/bookings/hotels/${id}`);
+    } else if (type === "transport" || type === "transportation") {
+      router.push(`/dashboard/bookings/transportation/${id}`);
+    } else if (type === "custom_trip") {
+      router.push(`/dashboard/requests/plan-your-trip/${id}`);
+    } else if (type === "b2b" || type === "b2b_proposal") {
+      router.push(`/dashboard/requests/b2b-programs/${id}`);
+    } else if (type === "mice" || type === "event_proposal") {
+      router.push(`/dashboard/requests/mice-corporate/${id}`);
+    }
+  };
+
+  return <ViewButton onClick={handleView} />;
+}
 
 export const depositsColumns: DataTableColumn<DepositRow>[] = [
   {
@@ -78,7 +109,7 @@ export const depositsColumns: DataTableColumn<DepositRow>[] = [
     render: (row) => {
       const isPending = row.deposit_status === "pending";
       const isCollected = row.deposit_status === "collected";
-      
+
       let statusStyle = styles.statusOverdue;
       if (isPending) statusStyle = styles.statusPending;
       else if (isCollected) statusStyle = styles.statusCollected || styles.statusPending;
@@ -86,7 +117,9 @@ export const depositsColumns: DataTableColumn<DepositRow>[] = [
       return (
         <span className={`${styles.statusPill} ${statusStyle}`}>
           <i aria-hidden />
-          {row.deposit_status ? row.deposit_status.charAt(0).toUpperCase() + row.deposit_status.slice(1).toLowerCase() : "Unknown"}
+          {row.deposit_status
+            ? row.deposit_status.charAt(0).toUpperCase() + row.deposit_status.slice(1).toLowerCase()
+            : "Unknown"}
         </span>
       );
     },
@@ -100,19 +133,9 @@ export const depositsColumns: DataTableColumn<DepositRow>[] = [
       </span>
     ),
   },
+  {
+    id: "actions",
+    header: "",
+    render: (row) => <ViewAction row={row} />,
+  },
 ];
-
-export const depositRowActions = (
-  onAction?: (action: { label: string }, row: any) => void,
-  canEdit: boolean = true
-) => (row: DepositRow): DataTableRowAction<DepositRow>[] => {
-  const actions: DataTableRowAction<DepositRow>[] = [
-    { label: "View Booking", iconSrc: "/images/dashboard/view.svg", onClick: (r: any) => onAction?.({ label: "View Booking" }, r) },
-  ];
-
-  if (canEdit) {
-    actions.push({ label: "Send reminder", iconSrc: "/images/dashboard/finance/payment/reminder.svg", onClick: (r: any) => onAction?.({ label: "Send reminder" }, r) });
-  }
-
-  return actions;
-};

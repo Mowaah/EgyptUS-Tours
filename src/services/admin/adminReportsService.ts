@@ -141,6 +141,8 @@ export interface CustomersByNationality {
 }
 
 export interface TopCustomer {
+  id?: number | string;
+  customer_id?: number | string;
   customer_name: string;
   email: string;
   total_revenue: string;

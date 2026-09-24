@@ -1,10 +1,15 @@
-import type { DataTableColumn, DataTableRowAction } from "@/components/dashboard/DataTable";
+"use client";
+
+import { useRouter } from "next/navigation";
+import type { DataTableColumn } from "@/components/dashboard/DataTable";
+import ViewButton from "@/components/shared/ViewButton/ViewButton";
 import styles from "../PaymentsTable/PaymentsTable.module.scss";
 
 export interface PaymentRow {
   id: string;
   rawId?: number | string;
   bookingId: string;
+  bookingPk?: number | string;
   bookingType?: string;
   customer: string;
   service: string;
@@ -22,6 +27,33 @@ const serviceClass: Record<string, string> = {
   MICE: styles.serviceMice,
   "Custom Trip": styles.serviceB2B,
 };
+
+function ViewAction({ row }: { row: PaymentRow }) {
+  const router = useRouter();
+
+  const handleView = () => {
+    const type = row.bookingType;
+    const id = row.bookingPk;
+
+    if (!id) return;
+
+    if (type === "trip") {
+      router.push(`/dashboard/bookings/trips/${id}`);
+    } else if (type === "hotel") {
+      router.push(`/dashboard/bookings/hotels/${id}`);
+    } else if (type === "transport" || type === "transportation") {
+      router.push(`/dashboard/bookings/transportation/${id}`);
+    } else if (type === "custom_trip") {
+      router.push(`/dashboard/requests/plan-your-trip/${id}`);
+    } else if (type === "b2b_proposal" || type === "b2b") {
+      router.push(`/dashboard/requests/b2b-programs/${id}`);
+    } else if (type === "event_proposal" || type === "mice") {
+      router.push(`/dashboard/requests/mice-corporate/${id}`);
+    }
+  };
+
+  return <ViewButton onClick={handleView} />;
+}
 
 export const paymentsColumns: DataTableColumn<PaymentRow>[] = [
   {
@@ -66,7 +98,7 @@ export const paymentsColumns: DataTableColumn<PaymentRow>[] = [
       const statusLower = row.status.toLowerCase();
       const isPaid = statusLower === "fully paid";
       const isInProgress = statusLower === "in progress";
-      
+
       let statusClass = styles.statusRefunded;
       if (isPaid) statusClass = styles.statusPaid;
       else if (isInProgress) statusClass = styles.statusInProgress;
@@ -79,9 +111,9 @@ export const paymentsColumns: DataTableColumn<PaymentRow>[] = [
       );
     },
   },
-];
-
-export const paymentRowActions = (onAction?: (action: { label: string }, row: any) => void) => (row: PaymentRow): DataTableRowAction<PaymentRow>[] => [
-  { label: "View Booking", iconSrc: "/images/dashboard/view.svg", onClick: (r: any) => onAction?.({ label: "View Booking" }, r) },
-  { label: "Download Receipt", iconSrc: "/images/dashboard/finance/payment/export.svg", onClick: (r: any) => onAction?.({ label: "Download Receipt" }, r) },
+  {
+    id: "actions",
+    header: "",
+    render: (row) => <ViewAction row={row} />,
+  },
 ];
