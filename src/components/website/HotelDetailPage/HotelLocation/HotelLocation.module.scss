@@ -20,8 +20,11 @@
   align-items: center;
   gap: 12px;
   margin-bottom: 16px;
+  width: 100%;
+  min-width: 0;
 
   img {
+    flex-shrink: 0;
     filter: brightness(0) saturate(100%) invert(48%) sepia(87%) deg(354) saturate(2405%) hue-rotate(360deg); // Approx orange or specific SVG color
   }
 }
@@ -30,6 +33,11 @@
   font-size: $font-size-base;
   color: $text-lighter;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .mapContainer {
@@ -108,5 +116,9 @@
 
   &:hover {
     background: $gray-50;
+  }
+
+  &.expandBtn img {
+    transform: rotate(45deg);
   }
 }

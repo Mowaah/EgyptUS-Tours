@@ -300,7 +300,10 @@
 .dayInfo {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 4px;
+  width: 100%;
+  max-width: 150px;
 }
 
 .dayTitle {
@@ -309,7 +312,8 @@
   color: $dark;
   text-align: center;
   margin: 0;
-  max-width: 300px;
+  width: 100%;
+  line-height: 1.35;
 }
 
 .daySubtitle {
@@ -318,6 +322,8 @@
   font-weight: $font-weight-normal;
   text-align: center;
   margin: 0;
+  width: 100%;
+  line-height: 1.35;
 }
 
 // ── Detail Card ───────────────────────────────────────────────

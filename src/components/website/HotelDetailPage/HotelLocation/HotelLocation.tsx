@@ -10,14 +10,20 @@ interface HotelLocationProps {
 export default function HotelLocation({ hotel }: HotelLocationProps) {
   const { t } = useTranslation("hotels");
 
+  const displayAddress = hotel.address || hotel.location || "";
+
   return (
     <section id="location" className={styles.section}>
       <h2 className={styles.heading}>{t("location.heading", "Location")}</h2>
 
-      <div className={styles.addressBar}>
-        <Image src="/images/location-orange.svg" alt="" width={24} height={24} />
-        <p className={styles.address}>{hotel.address}</p>
-      </div>
+      {displayAddress && (
+        <div className={styles.addressBar}>
+          <Image src="/images/location-orange.svg" alt="" width={24} height={24} />
+          <p className={styles.address} title={displayAddress}>
+            {displayAddress}
+          </p>
+        </div>
+      )}
 
       <div className={styles.mapContainer}>
         {hotel.address || hotel.location ? (
@@ -40,8 +46,8 @@ export default function HotelLocation({ hotel }: HotelLocationProps) {
 
         {/* Controls Overlay (Static Visuals) */}
         <div className={styles.mapControls}>
-          <button className={styles.controlBtn}>
-            <Image src="/images/arrows/pagination-arrow.svg" alt="Expand" width={20} height={20} style={{ transform: "rotate(45deg)" }} />
+          <button type="button" className={`${styles.controlBtn} ${styles.expandBtn}`} aria-label="Expand map">
+            <Image src="/images/arrows/pagination-arrow.svg" alt="" width={20} height={20} />
           </button>
           <div className={styles.zoomControls}>
             <button className={styles.controlBtn}>+</button>
