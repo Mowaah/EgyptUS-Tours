@@ -169,8 +169,9 @@
 
 .specs {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: flex-start;
+  gap: 32px;
   width: 100%;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding-bottom: 12px;
@@ -188,6 +189,7 @@
   font-weight: $font-weight-normal;
   line-height: 16px;
   color: $gray-500-alt;
+  white-space: nowrap;
 }
 
 .specValue {
@@ -196,6 +198,7 @@
   font-weight: $font-weight-bold;
   line-height: 24px;
   color: $dark;
+  white-space: nowrap;
 }
 
 .features {
