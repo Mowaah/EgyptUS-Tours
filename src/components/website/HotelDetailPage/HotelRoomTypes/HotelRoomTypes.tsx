@@ -260,13 +260,22 @@ function RoomCard({ room }: { room: HotelRoom }) {
     <div className={styles.roomCard}>
       {/* ── Image ── */}
       <div className={styles.roomGallery}>
-        <Image
-          src={currentImage}
-          alt={title}
-          fill
-          className={styles.roomImg}
-          unoptimized={currentImage.startsWith("http") || currentImage.startsWith("data:")}
-        />
+        {images.map((src, i) => (
+          <div
+            key={`${src}-${i}`}
+            className={`${styles.roomImgSlide} ${currentImgIndex % images.length === i ? styles.roomImgSlideActive : ""}`}
+            aria-hidden={currentImgIndex % images.length !== i}
+          >
+            <Image
+              src={src}
+              alt={`${title} - Photo ${i + 1}`}
+              fill
+              className={styles.roomImg}
+              unoptimized={src.startsWith("http") || src.startsWith("data:")}
+              loading={i <= 1 ? "eager" : "lazy"}
+            />
+          </div>
+        ))}
 
         {/* Discount badge */}
         {room.discountPercent ? (

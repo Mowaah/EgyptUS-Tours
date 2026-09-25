@@ -21,27 +21,43 @@ export default function DetailGallery({ images, title, rating, reviewCount, desc
 
   const thumbs = images.slice(0, 5);
 
+  if (!images || images.length === 0) return null;
+
   return (
     <div className={styles.gallery}>
       {/* Main image */}
       <div className={styles.main}>
-        <Image
-          src={images[activeIndex]}
-          alt={title}
-          fill
-          sizes="(max-width: 1024px) 100vw, 75vw"
-          className={styles.mainImg}
-          priority
-        />
+        {images.map((src, i) => (
+          <div
+            key={`${src}-${i}`}
+            className={`${styles.imageSlide} ${activeIndex === i ? styles.imageSlideActive : ""}`}
+            aria-hidden={activeIndex !== i}
+          >
+            <Image
+              src={src}
+              alt={`${title} - Photo ${i + 1}`}
+              fill
+              sizes="(max-width: 1024px) 100vw, 75vw"
+              className={styles.mainImg}
+              priority={i <= 1}
+              loading={i <= 2 ? "eager" : "lazy"}
+            />
+          </div>
+        ))}
+
         <div className={styles.counter}>
           {activeIndex + 1}/{images.length}
         </div>
-        <button className={`${styles.arrow} ${styles.arrowLeft}`} onClick={prev} aria-label="Previous">
-          <Image src="/images/arrows/pagination-arrow.svg" alt="Previous" width={16} height={16} />
-        </button>
-        <button className={`${styles.arrow} ${styles.arrowRight}`} onClick={next} aria-label="Next">
-          <Image src="/images/arrows/pagination-arrow.svg" alt="Next" width={16} height={16} style={{ transform: "rotate(180deg)" }} />
-        </button>
+        {images.length > 1 && (
+          <>
+            <button className={`${styles.arrow} ${styles.arrowLeft}`} onClick={prev} aria-label="Previous">
+              <Image src="/images/arrows/pagination-arrow.svg" alt="Previous" width={16} height={16} />
+            </button>
+            <button className={`${styles.arrow} ${styles.arrowRight}`} onClick={next} aria-label="Next">
+              <Image src="/images/arrows/pagination-arrow.svg" alt="Next" width={16} height={16} />
+            </button>
+          </>
+        )}
         
         {/* Render provided overlay OR the built-in mobile overlay */}
         {overlayContent || (
@@ -56,17 +72,21 @@ export default function DetailGallery({ images, title, rating, reviewCount, desc
       </div>
 
       {/* Thumbnails */}
-      <div className={styles.thumbs}>
-        {thumbs.map((src, i) => (
-          <button
-            key={i}
-            className={`${styles.thumb} ${activeIndex === i ? styles.thumbActive : ""}`}
-            onClick={() => setActiveIndex(i)}
-          >
-            <Image src={src} alt={`${title} Photo ${i + 1}`} fill sizes="120px" className={styles.thumbImg} />
-          </button>
-        ))}
-      </div>
+      {images.length > 1 && (
+        <div className={styles.thumbs}>
+          {thumbs.map((src, i) => (
+            <button
+              key={i}
+              type="button"
+              className={`${styles.thumb} ${activeIndex === i ? styles.thumbActive : ""}`}
+              onClick={() => setActiveIndex(i)}
+              aria-label={`View photo ${i + 1}`}
+            >
+              <Image src={src} alt={`${title} Photo ${i + 1}`} fill sizes="120px" className={styles.thumbImg} />
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

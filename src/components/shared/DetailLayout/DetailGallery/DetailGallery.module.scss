@@ -19,10 +19,28 @@
   height: min(400px, 95vw);
   border-radius: 16px;
   overflow: hidden;
+  background-color: $gray-100;
 
   @media (min-width: 1024px) {
     height: auto;
     border-radius: 0;
+  }
+}
+
+.imageSlide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  pointer-events: none;
+  z-index: 0;
+
+  &.imageSlideActive {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    z-index: 1;
   }
 }
 
@@ -116,6 +134,10 @@
 
 .arrowRight {
   right: 16px;
+
+  img {
+    transform: rotate(180deg);
+  }
 }
 
 .thumbs {

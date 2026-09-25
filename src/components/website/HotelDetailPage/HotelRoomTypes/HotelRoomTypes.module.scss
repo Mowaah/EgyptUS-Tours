@@ -79,6 +79,23 @@
   }
 }
 
+.roomImgSlide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  pointer-events: none;
+  z-index: 0;
+
+  &.roomImgSlideActive {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    z-index: 1;
+  }
+}
+
 .roomImg {
   object-fit: cover;
   border-radius: 0;
