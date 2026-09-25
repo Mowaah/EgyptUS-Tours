@@ -6,6 +6,7 @@
   display: flex;
   justify-content: center;
   padding: 0 16px;
+  box-sizing: border-box;
 
   @media (min-width: 640px) {
     padding: 0 24px;
@@ -19,21 +20,27 @@
 .stepContainer {
   display: flex;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: space-between;
   width: 100%;
-  max-width: 1216px;
+  max-width: 860px;
 }
 
 .stepChunk {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
 }
 
 .step {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  width: 100%;
+  position: relative;
+  z-index: 2;
 
   @media (min-width: 768px) {
     gap: 12px;
@@ -41,13 +48,13 @@
 }
 
 .stepCircle {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: $font-size-sm;
+  font-size: $font-size-base;
   font-weight: $font-weight-bold;
   flex-shrink: 0;
   box-sizing: border-box;
@@ -62,7 +69,7 @@
 
 .stepCircleActive {
   background: #FEE8DE;
-  border: 3px solid #FDCFBB;
+  border: 3.5px solid #FDCFBB;
   color: transparent;
 
   @media (min-width: 768px) {
@@ -71,8 +78,8 @@
 }
 
 .stepBullseyeDot {
-  width: 10px;
-  height: 10px;
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
   background: #FA6324;
   flex-shrink: 0;
@@ -96,10 +103,12 @@
 }
 
 .stepLabel {
-  font-size: $font-size-2xs;
+  font-size: $font-size-13;
   font-weight: $font-weight-medium;
   color: $gray-400;
+  text-align: center;
   white-space: nowrap;
+  line-height: 1.25;
   transition: color $transition-base, font-weight $transition-base;
 
   @media (min-width: 768px) {
@@ -107,9 +116,28 @@
   }
 }
 
+.wrapLabels {
+  .stepLabel {
+    white-space: normal;
+    max-width: 78px;
+
+    @media (min-width: 640px) {
+      white-space: nowrap;
+      max-width: none;
+    }
+  }
+
+  .stepLine {
+    @media (max-width: 639px) {
+      left: calc(50% + 28px);
+      width: calc(100% - 56px);
+    }
+  }
+}
+
 .stepLabelCurrent {
   color: $dark;
-  font-weight: $font-weight-medium;
+  font-weight: $font-weight-bold;
 }
 
 .stepLabelDone {
@@ -118,52 +146,25 @@
 }
 
 .stepLine {
-  width: 16px;
-  height: 2px;
+  position: absolute;
+  top: 18.5px;
+  left: calc(50% + 38px);
+  width: calc(100% - 76px);
+  height: 3px;
   background: $gray-100-zinc;
   border-radius: 42px;
-  margin-top: 15px;
-  margin-inline: 4px;
   transition: background $transition-base;
-
-  @media (min-width: 480px) {
-    width: 24px;
-    margin-inline: 8px;
-  }
-
-  @media (min-width: 640px) {
-    width: 32px;
-    margin-inline: 10px;
-  }
+  z-index: 1;
+  pointer-events: none;
 
   @media (min-width: 768px) {
-    width: 48px;
+    top: 22px;
     height: 4px;
-    margin-top: 22px;
-    margin-inline: 10px;
-  }
-
-  @media (min-width: 1024px) {
-    width: 96px;
-    margin-inline: 16px;
+    left: calc(50% + 54px);
+    width: calc(100% - 108px);
   }
 }
 
 .stepLineActive {
   background: $secondary;
-}
-
-.wrapLabels {
-  .stepChunk:nth-child(2),
-  .stepChunk:nth-child(3),
-  .stepChunk:nth-child(4) {
-    .stepLabel {
-      @media (max-width: 767px) {
-        white-space: normal;
-        text-align: center;
-        max-width: 80px;
-        line-height: 1.25;
-      }
-    }
-  }
 }
