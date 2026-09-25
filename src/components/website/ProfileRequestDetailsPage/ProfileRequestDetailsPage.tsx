@@ -23,6 +23,8 @@ import {
   formatVenueType,
   formatAdditionalServices,
   formatBudgetRangeLabel,
+  formatBudgetFlexibility,
+  formatSource,
 } from "@/utils/formatMetric";
 import { COUNTRIES } from "@/data/countries";
 import { useAuth } from "@/contexts/AuthContext";
@@ -102,7 +104,16 @@ interface ProfileRequestDetailData {
     venue_type?: string;
     additional_services?: string[];
     estimated_budget_range?: string;
+    budget_flexibility?: string;
+    hear_about_us?: string;
   };
+  budget?: {
+    estimated_budget_range?: string;
+    budget_flexibility?: string;
+    hear_about_us?: string;
+  };
+  budget_flexibility?: string;
+  hear_about_us?: string;
   preferences?: {
     hotel_category?: string;
     room_type?: string | string[];
@@ -373,7 +384,24 @@ export default function ProfileRequestDetailsPage() {
         icon: "/images/profile/detail/budget-info.svg",
         fieldsColumns: 3,
         fields: [
-          { label: "Estimated Budget", value: formatBudgetRangeLabel(data.event?.estimated_budget_range) },
+          {
+            label: "Estimated Budget",
+            value: formatBudgetRangeLabel(
+              data.budget?.estimated_budget_range || data.event?.estimated_budget_range
+            ),
+          },
+          {
+            label: "Budget Flexibility",
+            value: formatBudgetFlexibility(
+              data.budget?.budget_flexibility || data.event?.budget_flexibility || data.budget_flexibility
+            ),
+          },
+          {
+            label: "How did you hear about us?",
+            value: formatSource(
+              data.budget?.hear_about_us || data.event?.hear_about_us || data.hear_about_us
+            ),
+          },
         ],
       },
     ];
