@@ -1,9 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/shared";
 import { MultiCurrencyPrice } from "@/constants/currency";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useHideAtFooter } from "@/hooks/useHideAtFooter";
 import styles from "./BookingWidget.module.scss";
 
 interface BookingWidgetProps {
@@ -15,11 +18,15 @@ interface BookingWidgetProps {
 export default function BookingWidget({ vehicleId, totalPrice = "1299", prices }: BookingWidgetProps) {
   const { formatCurrency } = useCurrency();
   const { t } = useTranslation("transportation");
+  const isAtFooter = useHideAtFooter();
   const formattedPrice = formatCurrency(prices || Number(String(totalPrice).replace(/,/g, "")) || 0);
   const bookHref = `/transportation/${vehicleId}/book`;
 
   return (
-    <aside className={styles.sidebar} aria-label="Book this vehicle">
+    <aside
+      className={`${styles.sidebar} ${isAtFooter ? styles.hiddenOnFooter : ""}`}
+      aria-label="Book this vehicle"
+    >
       <div className={styles.card}>
         <div className={styles.desktop}>
           <div className={styles.header}>

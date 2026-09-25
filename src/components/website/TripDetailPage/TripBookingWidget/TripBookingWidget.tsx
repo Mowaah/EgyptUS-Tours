@@ -6,6 +6,7 @@ import { Trip } from "@/types";
 import Button from "@/components/shared/Button/Button";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useHideAtFooter } from "@/hooks/useHideAtFooter";
 import styles from "./TripBookingWidget.module.scss";
 
 interface TripBookingWidgetProps {
@@ -15,6 +16,7 @@ interface TripBookingWidgetProps {
 export default function TripBookingWidget({ trip }: TripBookingWidgetProps) {
   const { formatCurrency } = useCurrency();
   const { t } = useTranslation("trips");
+  const isAtFooter = useHideAtFooter();
 
   function formatPrice(prices?: any, value?: number) {
     if (prices && (prices.usd != null || prices.egp != null || prices.eur != null)) {
@@ -37,7 +39,10 @@ export default function TripBookingWidget({ trip }: TripBookingWidgetProps) {
   }
 
   return (
-    <aside className={styles.sidebar} aria-label="Book this tour">
+    <aside
+      className={`${styles.sidebar} ${isAtFooter ? styles.hiddenOnFooter : ""}`}
+      aria-label="Book this tour"
+    >
       <div className={styles.card}>
         <div className={styles.desktop}>
           <h3 className={styles.title}>{t("bookingWidget.title", "Book Your Tour")}</h3>

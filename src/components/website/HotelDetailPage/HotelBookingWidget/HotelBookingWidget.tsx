@@ -6,6 +6,7 @@ import { Hotel } from "@/types";
 import Button from "@/components/shared/Button/Button";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useHideAtFooter } from "@/hooks/useHideAtFooter";
 import styles from "./HotelBookingWidget.module.scss";
 
 interface HotelBookingWidgetProps {
@@ -16,10 +17,14 @@ export default function HotelBookingWidget({ hotel }: HotelBookingWidgetProps) {
   const bookHref = `/hotels/${hotel.id}/book`;
   const { formatCurrency } = useCurrency();
   const { t } = useTranslation("hotels");
+  const isAtFooter = useHideAtFooter();
   const price = formatCurrency(hotel.prices || hotel.pricePerNight);
 
   return (
-    <aside className={styles.sidebar} aria-label="Book this hotel">
+    <aside
+      className={`${styles.sidebar} ${isAtFooter ? styles.hiddenOnFooter : ""}`}
+      aria-label="Book this hotel"
+    >
       <div className={styles.card}>
         <div className={styles.desktop}>
           <h3 className={styles.title}>{t("bookingWidget.title", "Plan Your Stay")}</h3>

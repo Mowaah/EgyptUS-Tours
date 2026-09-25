@@ -7,6 +7,13 @@
     z-index: 55;
     padding-bottom: env(safe-area-inset-bottom, 0px);
     background: $white;
+    transition: transform $transition-base, opacity $transition-base;
+
+    &.hiddenOnFooter {
+      transform: translateY(100%);
+      opacity: 0;
+      pointer-events: none;
+    }
   }
 
   @media (min-width: 1024px) {

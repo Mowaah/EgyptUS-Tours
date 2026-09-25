@@ -1,13 +1,21 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/shared";
+import { useHideAtFooter } from "@/hooks/useHideAtFooter";
 import styles from "./EventsBookingWidget.module.scss";
 
 const PROPOSAL_HREF = "/events/request-proposal";
 
 export default function EventsBookingWidget() {
+  const isAtFooter = useHideAtFooter();
+
   return (
-    <aside className={styles.sidebar} aria-label="Request an events proposal">
+    <aside
+      className={`${styles.sidebar} ${isAtFooter ? styles.hiddenOnFooter : ""}`}
+      aria-label="Request an events proposal"
+    >
       <div className={styles.card}>
         <div className={styles.desktop}>
           <div className={styles.headerContent}>
