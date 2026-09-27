@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import { getAdminProfile, logoutAdmin } from "@/lib/adminCoreApi";
+import { getAdminProfile, logoutAdmin, refreshAdminToken } from "@/lib/adminCoreApi";
 
 import type { AdminRolePermissions } from "@/components/dashboard/AccessControl/types";
 import {
@@ -51,23 +51,87 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoadingAdmin, setIsLoadingAdmin] = useState(true);
 
   useEffect(() => {
-    // Check if we have an admin access token on mount
-    const accessToken = Cookies.get("admin_access_token");
-    if (accessToken) {
-      getAdminProfile()
-        .then((data: any) => {
-          setAdminUser(data); 
-        })
-        .catch((err) => {
-          console.error("Failed to fetch admin profile", err);
-          logoutAdminTokens();
-        })
-        .finally(() => {
+    let isCancelled = false;
+
+    async function initAuth() {
+      const accessToken = Cookies.get("admin_access_token");
+      const refreshToken = Cookies.get("admin_refresh_token");
+
+      if (accessToken) {
+        try {
+          const data = await getAdminProfile();
+          if (!isCancelled) {
+            if (data && (data.id || data.email)) {
+              setAdminUser(data);
+            } else {
+              throw new Error("Invalid admin user data");
+            }
+          }
+        } catch (err) {
+          console.error("Failed to fetch admin profile with access token", err);
+          if (refreshToken) {
+            try {
+              const res = await refreshAdminToken(refreshToken);
+              if (res?.access) {
+                Cookies.set("admin_access_token", res.access, { expires: 1 });
+                const retryProfile = await getAdminProfile();
+                if (!isCancelled) {
+                  if (retryProfile && (retryProfile.id || retryProfile.email)) {
+                    setAdminUser(retryProfile);
+                    return;
+                  }
+                }
+              }
+            } catch (refreshErr) {
+              console.error("Failed to refresh admin token on mount", refreshErr);
+            }
+          }
+          if (!isCancelled) {
+            logoutAdminTokens();
+          }
+        } finally {
+          if (!isCancelled) {
+            setIsLoadingAdmin(false);
+          }
+        }
+      } else if (refreshToken) {
+        try {
+          const res = await refreshAdminToken(refreshToken);
+          if (res?.access) {
+            Cookies.set("admin_access_token", res.access, { expires: 1 });
+            const data = await getAdminProfile();
+            if (!isCancelled) {
+              if (data && (data.id || data.email)) {
+                setAdminUser(data);
+              } else {
+                throw new Error("Invalid admin user data");
+              }
+            }
+          } else {
+            throw new Error("No access token returned from refresh");
+          }
+        } catch (err) {
+          console.error("Failed to refresh admin token on mount", err);
+          if (!isCancelled) {
+            logoutAdminTokens();
+          }
+        } finally {
+          if (!isCancelled) {
+            setIsLoadingAdmin(false);
+          }
+        }
+      } else {
+        if (!isCancelled) {
           setIsLoadingAdmin(false);
-        });
-    } else {
-      setIsLoadingAdmin(false);
+        }
+      }
     }
+
+    initAuth();
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   const loginAdminTokens = (access: string, refresh: string, userData: AdminUser) => {

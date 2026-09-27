@@ -29,6 +29,7 @@ interface SelectDropdownProps<T extends SelectOption = SelectOption> {
   error?: boolean;
   disabled?: boolean;
   placeholder?: string;
+  zIndex?: number;
 }
 
 export default function SelectDropdown<T extends SelectOption = SelectOption>({
@@ -44,6 +45,7 @@ export default function SelectDropdown<T extends SelectOption = SelectOption>({
   error,
   disabled = false,
   placeholder,
+  zIndex,
 }: SelectDropdownProps<T>) {
   const isSelected = Boolean(value && value !== "");
   const selectedOption = isSelected ? options.find((o) => o.value === value) : undefined;
@@ -57,6 +59,7 @@ export default function SelectDropdown<T extends SelectOption = SelectOption>({
       onChange={onChange}
       checkboxStyle={checkboxStyle}
       dropdownClassName={styles.dropdownPanel}
+      zIndex={zIndex}
       renderOption={renderOption || ((opt) => (
         <div className={styles.option}>
           <div className={styles.optionMain}>

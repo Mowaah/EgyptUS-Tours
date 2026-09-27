@@ -14,11 +14,18 @@ export default function DashboardRouteGuard({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { isLoadingAdmin, canView, canCreate, canEdit } = useAdminAuth();
+  const { isLoadingAdmin, adminUser, canView, canCreate, canEdit } = useAdminAuth();
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
     if (isLoadingAdmin) {
+      return;
+    }
+
+    // If not authenticated as admin, redirect to login
+    if (!adminUser) {
+      setIsAuthorized(false);
+      router.replace("/dashboard/login");
       return;
     }
 

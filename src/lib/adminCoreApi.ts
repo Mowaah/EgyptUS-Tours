@@ -38,15 +38,17 @@ adminApiClient.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
+    const isAuthEndpoint = originalRequest?.url?.includes('/refresh/') || originalRequest?.url?.includes('/login/');
+
     // Handle 401s for token refresh
-    if (error.response?.status === 401 && !originalRequest._retry && typeof window !== 'undefined') {
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint && typeof window !== 'undefined') {
       originalRequest._retry = true;
       const refresh = Cookies.get('admin_refresh_token');
       
       if (refresh) {
         try {
           const res = await axios.post(`${BASE_URL}/api/v1/admin/auth/refresh/`, { refresh });
-          if (res.data.access) {
+          if (res.data?.access) {
             Cookies.set('admin_access_token', res.data.access, { expires: 1 });
             originalRequest.headers.Authorization = `Bearer ${res.data.access}`;
             return adminApiClient(originalRequest);
@@ -54,19 +56,16 @@ adminApiClient.interceptors.response.use(
         } catch (refreshError) {
           Cookies.remove('admin_access_token');
           Cookies.remove('admin_refresh_token');
+          if (window.location.pathname !== '/dashboard/login') {
+            window.location.href = '/dashboard/login';
+          }
+          return Promise.reject(refreshError);
         }
       } else {
         Cookies.remove('admin_access_token');
         Cookies.remove('admin_refresh_token');
-      }
-
-// If refresh fails on a GET request, retry without Auth header (though admin is strictly protected)
-      if (originalRequest.method?.toLowerCase() === 'get' && originalRequest.headers?.Authorization) {
-        delete originalRequest.headers.Authorization;
-        try {
-          return await adminApiClient(originalRequest);
-        } catch (e) {
-          // Ignore fallback error
+        if (window.location.pathname !== '/dashboard/login') {
+          window.location.href = '/dashboard/login';
         }
       }
     }
@@ -123,12 +122,17 @@ adminDataClient.interceptors.response.use(
         } catch (refreshError) {
           Cookies.remove('admin_access_token');
           Cookies.remove('admin_refresh_token');
-          window.location.href = '/dashboard/login';
+          if (window.location.pathname !== '/dashboard/login') {
+            window.location.href = '/dashboard/login';
+          }
+          return Promise.reject(refreshError);
         }
       } else {
         Cookies.remove('admin_access_token');
         Cookies.remove('admin_refresh_token');
-        window.location.href = '/dashboard/login';
+        if (window.location.pathname !== '/dashboard/login') {
+          window.location.href = '/dashboard/login';
+        }
       }
     }
 
@@ -181,6 +185,11 @@ export async function getAdminProfile(): Promise<any> {
 
 export async function updateAdminProfile(payload: any): Promise<any> {
   return await adminApiClient.patch('/me/', payload);
+}
+
+export async function refreshAdminToken(refresh: string): Promise<{ access: string }> {
+  const res = await axios.post(`${BASE_URL}/api/v1/admin/auth/refresh/`, { refresh });
+  return res.data;
 }
 
 export async function logoutAdmin(payload: { refresh: string }, accessToken?: string): Promise<any> {

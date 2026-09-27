@@ -25,6 +25,7 @@ export interface CheckboxDropdownProps<T extends CheckboxOption = CheckboxOption
   /** Optional class for the root wrapper (e.g. shrink-to-fit sort triggers) */
   wrapperClassName?: string;
   menuItemTextClassName?: string;
+  zIndex?: number;
 }
 
 export default function CheckboxDropdown<T extends CheckboxOption>({
@@ -39,11 +40,14 @@ export default function CheckboxDropdown<T extends CheckboxOption>({
   checkboxClassName = "",
   wrapperClassName = "",
   menuItemTextClassName = "",
+  zIndex,
 }: CheckboxDropdownProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [dropdownStyle, setDropdownStyle] = useState<CSSProperties>({});
+
+  const effectiveZIndex = zIndex ?? 20000;
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -77,7 +81,7 @@ export default function CheckboxDropdown<T extends CheckboxOption>({
           bottom: window.innerHeight - rect.top + 8,
           top: "auto",
           width: rect.width,
-          zIndex: 9999,
+          zIndex: effectiveZIndex,
         });
       } else {
         setDropdownStyle({
@@ -86,7 +90,7 @@ export default function CheckboxDropdown<T extends CheckboxOption>({
           top: rect.bottom + 8,
           bottom: "auto",
           width: rect.width,
-          zIndex: 9999,
+          zIndex: effectiveZIndex,
         });
       }
     };
@@ -99,7 +103,7 @@ export default function CheckboxDropdown<T extends CheckboxOption>({
       window.removeEventListener("resize", updateDropdownPosition);
       window.removeEventListener("scroll", updateDropdownPosition, true);
     };
-  }, [isOpen]);
+  }, [isOpen, effectiveZIndex]);
 
   const handleSelect = (optionValue: string) => {
     if (multiple) {
@@ -129,35 +133,40 @@ export default function CheckboxDropdown<T extends CheckboxOption>({
           style={dropdownStyle}
           ref={dropdownRef}
         >
-          {options.map((opt) => {
-            const selected = isSelected(opt.value);
-            return (
-              <button
-                key={opt.value}
-                type="button"
-                className={`${styles.menuItem} ${selected ? styles.menuItemSelected : ""}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleSelect(opt.value);
-                }}
-              >
-                {checkboxStyle !== "none" && (
-                  <CheckboxIndicator
-                    variant={checkboxStyle === "radio" ? "radio" : "square"}
-                    size="sm"
-                    selected={selected}
-                    aria-hidden
-                    className={checkboxClassName}
-                  />
-                )}
-                {renderOption ? renderOption(opt, selected) : (
-                  <span className={[styles.menuItemText, menuItemTextClassName].filter(Boolean).join(" ")}>
-                    {opt.label}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+          {options
+            .filter((opt) => !opt.hidden)
+            .map((opt) => {
+              const selected = isSelected(opt.value);
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  disabled={opt.disabled}
+                  className={`${styles.menuItem} ${selected ? styles.menuItemSelected : ""}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!opt.disabled) {
+                      handleSelect(opt.value);
+                    }
+                  }}
+                >
+                  {checkboxStyle !== "none" && (
+                    <CheckboxIndicator
+                      variant={checkboxStyle === "radio" ? "radio" : "square"}
+                      size="sm"
+                      selected={selected}
+                      aria-hidden
+                      className={checkboxClassName}
+                    />
+                  )}
+                  {renderOption ? renderOption(opt, selected) : (
+                    <span className={[styles.menuItemText, menuItemTextClassName].filter(Boolean).join(" ")}>
+                      {opt.label}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
         </div>,
         document.body
       )
