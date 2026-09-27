@@ -86,6 +86,13 @@
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05), 0px 0px 0px 4px #FEE4E2 !important;
 }
 
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+  background-color: $gray-50 !important;
+  pointer-events: none;
+}
+
 .dropdownValue {
   font-size: $font-size-sm;
   color: $dark;

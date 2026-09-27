@@ -1,0 +1,29 @@
+@use "@/styles/variables" as *;
+
+.langWrapper {
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+
+.routeCode {
+  font-weight: 700;
+  color: $dark;
+  font-size: $font-size-sm;
+}
+
+.location {
+  font-weight: 400;
+  color: $dark;
+  font-size: $font-size-sm;
+}
+
+.price {
+  font-weight: 500;
+  color: $dark;
+  font-size: $font-size-sm;
+}
+
+.emptyPrice {
+  color: $gray-400;
+  font-size: $font-size-sm;
+}

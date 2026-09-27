@@ -22,13 +22,14 @@ import TransportBookingSummary from "@/components/website/BookTransportationPage
 import { getProfileBookingDetail, payRemainingBookingBalance, cancelProfileBooking, getFullImageUrl } from "@/lib/api";
 import { getAllTrips } from "@/services/tripsService";
 import { COUNTRIES } from "@/data/countries";
+import { getNationalityName } from "@/utils/nationality";
 import { MultiCurrencyPrice } from "@/constants/currency";
 import { calculateRefundSummary } from "@/utils/cancellationPolicy";
 import { getStatusConfig } from "@/utils/statusUtils";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
-import { formatDateDDMMYYYY, isDateWithinFullPaymentWindow } from "@/utils/dateFormat";
+import { formatDateDDMMYYYY, isDateWithinFullPaymentWindow, formatDisplayTime, parseDate } from "@/utils/dateFormat";
 import {
   getPendingGuestRecord,
   getGuestAuthEmail,
@@ -279,19 +280,7 @@ export default function ProfileBookingDetailsPage() {
 
   const getLocalizedNationality = (codeOrName: string) => {
     if (!codeOrName) return "";
-    const country = COUNTRIES.find(
-      (c) =>
-        c.code.toLowerCase() === codeOrName.trim().toLowerCase() ||
-        c.nationality.toLowerCase() === codeOrName.trim().toLowerCase() ||
-        c.name.toLowerCase() === codeOrName.trim().toLowerCase()
-    );
-    if (!country) return codeOrName;
-    try {
-      const regionName = new Intl.DisplayNames([localeCode], { type: "region" }).of(country.code.toUpperCase());
-      return regionName || country.nationality;
-    } catch {
-      return country.nationality;
-    }
+    return getNationalityName(codeOrName);
   };
 
   const formatLocalizedDuration = (raw: string | undefined | null) => {
@@ -370,20 +359,53 @@ export default function ProfileBookingDetailsPage() {
   const hotelTotalAmount = totalAmount;
   const hotelDepositAmount = depositAmount;
 
-  // Calculate final payment due date (30 days before start date, or fallback to backend provided date)
+  // Calculate final/deposit payment due date (backend provided, or 30 days before start/pickup date)
   let paymentDueDate = "—";
-  if (payment.due_date) {
-    const dueDateObj = new Date(payment.due_date);
+  const rawDue =
+    payment.payment_due_date ||
+    payment.due_date ||
+    bData.payment_due_date ||
+    bData.deposit_due_date ||
+    bData.details?.payment_due_date;
+
+  if (rawDue) {
+    const dueDateObj = new Date(rawDue);
     if (!isNaN(dueDateObj.getTime())) {
-      paymentDueDate = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" }).format(dueDateObj);
+      paymentDueDate = new Intl.DateTimeFormat(localeCode, { month: "long", day: "numeric", year: "numeric" }).format(dueDateObj);
     } else {
-      paymentDueDate = payment.due_date;
+      paymentDueDate = String(rawDue);
     }
-  } else if (bData.check_in_date || bData.start_date) {
-    const startD = new Date(bData.check_in_date || bData.start_date);
-    if (!isNaN(startD.getTime())) {
-      startD.setDate(startD.getDate() - 30);
-      paymentDueDate = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" }).format(startD);
+  } else {
+    const rawServiceDate =
+      bData.pickup_date ||
+      bData.check_in_date ||
+      bData.start_date ||
+      bData.details?.pickup_date ||
+      bData.details?.check_in_date ||
+      bData.details?.start_date;
+
+    if (rawServiceDate) {
+      const serviceD = parseDate(rawServiceDate);
+      if (serviceD && !isNaN(serviceD.getTime())) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (paidAmount > 0) {
+          // Final/remaining payment due: 30 days before service date
+          const dueD = new Date(serviceD);
+          dueD.setDate(dueD.getDate() - 30);
+          const finalDue = dueD < today ? serviceD : dueD;
+          paymentDueDate = new Intl.DateTimeFormat(localeCode, { month: "long", day: "numeric", year: "numeric" }).format(finalDue);
+        } else {
+          // Initial deposit due: within 7 days of booking or by service date
+          const createdRaw = bData.created_at || bData.date;
+          const createdD = createdRaw ? parseDate(createdRaw) : new Date();
+          const depD = new Date(createdD || today);
+          depD.setDate(depD.getDate() + 7);
+          const finalDepDue = depD > serviceD ? serviceD : depD;
+          paymentDueDate = new Intl.DateTimeFormat(localeCode, { month: "long", day: "numeric", year: "numeric" }).format(finalDepDue);
+        }
+      }
     }
   }
 
@@ -757,7 +779,7 @@ export default function ProfileBookingDetailsPage() {
           { label: t("profile.details.name", "Name"), value: contact.full_name || "" },
           { label: t("profile.details.email", "Email"), value: contact.email || "" },
           { label: t("profile.details.phone", "Phone Number"), value: safeFormData.phone || "" },
-          { label: t("profile.details.nationality", "Nationality"), value: contact.nationality || "" },
+          { label: t("profile.details.nationality", "Nationality"), value: getLocalizedNationality(contact.nationality || "") || "" },
         ],
       },
       {
@@ -766,7 +788,7 @@ export default function ProfileBookingDetailsPage() {
         fields: [
           { label: t("profile.details.pickupLocation", "Pickup Location"), value: bData.pickup_location || bData.details?.pickup_location || "" },
           { label: t("profile.details.dropoffLocation", "Drop-off Location"), value: bData.dropoff_location || bData.details?.dropoff_location || "" },
-          { label: t("profile.details.pickupTime", "Pickup Time"), value: bData.pickup_time || bData.details?.pickup_time || "" },
+          { label: t("profile.details.pickupTime", "Pickup Time"), value: formatDisplayTime(bData.pickup_time || bData.details?.pickup_time) || "—" },
           { label: t("profile.details.pickupDate", "Pickup Date"), value: formatDateDDMMYYYY(bData.pickup_date || bData.details?.pickup_date || "") || "" },
           { label: t("profile.details.passengers", "Passengers"), value: bData.details?.passengers_label || `${bData.passengers || 0} Passengers` },
           { label: t("profile.details.luggage", "Luggage"), value: bData.details?.luggage_label || `${bData.luggage || 0} Bags` },
@@ -1016,6 +1038,14 @@ export default function ProfileBookingDetailsPage() {
       itemHref={vehicleHref}
       formData={safeFormData as any}
       isRemainingView={!isFullyPaid && paidAmount > 0 && paidAmount < totalAmount}
+      isFullyPaid={isFullyPaid}
+      totalAmount={totalAmount}
+      depositAmount={depositAmount}
+      paidAmount={paidAmount}
+      totalPrices={totalPrices}
+      depositPrices={depositPrices}
+      remainingPrices={remainingPrices}
+      paidPrices={paidPrices}
     />
   ) : isHotel ? (
     <BookingSidebar

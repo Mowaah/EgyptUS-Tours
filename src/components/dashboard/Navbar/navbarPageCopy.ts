@@ -83,6 +83,13 @@ const pageCopyByPath: Record<string, PageCopy> = {
     searchPlaceholder: "Search Vehicles...",
     primaryAction: { label: "Add New Vehicles" },
   },
+  "/dashboard/catalog/transportation/routes": {
+    title: "Vehicles",
+    subtitle: "Manage your vehicle fleet for transfers and tours.",
+    breadcrumbTrail: [{ label: "Catalog" }, { label: "Vehicles" }],
+    searchPlaceholder: "Search Vehicles...",
+    primaryAction: { label: "Add New Route", iconSrc: "/images/dashboard/navbar/add-circle.svg" },
+  },
   "/dashboard/catalog/transportation/new": {
     title: "Add New Vehicle",
     subtitle: "Add a new vehicle and configure its specifications, pricing, and availability.",

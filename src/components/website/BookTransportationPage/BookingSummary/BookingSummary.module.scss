@@ -295,6 +295,60 @@
   }
 }
 
+.routesRow {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.routeBlock {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.routeHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.routeIconPill {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.routeLabel {
+  font-family: "Trip Sans", sans-serif;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $secondary;
+}
+
+.routeTextBlock {
+  display: flex;
+  flex-direction: column;
+  margin-left: 11px;
+  padding-left: 18px;
+  border-left: 1px solid #FFC299;
+  margin-top: 4px;
+  gap: 2px;
+}
+
+.routeValue {
+  font-family: "Trip Sans", sans-serif;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $dark;
+  word-break: break-word;
+}
+
 .priceTable {
   box-sizing: border-box;
   display: flex;
@@ -334,6 +388,16 @@
   font-size: $font-size-13;
   font-weight: 700;
   color: $dark;
+
+  @media (min-width: 640px) {
+    font-size: $font-size-sm;
+  }
+}
+
+.servicePriceValue {
+  font-size: $font-size-13;
+  font-weight: 700;
+  color: $success;
 
   @media (min-width: 640px) {
     font-size: $font-size-sm;

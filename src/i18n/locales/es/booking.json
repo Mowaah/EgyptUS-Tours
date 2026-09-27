@@ -303,7 +303,7 @@
       "email": "Correo Electrónico",
       "emailPlaceholder": "ejemplo@gmail.com",
       "phone": "Número de Teléfono",
-      "nationality": "Selecciona tu Nacionalidad",
+      "nationality": "Nacionalidad",
       "notes": "Instrucciones Especiales para el Conductor (Opcional)",
       "notesPlaceholder": "Paradas adicionales, sillas de bebé o indicaciones de referencia...",
       "continueToPayment": "Continuar al Pago"

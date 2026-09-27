@@ -386,7 +386,7 @@ export async function submitTripBooking(data: any): Promise<any> {
 }
 
 export async function submitTransportationBooking(data: any): Promise<any> {
-  return await apiClient.post('/booking-requests/transportation/', data);
+  return await apiClient.post('/transport-bookings/', data);
 }
 
 export function formatUrlForBackend(url?: string): string {

@@ -177,6 +177,81 @@ export default function StepTripDetails({
     }
   }, [maxPassengers, maxLuggage, formData.passengers, formData.luggage, onChange]);
 
+  const { language } = useTranslation();
+  const { data: routesData } = useSWR(
+    vehicle.id ? `/vehicles/${vehicle.id}/routes/?lang=${language}` : null,
+    fetcher
+  );
+
+  const pickupOptions = useMemo(() => {
+    const routes = Array.isArray(routesData) ? routesData : [];
+    const uniqueFrom = Array.from(new Set(routes.map((r: any) => r.from_location).filter(Boolean)));
+    return [
+      { label: t("transportBooking.rideDetails.selectPickup", "Select pickup location"), value: "" },
+      ...uniqueFrom.map((loc) => ({ label: loc, value: loc })),
+    ];
+  }, [routesData, t]);
+
+  const dropoffOptions = useMemo(() => {
+    const routes = Array.isArray(routesData) ? routesData : [];
+    if (!formData.pickupLocation) {
+      return [{ label: t("transportBooking.rideDetails.selectDropoff", "Select drop-off location"), value: "" }];
+    }
+    const filtered = routes.filter(
+      (r: any) => r.from_location?.toLowerCase() === formData.pickupLocation.toLowerCase()
+    );
+    const uniqueTo = Array.from(new Set(filtered.map((r: any) => r.to_location).filter(Boolean)));
+    return [
+      { label: t("transportBooking.rideDetails.selectDropoff", "Select drop-off location"), value: "" },
+      ...uniqueTo.map((loc) => ({ label: loc, value: loc })),
+    ];
+  }, [routesData, formData.pickupLocation, t]);
+
+  useEffect(() => {
+    const routes = Array.isArray(routesData) ? routesData : [];
+    if (!formData.pickupLocation || !formData.dropoffLocation) {
+      if (formData.routeId) {
+        onChange({
+          routeId: null,
+          routePrice: 0,
+          routePriceEgp: undefined,
+          routePriceEur: undefined,
+          selectedRoute: null,
+        });
+      }
+      return;
+    }
+    const matched = routes.find(
+      (r: any) =>
+        r.from_location?.toLowerCase() === formData.pickupLocation.toLowerCase() &&
+        r.to_location?.toLowerCase() === formData.dropoffLocation.toLowerCase()
+    );
+    if (matched && matched.id !== formData.routeId) {
+      onChange({
+        routeId: matched.id,
+        routePrice: parseFloat(matched.price) || 0,
+        routePriceEgp: matched.price_egp ? parseFloat(matched.price_egp) : undefined,
+        routePriceEur: matched.price_eur ? parseFloat(matched.price_eur) : undefined,
+        selectedRoute: matched,
+      });
+    }
+  }, [routesData, formData.pickupLocation, formData.dropoffLocation, formData.routeId, onChange]);
+
+  const handlePickupChange = (newPickup: string) => {
+    const routes = Array.isArray(routesData) ? routesData : [];
+    const isValidDropoff = routes.some(
+      (r: any) =>
+        r.from_location?.toLowerCase() === newPickup.toLowerCase() &&
+        r.to_location?.toLowerCase() === formData.dropoffLocation?.toLowerCase()
+    );
+    onChange({
+      pickupLocation: newPickup,
+      dropoffLocation: isValidDropoff ? formData.dropoffLocation : "",
+      routeId: null,
+      selectedRoute: null,
+    });
+  };
+
   return (
     <div className={styles.stepCard}>
       {/* Header */}
@@ -191,24 +266,37 @@ export default function StepTripDetails({
         {/* Pickup & Drop-off */}
         <FormField
           label={t("transportBooking.rideDetails.pickupLocation", "Pickup Location")}
-          placeholder={t("transportBooking.rideDetails.pickupLocationPlaceholder", "e.g. Cairo Airport Terminal 3, or Hotel Name")}
-          value={formData.pickupLocation}
-          onChange={(e) => onChange({ pickupLocation: e.target.value })}
-          wrapperClassName={styles.formField}
-          className={styles.tallInput}
           required
+          wrapperClassName={styles.formField}
           error={errors.pickupLocation}
-        />
+        >
+          <SelectDropdown
+            id="pickup-location-select"
+            label={t("transportBooking.rideDetails.selectPickup", "Select pickup location")}
+            options={pickupOptions}
+            value={formData.pickupLocation}
+            onChange={handlePickupChange}
+            triggerClassName={`${formStyles.input} ${styles.tallInput} ${errors.pickupLocation ? formStyles.inputInvalid : ""}`}
+            error={!!errors.pickupLocation}
+          />
+        </FormField>
         <FormField
           label={t("transportBooking.rideDetails.dropoffLocation", "Drop-off Location")}
-          placeholder={t("transportBooking.rideDetails.dropoffLocationPlaceholder", "e.g. Mena House Hotel, Giza")}
-          value={formData.dropoffLocation}
-          onChange={(e) => onChange({ dropoffLocation: e.target.value })}
-          wrapperClassName={styles.formField}
-          className={styles.tallInput}
           required
+          wrapperClassName={styles.formField}
           error={errors.dropoffLocation}
-        />
+        >
+          <SelectDropdown
+            id="dropoff-location-select"
+            label={t("transportBooking.rideDetails.selectDropoff", "Select drop-off location")}
+            options={dropoffOptions}
+            value={formData.dropoffLocation}
+            onChange={(val) => onChange({ dropoffLocation: val })}
+            triggerClassName={`${formStyles.input} ${styles.tallInput} ${errors.dropoffLocation ? formStyles.inputInvalid : ""}`}
+            error={!!errors.dropoffLocation}
+            disabled={!formData.pickupLocation}
+          />
+        </FormField>
 
 
         {/* Date & Time */}

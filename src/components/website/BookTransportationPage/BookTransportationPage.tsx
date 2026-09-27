@@ -13,8 +13,12 @@ import styles from "./BookTransportationPage.module.scss";
 
 import StepTripDetails from "./steps/TripDetails/StepTripDetails";
 import StepPersonalInfo from "./steps/PersonalInfo/StepPersonalInfo";
-import StepPayment from "./steps/Payment/StepPayment";
+import StepBookingSummary from "./steps/BookingSummary/StepBookingSummary";
 import BookingSummary from "./BookingSummary/BookingSummary";
+import { submitTransportationBooking, getProfileBookingDetail } from "@/lib/api";
+import { formatPhoneE164 } from "@/utils/validators";
+import { formatDateToYMD, formatDateDDMMYYYY, formatDisplayTime } from "@/utils/dateFormat";
+import { savePendingGuestRecord } from "@/utils/guestBookingAuth";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -29,6 +33,7 @@ export interface SavedTransportBookingInfo {
   vehicleSlug?: string;
   vehicleName?: string;
   pickupDate?: string;
+  pickupTime?: string;
   totalAmount?: number;
   depositAmount?: number;
 }
@@ -116,10 +121,32 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
         id: bookingId,
         vehicleName: savedInfo?.vehicleName || `${vehicle.type} - ${vehicle.name}`,
         pickupDate: savedInfo?.pickupDate || formData.pickupDate,
+        pickupTime: savedInfo?.pickupTime || formData.pickupTime,
         totalAmount: savedInfo?.totalAmount,
         depositAmount: savedInfo?.depositAmount,
       });
       setShowSuccess(true);
+
+      if (bookingId) {
+        getProfileBookingDetail("transport", bookingId)
+          .then((res) => {
+            if (res) {
+              setConfirmedBooking((prev) => ({
+                id: bookingId,
+                vehicleName:
+                  res.vehicle_name ||
+                  (res.vehicle?.name ? `${res.vehicle?.type || ""} - ${res.vehicle?.name || ""}`.trim().replace(/^-\s*/, "") : null) ||
+                  prev?.vehicleName ||
+                  `${vehicle.type} - ${vehicle.name}`,
+                pickupDate: res.pickup_date || prev?.pickupDate || formData.pickupDate,
+                pickupTime: res.pickup_time || prev?.pickupTime || formData.pickupTime,
+                totalAmount: parseFloat(res.total_price) || prev?.totalAmount,
+                depositAmount: parseFloat(res.deposit_amount) || prev?.depositAmount,
+              }));
+            }
+          })
+          .catch(() => {});
+      }
 
       try {
         window.history.replaceState({}, "", window.location.pathname);
@@ -130,8 +157,10 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
   const steps = [
     { number: 1, label: t("transportBooking.steps.rideDetails", "Trip Details") },
     { number: 2, label: t("transportBooking.steps.contactDetails", "Personal Info") },
-    { number: 3, label: t("transportBooking.steps.payment", "Payment") },
+    { number: 3, label: t("transportBooking.steps.summary", "Booking Summary") },
   ];
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (patch: Partial<TransportationBookingData>) => {
     setFormData((prev) => ({ ...prev, ...patch }));
@@ -165,11 +194,87 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
 
     setFieldErrors({});
     if (currentStep < 3) setCurrentStep((s) => s + 1);
-    else setShowSuccess(true);
   };
 
   const handlePrevious = () => {
     if (currentStep > 1) setCurrentStep((s) => s - 1);
+  };
+
+  const handleSubmitBooking = async () => {
+    setIsSubmitting(true);
+    try {
+      const formatTime = (timeStr: string) => {
+        if (!timeStr) return "12:00:00";
+        if (!timeStr.toLowerCase().includes("m")) {
+          return timeStr.includes(":") ? timeStr : "12:00:00";
+        }
+        const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)$/i);
+        if (!match) return "12:00:00";
+        let hours = parseInt(match[1], 10);
+        const minutes = match[2];
+        const period = match[3].toUpperCase();
+        if (period === "AM" && hours === 12) hours = 0;
+        if (period === "PM" && hours < 12) hours += 12;
+        return `${String(hours).padStart(2, "0")}:${minutes}:00`;
+      };
+
+      const payload: Record<string, any> = {
+        name: formData.name,
+        vehicle_slug: vehicle.id,
+        route_id: formData.routeId,
+        pickup_date: formatDateToYMD(formData.pickupDate),
+        pickup_time: formatTime(formData.pickupTime),
+        passengers: formData.passengers,
+        luggage: String(formData.luggage),
+        additional_service_ids: formData.additionalServiceIds,
+        email: formData.email,
+        phone: formatPhoneE164(formData.phone),
+        nationality: formData.nationality,
+        special_requests: formData.specialRequests,
+        terms_accepted: formData.termsAccepted,
+        currency: "usd",
+      };
+
+      const booking = await submitTransportationBooking(payload);
+      savePendingGuestRecord({
+        email: formData.email,
+        name: formData.name,
+        type: "transport",
+        id: booking?.id,
+        title: `${vehicle.type} - ${vehicle.name}`,
+      });
+
+      const totalNum = parseFloat(booking?.total_price) || formData.routePrice || parseFloat(vehicle.price.replace(/[^0-9.]/g, "")) || 0;
+      const depositNum = parseFloat(booking?.deposit_amount) || totalNum * 0.3;
+
+      if (booking?.payment_url) {
+        saveTransportBookingInfo({
+          id: booking.id,
+          vehicleSlug: vehicle.id,
+          vehicleName: `${vehicle.type} - ${vehicle.name}`,
+          pickupDate: formData.pickupDate,
+          pickupTime: formData.pickupTime || booking.pickup_time,
+          totalAmount: totalNum,
+          depositAmount: depositNum,
+        });
+        window.location.assign(resolvePaymentUrl(booking.payment_url));
+      } else {
+        setConfirmedBooking({
+          id: booking?.id || Math.floor(Math.random() * 90000000 + 10000000),
+          vehicleName: `${vehicle.type} - ${vehicle.name}`,
+          pickupDate: formData.pickupDate,
+          pickupTime: formData.pickupTime || booking?.pickup_time,
+          totalAmount: totalNum,
+          depositAmount: depositNum,
+        });
+        setShowSuccess(true);
+      }
+    } catch (error) {
+      console.error("Failed to submit transportation booking:", error);
+      alert(t("errors.bookingSubmitFailed", "Something went wrong while confirming your booking. Please try again."));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -206,14 +311,23 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
 
       <main className={planPageStyles.mainContent}>
         <div className={planPageStyles.content}>
-          <div className={styles.layout}>
-            <div className={styles.formArea}>
+          <div className={currentStep === 3 ? styles.fullLayout : styles.layout}>
+            <div className={currentStep === 3 ? styles.fullFormArea : styles.formArea}>
               {currentStep === 1 && <StepTripDetails {...sharedProps} />}
               {currentStep === 2 && <StepPersonalInfo {...sharedProps} />}
-              {currentStep === 3 && <StepPayment {...sharedProps} />}
+              {currentStep === 3 && (
+                <StepBookingSummary
+                  vehicle={vehicle}
+                  formData={formData}
+                  onChange={handleChange}
+                  onPrevious={handlePrevious}
+                  onSubmit={handleSubmitBooking}
+                  isSubmitting={isSubmitting}
+                />
+              )}
             </div>
 
-            <BookingSummary vehicle={vehicle} formData={formData} />
+            {currentStep !== 3 && <BookingSummary vehicle={vehicle} formData={formData} />}
           </div>
         </div>
       </main>
@@ -222,6 +336,7 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
         <SuccessModal
           title={t("transportBooking.success.title", "Booking Confirmed!")}
           message={t("transportBooking.success.message", "Your vehicle has been successfully booked. Confirmation details have been sent to your email.")}
+          buttonText={t("transportBooking.success.backToHome", "Back to Home")}
           primaryButtonText={t("transportBooking.success.viewBooking", "View Booking")}
           onPrimaryClick={() => {
             const targetId = confirmedBooking?.id;
@@ -239,10 +354,12 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
             router.push("/");
           }}
           metadata={[
-            { label: t("sidebar.bookingSummary", "Booking Reference"), value: `BK-${String(confirmedBooking?.id || Math.floor(Math.random() * 90000000 + 10000000)).padStart(6, "0")}` },
-            { label: t("transportBooking.rideDetails.vehicle", "Vehicle"), value: confirmedBooking?.vehicleName || `${vehicle.type} - ${vehicle.name}` },
-            { label: t("transportBooking.rideDetails.pickupDate", "Pickup Date"), value: confirmedBooking?.pickupDate || formData.pickupDate || "—" },
-            { label: t("sidebar.totalPaid", "Total Paid"), value: confirmedBooking?.depositAmount ? formatCurrency({ usd: Number(confirmedBooking.depositAmount) }) : formatCurrency(vehicle.prices || Number(vehicle.price.replace(/[^0-9.]/g, "")) || 0), valueColor: "#FF6600" },
+            { label: t("transportBooking.summary.bookingReference", "Booking Reference"), value: `#BK${confirmedBooking?.id || "53602205"}` },
+            { label: t("transportBooking.summary.vehicle", "Vehicle"), value: confirmedBooking?.vehicleName || `${vehicle.type} - ${vehicle.name}` },
+            { label: t("transportBooking.rideDetails.pickupDate", "Pickup Date"), value: formatDateDDMMYYYY(confirmedBooking?.pickupDate || formData.pickupDate) },
+            { label: t("transportBooking.rideDetails.pickupTime", "Pickup Time"), value: formatDisplayTime(confirmedBooking?.pickupTime || formData.pickupTime) },
+            { label: t("sidebar.totalPrice", "Total Price"), value: formatCurrency({ usd: Number(confirmedBooking?.totalAmount || formData.routePrice || Number(vehicle.price.replace(/[^0-9.]/g, "")) || 0) }), valueColor: "#FF6600" },
+            { label: t("sidebar.paidNow", "Paid Now"), value: formatCurrency({ usd: Number(confirmedBooking?.depositAmount || (Number(confirmedBooking?.totalAmount || formData.routePrice || Number(vehicle.price.replace(/[^0-9.]/g, "")) || 0) * 0.3)) }), valueColor: "#FF6600" },
           ]}
         />
       )}

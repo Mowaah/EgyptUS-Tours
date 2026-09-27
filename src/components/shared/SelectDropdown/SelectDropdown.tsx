@@ -27,6 +27,7 @@ interface SelectDropdownProps<T extends SelectOption = SelectOption> {
   /** Optional override for checkbox style */
   checkboxStyle?: "radio" | "checkbox" | "none";
   error?: boolean;
+  disabled?: boolean;
   placeholder?: string;
 }
 
@@ -41,6 +42,7 @@ export default function SelectDropdown<T extends SelectOption = SelectOption>({
   renderOption,
   checkboxStyle = "radio",
   error,
+  disabled = false,
   placeholder,
 }: SelectDropdownProps<T>) {
   const isSelected = Boolean(value && value !== "");
@@ -73,13 +75,17 @@ export default function SelectDropdown<T extends SelectOption = SelectOption>({
       renderTrigger={(isOpen, setIsOpen) => (
         <div
           id={id}
-          className={`${styles.dropdownTrigger} ${isOpen ? styles.dropdownTriggerOpen : ""} ${triggerClassName} ${error ? styles.error : ""}`}
-          tabIndex={0}
+          className={`${styles.dropdownTrigger} ${isOpen ? styles.dropdownTriggerOpen : ""} ${triggerClassName} ${error ? styles.error : ""} ${disabled ? styles.disabled : ""}`}
+          tabIndex={disabled ? -1 : 0}
           role="combobox"
           aria-expanded={isOpen}
+          aria-disabled={disabled}
           aria-label={label}
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => {
+            if (!disabled) setIsOpen(!isOpen);
+          }}
           onKeyDown={(e) => {
+            if (disabled) return;
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
               setIsOpen(!isOpen);

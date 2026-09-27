@@ -1,0 +1,93 @@
+@use "@/styles/variables" as *;
+
+.stepCard {
+  background: $white;
+  border-radius: 24px;
+  border: 1px solid $border-card;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  @media (min-width: 768px) {
+    padding: 32px;
+    border-radius: 32px;
+  }
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title {
+  font-family: "Trip Sans", sans-serif;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $dark;
+  margin: 0;
+}
+
+.subtitle {
+  font-family: "Trip Sans", sans-serif;
+  font-size: $font-size-sm;
+  color: $text-light;
+  margin: 0;
+}
+
+.contentRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: flex-start;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 1.25fr 0.75fr;
+    gap: 32px;
+  }
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0 4px;
+  font-size: $font-size-13;
+  color: $dark;
+  cursor: pointer;
+  line-height: 1.5;
+
+  @media (min-width: 768px) {
+    font-size: $font-size-15;
+    align-items: center;
+  }
+}
+
+.linkBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: $primary;
+  text-decoration: underline;
+  font-weight: $font-weight-bold;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+
+  &:hover {
+    color: darken($primary, 10%);
+  }
+}
+
+.checkboxInputHidden {
+  display: none;
+}

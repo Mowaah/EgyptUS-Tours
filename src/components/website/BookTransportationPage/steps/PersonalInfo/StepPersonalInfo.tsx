@@ -71,7 +71,7 @@ export default function StepPersonalInfo({
               hasError={!!errors.phone}
             />
           </FormField>
-          <FormField label={t("transportBooking.contactDetails.nationality", "Select Your Nationality")} required error={errors.nationality}>
+          <FormField label={t("transportBooking.contactDetails.nationality", "Nationality")} required error={errors.nationality}>
             <NationalitySelect
               value={formData.nationality}
               onChange={(val) => onChange({ nationality: val })}
@@ -91,46 +91,12 @@ export default function StepPersonalInfo({
           />
         </div>
 
-        <label className={styles.checkboxRow}>
-          <input
-            type="checkbox"
-            checked={formData.termsAccepted}
-            onChange={(e) => onChange({ termsAccepted: e.target.checked })}
-            style={{ display: "none" }}
-          />
-          <div className={styles.checkboxWrap}>
-            <CheckboxIndicator variant="square" size="md" selected={formData.termsAccepted} aria-hidden />
-          </div>
-          <span className={styles.checkboxLabel}>
-            {t("terms.agreePrefix", "I have read and agree to the")}{" "}
-            <button
-              type="button"
-              className={styles.linkBtn}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setShowTermsModal(true);
-              }}
-            >
-              {t("terms.termsAndCancellation", "Terms & Conditions and Cancellation")}
-            </button>{" "}
-            {t("terms.policySuffix", "Policy.")}
-          </span>
-        </label>
       </div>
 
       <BookingStepFooter
         onPrevious={onPrevious}
         onContinue={onContinue}
-        continueLabel={t("transportBooking.contactDetails.continueToPayment", "Continue To Payment")}
-        continueDisabled={!formData.termsAccepted}
-        showMoneyIcon
-      />
-
-      <ImportantLinksModal
-        open={showTermsModal}
-        initialTab="terms"
-        onClose={() => setShowTermsModal(false)}
+        continueLabel={t("buttons.continue", "Continue")}
       />
     </div>
   );

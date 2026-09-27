@@ -18,10 +18,31 @@ interface BookingSummaryProps {
   vehicle: Vehicle;
   formData: TransportationBookingData;
   isRemainingView?: boolean;
+  isFullyPaid?: boolean;
   itemHref?: string;
+  totalAmount?: number;
+  depositAmount?: number;
+  paidAmount?: number;
+  totalPrices?: MultiCurrencyPrice;
+  depositPrices?: MultiCurrencyPrice;
+  remainingPrices?: MultiCurrencyPrice;
+  paidPrices?: MultiCurrencyPrice;
 }
 
-export default function BookingSummary({ vehicle, formData, isRemainingView = false, itemHref }: BookingSummaryProps) {
+export default function BookingSummary({
+  vehicle,
+  formData,
+  isRemainingView = false,
+  isFullyPaid = false,
+  itemHref,
+  totalAmount: propTotalAmount,
+  depositAmount: propDepositAmount,
+  paidAmount: propPaidAmount,
+  totalPrices: propTotalPrices,
+  depositPrices: propDepositPrices,
+  remainingPrices: propRemainingPrices,
+  paidPrices: propPaidPrices,
+}: BookingSummaryProps) {
   const [expanded, setExpanded] = useState(false);
   const { t } = useTranslation("booking");
   const { formatCurrency } = useCurrency();
@@ -35,11 +56,21 @@ export default function BookingSummary({ vehicle, formData, isRemainingView = fa
     formData.additionalServiceIds?.includes(s.id)
   );
 
+  const routeUsd = formData.routePrice ?? (parseFloat((vehicle.price ?? "0").replace(/[^0-9.]/g, "")) || 0);
+  const routeEgp = formData.routePriceEgp ?? (vehicle.prices?.egp ? Number(vehicle.prices.egp) : (parseFloat(vehicle.price ?? "0") || 0));
+  const routeEur = formData.routePriceEur ?? (vehicle.prices?.eur ? Number(vehicle.prices.eur) : (parseFloat(vehicle.price ?? "0") || 0));
+
+  const transferPrices: MultiCurrencyPrice = useMemo(() => ({
+    usd: routeUsd,
+    egp: routeEgp,
+    eur: routeEur,
+  }), [routeUsd, routeEgp, routeEur]);
+
   const calculateTotalForCurrency = (curr: "usd" | "egp" | "eur") => {
     let base = 0;
-    if (curr === "egp") base = Number(vehicle.prices?.egp) || (parseFloat(vehicle.price ?? "0") || 0);
-    else if (curr === "eur") base = Number(vehicle.prices?.eur) || (parseFloat(vehicle.price ?? "0") || 0);
-    else base = Number(vehicle.prices?.usd) || (parseFloat(vehicle.price ?? "0") || 0);
+    if (curr === "egp") base = routeEgp;
+    else if (curr === "eur") base = routeEur;
+    else base = routeUsd;
 
     const sTotal = selectedServices.reduce((acc: number, s: any) => {
       let sp = parseFloat(s.price) || 0;
@@ -55,7 +86,7 @@ export default function BookingSummary({ vehicle, formData, isRemainingView = fa
     usd: calculateTotalForCurrency("usd"),
     egp: calculateTotalForCurrency("egp"),
     eur: calculateTotalForCurrency("eur"),
-  }), [vehicle, selectedServices]);
+  }), [routeUsd, routeEgp, routeEur, selectedServices]);
 
   const isDepositFull = useMemo(() => {
     return isDateWithinFullPaymentWindow(formData.pickupDate);
@@ -73,6 +104,12 @@ export default function BookingSummary({ vehicle, formData, isRemainingView = fa
     egp: (Number(totalPrices.egp) || 0) - (Number(depositPrices.egp) || 0),
     eur: (Number(totalPrices.eur) || 0) - (Number(depositPrices.eur) || 0),
   }), [totalPrices, depositPrices]);
+
+  const resolvedTotalPrices = propTotalPrices || totalPrices;
+  const resolvedDepositPrices = propDepositPrices || depositPrices;
+  const resolvedRemainingPrices = propRemainingPrices || remainingPrices;
+  const resolvedPaidPrices = propPaidPrices || (propPaidAmount != null ? { usd: propPaidAmount } : depositPrices);
+  const vehicleTitle = [vehicle.type, vehicle.name].filter(Boolean).join(" - ");
 
   const pickupShort = formData.pickupLocation
     ? formData.pickupLocation.split(",")[0]
@@ -92,11 +129,11 @@ export default function BookingSummary({ vehicle, formData, isRemainingView = fa
         aria-controls="transport-summary-details"
       >
         <div className={styles.compactText}>
-          <span className={styles.compactTitle}>{vehicle.type} – {vehicle.name}</span>
+          <span className={styles.compactTitle}>{vehicleTitle}</span>
           <span className={styles.compactRoute}>{pickupShort} → {dropoffShort}</span>
         </div>
         <div className={styles.compactRight}>
-          <span className={styles.compactTotal}>{formatCurrency(totalPrices)}</span>
+          <span className={styles.compactTotal}>{formatCurrency(resolvedTotalPrices)}</span>
           <svg
             className={`${styles.compactChevron} ${expanded ? styles.compactChevronOpen : ""}`}
             width={16} height={16} viewBox="0 0 16 16" fill="none" aria-hidden
@@ -149,19 +186,47 @@ export default function BookingSummary({ vehicle, formData, isRemainingView = fa
                       <h3 className={styles.vehicleName}>
                         {vehicleHref ? (
                           <Link href={vehicleHref} className={styles.vehicleNameLink}>
-                            {vehicle.type} - {vehicle.name}
+                            {vehicleTitle}
                           </Link>
                         ) : (
-                          <span className={styles.vehicleNameLink}>{vehicle.type} - {vehicle.name}</span>
+                          <span className={styles.vehicleNameLink}>{vehicleTitle}</span>
                         )}
                       </h3>
                     );
                   })()}
 
+                  {(formData.pickupLocation || formData.dropoffLocation) && (
+                    <div className={styles.routesRow}>
+                      <div className={styles.routeBlock}>
+                        <div className={styles.routeHeader}>
+                          <div className={styles.routeIconPill}>
+                            <Image src="/images/pickup-dropoff.svg" alt="" width={24} height={24} />
+                          </div>
+                          <span className={styles.routeLabel}>{t("transportBooking.rideDetails.pickup", "Pickup")}</span>
+                        </div>
+                        <div className={styles.routeTextBlock}>
+                          <span className={styles.routeValue}>{formData.pickupLocation || "—"}</span>
+                        </div>
+                      </div>
+
+                      <div className={styles.routeBlock}>
+                        <div className={styles.routeHeader}>
+                          <div className={styles.routeIconPill}>
+                            <Image src="/images/pickup-dropoff.svg" alt="" width={24} height={24} />
+                          </div>
+                          <span className={styles.routeLabel}>{t("transportBooking.rideDetails.dropoff", "Drop-Off")}</span>
+                        </div>
+                        <div className={styles.routeTextBlock}>
+                          <span className={styles.routeValue}>{formData.dropoffLocation || "—"}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div className={styles.priceTable}>
                     <div className={styles.priceRow}>
-                      <span className={styles.priceLabel}>{t("sidebar.basePrice", "Base Price")}</span>
-                      <span className={styles.priceValue}>{formatCurrency(vehicle.prices || basePrice)}</span>
+                      <span className={styles.priceLabel}>{t("sidebar.transferPrice", "Transfer Price")}</span>
+                      <span className={styles.priceValue}>{formatCurrency(transferPrices)}</span>
                     </div>
                     {selectedServices.map((s: any) => {
                       const servicePrices = {
@@ -172,7 +237,7 @@ export default function BookingSummary({ vehicle, formData, isRemainingView = fa
                       return (
                         <div className={styles.priceRow} key={s.id}>
                           <span className={styles.priceLabel}>{s.name}</span>
-                          <span className={styles.priceValue}>+{formatCurrency(servicePrices)}</span>
+                          <span className={styles.servicePriceValue}>+{formatCurrency(servicePrices)}</span>
                         </div>
                       );
                     })}
@@ -182,34 +247,38 @@ export default function BookingSummary({ vehicle, formData, isRemainingView = fa
 
               <div className={styles.totalRow}>
                 <span className={styles.totalLabel}>{t("sidebar.total", "Total")}</span>
-                <span className={styles.totalAmount}>{formatCurrency(totalPrices)}</span>
+                <span className={styles.totalAmount}>{formatCurrency(resolvedTotalPrices)}</span>
               </div>
 
-              <div className={styles.depositBox}>
-                {isRemainingView ? (
-                  <>
-                    <div className={styles.depositRow}>
-                      <span className={styles.depositLabel}>{t("sidebar.remainingBalance", "Remaining balance")}</span>
-                      <span className={styles.depositAmount}>{formatCurrency(remainingPrices)}</span>
-                    </div>
-                    <div className={styles.remainingRow}>
-                      <span className={styles.remainingNote}>{t("sidebar.paid30", "Paid (30%)")}</span>
-                      <span className={styles.remainingVal}>{formatCurrency(depositPrices)}</span>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className={styles.depositRow}>
-                      <span className={styles.depositLabel}>{t("sidebar.payNow", "Pay now")} {depositFactor === 1 ? t("sidebar.fullAmount", "(Full amount)") : t("sidebar.deposit30", "(30% deposit)")}</span>
-                      <span className={styles.depositAmount}>{formatCurrency(depositPrices)}</span>
-                    </div>
-                    <div className={styles.remainingRow}>
-                      <span className={styles.remainingNote}>{t("sidebar.remainingNote", "Remaining 70% due one month before your trip")}</span>
-                      <span className={styles.remainingVal}>{formatCurrency(remainingPrices)}</span>
-                    </div>
-                  </>
-                )}
-              </div>
+              {!isFullyPaid && (
+                <div className={styles.depositBox}>
+                  {isRemainingView ? (
+                    <>
+                      <div className={styles.depositRow}>
+                        <span className={styles.depositLabel}>{t("sidebar.remainingBalance", "Remaining balance")}</span>
+                        <span className={styles.depositAmount}>{formatCurrency(resolvedRemainingPrices)}</span>
+                      </div>
+                      <div className={styles.remainingRow}>
+                        <span className={styles.remainingNote}>{t("sidebar.paid30", "Paid (30%)")}</span>
+                        <span className={styles.remainingVal}>{formatCurrency(resolvedPaidPrices)}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className={styles.depositRow}>
+                        <span className={styles.depositLabel}>{t("sidebar.payNow", "Pay now")} {depositFactor === 1 ? t("sidebar.fullAmount", "(Full amount)") : t("sidebar.deposit30", "(30% deposit)")}</span>
+                        <span className={styles.depositAmount}>{formatCurrency(resolvedDepositPrices)}</span>
+                      </div>
+                      {depositFactor < 1 && (
+                        <div className={styles.remainingRow}>
+                          <span className={styles.remainingNote}>{t("sidebar.remainingNote", "Remaining 70% due one month before your trip")}</span>
+                          <span className={styles.remainingVal}>{formatCurrency(resolvedRemainingPrices)}</span>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
 
               <div className={styles.trustBadges}>
                 {[

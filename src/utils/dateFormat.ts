@@ -250,4 +250,40 @@ export function isDateWithinFullPaymentWindow(
   return diffDays <= windowDays;
 }
 
+/**
+ * Formats a time string into 12-hour "HH:MM AM/PM" format (e.g. "13:00:00" -> "01:00 PM").
+ *
+ * @param value The time input string
+ * @param fallback Fallback string if missing or invalid (defaults to "—")
+ * @returns Formatted time string in "HH:MM AM/PM" or fallback
+ */
+export function formatDisplayTime(
+  value?: string | null,
+  fallback: string = "—"
+): string {
+  if (!value) return fallback;
+  const str = String(value).trim();
+  if (!str || str === "—" || str === "-") return fallback;
+
+  // 1. If already in 12-hour AM/PM format (e.g. "01:00 PM", "1:00 pm", "10:30 AM")
+  const ampmMatch = str.match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*([APap][Mm])$/);
+  if (ampmMatch) {
+    const [, h, m, period] = ampmMatch;
+    return `${h.padStart(2, "0")}:${m} ${period.toUpperCase()}`;
+  }
+
+  // 2. If in 24-hour format (e.g. "13:00:00", "13:00", "09:30")
+  const match24 = str.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+  if (match24) {
+    let hours = parseInt(match24[1], 10);
+    const minutes = match24[2];
+    const period = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    if (hours === 0) hours = 12;
+    return `${String(hours).padStart(2, "0")}:${minutes} ${period}`;
+  }
+
+  return str;
+}
+
 

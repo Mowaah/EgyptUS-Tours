@@ -24,7 +24,19 @@ export interface Vehicle {
   pricePerKmPrices?: MultiCurrencyPrice;
 }
 
+export interface VehicleRoutePublic {
+  id: number;
+  route_code: string;
+  from_location: string;
+  to_location: string;
+  price: string;
+  price_egp?: string;
+  price_eur?: string;
+  currency?: string;
+}
+
 export interface TransportationBookingData {
+  routeId?: number | null;
   pickupLocation: string;
   dropoffLocation: string;
   tripType: "One Way" | "Round Trip";
@@ -43,9 +55,14 @@ export interface TransportationBookingData {
   cardName: string;
   expiry: string;
   cvv: string;
+  routePrice?: number;
+  routePriceEgp?: number;
+  routePriceEur?: number;
+  selectedRoute?: VehicleRoutePublic | null;
 }
 
 export const INITIAL_TRANSPORT_BOOKING: TransportationBookingData = {
+  routeId: null,
   pickupLocation: "",
   dropoffLocation: "",
   tripType: "One Way",
@@ -64,4 +81,8 @@ export const INITIAL_TRANSPORT_BOOKING: TransportationBookingData = {
   cardName: "",
   expiry: "",
   cvv: "",
+  routePrice: 0,
+  routePriceEgp: undefined,
+  routePriceEur: undefined,
+  selectedRoute: null,
 };

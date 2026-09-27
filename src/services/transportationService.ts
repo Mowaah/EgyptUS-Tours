@@ -1,4 +1,5 @@
 import { VehiclePaginatedResponse, VehicleDetail, VehicleList } from "@/types/api";
+import { VehicleRoutePublic } from "@/types/transportation";
 import { serverFetch } from "@/lib/api";
 
 /**
@@ -34,10 +35,20 @@ export async function getAllVehicles(): Promise<VehicleList[]> {
       const pages = await Promise.all(promises);
       pages.forEach(p => results.push(...(p?.results || [])));
     }
-    
     return results;
   } catch (error) {
     console.error("Error in getAllVehicles:", error);
     return [];
   }
 }
+
+export async function getVehicleRoutes(slug: string, lang = "en"): Promise<VehicleRoutePublic[]> {
+  try {
+    return await serverFetch<VehicleRoutePublic[]>(`/vehicles/${slug}/routes/?lang=${lang}`);
+  } catch (error) {
+    console.error("Error in getVehicleRoutes:", error);
+    return [];
+  }
+}
+
+

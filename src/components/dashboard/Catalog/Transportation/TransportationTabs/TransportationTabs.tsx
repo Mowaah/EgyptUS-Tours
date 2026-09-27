@@ -5,8 +5,9 @@ import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/Dashboard
 
 const TABS = [
   { id: "vehicles", label: "Vehicles", path: "/dashboard/catalog/transportation", iconSrc: "/images/dashboard/sidebar/transportation.svg" },
+  { id: "routes", label: "Routes & Pricing", path: "/dashboard/catalog/transportation/routes", iconSrc: "/images/dashboard/catalog/routes.svg" },
   { id: "categories", label: "Categories", path: "/dashboard/catalog/transportation/categories", iconSrc: "/images/dashboard/catalog/categories.svg" },
-  { id: "additional-services", label: "Additional Services", path: "/dashboard/catalog/transportation/additional-services", iconSrc: "/images/dashboard/catalog/destinations.svg" }, // Assuming a generic icon for now
+  { id: "additional-services", label: "Additional Services", path: "/dashboard/catalog/transportation/additional-services", iconSrc: "/images/dashboard/catalog/destinations.svg" },
 ];
 
 export default function TransportationTabs() {

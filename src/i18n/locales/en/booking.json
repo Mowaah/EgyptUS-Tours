@@ -301,7 +301,7 @@
       "email": "Email Address",
       "emailPlaceholder": "example@gmail.com",
       "phone": "Phone Number",
-      "nationality": "Select Your Nationality",
+      "nationality": "Nationality",
       "notes": "Special Instructions for Driver (Optional)",
       "notesPlaceholder": "Any extra stops, infant seats needed, or landmark hints...",
       "continueToPayment": "Continue To Payment"
