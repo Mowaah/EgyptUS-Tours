@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import Image from "next/image";
-import { IconStepper } from "@/components/shared";
+import { IconStepper, LoadingSpinner } from "@/components/shared";
 import { DashboardFooter } from "@/components/dashboard/shared";
 import styles from "./WizardLayout.module.scss";
 
@@ -59,14 +59,17 @@ export default function WizardLayout({
               type="button" 
               className={styles.previousButton}
               onClick={onPrevious}
-              disabled={currentStep === 0}
+              disabled={currentStep === 0 || isLoading}
             >
               <Image src="/images/dashboard/previous.svg" alt="Previous" width={20} height={20} />
               <span>Previous</span>
             </button>
             <button type="button" className={styles.nextButton} onClick={onNext} disabled={isLoading}>
-              <span>{isLastStep ? publishLabel : "Next"}</span>
-              {!isLastStep && <Image src="/images/dashboard/next.svg" alt="Next" width={20} height={20} />}
+              {isLoading && (
+                <LoadingSpinner size="sm" variant="inline" color="white" />
+              )}
+              <span>{isLastStep ? (isLoading ? "Publishing..." : publishLabel) : (isLoading ? "Loading..." : "Next")}</span>
+              {!isLastStep && !isLoading && <Image src="/images/dashboard/next.svg" alt="Next" width={20} height={20} />}
             </button>
           </div>
         </div>

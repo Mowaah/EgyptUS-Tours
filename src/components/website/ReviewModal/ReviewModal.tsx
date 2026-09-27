@@ -10,6 +10,7 @@ import {
   ReviewInvitationData,
 } from "@/services/reviewsService";
 import { getFullImageUrl } from "@/lib/api";
+import { LoadingSpinner } from "@/components/shared";
 import styles from "./ReviewModal.module.scss";
 
 interface ReviewModalProps {
@@ -291,7 +292,7 @@ export default function ReviewModal({ token, onClose }: ReviewModalProps) {
           {/* Modal Content */}
           {loading ? (
             <div className={styles.loadingContainer}>
-              <div className={styles.loadingSpinner} />
+              <LoadingSpinner size="md" label="" />
               <p className={styles.uploadPrimaryText}>Loading your booking details...</p>
             </div>
           ) : fetchError ? (

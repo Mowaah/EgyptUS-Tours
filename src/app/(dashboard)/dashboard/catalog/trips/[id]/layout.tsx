@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, createContext, useContext } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import { useRouter, usePathname, useParams } from "next/navigation";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
@@ -18,6 +18,8 @@ import {
   publishCatalogTrip,
   unpublishCatalogTrip,
 } from "@/services/admin/adminCatalogTripsService";
+
+import { isDayTour } from "@/utils/tripUtils";
 
 const BLOCKER_MESSAGES: Record<string, string> = {
   "catalog.trip.missing_title": "A title is required",
@@ -60,9 +62,9 @@ export function useTripDetailContext() {
   return useContext(TripDetailContext);
 }
 
-function buildTabs(id: string) {
+function buildTabs(id: string, isDayTourTrip = false) {
   const base = `/dashboard/catalog/trips/${id}`;
-  return [
+  const allTabs = [
     { id: "overview",   label: "Overview",           href: `${base}/overview`,   iconSrc: "/images/dashboard/catalog/trips/overview.svg" },
     { id: "inclusions", label: "Inclusions",          href: `${base}/inclusions`, iconSrc: "/images/dashboard/catalog/trips/inclusions.svg" },
     { id: "pricing",    label: "Pricing",             href: `${base}/pricing`,    iconSrc: "/images/dashboard/catalog/trips/pricing.svg" },
@@ -72,6 +74,7 @@ function buildTabs(id: string) {
     { id: "media",      label: "Media",               href: `${base}/media`,      iconSrc: "/images/dashboard/catalog/trips/media.svg" },
     { id: "seo",        label: "SEO",                 href: `${base}/seo`,        iconSrc: "/images/dashboard/catalog/trips/seo.svg" },
   ];
+  return isDayTourTrip ? allTabs.filter(t => t.id !== "hotels") : allTabs;
 }
 
 export default function TripLayout({
@@ -86,6 +89,7 @@ export default function TripLayout({
   const pathname = usePathname();
   
   const { trip, loading, refetch } = useCatalogTripDetail(id);
+  const isDayTourTrip = isDayTour(trip);
   
   const { canEdit } = useAdminAuth();
   const canEditCatalog = canEdit("catalog");
@@ -96,7 +100,13 @@ export default function TripLayout({
   const [bannerMessage, setBannerMessage] = useState<string | null>(null);
   const [bannerVariant, setBannerVariant] = useState<"success" | "warning">("success");
   const [isActionPending, setIsActionPending] = useState(false);
-  const tabs = buildTabs(id);
+  const tabs = buildTabs(id, isDayTourTrip);
+
+  useEffect(() => {
+    if (isDayTourTrip && pathname?.endsWith("/hotels")) {
+      router.replace(`/dashboard/catalog/trips/${id}/overview`);
+    }
+  }, [isDayTourTrip, pathname, id, router]);
 
   if (pathname?.endsWith("/edit")) {
     return <>{children}</>;
@@ -158,6 +168,8 @@ export default function TripLayout({
                   ? {
                       label: isActionPending ? "Publishing..." : "Publish",
                       icon: "/images/send.svg",
+                      loading: isActionPending,
+                      disabled: isActionPending,
                       onClick: async () => {
                         if (!trip || isActionPending) return;
                         setIsActionPending(true);
@@ -176,6 +188,8 @@ export default function TripLayout({
                     ? {
                         label: isActionPending ? "Publishing..." : "Publish",
                         icon: "/images/send.svg",
+                        loading: isActionPending,
+                        disabled: isActionPending,
                         onClick: async () => {
                           if (!trip || isActionPending) return;
                           setIsActionPending(true);
@@ -232,9 +246,7 @@ export default function TripLayout({
           />
         )}
         <DashboardTabs tabs={tabs} ariaLabel="Trip Tabs" />
-        {!pathname?.endsWith("/pricing") && (
-          <LanguageTabs active={activeLang} onChange={setActiveLang} variant="white" />
-        )}
+        <LanguageTabs active={activeLang} onChange={setActiveLang} variant="white" />
         {children}
       </div>
 

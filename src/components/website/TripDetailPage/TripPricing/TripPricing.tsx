@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Trip } from "@/types";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { isDayTour } from "@/utils/tripUtils";
 import styles from "./TripPricing.module.scss";
 
 interface TripPricingProps {
@@ -14,6 +15,7 @@ interface TripPricingProps {
 export default function TripPricing({ trip }: TripPricingProps) {
   const { formatCurrency } = useCurrency();
   const { t } = useTranslation("trips");
+  const isDayTourTrip = isDayTour(trip);
   const allPricing = trip.pricing ?? [];
   const hasValidTiers = (col: any) => col.tiers && col.tiers.some((t: any) => (t.price || 0) > 0);
 
@@ -51,7 +53,9 @@ export default function TripPricing({ trip }: TripPricingProps) {
 
       <div className={styles.inner}>
         <div className={styles.header}>
-          <h2 className={styles.heading}>{t("pricing.heading", "Prices & Accommodation")}</h2>
+          <h2 className={styles.heading}>
+            {isDayTourTrip ? t("pricing.tourPrices", "Tour Prices") : t("pricing.heading", "Prices & Accommodation")}
+          </h2>
           <p className={styles.subtitle}>
             {t("pricing.subtitle", "Explore detailed pricing and accommodation options tailored to your selected trip")}
           </p>
@@ -82,15 +86,32 @@ export default function TripPricing({ trip }: TripPricingProps) {
               <h3 className={styles.season}>{col.season}</h3>
               {col.tiers.map((tier, ti) => (
                 <div key={ti} className={styles.tier}>
-                  <div className={styles.tierHeader}>
-                    <div className={styles.tierIconWrap}>
-                      <Image src="/images/currency.svg" alt="" width={22} height={22} />
-                    </div>
-                    <p className={styles.tierPrice}>{formatCurrency(tier.prices || tier.price)}</p>
-                  </div>
-                  <p className={styles.tierLabel}>
-                    {t("pricing.perPersonIn", "Per Person in {label}").replace("{label}", tier.label)}
-                  </p>
+                  {isDayTourTrip ? (
+                    <>
+                      <div className={styles.tierHeader}>
+                        <div className={styles.tierIconWrap}>
+                          <Image src="/images/currency.svg" alt="" width={22} height={22} />
+                        </div>
+                        <p className={styles.tierPrice}>
+                          {formatCurrency(tier.prices || tier.price)}{" "}
+                          <span className={styles.perPersonSuffix}>/ {t("pricing.perPerson", "Per Person")}</span>
+                        </p>
+                      </div>
+                      <p className={styles.dayTourTierLabel}>{tier.label}</p>
+                    </>
+                  ) : (
+                    <>
+                      <div className={styles.tierHeader}>
+                        <div className={styles.tierIconWrap}>
+                          <Image src="/images/currency.svg" alt="" width={22} height={22} />
+                        </div>
+                        <p className={styles.tierPrice}>{formatCurrency(tier.prices || tier.price)}</p>
+                      </div>
+                      <p className={styles.tierLabel}>
+                        {t("pricing.perPersonIn", "Per Person in {label}").replace("{label}", tier.label)}
+                      </p>
+                    </>
+                  )}
                 </div>
               ))}
             </div>

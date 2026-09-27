@@ -4,6 +4,7 @@ import Image from "next/image";
 import { formatPrice } from "@/constants/currency";
 import styles from "./page.module.scss";
 import { useTripDetailContext } from "../layout";
+import { isDayTour } from "@/utils/tripUtils";
 
 interface SeasonTier {
   id?: number | string;
@@ -62,6 +63,46 @@ export default function TripPricingPage() {
           <h2>Pricing</h2>
         </div>
         <p style={{ color: "#9ca3af", fontSize: "14px", padding: "24px 0" }}>No pricing seasons have been filled yet.</p>
+      </div>
+    );
+  }
+
+  if (isDayTour(trip)) {
+    const uniqueSeasonsMap = new Map<string, SeasonPricing>();
+    for (const s of seasonPricings) {
+      if (!s.tiers || s.tiers.length === 0) continue;
+      const key = s.season_label || "Season";
+      if (!uniqueSeasonsMap.has(key)) {
+        uniqueSeasonsMap.set(key, s);
+      }
+    }
+    const seasons = Array.from(uniqueSeasonsMap.values());
+
+    return (
+      <div className={styles.container}>
+        <div className={styles.titleRow}>
+          <div className={styles.iconWrap}>
+            <Image src="/images/dashboard/catalog/trips/pricing.svg" alt="" width={20} height={20} />
+          </div>
+          <h2>Pricing</h2>
+        </div>
+
+        <div className={styles.seasonsWrapper}>
+          {seasons.map((season) => (
+            <div key={season.id || season.season_label} className={styles.seasonColumn}>
+              <span className={styles.seasonTitle}>{season.season_label}</span>
+              {(season.tiers || []).map((tier) => (
+                <div key={tier.id || tier.label} className={styles.priceRow}>
+                  <div className={styles.roomInfo}>
+                    <span className={styles.perPerson}>Per Person</span>
+                    <span className={styles.roomType}>{tier.label}</span>
+                  </div>
+                  <div className={styles.priceValue}>{formatPrice(tier.price)}</div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

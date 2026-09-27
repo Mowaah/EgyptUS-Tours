@@ -46,8 +46,12 @@ export function useWizard<TFormValues extends Record<string, any>>({
       if (isLastStep) {
         // Run the main onSubmit wrapper which handles getting all form data
         methods.handleSubmit(async (data) => {
-          await onSubmit(data, { intent: "publish" });
-          onFinished?.();
+          try {
+            await onSubmit(data, { intent: "publish" });
+            onFinished?.();
+          } catch {
+            // Form errors and step transitions are handled inside onSubmit
+          }
         })();
       } else {
         setCurrentStep((prev) => prev + 1);

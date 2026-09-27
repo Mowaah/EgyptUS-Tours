@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { LoadingSpinner } from "@/components/shared";
 import { formatDateDDMMYYYY } from "@/utils/dateFormat";
 import styles from "./DashboardFooter.module.scss";
 
@@ -54,7 +55,7 @@ export function DashboardFooter({
             disabled={isSaveDisabled || isSaving}
           >
             {isSaving && (
-              <span className={styles.loadingSpinner} aria-hidden="true" style={{ marginRight: '8px' }} />
+              <LoadingSpinner size="sm" variant="inline" color="white" />
             )}
             Save Changes
             {!isSaving && (

@@ -2,6 +2,7 @@ import { Trip, Hotel, HotelRoom } from "@/types";
 import { BookingData } from "@/types";
 import { MultiCurrencyPrice } from "@/constants/currency";
 import { parseDate, isDateWithinFullPaymentWindow } from "./dateFormat";
+import { isDayTour, getBracketForPax } from "./tripUtils";
 
 export const CHILD_POLICY = {
   freeThroughAge: 2,
@@ -186,6 +187,109 @@ export function calculateTripBookingPrice(
   const seasons = trip.seasonPricing || [];
   const baseSeason = resolveApplicableSeason(seasons, tourType, formData.startDate) || seasons[0];
   const addOns = trip.additionalRooms || {};
+
+  if (isDayTour(trip)) {
+    const totalPax = Math.max(1, (formData.adults || 0) + (formData.children || 0));
+    const bracket = getBracketForPax(totalPax);
+
+    // Find bracket tier in baseSeason
+    const allTiers = baseSeason?.tiers || [];
+    const matchedTier = allTiers.find((t) => {
+      const lbl = t.label.toLowerCase();
+      if (bracket.key === "solo") return lbl.includes("solo") || lbl.includes("1 pax");
+      if (bracket.key === "2_4") return lbl.includes("2-4") || lbl.includes("2_4");
+      if (bracket.key === "5_8") return lbl.includes("5-8") || lbl.includes("5_8");
+      if (bracket.key === "9_20") return lbl.includes("9-20") || lbl.includes("9_20");
+      return false;
+    });
+
+    const fallbackPrice = trip.price || trip.privatePrice || 0;
+    const unitPriceUsd = Number(matchedTier ? matchedTier.price : (baseSeason?.double || fallbackPrice)) || 0;
+    const unitPriceEgp = Number(matchedTier?.prices?.egp ?? (matchedTier?.priceEgp ?? (baseSeason?.doubleEgp ?? unitPriceUsd * 50))) || unitPriceUsd * 50;
+    const unitPriceEur = Number(matchedTier?.prices?.eur ?? (matchedTier?.priceEur ?? (baseSeason?.doubleEur ?? unitPriceUsd))) || unitPriceUsd;
+
+    const adultTotalUsd = unitPriceUsd * (formData.adults || 0);
+    const adultTotalEgp = unitPriceEgp * (formData.adults || 0);
+    const adultTotalEur = unitPriceEur * (formData.adults || 0);
+
+    const childrenAges = formData.childrenAges || [];
+    const childOccupants: ChildOccupant[] = [];
+    for (let cIdx = 0; cIdx < (formData.children || 0); cIdx++) {
+      const age = childrenAges[cIdx] != null ? childrenAges[cIdx] : 8;
+      childOccupants.push({
+        childIndex: cIdx,
+        age,
+        priceFraction: getChildPriceFraction(age),
+      });
+    }
+
+    const childrenTotalUsd = childOccupants.reduce((acc, ch) => acc + unitPriceUsd * ch.priceFraction, 0);
+    const childrenTotalEgp = childOccupants.reduce((acc, ch) => acc + unitPriceEgp * ch.priceFraction, 0);
+    const childrenTotalEur = childOccupants.reduce((acc, ch) => acc + unitPriceEur * ch.priceFraction, 0);
+
+    const lineTotalUsd = adultTotalUsd + childrenTotalUsd;
+    const lineTotalEgp = adultTotalEgp + childrenTotalEgp;
+    const lineTotalEur = adultTotalEur + childrenTotalEur;
+
+    const lineItems: RoomLineItem[] = [
+      {
+        roomType: "single",
+        roomName: bracket.label,
+        viewLabel: "",
+        quantity: 1,
+        adultCount: formData.adults || 0,
+        children: childOccupants,
+        unitPrice: unitPriceUsd,
+        unitPrices: { usd: unitPriceUsd, egp: unitPriceEgp, eur: unitPriceEur },
+        adultTotal: adultTotalUsd,
+        childrenTotal: childrenTotalUsd,
+        lineTotal: lineTotalUsd,
+        lineTotals: { usd: lineTotalUsd, egp: lineTotalEgp, eur: lineTotalEur },
+      },
+    ];
+
+    const subtotalUsd = lineTotalUsd;
+    const subtotalEgp = lineTotalEgp;
+    const subtotalEur = lineTotalEur;
+
+    const discountPercent = parseDiscountPercent(trip.discountValue || trip.discountLabel);
+    const hasDiscount = discountPercent > 0;
+    const discountTitle =
+      (trip as any)?.promotion?.title ||
+      (trip as any)?.promotion_title ||
+      trip.discountTitle ||
+      trip.discountLabel ||
+      (hasDiscount ? "Special Discount" : undefined);
+
+    const discountUsd = hasDiscount ? (subtotalUsd * discountPercent) / 100 : 0;
+    const discountEgp = hasDiscount ? (subtotalEgp * discountPercent) / 100 : 0;
+    const discountEur = hasDiscount ? (subtotalEur * discountPercent) / 100 : 0;
+
+    const totalUsd = Math.max(0, subtotalUsd - discountUsd);
+    const totalEgp = Math.max(0, subtotalEgp - discountEgp);
+    const totalEur = Math.max(0, subtotalEur - discountEur);
+
+    const isDepositFull = isDateWithinFullPaymentWindow(formData.startDate);
+    const depositRate = isDepositFull ? 1 : 0.30;
+    const remainingRate = isDepositFull ? 0 : 0.70;
+
+    return {
+      lineItems,
+      subtotal: subtotalUsd,
+      subtotalPrices: { usd: subtotalUsd, egp: subtotalEgp, eur: subtotalEur },
+      discountAmount: discountUsd,
+      discountPercent: hasDiscount ? discountPercent : 0,
+      discountTitle,
+      discountPrices: { usd: discountUsd, egp: discountEgp, eur: discountEur },
+      total: totalUsd,
+      depositAmount: totalUsd * depositRate,
+      remainingAmount: totalUsd * remainingRate,
+      isDepositFull,
+      totalPrices: { usd: totalUsd, egp: totalEgp, eur: totalEur },
+      depositPrices: { usd: totalUsd * depositRate, egp: totalEgp * depositRate, eur: totalEur * depositRate },
+      remainingPrices: { usd: totalUsd * remainingRate, egp: totalEgp * remainingRate, eur: totalEur * remainingRate },
+    };
+  }
 
   // Build room rows from formData.rooms & customizations
   const roomRows: Array<{ roomType: "single" | "double" | "triple"; viewLabel: string; quantity: number }> = [];

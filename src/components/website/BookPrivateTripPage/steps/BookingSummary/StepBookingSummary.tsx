@@ -11,6 +11,7 @@ import { getNationalityName } from "@/utils/nationality";
 import { useTranslation } from "@/hooks/useTranslation";
 import { MultiCurrencyPrice } from "@/constants/currency";
 import { calculateTripBookingPrice } from "@/utils/bookingPricing";
+import { isDayTour } from "@/utils/tripUtils";
 
 interface StepBookingSummaryProps {
   trip: Trip;
@@ -109,7 +110,7 @@ export default function StepBookingSummary({
         { label: t("sidebar.duration", "Duration"), value: formattedDuration },
       ],
     },
-    ...(roomItems.length > 0
+    ...(roomItems.length > 0 && !isDayTour(trip)
       ? [
         {
           title: t("sidebar.rooms", "Rooms"),

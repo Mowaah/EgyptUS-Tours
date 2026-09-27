@@ -23,6 +23,7 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { getRoomSubtitle, ROOM_TYPE_CHILD_CAPACITY, resolveApplicableSeason, normalizeRoomType } from "@/utils/bookingPricing";
 import { parseDate } from "@/utils/dateFormat";
+import { isDayTour } from "@/utils/tripUtils";
 
 interface StepYourDetailsProps {
   trip: Trip;
@@ -40,6 +41,7 @@ const CHILD_AGE_OPTIONS = Array.from({ length: 10 }, (_, i) => ({
 export default function StepYourDetails({ trip, formData, onChange, onContinue, isGroupTrip }: StepYourDetailsProps) {
   const { formatCurrency } = useCurrency();
   const { t } = useTranslation("booking");
+  const isDayTourTrip = isDayTour(trip);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Extract rooms directly from trip season pricing instead of hotel
@@ -183,52 +185,64 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
       newErrors.adults = t("planYourTrip.travelerInfo.adultsRequired", "At least 1 adult is required.");
     }
 
-    let totalCapacity = 0;
-    let totalRoomCount = 0;
-    roomGroups.forEach((group) => {
-      const c = formData.rooms[group.key] || 0;
-      totalRoomCount += c;
-      const k = group.key.toLowerCase();
-      if (k.includes("single")) totalCapacity += c * 1;
-      else if (k.includes("double") || k.includes("twin")) totalCapacity += c * 2;
-      else if (k.includes("triple")) totalCapacity += c * 3;
-      else if (k.includes("quad")) totalCapacity += c * 4;
-      else totalCapacity += c * 2; // fallback
-    });
+    if (isDayTourTrip) {
+      if ((formData.adults || 0) + (formData.children || 0) > 20) {
+        newErrors.adults = "Maximum 20 travelers allowed for Day Tours.";
+      }
+      if (formData.children > 0) {
+        const ages = formData.childrenAges || [];
+        if (ages.length !== formData.children || ages.some((a) => a == null || a <= 0)) {
+          newErrors.childrenAges = "Please select the age for each child.";
+        }
+      }
+    } else {
+      let totalCapacity = 0;
+      let totalRoomCount = 0;
+      roomGroups.forEach((group) => {
+        const c = formData.rooms[group.key] || 0;
+        totalRoomCount += c;
+        const k = group.key.toLowerCase();
+        if (k.includes("single")) totalCapacity += c * 1;
+        else if (k.includes("double") || k.includes("twin")) totalCapacity += c * 2;
+        else if (k.includes("triple")) totalCapacity += c * 3;
+        else if (k.includes("quad")) totalCapacity += c * 4;
+        else totalCapacity += c * 2; // fallback
+      });
 
-    if (totalRoomCount === 0) {
-      newErrors.rooms = t("hotelBooking.roomDates.roomsRequired", "Please select at least one room.");
-    } else if (formData.adults > totalCapacity) {
-      newErrors.rooms = `${t("hotelBooking.roomDates.roomCapacityExceeded", "Selected rooms only accommodate")} ${totalCapacity} ${t("hotelBooking.roomDates.adults", "adults")}, ${t("hotelBooking.roomDates.butSelected", "but")} ${formData.adults} ${t("hotelBooking.roomDates.adultsSelected", "adults are booked")}.`;
-    }
-
-    if (formData.children > 0) {
-      const ages = formData.childrenAges || [];
-      if (ages.length !== formData.children || ages.some((a) => a == null || a <= 0)) {
-        newErrors.childrenAges = "Please select the age for each child.";
+      if (totalRoomCount === 0) {
+        newErrors.rooms = t("hotelBooking.roomDates.roomsRequired", "Please select at least one room.");
+      } else if (formData.adults > totalCapacity) {
+        newErrors.rooms = `${t("hotelBooking.roomDates.roomCapacityExceeded", "Selected rooms only accommodate")} ${totalCapacity} ${t("hotelBooking.roomDates.adults", "adults")}, ${t("hotelBooking.roomDates.butSelected", "but")} ${formData.adults} ${t("hotelBooking.roomDates.adultsSelected", "adults are booked")}.`;
       }
 
-      const assigned = formData.childRoomPricing || [];
-      const singleAssigned = assigned.filter((r) => r.toLowerCase().includes("single")).length;
-      const doubleAssigned = assigned.filter((r) => r.toLowerCase().includes("double")).length;
-      const tripleAssigned = assigned.filter((r) => r.toLowerCase().includes("triple")).length;
+      if (formData.children > 0) {
+        const ages = formData.childrenAges || [];
+        if (ages.length !== formData.children || ages.some((a) => a == null || a <= 0)) {
+          newErrors.childrenAges = "Please select the age for each child.";
+        }
 
-      const singleCount = formData.rooms?.single || 0;
-      const doubleCount = formData.rooms?.double || 0;
-      const tripleCount = formData.rooms?.triple || 0;
+        const assigned = formData.childRoomPricing || [];
+        const singleAssigned = assigned.filter((r) => r.toLowerCase().includes("single")).length;
+        const doubleAssigned = assigned.filter((r) => r.toLowerCase().includes("double")).length;
+        const tripleAssigned = assigned.filter((r) => r.toLowerCase().includes("triple")).length;
 
-      if (singleAssigned > singleCount * ROOM_TYPE_CHILD_CAPACITY.single) {
-        newErrors.childPricing = singleCount === 0
-          ? "You have children assigned to a Single room, but no Single room is selected."
-          : "Single rooms can only accommodate up to 2 children per room.";
-      } else if (doubleAssigned > doubleCount * ROOM_TYPE_CHILD_CAPACITY.double) {
-        newErrors.childPricing = doubleCount === 0
-          ? "You have children assigned to a Double room, but no Double room is selected."
-          : "Double rooms can only accommodate up to 2 children per room.";
-      } else if (tripleAssigned > tripleCount * ROOM_TYPE_CHILD_CAPACITY.triple) {
-        newErrors.childPricing = tripleCount === 0
-          ? "You have children assigned to a Triple room, but no Triple room is selected."
-          : "Triple rooms can only accommodate up to 1 child per room.";
+        const singleCount = formData.rooms?.single || 0;
+        const doubleCount = formData.rooms?.double || 0;
+        const tripleCount = formData.rooms?.triple || 0;
+
+        if (singleAssigned > singleCount * ROOM_TYPE_CHILD_CAPACITY.single) {
+          newErrors.childPricing = singleCount === 0
+            ? "You have children assigned to a Single room, but no Single room is selected."
+            : "Single rooms can only accommodate up to 2 children per room.";
+        } else if (doubleAssigned > doubleCount * ROOM_TYPE_CHILD_CAPACITY.double) {
+          newErrors.childPricing = doubleCount === 0
+            ? "You have children assigned to a Double room, but no Double room is selected."
+            : "Double rooms can only accommodate up to 2 children per room.";
+        } else if (tripleAssigned > tripleCount * ROOM_TYPE_CHILD_CAPACITY.triple) {
+          newErrors.childPricing = tripleCount === 0
+            ? "You have children assigned to a Triple room, but no Triple room is selected."
+            : "Triple rooms can only accommodate up to 1 child per room.";
+        }
       }
     }
 
@@ -274,6 +288,15 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
   const handleGuestChange = (guestType: "adults" | "children" | "infants", increment: boolean) => {
     if (errors.adults && guestType === "adults") setErrors((e) => ({ ...e, adults: "" }));
     if (errors.rooms) setErrors((e) => ({ ...e, rooms: "" }));
+
+    if (isDayTourTrip && increment) {
+      if (guestType === "adults" || guestType === "children") {
+        if ((formData.adults || 0) + (formData.children || 0) >= 20) {
+          return;
+        }
+      }
+    }
+
     const newCount = Math.max(0, formData[guestType] + (increment ? 1 : -1));
     const patch: Partial<BookingData> = { [guestType]: newCount };
 
@@ -552,7 +575,9 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
                   value={formData.startDate}
                   onChange={(date) => {
                     const updates: Partial<BookingData> = { startDate: date };
-                    if (date && trip?.duration?.days) {
+                    if (isDayTourTrip) {
+                      updates.endDate = date;
+                    } else if (date && trip?.duration?.days) {
                       const d = parseDate(date);
                       if (d) {
                         d.setDate(d.getDate() + trip.duration.days - 1);
@@ -643,60 +668,64 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
           </div>
         )}
 
-        <hr className={stepStyles.divider} aria-hidden="true" />
-
-        <RoomSelector
-          required
-          rooms={roomGroups}
-          counts={formData.rooms}
-          customizations={flatCustomizations}
-          onCountChange={handleCountChange}
-          onCustomizationChange={handleCustomizationChange}
-          error={errors.rooms}
-          emptyMessage={t("hotelBooking.roomDates.noRooms", "No rooms found for this trip.")}
-        />
-
-        {/* ── Child Room Pricing * ── */}
-        {formData.children > 0 && (
-          <div className={stepStyles.childPricingSection}>
+        {!isDayTourTrip && (
+          <>
             <hr className={stepStyles.divider} aria-hidden="true" />
-            <h3 className={`${stepStyles.sectionTitle} ${stepStyles.childPricingTitle}`}>
-              Child Room Pricing <span className={stepStyles.requiredStar}>*</span>
-            </h3>
-            <div className={stepStyles.childPricingGrid}>
-              {Array.from({ length: formData.children }).map((_, i) => {
-                const childAge = formData.childrenAges?.[i] != null && formData.childrenAges[i] > 0 
-                  ? formData.childrenAges[i] 
-                  : null;
-                const rawAssigned = formData.childRoomPricing?.[i];
-                const assignedRoom =
-                  childRoomOptions.find((o) => o.value === rawAssigned)?.value ||
-                  childRoomOptions.find((o) => normalizeRoomType(o.value) === normalizeRoomType(rawAssigned))?.value ||
-                  childRoomOptions[0]?.value ||
-                  "double:Garden View";
-                const labelText = childAge ? `Child ${i + 1} - ( ${childAge} years )` : `Child ${i + 1}`;
-                return (
-                  <div key={`child-room-${i}`} className={stepStyles.childPricingItem}>
-                    <label className={stepStyles.childPricingLabel}>
-                      {labelText}
-                    </label>
-                    <SelectDropdown
-                      id={`child-room-select-${i}`}
-                      options={childRoomOptions}
-                      value={assignedRoom}
-                      onChange={(val) => handleChildRoomChange(i, val)}
-                    />
+
+            <RoomSelector
+              required
+              rooms={roomGroups}
+              counts={formData.rooms}
+              customizations={flatCustomizations}
+              onCountChange={handleCountChange}
+              onCustomizationChange={handleCustomizationChange}
+              error={errors.rooms}
+              emptyMessage={t("hotelBooking.roomDates.noRooms", "No rooms found for this trip.")}
+            />
+
+            {/* ── Child Room Pricing * ── */}
+            {formData.children > 0 && (
+              <div className={stepStyles.childPricingSection}>
+                <hr className={stepStyles.divider} aria-hidden="true" />
+                <h3 className={`${stepStyles.sectionTitle} ${stepStyles.childPricingTitle}`}>
+                  Child Room Pricing <span className={stepStyles.requiredStar}>*</span>
+                </h3>
+                <div className={stepStyles.childPricingGrid}>
+                  {Array.from({ length: formData.children }).map((_, i) => {
+                    const childAge = formData.childrenAges?.[i] != null && formData.childrenAges[i] > 0 
+                      ? formData.childrenAges[i] 
+                      : null;
+                    const rawAssigned = formData.childRoomPricing?.[i];
+                    const assignedRoom =
+                      childRoomOptions.find((o) => o.value === rawAssigned)?.value ||
+                      childRoomOptions.find((o) => normalizeRoomType(o.value) === normalizeRoomType(rawAssigned))?.value ||
+                      childRoomOptions[0]?.value ||
+                      "double:Garden View";
+                    const labelText = childAge ? `Child ${i + 1} - ( ${childAge} years )` : `Child ${i + 1}`;
+                    return (
+                      <div key={`child-room-${i}`} className={stepStyles.childPricingItem}>
+                        <label className={stepStyles.childPricingLabel}>
+                          {labelText}
+                        </label>
+                        <SelectDropdown
+                          id={`child-room-select-${i}`}
+                          options={childRoomOptions}
+                          value={assignedRoom}
+                          onChange={(val) => handleChildRoomChange(i, val)}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+                {errors.childPricing && (
+                  <div className={`${formStyles.errorMessage} ${stepStyles.errorMarginTop8}`}>
+                    <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
+                    <span>{errors.childPricing}</span>
                   </div>
-                );
-              })}
-            </div>
-            {errors.childPricing && (
-              <div className={`${formStyles.errorMessage} ${stepStyles.errorMarginTop8}`}>
-                <Image src="/images/information-fill.svg" alt="" width={16} height={16} aria-hidden="true" />
-                <span>{errors.childPricing}</span>
+                )}
               </div>
             )}
-          </div>
+          </>
         )}
 
         <hr className={stepStyles.divider} aria-hidden="true" />

@@ -120,6 +120,8 @@ export default function TransportationLayout({
                   ? {
                       label: isActionPending ? "Publishing..." : "Publish",
                       icon: "/images/send.svg",
+                      loading: isActionPending,
+                      disabled: isActionPending,
                       onClick: async () => {
                         if (!vehicle || isActionPending) return;
                         setIsActionPending(true);
@@ -138,6 +140,8 @@ export default function TransportationLayout({
                   ? {
                       label: isActionPending ? "Publishing..." : "Publish",
                       icon: "/images/send.svg",
+                      loading: isActionPending,
+                      disabled: isActionPending,
                       onClick: async () => {
                         if (!vehicle || isActionPending) return;
                         setIsActionPending(true);

@@ -105,6 +105,7 @@ export interface TripReview {
 export interface TripList {
   id: number;
   slug: string;
+  kind?: "trip" | "day_tour";
   title: string;
   short_description: string;
   location_text: string;

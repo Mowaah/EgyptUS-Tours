@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import { LoadingSpinner } from "@/components/shared";
 import styles from "./ProfileHeader.module.scss";
 
 export type PillVariant = "blue" | "green" | "red" | "orange" | "gray" | "purple";
@@ -10,6 +11,8 @@ export interface ProfileActionConfig {
   iconPosition?: "left" | "right";
   iconSize?: number;
   onClick?: () => void;
+  disabled?: boolean;
+  loading?: boolean;
 }
 
 interface ProfileHeaderProps {
@@ -95,14 +98,21 @@ export default function ProfileHeader({
           {actionButtons}
 
           {secondaryAction && (
-            <button className={styles.secondaryActionButton} onClick={secondaryAction.onClick}>
-              {secondaryAction.icon && secondaryAction.iconPosition !== "right" && (
+            <button
+              className={styles.secondaryActionButton}
+              onClick={secondaryAction.onClick}
+              disabled={secondaryAction.disabled || secondaryAction.loading}
+            >
+              {secondaryAction.loading && (
+                <LoadingSpinner size="sm" variant="inline" color="current" />
+              )}
+              {!secondaryAction.loading && secondaryAction.icon && secondaryAction.iconPosition !== "right" && (
                 typeof secondaryAction.icon === "string" 
                   ? <Image src={secondaryAction.icon} alt="" width={secondaryAction.iconSize || 20} height={secondaryAction.iconSize || 20} />
                   : secondaryAction.icon
               )}
               {secondaryAction.label}
-              {secondaryAction.icon && secondaryAction.iconPosition === "right" && (
+              {!secondaryAction.loading && secondaryAction.icon && secondaryAction.iconPosition === "right" && (
                 typeof secondaryAction.icon === "string"
                   ? <Image src={secondaryAction.icon} alt="" width={secondaryAction.iconSize || 20} height={secondaryAction.iconSize || 20} />
                   : secondaryAction.icon
@@ -111,14 +121,21 @@ export default function ProfileHeader({
           )}
 
           {archiveAction && (
-            <button className={styles.archiveActionButton} onClick={archiveAction.onClick}>
-              {archiveAction.icon && archiveAction.iconPosition !== "right" && (
+            <button
+              className={styles.archiveActionButton}
+              onClick={archiveAction.onClick}
+              disabled={archiveAction.disabled || archiveAction.loading}
+            >
+              {archiveAction.loading && (
+                <LoadingSpinner size="sm" variant="inline" color="current" />
+              )}
+              {!archiveAction.loading && archiveAction.icon && archiveAction.iconPosition !== "right" && (
                 typeof archiveAction.icon === "string"
                   ? <Image src={archiveAction.icon} alt="" width={archiveAction.iconSize || 20} height={archiveAction.iconSize || 20} />
                   : archiveAction.icon
               )}
               {archiveAction.label}
-              {archiveAction.icon && archiveAction.iconPosition === "right" && (
+              {!archiveAction.loading && archiveAction.icon && archiveAction.iconPosition === "right" && (
                 typeof archiveAction.icon === "string"
                   ? <Image src={archiveAction.icon} alt="" width={archiveAction.iconSize || 20} height={archiveAction.iconSize || 20} />
                   : archiveAction.icon
@@ -127,14 +144,21 @@ export default function ProfileHeader({
           )}
 
           {dangerAction && (
-            <button className={styles.dangerActionButton} onClick={dangerAction.onClick}>
-              {dangerAction.icon && dangerAction.iconPosition !== "right" && (
+            <button
+              className={styles.dangerActionButton}
+              onClick={dangerAction.onClick}
+              disabled={dangerAction.disabled || dangerAction.loading}
+            >
+              {dangerAction.loading && (
+                <LoadingSpinner size="sm" variant="inline" color="white" />
+              )}
+              {!dangerAction.loading && dangerAction.icon && dangerAction.iconPosition !== "right" && (
                 typeof dangerAction.icon === "string"
                   ? <Image src={dangerAction.icon} alt="" width={dangerAction.iconSize || 20} height={dangerAction.iconSize || 20} />
                   : dangerAction.icon
               )}
               {dangerAction.label}
-              {dangerAction.icon && dangerAction.iconPosition === "right" && (
+              {!dangerAction.loading && dangerAction.icon && dangerAction.iconPosition === "right" && (
                 typeof dangerAction.icon === "string"
                   ? <Image src={dangerAction.icon} alt="" width={dangerAction.iconSize || 20} height={dangerAction.iconSize || 20} />
                   : dangerAction.icon
@@ -143,14 +167,21 @@ export default function ProfileHeader({
           )}
 
           {primaryAction && (
-            <button className={styles.primaryActionButton} onClick={primaryAction.onClick}>
-              {primaryAction.icon && primaryAction.iconPosition !== "right" && (
+            <button
+              className={styles.primaryActionButton}
+              onClick={primaryAction.onClick}
+              disabled={primaryAction.disabled || primaryAction.loading}
+            >
+              {primaryAction.loading && (
+                <LoadingSpinner size="sm" variant="inline" color="white" />
+              )}
+              {!primaryAction.loading && primaryAction.icon && primaryAction.iconPosition !== "right" && (
                 typeof primaryAction.icon === "string"
                   ? <Image src={primaryAction.icon} alt="" width={primaryAction.iconSize || 20} height={primaryAction.iconSize || 20} />
                   : primaryAction.icon
               )}
               {primaryAction.label}
-              {primaryAction.icon && primaryAction.iconPosition === "right" && (
+              {!primaryAction.loading && primaryAction.icon && primaryAction.iconPosition === "right" && (
                 typeof primaryAction.icon === "string"
                   ? <Image src={primaryAction.icon} alt="" width={primaryAction.iconSize || 20} height={primaryAction.iconSize || 20} />
                   : primaryAction.icon

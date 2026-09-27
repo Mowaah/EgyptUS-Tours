@@ -81,6 +81,7 @@
   },
   "pricing": {
     "heading": "Precios y Alojamiento",
+    "tourPrices": "Precios de Tours",
     "subtitle": "Explora precios detallados y opciones de alojamiento adaptadas a tu viaje",
     "privateTour": "Tour Privado",
     "groupTour": "Tour en Grupo",
@@ -128,6 +129,7 @@
     "excluded": "Qué No Está Incluido",
     "travelerPhotos": "Tomadas por Viajeros",
     "pricesAccommodation": "Precios y Alojamiento",
+    "tourPrices": "Precios de Tours",
     "luxuryAccommodations": "Alojamientos de Lujo",
     "datesAvailability": "Fechas y Disponibilidad",
     "itinerary": "Itinerario Día a Día",

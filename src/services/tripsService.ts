@@ -6,10 +6,13 @@ import { getFullHotelBySlug } from "@/services/hotelsService";
 export async function getAllTrips(params?: Record<string, string>): Promise<TripList[]> {
   try {
     const query = new URLSearchParams();
+    if (!params?.kind) {
+      query.append("kind", "all");
+    }
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
         if (value && key !== "page_size") {
-          query.append(key, value);
+          query.set(key, value);
         }
       });
     }
@@ -88,6 +91,7 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
   return {
     id: tripDetail.slug,
     numericId: tripDetail.id,
+    kind: tripDetail.kind || "trip",
     title: tripDetail.title,
     description: tripDetail.description || tripDetail.short_description,
     image: tripDetail.image || "/images/pyramids4.jpg",
@@ -304,6 +308,18 @@ export async function getFullTripById(idOrSlug: string, relatedTripsData: TripLi
           singlePrices: { usd: single.val, egp: single.valEgp, eur: single.valEur },
           doublePrices: { usd: double.val, egp: double.valEgp, eur: double.valEur },
           triplePrices: { usd: triple.val, egp: triple.valEgp, eur: triple.valEur },
+          tiers: (s.tiers || []).map(tier => {
+            const tierPrice = parseFloat(tier.price) || 0;
+            const tierPriceEgp = tier.price_egp ? parseFloat(tier.price_egp) : tierPrice * 50;
+            const tierPriceEur = tier.price_eur ? parseFloat(tier.price_eur) : tierPrice;
+            return {
+              label: tier.label,
+              price: tierPrice,
+              priceEgp: tierPriceEgp,
+              priceEur: tierPriceEur,
+              prices: { usd: tierPrice, egp: tierPriceEgp, eur: tierPriceEur },
+            };
+          }),
         };
       });
     })(),

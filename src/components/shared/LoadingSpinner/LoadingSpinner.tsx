@@ -6,6 +6,7 @@ import styles from "./LoadingSpinner.module.scss";
 export interface LoadingSpinnerProps {
   size?: "sm" | "md" | "lg";
   variant?: "default" | "fullPage" | "inline";
+  color?: "primary" | "white" | "current";
   label?: string;
   className?: string;
 }
@@ -13,7 +14,8 @@ export interface LoadingSpinnerProps {
 export default function LoadingSpinner({
   size = "md",
   variant = "default",
-  label = "Loading...",
+  color = "primary",
+  label,
   className = "",
 }: LoadingSpinnerProps) {
   const containerClasses = [
@@ -25,12 +27,23 @@ export default function LoadingSpinner({
     .filter(Boolean)
     .join(" ");
 
+  const resolvedLabel = label !== undefined ? label : variant === "inline" ? "" : "Loading...";
+  const Tag = variant === "inline" ? "span" : "div";
+
   return (
-    <div className={containerClasses} role="status" aria-label="Loading">
-      <div className={styles.spinnerContainer}>
-        <div className={`${styles.spinnerRing} ${styles[size]}`} />
-      </div>
-      {label && <span className={styles.label}>{label}</span>}
-    </div>
+    <Tag className={containerClasses} role="status" aria-label="Loading">
+      <span className={styles.spinnerContainer}>
+        <span
+          className={[
+            styles.spinnerRing,
+            styles[size],
+            color !== "primary" ? styles[color] : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+        />
+      </span>
+      {resolvedLabel && <span className={styles.label}>{resolvedLabel}</span>}
+    </Tag>
   );
 }

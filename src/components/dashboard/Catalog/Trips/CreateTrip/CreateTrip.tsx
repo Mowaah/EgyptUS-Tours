@@ -29,6 +29,7 @@ import {
 } from "@/services/admin/adminCatalogTripsService";
 import { getCategories } from "@/services/admin/adminCatalogCategoriesService";
 import { getDestinations } from "@/services/admin/adminCatalogDestinationsService";
+import { isDayTour, isDayTourCategory } from "@/utils/tripUtils";
 import styles from "./CreateTrip.module.scss";
 
 const STEPS: WizardStepConfig[] = [
@@ -59,12 +60,12 @@ const EMPTY_VALUES: CreateTripValues = {
   exclusions: [{ en: "", it: "", es: "" }],
   pricing: {
     privateTour: { seasons: [
-      { dateRange: "May - Sep", singleRoom: "", doubleRoom: "", tripleRoom: "" },
-      { dateRange: "Oct - Apr", singleRoom: "", doubleRoom: "", tripleRoom: "" },
+      { dateRange: "May - Sep", singleRoom: "", doubleRoom: "", tripleRoom: "", solo: "", pax2_4: "", pax5_8: "", pax9_20: "" },
+      { dateRange: "Oct - Apr", singleRoom: "", doubleRoom: "", tripleRoom: "", solo: "", pax2_4: "", pax5_8: "", pax9_20: "" },
     ] },
     groupTour: { seasons: [
-      { dateRange: "May - Sep", singleRoom: "", doubleRoom: "", tripleRoom: "" },
-      { dateRange: "Oct - Apr", singleRoom: "", doubleRoom: "", tripleRoom: "" },
+      { dateRange: "May - Sep", singleRoom: "", doubleRoom: "", tripleRoom: "", solo: "", pax2_4: "", pax5_8: "", pax9_20: "" },
+      { dateRange: "Oct - Apr", singleRoom: "", doubleRoom: "", tripleRoom: "", solo: "", pax2_4: "", pax5_8: "", pax9_20: "" },
     ] },
     additionalRooms: { seaView: "", poolView: "" },
   },
@@ -242,11 +243,22 @@ function mapTripToFormValues(trip: any): CreateTripValues {
     const mapped = rows.map((season) => {
       const tiers = asList(season?.tiers);
       const byLabel = (label: string) => money(tiers.find((tier) => asText(tier?.label).toLowerCase().includes(label))?.price) || "";
+      const byBracket = (label: string) => {
+        const found = tiers.find((tier) => {
+          const l = asText(tier?.label).toLowerCase();
+          return l.includes(label.toLowerCase());
+        });
+        return money(found?.price) || "";
+      };
       return {
         dateRange: asText(season?.season_label || [season?.start_date, season?.end_date].filter(Boolean).join(" - ")),
         singleRoom: byLabel("single"),
         doubleRoom: byLabel("double"),
         tripleRoom: byLabel("triple"),
+        solo: byBracket("solo"),
+        pax2_4: byBracket("2-4") || byBracket("2_4"),
+        pax5_8: byBracket("5-8") || byBracket("5_8"),
+        pax9_20: byBracket("9-20") || byBracket("9_20"),
       };
     });
 
@@ -258,8 +270,8 @@ function mapTripToFormValues(trip: any): CreateTripValues {
     // Pad editable seasons to always have 2 entries
     while (editableSeasons.length < 2) {
       editableSeasons.push(editableSeasons.length === 0
-        ? { dateRange: "May - Sep", singleRoom: "", doubleRoom: "", tripleRoom: "" }
-        : { dateRange: "Oct - Apr", singleRoom: "", doubleRoom: "", tripleRoom: "" }
+        ? { dateRange: "May - Sep", singleRoom: "", doubleRoom: "", tripleRoom: "", solo: "", pax2_4: "", pax5_8: "", pax9_20: "" }
+        : { dateRange: "Oct - Apr", singleRoom: "", doubleRoom: "", tripleRoom: "", solo: "", pax2_4: "", pax5_8: "", pax9_20: "" }
       );
     }
 
@@ -440,10 +452,13 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
   const hasPrivate = tourTypes.includes("private-tour");
   const hasGroup = tourTypes.includes("group-tour");
 
+  const isDayTourTrip = isDayTourCategory(data.category, categoryRecords) ||
+    [...(data.pricing?.privateTour?.seasons || []), ...(data.pricing?.groupTour?.seasons || [])].some((s) => s.solo || s.pax2_4 || s.pax5_8 || s.pax9_20);
+
   const seasonRows = [
     ...(hasPrivate ? (data.pricing?.privateTour?.seasons || []).map((season) => ({ ...season, tourType: "private" })) : []),
     ...(hasGroup ? (data.pricing?.groupTour?.seasons || []).map((season) => ({ ...season, tourType: "group" })) : []),
-  ].filter((season) => season.dateRange || season.singleRoom || season.doubleRoom || season.tripleRoom);
+  ].filter((season) => season.dateRange || season.singleRoom || season.doubleRoom || season.tripleRoom || season.solo || season.pax2_4 || season.pax5_8 || season.pax9_20);
 
   const userSlugEn = data.slug?.en ? slugify(data.slug.en) : "";
   const baseSlugEn = slugify(data.tripName?.en || "trip");
@@ -461,6 +476,7 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
   const locationText = selectedDestinationNames.join(" · ") || "Egypt";
 
   return {
+    kind: isDayTourTrip ? "day_tour" : "trip",
     translations: {
       en: {
         title: data.tripName?.en || "",
@@ -502,7 +518,10 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
     duration_nights: durationNights || 0,
     offers_private_tour: tourTypes.includes("private-tour"),
     offers_group_tour: tourTypes.includes("group-tour"),
-    additional_rooms: {
+    additional_rooms: isDayTourTrip ? {
+      sea_view: null,
+      pool_view: null,
+    } : {
       sea_view: money(data.pricing?.additionalRooms?.seaView) || null,
       pool_view: money(data.pricing?.additionalRooms?.poolView) || null,
     },
@@ -534,11 +553,19 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
         start_date: range.start_date,
         end_date: range.end_date,
         order: index,
-        tiers: [
-          { label: "Single Room", price: money(season.singleRoom), order: 0 },
-          { label: "Double Room", price: money(season.doubleRoom), order: 1 },
-          { label: "Triple Room", price: money(season.tripleRoom), order: 2 },
-        ].filter((tier) => tier.price),
+        tiers: (isDayTourTrip
+          ? [
+              { label: "Solo", price: money(season.solo), order: 0 },
+              { label: "2-4 Pax", price: money(season.pax2_4), order: 1 },
+              { label: "5-8 Pax", price: money(season.pax5_8), order: 2 },
+              { label: "9-20 Pax", price: money(season.pax9_20), order: 3 },
+            ]
+          : [
+              { label: "Single Room", price: money(season.singleRoom), order: 0 },
+              { label: "Double Room", price: money(season.doubleRoom), order: 1 },
+              { label: "Triple Room", price: money(season.tripleRoom), order: 2 },
+            ]
+        ).filter((tier) => tier.price),
       };
     }),
     itinerary_days: itinerary,
@@ -559,7 +586,7 @@ async function buildPayload(data: CreateTripValues, intent: WizardSubmitIntent, 
           })
           .filter(Boolean)
       : [],
-    hotel_ids: (data.hotels || []).map((id) => Number(id)).filter((id) => Number.isInteger(id) && id > 0),
+    hotel_ids: isDayTourTrip ? [] : (data.hotels || []).map((id) => Number(id)).filter((id) => Number.isInteger(id) && id > 0),
     media_items: photos.filter(Boolean),
     replace_bullets: true,
     replace_season_pricings: true,
@@ -629,15 +656,15 @@ function errorMessage(error: any): string {
   return messages.length > 0 ? messages.join("\n") : "An unexpected error occurred.";
 }
 
-const getErrorStepIndex = (errors: any) => {
+const getErrorStepIndex = (errors: any, isDayTour: boolean) => {
   if (errors.tripName || errors.category || errors.destinations || errors.duration || errors.tourTypes || errors.starRating || errors.brochureFile || errors.description || errors.culturalValue || errors.whoIsTripFor) return 0;
   if (errors.inclusions || errors.exclusions) return 1;
   if (errors.pricing) return 2;
   if (errors.itinerary) return 3;
   if (errors.datesAvailability) return 4;
-  if (errors.hotels) return 5;
-  if (errors.photos) return 6;
-  if (errors.metaTitle || errors.metaDescription || errors.metaKeywords || errors.slug) return 7;
+  if (!isDayTour && errors.hotels) return 5;
+  if (errors.photos) return isDayTour ? 5 : 6;
+  if (errors.metaTitle || errors.metaDescription || errors.metaKeywords || errors.slug) return isDayTour ? 6 : 7;
   return -1;
 };
 
@@ -652,6 +679,14 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange, ref }: { tri
   const [isSaving, setIsSaving] = useState(false);
 
   const [lastUpdateDate, setLastUpdateDate] = useState<string | undefined>(undefined);
+  const [categoriesList, setCategoriesList] = useState<any[]>([]);
+  const [loadedTripKind, setLoadedTripKind] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    getCategories({ page_size: 100 })
+      .then((res) => setCategoriesList(asList(res)))
+      .catch(() => {});
+  }, []);
 
   const methods = useForm<CreateTripValues>({
     resolver: zodResolver(createTripSchema),
@@ -660,6 +695,16 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange, ref }: { tri
   });
 
   const { handleSubmit, formState: { isDirty } } = methods;
+
+  const watchedCategory = methods.watch("category");
+
+  const isDayTourActive = useMemo(() => {
+    return isDayTour({ category: watchedCategory, kind: loadedTripKind }, categoriesList);
+  }, [watchedCategory, loadedTripKind, categoriesList]);
+
+  const activeSteps = useMemo(() => {
+    return isDayTourActive ? STEPS.filter((s) => s.label !== "Hotels") : STEPS;
+  }, [isDayTourActive]);
 
   useEffect(() => {
     onDirtyChange?.(isDirty);
@@ -676,6 +721,7 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange, ref }: { tri
     getCatalogTripDetail(tripId)
       .then((trip) => {
         if (!ignore) {
+          setLoadedTripKind(trip?.kind);
           methods.reset(mapTripToFormValues(trip));
           if (trip?.updated_at) {
             setLastUpdateDate(formatDateDDMMYYYY(trip.updated_at));
@@ -690,6 +736,45 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange, ref }: { tri
       ignore = true;
     };
   }, [methods, tripId]);
+
+  const tripNameEn = methods.watch("tripName.en");
+  const metaTitleEn = methods.watch("metaTitle.en");
+  const slugEnVal = methods.watch("slug.en");
+
+  useEffect(() => {
+    if (!tripId && !slugEnVal) {
+      const source = metaTitleEn || tripNameEn;
+      if (source) {
+        methods.setValue("slug.en", slugify(source));
+      }
+    }
+  }, [tripId, tripNameEn, metaTitleEn, slugEnVal, methods]);
+
+  const tripNameIt = methods.watch("tripName.it");
+  const metaTitleIt = methods.watch("metaTitle.it");
+  const slugItVal = methods.watch("slug.it");
+
+  useEffect(() => {
+    if (!tripId && !slugItVal) {
+      const source = metaTitleIt || tripNameIt;
+      if (source) {
+        methods.setValue("slug.it", slugify(source));
+      }
+    }
+  }, [tripId, tripNameIt, metaTitleIt, slugItVal, methods]);
+
+  const tripNameEs = methods.watch("tripName.es");
+  const metaTitleEs = methods.watch("metaTitle.es");
+  const slugEsVal = methods.watch("slug.es");
+
+  useEffect(() => {
+    if (!tripId && !slugEsVal) {
+      const source = metaTitleEs || tripNameEs;
+      if (source) {
+        methods.setValue("slug.es", slugify(source));
+      }
+    }
+  }, [tripId, tripNameEs, metaTitleEs, slugEsVal, methods]);
 
   const onSubmit = async (data: CreateTripValues, meta: { intent: WizardSubmitIntent }) => {
     setIsSaving(true);
@@ -715,7 +800,88 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange, ref }: { tri
         await publishCatalogTrip(nextTripId);
       }
     } catch (error: any) {
-      const errStr = JSON.stringify(error?.response?.data || error?.message || "");
+      const errData = error?.response?.data;
+      let targetStepLabel: string | null = null;
+
+      // 1. Translations field validation errors from backend (e.g. slug already in use)
+      if (errData?.translations && typeof errData.translations === "object") {
+        const trans = errData.translations;
+        const languages = ["en", "it", "es"] as const;
+        for (const lang of languages) {
+          const langObj = trans[lang];
+          if (!langObj || typeof langObj !== "object") continue;
+
+          if (langObj.slug) {
+            const msg = Array.isArray(langObj.slug) ? langObj.slug.join(" ") : String(langObj.slug);
+            methods.setError(`slug.${lang}` as any, {
+              type: "server",
+              message: msg,
+            });
+            if (!targetStepLabel) targetStepLabel = "SEO";
+          }
+          if (langObj.meta_title) {
+            const msg = Array.isArray(langObj.meta_title) ? langObj.meta_title.join(" ") : String(langObj.meta_title);
+            methods.setError(`metaTitle.${lang}` as any, {
+              type: "server",
+              message: msg,
+            });
+            if (!targetStepLabel) targetStepLabel = "SEO";
+          }
+          if (langObj.meta_description) {
+            const msg = Array.isArray(langObj.meta_description) ? langObj.meta_description.join(" ") : String(langObj.meta_description);
+            methods.setError(`metaDescription.${lang}` as any, {
+              type: "server",
+              message: msg,
+            });
+            if (!targetStepLabel) targetStepLabel = "SEO";
+          }
+          if (langObj.meta_keywords) {
+            const msg = Array.isArray(langObj.meta_keywords) ? langObj.meta_keywords.join(" ") : String(langObj.meta_keywords);
+            methods.setError(`metaKeywords.${lang}` as any, {
+              type: "server",
+              message: msg,
+            });
+            if (!targetStepLabel) targetStepLabel = "SEO";
+          }
+          if (langObj.title) {
+            const msg = Array.isArray(langObj.title) ? langObj.title.join(" ") : String(langObj.title);
+            methods.setError(`tripName.${lang}` as any, {
+              type: "server",
+              message: msg,
+            });
+            if (!targetStepLabel) targetStepLabel = "Overview";
+          }
+          if (langObj.description) {
+            const msg = Array.isArray(langObj.description) ? langObj.description.join(" ") : String(langObj.description);
+            methods.setError(`description.${lang}` as any, {
+              type: "server",
+              message: msg,
+            });
+            if (!targetStepLabel) targetStepLabel = "Overview";
+          }
+          if (langObj.short_description) {
+            const msg = Array.isArray(langObj.short_description) ? langObj.short_description.join(" ") : String(langObj.short_description);
+            methods.setError(`culturalValue.${lang}` as any, {
+              type: "server",
+              message: msg,
+            });
+            if (!targetStepLabel) targetStepLabel = "Overview";
+          }
+        }
+      }
+
+      // 2. Direct root-level slug error fallback
+      if (errData?.slug) {
+        const msg = Array.isArray(errData.slug) ? errData.slug.join(" ") : String(errData.slug);
+        methods.setError("slug.en" as any, {
+          type: "server",
+          message: msg,
+        });
+        if (!targetStepLabel) targetStepLabel = "SEO";
+      }
+
+      // 3. Unique availability constraints
+      const errStr = JSON.stringify(errData || error?.message || "");
       if (
         errStr.includes("uniq_trip_availability_window") ||
         errStr.includes("duplicate key value violates unique constraint") ||
@@ -759,8 +925,18 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange, ref }: { tri
             type: "manual",
             message: "This date range has already been added.",
           });
+          if (!targetStepLabel) targetStepLabel = "Dates Availability";
         }
       }
+
+      // If an error step was identified, switch to that step immediately
+      if (targetStepLabel) {
+        const stepIdx = activeSteps.findIndex((s) => s.label === targetStepLabel);
+        if (stepIdx !== -1) {
+          setCurrentStep(stepIdx);
+        }
+      }
+
       throw error;
     } finally {
       setIsSaving(false);
@@ -768,9 +944,13 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange, ref }: { tri
   };
 
   const handleSaveDraft = async () => {
-    const data = methods.getValues();
-    await onSubmit(data as CreateTripValues, { intent: "draft" });
-    router.push("/dashboard/catalog/trips?draft=true");
+    try {
+      const data = methods.getValues();
+      await onSubmit(data as CreateTripValues, { intent: "draft" });
+      router.push("/dashboard/catalog/trips?draft=true");
+    } catch {
+      // Backend/form validation errors are handled in onSubmit
+    }
   };
 
   useImperativeHandle(ref, () => ({
@@ -784,12 +964,18 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange, ref }: { tri
     handleStepClick,
     setCurrentStep,
   } = useWizard<CreateTripValues>({
-    steps: STEPS,
+    steps: activeSteps,
     methods,
     onSubmit,
     onFinished: () => setIsPublishedModalOpen(true),
     isEdit: !!tripId,
   });
+
+  useEffect(() => {
+    if (currentStep >= activeSteps.length) {
+      setCurrentStep(Math.max(0, activeSteps.length - 1));
+    }
+  }, [activeSteps.length, currentStep, setCurrentStep]);
 
   const successCopy = useMemo(() => {
     if (tripId) {
@@ -805,23 +991,25 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange, ref }: { tri
     };
   }, [tripId]);
 
+  const currentStepConfig = activeSteps[currentStep];
+
   const renderStep = () => {
-    switch (currentStep) {
-      case 0:
+    switch (currentStepConfig?.label) {
+      case "Overview":
         return <OverviewStep />;
-      case 1:
+      case "Inclusions":
         return <InclusionsStep />;
-      case 2:
-        return <PricingStep />;
-      case 3:
+      case "Pricing":
+        return <PricingStep isDayTour={isDayTourActive} />;
+      case "Itinerary":
         return <ItineraryStep />;
-      case 4:
+      case "Dates Availability":
         return <DatesAvailabilityStep />;
-      case 5:
+      case "Hotels":
         return <HotelsStep />;
-      case 6:
+      case "Media":
         return <WizardMediaStep />;
-      case 7:
+      case "SEO":
         return <SEOStep />;
       default:
         return null;
@@ -834,9 +1022,12 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange, ref }: { tri
         id="create-trip-form"
         className={styles.page}
         onSubmit={handleSubmit(
-          (data) => onSubmit(data, { intent: "save" }).then(() => setIsPublishedModalOpen(true)),
+          (data) =>
+            onSubmit(data, { intent: "save" })
+              .then(() => setIsPublishedModalOpen(true))
+              .catch(() => {}),
           (errors) => {
-            const errorStepIndex = getErrorStepIndex(errors);
+            const errorStepIndex = getErrorStepIndex(errors, isDayTourActive);
             if (errorStepIndex !== -1 && errorStepIndex !== currentStep) {
               setCurrentStep(errorStepIndex);
             }
@@ -844,7 +1035,7 @@ export function CreateTrip({ tripId, onDirtyChange, onSavingChange, ref }: { tri
         )}
       >
         <WizardLayout
-          steps={STEPS}
+          steps={activeSteps}
           currentStep={currentStep}
           isEdit={!!tripId}
           onNext={handleNext}

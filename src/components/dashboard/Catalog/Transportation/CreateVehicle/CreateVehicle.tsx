@@ -376,6 +376,7 @@ const getErrorStepIndex = (errors: any) => {
           onPrevious={handlePrevious}
           onStepClick={handleStepClick}
           publishLabel="Publish Vehicle"
+          isLoading={isSaving}
           lastUpdateDate={lastUpdateDate}
         >
           {renderStep()}

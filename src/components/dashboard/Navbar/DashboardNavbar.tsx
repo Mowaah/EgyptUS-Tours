@@ -7,6 +7,7 @@ import NotificationDropdown from "./NotificationDropdown/NotificationDropdown";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import pageCopyByPath, { type BreadcrumbSegment } from "./navbarPageCopy";
 import styles from "./DashboardNavbar.module.scss";
+import { LoadingSpinner } from "@/components/shared";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { resolveModuleFromPathname } from "@/utils/adminPermissions";
 
@@ -244,7 +245,7 @@ export default function DashboardNavbar({
                   disabled={visibleTertiaryAction.disabled || visibleTertiaryAction.loading}
                 >
                   {visibleTertiaryAction.loading && (
-                    <span className={styles.loadingSpinner} aria-hidden="true" />
+                    <LoadingSpinner size="sm" variant="inline" color="current" />
                   )}
                   {visibleTertiaryAction.iconSrc && !visibleTertiaryAction.loading && !visibleTertiaryAction.hideIcon && (
                     <Image
@@ -270,7 +271,7 @@ export default function DashboardNavbar({
                   disabled={visibleSecondaryAction.disabled || visibleSecondaryAction.loading}
                 >
                   {visibleSecondaryAction.loading && (
-                    <span className={styles.loadingSpinner} aria-hidden="true" />
+                    <LoadingSpinner size="sm" variant="inline" color="current" />
                   )}
                   {visibleSecondaryAction.iconSrc && !visibleSecondaryAction.loading && !visibleSecondaryAction.hideIcon && (
                     <Image
@@ -296,7 +297,7 @@ export default function DashboardNavbar({
                   disabled={visiblePrimaryAction.disabled || visiblePrimaryAction.loading}
                 >
                   {visiblePrimaryAction.loading && (
-                    <span className={styles.loadingSpinner} aria-hidden="true" />
+                    <LoadingSpinner size="sm" variant="inline" color="white" />
                   )}
                   {!visiblePrimaryAction.loading && visiblePrimaryAction.label}
                   {!visiblePrimaryAction.loading && !visiblePrimaryAction.hideIcon && (

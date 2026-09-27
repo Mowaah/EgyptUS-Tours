@@ -117,7 +117,12 @@
     color: $background;
   }
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: #1d5ec9;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }

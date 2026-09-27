@@ -81,6 +81,7 @@
   },
   "pricing": {
     "heading": "Prices & Accommodation",
+    "tourPrices": "Tour Prices",
     "subtitle": "Explore detailed pricing and accommodation options tailored to your selected trip",
     "privateTour": "Private Tour",
     "groupTour": "Group Tour",
@@ -128,6 +129,7 @@
     "excluded": "What's Not Included",
     "travelerPhotos": "Taken by Travelers",
     "pricesAccommodation": "Prices & Accommodation",
+    "tourPrices": "Tour Prices",
     "luxuryAccommodations": "Luxury Accommodations",
     "datesAvailability": "Dates & Availability",
     "itinerary": "Day-by-Day Itinerary",

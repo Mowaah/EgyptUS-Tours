@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { requiredLocalizedStringSchema, localizedSlugSchema } from "@/components/dashboard/shared/i18n";
 import { formatDateToYMD } from "@/utils/dateFormat";
+import { isDayTourText } from "@/utils/tripUtils";
 
 function normalizeDateRangeKey(value: string): string {
   // Must have both start and end separated by " - "
@@ -53,6 +54,10 @@ export const createTripSchema = z
                   singleRoom: z.string().optional(),
                   doubleRoom: z.string().optional(),
                   tripleRoom: z.string().optional(),
+                  solo: z.string().optional(),
+                  pax2_4: z.string().optional(),
+                  pax5_8: z.string().optional(),
+                  pax9_20: z.string().optional(),
                 })
               )
               .optional(),
@@ -67,6 +72,10 @@ export const createTripSchema = z
                   singleRoom: z.string().optional(),
                   doubleRoom: z.string().optional(),
                   tripleRoom: z.string().optional(),
+                  solo: z.string().optional(),
+                  pax2_4: z.string().optional(),
+                  pax5_8: z.string().optional(),
+                  pax9_20: z.string().optional(),
                 })
               )
               .optional(),
@@ -225,11 +234,17 @@ export const createTripSchema = z
       });
     }
 
-    if (isPrivate) {
+    const isDayTour =
+      isDayTourText(data.category) ||
+      (data.pricing?.privateTour?.seasons || []).some((s) => s.solo || s.pax2_4 || s.pax5_8 || s.pax9_20) ||
+      (data.pricing?.groupTour?.seasons || []).some((s) => s.solo || s.pax2_4 || s.pax5_8 || s.pax9_20);
 
+    if (isPrivate) {
       const seasons = data.pricing?.privateTour?.seasons || [];
       const validSeasons = seasons.filter(
-        (s) => s.dateRange || s.singleRoom || s.doubleRoom || s.tripleRoom
+        (s) => isDayTour
+          ? (s.dateRange || s.solo || s.pax2_4 || s.pax5_8 || s.pax9_20)
+          : (s.dateRange || s.singleRoom || s.doubleRoom || s.tripleRoom)
       );
       if (validSeasons.length === 0) {
         ctx.addIssue({
@@ -244,27 +259,43 @@ export const createTripSchema = z
         });
       } else {
         seasons.forEach((season, idx) => {
-          if (!season.singleRoom || !season.doubleRoom || !season.tripleRoom) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              path: ["pricing", "privateTour", "seasons", idx],
-              message: "Private tour seasons need single, double, and triple room prices",
-            });
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              path: ["pricing"],
-              message: "Private tour seasons need single, double, and triple room prices",
-            });
+          if (isDayTour) {
+            if (!season.solo || !season.pax2_4 || !season.pax5_8 || !season.pax9_20) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ["pricing", "privateTour", "seasons", idx],
+                message: "Private tour seasons need Solo, 2-4 Pax, 5-8 Pax, and 9-20 Pax prices",
+              });
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ["pricing"],
+                message: "Private tour seasons need Solo, 2-4 Pax, 5-8 Pax, and 9-20 Pax prices",
+              });
+            }
+          } else {
+            if (!season.singleRoom || !season.doubleRoom || !season.tripleRoom) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ["pricing", "privateTour", "seasons", idx],
+                message: "Private tour seasons need single, double, and triple room prices",
+              });
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ["pricing"],
+                message: "Private tour seasons need single, double, and triple room prices",
+              });
+            }
           }
         });
       }
     }
 
     if (isGroup) {
-
       const seasons = data.pricing?.groupTour?.seasons || [];
       const validSeasons = seasons.filter(
-        (s) => s.dateRange || s.singleRoom || s.doubleRoom || s.tripleRoom
+        (s) => isDayTour
+          ? (s.dateRange || s.solo || s.pax2_4 || s.pax5_8 || s.pax9_20)
+          : (s.dateRange || s.singleRoom || s.doubleRoom || s.tripleRoom)
       );
       if (validSeasons.length === 0) {
         ctx.addIssue({
@@ -279,17 +310,32 @@ export const createTripSchema = z
         });
       } else {
         seasons.forEach((season, idx) => {
-          if (!season.singleRoom || !season.doubleRoom || !season.tripleRoom) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              path: ["pricing", "groupTour", "seasons", idx],
-              message: "Group tour seasons need single, double, and triple room prices",
-            });
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              path: ["pricing"],
-              message: "Group tour seasons need single, double, and triple room prices",
-            });
+          if (isDayTour) {
+            if (!season.solo || !season.pax2_4 || !season.pax5_8 || !season.pax9_20) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ["pricing", "groupTour", "seasons", idx],
+                message: "Group tour seasons need Solo, 2-4 Pax, 5-8 Pax, and 9-20 Pax prices",
+              });
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ["pricing"],
+                message: "Group tour seasons need Solo, 2-4 Pax, 5-8 Pax, and 9-20 Pax prices",
+              });
+            }
+          } else {
+            if (!season.singleRoom || !season.doubleRoom || !season.tripleRoom) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ["pricing", "groupTour", "seasons", idx],
+                message: "Group tour seasons need single, double, and triple room prices",
+              });
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ["pricing"],
+                message: "Group tour seasons need single, double, and triple room prices",
+              });
+            }
           }
         });
       }

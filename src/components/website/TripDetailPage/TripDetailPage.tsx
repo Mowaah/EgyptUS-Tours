@@ -25,6 +25,7 @@ import styles from "./TripDetailPage.module.scss";
 import { TestimonialData } from "@/services/testimonialsService";
 import { useFavorite } from "@/hooks/useFavorite";
 import { useTranslation } from "@/hooks/useTranslation";
+import { isDayTour } from "@/utils/tripUtils";
 
 interface TripDetailPageProps {
   trip: Trip;
@@ -39,14 +40,15 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
     initialFavorite: trip.isFavorite ?? false,
   });
   const { t } = useTranslation("trips");
+  const isDayTourTrip = isDayTour(trip);
 
   const BASE_TRIP_TABS = [
     { id: "overview", label: t("tabs.overview", "Overview") },
     { id: "included", label: t("tabs.included", "What's Included") },
     { id: "excluded", label: t("tabs.excluded", "What's Not Included") },
     { id: "traveler-photos", label: t("tabs.travelerPhotos", "Taken by Travelers"), requiresPhotos: true },
-    { id: "prices-accommodation", label: t("tabs.pricesAccommodation", "Prices & Accommodation") },
-    { id: "luxury-accommodations", label: t("tabs.luxuryAccommodations", "Luxury Accommodations") },
+    { id: "prices-accommodation", label: isDayTourTrip ? t("pricing.tourPrices", "Tour Prices") : t("tabs.pricesAccommodation", "Prices & Accommodation") },
+    ...(!isDayTourTrip ? [{ id: "luxury-accommodations", label: t("tabs.luxuryAccommodations", "Luxury Accommodations") }] : []),
     { id: "dates-availability", label: t("tabs.datesAvailability", "Dates & Availability"), requiresAvailability: true },
     { id: "itinerary", label: t("tabs.itinerary", "Day-by-Day Itinerary") },
     { id: "traveler-reviews", label: t("tabs.travelerReviews", "Traveler Reviews") },
@@ -205,9 +207,11 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
       <TripPricing trip={trip} />
 
       {/* ── Accommodations (Swapped here) ── */}
-      <div className={styles.container}>
-        <TripAccommodations trip={trip} />
-      </div>
+      {!isDayTourTrip && (
+        <div className={styles.container}>
+          <TripAccommodations trip={trip} />
+        </div>
+      )}
 
       {/* Dates & Availability Swapped here */}
       <div className={styles.container}>

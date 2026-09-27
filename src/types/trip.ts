@@ -15,6 +15,7 @@ export interface TripHotel {
 export interface Trip {
   id: string;
   numericId?: number;
+  kind?: "trip" | "day_tour";
   title: string;
   description: string;
   image: string;
@@ -136,6 +137,13 @@ export interface Trip {
     singlePrices?: MultiCurrencyPrice;
     doublePrices?: MultiCurrencyPrice;
     triplePrices?: MultiCurrencyPrice;
+    tiers?: Array<{
+      label: string;
+      price: number;
+      priceEgp?: number;
+      priceEur?: number;
+      prices?: MultiCurrencyPrice;
+    }>;
   }>;
 
   additionalRooms?: {

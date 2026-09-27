@@ -84,7 +84,7 @@
   cursor: pointer;
 
   &:hover {
-    color: darken($primary, 10%);
+    color: $primary-hover;
   }
 }
 

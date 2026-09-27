@@ -14,6 +14,7 @@ import { MultiCurrencyPrice } from "@/constants/currency";
 import { calculateTripBookingPrice } from "@/utils/bookingPricing";
 import { savePendingGuestRecord } from "@/utils/guestBookingAuth";
 import { formatDateToYMD } from "@/utils/dateFormat";
+import { isDayTour } from "@/utils/tripUtils";
 
 import planPageStyles from "../PlanYourTripPage/PlanYourTripPage.module.scss";
 
@@ -216,6 +217,8 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
       const calculatedDouble = (formData.roomCustomizations?.double || []).length || doubleCount;
       const calculatedTriple = (formData.roomCustomizations?.triple || []).length || tripleCount;
 
+      const isDayTourTrip = isDayTour(trip);
+
       const payload = {
         name: formData.name.trim(),
         trip_slug: trip.id,
@@ -223,20 +226,20 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
         phone: formatPhoneE164(formData.phone),
         nationality: formData.nationality,
         start_date: formatDateToYMD(formData.startDate),
-        end_date: formatDateToYMD(formData.endDate),
+        end_date: isDayTourTrip ? formatDateToYMD(formData.startDate) : formatDateToYMD(formData.endDate),
         adults: formData.adults,
         children: formData.children,
         infants: formData.infants,
-        rooms: {
+        rooms: isDayTourTrip ? { single: 0, double: 0, triple: 0 } : {
           single: calculatedSingle,
           double: calculatedDouble,
           triple: calculatedTriple,
         },
-        room_selections: roomSelections.length > 0 ? roomSelections : undefined,
+        room_selections: isDayTourTrip ? undefined : (roomSelections.length > 0 ? roomSelections : undefined),
         departure_month: isFixedDates ? formData.departureMonth : undefined,
         departure_date_id: isFixedDates && formData.departureDateId ? Number(formData.departureDateId) || undefined : undefined,
         children_ages: formData.children > 0 ? (formData.childrenAges || []) : undefined,
-        child_room_pricing: formData.children > 0 ? (formData.childRoomPricing || []) : undefined,
+        child_room_pricing: isDayTourTrip ? undefined : (formData.children > 0 ? (formData.childRoomPricing || []) : undefined),
         special_requests: formData.specialRequests,
         terms_accepted: formData.termsAccepted,
         tour_type: isGroupTrip ? "group" : "private",

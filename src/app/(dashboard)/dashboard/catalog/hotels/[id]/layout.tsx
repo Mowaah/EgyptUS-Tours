@@ -191,6 +191,8 @@ export default function HotelLayout({
                   ? {
                       label: isActionPending ? "Publishing..." : "Publish",
                       icon: "/images/send.svg",
+                      loading: isActionPending,
+                      disabled: isActionPending,
                       onClick: async () => {
                         if (!hotel || isActionPending) return;
                         setIsActionPending(true);
@@ -209,6 +211,8 @@ export default function HotelLayout({
                   ? {
                       label: isActionPending ? "Publishing..." : "Publish",
                       icon: "/images/send.svg",
+                      loading: isActionPending,
+                      disabled: isActionPending,
                       onClick: async () => {
                         if (!hotel || isActionPending) return;
                         setIsActionPending(true);

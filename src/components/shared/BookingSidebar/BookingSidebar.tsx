@@ -10,6 +10,7 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { calculateTripBookingPrice, calculateHotelBookingPrice, CHILD_POLICY, normalizeRoomType, resolveApplicableSeason } from "@/utils/bookingPricing";
 import { formatDateDDMMYYYY, parseDate, isDateWithinFullPaymentWindow } from "@/utils/dateFormat";
+import { isDayTour } from "@/utils/tripUtils";
 import styles from "./BookingSidebar.module.scss";
 
 interface BookingSidebarProps {
@@ -468,24 +469,37 @@ export default function BookingSidebar({
               ))
             ) : hasValidPricingSummary && pricingSummary && pricingSummary.lineItems.length > 0 ? (
               pricingSummary.lineItems.map((item, idx) => {
-                const adultLabel = `${item.adultCount} ${item.adultCount === 1 ? t("sidebar.adult", "Adult") : t("sidebar.adults", "Adults")}`;
-                const childList = item.children.map((c) => `${c.age} years`).join(", ");
-                const childLabel = item.children.length > 0
-                  ? ` . ${item.children.length} ${item.children.length === 1 ? t("sidebar.child", "Child") : t("sidebar.children", "Children")} (${childList})`
-                  : "";
-                const occupantText = `${adultLabel}${childLabel}`;
+                const isDayTourTrip = trip ? isDayTour(trip) : false;
 
-                const displayName = item.categoryLabel
+                let displayName = item.categoryLabel
                   ? `${item.quantity} × ${item.roomName} ${item.categoryLabel} - ${item.viewLabel}`
                   : `${item.quantity} × ${item.roomName} - ${item.viewLabel}`;
+
+                let displayPrice = formatMoney(item.lineTotals || item.lineTotal);
+                let occupantText = "";
+
+                if (isDayTourTrip) {
+                  displayName = item.roomName;
+                  displayPrice = formatMoney(item.unitPrices || item.unitPrice);
+                  const adultText = `${item.adultCount} ${item.adultCount === 1 ? t("sidebar.adult", "Adult") : t("sidebar.adults", "Adult")}`;
+                  const childrenText = item.children.map((c) => `1 ${t("sidebar.child", "Child")} (${c.age} years)`).join(", ");
+                  occupantText = [adultText, childrenText].filter(Boolean).join(" , ");
+                } else {
+                  const adultLabel = `${item.adultCount} ${item.adultCount === 1 ? t("sidebar.adult", "Adult") : t("sidebar.adults", "Adults")}`;
+                  const childList = item.children.map((c) => `${c.age} years`).join(", ");
+                  const childLabel = item.children.length > 0
+                    ? ` . ${item.children.length} ${item.children.length === 1 ? t("sidebar.child", "Child") : t("sidebar.children", "Children")} (${childList})`
+                    : "";
+                  occupantText = `${adultLabel}${childLabel}`;
+                }
 
                 return (
                   <div key={`${item.roomType}-${item.viewLabel}-${idx}`} className={styles.priceItemWrap}>
                     <div className={styles.priceRow}>
                       <span>{displayName}</span>
-                      <strong>{formatMoney(item.lineTotals || item.lineTotal)}</strong>
+                      <strong>{displayPrice}</strong>
                     </div>
-                    <span className={styles.occupantSubtext}>{occupantText}</span>
+                    {occupantText && <span className={styles.occupantSubtext}>{occupantText}</span>}
                   </div>
                 );
               })
