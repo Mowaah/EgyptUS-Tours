@@ -116,6 +116,8 @@ function mapRevenueLines(rows: RevenueOverviewRow[]): ChartLine[] {
     { name: "Hotels", color: "#FF8B3D", points: rows.map((r) => parseMoney(r.hotel)) },
     { name: "Transportation", color: "#FB7D91", points: rows.map((r) => parseMoney(r.transport)) },
     { name: "MICE", color: "#A23DE0", points: rows.map((r) => parseMoney(r.mice)) },
+    { name: "B2B", color: "#B6F3D2", points: rows.map((r) => parseMoney(r.b2b)) },
+    { name: "Plan Your Trip", color: "#E9BDFF", points: rows.map((r) => parseMoney(r.custom_trip ?? "0")) },
   ];
 }
 
@@ -124,6 +126,8 @@ const DEFAULT_REVENUE_LINES: ChartLine[] = [
   { name: "Hotels", color: "#FF8B3D", points: [] },
   { name: "Transportation", color: "#FB7D91", points: [] },
   { name: "MICE", color: "#A23DE0", points: [] },
+  { name: "B2B", color: "#B6F3D2", points: [] },
+  { name: "Plan Your Trip", color: "#E9BDFF", points: [] },
 ];
 
 const DEFAULT_DOMESTIC_LINES: ChartLine[] = [

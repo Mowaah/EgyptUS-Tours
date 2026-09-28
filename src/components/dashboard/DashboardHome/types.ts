@@ -65,6 +65,7 @@ export interface RevenueOverviewRow {
   transport: string;
   mice: string;
   b2b: string;
+  custom_trip?: string;
 }
 
 export interface DomesticOverviewRow {
