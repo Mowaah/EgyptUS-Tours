@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: BlogDetailRouteProps): Promis
       openGraph: {
         title,
         description,
-        images: [blog.hero_image || blog.featured_image || "/images/home/hero-bg.png"],
+        images: [blog.featured_image || blog.hero_image || "/images/home/hero-bg.png"],
       },
     };
   } catch (err) {
@@ -78,7 +78,7 @@ export default async function BlogDetailRoute({ params }: BlogDetailRouteProps) 
       date: new Date(blog.published_at).toLocaleDateString(localeCode, { day: '2-digit', month: 'long', year: 'numeric' }),
       readTime: `${blog.read_time_minutes} min`,
       views: `${blog.views_count || 0}`,
-      heroImage: blog.hero_image || blog.featured_image || "/images/home/hero-bg.png",
+      heroImage: blog.featured_image || blog.hero_image || "/images/home/hero-bg.png",
       heroCaption: loc.imageTitle || blog.image_title || "",
       imageAlt: loc.imageAlt || blog.image_alt || blogTitle,
       htmlContent: blogContent,
@@ -91,7 +91,7 @@ export default async function BlogDetailRoute({ params }: BlogDetailRouteProps) 
           id: rb.slug,
           title: rloc.title || rb.title,
           date: new Date(rb.published_at).toLocaleDateString(localeCode, { day: '2-digit', month: 'long', year: 'numeric' }),
-          image: rb.featured_image || rb.hero_image || "/images/article.jpg",
+          image: rb.hero_image || rb.featured_image || "/images/article.jpg",
           href: `/blogs/${rb.slug}`
         };
       }),

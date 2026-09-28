@@ -48,7 +48,7 @@ export default function LatestArticles({
       title: loc.title || a.title,
       excerpt: loc.excerpt || a.excerpt,
       date: new Date(a.published_at).toLocaleDateString(localeCode, { day: '2-digit', month: 'long', year: 'numeric' }),
-      image: a.featured_image || a.hero_image || "/images/home/hero-bg.png"
+      image: a.hero_image || a.featured_image || "/images/home/hero-bg.png"
     };
   });
 
@@ -153,7 +153,7 @@ export default function LatestArticles({
                         <Link key={article.id} href={`/articles/${article.slug}`} className={styles.smallCard}>
                           <div className={styles.smallImageWrap}>
                             <Image
-                              src={article.featured_image || "/images/home/hero-bg.png"}
+                              src={article.hero_image || article.featured_image || "/images/home/hero-bg.png"}
                               alt={title}
                               fill
                               className={styles.image}

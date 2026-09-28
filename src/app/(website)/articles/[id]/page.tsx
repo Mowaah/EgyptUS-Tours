@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: ArticleDetailRouteProps): Pro
       openGraph: {
         title,
         description,
-        images: [article.hero_image || article.featured_image || "/images/home/hero-bg.png"],
+        images: [article.featured_image || article.hero_image || "/images/home/hero-bg.png"],
       },
     };
   } catch (err) {
@@ -78,7 +78,7 @@ export default async function ArticleDetailRoute({ params }: ArticleDetailRouteP
       date: new Date(article.published_at).toLocaleDateString(localeCode, { day: '2-digit', month: 'long', year: 'numeric' }),
       readTime: `${article.read_time_minutes} min`,
       views: `${article.views_count || 0}`,
-      heroImage: article.hero_image || article.featured_image || "/images/home/hero-bg.png",
+      heroImage: article.featured_image || article.hero_image || "/images/home/hero-bg.png",
       heroCaption: loc.imageTitle || article.image_title || "",
       imageAlt: loc.imageAlt || article.image_alt || articleTitle,
       htmlContent: articleContent,
@@ -91,7 +91,7 @@ export default async function ArticleDetailRoute({ params }: ArticleDetailRouteP
           id: ra.slug,
           title: rloc.title || ra.title,
           date: new Date(ra.published_at).toLocaleDateString(localeCode, { day: '2-digit', month: 'long', year: 'numeric' }),
-          image: ra.featured_image || ra.hero_image || "/images/article.jpg",
+          image: ra.hero_image || ra.featured_image || "/images/article.jpg",
           href: `/articles/${ra.slug}`
         };
       }),

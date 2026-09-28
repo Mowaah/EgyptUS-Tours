@@ -41,7 +41,7 @@ export default function BlogTrending({
       title: loc.title || a.title,
       excerpt: loc.excerpt || a.excerpt,
       date: new Date(a.published_at).toLocaleDateString(localeCode, { day: '2-digit', month: 'long', year: 'numeric' }),
-      image: a.featured_image || a.hero_image || "/images/home/hero-bg.png"
+      image: a.hero_image || a.featured_image || "/images/home/hero-bg.png"
     };
   });
 
