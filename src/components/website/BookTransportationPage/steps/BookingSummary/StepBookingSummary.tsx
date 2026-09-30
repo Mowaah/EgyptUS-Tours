@@ -134,7 +134,7 @@ export default function StepBookingSummary({
       <BookingStepFooter
         onPrevious={onPrevious}
         onContinue={onSubmit}
-        continueLabel={isSubmitting ? t("transportBooking.connectingPayment", "Connecting to Payment...") : t("buttons.continueToPayment", "Continue To Payment")}
+        continueLabel={isSubmitting ? t("transportBooking.checkoutStarting", "Starting Checkout...") : t("buttons.continueToPayment", "Continue To Payment")}
         continueDisabled={!formData.termsAccepted || isSubmitting}
         showMoneyIcon
       />

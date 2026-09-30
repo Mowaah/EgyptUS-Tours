@@ -252,7 +252,7 @@
       "subtitle": "Revisa atentamente los detalles de tu viaje antes de confirmar la reserva.",
       "contactInfo": "Datos de Contacto",
       "tripInfo": "Datos del Viaje",
-      "connectingPaymob": "Conectando con Paymob...",
+      "connectingPaymob": "Iniciando Pago...",
       "continueToPayment": "Continuar al Pago"
     },
     "success": {
@@ -273,9 +273,11 @@
     "breadcrumbTransport": "Transporte",
     "breadcrumbDetails": "Detalles",
     "backToTransport": "Volver a Transporte",
+    "checkoutStarting": "Iniciando Pago...",
     "steps": {
       "rideDetails": "Detalles del Viaje",
       "contactDetails": "Datos Personales",
+      "summary": "Resumen de la Reserva",
       "payment": "Pago"
     },
     "rideDetails": {

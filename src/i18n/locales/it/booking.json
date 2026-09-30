@@ -252,7 +252,7 @@
       "subtitle": "Controlla attentamente i dettagli del tuo viaggio prima di confermare la prenotazione.",
       "contactInfo": "Dati di Contatto",
       "tripInfo": "Dati del Viaggio",
-      "connectingPaymob": "Connessione a Paymob...",
+      "connectingPaymob": "Avvio Pagamento...",
       "continueToPayment": "Continua al Pagamento"
     },
     "success": {
@@ -273,9 +273,11 @@
     "breadcrumbTransport": "Trasporti",
     "breadcrumbDetails": "Dettagli",
     "backToTransport": "Torna ai Trasporti",
+    "checkoutStarting": "Avvio Pagamento...",
     "steps": {
       "rideDetails": "Dettagli Viaggio",
       "contactDetails": "Dati Personali",
+      "summary": "Riepilogo Prenotazione",
       "payment": "Pagamento"
     },
     "rideDetails": {

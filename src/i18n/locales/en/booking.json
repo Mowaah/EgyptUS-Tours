@@ -250,7 +250,7 @@
       "subtitle": "Please review your trip details carefully before confirming your reservation.",
       "contactInfo": "Contact Info",
       "tripInfo": "Trip Info",
-      "connectingPaymob": "Connecting to Paymob...",
+      "connectingPaymob": "Starting Checkout...",
       "continueToPayment": "Continue To Payment"
     },
     "success": {
@@ -271,9 +271,11 @@
     "breadcrumbTransport": "Transportation",
     "breadcrumbDetails": "Details",
     "backToTransport": "Back To Transportation",
+    "checkoutStarting": "Starting Checkout...",
     "steps": {
       "rideDetails": "Trip Details",
       "contactDetails": "Personal Info",
+      "summary": "Booking Summary",
       "payment": "Payment"
     },
     "rideDetails": {

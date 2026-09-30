@@ -158,6 +158,7 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
     { number: 1, label: t("transportBooking.steps.rideDetails", "Trip Details") },
     { number: 2, label: t("transportBooking.steps.contactDetails", "Personal Info") },
     { number: 3, label: t("transportBooking.steps.summary", "Booking Summary") },
+    { number: 4, label: t("transportBooking.steps.payment", "Payment") },
   ];
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -306,7 +307,7 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
       />
 
       <div ref={stepIndicatorRef} className={styles.stepperWrap}>
-        <StepIndicator steps={steps} currentStep={currentStep} />
+        <StepIndicator steps={steps} currentStep={isSubmitting && currentStep === 3 ? 4 : currentStep} />
       </div>
 
       <main className={planPageStyles.mainContent}>
