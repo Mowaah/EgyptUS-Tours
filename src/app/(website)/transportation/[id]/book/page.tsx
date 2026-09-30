@@ -22,8 +22,9 @@ export default async function BookTransportationRoute({ params }: Props) {
       name: detail.name || detail.title || "",
       title: detail.title || detail.name || "",
       type: detail.vehicle_type || detail.type || "Premium Vehicle",
-      image: detail.image || "/images/sedan.png",
+      image: detail.image || detail.hero_image || detail.gallery?.[0]?.image || "/images/sedan.png",
       gallery: detail.gallery?.map(g => g.image) || [],
+      additionalServices: detail.additional_services || [],
       price: discountedPrice.toString(),
       prices: {
         usd: discountedPrice,

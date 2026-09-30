@@ -36,7 +36,6 @@ const EMPTY_VALUES: CreateVehicleValues = {
   description: { en: "", it: "", es: "" },
   basePrice: "",
   pricePerKm: "",
-  additionalServices: [],
   photos: [
     { file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } }, // hero
     { file: undefined, title: { en: "", it: "", es: "" }, alt: { en: "", it: "", es: "" } }, // gallery
@@ -161,7 +160,6 @@ async function buildPayload(data: CreateVehicleValues, intent: WizardSubmitInten
     passengers: intValue(data.passengerCapacity) || 1,
     luggage_capacity: intValue(data.luggageCapacity) || 0,
     rating_avg: data.starRating ? parseFloat(data.starRating) : undefined,
-    additional_service_ids: data.additionalServices?.map(id => parseInt(id, 10)) || [],
     currency_code: DASHBOARD_CURRENCY.code,
     price_amount: money(data.basePrice) || undefined,
     price_per_km: money(data.pricePerKm) || undefined,
@@ -219,7 +217,6 @@ function mapVehicleToFormValues(vehicle: any): CreateVehicleValues {
     description: { en: asText(tEn.description || vehicle.description), it: asText(tIt.description), es: asText(tEs.description) },
     basePrice: asText(vehicle.price_amount),
     pricePerKm: asText(vehicle.price_per_km),
-    additionalServices: (vehicle.additional_services || []).map((s: any) => String(s.id || s)),
     photos,
     metaTitle: { en: asText(tEn.meta_title), it: asText(tIt.meta_title), es: asText(tEs.meta_title) },
     metaDescription: { en: asText(tEn.meta_description), it: asText(tIt.meta_description), es: asText(tEs.meta_description) },

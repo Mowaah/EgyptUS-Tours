@@ -201,3 +201,29 @@
     cursor: not-allowed;
   }
 }
+
+@media (max-width: 1499px) {
+  .filterPopover {
+    width: 420px;
+  }
+
+  .popoverHeader {
+    height: 64px;
+    padding: 12px 18px;
+  }
+
+  .popoverBody {
+    padding: 14px 18px 24px;
+    gap: 20px;
+  }
+
+  .quickFilterPill {
+    height: 48px;
+    padding: 0 10px;
+  }
+
+  .popoverFooter {
+    height: 70px;
+    padding: 12px 18px;
+  }
+}

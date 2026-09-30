@@ -57,6 +57,7 @@ export interface VehicleAdditionalServicePublic {
 
 export interface VehicleDetail extends VehicleList {
   description: string;
+  hero_image?: string | null;
   gallery: VehicleGalleryImage[];
   duration?: {
     hours_min: number;

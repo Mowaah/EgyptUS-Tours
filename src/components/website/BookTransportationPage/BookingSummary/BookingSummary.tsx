@@ -4,15 +4,11 @@ import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Vehicle, TransportationBookingData } from "@/types";
-import useSWR from "swr";
-import { apiClient } from "@/lib/api";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { MultiCurrencyPrice } from "@/constants/currency";
 import { useTranslation } from "@/hooks/useTranslation";
 import { parseDate, isDateWithinFullPaymentWindow } from "@/utils/dateFormat";
 import styles from "./BookingSummary.module.scss";
-
-const fetcher = (url: string) => apiClient.get(url).then((res: any) => res.results || res);
 
 interface BookingSummaryProps {
   vehicle: Vehicle;
@@ -47,8 +43,7 @@ export default function BookingSummary({
   const { t } = useTranslation("booking");
   const { formatCurrency } = useCurrency();
 
-  const { data: vehicleDetailsData } = useSWR(vehicle.id ? `/vehicles/${vehicle.id}/` : null, fetcher);
-  const additionalServices = vehicleDetailsData?.additional_services || [];
+  const additionalServices = vehicle.additionalServices || [];
 
   const basePrice = parseFloat((vehicle.price ?? "0").replace(/[^0-9.]/g, "")) || 0;
 

@@ -133,7 +133,7 @@ export default function StepTripDetails({
   errors = {},
 }: StepTripDetailsProps) {
   const { data: vehicleDetailsData } = useSWR(`/vehicles/${vehicle.id}/`, fetcher);
-  const additionalServices = vehicleDetailsData?.additional_services || [];
+  const additionalServices = vehicle.additionalServices ?? vehicleDetailsData?.additional_services ?? [];
   const { t } = useTranslation("booking");
 
   const maxPassengers = Math.max(1, vehicleDetailsData?.passengers || vehicle.passengers || 1);

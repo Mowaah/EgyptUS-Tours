@@ -1,4 +1,5 @@
 import { MultiCurrencyPrice } from "@/constants/currency";
+import type { VehicleAdditionalServicePublic } from "@/types/api/vehicles";
 
 export interface Vehicle {
   id: string;
@@ -7,6 +8,7 @@ export interface Vehicle {
   type: string;
   image: string;
   gallery?: string[];
+  additionalServices?: VehicleAdditionalServicePublic[];
   price: string;
   prices?: MultiCurrencyPrice;
   passengers: number;

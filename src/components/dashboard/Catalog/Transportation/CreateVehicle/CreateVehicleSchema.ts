@@ -22,7 +22,6 @@ export const createVehicleSchema = z.object({
   // Pricing
   basePrice: z.string().optional(),
   pricePerKm: z.string().optional(),
-  additionalServices: z.array(z.string()).default([]),
 
   // Media
   photos: z
