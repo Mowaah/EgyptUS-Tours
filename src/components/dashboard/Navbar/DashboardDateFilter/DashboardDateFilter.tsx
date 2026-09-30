@@ -114,6 +114,9 @@ export default function DashboardDateFilter() {
 
   const handleStartDateChange = (val: string) => {
     setStartDate(val);
+    if (val && endDate && val > endDate) {
+      setEndDate("");
+    }
     if (val) {
       setSelectedQuickRange(null);
     }
@@ -263,7 +266,6 @@ export default function DashboardDateFilter() {
                 {/* Start Date */}
                 <CustomDatePicker
                   variant="custom"
-                  allowPastDates={true}
                   value={toPickerValue(startDate)}
                   onChange={(val) => handleStartDateChange(toIsoDate(val))}
                   dropdownClassName={styles.datePickerPortal}
@@ -294,7 +296,7 @@ export default function DashboardDateFilter() {
                 {/* End Date */}
                 <CustomDatePicker
                   variant="custom"
-                  allowPastDates={true}
+                  minDate={startDate ? parseDate(startDate) : undefined}
                   value={toPickerValue(endDate)}
                   onChange={(val) => handleEndDateChange(toIsoDate(val))}
                   dropdownClassName={styles.datePickerPortal}

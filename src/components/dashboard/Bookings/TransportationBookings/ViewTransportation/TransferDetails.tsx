@@ -1,5 +1,5 @@
 import styles from "./ViewTransportation.module.scss";
-import { formatDateDDMMYYYY } from "@/utils/dateFormat";
+import { formatDateDDMMYYYY, formatDisplayTime } from "@/utils/dateFormat";
 
 interface TransferDetailsProps {
   transfer: any;
@@ -35,7 +35,7 @@ export default function TransferDetails({ transfer }: TransferDetailsProps) {
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Date & Time</span>
           <span className={styles.infoValue}>
-            {formatDateString(transfer?.pickup_date)} · {transfer?.pickup_time || "-"}
+            {formatDateString(transfer?.pickup_date)} · {formatDisplayTime(transfer?.pickup_time, "-")}
           </span>
         </div>
 
