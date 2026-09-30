@@ -16,6 +16,7 @@ import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyStat
 import { ReassignModal } from "@/components/dashboard/shared";
 import { useAdminUsers } from "@/hooks/useAdminUsers";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
+import { useDashboardDateRange } from "@/hooks/useDashboardDateRange";
 
 const filterOptions = {
   batchId: ["All", "LD-001", "LD-002", "LD-003"],
@@ -35,6 +36,7 @@ interface InquiriesPanelProps {
 export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEditLead, onAddLead }: InquiriesPanelProps) {
   const router = useRouter();
   const { canEdit } = useAdminAuth();
+  const dateRange = useDashboardDateRange();
   
   const defaultFilters = {
     batchId: "All",
@@ -61,6 +63,8 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
     const params: any = {
       page: pageIndex + 1,
       page_size: pageSize,
+      date_from: dateRange.date_from,
+      date_to: dateRange.date_to,
     };
     if (searchQuery) params.search = searchQuery;
     if (appliedFilters.batchId !== "All") params.batch_code = appliedFilters.batchId;
@@ -83,7 +87,7 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
       params.date_to = appliedFilters.date;
     }
     return params;
-  }, [pageIndex, pageSize, searchQuery, appliedFilters, users]);
+  }, [pageIndex, pageSize, searchQuery, appliedFilters, users, dateRange]);
 
   const { data: leadsData, isLoading } = useLeads(queryParams);
   const leadsList = leadsData?.results || [];
@@ -108,6 +112,7 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
   const resetFilters = () => {
     setFilters(defaultFilters);
     setAppliedFilters(defaultFilters);
+    dateRange.clearDateFilter();
     onClearSearch?.();
   };
 
@@ -130,6 +135,9 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
     options: options as string[],
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
+
+  const hasTableFilters = Object.values(appliedFilters).some((value) => value !== "All");
+  const hasActiveFilters = hasTableFilters || dateRange.hasActiveFilter;
 
 
 
@@ -182,9 +190,9 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
         onPageSizeChange={setPageSize}
         defaultPageSize={10}
         isLoading={isLoading}
-        onClearSearch={onClearSearch || resetFilters}
+        onClearSearch={resetFilters}
         emptyState={
-          !searchQuery && Object.values(appliedFilters).every((v) => v === "All") ? (
+          !searchQuery && !hasActiveFilters ? (
             <DashboardEmptyState
               title="No Leads Yet"
               subtitle="Leads will appear here once they are added or imported."
@@ -192,9 +200,9 @@ export default function InquiriesPanel({ searchQuery = "", onClearSearch, onEdit
               onAction={onAddLead}
               imageSrc="/images/dashboard/empty.png"
             />
-          ) : !searchQuery && Object.values(appliedFilters).some((v) => v !== "All") ? (
+          ) : hasActiveFilters ? (
               <DashboardFilterEmptyState
-                onClearFilters={onClearSearch || resetFilters}
+                onClearFilters={resetFilters}
                 title="No Results Found"
                 subtitle="No results match the selected filters."
               />

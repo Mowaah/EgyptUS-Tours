@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
+import DashboardDateFilter from "@/components/dashboard/Navbar/DashboardDateFilter/DashboardDateFilter";
 import ContactUsPanel from "./ContactUsPanel";
 import styles from "./ContactUs.module.scss";
 
@@ -15,10 +16,11 @@ export default function ContactUs() {
         subtitle="Review incoming customer messages and respond via email when needed"
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        customFilterDropdown={<DashboardDateFilter />}
       />
       
       {/* Notice there are no summary cards here based on the design! */}
-      <ContactUsPanel searchQuery={searchQuery} />
+      <ContactUsPanel searchQuery={searchQuery} onClearSearch={() => setSearchQuery("")} />
     </div>
   );
 }

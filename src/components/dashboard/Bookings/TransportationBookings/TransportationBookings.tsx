@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
+import DashboardDateFilter from "@/components/dashboard/Navbar/DashboardDateFilter/DashboardDateFilter";
 
 import TransportationSummaryGrid from "./TransportationSummaryGrid/TransportationSummaryGrid";
 import TransportationPanel from "./TransportationPanel/TransportationPanel";
@@ -24,7 +25,7 @@ export default function TransportationBookings({ searchQuery = "", onClearSearch
 
   return (
     <div className={styles.page}>
-      <DashboardNavbar hidePrimaryAction onPrimaryAction={handleNewBooking} />
+      <DashboardNavbar hidePrimaryAction onPrimaryAction={handleNewBooking} customFilterDropdown={<DashboardDateFilter />} />
       <TransportationSummaryGrid />
       <TransportationPanel
         searchQuery={searchQuery}

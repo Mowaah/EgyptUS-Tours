@@ -13,8 +13,8 @@ export async function getCustomers(filters?: AdminCustomerFilters): Promise<Admi
   return response as unknown as AdminCustomerListResponse;
 }
 
-export async function getCustomerStats(): Promise<AdminCustomerStats> {
-  const response = await adminDataClient.get('/customers/stats/');
+export async function getCustomerStats(params?: any): Promise<AdminCustomerStats> {
+  const response = await adminDataClient.get('/customers/stats/', { params });
   return response as unknown as AdminCustomerStats;
 }
 

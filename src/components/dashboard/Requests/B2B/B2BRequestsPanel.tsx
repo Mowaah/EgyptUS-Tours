@@ -14,9 +14,10 @@ import { useRequestPanel } from "@/hooks/useRequestPanel";
 
 interface B2BRequestsPanelProps {
   searchQuery?: string;
+  onClearSearch?: () => void;
 }
 
-export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelProps) {
+export default function B2BRequestsPanel({ searchQuery = "", onClearSearch }: B2BRequestsPanelProps) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -32,9 +33,11 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
     handleExport,
     appliedSourceFilter,
     appliedStatusFilter,
+    hasDateFilter,
     totalCount,
   } = useRequestPanel<B2BApiItem>({
     searchQuery,
+    onClearSearch,
     page,
     pageSize,
     fetchRequestsApi: getB2BRequests,
@@ -108,13 +111,13 @@ export default function B2BRequestsPanel({ searchQuery = "" }: B2BRequestsPanelP
         isLoading={loading}
         onClearSearch={handleClean}
         emptyState={
-          !searchQuery && !appliedSourceFilter && !appliedStatusFilter ? (
+          !searchQuery && !appliedSourceFilter && !appliedStatusFilter && !hasDateFilter ? (
             <DashboardEmptyState
               title="No B2B Requests Yet"
               subtitle="B2B requests will appear here once users start submitting them"
               imageSrc="/images/dashboard/empty.png"
             />
-          ) : !searchQuery && (appliedSourceFilter || appliedStatusFilter) ? (
+          ) : appliedSourceFilter || appliedStatusFilter || hasDateFilter ? (
               <DashboardFilterEmptyState
                 onClearFilters={handleClean}
                 title="No Results Found"

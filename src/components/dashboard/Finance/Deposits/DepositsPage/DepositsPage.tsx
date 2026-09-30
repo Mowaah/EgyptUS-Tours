@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import FinanceDateFilter from "@/components/dashboard/Finance/FinanceDateFilter/FinanceDateFilter";
+import DashboardDateFilter from "@/components/dashboard/Navbar/DashboardDateFilter/DashboardDateFilter";
 import { SummaryCard } from "@/components/dashboard/SummaryCard";
 import DepositsTable from "../DepositsTable/DepositsTable";
 import DepositStatusDonut from "../DepositStatusDonut/DepositStatusDonut";
@@ -52,7 +52,7 @@ export default function DepositsPage() {
         title="Deposits"
         subtitle="Track deposit status for all bookings (30% policy)."
         searchPlaceholder="Search Customer, Booking ID, Payment ID"
-        customFilterDropdown={<FinanceDateFilter />}
+        customFilterDropdown={<DashboardDateFilter />}
         primaryAction={{
           label: "Export Report",
           iconSrc: "/images/dashboard/export2.svg"

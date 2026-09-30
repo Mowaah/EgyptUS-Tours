@@ -14,9 +14,10 @@ import { useRequestPanel } from "@/hooks/useRequestPanel";
 
 interface ContactUsPanelProps {
   searchQuery?: string;
+  onClearSearch?: () => void;
 }
 
-export default function ContactUsPanel({ searchQuery = "" }: ContactUsPanelProps) {
+export default function ContactUsPanel({ searchQuery = "", onClearSearch }: ContactUsPanelProps) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -29,9 +30,11 @@ export default function ContactUsPanel({ searchQuery = "" }: ContactUsPanelProps
     handleClean,
     handleExport,
     appliedStatusFilter,
+    hasDateFilter,
     totalCount,
   } = useRequestPanel<any>({
     searchQuery,
+    onClearSearch,
     page,
     pageSize,
     fetchRequestsApi: getContactUsRequests,
@@ -83,13 +86,13 @@ export default function ContactUsPanel({ searchQuery = "" }: ContactUsPanelProps
         isLoading={loading}
         onClearSearch={handleClean}
         emptyState={
-          !searchQuery && !appliedStatusFilter ? (
+          !searchQuery && !appliedStatusFilter && !hasDateFilter ? (
             <DashboardEmptyState
               title="No Contact Us Messages Yet"
               subtitle="Messages from customers will appear here."
               imageSrc="/images/dashboard/empty.png"
             />
-          ) : !searchQuery && appliedStatusFilter ? (
+          ) : appliedStatusFilter || hasDateFilter ? (
               <DashboardFilterEmptyState
                 onClearFilters={handleClean}
                 title="No Results Found"

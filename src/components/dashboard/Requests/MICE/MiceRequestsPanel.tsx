@@ -14,9 +14,10 @@ import { useRequestPanel } from "@/hooks/useRequestPanel";
 
 interface MiceRequestsPanelProps {
   searchQuery?: string;
+  onClearSearch?: () => void;
 }
 
-export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPanelProps) {
+export default function MiceRequestsPanel({ searchQuery = "", onClearSearch }: MiceRequestsPanelProps) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -32,9 +33,11 @@ export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPane
     handleExport,
     appliedSourceFilter,
     appliedStatusFilter,
+    hasDateFilter,
     totalCount,
   } = useRequestPanel<any>({
     searchQuery,
+    onClearSearch,
     page,
     pageSize,
     fetchRequestsApi: getMiceRequests,
@@ -107,13 +110,13 @@ export default function MiceRequestsPanel({ searchQuery = "" }: MiceRequestsPane
         isLoading={loading}
         onClearSearch={handleClean}
         emptyState={
-          !searchQuery && !appliedSourceFilter && !appliedStatusFilter ? (
+          !searchQuery && !appliedSourceFilter && !appliedStatusFilter && !hasDateFilter ? (
             <DashboardEmptyState
               title="No MICE & Corporate Requests Yet"
               subtitle="MICE requests will appear here once users start submitting them"
               imageSrc="/images/dashboard/empty.png"
             />
-          ) : !searchQuery && (appliedSourceFilter || appliedStatusFilter) ? (
+          ) : appliedSourceFilter || appliedStatusFilter || hasDateFilter ? (
               <DashboardFilterEmptyState
                 onClearFilters={handleClean}
                 title="No Results Found"

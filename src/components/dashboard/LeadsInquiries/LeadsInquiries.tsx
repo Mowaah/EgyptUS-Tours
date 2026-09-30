@@ -3,6 +3,7 @@
 import { useState } from "react";
 import DashboardTabs from "@/components/dashboard/shared/DashboardTabs/DashboardTabs";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
+import DashboardDateFilter from "@/components/dashboard/Navbar/DashboardDateFilter/DashboardDateFilter";
 import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { InquiriesPanel } from "./InquiriesPanel";
@@ -57,6 +58,8 @@ export default function LeadsInquiries() {
         onPrimaryAction={handlePrimaryAction} 
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        customFilterDropdown={activeTab === "leads" ? <DashboardDateFilter /> : null}
+        hideFilterButton={activeTab !== "leads"}
       />
       
       <div className={styles.page}>

@@ -3,9 +3,12 @@ import { SummaryCard } from "@/components/dashboard/SummaryCard";
 import { getTripStats } from "@/services/admin/adminBookingsService";
 import { TripSummaryMetric } from "../types";
 import styles from "./TripsSummaryGrid.module.scss";
+import { useDashboardDateRange } from "@/hooks/useDashboardDateRange";
 
 export default function TripsSummaryGrid() {
-  const { data, isLoading } = useSWR(["adminTripStats", "30d"], () => getTripStats("30d"));
+  const dateRange = useDashboardDateRange();
+  const query = { range: "30d", date_from: dateRange.date_from, date_to: dateRange.date_to };
+  const { data, isLoading } = useSWR(["adminTripStats", query], () => getTripStats(query));
 
   if (isLoading) {
     return <div className={styles.grid}>Loading metrics...</div>;

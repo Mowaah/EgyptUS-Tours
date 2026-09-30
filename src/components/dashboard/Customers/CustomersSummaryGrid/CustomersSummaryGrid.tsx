@@ -1,9 +1,11 @@
 import { SummaryCard } from "@/components/dashboard/SummaryCard";
 import { useAdminCustomerStats } from "@/hooks/useCustomers";
 import styles from "./CustomersSummaryGrid.module.scss";
+import { useDashboardDateRange } from "@/hooks/useDashboardDateRange";
 
 export default function CustomersSummaryGrid() {
-  const { stats, isLoading, isError } = useAdminCustomerStats();
+  const dateRange = useDashboardDateRange();
+  const { stats, isLoading, isError } = useAdminCustomerStats({ date_from: dateRange.date_from, date_to: dateRange.date_to });
 
   if (isError) {
     return <div style={{ height: 100, display: "flex", alignItems: "center", justifyContent: "center", color: "red" }}>Failed to load stats</div>;

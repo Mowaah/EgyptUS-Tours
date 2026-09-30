@@ -10,6 +10,8 @@ export interface BookingQuery {
   vehicle_class?: string;
   trip_type?: string;
   payment_status?: string;
+  date_from?: string;
+  date_to?: string;
 }
 
 export async function getTripBookings(query?: BookingQuery): Promise<any> {
@@ -36,16 +38,19 @@ export async function getHotelBookingById(id: string | number): Promise<any> {
   return await adminDataClient.get(`/bookings/hotels/${id}/`);
 }
 
-export async function getTripStats(range: string = "30d"): Promise<any> {
-  return await adminDataClient.get('/bookings/trips/stats/', { params: { range } });
+export async function getTripStats(query: string | BookingQuery = "30d"): Promise<any> {
+  const params = typeof query === "string" ? { range: query } : query;
+  return await adminDataClient.get('/bookings/trips/stats/', { params });
 }
 
-export async function getTransportationStats(range: string = "30d"): Promise<any> {
-  return await adminDataClient.get('/bookings/transportation/stats/', { params: { range } });
+export async function getTransportationStats(query: string | BookingQuery = "30d"): Promise<any> {
+  const params = typeof query === "string" ? { range: query } : query;
+  return await adminDataClient.get('/bookings/transportation/stats/', { params });
 }
 
-export async function getHotelStats(range: string = "30d"): Promise<any> {
-  return await adminDataClient.get('/bookings/hotels/stats/', { params: { range } });
+export async function getHotelStats(query: string | BookingQuery = "30d"): Promise<any> {
+  const params = typeof query === "string" ? { range: query } : query;
+  return await adminDataClient.get('/bookings/hotels/stats/', { params });
 }
 
 export async function reassignBooking(type: 'trips' | 'transportation' | 'hotels', id: string | number, agentId: string | number, reason?: string): Promise<any> {

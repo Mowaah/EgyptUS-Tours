@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useDashboardDateRange } from "@/hooks/useDashboardDateRange";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { DataTable } from "@/components/dashboard/DataTable";
 import {
@@ -32,6 +33,7 @@ interface HotelsPanelProps {
 
 export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBooking }: HotelsPanelProps) {
   const { canCreate, canEdit } = useAdminAuth();
+  const dateRange = useDashboardDateRange();
   const defaultFilters = {
     paymentStatus: "All",
     status: "All",
@@ -49,6 +51,8 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
     const params: Record<string, any> = {
       page: pageIndex + 1,
       page_size: pageSize,
+      date_from: dateRange.date_from,
+      date_to: dateRange.date_to,
     };
     if (searchQuery) params.search = searchQuery;
     if (appliedFilters.paymentStatus !== "All") {
@@ -71,7 +75,7 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
       params.source = appliedFilters.source === "Agent" ? "admin" : "website";
     }
     return params;
-  }, [appliedFilters, searchQuery, pageIndex, pageSize]);
+  }, [appliedFilters, searchQuery, pageIndex, pageSize, dateRange]);
 
   const { data, mutate, isLoading } = useSWR(
     ["/bookings/hotels", queryParams],
@@ -96,6 +100,15 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
     setFilters(defaultFilters);
     setAppliedFilters(defaultFilters);
   };
+
+  const clearAllFilters = () => {
+    resetFilters();
+    dateRange.clearDateFilter();
+    onClearSearch?.();
+  };
+
+  const hasTableFilters = Object.values(appliedFilters).some((value) => value !== "All");
+  const hasActiveFilters = hasTableFilters || dateRange.hasActiveFilter;
 
   const applyFilters = () => {
     setAppliedFilters(filters);
@@ -159,9 +172,9 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
           onPageSizeChange={setPageSize}
           defaultPageSize={10}
           isLoading={isLoading}
-          onClearSearch={onClearSearch || resetFilters}
+          onClearSearch={clearAllFilters}
           emptyState={
-            !searchQuery && Object.values(appliedFilters).every((v) => v === "All") ? (
+            !searchQuery && !hasActiveFilters ? (
               <DashboardEmptyState
                 title="No Bookings Found"
                 subtitle="Hotels bookings will appear here once they are added."
@@ -169,9 +182,9 @@ export default function HotelsPanel({ searchQuery = "", onClearSearch, onNewBook
                 // onAction={canCreate("bookings") ? onNewBooking : undefined}
                 imageSrc="/images/dashboard/empty.png"
               />
-            ) : !searchQuery && Object.values(appliedFilters).some((v) => v !== "All") ? (
+            ) : hasActiveFilters ? (
               <DashboardFilterEmptyState
-                onClearFilters={onClearSearch || resetFilters}
+                onClearFilters={clearAllFilters}
                 title="No Results Found"
                 subtitle="No results match the selected filters."
               />

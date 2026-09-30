@@ -17,6 +17,7 @@ import { useAdminCustomers } from "@/hooks/useCustomers";
 import { updateCustomer, blockCustomer } from "@/services/admin/adminCustomersService";
 import type { AdminCustomerFilters, AdminCustomer } from "@/types/adminCustomerTypes";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
+import { useDashboardDateRange } from "@/hooks/useDashboardDateRange";
 
 const filterOptions = {
   nationality: ["All", "Egyptian", "American", "Spanish", "Japanese"],
@@ -31,6 +32,7 @@ interface CustomersPanelProps {
 
 export default function CustomersPanel({ searchQuery = "", onClearSearch }: CustomersPanelProps) {
   const { canEdit } = useAdminAuth();
+  const dateRange = useDashboardDateRange();
   const defaultFilters = {
     nationality: "All",
     bookings: "High to low",
@@ -51,7 +53,7 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
 
   // Build the API filters based on the active UI state
   const apiFilters = useMemo<AdminCustomerFilters>(() => {
-    const f: AdminCustomerFilters = { page, page_size: pageSize };
+    const f: AdminCustomerFilters = { page, page_size: pageSize, date_from: dateRange.date_from, date_to: dateRange.date_to };
     if (searchQuery) f.search = searchQuery;
     if (appliedFilters.nationality !== "All") f.nationality = appliedFilters.nationality;
     if (appliedFilters.status !== "All") f.status = appliedFilters.status.toLowerCase();
@@ -62,7 +64,7 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
     else f.ordering = "-created_at";
 
     return f;
-  }, [appliedFilters, searchQuery, page, pageSize]);
+  }, [appliedFilters, searchQuery, page, pageSize, dateRange]);
 
   const { customers, isLoading, refetch } = useAdminCustomers(apiFilters);
   
@@ -72,6 +74,7 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
   const resetFilters = () => {
     setFilters(defaultFilters);
     setAppliedFilters(defaultFilters);
+    dateRange.clearDateFilter();
     setPage(1);
     if (onClearSearch) {
       onClearSearch();
@@ -96,6 +99,9 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
     options,
     onChange: (value: string) => setFilters((current) => ({ ...current, [id]: value })),
   }));
+
+  const hasTableFilters = appliedFilters.nationality !== "All" || appliedFilters.status !== "All";
+  const hasActiveFilters = hasTableFilters || dateRange.hasActiveFilter;
 
   const router = useRouter();
 
@@ -141,13 +147,13 @@ export default function CustomersPanel({ searchQuery = "", onClearSearch }: Cust
         isLoading={isLoading}
         onClearSearch={resetFilters}
         emptyState={
-          !searchQuery && Object.values(appliedFilters).every((v) => v === "All") ? (
+          !searchQuery && !hasActiveFilters ? (
             <DashboardEmptyState
               title="No Customers Found"
               subtitle="Customers will appear here once they register or are added."
               imageSrc="/images/dashboard/empty.png"
             />
-          ) : !searchQuery && Object.values(appliedFilters).some((v) => v !== "All") ? (
+          ) : hasActiveFilters ? (
             <DashboardFilterEmptyState
               onClearFilters={resetFilters}
               title="No Results Found"

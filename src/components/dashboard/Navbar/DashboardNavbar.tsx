@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState, useEffect, useRef } from "react";
 import NotificationDropdown from "./NotificationDropdown/NotificationDropdown";
+import DashboardFilterButton from "./DashboardFilterButton";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import pageCopyByPath, { type BreadcrumbSegment } from "./navbarPageCopy";
 import styles from "./DashboardNavbar.module.scss";
@@ -128,7 +129,11 @@ export default function DashboardNavbar({
   const visibleTertiaryAction = tertiaryAction ?? (pageCopy as any).tertiaryAction;
   const searchPlaceholderStr =
     searchPlaceholder ?? pageCopy.searchPlaceholder ?? "Search bookings, customers...";
-  const isFilterHidden = hideFilterButton ?? pageCopy.hideFilterButton;
+  const isFilterHidden =
+    hideFilterButton ??
+    (pageCopy.hideFilterButton ||
+      pathname.startsWith("/dashboard/catalog/") ||
+      pathname.startsWith("/dashboard/settings/"));
   const isSearchHidden = hideSearch ?? pageCopy.hideSearch;
 
   const lacksPermissionForPrimary = useMemo(() => {
@@ -203,16 +208,7 @@ export default function DashboardNavbar({
                 <StatusFilterDropdown />
               ) : (
                 !isFilterHidden && (
-                  <button className={styles.filterButton} type="button" aria-label="Filter dashboard results">
-                    <Image
-                      src="/images/dashboard/navbar/filter.svg"
-                      alt=""
-                      width={24}
-                      height={24}
-                      className={styles.actionIcon}
-                      aria-hidden
-                    />
-                  </button>
+                  <DashboardFilterButton />
                 )
               )}
 
@@ -365,14 +361,7 @@ function StatusFilterDropdown() {
 
   return (
     <div ref={filterRef} className={styles.filterDropdownContainer}>
-      <button 
-        className={`${styles.filterButton} ${isOpen ? styles.active : ""}`} 
-        type="button" 
-        aria-label="Filter dashboard results" 
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <Image src="/images/dashboard/navbar/filter.svg" alt="" width={24} height={24} className={styles.actionIcon} aria-hidden />
-      </button>
+      <DashboardFilterButton isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
 
       {isOpen && (
         <div className={styles.filterDropdown}>

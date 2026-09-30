@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
+import DashboardDateFilter from "@/components/dashboard/Navbar/DashboardDateFilter/DashboardDateFilter";
 import HotelsSummaryGrid from "./HotelsSummaryGrid/HotelsSummaryGrid";
 import HotelsPanel from "./HotelsPanel/HotelsPanel";
 import AddHotelBookingModal from "./AddHotelBookingModal/AddHotelBookingModal";
@@ -23,7 +24,7 @@ export default function HotelsBookings({ searchQuery = "", onClearSearch, onNewB
 
   return (
     <div className={styles.page}>
-      <DashboardNavbar hidePrimaryAction onPrimaryAction={handleNewBooking} />
+      <DashboardNavbar hidePrimaryAction onPrimaryAction={handleNewBooking} customFilterDropdown={<DashboardDateFilter />} />
       <HotelsSummaryGrid />
       <HotelsPanel 
         searchQuery={searchQuery} 

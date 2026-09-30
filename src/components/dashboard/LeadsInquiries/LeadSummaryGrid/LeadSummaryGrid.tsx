@@ -1,9 +1,11 @@
 import { SummaryCard } from "@/components/dashboard/SummaryCard";
 import { useLeadStats } from "@/hooks/useLeads";
 import styles from "./LeadSummaryGrid.module.scss";
+import { useDashboardDateRange } from "@/hooks/useDashboardDateRange";
 
 export default function LeadSummaryGrid() {
-  const { data: stats } = useLeadStats();
+  const dateRange = useDashboardDateRange();
+  const { data: stats } = useLeadStats({ date_from: dateRange.date_from, date_to: dateRange.date_to });
 
   if (!stats) return null;
 

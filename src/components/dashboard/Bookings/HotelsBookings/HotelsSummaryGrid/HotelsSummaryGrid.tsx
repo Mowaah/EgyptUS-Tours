@@ -3,9 +3,12 @@ import { SummaryCard } from "@/components/dashboard/SummaryCard";
 import { getHotelStats } from "@/services/admin/adminBookingsService";
 
 import styles from "./HotelsSummaryGrid.module.scss";
+import { useDashboardDateRange } from "@/hooks/useDashboardDateRange";
 
 export default function HotelsSummaryGrid() {
-  const { data, isLoading } = useSWR(["adminHotelStats", "30d"], () => getHotelStats("30d"));
+  const dateRange = useDashboardDateRange();
+  const query = { range: "30d", date_from: dateRange.date_from, date_to: dateRange.date_to };
+  const { data, isLoading } = useSWR(["adminHotelStats", query], () => getHotelStats(query));
 
   if (isLoading) {
     return <div className={styles.grid}>Loading metrics...</div>;

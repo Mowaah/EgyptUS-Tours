@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import useSWR from "swr";
 import { buildRequestFilterParams, downloadBlobAsCSV } from "@/lib/utils";
+import { useDashboardDateRange } from "@/hooks/useDashboardDateRange";
 
 interface UseRequestPanelOptions<T> {
   searchQuery: string;
+  onClearSearch?: () => void;
   fetchRequestsApi: (params: any) => Promise<any>;
   exportCsvApi: (params: any) => Promise<Blob>;
   exportFilename: string;
@@ -14,6 +16,7 @@ interface UseRequestPanelOptions<T> {
 
 export function useRequestPanel<T>({
   searchQuery,
+  onClearSearch,
   fetchRequestsApi,
   exportCsvApi,
   exportFilename,
@@ -21,6 +24,7 @@ export function useRequestPanel<T>({
   page = 1,
   pageSize = 10,
 }: UseRequestPanelOptions<T>) {
+  const dateRange = useDashboardDateRange();
   const [sourceFilter, setSourceFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [appliedSourceFilter, setAppliedSourceFilter] = useState("");
@@ -28,10 +32,12 @@ export function useRequestPanel<T>({
 
   const apiParams = useMemo(() => {
     const params = buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter);
+    params.date_from = dateRange.date_from;
+    params.date_to = dateRange.date_to;
     params.page = page;
     params.page_size = pageSize;
     return params;
-  }, [searchQuery, appliedSourceFilter, appliedStatusFilter, page, pageSize]);
+  }, [searchQuery, appliedSourceFilter, appliedStatusFilter, page, pageSize, dateRange]);
 
   const { data: res, isLoading: loading, mutate: refetch } = useSWR(
     [swrKey, apiParams],
@@ -52,11 +58,15 @@ export function useRequestPanel<T>({
     setStatusFilter("");
     setAppliedSourceFilter("");
     setAppliedStatusFilter("");
+    dateRange.clearDateFilter();
+    onClearSearch?.();
   };
 
   const handleExport = async () => {
     try {
       const params = buildRequestFilterParams(searchQuery, appliedSourceFilter, appliedStatusFilter);
+      params.date_from = dateRange.date_from;
+      params.date_to = dateRange.date_to;
       const blob = await exportCsvApi(params);
       downloadBlobAsCSV(blob, exportFilename);
     } catch (err) {
@@ -78,5 +88,6 @@ export function useRequestPanel<T>({
     handleExport,
     appliedSourceFilter,
     appliedStatusFilter,
+    hasDateFilter: dateRange.hasActiveFilter,
   };
 }

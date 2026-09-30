@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useDashboardDateRange } from "@/hooks/useDashboardDateRange";
 import { DataTable } from "@/components/dashboard/DataTable";
 import {
   TablePanel,
@@ -42,6 +43,7 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
   const [filters, setFilters] = useState(defaultFilters);
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters);
   const router = useRouter();
+  const dateRange = useDashboardDateRange();
   const { canEdit } = useAdminAuth();
 
   const [pageIndex, setPageIndex] = useState(0);
@@ -51,6 +53,8 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
     const params: Record<string, any> = {
       page: pageIndex + 1,
       page_size: pageSize,
+      date_from: dateRange.date_from,
+      date_to: dateRange.date_to,
     };
     if (searchQuery) params.search = searchQuery;
     if (appliedFilters.tourType !== "All") params.tour_type = appliedFilters.tourType.toLowerCase();
@@ -74,7 +78,7 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
       params.source = appliedFilters.source === "Agent" ? "admin" : "website";
     }
     return params;
-  }, [appliedFilters, searchQuery, pageIndex, pageSize]);
+  }, [appliedFilters, searchQuery, pageIndex, pageSize, dateRange]);
 
   const { data, mutate, isLoading } = useSWR(
     ["/bookings/trips", queryParams],
@@ -99,6 +103,15 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
     setFilters(defaultFilters);
     setAppliedFilters(defaultFilters);
   };
+
+  const clearAllFilters = () => {
+    resetFilters();
+    dateRange.clearDateFilter();
+    onClearSearch?.();
+  };
+
+  const hasTableFilters = Object.values(appliedFilters).some((value) => value !== "All");
+  const hasActiveFilters = hasTableFilters || dateRange.hasActiveFilter;
 
   const applyFilters = () => {
     setAppliedFilters(filters);
@@ -165,9 +178,9 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
           onPageSizeChange={setPageSize}
           defaultPageSize={10}
           isLoading={isLoading}
-          onClearSearch={onClearSearch || resetFilters}
+          onClearSearch={clearAllFilters}
           emptyState={
-            !searchQuery && Object.values(appliedFilters).every((v) => v === "All") ? (
+            !searchQuery && !hasActiveFilters ? (
               <DashboardEmptyState
                 title="No Trips Found"
                 subtitle="Trips bookings will appear here once they are added."
@@ -175,11 +188,11 @@ export default function TripsPanel({ searchQuery = "", onClearSearch, onNewBooki
                 // onAction={onNewBooking}
                 imageSrc="/images/dashboard/empty.png"
               />
-            ) : !searchQuery && Object.values(appliedFilters).some((v) => v !== "All") ? (
+            ) : hasActiveFilters ? (
               <DashboardFilterEmptyState
-                onClearFilters={onClearSearch || resetFilters}
-                title="No Trips Found"
-                subtitle="No trips match the selected filters."
+                onClearFilters={clearAllFilters}
+                title="No Results Found"
+                subtitle="No results match the selected filters."
               />
             ) : undefined
           }

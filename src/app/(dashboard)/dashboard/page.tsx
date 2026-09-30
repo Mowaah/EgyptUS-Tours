@@ -1,5 +1,6 @@
 import DashboardHome from "@/components/dashboard/DashboardHome";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
+import DashboardDateFilter from "@/components/dashboard/Navbar/DashboardDateFilter/DashboardDateFilter";
 import styles from "./page.module.scss";
 
 export default function DashboardHomePage() {
@@ -7,7 +8,7 @@ export default function DashboardHomePage() {
     <>
       
       
-        <DashboardNavbar />
+        <DashboardNavbar customFilterDropdown={<DashboardDateFilter />} />
         <DashboardHome />
       
     </>

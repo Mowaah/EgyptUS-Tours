@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
-import FinanceDateFilter from "@/components/dashboard/Finance/FinanceDateFilter/FinanceDateFilter";
+import DashboardDateFilter from "@/components/dashboard/Navbar/DashboardDateFilter/DashboardDateFilter";
 import { SummaryCard } from "@/components/dashboard/SummaryCard";
 import PaymentsTable from "../PaymentsTable/PaymentsTable";
 import RevenueByCategory from "../RevenueByCategory/RevenueByCategory";
@@ -153,7 +153,7 @@ export default function PaymentsPage() {
         title="Payments"
         subtitle="Track and manage all payment transactions."
         searchPlaceholder="Search Customer, Booking ID, Payment ID"
-        customFilterDropdown={<FinanceDateFilter />}
+        customFilterDropdown={<DashboardDateFilter />}
         primaryAction={{
           label: "Export Report",
           iconSrc: "/images/dashboard/export2.svg",

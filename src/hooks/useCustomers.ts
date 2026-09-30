@@ -24,10 +24,10 @@ export function useAdminCustomers(filters?: AdminCustomerFilters) {
   };
 }
 
-export function useAdminCustomerStats() {
+export function useAdminCustomerStats(params?: any) {
   const { data, error, isLoading, mutate } = useSWR(
-    'adminCustomerStats',
-    () => getCustomerStats()
+    ['adminCustomerStats', params],
+    () => getCustomerStats(params)
   );
 
   return {

@@ -58,8 +58,8 @@ export async function addAdminLeadNote(id: number, note: string): Promise<AdminL
   return await adminDataClient.post(`/leads/${id}/notes/`, { note });
 }
 
-export async function getAdminLeadStats(): Promise<any> {
-  return await adminDataClient.get("/leads/stats/");
+export async function getAdminLeadStats(params?: any): Promise<any> {
+  return await adminDataClient.get("/leads/stats/", { params });
 }
 
 export async function convertAdminLead(id: number, note: string): Promise<AdminLead> {

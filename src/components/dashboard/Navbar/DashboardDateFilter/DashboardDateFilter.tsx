@@ -6,7 +6,8 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CustomDatePicker, CheckboxIndicator } from "@/components/shared";
 import DashboardField from "@/components/dashboard/shared/DashboardField/DashboardField";
 import { formatDateDDMMYYYY, formatDateToYMD, parseDate } from "@/utils/dateFormat";
-import styles from "./FinanceDateFilter.module.scss";
+import styles from "./DashboardDateFilter.module.scss";
+import DashboardFilterButton from "@/components/dashboard/Navbar/DashboardFilterButton";
 
 type QuickRange = "today" | "this_week" | "this_month";
 
@@ -35,7 +36,7 @@ function formatDateLabel(dateStr: string): string {
   }
 }
 
-export default function FinanceDateFilter() {
+export default function DashboardDateFilter() {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -46,7 +47,6 @@ export default function FinanceDateFilter() {
   const currentRange = searchParams.get("range");
   const currentDateFrom = searchParams.get("date_from") || "";
   const currentDateTo = searchParams.get("date_to") || "";
-
   const hasActiveFilter = Boolean(currentRange || currentDateFrom || currentDateTo);
 
   const initialQuickRange: QuickRange | null =
@@ -58,6 +58,8 @@ export default function FinanceDateFilter() {
   const [selectedQuickRange, setSelectedQuickRange] = useState<QuickRange | null>(initialQuickRange);
   const [startDate, setStartDate] = useState(currentDateFrom);
   const [endDate, setEndDate] = useState(currentDateTo);
+  const invalidCustomRange =
+    Boolean(startDate) !== Boolean(endDate) || Boolean(startDate && endDate && startDate > endDate);
 
   // Sync draft state whenever search params change or popover opens
   useEffect(() => {
@@ -140,6 +142,7 @@ export default function FinanceDateFilter() {
   };
 
   const handleApply = () => {
+    if (!selectedQuickRange && invalidCustomRange) return;
     const params = new URLSearchParams(searchParams.toString());
 
     if (selectedQuickRange) {
@@ -171,27 +174,15 @@ export default function FinanceDateFilter() {
 
   return (
     <div ref={containerRef} className={styles.container}>
-      <button
-        type="button"
-        className={`${styles.filterButton} ${isOpen ? styles.active : ""} ${
-          hasActiveFilter ? styles.hasFilter : ""
-        }`}
-        aria-label="Filter finance results by date"
-        aria-expanded={isOpen}
+      <DashboardFilterButton
+        label="Filter dashboard results by date"
+        isOpen={isOpen}
+        hasActiveFilter={hasActiveFilter}
         onClick={() => setIsOpen((prev) => !prev)}
-      >
-        <Image
-          src="/images/dashboard/navbar/filter.svg"
-          alt=""
-          width={24}
-          height={24}
-          className={styles.actionIcon}
-          aria-hidden
-        />
-      </button>
+      />
 
       {isOpen && (
-        <div className={styles.filterPopover} role="dialog" aria-label="Finance date filter">
+        <div className={styles.filterPopover} role="dialog" aria-label="Dashboard date filter">
           {/* Header */}
           <div className={styles.popoverHeader}>
             <div className={styles.headerIconBadge}>
@@ -339,7 +330,12 @@ export default function FinanceDateFilter() {
             <button type="button" className={styles.btnClean} onClick={handleClean}>
               Clean
             </button>
-            <button type="button" className={styles.btnApply} onClick={handleApply}>
+            <button
+              type="button"
+              className={styles.btnApply}
+              onClick={handleApply}
+              disabled={!selectedQuickRange && invalidCustomRange}
+            >
               Apply
             </button>
           </div>

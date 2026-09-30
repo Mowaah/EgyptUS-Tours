@@ -14,9 +14,10 @@ import { useRequestPanel } from "@/hooks/useRequestPanel";
 
 interface CustomTripRequestsPanelProps {
   searchQuery: string;
+  onClearSearch?: () => void;
 }
 
-export default function CustomTripRequestsPanel({ searchQuery }: CustomTripRequestsPanelProps) {
+export default function CustomTripRequestsPanel({ searchQuery, onClearSearch }: CustomTripRequestsPanelProps) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -32,9 +33,11 @@ export default function CustomTripRequestsPanel({ searchQuery }: CustomTripReque
     handleExport,
     appliedSourceFilter,
     appliedStatusFilter,
+    hasDateFilter,
     totalCount,
   } = useRequestPanel<PlanYourTripApiItem>({
     searchQuery,
+    onClearSearch,
     page,
     pageSize,
     fetchRequestsApi: getPlanYourTripRequests,
@@ -108,13 +111,13 @@ export default function CustomTripRequestsPanel({ searchQuery }: CustomTripReque
         isLoading={loading}
         onClearSearch={handleClean}
         emptyState={
-          !searchQuery && !appliedSourceFilter && !appliedStatusFilter ? (
+          !searchQuery && !appliedSourceFilter && !appliedStatusFilter && !hasDateFilter ? (
             <DashboardEmptyState
               title="No Custom Trip Requests Yet"
               subtitle="Custom trip requests will appear here once users start submitting them"
               imageSrc="/images/dashboard/empty.png"
             />
-          ) : !searchQuery && (appliedSourceFilter || appliedStatusFilter) ? (
+          ) : appliedSourceFilter || appliedStatusFilter || hasDateFilter ? (
               <DashboardFilterEmptyState
                 onClearFilters={handleClean}
                 title="No Results Found"

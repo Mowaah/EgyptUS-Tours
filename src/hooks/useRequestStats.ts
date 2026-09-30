@@ -1,4 +1,5 @@
 import useSWR from "swr";
+import { useDashboardDateRange } from "@/hooks/useDashboardDateRange";
 
 export interface RequestStats {
   total: number;
@@ -8,9 +9,11 @@ export interface RequestStats {
 }
 
 export function useRequestStats(fetcher: (params: any) => Promise<any>, swrKey: string) {
+  const dateRange = useDashboardDateRange();
+  const { date_from, date_to } = dateRange;
   const { data: res, isLoading: loading } = useSWR(
-    swrKey,
-    () => fetcher({ range: "30d" }),
+    [swrKey, date_from, date_to],
+    () => fetcher({ range: "30d", date_from, date_to }),
     { keepPreviousData: true }
   );
 

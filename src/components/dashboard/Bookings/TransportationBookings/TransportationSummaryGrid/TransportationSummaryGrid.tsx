@@ -3,9 +3,12 @@ import { SummaryCard } from "@/components/dashboard/SummaryCard";
 import { getTransportationStats } from "@/services/admin/adminBookingsService";
 
 import styles from "./TransportationSummaryGrid.module.scss";
+import { useDashboardDateRange } from "@/hooks/useDashboardDateRange";
 
 export default function TransportationSummaryGrid() {
-  const { data, isLoading } = useSWR(["adminTransportStats", "30d"], () => getTransportationStats("30d"));
+  const dateRange = useDashboardDateRange();
+  const query = { range: "30d", date_from: dateRange.date_from, date_to: dateRange.date_to };
+  const { data, isLoading } = useSWR(["adminTransportStats", query], () => getTransportationStats(query));
 
   if (isLoading) {
     return <div className={styles.grid}>Loading metrics...</div>;

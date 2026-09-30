@@ -28,6 +28,8 @@ import type {
 } from "./types";
 import { formatCompactMetric, formatTrendPct } from "@/utils/formatMetric";
 import styles from "./DashboardHome.module.scss";
+import { useDashboardDateRange } from "@/hooks/useDashboardDateRange";
+import type { DashboardQueryParams } from "@/services/admin/adminDashboardService";
 
 const DESTINATION_COLORS = ["#A1CCFF", "#FFC6A0", "#FFD6DD", "#E9BDFF", "#B6F3D2"];
 
@@ -273,12 +275,18 @@ export default function DashboardHome() {
   const [revenueRange, setRevenueRange] = useState<DashboardRange>("Monthly");
   const [bookingRange, setBookingRange] = useState<DashboardRange>("Monthly");
 
-  // Base fetch for metric cards, destinations, distribution, and pending actions (always "month")
-  const baseApi = useAdminDashboard("month");
+  const dateRange = useDashboardDateRange();
+  const selectedRange = dateRange.range as DashboardQueryParams["range"] | undefined;
+  const filteredDateRange = dateRange.date_from || dateRange.date_to
+    ? { date_from: dateRange.date_from, date_to: dateRange.date_to }
+    : undefined;
+
+  // Apply the navbar date filter to each dashboard panel while retaining each chart's local range otherwise.
+  const baseApi = useAdminDashboard(selectedRange || "month", filteredDateRange);
   
   // Two separate fetches so each panel's range is independent
-  const revenueApi = useAdminDashboard(toApiRange(revenueRange));
-  const bookingApi = useAdminDashboard(toApiRange(bookingRange));
+  const revenueApi = useAdminDashboard(selectedRange || toApiRange(revenueRange), filteredDateRange);
+  const bookingApi = useAdminDashboard(selectedRange || toApiRange(bookingRange), filteredDateRange);
 
   const basePayload = baseApi.dashboardData;
   const revenuePayload = revenueApi.dashboardData;

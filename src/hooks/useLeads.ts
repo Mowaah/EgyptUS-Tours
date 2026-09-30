@@ -87,10 +87,10 @@ export function useLeadTimeline(id: number) {
   };
 }
 
-export function useLeadStats() {
+export function useLeadStats(params?: any) {
   const { data, error, isLoading, mutate: refetch } = useSWR(
-    "adminLeadStats",
-    () => getAdminLeadStats()
+    ["adminLeadStats", params],
+    () => getAdminLeadStats(params)
   );
 
   return {
