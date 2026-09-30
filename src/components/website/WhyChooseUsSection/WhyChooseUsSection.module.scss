@@ -13,8 +13,8 @@
 
 .grid {
   display: grid;
-  // On mobile, show 2-column card grid but give the header its own full row.
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  // Stack feature cards on phones and expand the grid at tablet/desktop sizes.
+  grid-template-columns: minmax(0, 1fr);
   gap: 10px;
 
   @include sm {
@@ -22,6 +22,7 @@
   }
 
   @include md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: $spacing-lg;
   }
 

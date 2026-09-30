@@ -216,34 +216,88 @@ export default function ProfilePage() {
           ]);
 
           setFavoriteTrips(
-            tripsData.map((t) => ({
-              id: t.slug,
-              title: t.title,
-              description: t.short_description,
-              location: t.location_text,
-              price: parseFloat(t.base_price),
-              currency: t.currency_code,
-              priceLabel: t.price_label,
-              duration: t.duration,
-              image: t.image || "/images/destination1.png",
-              isFavorite: t.is_favorite,
-            }))
+            tripsData.map((t) => {
+              const basePrice = parseFloat(t.base_price) || 0;
+              const basePriceEgp = t.base_price_egp != null ? parseFloat(t.base_price_egp) || 0 : undefined;
+              const basePriceEur = t.base_price_eur != null ? parseFloat(t.base_price_eur) || 0 : undefined;
+              const discountPercent = parseFloat(t.discount_value) || 0;
+              const discountedPrice = discountPercent > 0
+                ? basePrice * (1 - discountPercent / 100)
+                : basePrice;
+
+              return {
+                id: t.slug,
+                title: t.title,
+                description: t.short_description,
+                location: t.location_text,
+                price: discountedPrice,
+                prices: {
+                  usd: discountedPrice,
+                  egp: basePriceEgp != null
+                    ? (discountPercent > 0 ? basePriceEgp * (1 - discountPercent / 100) : basePriceEgp)
+                    : undefined,
+                  eur: basePriceEur != null
+                    ? (discountPercent > 0 ? basePriceEur * (1 - discountPercent / 100) : basePriceEur)
+                    : undefined,
+                },
+                originalPrice: discountPercent > 0 ? basePrice : undefined,
+                originalPrices: discountPercent > 0
+                  ? { usd: basePrice, egp: basePriceEgp, eur: basePriceEur }
+                  : undefined,
+                currency: t.currency_code,
+                priceLabel: t.price_label,
+                duration: t.duration,
+                image: t.image || "/images/destination1.png",
+                discountTitle: t.discount_title || undefined,
+                discountValue: discountPercent > 0 ? `${discountPercent}% Off` : undefined,
+                isFavorite: t.is_favorite,
+              };
+            })
           );
 
           setFavoriteHotels(
-            hotelsData.map((h) => ({
-              id: h.slug,
-              name: h.name,
-              location: h.location_text,
-              image: h.hero_image || h.image || "/images/pyramids.jpg",
-              stars: typeof h.stars === "number" ? h.stars : (parseFloat(String(h.stars)) || 0),
-              rating: h.rating_avg,
-              reviews: h.review_count,
-              rooms: h.rooms,
-              pricePerNight: parseFloat(h.price_per_night),
-              currency: h.currency_code,
-              isFavorite: h.is_favorite,
-            }))
+            hotelsData.map((h) => {
+              const basePrice = parseFloat(h.price_per_night) || 0;
+              const basePriceEgp = h.price_per_night_egp != null
+                ? parseFloat(h.price_per_night_egp) || 0
+                : undefined;
+              const basePriceEur = h.price_per_night_eur != null
+                ? parseFloat(h.price_per_night_eur) || 0
+                : undefined;
+              const discountPercent = parseFloat(h.discount_value) || 0;
+              const discountedPrice = discountPercent > 0
+                ? basePrice * (1 - discountPercent / 100)
+                : basePrice;
+
+              return {
+                id: h.slug,
+                name: h.name,
+                location: h.location_text,
+                image: h.hero_image || h.image || "/images/pyramids.jpg",
+                stars: typeof h.stars === "number" ? h.stars : (parseFloat(String(h.stars)) || 0),
+                rating: h.rating_avg,
+                reviews: h.review_count,
+                rooms: h.rooms,
+                pricePerNight: discountedPrice,
+                prices: {
+                  usd: discountedPrice,
+                  egp: basePriceEgp != null
+                    ? (discountPercent > 0 ? basePriceEgp * (1 - discountPercent / 100) : basePriceEgp)
+                    : undefined,
+                  eur: basePriceEur != null
+                    ? (discountPercent > 0 ? basePriceEur * (1 - discountPercent / 100) : basePriceEur)
+                    : undefined,
+                },
+                originalPrice: discountPercent > 0 ? basePrice : undefined,
+                originalPrices: discountPercent > 0
+                  ? { usd: basePrice, egp: basePriceEgp, eur: basePriceEur }
+                  : undefined,
+                currency: h.currency_code,
+                discountTitle: h.discount_title || undefined,
+                discountValue: discountPercent > 0 ? `${discountPercent}% Off` : undefined,
+                isFavorite: h.is_favorite,
+              };
+            })
           );
         } catch (error) {
           console.error("Failed to fetch favorites:", error);

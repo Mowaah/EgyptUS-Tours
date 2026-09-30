@@ -277,7 +277,6 @@ export default function BookingSummary({
 
               <div className={styles.trustBadges}>
                 {[
-                  t("sidebar.freeCancellation", "Free cancellation"),
                   t("sidebar.support247", "24/7 support"),
                   t("sidebar.securePayment", "Secure Payment"),
                 ].map((text) => (

@@ -137,6 +137,18 @@ export default function MiceSection() {
               );
             })}
           </div>
+          <div className={styles.galleryPagination} aria-label="Corporate event gallery slides">
+            {GALLERY_IMAGES.map((src, i) => (
+              <button
+                key={src}
+                type="button"
+                className={`${styles.galleryDot} ${active === i ? styles.galleryDotActive : ""}`}
+                onClick={() => setActive(i)}
+                aria-label={`Show corporate event image ${i + 1}`}
+                aria-current={active === i ? "true" : undefined}
+              />
+            ))}
+          </div>
         </div>
 
         <div className={styles.viewAll}>
