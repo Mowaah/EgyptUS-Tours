@@ -47,6 +47,52 @@ export function getRoomSubtitle(roomType: string): string {
   return "2 Adults , 2 Children";
 }
 
+const MONTH_NUMBER_BY_TOKEN: Record<string, number> = {
+  jan: 1,
+  feb: 2,
+  mar: 3,
+  apr: 4,
+  may: 5,
+  jun: 6,
+  jul: 7,
+  aug: 8,
+  sep: 9,
+  oct: 10,
+  nov: 11,
+  dec: 12,
+};
+
+function getSeasonMonths(label?: string): number[] | undefined {
+  const normalized = (label || "").trim().toLowerCase();
+  if (!normalized) return undefined;
+  if (normalized.includes("christmas") || normalized.includes("new year")) return [12, 1];
+
+  const parts = normalized.split(/\s*[-–—]\s*/);
+  if (parts.length < 2) return undefined;
+
+  const parseMonth = (part: string) => {
+    const tokens = part.replace(/[^a-z]/g, " ").trim().split(/\s+/);
+    for (const token of tokens) {
+      const month = Object.entries(MONTH_NUMBER_BY_TOKEN).find(([prefix]) => token.startsWith(prefix))?.[1];
+      if (month) return month;
+    }
+    return undefined;
+  };
+
+  const startMonth = parseMonth(parts[0]);
+  const endMonth = parseMonth(parts[parts.length - 1]);
+  if (!startMonth || !endMonth) return undefined;
+
+  const months: number[] = [];
+  let month = startMonth;
+  while (true) {
+    months.push(month);
+    if (month === endMonth) break;
+    month = month === 12 ? 1 : month + 1;
+  }
+  return months;
+}
+
 export function allocateAdultsToRooms(
   roomRows: Array<{ roomType: string; quantity: number }>,
   totalAdults: number
@@ -144,37 +190,40 @@ export function resolveApplicableSeason<
 
   if (!startDateStr) return tourSeasons[0];
 
-  const onDate = new Date(startDateStr);
-  if (isNaN(onDate.getTime())) return tourSeasons[0];
+  const onDate = parseDate(startDateStr);
+  if (!onDate) return tourSeasons[0];
 
-  const dateMatch = tourSeasons.find((s) => {
-    if (s.startDate && s.endDate) {
-      const start = new Date(s.startDate);
-      const end = new Date(s.endDate);
-      if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
-        if (start <= end) {
-          return onDate >= start && onDate <= end;
-        }
-        return onDate >= start || onDate <= end;
+  const matchingSeasons = tourSeasons.flatMap((season, index) => {
+    let spanDays: number;
+    if (season.startDate && season.endDate) {
+      const start = parseDate(season.startDate);
+      const end = parseDate(season.endDate);
+      if (start && end) {
+        const matches = start <= end
+          ? onDate >= start && onDate <= end
+          : onDate >= start || onDate <= end;
+        if (!matches) return [];
+
+        const rangeDays = Math.round((end.getTime() - start.getTime()) / 86_400_000) + 1;
+        spanDays = rangeDays > 0 ? rangeDays : 365 + rangeDays;
+      } else {
+        return [];
       }
+    } else {
+      const months = getSeasonMonths(season.label);
+      if (!months?.includes(onDate.getMonth() + 1)) return [];
+      spanDays = months.length * 31;
     }
 
-    if (s.label) {
-      const monthNum = onDate.getMonth() + 1; // 1-12
-      const lower = s.label.toLowerCase();
-      if (lower.includes("christmas") || lower.includes("new year")) {
-        return monthNum === 12 || monthNum === 1;
-      }
-      const months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
-      const currentMonthStr = months[monthNum - 1];
-      if (lower.includes(currentMonthStr)) {
-        return true;
-      }
-    }
-    return false;
+    return [{ season, index, spanDays }];
   });
 
-  return dateMatch || tourSeasons[0];
+  if (matchingSeasons.length > 0) {
+    matchingSeasons.sort((a, b) => a.spanDays - b.spanDays || a.index - b.index);
+    return matchingSeasons[0].season;
+  }
+
+  return tourSeasons[0];
 }
 
 /**
