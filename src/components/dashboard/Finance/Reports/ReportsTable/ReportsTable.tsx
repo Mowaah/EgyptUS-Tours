@@ -19,7 +19,6 @@ export default function ReportsTable({ data: customData }: ReportsTableProps = {
     <PanelHeader
       icon="revenue"
       title="Top Products by Revenue"
-      subtitle="Best sellers with growth & margin — prioritize marketing budget here"
     />
   );
 

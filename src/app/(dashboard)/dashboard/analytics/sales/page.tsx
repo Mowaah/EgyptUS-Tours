@@ -67,6 +67,7 @@ export default function SalesReportsPage() {
         <div className={styles.leftColumn}>
           <RevenueByDestinationChart 
             title="Revenue by Destination"
+            subtitle=""
             icon="reports/top_destinations"
             gridLabels={destinationData.gridLabels}
             tooltipFormat="revenue"

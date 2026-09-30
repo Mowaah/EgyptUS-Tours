@@ -60,7 +60,7 @@ export default function OperationalReportsPage() {
       <div className={styles.leftColumn}>
         <RevenueByDestinationChart 
           title="Top Destinations in Egypt"
-          subtitle="Overview of bookings to different Places"
+          subtitle=""
           icon="reports/top_destinations"
           gridLabels={destinationData.gridLabels}
           tooltipFormat="booking"
@@ -83,7 +83,7 @@ export default function OperationalReportsPage() {
         
         <FleetUtilizationChart 
           title="Fleet Utilization"
-          subtitle="Approximate vehicle utilization %"
+          subtitle=""
           showBanner={false}
           mode="operational"
           fleetData={reportsData?.fleet_utilization || []}

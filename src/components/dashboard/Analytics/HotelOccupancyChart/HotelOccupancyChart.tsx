@@ -48,16 +48,11 @@ export default function HotelOccupancyChart({ data = [], actions }: HotelOccupan
     });
   }, [data]);
 
-  const isEmpty = useMemo(() => {
-    return !chartData.length || chartData.every((item) => item.value1 === 0 && item.value2 === 0);
-  }, [chartData]);
-
   return (
     <article className={parentStyles.chartCard}>
       <PanelHeader
         icon="reports/hotel_occupancy"
         title="Hotel Occupancy"
-        subtitle={isEmpty ? undefined : "Approximate occupancy %"}
         actions={actions}
       />
 

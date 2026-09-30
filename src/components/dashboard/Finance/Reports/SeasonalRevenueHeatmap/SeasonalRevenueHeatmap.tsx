@@ -79,7 +79,6 @@ export default function SeasonalRevenueHeatmap({ heatmapData: rawData }: Seasona
       <PanelHeader
         icon="finance/payment/seasonal"
         title="Seasonal Revenue Heatmap"
-        subtitle="Revenue distribution across services and months"
       />
 
       <div className={styles.heatmapContainer}>

@@ -122,16 +122,11 @@ export default function AvgTimeToConvertChart({ data = [], actions }: AvgTimeToC
   const hoverYConverted = hoverIndex !== null && pointsConverted[hoverIndex] ? pointsConverted[hoverIndex].y : 0;
   const hoverYLost = hoverIndex !== null && pointsLost[hoverIndex] ? pointsLost[hoverIndex].y : 0;
 
-  const isEmpty = useMemo(() => {
-    return !data || data.length === 0 || data.every((d) => (d.converted_count ?? 0) === 0 && (d.lost_count ?? 0) === 0);
-  }, [data]);
-
   return (
     <article className={parentStyles.chartCard}>
       <PanelHeader
         icon="reports/avg_time"
         title="Converted vs Lost Leads"
-        subtitle={isEmpty ? undefined : "By lead channel (Count)"}
         actions={actions}
       />
 

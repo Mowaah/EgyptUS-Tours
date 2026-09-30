@@ -84,8 +84,8 @@ export default function FinancialReportsPage() {
 
       <div className={styles.bottomGrid}>
         <div className={styles.leftColumn}>
-          <RevenueByDestinationChart data={destinationChartData} />
-          <FleetUtilizationChart fleetData={data?.fleet_revenue_by_vehicle_type} />
+          <RevenueByDestinationChart data={destinationChartData} subtitle="" />
+          <FleetUtilizationChart fleetData={data?.fleet_revenue_by_vehicle_type} subtitle="" />
         </div>
         <div className={styles.rightColumn}>
           <SeasonalRevenueHeatmap heatmapData={data?.seasonal_heatmap} />

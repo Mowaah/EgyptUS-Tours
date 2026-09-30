@@ -44,16 +44,11 @@ export default function ServiceRevenueChart({ data, actions }: ServiceRevenueCha
     ];
   }, [distribution]);
 
-  const isEmpty = useMemo(() => {
-    return distribution.every((d) => d.rawValue === 0);
-  }, [distribution]);
-
   return (
     <article className={parentStyles.chartCard}>
       <PanelHeader
         icon="reports/money-send_grey"
         title="Service Revenue"
-        subtitle={isEmpty ? undefined : "By service type"}
         actions={actions}
       />
       
