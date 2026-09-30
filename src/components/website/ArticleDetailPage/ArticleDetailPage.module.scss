@@ -741,6 +741,13 @@
   color: $dark-navy;
   line-height: 1.4;
   margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
 
   @media (min-width: 640px) {
     font-size: $font-size-xl;

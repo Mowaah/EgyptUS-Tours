@@ -60,7 +60,9 @@
   font-weight: $font-weight-bold;
   color: $dark;
   line-height: 1.4;
-  @include truncate(2);
+  min-width: 0;
+  overflow-wrap: anywhere;
+  @include truncate(3);
 }
 
 .excerpt {
