@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Blog } from "@/types";
 import { useTranslation } from "@/hooks/useTranslation";
+import { toArticleSlug } from "@/utils/articleSlug";
 import styles from "./BlogCard.module.scss";
 
 interface BlogCardProps {
@@ -14,7 +15,7 @@ interface BlogCardProps {
 
 export default function BlogCard({ blog, readText, href }: BlogCardProps) {
   const { t } = useTranslation("common");
-  const linkHref = href || `/blogs/${blog.id}`;
+  const linkHref = href || `/blogs/${toArticleSlug(blog.id)}`;
   const actionText = readText || t("blogs.readBlog", "Read blog");
 
   return (

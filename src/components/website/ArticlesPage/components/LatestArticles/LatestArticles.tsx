@@ -7,6 +7,7 @@ import { Blog } from "@/types";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { getBackendLocalizedArticle, getBackendLocalizedName } from "@/utils/localizedContent";
+import { toArticleSlug } from "@/utils/articleSlug";
 import styles from "./LatestArticles.module.scss";
 
 import { ArticleList } from "@/types/api/articles";
@@ -88,7 +89,7 @@ export default function LatestArticles({
                       key={article.id}
                       blog={article}
                       readText={t("articles.readMore", "Read more")}
-                      href={`/articles/${article.id}`}
+                      href={`/articles/${toArticleSlug(article.id)}`}
                     />
                   ))}
                 </div>
@@ -124,7 +125,7 @@ export default function LatestArticles({
             ) : (
               <>
                 {featured && (
-                  <Link href={`/articles/${featured.slug}`} className={styles.featuredCard}>
+                  <Link href={`/articles/${toArticleSlug(featured.slug || featured.title)}`} className={styles.featuredCard}>
                     <div className={styles.featuredImageWrap}>
                       <Image
                         src={featured.hero_image || featured.featured_image || "/images/home/hero-bg.png"}
@@ -150,7 +151,7 @@ export default function LatestArticles({
                       const title = loc.title || article.title;
                       const categoryName = getBackendLocalizedName(article.category, language, article.category?.name || "Article");
                       return (
-                        <Link key={article.id} href={`/articles/${article.slug}`} className={styles.smallCard}>
+                        <Link key={article.id} href={`/articles/${toArticleSlug(article.slug || article.title)}`} className={styles.smallCard}>
                           <div className={styles.smallImageWrap}>
                             <Image
                               src={article.hero_image || article.featured_image || "/images/home/hero-bg.png"}

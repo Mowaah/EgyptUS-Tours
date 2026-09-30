@@ -1,9 +1,10 @@
 import ArticleDetailPage, { ArticleContent } from "@/components/website/ArticleDetailPage/ArticleDetailPage";
 import { getArticleBySlug, getAllArticles } from "@/services/articlesService";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { normalizeLanguage, getTranslation } from "@/i18n";
 import { getBackendLocalizedArticle, getBackendLocalizedName } from "@/utils/localizedContent";
+import { toArticleSlug } from "@/utils/articleSlug";
 
 import { Metadata } from "next";
 
@@ -27,6 +28,7 @@ export async function generateMetadata({ params }: ArticleDetailRouteProps): Pro
       title,
       description,
       keywords: article.meta_keywords || "",
+      alternates: { canonical: `/articles/${toArticleSlug(article.slug || article.title)}` },
       openGraph: {
         title,
         description,
@@ -46,17 +48,23 @@ export default async function ArticleDetailRoute({ params }: ArticleDetailRouteP
   const cookieStore = await cookies();
   const lang = normalizeLanguage(cookieStore.get("egyptus_lang")?.value);
   const localeCode = lang === "it" ? "it-IT" : lang === "es" ? "es-ES" : "en-GB";
+
+  let article: any;
+  try {
+    article = await getArticleBySlug(slug);
+  } catch {
+    notFound();
+  }
+
+  const canonicalSlug = toArticleSlug(article.slug || article.title);
+  if (slug !== canonicalSlug) permanentRedirect(`/articles/${canonicalSlug}`);
   
   try {
-    const [articleResponse, allArticles] = await Promise.all([
-      getArticleBySlug(slug),
-      getAllArticles()
-    ]);
-    const article = articleResponse as any;
+    const allArticles = await getAllArticles();
     
     // Get 3 random articles excluding current one
     const randomArticles = allArticles
-      .filter(a => a.slug !== slug)
+      .filter(a => toArticleSlug(a.slug) !== canonicalSlug)
       .sort(() => 0.5 - Math.random())
       .slice(0, 3);
 
@@ -92,7 +100,7 @@ export default async function ArticleDetailRoute({ params }: ArticleDetailRouteP
           title: rloc.title || ra.title,
           date: new Date(ra.published_at).toLocaleDateString(localeCode, { day: '2-digit', month: 'long', year: 'numeric' }),
           image: ra.hero_image || ra.featured_image || "/images/article.jpg",
-          href: `/articles/${ra.slug}`
+          href: `/articles/${toArticleSlug(ra.slug || ra.title)}`
         };
       }),
       breadcrumbs: [

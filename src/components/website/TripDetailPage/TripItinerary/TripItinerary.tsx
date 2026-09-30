@@ -13,7 +13,6 @@ export default function TripItinerary({ trip }: Props) {
   const { t } = useTranslation("trips");
   if (!days.length) return null;
 
-  const totalValue = days.reduce((sum, d) => sum + (d.value ?? 0), 0);
   const current = days[active];
 
   return (
@@ -23,7 +22,7 @@ export default function TripItinerary({ trip }: Props) {
         <span className={styles.satisfactionPill}>{t("itinerary.satisfactionRate", "97% Traveler Satisfaction Rate")}</span>
         <h2 className={styles.heading}>{t("itinerary.heading", "Day by Day Itinerary")}</h2>
         <p className={styles.subtitle}>
-          {t("itinerary.subtitle", "Experience {value} worth of unforgettable moments along the legendary Nile River").replace("{value}", `$${totalValue.toLocaleString()}`)}
+          {t("itinerary.subtitle", "Discover the highlights, experiences, and adventures planned for each day")}
         </p>
       </div>
 

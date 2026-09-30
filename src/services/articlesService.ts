@@ -1,6 +1,7 @@
 import { serverFetch, apiClient, getFullImageUrl } from '@/lib/api';
 import { PaginatedResponse } from '@/types/api/index';
 import { ArticleList, ArticleDetail } from '@/types/api/articles';
+import { toArticleSlug } from '@/utils/articleSlug';
 
 const mapArticleImages = <T extends Partial<ArticleDetail & ArticleList>>(article: T): T => {
   if (article.hero_image) article.hero_image = getFullImageUrl(article.hero_image);
@@ -36,8 +37,17 @@ export async function getAllArticles(): Promise<ArticleList[]> {
 
 // Fetch a single article by slug
 export async function getArticleBySlug(slug: string): Promise<ArticleDetail> {
-  const response = await serverFetch<ArticleDetail>(`/articles/${slug}/`);
-  return mapArticleImages(response);
+  try {
+    const response = await serverFetch<ArticleDetail>(`/articles/${encodeURIComponent(slug)}/`);
+    return mapArticleImages(response);
+  } catch (error) {
+    const articles = await getAllArticles();
+    const match = articles.find((article) => toArticleSlug(article.slug) === toArticleSlug(slug));
+    if (!match) throw error;
+
+    const response = await serverFetch<ArticleDetail>(`/articles/${encodeURIComponent(match.slug)}/`);
+    return mapArticleImages(response);
+  }
 }
 
 // Fetch featured articles

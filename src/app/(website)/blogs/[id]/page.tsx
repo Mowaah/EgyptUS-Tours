@@ -1,9 +1,10 @@
 import ArticleDetailPage, { ArticleContent } from "@/components/website/ArticleDetailPage/ArticleDetailPage";
 import { getBlogBySlug, getAllBlogs } from "@/services/blogsService";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { normalizeLanguage, getTranslation } from "@/i18n";
 import { getBackendLocalizedArticle, getBackendLocalizedName } from "@/utils/localizedContent";
+import { toArticleSlug } from "@/utils/articleSlug";
 
 import { Metadata } from "next";
 
@@ -27,6 +28,7 @@ export async function generateMetadata({ params }: BlogDetailRouteProps): Promis
       title,
       description,
       keywords: blog.meta_keywords || "",
+      alternates: { canonical: `/blogs/${toArticleSlug(blog.slug || blog.title)}` },
       openGraph: {
         title,
         description,
@@ -46,17 +48,23 @@ export default async function BlogDetailRoute({ params }: BlogDetailRouteProps) 
   const cookieStore = await cookies();
   const lang = normalizeLanguage(cookieStore.get("egyptus_lang")?.value);
   const localeCode = lang === "it" ? "it-IT" : lang === "es" ? "es-ES" : "en-GB";
+
+  let blog: any;
+  try {
+    blog = await getBlogBySlug(slug);
+  } catch {
+    notFound();
+  }
+
+  const canonicalSlug = toArticleSlug(blog.slug || blog.title);
+  if (slug !== canonicalSlug) permanentRedirect(`/blogs/${canonicalSlug}`);
   
   try {
-    const [blogResponse, allBlogs] = await Promise.all([
-      getBlogBySlug(slug),
-      getAllBlogs()
-    ]);
-    const blog = blogResponse as any;
+    const allBlogs = await getAllBlogs();
     
     // Get 3 random blogs excluding current one
     const randomBlogs = allBlogs
-      .filter(b => b.slug !== slug)
+      .filter(b => toArticleSlug(b.slug) !== canonicalSlug)
       .sort(() => 0.5 - Math.random())
       .slice(0, 3);
 
@@ -92,7 +100,7 @@ export default async function BlogDetailRoute({ params }: BlogDetailRouteProps) 
           title: rloc.title || rb.title,
           date: new Date(rb.published_at).toLocaleDateString(localeCode, { day: '2-digit', month: 'long', year: 'numeric' }),
           image: rb.hero_image || rb.featured_image || "/images/article.jpg",
-          href: `/blogs/${rb.slug}`
+          href: `/blogs/${toArticleSlug(rb.slug || rb.title)}`
         };
       }),
       breadcrumbs: [

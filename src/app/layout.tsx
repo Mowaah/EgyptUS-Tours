@@ -10,6 +10,7 @@ import Script from "next/script";
 import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://egypt-us.com"),
   title: "Egypt-Us",
   description: "History, culture, and luxury all in one trip",
 };

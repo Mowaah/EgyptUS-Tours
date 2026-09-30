@@ -7,6 +7,7 @@ import { Blog } from "@/types";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { getBackendLocalizedArticle, getBackendLocalizedName } from "@/utils/localizedContent";
+import { toArticleSlug } from "@/utils/articleSlug";
 import styles from "./BlogTrending.module.scss";
 
 import { ArticleList } from "@/types/api/articles";
@@ -104,7 +105,7 @@ export default function BlogTrending({
           <>
             <div className={isSearching ? styles.searchResultsGrid : styles.grid}>
               {currentBlogs.map((blog) => (
-                <BlogCard key={blog.id} blog={blog} href={`/blogs/${blog.id}`} />
+                <BlogCard key={blog.id} blog={blog} href={`/blogs/${toArticleSlug(blog.id)}`} />
               ))}
             </div>
 

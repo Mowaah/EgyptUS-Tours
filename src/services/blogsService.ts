@@ -1,6 +1,7 @@
 import { serverFetch, apiClient, getFullImageUrl } from '@/lib/api';
 import { PaginatedResponse } from '@/types/api/index';
 import { ArticleList, ArticleDetail } from '@/types/api/articles';
+import { toArticleSlug } from '@/utils/articleSlug';
 
 const mapBlogImages = <T extends Partial<ArticleDetail & ArticleList>>(blog: T): T => {
   if (blog.hero_image) blog.hero_image = getFullImageUrl(blog.hero_image);
@@ -36,8 +37,17 @@ export async function getAllBlogs(): Promise<ArticleList[]> {
 
 // Fetch a single blog by slug
 export async function getBlogBySlug(slug: string): Promise<ArticleDetail> {
-  const response = await serverFetch<ArticleDetail>(`/blogs/${slug}/`);
-  return mapBlogImages(response);
+  try {
+    const response = await serverFetch<ArticleDetail>(`/blogs/${encodeURIComponent(slug)}/`);
+    return mapBlogImages(response);
+  } catch (error) {
+    const blogs = await getAllBlogs();
+    const match = blogs.find((blog) => toArticleSlug(blog.slug) === toArticleSlug(slug));
+    if (!match) throw error;
+
+    const response = await serverFetch<ArticleDetail>(`/blogs/${encodeURIComponent(match.slug)}/`);
+    return mapBlogImages(response);
+  }
 }
 
 // Fetch featured blogs
