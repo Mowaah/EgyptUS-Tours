@@ -49,6 +49,9 @@ export interface TripBookingDetails {
   roomType: string;
   /** e.g. +3 badge next to room type */
   roomExtraCount?: number;
+  isDayTour?: boolean;
+  paxBracketLabel?: string;
+  pax?: number;
   travelersLabel: string;
 }
 
@@ -812,16 +815,20 @@ export default function TripBookingCard(props: TripBookingCardProps) {
                 value={formatLocalizedDuration(props.details.durationLabel)}
               />
               <DetailCell
-                icon={TRIP_ICONS.roomType}
-                label={t("profile.card.roomType", "Room Type")}
+                icon={props.details.isDayTour ? TRIP_ICONS.travelers : TRIP_ICONS.roomType}
+                label={props.details.isDayTour ? t("profile.card.pax", "Pax") : t("profile.card.roomType", "Room Type")}
                 value={
-                  <span className={styles.roomRow}>
-                    <span>{getLocalizedRoomTitle(props.details.roomType)}</span>
-                    {props.details.roomExtraCount != null &&
-                      props.details.roomExtraCount > 0 && (
-                        <span className={styles.roomTag}>+{props.details.roomExtraCount}</span>
-                      )}
-                  </span>
+                  props.details.isDayTour
+                    ? props.details.paxBracketLabel || (props.details.pax ? `${props.details.pax} Pax` : "—")
+                    : (
+                      <span className={styles.roomRow}>
+                        <span>{getLocalizedRoomTitle(props.details.roomType)}</span>
+                        {props.details.roomExtraCount != null &&
+                          props.details.roomExtraCount > 0 && (
+                            <span className={styles.roomTag}>+{props.details.roomExtraCount}</span>
+                          )}
+                      </span>
+                    )
                 }
               />
               <DetailCell

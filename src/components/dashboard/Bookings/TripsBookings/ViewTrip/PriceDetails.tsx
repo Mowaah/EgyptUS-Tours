@@ -97,13 +97,16 @@ export default function PriceDetails({ details, overview, booking }: PriceDetail
 
           <div className={styles.priceList}>
             {items.map((item: any, idx: number) => {
+              const isPaxItem = booking?.trip_kind === "day_tour" || item.item_type === "pax";
               const rawType = item.type_label || item.room_type || item.category || "";
               let capType = rawType ? rawType.charAt(0).toUpperCase() + rawType.slice(1) : "Room";
               if (!capType.toLowerCase().includes("room")) {
                 capType = `${capType} Room`;
               }
               const viewLabel = item.view_label || item.room_view || "";
-              const label = item.name || (viewLabel ? `${capType} - ${viewLabel}` : capType);
+              const label = isPaxItem
+                ? item.label || booking?.pax_bracket_label || (Number(booking?.pax) > 0 ? `${booking.pax} Pax` : "Pax")
+                : item.name || (viewLabel ? `${capType} - ${viewLabel}` : capType);
               const quantity = item.quantity || 1;
 
               const adults = item.adult_count ?? item.adults ?? (idx === 0 ? booking?.adults : 0) ?? 0;
@@ -138,7 +141,7 @@ export default function PriceDetails({ details, overview, booking }: PriceDetail
                 <div key={idx} className={styles.priceListItem}>
                   <div className={styles.priceItemLeft}>
                     <span className={styles.priceItemName}>
-                      {`${quantity} × ${label}`}
+                      {isPaxItem ? label : `${quantity} × ${label}`}
                       {details?.nights ? ` (${details.nights} ${details.nights === 1 ? 'night' : 'nights'})` : ""}
                     </span>
                     {subtitle && (

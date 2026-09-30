@@ -83,6 +83,7 @@ export default function BookingSidebar({
 
   const finalTotal = totalAmount;
   const isHotel = !!hotel;
+  const isDayTourTrip = trip ? isDayTour(trip) : false;
   const formatMoney = formatCurrency;
 
   const pricingSummary = React.useMemo(() => {
@@ -391,7 +392,9 @@ export default function BookingSidebar({
           </div>
 
           {/* Your Stay */}
-          <div className={styles.sidebarSectionLabel}>{t("sidebar.yourStay", "Your Stay")}</div>
+          <div className={styles.sidebarSectionLabel}>
+            {isDayTourTrip ? t("sidebar.yourTour", "Your Tour") : t("sidebar.yourStay", "Your Stay")}
+          </div>
           <div className={styles.datesRow}>
             <div className={styles.dateBlock}>
               <div className={styles.dateHeader}>

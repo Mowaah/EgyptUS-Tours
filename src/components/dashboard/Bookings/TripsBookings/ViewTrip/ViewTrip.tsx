@@ -49,6 +49,7 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
   );
 
   const payload = tripData;
+  const isDayTour = payload?.trip_kind === "day_tour";
   const opStatus = payload?.operational_status?.toLowerCase();
   const hasRefundRecord = Boolean(
     payload?.refund != null ||
@@ -297,7 +298,7 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
             <div className={styles.leftColumn}>
               <GuestDetails guest={payload?.guest} booking={payload?.booking} />
               <BookingInformation booking={payload?.booking} />
-              <RoomSelection selections={payload?.booking?.room_selections} booking={payload?.booking} />
+              {!isDayTour && <RoomSelection selections={payload?.booking?.room_selections} booking={payload?.booking} />}
               <PaymentOverview overview={payload?.payment_overview} payload={payload} />
               {(() => {
                 const refundBankData =
@@ -335,7 +336,16 @@ export default function ViewTrip({ tripId }: ViewTripProps) {
             </div>
             
             <div className={styles.rightColumn}>
-              <PriceDetails details={payload?.price_details} overview={payload?.payment_overview} booking={payload?.booking} />
+              <PriceDetails
+                details={payload?.price_details}
+                overview={payload?.payment_overview}
+                booking={{
+                  ...payload?.booking,
+                  trip_kind: payload?.trip_kind,
+                  pax: payload?.pax,
+                  pax_bracket_label: payload?.pax_bracket_label,
+                }}
+              />
               <ActivityTimeline events={payload?.events || []} />
               {isRefunded && payload?.refund && (
                 <RefundSummaryCard

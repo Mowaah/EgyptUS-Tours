@@ -29,6 +29,7 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { getHotelRoomViewKey, getHotelRoomViewLabel } from "@/utils/hotelRoomViews";
+import { getBracketForPax, isDayTour } from "@/utils/tripUtils";
 import { formatDateDDMMYYYY, isDateWithinFullPaymentWindow, formatDisplayTime, parseDate } from "@/utils/dateFormat";
 import {
   getPendingGuestRecord,
@@ -108,6 +109,9 @@ export default function ProfileBookingDetailsPage() {
   }, [id, detailsType, isAuthenticated]);
 
   const bData = bookingDetail || {};
+  const isDayTourBooking = isDayTour({
+    kind: bData.trip_kind || bData.details?.trip_kind || bData.trip?.kind,
+  });
   const contact = bData.contact || {};
   const payment = bData.payment_summary || {};
   const roomsObj = bData.rooms || { single: 0, double: 0, triple: 0 };
@@ -387,6 +391,12 @@ export default function ProfileBookingDetailsPage() {
       triple: roomsObj.triple || 0,
     },
   };
+  const totalPax = safeFormData.adults + safeFormData.children;
+  const paxBracketLabel =
+    bData.pax_bracket_label ||
+    bData.details?.pax_bracket_label ||
+    bData.price_details?.pax_bracket_label ||
+    (isDayTourBooking && totalPax > 0 ? getBracketForPax(totalPax).label : "");
 
   const rawDiscount =
     bData.price_details?.discount != null
@@ -652,6 +662,7 @@ export default function ProfileBookingDetailsPage() {
   };
 
   const hotelRoomsList = (() => {
+    if (isDayTourBooking) return [];
     if (rawOverviews.length > 0) {
       return rawOverviews.map((ov: any, idx: number) => {
         const cat = (ov.category_label || "").trim();
@@ -732,6 +743,7 @@ export default function ProfileBookingDetailsPage() {
   const bookingLineItems = (() => {
     if (rawOverviews.length > 0) {
       return rawOverviews.map((it: any) => {
+        const isPaxItem = isDayTourBooking || it.item_type === "pax";
         const cat = (it.category_label || "").trim();
         const typ = (it.type_label || "").trim();
         const typeName = cat && typ
@@ -765,7 +777,9 @@ export default function ProfileBookingDetailsPage() {
         const price = rawPrice > 0 ? rawPrice : totalAmount / rawOverviews.length;
 
         return {
-          label: `${qty} × ${roomTitle} - ${view}`,
+          label: isPaxItem
+            ? it.label || paxBracketLabel || (totalPax > 0 ? `${totalPax} Pax` : t("profile.details.pax", "Pax"))
+            : `${qty} × ${roomTitle} - ${view}`,
           subtext: occupantText || undefined,
           price: isEgp ? { egp: price } : isEur ? { eur: price } : { usd: price },
         };
@@ -805,7 +819,11 @@ export default function ProfileBookingDetailsPage() {
 
     return [
       {
-        label: isHotel ? t("sidebar.hotelStay", "Hotel Stay") : t("sidebar.tripPackage", "Trip Package"),
+        label: isHotel
+          ? t("sidebar.hotelStay", "Hotel Stay")
+          : isDayTourBooking
+            ? paxBracketLabel || (totalPax > 0 ? `${totalPax} Pax` : t("profile.details.pax", "Pax"))
+            : t("sidebar.tripPackage", "Trip Package"),
         price: totalPrices,
       },
     ];
@@ -904,9 +922,13 @@ export default function ProfileBookingDetailsPage() {
           ],
         },
         {
-          title: t("profile.details.rooms", "Rooms"),
-          icon: "/images/summary/rooms.svg",
-          listItems: hotelRoomsList.length ? hotelRoomsList : ["Standard Room"],
+          title: isDayTourBooking
+            ? t("profile.details.pax", "Pax")
+            : t("profile.details.rooms", "Rooms"),
+          icon: isDayTourBooking ? "/images/summary/adults.svg" : "/images/summary/rooms.svg",
+          listItems: isDayTourBooking
+            ? [paxBracketLabel, bData.details?.travelers_label].filter(Boolean)
+            : hotelRoomsList.length ? hotelRoomsList : ["Standard Room"],
         },
         {
           title: t("profile.details.specialRequests", "Special Requests"),
@@ -1142,6 +1164,7 @@ export default function ProfileBookingDetailsPage() {
     <BookingSidebar
       trip={{
         id: tripIdentifier || "trip",
+        kind: isDayTourBooking ? "day_tour" : bData.trip_kind || bData.trip?.kind,
         title: bData.details?.trip_name || bData.title || bData.trip?.title || "Trip",
         description: bData.details?.travel_type || bData.trip?.short_description || "",
         image: bData.image || bData.trip?.image || "/images/home/hero-bg.png",

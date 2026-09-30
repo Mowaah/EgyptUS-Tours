@@ -494,6 +494,8 @@ export default function ProfilePage() {
             const roomExtraCount = computeRoomExtraCount();
 
             if (type === "trip") {
+              const isDayTour = d.trip_kind === "day_tour" || bk.trip_kind === "day_tour";
+              const pax = Number(d.pax ?? bk.pax ?? (bk.adults || 0) + (bk.children || 0));
               const rawTourType = (
                 d.tour_type ||
                 bk.tour_type ||
@@ -517,6 +519,9 @@ export default function ProfilePage() {
                 durationLabel: d.duration_label || "",
                 roomType: d.room_type || "",
                 roomExtraCount,
+                isDayTour,
+                pax: Number.isFinite(pax) ? pax : undefined,
+                paxBracketLabel: d.pax_bracket_label || bk.pax_bracket_label || (pax > 0 ? `${pax} Pax` : ""),
                 travelersLabel: d.travelers_label || "",
               };
             } else if (type === "hotel") {
