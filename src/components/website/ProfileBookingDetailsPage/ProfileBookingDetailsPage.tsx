@@ -921,15 +921,13 @@ export default function ProfileBookingDetailsPage() {
             { label: t("profile.details.duration", "Duration"), value: formatLocalizedDuration(bData.details?.duration_label || `${bData.trip?.duration?.nights || 0} Nights / ${bData.trip?.duration?.days || 0} Days`) },
           ],
         },
-        {
-          title: isDayTourBooking
-            ? t("profile.details.pax", "Pax")
-            : t("profile.details.rooms", "Rooms"),
-          icon: isDayTourBooking ? "/images/summary/adults.svg" : "/images/summary/rooms.svg",
-          listItems: isDayTourBooking
-            ? [paxBracketLabel, bData.details?.travelers_label].filter(Boolean)
-            : hotelRoomsList.length ? hotelRoomsList : ["Standard Room"],
-        },
+        ...(!isDayTourBooking
+          ? [{
+              title: t("profile.details.rooms", "Rooms"),
+              icon: "/images/summary/rooms.svg",
+              listItems: hotelRoomsList.length ? hotelRoomsList : ["Standard Room"],
+            }]
+          : []),
         {
           title: t("profile.details.specialRequests", "Special Requests"),
           icon: "/images/summary/special.svg",

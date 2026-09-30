@@ -39,9 +39,10 @@ const matchesStatus = (item: any, filterStatus: string): boolean => {
   if (!filterStatus || filterStatus === "All") return true;
   const target = normalize(filterStatus);
   const rawStatus = normalize(item.status || "");
+  const displayStatus = normalize(item.display_status || "");
   const paymentStatus = normalize(item.payment_status || "");
 
-  if (rawStatus === target || paymentStatus === target) {
+  if (displayStatus === target || rawStatus === target || paymentStatus === target) {
     return true;
   }
 
@@ -115,7 +116,7 @@ export function useBookingHistoryPanel(customerId: string) {
         const currency = row.currency?.toUpperCase() || "USD";
         const price = `${currency} ${Number(row.total_price || 0).toLocaleString()}`;
         const paymentStatus = formatLabel(row.payment_status || "");
-        const status = formatLabel(row.status || "");
+        const status = formatLabel(row.display_status || row.status || "");
 
         return [bookingId, service, name, dates, price, paymentStatus, status]
           .map((val) => `"${String(val).replace(/"/g, '""')}"`)

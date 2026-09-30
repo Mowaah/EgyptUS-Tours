@@ -159,12 +159,15 @@ export const bookingHistoryColumns: DataTableColumn<CustomerBookingItem>[] = [
   {
     id: "status",
     header: "Status",
-    render: (row) => (
-      <StatusPill 
-        label={formatLabel(row.status)} 
-        variant={getStatusVariant(row.status)} 
-      />
-    ),
+    render: (row) => {
+      const status = row.display_status || row.status;
+      return (
+        <StatusPill
+          label={formatLabel(status)}
+          variant={getStatusVariant(status)}
+        />
+      );
+    },
   },
   {
     id: "actions",
