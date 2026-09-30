@@ -5,31 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { confirmPaymobPaymentRedirect } from "@/lib/api";
 import { LoadingSpinner } from "@/components/shared";
 
-function isPaymobSuccess(params: URLSearchParams): boolean {
-  const successVal = (params.get("success") || "").toLowerCase();
-  const isSuccess = successVal === "true" || successVal === "1" || successVal === "yes";
-
-  const errorOccuredVal = (params.get("error_occured") || "").toLowerCase();
-  const hasError = errorOccuredVal === "true" || errorOccuredVal === "1" || errorOccuredVal === "yes";
-
-  const txnCode = (params.get("txn_response_code") || "").toUpperCase();
-  const isApprovedCode =
-    !txnCode ||
-    txnCode === "APPROVED" ||
-    txnCode === "00" ||
-    txnCode === "0" ||
-    txnCode === "200" ||
-    txnCode === "SUCCESS";
-
-  const isPending = (params.get("pending") || "").toLowerCase() === "true";
-
-  if (params.get("booking_success") === "true" || params.get("booking_success") === "1") {
-    return true;
-  }
-
-  return isSuccess && !hasError && isApprovedCode && !isPending;
-}
-
 function sanitizeSlug(slug: string | null): string | null {
   if (!slug) return null;
   const cleaned = slug.trim().toLowerCase();
@@ -50,7 +25,7 @@ function PaymentResultContent() {
 
     async function processResult() {
       const urlParams = new URLSearchParams(window.location.search);
-      const success = isPaymobSuccess(urlParams);
+      let success = false;
 
       let savedHotelSlug: string | null = null;
       let savedTripSlug: string | null = null;
@@ -98,7 +73,9 @@ function PaymentResultContent() {
       let confirmedBookingId: string | null = null;
       let confirmedBookingType: string | null = null;
 
-      if (success) {
+      const hasPaymobReference = ["order", "order_id", "merchant_order_id", "id", "transaction_id"]
+        .some((key) => Boolean(urlParams.get(key)));
+      if (hasPaymobReference) {
         try {
           const redirectPayload: Record<string, any> = {};
           urlParams.forEach((val, key) => {
@@ -108,14 +85,14 @@ function PaymentResultContent() {
             redirectPayload.booking_id = savedBookingId;
           }
           const confirmRes = await confirmPaymobPaymentRedirect(redirectPayload);
-          if (confirmRes?.booking_id) {
-            confirmedBookingId = String(confirmRes.booking_id);
-          }
-          if (confirmRes?.booking_type) {
-            confirmedBookingType = String(confirmRes.booking_type);
+          success = confirmRes?.success === true;
+          if (confirmRes?.booking_id) confirmedBookingId = String(confirmRes.booking_id);
+          if (confirmRes?.booking_type) confirmedBookingType = String(confirmRes.booking_type);
+          if (!success) {
+            console.warn("Paymob payment is not confirmed by the backend yet.");
           }
         } catch (err) {
-          console.warn("Backend payment confirmation warning:", err);
+          console.warn("Could not verify Paymob payment with the backend:", err);
         }
       }
 
@@ -143,6 +120,8 @@ function PaymentResultContent() {
         } else {
           router.replace(`/transportation/${savedVehicleSlug}/book?payment_failed=true`);
         }
+      } else if (!success && finalBookingId && ["trip", "hotel", "transport"].includes(finalType)) {
+        router.replace(`/profile/bookings-details?id=${encodeURIComponent(finalBookingId)}&type=${finalType}&payment_failed=true`);
       } else {
         if (success) {
           const amountCents = urlParams.get("amount_cents");

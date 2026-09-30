@@ -105,6 +105,7 @@ function clearBookingInfo() {
 export default function BookHotelPage({ hotel }: BookHotelPageProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useTranslation("booking");
   const { formatCurrency } = useCurrency();
   const [currentStep, setCurrentStep] = useState(1);
   const [isStartingCheckout, setIsStartingCheckout] = useState(false);
@@ -125,13 +126,15 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
       searchParams.get("booking_success") === "true" ||
       searchParams.get("booking_success") === "1";
 
-    const successParam = (urlParams.get("success") || searchParams.get("success") || "").toLowerCase();
-    const pendingParam = (urlParams.get("pending") || searchParams.get("pending") || "").toLowerCase();
-    const isDirectPaymobSuccess =
-      (successParam === "true" || successParam === "1") &&
-      pendingParam !== "true";
+    const isPaymentFailed =
+      urlParams.get("payment_failed") === "true" || searchParams.get("payment_failed") === "true";
+    if (isPaymentFailed) {
+      alert(t("errors.paymentNotVerified", "We couldn’t verify your payment. Check your booking status before trying again."));
+      window.history.replaceState({}, "", window.location.pathname);
+      return;
+    }
 
-    if (isBookingSuccess || isDirectPaymobSuccess) {
+    if (isBookingSuccess) {
       const savedInfo = getBookingInfo();
       const rawBookingId =
         urlParams.get("booking_id") ||
@@ -158,7 +161,7 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
         window.history.replaceState({}, "", window.location.pathname);
       } catch {}
     }
-  }, [searchParams, hotel.name]);
+  }, [searchParams, hotel.name, t]);
 
   const handleChange = (patch: Partial<BookingData>) => {
     setFormData((prev) => ({ ...prev, ...patch }));
@@ -294,8 +297,6 @@ export default function BookHotelPage({ hotel }: BookHotelPageProps) {
       router.push("/profile?tab=bookings&type=hotel");
     }
   };
-
-  const { t } = useTranslation("booking");
 
   const steps = [
     { number: 1, label: t("hotelBooking.steps.roomDates", "Room & Dates") },

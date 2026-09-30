@@ -349,7 +349,12 @@ export async function getProfileBookingDetail(type: string, id: string): Promise
 export async function payRemainingBookingBalance(
   type: string,
   id: string
-): Promise<{ payment_url: string; payment_link_status: string }> {
+): Promise<{
+  payment_url: string;
+  payment_link_status: string;
+  remaining_amount?: string;
+  currency?: string;
+}> {
   return await apiClient.post(`/profile/bookings/${id}/pay-remaining/?type=${type}`, {});
 }
 

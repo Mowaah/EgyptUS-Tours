@@ -274,6 +274,7 @@
     "breadcrumbDetails": "Detalles",
     "backToTransport": "Volver a Transporte",
     "checkoutStarting": "Iniciando Pago...",
+    "checkoutUnavailable": "La reserva se creó, pero no se pudo iniciar el pago. Contacta con soporte antes de enviar otra reserva.",
     "steps": {
       "rideDetails": "Detalles del Viaje",
       "contactDetails": "Datos Personales",
@@ -380,6 +381,7 @@
     "policySuffix": "."
   },
   "errors": {
+    "paymentNotVerified": "No pudimos verificar tu pago. Comprueba el estado de tu reserva antes de intentarlo de nuevo.",
     "required": "Este campo es obligatorio.",
     "nameRequired": "El nombre completo es obligatorio.",
     "emailRequired": "El correo electrónico es obligatorio.",

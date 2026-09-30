@@ -272,6 +272,7 @@
     "breadcrumbDetails": "Details",
     "backToTransport": "Back To Transportation",
     "checkoutStarting": "Starting Checkout...",
+    "checkoutUnavailable": "Your booking was created, but checkout could not be started. Please contact support before submitting another booking.",
     "steps": {
       "rideDetails": "Trip Details",
       "contactDetails": "Personal Info",
@@ -378,6 +379,7 @@
     "policySuffix": "Policy."
   },
   "errors": {
+    "paymentNotVerified": "We couldn’t verify your payment. Check your booking status before trying again.",
     "required": "This field is required.",
     "nameRequired": "Full Name is required.",
     "emailRequired": "Email Address is required.",

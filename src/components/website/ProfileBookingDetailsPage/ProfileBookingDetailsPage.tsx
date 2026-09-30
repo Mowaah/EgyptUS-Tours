@@ -8,7 +8,6 @@ import {
   BookingSidebar,
   CancelBookingModal,
   PageHeader,
-  PaymentForm,
   RefundBankDetailsCard,
   RefundSummaryCard,
   StatusPill,
@@ -107,25 +106,6 @@ export default function ProfileBookingDetailsPage() {
       setLoading(false);
     }
   }, [id, detailsType, isAuthenticated]);
-
-  useEffect(() => {
-    if (searchParams.get("payment_success") === "true") {
-      setShowPaymentSuccess(true);
-      if (typeof window !== "undefined") {
-        const newUrl = new URL(window.location.href);
-        newUrl.searchParams.delete("payment_success");
-        window.history.replaceState({}, "", newUrl.toString());
-      }
-      if (id && isAuthenticated) {
-        const timer = setTimeout(() => {
-          getProfileBookingDetail(detailsType, id)
-            .then(setBookingDetail)
-            .catch(() => undefined);
-        }, 1500);
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [searchParams, id, detailsType, isAuthenticated]);
 
   const bData = bookingDetail || {};
   const contact = bData.contact || {};
@@ -268,12 +248,80 @@ export default function ProfileBookingDetailsPage() {
     : null;
 
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
+  const [paymentSuccessAmount, setPaymentSuccessAmount] = useState<number | null>(null);
   const [showCancelSuccess, setShowCancelSuccess] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [isPaying, setIsPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
   const [cancelError, setCancelError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (searchParams.get("payment_success") !== "true") return;
+    const url = new URL(window.location.href);
+    url.searchParams.delete("payment_success");
+    window.history.replaceState({}, "", url.toString());
+    if (!id || !isAuthenticated) return;
+
+    const pendingPaymentKey = "pending_profile_booking_payment";
+    let pendingPayment: { bookingId?: string; bookingType?: string; amount?: number } | null = null;
+    try {
+      const rawPendingPayment = sessionStorage.getItem(pendingPaymentKey);
+      if (rawPendingPayment) pendingPayment = JSON.parse(rawPendingPayment);
+    } catch {
+      pendingPayment = null;
+    }
+    const pendingAmount =
+      pendingPayment?.bookingId === id && pendingPayment?.bookingType === detailsType
+        ? Number(pendingPayment.amount)
+        : Number.NaN;
+
+    getProfileBookingDetail(detailsType, id)
+      .then((detail) => {
+        setBookingDetail(detail);
+        const summary = detail?.payment_summary || {};
+        const total = Number(detail?.total_amount ?? detail?.total_price ?? summary.total_amount ?? summary.total_price ?? detail?.price ?? 0);
+        const paid = Number(summary.paid_amount ?? detail?.paid_amount ?? detail?.payment_overview?.paid_amount ?? 0);
+        const rawRemaining = summary.remaining_amount ?? detail?.remaining_amount ?? detail?.payment_overview?.remaining_amount;
+        const remaining = rawRemaining == null ? Number.NaN : Number(rawRemaining);
+        const isConfirmedPaid =
+          String(detail?.payment_status || "").toLowerCase() === "paid" ||
+          String(summary.payment_status || "").toLowerCase() === "paid" ||
+          String(detail?.payment_link_status || "").toLowerCase() === "paid" ||
+          (total > 0 && paid >= total) ||
+          remaining === 0;
+        if (isConfirmedPaid) {
+          const deposit = Number(summary.deposit_amount ?? detail?.deposit_amount ?? 0);
+          const fallbackPaidNow =
+            total > 0 && paid >= total
+              ? Math.max(0, paid - deposit) || total
+              : paid;
+          setPaymentSuccessAmount(
+            Number.isFinite(pendingAmount) && pendingAmount > 0 ? pendingAmount : fallbackPaidNow
+          );
+          setShowPaymentSuccess(true);
+        } else {
+          setPayError(t("profile.details.paymentNotVerified", "We couldn’t verify your payment. Check the booking status before trying again."));
+        }
+      })
+      .catch(() => {
+        setPayError(t("profile.details.paymentNotVerified", "We couldn’t verify your payment. Check the booking status before trying again."));
+      })
+      .finally(() => {
+        try {
+          sessionStorage.removeItem(pendingPaymentKey);
+        } catch {}
+      });
+  }, [searchParams, id, detailsType, isAuthenticated, t]);
+
+  useEffect(() => {
+    if (searchParams.get("payment_failed") !== "true") return;
+    setPayError(t("profile.details.paymentNotVerified", "We couldn’t verify your payment. Check the booking status before trying again."));
+    const url = new URL(window.location.href);
+    url.searchParams.delete("payment_failed");
+    window.history.replaceState({}, "", url.toString());
+  }, [searchParams, t]);
+
   const isCancelledOrRefunded = isCancelled || isRejected || isRefundInProgress || isRefunded || isNoRefund;
   const showCancelAction = !isCancelledOrRefunded;
   const showPayAction = !isFullyPaid && !isCancelledOrRefunded && !isStartDatePast;
@@ -500,6 +548,17 @@ export default function ProfileBookingDetailsPage() {
     try {
       const result = await payRemainingBookingBalance(detailsType, id);
       if (result.payment_url) {
+        const amount = Number(result.remaining_amount);
+        if (Number.isFinite(amount) && amount > 0) {
+          try {
+            sessionStorage.setItem("pending_profile_booking_payment", JSON.stringify({
+              bookingId: id,
+              bookingType: detailsType,
+              amount,
+              currency: result.currency || currencyCode,
+            }));
+          } catch {}
+        }
         window.location.href = result.payment_url;
       } else {
         setPayError("Could not generate payment link. Please try again.");
@@ -945,15 +1004,12 @@ export default function ProfileBookingDetailsPage() {
     "USD"
   ).toUpperCase();
 
-  const buildDetailsHref = (view?: "payment") => {
+  useEffect(() => {
+    if (!isPaymentView) return;
     const params = new URLSearchParams(searchParams.toString());
-    if (view) {
-      params.set("view", view);
-    } else {
-      params.delete("view");
-    }
-    return `/profile/bookings-details?${params.toString()}`;
-  };
+    params.delete("view");
+    router.replace(`/profile/bookings-details?${params.toString()}`);
+  }, [isPaymentView, router, searchParams]);
 
   const normalizedTotal = totalAmount;
   const normalizedDeposit = depositAmount;
@@ -1211,17 +1267,7 @@ export default function ProfileBookingDetailsPage() {
         </div>
       ) : (
         <div className={styles.container}>
-          {isPaymentView ? (
-            <PaymentForm
-              formData={safeFormData as any}
-              onChange={() => undefined}
-              confirmLabel={`Confirm & Pay $${(isHotel ? hotelDepositAmount : depositAmount).toLocaleString()} ${(isHotel ? hotelDepositAmount : depositAmount) === totalAmount ? "(Full amount)" : "Deposit"}`}
-              onPrevious={() => router.push(buildDetailsHref())}
-              onConfirm={() => setShowPaymentSuccess(true)}
-              sidebar={paymentSidebar}
-            />
-          ) : (
-            <section className={styles.card}>
+          <section className={styles.card}>
               {!isFullyPaid && !isCancelled && !isRejected && !isStartDatePast && (
                 <div className={styles.warningBanner}>
                   <span className={styles.warningDot}>
@@ -1305,8 +1351,7 @@ export default function ProfileBookingDetailsPage() {
                   )}
                 </footer>
               )}
-            </section>
-          )}
+          </section>
         </div>
       )}
 
@@ -1350,12 +1395,14 @@ export default function ProfileBookingDetailsPage() {
                   : bData.start_date ? formatDateDDMMYYYY(bData.start_date) || "—" : "—",
             },
             {
-              label: "Total Paid",
-              value: isTransport
-                ? `$${depositAmount.toFixed(2)}`
-                : isHotel
-                  ? `$${hotelDepositAmount.toFixed(2)}`
-                  : `$${depositAmount.toLocaleString()}`,
+              label: "Amount Paid",
+              value: formatCurrency(
+                currencyCode === "EGP"
+                  ? { egp: paymentSuccessAmount ?? paidAmount }
+                  : currencyCode === "EUR"
+                    ? { eur: paymentSuccessAmount ?? paidAmount }
+                    : { usd: paymentSuccessAmount ?? paidAmount }
+              ),
               valueColor: "#FF6600",
             },
           ]}

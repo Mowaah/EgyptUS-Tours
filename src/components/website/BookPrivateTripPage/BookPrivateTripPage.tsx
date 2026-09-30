@@ -84,6 +84,7 @@ function clearBookingInfo() {
 export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTripPageProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useTranslation("booking");
   const [currentStep, setCurrentStep] = useState(1);
   const [isStartingCheckout, setIsStartingCheckout] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -114,13 +115,15 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
       searchParams.get("booking_success") === "true" ||
       searchParams.get("booking_success") === "1";
 
-    const successParam = (urlParams.get("success") || searchParams.get("success") || "").toLowerCase();
-    const pendingParam = (urlParams.get("pending") || searchParams.get("pending") || "").toLowerCase();
-    const isDirectPaymobSuccess =
-      (successParam === "true" || successParam === "1") &&
-      pendingParam !== "true";
+    const isPaymentFailed =
+      urlParams.get("payment_failed") === "true" || searchParams.get("payment_failed") === "true";
+    if (isPaymentFailed) {
+      alert(t("errors.paymentNotVerified", "We couldn’t verify your payment. Check your booking status before trying again."));
+      window.history.replaceState({}, "", window.location.pathname);
+      return;
+    }
 
-    if (isBookingSuccess || isDirectPaymobSuccess) {
+    if (isBookingSuccess) {
       const savedInfo = getBookingInfo();
       const rawBookingId =
         urlParams.get("booking_id") ||
@@ -148,7 +151,7 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
         window.history.replaceState({}, "", window.location.pathname);
       } catch {}
     }
-  }, [searchParams, trip.title, isGroupTrip, totalAmount, depositAmount, formData.startDate, formData.endDate]);
+  }, [searchParams, trip.title, isGroupTrip, totalAmount, depositAmount, formData.startDate, formData.endDate, t]);
 
   const handleChange = (patch: Partial<BookingData>) => {
     setFormData((prev) => ({ ...prev, ...patch }));
@@ -302,8 +305,6 @@ export default function BookPrivateTripPage({ trip, isGroupTrip }: BookPrivateTr
       router.push("/profile?tab=bookings&type=trip");
     }
   };
-
-  const { t } = useTranslation("booking");
 
   const steps = [
     { number: 1, label: t("tripBooking.steps.dates", "Your Details") },

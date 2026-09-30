@@ -15,7 +15,7 @@ import StepTripDetails from "./steps/TripDetails/StepTripDetails";
 import StepPersonalInfo from "./steps/PersonalInfo/StepPersonalInfo";
 import StepBookingSummary from "./steps/BookingSummary/StepBookingSummary";
 import BookingSummary from "./BookingSummary/BookingSummary";
-import { submitTransportationBooking, getProfileBookingDetail } from "@/lib/api";
+import { extractApiError, submitTransportationBooking, getProfileBookingDetail } from "@/lib/api";
 import { formatPhoneE164 } from "@/utils/validators";
 import { formatDateToYMD, formatDateDDMMYYYY, formatDisplayTime } from "@/utils/dateFormat";
 import { savePendingGuestRecord } from "@/utils/guestBookingAuth";
@@ -99,13 +99,15 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
       searchParams.get("booking_success") === "true" ||
       searchParams.get("booking_success") === "1";
 
-    const successParam = (urlParams.get("success") || searchParams.get("success") || "").toLowerCase();
-    const pendingParam = (urlParams.get("pending") || searchParams.get("pending") || "").toLowerCase();
-    const isDirectPaymobSuccess =
-      (successParam === "true" || successParam === "1") &&
-      pendingParam !== "true";
+    const isPaymentFailed =
+      urlParams.get("payment_failed") === "true" || searchParams.get("payment_failed") === "true";
+    if (isPaymentFailed) {
+      alert(t("errors.paymentNotVerified", "We couldn’t verify your payment. Check your booking status before trying again."));
+      window.history.replaceState({}, "", window.location.pathname);
+      return;
+    }
 
-    if (isBookingSuccess || isDirectPaymobSuccess) {
+    if (isBookingSuccess) {
       const savedInfo = getTransportBookingInfo();
       const rawBookingId =
         urlParams.get("booking_id") ||
@@ -152,7 +154,7 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
         window.history.replaceState({}, "", window.location.pathname);
       } catch {}
     }
-  }, [searchParams, vehicle.name, vehicle.type]);
+  }, [searchParams, vehicle.name, vehicle.type, t]);
 
   const steps = [
     { number: 1, label: t("transportBooking.steps.rideDetails", "Trip Details") },
@@ -237,6 +239,10 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
       };
 
       const booking = await submitTransportationBooking(payload);
+      if (!booking?.payment_url) {
+        throw new Error(t("transportBooking.checkoutUnavailable", "Your booking was created, but checkout could not be started. Please contact support before submitting another booking."));
+      }
+
       savePendingGuestRecord({
         email: formData.email,
         name: formData.name,
@@ -248,31 +254,19 @@ export default function BookTransportationPage({ vehicle }: BookTransportationPa
       const totalNum = parseFloat(booking?.total_price) || formData.routePrice || parseFloat(vehicle.price.replace(/[^0-9.]/g, "")) || 0;
       const depositNum = parseFloat(booking?.deposit_amount) || totalNum * 0.3;
 
-      if (booking?.payment_url) {
-        saveTransportBookingInfo({
-          id: booking.id,
-          vehicleSlug: vehicle.id,
-          vehicleName: `${vehicle.type} - ${vehicle.name}`,
-          pickupDate: formData.pickupDate,
-          pickupTime: formData.pickupTime || booking.pickup_time,
-          totalAmount: totalNum,
-          depositAmount: depositNum,
-        });
-        window.location.assign(resolvePaymentUrl(booking.payment_url));
-      } else {
-        setConfirmedBooking({
-          id: booking?.id || Math.floor(Math.random() * 90000000 + 10000000),
-          vehicleName: `${vehicle.type} - ${vehicle.name}`,
-          pickupDate: formData.pickupDate,
-          pickupTime: formData.pickupTime || booking?.pickup_time,
-          totalAmount: totalNum,
-          depositAmount: depositNum,
-        });
-        setShowSuccess(true);
-      }
+      saveTransportBookingInfo({
+        id: booking.id,
+        vehicleSlug: vehicle.id,
+        vehicleName: `${vehicle.type} - ${vehicle.name}`,
+        pickupDate: formData.pickupDate,
+        pickupTime: formData.pickupTime || booking.pickup_time,
+        totalAmount: totalNum,
+        depositAmount: depositNum,
+      });
+      window.location.assign(resolvePaymentUrl(booking.payment_url));
     } catch (error) {
       console.error("Failed to submit transportation booking:", error);
-      alert(t("errors.bookingSubmitFailed", "Something went wrong while confirming your booking. Please try again."));
+      alert(extractApiError(error, t("errors.bookingSubmitFailed", "Something went wrong while confirming your booking. Please try again.")));
     } finally {
       setIsSubmitting(false);
     }

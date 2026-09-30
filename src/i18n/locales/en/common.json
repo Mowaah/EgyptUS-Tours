@@ -307,6 +307,7 @@
       "none": "None",
       "cancelBooking": "Cancel Booking",
       "payRemaining": "Pay Remaining Balance",
+      "paymentNotVerified": "We couldn’t verify your payment. Check the booking status before trying again.",
       "paymentDueWarning": "Final payment due by {date} to keep your booking",
       "status": {
         "confirmed": "Confirmed",

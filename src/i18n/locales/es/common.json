@@ -307,6 +307,7 @@
       "none": "Ninguna",
       "cancelBooking": "Cancelar Reserva",
       "payRemaining": "Pagar Saldo Restante",
+      "paymentNotVerified": "No pudimos verificar tu pago. Comprueba el estado de la reserva antes de intentarlo de nuevo.",
       "paymentDueWarning": "Pago final requerido antes del {date} para mantener tu reserva",
       "status": {
         "confirmed": "Confirmada",

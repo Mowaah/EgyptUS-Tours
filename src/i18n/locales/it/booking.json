@@ -274,6 +274,7 @@
     "breadcrumbDetails": "Dettagli",
     "backToTransport": "Torna ai Trasporti",
     "checkoutStarting": "Avvio Pagamento...",
+    "checkoutUnavailable": "La prenotazione è stata creata, ma non è stato possibile avviare il pagamento. Contatta l’assistenza prima di inviare un’altra prenotazione.",
     "steps": {
       "rideDetails": "Dettagli Viaggio",
       "contactDetails": "Dati Personali",
@@ -380,6 +381,7 @@
     "policySuffix": "."
   },
   "errors": {
+    "paymentNotVerified": "Non è stato possibile verificare il pagamento. Controlla lo stato della prenotazione prima di riprovare.",
     "required": "Questo campo è obbligatorio.",
     "nameRequired": "Il nome e cognome è obbligatorio.",
     "emailRequired": "L'indirizzo email è obbligatorio.",
