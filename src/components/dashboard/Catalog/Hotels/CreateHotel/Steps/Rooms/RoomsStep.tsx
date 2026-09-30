@@ -7,6 +7,7 @@ import LanguageTabs, { Language } from "@/components/shared/LanguageTabs/Languag
 import { getLangKey } from "@/components/dashboard/shared/i18n";
 import { CreateHotelValues } from "../../CreateHotelSchema";
 import { DASHBOARD_CURRENCY } from "@/constants/currency";
+import { HOTEL_ROOM_VIEW_OPTIONS } from "@/utils/hotelRoomViews";
 import styles from "./RoomsStep.module.scss";
 import Image from "next/image";
 
@@ -254,11 +255,7 @@ function RoomItem({ field, index, remove }: { field: any, index: number, remove:
                   <DashboardField
                     {...field}
                     control="select"
-                    options={[
-                      { label: "Sea View", value: "Sea View" },
-                      { label: "Pool View", value: "Pool View" },
-                      { label: "Garden View", value: "Garden View" },
-                    ]}
+                    options={HOTEL_ROOM_VIEW_OPTIONS.map(({ value }) => ({ label: value, value }))}
                     label="Room View"
                     placeholder="e.g. Garden View"
                     error={getRoomError(errors, index, "view") || fieldState.error?.message}

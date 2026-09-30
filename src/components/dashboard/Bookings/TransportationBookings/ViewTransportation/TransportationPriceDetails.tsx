@@ -116,13 +116,7 @@ export default function TransportationPriceDetails({
       maximumFractionDigits: 2,
     })}`;
 
-  const tripTypeLabel = "Private Transfer";
-
-  const routeSubtitle =
-    transfer?.route ||
-    (transfer?.pickup_location && transfer?.dropoff_location
-      ? `${transfer.pickup_location} → ${transfer.dropoff_location}`
-      : "");
+  const transferPriceLabel = "Transfer Price";
 
   return (
     <div className={`${styles.card} ${styles.firstRowCard}`}>
@@ -192,18 +186,22 @@ export default function TransportationPriceDetails({
                 const qty = Number(item.quantity) || 1;
                 const name = item.name || item.title || item.label || "Service";
                 const cost = Number(item.price ?? item.amount ?? item.line_total ?? 0);
+                const isBaseItem = item.item_type === "base";
+                const isAdditionalService = item.item_type === "addon" || item.service_id != null;
                 return (
                   <div key={idx} className={styles.priceListItem}>
                     <div className={styles.priceItemLeft}>
                       <span className={styles.priceItemName}>
-                        {qty > 1 ? `${qty} × ` : ""}
-                        {name}
+                        {!isBaseItem && qty > 1 ? `${qty} × ` : ""}
+                        {isBaseItem ? transferPriceLabel : name}
                       </span>
-                      {item.subtitle && (
+                      {!isBaseItem && item.subtitle && (
                         <span className={styles.priceItemSubtitle}>{item.subtitle}</span>
                       )}
                     </div>
-                    <span className={styles.priceItemCost}>{formatCost(cost)}</span>
+                    <span className={isAdditionalService ? `${styles.priceItemCost} ${styles.priceItemCostAdditional}` : styles.priceItemCost}>
+                      {isAdditionalService ? "+" : ""}{formatCost(cost)}
+                    </span>
                   </div>
                 );
               })
@@ -218,10 +216,7 @@ export default function TransportationPriceDetails({
                   return (
                     <div className={styles.priceListItem}>
                       <div className={styles.priceItemLeft}>
-                        <span className={styles.priceItemName}>{tripTypeLabel}</span>
-                        {routeSubtitle && (
-                          <span className={styles.priceItemSubtitle}>{routeSubtitle}</span>
-                        )}
+                        <span className={styles.priceItemName}>{transferPriceLabel}</span>
                       </div>
                       <span className={styles.priceItemCost}>{formatCost(basePrice)}</span>
                     </div>
@@ -235,8 +230,8 @@ export default function TransportationPriceDetails({
                         {addon.name || addon.title || "Additional Service"}
                       </span>
                     </div>
-                    <span className={styles.priceItemCost}>
-                      {formatCost(Number(addon.price || addon.amount || 0))}
+                    <span className={`${styles.priceItemCost} ${styles.priceItemCostAdditional}`}>
+                      +{formatCost(Number(addon.price || addon.amount || 0))}
                     </span>
                   </div>
                 ))}
@@ -244,10 +239,7 @@ export default function TransportationPriceDetails({
             ) : (
               <div className={styles.priceListItem}>
                 <div className={styles.priceItemLeft}>
-                  <span className={styles.priceItemName}>{tripTypeLabel}</span>
-                  {routeSubtitle && (
-                    <span className={styles.priceItemSubtitle}>{routeSubtitle}</span>
-                  )}
+                  <span className={styles.priceItemName}>{transferPriceLabel}</span>
                 </div>
                 <span className={styles.priceItemCost}>{formatCost(totalAmount)}</span>
               </div>

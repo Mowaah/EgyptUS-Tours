@@ -70,7 +70,10 @@
       "all": "Todos",
       "sea": "Vista al Mar",
       "pool": "Vista a la Piscina",
-      "garden": "Vista al Jardín"
+      "garden": "Vista al Jardín",
+      "city": "Vista a la Ciudad",
+      "nile": "Vista al Nilo",
+      "pyramids": "Vista a las Pirámides"
     },
     "details": "Detalles",
     "startFrom": "Desde",

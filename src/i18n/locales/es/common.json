@@ -404,7 +404,10 @@
     "suite": "Suite",
     "seaView": "Vista al Mar",
     "poolView": "Vista a la Piscina",
-    "gardenView": "Vista al Jardín"
+    "gardenView": "Vista al Jardín",
+    "cityView": "Vista a la Ciudad",
+    "nileView": "Vista al Nilo",
+    "pyramidsView": "Vista a las Pirámides"
   },
   "refund": {
     "bankDetailsTitle": "Detalles bancarios de reembolso",

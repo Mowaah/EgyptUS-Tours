@@ -404,7 +404,10 @@
     "suite": "Suite",
     "seaView": "Sea View",
     "poolView": "Pool View",
-    "gardenView": "Garden View"
+    "gardenView": "Garden View",
+    "cityView": "City View",
+    "nileView": "Nile View",
+    "pyramidsView": "Pyramids View"
   },
   "refund": {
     "bankDetailsTitle": "Refund Bank Details",

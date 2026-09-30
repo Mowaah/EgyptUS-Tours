@@ -182,7 +182,10 @@
       "views": {
         "sea": "Sea View",
         "pool": "Pool View",
-        "garden": "Garden View"
+        "garden": "Garden View",
+        "city": "City View",
+        "nile": "Nile View",
+        "pyramids": "Pyramids View"
       }
     },
     "personalInfo": {

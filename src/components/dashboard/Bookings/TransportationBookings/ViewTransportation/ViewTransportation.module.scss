@@ -386,6 +386,10 @@
   flex-shrink: 0;
 }
 
+.priceItemCostAdditional {
+  color: $success;
+}
+
 .bookingInfoWrapper {
   display: flex;
   gap: 12px; /* Figma: Frame 2147227143 gap is 12px */

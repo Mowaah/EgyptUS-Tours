@@ -9,12 +9,13 @@ import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState/Dash
 import DashboardFilterEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardFilterEmptyState";
 import DashboardSearchEmptyState from "@/components/dashboard/DashboardEmptyState/DashboardSearchEmptyState";
 import { useHotelDetailContext } from "../layout";
+import { HOTEL_ROOM_VIEW_OPTIONS } from "@/utils/hotelRoomViews";
 import styles from "./page.module.scss";
 
 const filterOptions = {
   type: ["All", "Single", "Double Room", "Triple Room"],
   category: ["All", "Standard", "Deluxe", "Premium", "Suite"],
-  view: ["All", "Sea View", "Pool View", "Garden View"],
+  view: ["All", ...HOTEL_ROOM_VIEW_OPTIONS.map(({ value }) => value)],
   price: [
     "All",
     `Under ${DASHBOARD_CURRENCY.symbol}1,000`,

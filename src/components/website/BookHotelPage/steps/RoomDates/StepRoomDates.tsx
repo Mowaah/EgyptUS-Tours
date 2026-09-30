@@ -29,7 +29,7 @@ interface StepRoomDatesProps {
 }
 
 const PREFERRED_CAT_ORDER = ["Standard", "Deluxe", "Premium", "Suite", "Executive"];
-const PREFERRED_VIEW_ORDER = ["Garden", "Sea", "Pool", "City", "Nile", "Courtyard"];
+const PREFERRED_VIEW_ORDER = ["Garden", "Sea", "Pool", "City", "Nile", "Pyramids", "Courtyard"];
 
 function cleanCategoryName(cat?: string): string {
   if (!cat) return "Standard";
@@ -104,7 +104,7 @@ export default function StepRoomDates({
   // Only views that actually exist for the selected category
   const availableViews = useMemo(() => {
     const all = hotel.hotelRooms || [];
-    if (all.length === 0) return ["Garden", "Sea", "Pool"];
+    if (all.length === 0) return ["Garden", "Sea", "Pool", "City", "Nile", "Pyramids"];
     const catRooms = all.filter((r) => matchesCategory(r, selectedCategory));
     const roomsToUse = catRooms.length > 0 ? catRooms : all;
     const unique = Array.from(

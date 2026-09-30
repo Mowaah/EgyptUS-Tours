@@ -404,7 +404,10 @@
     "suite": "Suite",
     "seaView": "Vista Mare",
     "poolView": "Vista Piscina",
-    "gardenView": "Vista Giardino"
+    "gardenView": "Vista Giardino",
+    "cityView": "Vista Città",
+    "nileView": "Vista Nilo",
+    "pyramidsView": "Vista Piramidi"
   },
   "refund": {
     "bankDetailsTitle": "Dettagli bancari per il rimborso",

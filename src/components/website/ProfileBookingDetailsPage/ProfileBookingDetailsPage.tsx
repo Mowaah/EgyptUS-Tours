@@ -29,6 +29,7 @@ import { getStatusConfig } from "@/utils/statusUtils";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { getHotelRoomViewKey, getHotelRoomViewLabel } from "@/utils/hotelRoomViews";
 import { formatDateDDMMYYYY, isDateWithinFullPaymentWindow, formatDisplayTime, parseDate } from "@/utils/dateFormat";
 import {
   getPendingGuestRecord,
@@ -585,11 +586,10 @@ export default function ProfileBookingDetailsPage() {
   };
 
   const getLocalizedViewLabel = (opt: string) => {
-    const v = (opt || "").toLowerCase();
-    if (v.includes("sea") || v.includes("mar")) return t("rooms.seaView", "Sea View");
-    if (v.includes("pool") || v.includes("piscina")) return t("rooms.poolView", "Pool View");
-    if (v.includes("garden") || v.includes("jard") || v.includes("giard")) return t("rooms.gardenView", "Garden View");
-    return opt;
+    const key = getHotelRoomViewKey(opt);
+    return key
+      ? t(`rooms.${key}View` as Parameters<typeof t>[0], getHotelRoomViewLabel(opt))
+      : opt;
   };
 
   const hotelRoomsList = (() => {

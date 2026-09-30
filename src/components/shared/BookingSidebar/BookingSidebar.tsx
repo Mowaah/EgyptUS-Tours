@@ -11,6 +11,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { calculateTripBookingPrice, calculateHotelBookingPrice, CHILD_POLICY, normalizeRoomType, resolveApplicableSeason } from "@/utils/bookingPricing";
 import { formatDateDDMMYYYY, parseDate, isDateWithinFullPaymentWindow } from "@/utils/dateFormat";
 import { isDayTour } from "@/utils/tripUtils";
+import { getHotelRoomViewKey, getHotelRoomViewLabel } from "@/utils/hotelRoomViews";
 import styles from "./BookingSidebar.module.scss";
 
 interface BookingSidebarProps {
@@ -246,11 +247,10 @@ export default function BookingSidebar({
       };
 
       const getLocalizedViewLabel = (opt: string) => {
-        const v = opt.toLowerCase();
-        if (v.includes("sea")) return t("hotelBooking.roomDates.views.sea", "Sea View");
-        if (v.includes("pool")) return t("hotelBooking.roomDates.views.pool", "Pool View");
-        if (v.includes("garden")) return t("hotelBooking.roomDates.views.garden", "Garden View");
-        return opt.toLowerCase().includes("view") ? opt : `${opt.charAt(0).toUpperCase() + opt.slice(1)} View`;
+        const key = getHotelRoomViewKey(opt);
+        return key
+          ? t(`hotelBooking.roomDates.views.${key}` as Parameters<typeof t>[0], getHotelRoomViewLabel(opt))
+          : opt.toLowerCase().includes("view") ? opt : `${opt.charAt(0).toUpperCase() + opt.slice(1)} View`;
       };
 
       const customizations = formData.roomCustomizations?.[type] || [];
@@ -527,11 +527,11 @@ export default function BookingSidebar({
                     } : fallbackRoomPrice;
 
                     const viewTitle = (() => {
-                      const v = (room?.view || "").toLowerCase();
-                      if (v.includes("sea")) return t("hotelBooking.roomDates.views.sea", "Sea View");
-                      if (v.includes("pool")) return t("hotelBooking.roomDates.views.pool", "Pool View");
-                      if (v.includes("garden")) return t("hotelBooking.roomDates.views.garden", "Garden View");
-                      return room?.view || t("hotelBooking.roomDates.views.garden", "Garden View");
+                      const view = room?.view || "Garden View";
+                      const key = getHotelRoomViewKey(view);
+                      return key
+                        ? t(`hotelBooking.roomDates.views.${key}` as Parameters<typeof t>[0], getHotelRoomViewLabel(view))
+                        : view;
                     })();
 
                     rows.push(

@@ -6,6 +6,7 @@ import { Hotel, HotelRoom } from "@/types";
 import { FilterGroup, RadioFilterList, PriceRangeFilter, EmptyState, FilterSidebar } from "@/components/shared";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { HOTEL_ROOM_VIEW_OPTIONS } from "@/utils/hotelRoomViews";
 import styles from "./HotelRoomTypes.module.scss";
 
 interface HotelRoomTypesProps {
@@ -17,13 +18,6 @@ const TYPE_CONFIG = [
   { value: "Single", labelKey: "roomTypes.types.single" },
   { value: "Double Room", labelKey: "roomTypes.types.double" },
   { value: "Triple Room", labelKey: "roomTypes.types.triple" },
-] as const;
-
-const VIEW_CONFIG = [
-  { value: "All", labelKey: "roomTypes.views.all" },
-  { value: "Sea View", labelKey: "roomTypes.views.sea" },
-  { value: "Pool View", labelKey: "roomTypes.views.pool" },
-  { value: "Garden View", labelKey: "roomTypes.views.garden" },
 ] as const;
 
 export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
@@ -118,10 +112,13 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
   }, [t]);
 
   const viewOptions = useMemo(() => {
-    return VIEW_CONFIG.map(c => ({
-      label: t(c.labelKey as Parameters<typeof t>[0], c.value),
-      value: c.value,
-    }));
+    return [
+      { label: t("roomTypes.views.all", "All"), value: "All" },
+      ...HOTEL_ROOM_VIEW_OPTIONS.map(({ value, key }) => ({
+        label: t(`roomTypes.views.${key}` as Parameters<typeof t>[0], value),
+        value,
+      })),
+    ];
   }, [t]);
 
   return (

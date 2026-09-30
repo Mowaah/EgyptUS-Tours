@@ -70,7 +70,10 @@
       "all": "Tutti",
       "sea": "Vista Mare",
       "pool": "Vista Piscina",
-      "garden": "Vista Giardino"
+      "garden": "Vista Giardino",
+      "city": "Vista Città",
+      "nile": "Vista Nilo",
+      "pyramids": "Vista Piramidi"
     },
     "details": "Dettagli",
     "startFrom": "A Partire Da",

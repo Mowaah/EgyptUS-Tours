@@ -3,6 +3,7 @@ import { BookingData } from "@/types";
 import { MultiCurrencyPrice } from "@/constants/currency";
 import { parseDate, isDateWithinFullPaymentWindow } from "./dateFormat";
 import { isDayTour, getBracketForPax } from "./tripUtils";
+import { getHotelRoomViewLabel } from "./hotelRoomViews";
 
 export const CHILD_POLICY = {
   freeThroughAge: 2,
@@ -304,9 +305,7 @@ export function calculateTripBookingPrice(
     const viewCounts: Record<string, number> = {};
     for (let i = 0; i < count; i++) {
       const opt = customizations[i] || "garden";
-      let view = "Garden View";
-      if (opt.toLowerCase().includes("sea")) view = "Sea View";
-      else if (opt.toLowerCase().includes("pool")) view = "Pool View";
+      const view = getHotelRoomViewLabel(opt);
       viewCounts[view] = (viewCounts[view] || 0) + 1;
     }
 
