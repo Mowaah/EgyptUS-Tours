@@ -41,6 +41,7 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
   });
   const { t } = useTranslation("trips");
   const isDayTourTrip = isDayTour(trip);
+  const brochureUrl = trip.brochureUrl?.trim();
 
   const BASE_TRIP_TABS = [
     { id: "overview", label: t("tabs.overview", "Overview") },
@@ -81,30 +82,28 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
   };
 
   const handleDownloadBrochure = async () => {
-    if (trip.brochureUrl) {
-      try {
-        const response = await fetch(trip.brochureUrl);
-        const blob = await response.blob();
-        const blobUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = blobUrl;
-        link.download = `${trip.title.replace(/[^a-zA-Z0-9_-]/g, "_")}_Brochure.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(blobUrl);
-      } catch {
-        const link = document.createElement("a");
-        link.href = trip.brochureUrl;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        link.download = `${trip.title.replace(/[^a-zA-Z0-9_-]/g, "_")}_Brochure.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-    } else {
-      alert(t("noBrochure", "No brochure file has been uploaded for this trip yet."));
+    if (!brochureUrl) return;
+
+    try {
+      const response = await fetch(brochureUrl);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `${trip.title.replace(/[^a-zA-Z0-9_-]/g, "_")}_Brochure.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch {
+      const link = document.createElement("a");
+      link.href = brochureUrl;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.download = `${trip.title.replace(/[^a-zA-Z0-9_-]/g, "_")}_Brochure.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   };
 
@@ -144,7 +143,7 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
               onFavoriteToggle={toggle}
               location={trip.location || "Egypt"}
               duration={`${trip.duration.days} ${trip.duration.days === 1 ? t("day", "day") : t("days", "days")}${trip.duration.nights > 0 ? ` / ${trip.duration.nights} ${trip.duration.nights === 1 ? t("night", "night") : t("nights", "nights")}` : ""}`}
-              mobileBrochureButton={
+              mobileBrochureButton={brochureUrl ? (
                 <Button
                   variant="primary"
                   size="lg"
@@ -154,18 +153,20 @@ export default function TripDetailPage({ trip, testimonials = [] }: TripDetailPa
                 >
                   {t("downloadBrochure", "Get the Brochure")}
                 </Button>
-              }
+              ) : undefined}
             >
-              <Button
-                variant="outline"
-                size="sm"
-                className={styles.actionBtn}
-                icon={<Image src="/images/brochure.svg" alt="" width={18} height={18} />}
-                iconPosition="left"
-                onClick={handleDownloadBrochure}
-              >
-                {t("downloadBrochure", "Get the Brochure")}
-              </Button>
+              {brochureUrl && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={styles.actionBtn}
+                  icon={<Image src="/images/brochure.svg" alt="" width={18} height={18} />}
+                  iconPosition="left"
+                  onClick={handleDownloadBrochure}
+                >
+                  {t("downloadBrochure", "Get the Brochure")}
+                </Button>
+              )}
 
               <Button
                 variant="primary"
