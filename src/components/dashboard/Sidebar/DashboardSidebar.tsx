@@ -60,7 +60,6 @@ const navItems: NavItem[] = [
       { label: "Deposits", href: "/dashboard/finance/deposits" },
     ],
   },
-  { label: "Paymob", href: "https://eg.dashboard.paymob.com/login", external: true, module: "finance" },
   {
     label: "Marketing",
     module: "marketing",
@@ -92,6 +91,7 @@ const navItems: NavItem[] = [
     ],
   },
   { label: "SEO Configuration", href: "/dashboard/seo", module: "seo" },
+  { label: "Paymob", href: "https://eg.dashboard.paymob.com/login", external: true, module: "finance" },
 ];
 
 const toKebabCase = (value: string) =>
