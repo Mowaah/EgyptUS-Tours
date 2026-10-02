@@ -13,6 +13,7 @@ import type { AdminModuleKey } from "@/utils/adminPermissions";
 interface NavItem {
   label: string;
   href?: string;
+  external?: boolean;
   active?: boolean;
   defaultOpen?: boolean;
   module?: AdminModuleKey;
@@ -59,6 +60,7 @@ const navItems: NavItem[] = [
       { label: "Deposits", href: "/dashboard/finance/deposits" },
     ],
   },
+  { label: "Paymob", href: "https://eg.dashboard.paymob.com/login", external: true, module: "finance" },
   {
     label: "Marketing",
     module: "marketing",
@@ -282,6 +284,16 @@ export default function DashboardSidebar() {
                         <span>{item.label}</span>
                         <Chevron open={isOpen} />
                       </button>
+                    ) : href && item.external ? (
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.navLink}
+                      >
+                        <DashboardIcon label={item.label} className={styles.navIcon} />
+                        <span>{item.label}</span>
+                      </a>
                     ) : href ? (
                       <Link
                         href={href}
