@@ -13,8 +13,8 @@
 
 .grid {
   display: grid;
-  // On mobile, show 2-column card grid but give the header its own full row.
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  // Keep the mobile feature cards readable in a single column.
+  grid-template-columns: minmax(0, 1fr);
   gap: 10px;
 
   @include sm {
@@ -22,6 +22,7 @@
   }
 
   @include md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: $spacing-lg;
   }
 
@@ -49,11 +50,11 @@
 }
 
 .card {
-  border-radius: 16px;
-  padding: 14px;
+  border-radius: 18px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   min-width: 0;
 
   @include sm {
@@ -76,8 +77,8 @@
 }
 
 .iconBox {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: $radius-md;
   background-color: $white;
   display: flex;
@@ -86,8 +87,8 @@
   flex-shrink: 0;
 
   img, svg {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
   }
 
   @include sm {
@@ -113,13 +114,13 @@
 }
 
 .cardTitle {
-  font-size: $font-size-sm;
+  font-size: $font-size-base;
   font-weight: $font-weight-medium;
   margin: 0;
   line-height: 1.25;
 
   @include sm {
-    font-size: $font-size-15;
+    font-size: $font-size-base;
   }
 
   @include md {
@@ -133,7 +134,7 @@
 }
 
 .cardDesc {
-  font-size: $font-size-xs;
+  font-size: $font-size-sm;
   font-weight: $font-weight-normal;
   color: $text-muted;
   line-height: 1.45;
@@ -146,7 +147,7 @@
   overflow: hidden;
 
   @include sm {
-    font-size: $font-size-13;
+    font-size: $font-size-sm;
     -webkit-line-clamp: 4;
     line-clamp: 4;
   }

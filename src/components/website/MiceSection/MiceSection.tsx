@@ -122,7 +122,9 @@ export default function MiceSection() {
               return (
                 <div
                   key={i}
-                  className={`${styles.galleryItem} ${isCenter ? styles.galleryItemActive : ""}`}
+                  className={`${styles.galleryItem} ${isCenter ? styles.galleryItemActive : ""} ${
+                    slot === 1 ? styles.galleryItemLeft : slot === 3 ? styles.galleryItemRight : ""
+                  }`}
                   style={SLOT_STYLES[slot]}
                   onClick={() => setActive(i)}
                 >
