@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import type { DataTableColumn } from "@/components/dashboard/DataTable";
 import ViewButton from "@/components/shared/ViewButton/ViewButton";
 import styles from "../PaymentsTable/PaymentsTable.module.scss";
+import { formatCurrencyAmount } from "@/utils/formatMetric";
 
 export interface PaymentRow {
   id: string;
@@ -15,6 +16,8 @@ export interface PaymentRow {
   service: string;
   dates: string;
   method: string;
+  totalAmount?: string | number | null;
+  bookingCurrency?: string | null;
   status: string;
   rawStatus?: string;
 }
@@ -90,6 +93,15 @@ export const paymentsColumns: DataTableColumn<PaymentRow>[] = [
     id: "method",
     header: "Method",
     render: (row) => row.method,
+  },
+  {
+    id: "totalAmount",
+    header: "Total Amount",
+    render: (row) => {
+      const currency = row.bookingCurrency?.toLowerCase();
+      const symbol = currency === "eur" ? "€" : currency === "egp" ? "EGP " : currency === "gbp" ? "£" : "$";
+      return formatCurrencyAmount(row.totalAmount, symbol);
+    },
   },
   {
     id: "status",

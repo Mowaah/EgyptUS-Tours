@@ -106,6 +106,8 @@ export function usePaymentsPanel({
         service: serviceStr,
         dates: item.paid_at ? new Date(item.paid_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—",
         method: item.method_label,
+        totalAmount: item.booking_total_price ?? item.amount,
+        bookingCurrency: item.booking_currency ?? item.currency,
         status: item.status_label,
         rawStatus: item.status,
       };
@@ -133,6 +135,7 @@ export function usePaymentsPanel({
       "Service": item.service || "",
       "Date": item.dates || "",
       "Method": item.method || "",
+      "Total Amount": item.totalAmount || "",
       "Status": item.status || "",
     }));
 
