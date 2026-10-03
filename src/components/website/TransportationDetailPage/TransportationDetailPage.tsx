@@ -20,6 +20,14 @@ interface TransportationDetailPageProps {
 
 export default function TransportationDetailPage({ vehicleDetail }: TransportationDetailPageProps) {
   const { t } = useTranslation("transportation");
+  const parsePrice = (value?: string | null) => value != null ? Number.parseFloat(value) : undefined;
+  const hasPromotion = Boolean(vehicleDetail.discount_value && Number.parseFloat(vehicleDetail.discount_value) > 0);
+  const startingPrice = parsePrice(vehicleDetail.starting_from_price ?? vehicleDetail.starting_from)
+    ?? parsePrice(vehicleDetail.price_amount);
+  const startingPriceEgp = parsePrice(vehicleDetail.starting_from_price_egp)
+    ?? parsePrice(vehicleDetail.price_amount_egp);
+  const startingPriceEur = parsePrice(vehicleDetail.starting_from_price_eur)
+    ?? parsePrice(vehicleDetail.price_amount_eur);
 
   const TABS = [
     { id: "overview", label: t("tabs.overview", "Overview") },
@@ -36,11 +44,19 @@ export default function TransportationDetailPage({ vehicleDetail }: Transportati
     images: vehicleDetail.gallery && vehicleDetail.gallery.length > 0
       ? vehicleDetail.gallery.map(g => g.image)
       : [vehicleDetail.image || "/images/sedan.png"],
-    price: vehicleDetail.price_amount,
+    price: String(hasPromotion
+      ? parsePrice(vehicleDetail.discounted_starting_from_price) ?? startingPrice ?? 0
+      : startingPrice ?? 0),
     prices: {
-      usd: vehicleDetail.price_amount ? parseFloat(vehicleDetail.price_amount) : undefined,
-      egp: vehicleDetail.price_amount_egp ? parseFloat(vehicleDetail.price_amount_egp) : undefined,
-      eur: vehicleDetail.price_amount_eur ? parseFloat(vehicleDetail.price_amount_eur) : undefined,
+      usd: hasPromotion
+        ? parsePrice(vehicleDetail.discounted_starting_from_price) ?? startingPrice
+        : startingPrice,
+      egp: hasPromotion
+        ? parsePrice(vehicleDetail.discounted_starting_from_price_egp) ?? startingPriceEgp
+        : startingPriceEgp,
+      eur: hasPromotion
+        ? parsePrice(vehicleDetail.discounted_starting_from_price_eur) ?? startingPriceEur
+        : startingPriceEur,
     },
   };
 

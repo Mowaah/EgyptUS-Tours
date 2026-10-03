@@ -535,3 +535,17 @@
     font-size: $font-size-sm;
   }
 }
+
+.discount {
+  font-size: $font-size-13;
+  color: #009625;
+  font-weight: 600;
+
+  @media (min-width: 640px) {
+    font-size: $font-size-sm;
+  }
+
+  span:last-child {
+    font-weight: 700;
+  }
+}

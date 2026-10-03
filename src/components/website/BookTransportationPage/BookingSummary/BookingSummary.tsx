@@ -45,8 +45,6 @@ export default function BookingSummary({
 
   const additionalServices = vehicle.additionalServices || [];
 
-  const basePrice = parseFloat((vehicle.price ?? "0").replace(/[^0-9.]/g, "")) || 0;
-
   const selectedServices = additionalServices.filter((s: any) =>
     formData.additionalServiceIds?.includes(s.id)
   );
@@ -54,6 +52,8 @@ export default function BookingSummary({
   const routeUsd = formData.routePrice ?? (parseFloat((vehicle.price ?? "0").replace(/[^0-9.]/g, "")) || 0);
   const routeEgp = formData.routePriceEgp ?? (vehicle.prices?.egp ? Number(vehicle.prices.egp) : (parseFloat(vehicle.price ?? "0") || 0));
   const routeEur = formData.routePriceEur ?? (vehicle.prices?.eur ? Number(vehicle.prices.eur) : (parseFloat(vehicle.price ?? "0") || 0));
+  const promotionPercent = Number.parseFloat(vehicle.discountValue ?? "") || 0;
+  const hasPromotion = promotionPercent > 0;
 
   const transferPrices: MultiCurrencyPrice = useMemo(() => ({
     usd: routeUsd,
@@ -61,7 +61,7 @@ export default function BookingSummary({
     eur: routeEur,
   }), [routeUsd, routeEgp, routeEur]);
 
-  const calculateTotalForCurrency = (curr: "usd" | "egp" | "eur") => {
+  const calculateSubtotalForCurrency = (curr: "usd" | "egp" | "eur") => {
     let base = 0;
     if (curr === "egp") base = routeEgp;
     else if (curr === "eur") base = routeEur;
@@ -77,11 +77,25 @@ export default function BookingSummary({
     return base + sTotal;
   };
 
+  const calculateDiscountForCurrency = (curr: "usd" | "egp" | "eur") => {
+    const subtotal = calculateSubtotalForCurrency(curr);
+    return Math.round(subtotal * promotionPercent) / 100;
+  };
+
+  const calculateTotalForCurrency = (curr: "usd" | "egp" | "eur") =>
+    Math.max(calculateSubtotalForCurrency(curr) - calculateDiscountForCurrency(curr), 0);
+
+  const promotionPrices: MultiCurrencyPrice = useMemo(() => ({
+    usd: calculateDiscountForCurrency("usd"),
+    egp: calculateDiscountForCurrency("egp"),
+    eur: calculateDiscountForCurrency("eur"),
+  }), [routeUsd, routeEgp, routeEur, selectedServices, promotionPercent]);
+
   const totalPrices: MultiCurrencyPrice = useMemo(() => ({
     usd: calculateTotalForCurrency("usd"),
     egp: calculateTotalForCurrency("egp"),
     eur: calculateTotalForCurrency("eur"),
-  }), [routeUsd, routeEgp, routeEur, selectedServices]);
+  }), [routeUsd, routeEgp, routeEur, selectedServices, promotionPercent]);
 
   const isDepositFull = useMemo(() => {
     return isDateWithinFullPaymentWindow(formData.pickupDate);
@@ -236,6 +250,12 @@ export default function BookingSummary({
                         </div>
                       );
                     })}
+                    {hasPromotion && (Number(promotionPrices.usd) > 0 || Number(promotionPrices.egp) > 0 || Number(promotionPrices.eur) > 0) && (
+                      <div className={`${styles.priceRow} ${styles.discount}`}>
+                        <span>{vehicle.discountTitle || t("sidebar.specialDiscount", "Special Discount")}</span>
+                        <span>-{formatCurrency(promotionPrices)}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

@@ -5,8 +5,13 @@ export const createVehicleSchema = z.object({
   vehicleName: requiredLocalizedStringSchema("Vehicle Name is required"),
   model: z.string().min(1, "Model is required"),
   category: z.string().min(1, "Category is required"),
-  passengerCapacity: z.string().min(1, "Passenger Capacity is required"),
-  luggageCapacity: z.string().optional(),
+  passengerCapacity: z.string()
+    .min(1, "Passenger Capacity is required")
+    .regex(/^\d+$/, "Passenger Capacity must be a whole number")
+    .refine((value) => Number(value) > 0, "Passenger Capacity must be greater than 0"),
+  luggageCapacity: z.string()
+    .regex(/^\d*$/, "Luggage Capacity must be a whole number")
+    .optional(),
   starRating: z.string().optional().refine((val) => {
     if (!val) return true;
     const num = parseFloat(val);

@@ -23,31 +23,40 @@ export default async function Page() {
   ]);
   
   const vehicles: Vehicle[] = vehiclesData.map(v => {
-    const basePrice = parseFloat(v.price_amount) || 0;
-    const basePriceEgp = v.price_amount_egp ? parseFloat(v.price_amount_egp) : undefined;
-    const basePriceEur = v.price_amount_eur ? parseFloat(v.price_amount_eur) : undefined;
-    const discountPerc = v.discount_value ? parseFloat(v.discount_value) : 0;
-    const discountedPrice = discountPerc > 0 ? basePrice * (1 - discountPerc / 100) : basePrice;
+    const parsePrice = (value?: string | null) => value != null ? Number.parseFloat(value) : undefined;
+    const basePrice = parsePrice(v.starting_from_price ?? v.starting_from) ?? parsePrice(v.price_amount) ?? 0;
+    const basePriceEgp = parsePrice(v.starting_from_price_egp) ?? parsePrice(v.price_amount_egp);
+    const basePriceEur = parsePrice(v.starting_from_price_eur) ?? parsePrice(v.price_amount_eur);
+    const hasPromotion = Boolean(v.discount_value && Number.parseFloat(v.discount_value) > 0);
+    const discountedPrice = hasPromotion
+      ? parsePrice(v.discounted_starting_from_price) ?? basePrice
+      : basePrice;
+    const discountedPriceEgp = hasPromotion
+      ? parsePrice(v.discounted_starting_from_price_egp) ?? basePriceEgp
+      : basePriceEgp;
+    const discountedPriceEur = hasPromotion
+      ? parsePrice(v.discounted_starting_from_price_eur) ?? basePriceEur
+      : basePriceEur;
 
     return {
       id: v.slug,
       title: v.title || v.name,
-      type: v.type || v.vehicle_type,
+      type: v.category || v.type || v.vehicle_type,
       image: v.image || "/images/sedan.png",
       price: discountedPrice.toString(),
       prices: {
         usd: discountedPrice,
-        egp: basePriceEgp != null ? (discountPerc > 0 ? basePriceEgp * (1 - discountPerc / 100) : basePriceEgp) : undefined,
-        eur: basePriceEur != null ? (discountPerc > 0 ? basePriceEur * (1 - discountPerc / 100) : basePriceEur) : undefined,
+        egp: discountedPriceEgp,
+        eur: discountedPriceEur,
       },
-      originalPrice: discountPerc > 0 ? basePrice : undefined,
-      originalPrices: discountPerc > 0 ? {
+      originalPrice: hasPromotion ? basePrice : undefined,
+      originalPrices: hasPromotion ? {
         usd: basePrice,
         egp: basePriceEgp,
         eur: basePriceEur,
       } : undefined,
       discountTitle: v.discount_title || undefined,
-      discountValue: v.discount_value ? `${parseFloat(v.discount_value)}% Off` : undefined,
+      discountValue: hasPromotion ? `${parseFloat(v.discount_value!)}% Off` : undefined,
       passengers: v.passengers,
       luggage: (v.luggage_capacity !== undefined && v.luggage_capacity !== null && v.luggage_capacity > 0)
         ? `${v.luggage_capacity} large suitcase${v.luggage_capacity > 1 ? "s" : ""}`
