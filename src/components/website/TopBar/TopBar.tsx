@@ -114,13 +114,25 @@ export default function TopBar() {
     <div className={styles.topbar}>
       <div className={styles.container}>
         <div className={styles.socials}>
-          <a href="#" aria-label="Facebook" className={styles.socialIcon}>
+          <a
+            href="https://www.facebook.com/egyptus.tours/"
+            aria-label="Facebook"
+            className={styles.socialIcon}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <Image src="/images/footer/facebook.svg" alt="Facebook" width={12.6} height={12.6} />
           </a>
-          <a href="#" aria-label="Instagram" className={styles.socialIcon}>
+          <a
+            href="https://www.instagram.com/egyptustours/"
+            aria-label="Instagram"
+            className={styles.socialIcon}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <Image src="/images/footer/instagram.svg" alt="Instagram" width={12} height={12} />
           </a>
-          <a href="#" aria-label="Tiktok" className={styles.socialIcon}>
+          <a href="#" aria-label="Tiktok" className={styles.socialIcon} hidden>
             <Image src="/images/footer/tiktok.svg" alt="Tiktok" width={12} height={12} />
           </a>
         </div>

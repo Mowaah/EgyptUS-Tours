@@ -11,33 +11,39 @@ type NavLinksType = Record<string, NavLinkItem[]>;
 
 const SOCIALS = [
   {
-    href: "#",
+    href: "https://www.facebook.com/egyptus.tours/",
     label: "Facebook",
+    visible: true,
     icon: <Image src="/images/footer/facebook.svg" alt="Facebook" width={19} height={19} />,
   },
   {
-    href: "#",
+    href: "https://www.instagram.com/egyptustours/",
     label: "Instagram",
+    visible: true,
     icon: <Image src="/images/footer/instagram.svg" alt="Instagram" width={18} height={18} />,
   },
   {
     href: "#",
     label: "TikTok",
+    visible: false,
     icon: <Image src="/images/footer/tiktok.svg" alt="TikTok" width={18} height={18} />,
   },
   {
     href: "#",
     label: "YouTube",
+    visible: false,
     icon: <Image src="/images/footer/youtube.svg" alt="YouTube" width={18} height={18} />,
   },
   {
     href: "#",
     label: "X",
+    visible: false,
     icon: <Image src="/images/footer/x.svg" alt="X" width={18} height={18} />,
   },
   {
     href: "#",
     label: "LinkedIn",
+    visible: false,
     icon: <Image src="/images/footer/linkedin.svg" alt="LinkedIn" width={18} height={18} />,
   },
 ];
@@ -101,7 +107,15 @@ export default function Footer() {
               <span className={styles.followLabel}>{t("footer.followUs", "Follow us")}</span>
               <div className={styles.socials}>
                 {SOCIALS.map((s) => (
-                  <a key={s.label} href={s.href} aria-label={s.label} className={styles.socialIcon}>
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    aria-label={s.label}
+                    className={styles.socialIcon}
+                    hidden={!s.visible}
+                    target={s.visible ? "_blank" : undefined}
+                    rel={s.visible ? "noopener noreferrer" : undefined}
+                  >
                     {s.icon}
                   </a>
                 ))}
