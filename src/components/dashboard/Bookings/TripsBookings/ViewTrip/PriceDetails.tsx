@@ -40,15 +40,16 @@ export default function PriceDetails({ details, overview, booking }: PriceDetail
     : null;
 
   let imgSrc = "/images/pyramids2.jpg";
-  if (details?.image_url) {
-    imgSrc = details.image_url.startsWith("http")
-      ? details.image_url
-      : `${BASE_URL}${details.image_url.startsWith("/") ? "" : "/"}${details.image_url}`;
-  } else if (booking?.trip_image || booking?.image_url) {
-    const bImg = booking.trip_image || booking.image_url;
-    imgSrc = bImg.startsWith("http")
-      ? bImg
-      : `${BASE_URL}${bImg.startsWith("/") ? "" : "/"}${bImg}`;
+  const rawImage =
+    booking?.hotel_card?.image_url ||
+    booking?.hotel_image ||
+    details?.image_url ||
+    booking?.trip_image ||
+    booking?.image_url;
+  if (rawImage) {
+    imgSrc = rawImage.startsWith("http")
+      ? rawImage
+      : `${BASE_URL}${rawImage.startsWith("/") ? "" : "/"}${rawImage}`;
   }
 
   const rawCurrency = (details?.currency || overview?.currency || "usd").toLowerCase();
