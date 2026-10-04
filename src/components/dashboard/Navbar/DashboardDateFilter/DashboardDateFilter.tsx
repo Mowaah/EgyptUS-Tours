@@ -266,6 +266,7 @@ export default function DashboardDateFilter() {
                 {/* Start Date */}
                 <CustomDatePicker
                   variant="custom"
+                  allowPastDates
                   value={toPickerValue(startDate)}
                   onChange={(val) => handleStartDateChange(toIsoDate(val))}
                   dropdownClassName={styles.datePickerPortal}
@@ -296,6 +297,7 @@ export default function DashboardDateFilter() {
                 {/* End Date */}
                 <CustomDatePicker
                   variant="custom"
+                  allowPastDates
                   minDate={startDate ? parseDate(startDate) : undefined}
                   value={toPickerValue(endDate)}
                   onChange={(val) => handleEndDateChange(toIsoDate(val))}

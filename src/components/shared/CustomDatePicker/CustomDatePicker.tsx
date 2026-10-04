@@ -58,12 +58,13 @@ export default function CustomDatePicker({
 
   // Effective minDate: defaults to start of today unless past dates are explicitly allowed
   const effectiveMinDate = (() => {
-    if (allowPastDates || minDate === null) return null;
+    if (minDate === null) return null;
     if (minDate !== undefined) {
       const d = new Date(minDate);
       d.setHours(0, 0, 0, 0);
       return d;
     }
+    if (allowPastDates) return null;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return today;
