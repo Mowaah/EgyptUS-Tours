@@ -2,51 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { CONTACT_INFO } from "@/constants";
+import { CONTACT_INFO, SOCIAL_LINKS } from "@/constants";
 import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./Footer.module.scss";
 
 type NavLinkItem = { label: string; href?: string; value?: string };
 type NavLinksType = Record<string, NavLinkItem[]>;
-
-const SOCIALS = [
-  {
-    href: "https://www.facebook.com/egyptus.tours/",
-    label: "Facebook",
-    visible: true,
-    icon: <Image src="/images/footer/facebook.svg" alt="Facebook" width={19} height={19} />,
-  },
-  {
-    href: "https://www.instagram.com/egyptustours/",
-    label: "Instagram",
-    visible: true,
-    icon: <Image src="/images/footer/instagram.svg" alt="Instagram" width={18} height={18} />,
-  },
-  {
-    href: "#",
-    label: "TikTok",
-    visible: false,
-    icon: <Image src="/images/footer/tiktok.svg" alt="TikTok" width={18} height={18} />,
-  },
-  {
-    href: "#",
-    label: "YouTube",
-    visible: false,
-    icon: <Image src="/images/footer/youtube.svg" alt="YouTube" width={18} height={18} />,
-  },
-  {
-    href: "#",
-    label: "X",
-    visible: false,
-    icon: <Image src="/images/footer/x.svg" alt="X" width={18} height={18} />,
-  },
-  {
-    href: "#",
-    label: "LinkedIn",
-    visible: false,
-    icon: <Image src="/images/footer/linkedin.svg" alt="LinkedIn" width={18} height={18} />,
-  },
-];
 
 const TRIPADVISOR_URL =
   "https://www.tripadvisor.com/Attraction_Review-g294202-d12995117-Reviews-Egyptus_Tours-Giza_Giza_Governorate.html";
@@ -106,17 +67,22 @@ export default function Footer() {
             <div className={styles.socialBlock}>
               <span className={styles.followLabel}>{t("footer.followUs", "Follow us")}</span>
               <div className={styles.socials}>
-                {SOCIALS.map((s) => (
+                {SOCIAL_LINKS.map((social) => (
                   <a
-                    key={s.label}
-                    href={s.href}
-                    aria-label={s.label}
+                    key={social.label}
+                    href={social.href}
+                    aria-label={social.label}
                     className={styles.socialIcon}
-                    hidden={!s.visible}
-                    target={s.visible ? "_blank" : undefined}
-                    rel={s.visible ? "noopener noreferrer" : undefined}
+                    hidden={!social.visible}
+                    target={social.visible ? "_blank" : undefined}
+                    rel={social.visible ? "noopener noreferrer" : undefined}
                   >
-                    {s.icon}
+                    <Image
+                      src={social.iconSrc}
+                      alt={social.label}
+                      width={social.footerIconSize}
+                      height={social.footerIconSize}
+                    />
                   </a>
                 ))}
               </div>

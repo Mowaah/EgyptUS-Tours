@@ -115,6 +115,10 @@
 
 }
 
+.socialIcon[hidden] {
+  display: none;
+}
+
 .linksGrid {
   display: grid;
   grid-template-columns: 1fr;

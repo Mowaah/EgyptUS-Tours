@@ -65,6 +65,10 @@
   }
 }
 
+.socialIcon[hidden] {
+  display: none;
+}
+
 .settings {
   display: flex;
   align-items: center;
