@@ -137,9 +137,62 @@
 }
 
 .dots {
-  border: none;
+  border: 1px solid transparent;
   background: transparent;
-  cursor: default;
+  cursor: pointer;
   opacity: 1;
   color: #ACACAC;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $secondary-border;
+    color: $secondary;
+    background: #FFF5EE;
+    opacity: 1;
+  }
+}
+
+.dotsInput {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 4px;
+  width: 32px;
+  min-width: 32px;
+  height: 28px;
+  border-radius: 8px;
+  background: $white;
+  border: 1.5px solid $secondary;
+  outline: none;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: $font-size-2xs;
+  line-height: 1;
+  color: $secondary;
+  box-shadow: 0 0 0 2px rgba(242, 140, 40, 0.15);
+  transition: all 0.2s ease;
+
+  @media (min-width: 640px) {
+    width: 40px;
+    min-width: 40px;
+    height: 32px;
+    border-radius: 12px;
+    font-size: $font-size-xs;
+    line-height: 16px;
+  }
+
+  &::placeholder {
+    color: #ACACAC;
+    font-weight: 400;
+    opacity: 0.6;
+  }
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  -moz-appearance: textfield;
 }
