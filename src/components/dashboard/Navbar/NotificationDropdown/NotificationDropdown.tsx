@@ -12,6 +12,7 @@ import type { AdminNotificationItem } from "@/types/adminNotificationTypes";
 export default function NotificationDropdown() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [hasOpened, setHasOpened] = useState(false);
   const [coords, setCoords] = useState({ top: 0, right: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -22,7 +23,9 @@ export default function NotificationDropdown() {
     isLoading,
     markAsRead,
     markAllAsRead,
-  } = useNotifications();
+  } = useNotifications({
+    fetchList: isOpen || hasOpened,
+  });
 
   const visibleNotifications = notifications.slice(0, 4);
 
@@ -43,6 +46,7 @@ export default function NotificationDropdown() {
 
   const toggleDropdown = () => {
     if (!isOpen && buttonRef.current) {
+      setHasOpened(true);
       const rect = buttonRef.current.getBoundingClientRect();
       setCoords({
         top: rect.bottom + 16,

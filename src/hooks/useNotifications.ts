@@ -19,6 +19,7 @@ export interface UseNotificationsOptions {
   pageSize?: number;
   category?: string;
   search?: string;
+  fetchList?: boolean;
 }
 
 export function useNotifications(options?: UseNotificationsOptions) {
@@ -26,15 +27,18 @@ export function useNotifications(options?: UseNotificationsOptions) {
   const pageSize = options?.pageSize ?? 20;
   const category = options?.category;
   const search = options?.search;
+  const fetchList = options?.fetchList ?? true;
 
-  const listKey = [
-    "adminNotifications",
-    "list",
-    page,
-    pageSize,
-    category || "all",
-    search || "",
-  ];
+  const listKey = fetchList
+    ? [
+        "adminNotifications",
+        "list",
+        page,
+        pageSize,
+        category || "all",
+        search || "",
+      ]
+    : null;
 
   const {
     data: unreadData,
@@ -44,7 +48,8 @@ export function useNotifications(options?: UseNotificationsOptions) {
     UNREAD_COUNT_KEY,
     getAdminNotificationUnreadCount,
     {
-      refreshInterval: 30000,
+      refreshInterval: 60000,
+      refreshWhenHidden: false,
       revalidateOnFocus: true,
       shouldRetryOnError: false,
     }
