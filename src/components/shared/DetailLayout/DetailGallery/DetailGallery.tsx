@@ -82,7 +82,14 @@ export default function DetailGallery({ images, title, rating, reviewCount, desc
               onClick={() => setActiveIndex(i)}
               aria-label={`View photo ${i + 1}`}
             >
-              <Image src={src} alt={`${title} Photo ${i + 1}`} fill sizes="120px" className={styles.thumbImg} />
+              <Image
+                src={src}
+                alt={`${title} Photo ${i + 1}`}
+                fill
+                sizes="(min-width: 1024px) 300px, 160px"
+                quality={85}
+                className={styles.thumbImg}
+              />
             </button>
           ))}
         </div>

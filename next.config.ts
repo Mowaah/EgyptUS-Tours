@@ -19,7 +19,7 @@ try {
 const nextConfig: NextConfig = {
   images: {
     unoptimized: process.env.NODE_ENV === "development",
-    qualities: [75, 100],
+    qualities: [75, 85, 100],
     remotePatterns: [
       {
         protocol: apiProtocol as "http" | "https",
