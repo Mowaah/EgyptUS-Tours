@@ -288,15 +288,16 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (activeTab === "favorites") {
-      const fetchFavorites = async () => {
-        setFavoritesLoading(true);
+      const fetchFavorites = async (silent = false) => {
+        if (!silent) {
+          setFavoritesLoading(true);
+        }
         try {
           if (!isAuthenticated) {
             const guestFavs = getGuestFavorites();
             if (guestFavs.trips.length === 0 && guestFavs.hotels.length === 0) {
               setFavoriteTrips([]);
               setFavoriteHotels([]);
-              setFavoritesLoading(false);
               return;
             }
 
@@ -330,15 +331,17 @@ export default function ProfilePage() {
         } catch (error) {
           console.error("Failed to fetch favorites:", error);
         } finally {
-          setFavoritesLoading(false);
+          if (!silent) {
+            setFavoritesLoading(false);
+          }
         }
       };
 
-      fetchFavorites();
+      fetchFavorites(false);
 
       const handleGuestChange = () => {
         if (!isAuthenticated && activeTab === "favorites") {
-          fetchFavorites();
+          fetchFavorites(true);
         }
       };
 

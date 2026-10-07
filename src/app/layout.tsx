@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import ScrollToTop from "@/components/shared/ScrollToTop/ScrollToTop";
 import ScrollAnimationProvider from "@/components/shared/ScrollAnimationProvider/ScrollAnimationProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import "./globals.scss";
 
 import Script from "next/script";
@@ -48,9 +49,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           />
         </noscript>
         <AuthProvider>
-          <ScrollToTop />
-          <ScrollAnimationProvider />
-          {children}
+          <FavoritesProvider>
+            <ScrollToTop />
+            <ScrollAnimationProvider />
+            {children}
+          </FavoritesProvider>
         </AuthProvider>
       </body>
     </html>

@@ -286,9 +286,19 @@ export async function logoutCustomer(payload: { refresh: string }, accessToken?:
 
 // --- Favorites ---
 export async function getFavoriteTripIds(): Promise<Set<string>> {
-  const res: any = await apiClient.get('/profile/favorites/trips/?page_size=1000');
-  const results: Array<{ slug: string }> = res?.results ?? [];
-  return new Set(results.map((t) => t.slug));
+  try {
+    const res: any = await apiClient.get('/profile/favorites/trips/?page_size=1000');
+    const results: any[] = Array.isArray(res) ? res : (res?.results ?? []);
+    const set = new Set<string>();
+    results.forEach((t) => {
+      if (t.slug) set.add(String(t.slug));
+      if (t.id != null) set.add(String(t.id));
+    });
+    return set;
+  } catch (err) {
+    console.error("Failed to fetch favorite trip IDs", err);
+    return new Set<string>();
+  }
 }
 
 export async function getFavoriteTrips(): Promise<any[]> {
@@ -305,9 +315,19 @@ export async function removeTripFavorite(slug: string): Promise<any> {
 }
 
 export async function getFavoriteHotelIds(): Promise<Set<string>> {
-  const res: any = await apiClient.get('/profile/favorites/hotels/?page_size=1000');
-  const results: Array<{ slug: string }> = res?.results ?? [];
-  return new Set(results.map((h) => h.slug));
+  try {
+    const res: any = await apiClient.get('/profile/favorites/hotels/?page_size=1000');
+    const results: any[] = Array.isArray(res) ? res : (res?.results ?? []);
+    const set = new Set<string>();
+    results.forEach((h) => {
+      if (h.slug) set.add(String(h.slug));
+      if (h.id != null) set.add(String(h.id));
+    });
+    return set;
+  } catch (err) {
+    console.error("Failed to fetch favorite hotel IDs", err);
+    return new Set<string>();
+  }
 }
 
 export async function getFavoriteHotels(): Promise<any[]> {
