@@ -90,11 +90,12 @@ export default function AboutStory() {
 
           <div className={styles.imageContent}>
             <Image
-              src="/images/about-story.png"
+              src="/images/about-story.webp"
               alt="Pyramids with people on camels"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className={styles.image}
+              priority
             />
           </div>
         </div>

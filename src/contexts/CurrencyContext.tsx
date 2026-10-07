@@ -97,7 +97,7 @@ export function CurrencyProvider({ children, initialCurrency }: CurrencyProvider
     (amount?: MultiCurrencyPrice | number | string | null, options: Intl.NumberFormatOptions = {}) => {
       const value = resolveMultiCurrencyPrice(amount, currency);
       const isWhole = value % 1 === 0;
-      const defaultFractionDigits = currency === "EGP" || isWhole ? 0 : 2;
+      const defaultFractionDigits = isWhole ? 0 : 2;
 
       const currencyDef = CURRENCY_OPTIONS.find((c) => c.code === currency) || CURRENCY_OPTIONS[0];
       const formattedNumber = new Intl.NumberFormat("en-US", {

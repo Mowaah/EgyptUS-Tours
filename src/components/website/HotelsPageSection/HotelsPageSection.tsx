@@ -391,7 +391,7 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
                 valueMin={priceRange.min}
                 valueMax={Math.min(priceRange.max, maxHotelPriceLimit)}
                 onChange={(min, max) => setPriceRange({ min, max })}
-                formatValue={(val) => formatCurrency({ usd: val, eur: val, egp: val * 50 })}
+                formatValue={(val) => formatCurrency({ usd: val, eur: val })}
               />
             </FilterGroup>
 
@@ -406,8 +406,8 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
             {filteredHotels.length > 0 ? (
               <>
                 <div className={styles.gridView}>
-                  {paginatedHotels.map((hotel) => (
-                    <HotelCard key={hotel.id} hotel={hotel} view="grid" onFavoriteToggle={handleFavoriteToggle} />
+                  {paginatedHotels.map((hotel, index) => (
+                    <HotelCard key={hotel.id} hotel={hotel} view="grid" onFavoriteToggle={handleFavoriteToggle} priority={index === 0} />
                   ))}
                 </div>
 

@@ -234,8 +234,8 @@ export default function TransportationPage({ vehicles, faqs }: TransportationPag
           {paginatedVehicles.length > 0 ? (
             <>
               <div className={isSearchResults ? styles.vehicleList : styles.vehicleGrid}>
-                {paginatedVehicles.map(vehicle => (
-                  <VehicleCard key={vehicle.id} vehicle={vehicle} view={isSearchResults ? "list" : "grid"} />
+                {paginatedVehicles.map((vehicle, index) => (
+                  <VehicleCard key={vehicle.id} vehicle={vehicle} view={isSearchResults ? "list" : "grid"} priority={index === 0} />
                 ))}
               </div>
 

@@ -193,7 +193,7 @@ export default function HotelRoomTypes({ hotel }: HotelRoomTypesProps) {
               valueMin={priceRange.min}
               valueMax={Math.min(priceRange.max, priceBounds.max)}
               onChange={(newMin, newMax) => setPriceRange({ min: newMin, max: newMax })}
-              formatValue={(val) => formatCurrency({ usd: val, eur: val, egp: val * 50 })}
+              formatValue={(val) => formatCurrency({ usd: val, eur: val })}
             />
           </FilterGroup>
         </FilterSidebar>

@@ -18,9 +18,10 @@ interface HotelCardProps {
   /** Override image height (default 288px) */
   imageHeight?: number;
   onFavoriteToggle?: (id: string) => void;
+  priority?: boolean;
 }
 
-export default function HotelCard({ hotel, view = "grid", imageHeight, onFavoriteToggle }: HotelCardProps) {
+export default function HotelCard({ hotel, view = "grid", imageHeight, onFavoriteToggle, priority = false }: HotelCardProps) {
   const { t } = useTranslation("common");
   const isList = view === "list";
   const hotelDetailsHref = `/hotels/${hotel.id}`;
@@ -56,6 +57,7 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
           className={styles.image}
+          priority={priority}
         />
         {(hotel.discountTitle || hotel.discountValue) && (
           <div className={styles.discountBanner}>

@@ -44,21 +44,19 @@ function parseBudgetRange(budgetStr?: string): { min: number; max: number } | nu
   if (!numbers || numbers.length === 0) return null;
 
   const parsedNumbers = numbers.map((n) => parseInt(n.replace(/,/g, ""), 10));
-  const isEgp = budgetStr.includes("£") || parsedNumbers.some((n) => n >= 10000);
-  const rate = isEgp ? 50 : 1;
 
   const lower = budgetStr.toLowerCase();
   const isLessThan = lower.includes("less") || lower.includes("menos") || lower.includes("meno") || lower.includes("under");
   const isOver = lower.includes("over") || lower.includes("más") || lower.includes("mas") || lower.includes("oltre") || lower.includes("+");
 
   if (isLessThan) {
-    return { min: 0, max: Math.round(parsedNumbers[0] / rate) };
+    return { min: 0, max: parsedNumbers[0] };
   }
   if (isOver) {
-    return { min: Math.round(parsedNumbers[0] / rate), max: 100000 };
+    return { min: parsedNumbers[0], max: 100000 };
   }
   if (parsedNumbers.length >= 2) {
-    return { min: Math.round(parsedNumbers[0] / rate), max: Math.round(parsedNumbers[1] / rate) };
+    return { min: parsedNumbers[0], max: parsedNumbers[1] };
   }
   return null;
 }
@@ -690,7 +688,7 @@ export default function TripsSection({
                   ...prev,
                   priceRange: { min, max }
                 }))}
-                formatValue={(val) => formatCurrency({ usd: val, eur: val, egp: val * 50 })}
+                formatValue={(val) => formatCurrency({ usd: val, eur: val })}
               />
             </FilterGroup>
 
@@ -717,6 +715,7 @@ export default function TripsSection({
                       key={trip.id}
                       trip={trip}
                       onFavoriteToggle={handleFavoriteToggle}
+                      priority={index === 0}
                     />
                   ))}
                 </div>

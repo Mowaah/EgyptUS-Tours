@@ -17,9 +17,14 @@ try {
 }
 
 const nextConfig: NextConfig = {
+  compress: true,
+  experimental: {
+    optimizePackageImports: ["@/components/shared", "lucide-react"],
+  },
   images: {
+    formats: ["image/avif", "image/webp"],
     unoptimized: process.env.NODE_ENV === "development",
-    qualities: [75, 85, 100],
+    qualities: [75, 80, 85, 100],
     remotePatterns: [
       {
         protocol: apiProtocol as "http" | "https",

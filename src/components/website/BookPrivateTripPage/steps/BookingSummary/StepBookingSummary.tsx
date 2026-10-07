@@ -94,10 +94,10 @@ export default function StepBookingSummary({
       title: t("tripBooking.step3.contactInfo", "Contact Info"),
       icon: "/images/summary/contact.svg",
       fields: [
-        { label: t("tripBooking.step2.fullName", "Name"), value: formData.name },
-        { label: t("tripBooking.step2.email", "Email"), value: formData.email },
-        { label: t("tripBooking.step2.phone", "Phone Number"), value: formData.phone },
-        { label: t("tripBooking.step2.nationality", "Nationality"), value: getNationalityName(formData.nationality) },
+        { label: t("tripBooking.step3.fullName", "Full Name"), value: formData.name },
+        { label: t("tripBooking.step3.email", "Email Address"), value: formData.email },
+        { label: t("tripBooking.step3.phone", "Phone Number"), value: formData.phone },
+        { label: t("tripBooking.step3.nationality", "Nationality"), value: getNationalityName(formData.nationality) },
       ],
     },
     {

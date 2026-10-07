@@ -28,10 +28,12 @@ export default async function HeroSection() {
     <section className={styles.hero}>
       <div className={styles.background}>
         <Image
-          src="/images/home/hero-bg.png"
+          src="/images/home/hero-bg.webp"
           alt=""
           fill
           priority
+          sizes="100vw"
+          quality={85}
           style={{ objectFit: "cover", objectPosition: "center" }}
         />
       </div>

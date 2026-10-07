@@ -7,11 +7,11 @@ import Image from "next/image";
 import styles from "./MiceSection.module.scss";
 
 const GALLERY_IMAGES = [
-  "/images/corporate/corporate1.png",
-  "/images/corporate/corporate2.png",
-  "/images/corporate/corporate3.png",
+  "/images/corporate/corporate1.webp",
+  "/images/corporate/corporate2.webp",
+  "/images/corporate/corporate3.webp",
   "/images/corporate/corporate4.jpg",
-  "/images/corporate/corporate5.png",
+  "/images/corporate/corporate5.webp",
 ];
 
 const N = GALLERY_IMAGES.length; // always 5

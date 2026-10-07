@@ -31,9 +31,10 @@ export interface Vehicle {
 interface VehicleCardProps {
   vehicle: Vehicle;
   view?: "grid" | "list";
+  priority?: boolean;
 }
 
-export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps) {
+export default function VehicleCard({ vehicle, view = "grid", priority = false }: VehicleCardProps) {
   const { t } = useTranslation("common");
   const { formatCurrency } = useCurrency();
   const isList = view === "list";
@@ -107,6 +108,7 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
               fill
               className={styles.image}
               sizes="(max-width: 768px) 100vw, 280px"
+              priority={priority}
             />
             {(vehicle.discountTitle || vehicle.discountValue) && (
               <div className={styles.discountBanner}>
@@ -150,6 +152,7 @@ export default function VehicleCard({ vehicle, view = "grid" }: VehicleCardProps
           fill
           className={styles.image}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          priority={priority}
         />
         {(vehicle.discountTitle || vehicle.discountValue) && (
           <div className={styles.discountBanner}>

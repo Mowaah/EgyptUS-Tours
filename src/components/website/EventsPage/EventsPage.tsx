@@ -13,11 +13,11 @@ import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./EventsPage.module.scss";
 
 const GALLERY_IMAGES = [
-  "/images/events1.png",
-  "/images/events2.png",
-  "/images/events3.png",
-  "/images/events4.png",
-  "/images/events5.png",
+  "/images/events1.webp",
+  "/images/events2.webp",
+  "/images/events3.webp",
+  "/images/events4.webp",
+  "/images/events5.webp",
 ];
 import type { TestimonialData } from "@/services/testimonialsService";
 

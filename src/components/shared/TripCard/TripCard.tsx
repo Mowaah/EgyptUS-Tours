@@ -14,9 +14,10 @@ interface TripCardProps {
   trip: Trip;
   onFavoriteToggle?: (id: string) => void;
   className?: string;
+  priority?: boolean;
 }
 
-export default function TripCard({ trip, onFavoriteToggle, className = "" }: TripCardProps) {
+export default function TripCard({ trip, onFavoriteToggle, className = "", priority = false }: TripCardProps) {
   const { t } = useTranslation("common");
   const tripDetailsHref = `/egypttours/${trip.id}`;
   const { formatCurrency } = useCurrency();
@@ -43,6 +44,7 @@ export default function TripCard({ trip, onFavoriteToggle, className = "" }: Tri
           fill
           sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, (max-width: 1279px) 33vw, 400px"
           className={styles.image}
+          priority={priority}
         />
         {(trip.discountTitle || trip.discountValue) && (
           <div className={styles.discountBanner}>

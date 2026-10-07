@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-
+import localFont from "next/font/local";
 
 import ScrollToTop from "@/components/shared/ScrollToTop/ScrollToTop";
 import ScrollAnimationProvider from "@/components/shared/ScrollAnimationProvider/ScrollAnimationProvider";
@@ -9,6 +9,28 @@ import "./globals.scss";
 
 import Script from "next/script";
 import { cookies } from "next/headers";
+
+const tripSans = localFont({
+  src: [
+    {
+      path: "../assets/fonts/TripSans-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../assets/fonts/TripSans-Medium.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../assets/fonts/TripSans-Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  variable: "--font-trip-sans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://egypt-us.com"),
@@ -29,7 +51,7 @@ export default async function RootLayout({
       <head>
         <Script
           id="gtm"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -39,7 +61,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           }}
         />
       </head>
-      <body suppressHydrationWarning>
+      <body className={`${tripSans.variable} ${tripSans.className}`} suppressHydrationWarning>
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-M92PRJC6"

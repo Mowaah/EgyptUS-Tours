@@ -473,7 +473,7 @@ export default function StepYourDetails({ trip, formData, onChange, onContinue, 
 
           <FormField
             id="pti-phone"
-            label={t("tripBooking.step2.phone", "Phone Number")}
+            label={t("tripBooking.step2.phone", "Enter your Phone Number")}
             required
             error={errors.phone}
           >

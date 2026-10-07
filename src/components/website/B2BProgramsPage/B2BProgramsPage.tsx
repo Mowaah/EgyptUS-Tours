@@ -13,11 +13,11 @@ import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./B2BProgramsPage.module.scss";
 
 const GALLERY_IMAGES = [
-  "/images/b2bpage/b2b1.png",
-  "/images/b2bpage/b2b2.png",
-  "/images/b2bpage/b2b3.png",
-  "/images/b2bpage/b2b4.png",
-  "/images/b2bpage/b2b5.png",
+  "/images/b2bpage/b2b1.webp",
+  "/images/b2bpage/b2b2.webp",
+  "/images/b2bpage/b2b3.webp",
+  "/images/b2bpage/b2b4.webp",
+  "/images/b2bpage/b2b5.webp",
 ];
 
 import type { TestimonialData } from "@/services/testimonialsService";

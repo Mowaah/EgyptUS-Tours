@@ -52,7 +52,6 @@ export default function PageHeader({
             height={247}
             className={styles.decoration}
             aria-hidden="true"
-            priority
           />
         </div>
       )}

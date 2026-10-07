@@ -40,32 +40,32 @@ export default function SearchBar({ destinations = [] }: SearchBarProps) {
     {
       label: t("search.budgetLess1000", "less than {amount}").replace(
         "{amount}",
-        formatCurrency({ usd: 1000, eur: 1000, egp: 50000 })
+        formatCurrency({ usd: 1000, eur: 1000 })
       ),
       value: "less1000",
     },
     {
       label: t("search.budget1000_2000", "{min} - {max}")
-        .replace("{min}", formatCurrency({ usd: 1000, eur: 1000, egp: 50000 }))
-        .replace("{max}", formatCurrency({ usd: 2000, eur: 2000, egp: 100000 })),
+        .replace("{min}", formatCurrency({ usd: 1000, eur: 1000 }))
+        .replace("{max}", formatCurrency({ usd: 2000, eur: 2000 })),
       value: "1000_2000",
     },
     {
       label: t("search.budget2000_3000", "{min} - {max}")
-        .replace("{min}", formatCurrency({ usd: 2000, eur: 2000, egp: 100000 }))
-        .replace("{max}", formatCurrency({ usd: 3000, eur: 3000, egp: 150000 })),
+        .replace("{min}", formatCurrency({ usd: 2000, eur: 2000 }))
+        .replace("{max}", formatCurrency({ usd: 3000, eur: 3000 })),
       value: "2000_3000",
     },
     {
       label: t("search.budget4000_5000", "{min} - {max}")
-        .replace("{min}", formatCurrency({ usd: 4000, eur: 4000, egp: 200000 }))
-        .replace("{max}", formatCurrency({ usd: 5000, eur: 5000, egp: 250000 })),
+        .replace("{min}", formatCurrency({ usd: 4000, eur: 4000 }))
+        .replace("{max}", formatCurrency({ usd: 5000, eur: 5000 })),
       value: "4000_5000",
     },
     {
       label: t("search.budgetOver5000", "Over {amount}").replace(
         "{amount}",
-        formatCurrency({ usd: 5000, eur: 5000, egp: 250000 })
+        formatCurrency({ usd: 5000, eur: 5000 })
       ),
       value: "over5000",
     },

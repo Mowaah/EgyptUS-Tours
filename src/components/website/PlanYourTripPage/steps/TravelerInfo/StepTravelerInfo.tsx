@@ -135,7 +135,7 @@ export default function StepTravelerInfo({
 
           <FormField
             id="pti-phone"
-            label={t("planYourTrip.travelerInfo.phone", "Phone Number")}
+            label={t("planYourTrip.travelerInfo.phone", "Enter your Phone Number")}
             required
             error={showErrors ? (!isPhoneFilled ? t("errors.required", "This field is required") : !phoneValid ? t("errors.phoneInvalid", "Please enter a valid phone number") : undefined) : undefined}
           >

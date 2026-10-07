@@ -62,9 +62,10 @@ export default function AboutTeam() {
           <div className={styles.imagesWrapper}>
             <div className={styles.singleImageWrap}>
               <Image
-                src="/images/team/founder.png"
+                src="/images/team/founder.webp"
                 alt="Mohamed Abbas - Founder"
                 fill
+                sizes="(max-width: 768px) 100vw, 400px"
                 className={styles.image}
               />
             </div>

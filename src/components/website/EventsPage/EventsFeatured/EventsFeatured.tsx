@@ -38,7 +38,7 @@ export default function EventsFeatured() {
           {/* ── Left: Single Image ── */}
           <div className={styles.imageWrap}>
             <Image
-              src="/images/case-study.png"
+              src="/images/case-study.webp"
               alt={t("featured.eventTitle", "60 American Travelers")}
               fill
               sizes="(max-width: 1024px) 100vw, 629px"

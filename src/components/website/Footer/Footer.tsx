@@ -102,7 +102,7 @@ export default function Footer() {
                   className={`${styles.linkGroup} ${isContact ? styles.contactGroup : ""}`}
                 >
                   <div className={isContact ? styles.contactContent : undefined}>
-                    <h4 className={styles.linkGroupTitle}>{title}</h4>
+                    <h3 className={styles.linkGroupTitle}>{title}</h3>
                     <ul className={styles.linkList}>
                       {links.map((link, i) =>
                         link.href ? (
@@ -164,7 +164,6 @@ export default function Footer() {
           width={1050}
           height={800}
           className={styles.shape}
-          priority
         />
       </div>
     </footer>

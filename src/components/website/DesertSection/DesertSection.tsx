@@ -11,13 +11,13 @@ export default function DesertSection() {
     {
       title: t("desert.westernTitle", "Western Desert"),
       description: t("desert.westernDesc", "Experience the thrill of the Egyptian desert with camel rides and sandboarding adventures."),
-      image: "/images/desert/western.png",
+      image: "/images/desert/western.webp",
       categoryParam: "Western Desert",
     },
     {
       title: t("desert.sinaiTitle", "Sinai Desert"),
       description: t("desert.sinaiDesc", "Experience the thrill of the Egyptian desert with camel rides and sandboarding adventures."),
-      image: "/images/desert/sinai.png",
+      image: "/images/desert/sinai.webp",
       categoryParam: "Sinai Desert",
     },
     {
