@@ -6,7 +6,6 @@ import DashboardNavbar from "@/components/dashboard/Navbar/DashboardNavbar";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import ProfileHeader from "@/components/dashboard/shared/ProfileHeader/ProfileHeader";
 import phStyles from "@/components/dashboard/shared/ProfileHeader/ProfileHeader.module.scss";
-import DashboardStatusBanner from "@/components/dashboard/shared/DashboardStatusBanner/DashboardStatusBanner";
 import ActionNoteModal, { ActionNoteModalConfig } from "@/components/dashboard/LeadsInquiries/ActionNoteModal/ActionNoteModal";
 import { ReassignModal, triggerToast } from "@/components/dashboard/shared";
 import { 
@@ -100,8 +99,6 @@ export default function RequestDetailsLayout({
   const { canEdit } = useAdminAuth();
   const canEditRequests = canEdit("requests");
   const [activeModalKey, setActiveModalKey] = useState<string | null>(null);
-  const [bannerMessage, setBannerMessage] = useState("");
-  
   const [agents, setAgents] = useState<any[]>([]);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
 
@@ -181,7 +178,6 @@ export default function RequestDetailsLayout({
       }
       
       if (successMessage) {
-        setBannerMessage(successMessage);
         triggerToast(successMessage, "success");
       }
       setActiveModalKey(null);
@@ -199,7 +195,6 @@ export default function RequestDetailsLayout({
         setLoadingAction(action);
         await onActionSubmit(action, payload);
         const msg = successMsg || "Action completed successfully";
-        setBannerMessage(msg);
         triggerToast(msg, "success");
       } catch (error: any) {
         console.error("Action failed:", error);
@@ -209,7 +204,6 @@ export default function RequestDetailsLayout({
         setLoadingAction(null);
       }
     } else if (successMsg) {
-      setBannerMessage(successMsg);
       triggerToast(successMsg, "success");
     }
   };
@@ -266,12 +260,6 @@ export default function RequestDetailsLayout({
       </DashboardNavbar>
 
       <div className={styles.contentWrapper}>
-        <DashboardStatusBanner 
-          message={bannerMessage} 
-          show={!!bannerMessage} 
-          onClose={() => setBannerMessage("")} 
-        />
-        
         <div className={styles.gridContainer}>
           <div className={styles.leftColumn}>
             {leftColumnContent}
@@ -527,7 +515,7 @@ export default function RequestDetailsLayout({
                 <button
                   className={styles.createProposalBtn}
                   type="button"
-                  onClick={() => setBannerMessage("Customer Review Opened")}
+                  onClick={() => triggerToast("Customer Review Opened", "success")}
                 >
                   <Image src="/images/dashboard/requests/footer/view-customer-review.svg" alt="" width={20} height={20} className={styles.whiteIcon} />
                   View Customer Review

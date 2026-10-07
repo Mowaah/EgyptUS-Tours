@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { apiClient, logoutCustomer } from "@/lib/api";
+import { syncGuestFavoritesToServer } from "@/utils/guestFavorites";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
 
@@ -38,6 +39,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       apiClient.get("/auth/me/")
         .then((data: any) => {
           setUser(data); // data is already unwrapped by our interceptor
+          syncGuestFavoritesToServer().catch((err) => {
+            console.warn("Failed to sync guest favorites after session restore", err);
+          });
         })
         .catch((err) => {
           console.error("Failed to fetch user profile", err);
@@ -56,6 +60,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     Cookies.set("access_token", access, { expires: 1 }); // 1 day
     Cookies.set("refresh_token", refresh, { expires: 7 }); // 7 days
     setUser(userData);
+    syncGuestFavoritesToServer().catch((err) => {
+      console.warn("Failed to sync guest favorites on login", err);
+    });
   };
 
   const logout = () => {

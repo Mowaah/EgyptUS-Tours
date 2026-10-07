@@ -21,7 +21,8 @@ import { Trip, Hotel } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useUpcomingTrip } from "@/hooks/useUpcomingTrip";
-import { getFavoriteTrips, getFavoriteHotels, getProfileRequests, getProfileSummary, getProfileBookings, getPaymentReceipt, getFullImageUrl } from "@/lib/api";
+import { getFavoriteTrips, getFavoriteHotels, getProfileRequests, getProfileSummary, getProfileBookings, getPaymentReceipt, getFullImageUrl, apiClient } from "@/lib/api";
+import { getGuestFavorites } from "@/utils/guestFavorites";
 import { getAllHotels } from "@/services/hotelsService";
 import { getStatusConfig } from "@/utils/statusUtils";
 import { formatDateDDMMYYYY } from "@/utils/dateFormat";
@@ -39,6 +40,86 @@ function parseProfileTab(param: string | null): TabType {
     return param;
   }
   return "favorites";
+}
+
+function mapTripItem(t: any): Trip {
+  const basePrice = parseFloat(t.base_price) || 0;
+  const basePriceEgp = t.base_price_egp != null ? parseFloat(t.base_price_egp) || 0 : undefined;
+  const basePriceEur = t.base_price_eur != null ? parseFloat(t.base_price_eur) || 0 : undefined;
+  const discountPercent = parseFloat(t.discount_value) || 0;
+  const discountedPrice = discountPercent > 0
+    ? basePrice * (1 - discountPercent / 100)
+    : basePrice;
+
+  return {
+    id: t.slug,
+    title: t.title,
+    description: t.short_description,
+    location: t.location_text,
+    price: discountedPrice,
+    prices: {
+      usd: discountedPrice,
+      egp: basePriceEgp != null
+        ? (discountPercent > 0 ? basePriceEgp * (1 - discountPercent / 100) : basePriceEgp)
+        : undefined,
+      eur: basePriceEur != null
+        ? (discountPercent > 0 ? basePriceEur * (1 - discountPercent / 100) : basePriceEur)
+        : undefined,
+    },
+    originalPrice: discountPercent > 0 ? basePrice : undefined,
+    originalPrices: discountPercent > 0
+      ? { usd: basePrice, egp: basePriceEgp, eur: basePriceEur }
+      : undefined,
+    currency: t.currency_code,
+    priceLabel: t.price_label,
+    duration: t.duration,
+    image: t.image || "/images/destination1.png",
+    discountTitle: t.discount_title || undefined,
+    discountValue: discountPercent > 0 ? `${discountPercent}% Off` : undefined,
+    isFavorite: true,
+  };
+}
+
+function mapHotelItem(h: any): Hotel {
+  const basePrice = parseFloat(h.price_per_night) || 0;
+  const basePriceEgp = h.price_per_night_egp != null
+    ? parseFloat(h.price_per_night_egp) || 0
+    : undefined;
+  const basePriceEur = h.price_per_night_eur != null
+    ? parseFloat(h.price_per_night_eur) || 0
+    : undefined;
+  const discountPercent = parseFloat(h.discount_value) || 0;
+  const discountedPrice = discountPercent > 0
+    ? basePrice * (1 - discountPercent / 100)
+    : basePrice;
+
+  return {
+    id: h.slug,
+    name: h.name,
+    location: h.location_text,
+    image: h.hero_image || h.image || "/images/pyramids.jpg",
+    stars: typeof h.stars === "number" ? h.stars : (parseFloat(String(h.stars)) || 0),
+    rating: h.rating_avg,
+    reviews: h.review_count,
+    rooms: h.rooms,
+    pricePerNight: discountedPrice,
+    prices: {
+      usd: discountedPrice,
+      egp: basePriceEgp != null
+        ? (discountPercent > 0 ? basePriceEgp * (1 - discountPercent / 100) : basePriceEgp)
+        : undefined,
+      eur: basePriceEur != null
+        ? (discountPercent > 0 ? basePriceEur * (1 - discountPercent / 100) : basePriceEur)
+        : undefined,
+    },
+    originalPrice: discountPercent > 0 ? basePrice : undefined,
+    originalPrices: discountPercent > 0
+      ? { usd: basePrice, egp: basePriceEgp, eur: basePriceEur }
+      : undefined,
+    discountTitle: h.discount_title || undefined,
+    discountValue: discountPercent > 0 ? `${discountPercent}% Off` : undefined,
+    isFavorite: true,
+  };
 }
 
 export default function ProfilePage() {
@@ -206,99 +287,46 @@ export default function ProfilePage() {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    if (isAuthenticated && activeTab === "favorites") {
+    if (activeTab === "favorites") {
       const fetchFavorites = async () => {
         setFavoritesLoading(true);
         try {
+          if (!isAuthenticated) {
+            const guestFavs = getGuestFavorites();
+            if (guestFavs.trips.length === 0 && guestFavs.hotels.length === 0) {
+              setFavoriteTrips([]);
+              setFavoriteHotels([]);
+              setFavoritesLoading(false);
+              return;
+            }
+
+            const [tripsRes, hotelsRes] = await Promise.all([
+              guestFavs.trips.length > 0
+                ? apiClient.get("/trips/?kind=all&page_size=100").then((r: any) => r?.results || r).catch(() => [])
+                : Promise.resolve([]),
+              guestFavs.hotels.length > 0
+                ? apiClient.get("/hotels/?page_size=100").then((r: any) => r?.results || r).catch(() => [])
+                : Promise.resolve([]),
+            ]);
+
+            const tripsList = Array.isArray(tripsRes) ? tripsRes : [];
+            const hotelsList = Array.isArray(hotelsRes) ? hotelsRes : [];
+
+            const filteredTrips = tripsList.filter((t: any) => guestFavs.trips.includes(t.slug));
+            const filteredHotels = hotelsList.filter((h: any) => guestFavs.hotels.includes(h.slug));
+
+            setFavoriteTrips(filteredTrips.map(mapTripItem));
+            setFavoriteHotels(filteredHotels.map(mapHotelItem));
+            return;
+          }
+
           const [tripsData, hotelsData] = await Promise.all([
             getFavoriteTrips(),
             getFavoriteHotels(),
           ]);
 
-          setFavoriteTrips(
-            tripsData.map((t) => {
-              const basePrice = parseFloat(t.base_price) || 0;
-              const basePriceEgp = t.base_price_egp != null ? parseFloat(t.base_price_egp) || 0 : undefined;
-              const basePriceEur = t.base_price_eur != null ? parseFloat(t.base_price_eur) || 0 : undefined;
-              const discountPercent = parseFloat(t.discount_value) || 0;
-              const discountedPrice = discountPercent > 0
-                ? basePrice * (1 - discountPercent / 100)
-                : basePrice;
-
-              return {
-                id: t.slug,
-                title: t.title,
-                description: t.short_description,
-                location: t.location_text,
-                price: discountedPrice,
-                prices: {
-                  usd: discountedPrice,
-                  egp: basePriceEgp != null
-                    ? (discountPercent > 0 ? basePriceEgp * (1 - discountPercent / 100) : basePriceEgp)
-                    : undefined,
-                  eur: basePriceEur != null
-                    ? (discountPercent > 0 ? basePriceEur * (1 - discountPercent / 100) : basePriceEur)
-                    : undefined,
-                },
-                originalPrice: discountPercent > 0 ? basePrice : undefined,
-                originalPrices: discountPercent > 0
-                  ? { usd: basePrice, egp: basePriceEgp, eur: basePriceEur }
-                  : undefined,
-                currency: t.currency_code,
-                priceLabel: t.price_label,
-                duration: t.duration,
-                image: t.image || "/images/destination1.png",
-                discountTitle: t.discount_title || undefined,
-                discountValue: discountPercent > 0 ? `${discountPercent}% Off` : undefined,
-                isFavorite: t.is_favorite,
-              };
-            })
-          );
-
-          setFavoriteHotels(
-            hotelsData.map((h) => {
-              const basePrice = parseFloat(h.price_per_night) || 0;
-              const basePriceEgp = h.price_per_night_egp != null
-                ? parseFloat(h.price_per_night_egp) || 0
-                : undefined;
-              const basePriceEur = h.price_per_night_eur != null
-                ? parseFloat(h.price_per_night_eur) || 0
-                : undefined;
-              const discountPercent = parseFloat(h.discount_value) || 0;
-              const discountedPrice = discountPercent > 0
-                ? basePrice * (1 - discountPercent / 100)
-                : basePrice;
-
-              return {
-                id: h.slug,
-                name: h.name,
-                location: h.location_text,
-                image: h.hero_image || h.image || "/images/pyramids.jpg",
-                stars: typeof h.stars === "number" ? h.stars : (parseFloat(String(h.stars)) || 0),
-                rating: h.rating_avg,
-                reviews: h.review_count,
-                rooms: h.rooms,
-                pricePerNight: discountedPrice,
-                prices: {
-                  usd: discountedPrice,
-                  egp: basePriceEgp != null
-                    ? (discountPercent > 0 ? basePriceEgp * (1 - discountPercent / 100) : basePriceEgp)
-                    : undefined,
-                  eur: basePriceEur != null
-                    ? (discountPercent > 0 ? basePriceEur * (1 - discountPercent / 100) : basePriceEur)
-                    : undefined,
-                },
-                originalPrice: discountPercent > 0 ? basePrice : undefined,
-                originalPrices: discountPercent > 0
-                  ? { usd: basePrice, egp: basePriceEgp, eur: basePriceEur }
-                  : undefined,
-                currency: h.currency_code,
-                discountTitle: h.discount_title || undefined,
-                discountValue: discountPercent > 0 ? `${discountPercent}% Off` : undefined,
-                isFavorite: h.is_favorite,
-              };
-            })
-          );
+          setFavoriteTrips(tripsData.map(mapTripItem));
+          setFavoriteHotels(hotelsData.map(mapHotelItem));
         } catch (error) {
           console.error("Failed to fetch favorites:", error);
         } finally {
@@ -307,6 +335,17 @@ export default function ProfilePage() {
       };
 
       fetchFavorites();
+
+      const handleGuestChange = () => {
+        if (!isAuthenticated && activeTab === "favorites") {
+          fetchFavorites();
+        }
+      };
+
+      window.addEventListener("guest_favorites_changed", handleGuestChange);
+      return () => {
+        window.removeEventListener("guest_favorites_changed", handleGuestChange);
+      };
     }
   }, [isAuthenticated, activeTab]);
 
@@ -933,8 +972,8 @@ export default function ProfilePage() {
               <EmptyState
                 framedIcon
                 iconSrc="/images/profile/glyphs/heart.svg"
-                iconWidth={150}
-                iconHeight={150}
+                iconWidth={200}
+                iconHeight={200}
                 title={t("profile.emptyStates.noFavoriteHotels", "Your favorite hotels list is empty")}
                 description={t("profile.emptyStates.noFavoriteHotelsDesc", "Save hotels you're interested in and come back anytime to complete your booking.")}
                 buttonText={t("profile.emptyStates.exploreHotels", "Explore hotels")}
@@ -1085,7 +1124,7 @@ export default function ProfilePage() {
           return (
             <EmptyState
               framedIcon
-              iconSrc="/images/profile-blue.svg"
+              iconSrc="/images/profile-blue2.svg"
               iconWidth={90}
               iconHeight={90}
               title={t("profile.emptyStates.authRequestsTitle", "Create an Account to View Your Requests")}

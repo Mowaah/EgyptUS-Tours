@@ -7,7 +7,6 @@ import Button from "../Button/Button";
 import FavoriteButton from "../FavoriteButton/FavoriteButton";
 import { StarRating } from "@/components/shared";
 import { useFavorite } from "@/hooks/useFavorite";
-import { useAuth } from "@/contexts/AuthContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./HotelCard.module.scss";
@@ -25,7 +24,6 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
   const { t } = useTranslation("common");
   const isList = view === "list";
   const hotelDetailsHref = `/hotels/${hotel.id}`;
-  const { isAuthenticated } = useAuth();
   const { formatCurrency } = useCurrency();
   const { isFavorite, isLoading, toggle } = useFavorite({
     slug: hotel.id,
@@ -68,14 +66,12 @@ export default function HotelCard({ hotel, view = "grid", imageHeight, onFavorit
           <h3 className={styles.name}>{hotel.name}</h3>
           <span className={styles.location}>{hotel.location}</span>
         </div>
-        {isAuthenticated && (
-          <FavoriteButton
-            isFavorite={isFavorite}
-            onToggle={handleFavoriteClick}
-            isLoading={isLoading}
-            className={styles.favorite}
-          />
-        )}
+        <FavoriteButton
+          isFavorite={isFavorite}
+          onToggle={handleFavoriteClick}
+          isLoading={isLoading}
+          className={styles.favorite}
+        />
 
       </Link>
 

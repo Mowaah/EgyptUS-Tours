@@ -6,7 +6,6 @@ import { Trip } from "@/types";
 import Button from "../Button/Button";
 import FavoriteButton from "../FavoriteButton/FavoriteButton";
 import { useFavorite } from "@/hooks/useFavorite";
-import { useAuth } from "@/contexts/AuthContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./TripCard.module.scss";
@@ -20,7 +19,6 @@ interface TripCardProps {
 export default function TripCard({ trip, onFavoriteToggle, className = "" }: TripCardProps) {
   const { t } = useTranslation("common");
   const tripDetailsHref = `/egypttours/${trip.id}`;
-  const { isAuthenticated } = useAuth();
   const { formatCurrency } = useCurrency();
   const { isFavorite, isLoading, toggle } = useFavorite({
     slug: trip.id,
@@ -51,14 +49,12 @@ export default function TripCard({ trip, onFavoriteToggle, className = "" }: Tri
             <span>{trip.discountTitle || trip.discountValue}</span>
           </div>
         )}
-        {isAuthenticated && (
-          <FavoriteButton
-            isFavorite={isFavorite}
-            onToggle={handleFavoriteClick}
-            isLoading={isLoading}
-            className={styles.favorite}
-          />
-        )}
+        <FavoriteButton
+          isFavorite={isFavorite}
+          onToggle={handleFavoriteClick}
+          isLoading={isLoading}
+          className={styles.favorite}
+        />
       </Link>
 
       <div className={styles.content}>
