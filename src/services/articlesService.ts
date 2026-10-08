@@ -12,7 +12,7 @@ const mapArticleImages = <T extends Partial<ArticleDetail & ArticleList>>(articl
 // Fetch all articles (Paginated)
 export async function getArticles(params?: Record<string, any>): Promise<PaginatedResponse<ArticleList>> {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
-  const response = await serverFetch<PaginatedResponse<ArticleList>>(`/articles/${query}`);
+  const response = await serverFetch<PaginatedResponse<ArticleList>>(`/articles/${query}`, { next: { revalidate: 60 } });
   response.results = response.results.map(mapArticleImages);
   return response;
 }
@@ -38,33 +38,33 @@ export async function getAllArticles(): Promise<ArticleList[]> {
 // Fetch a single article by slug
 export async function getArticleBySlug(slug: string): Promise<ArticleDetail> {
   try {
-    const response = await serverFetch<ArticleDetail>(`/articles/${encodeURIComponent(slug)}/`);
+    const response = await serverFetch<ArticleDetail>(`/articles/${encodeURIComponent(slug)}/`, { next: { revalidate: 60 } });
     return mapArticleImages(response);
   } catch (error) {
     const articles = await getAllArticles();
     const match = articles.find((article) => toArticleSlug(article.slug) === toArticleSlug(slug));
     if (!match) throw error;
 
-    const response = await serverFetch<ArticleDetail>(`/articles/${encodeURIComponent(match.slug)}/`);
+    const response = await serverFetch<ArticleDetail>(`/articles/${encodeURIComponent(match.slug)}/`, { next: { revalidate: 60 } });
     return mapArticleImages(response);
   }
 }
 
 // Fetch featured articles
 export async function getFeaturedArticles(): Promise<ArticleList[]> {
-  const response = await serverFetch<ArticleList[]>('/articles/featured/');
+  const response = await serverFetch<ArticleList[]>('/articles/featured/', { next: { revalidate: 60 } });
   return response.map(mapArticleImages);
 }
 
 // Fetch editors pick articles
 export async function getEditorsPickArticles(): Promise<ArticleList[]> {
-  const response = await serverFetch<ArticleList[]>('/articles/editors-picks/');
+  const response = await serverFetch<ArticleList[]>('/articles/editors-picks/', { next: { revalidate: 60 } });
   return response.map(mapArticleImages);
 }
 
 // Fetch latest articles
 export async function getLatestArticles(): Promise<ArticleList[]> {
-  const response = await serverFetch<ArticleList[]>('/articles/latest/');
+  const response = await serverFetch<ArticleList[]>('/articles/latest/', { next: { revalidate: 60 } });
   return response.map(mapArticleImages);
 }
 

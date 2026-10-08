@@ -12,7 +12,7 @@ const mapBlogImages = <T extends Partial<ArticleDetail & ArticleList>>(blog: T):
 // Fetch all blogs (Paginated)
 export async function getBlogs(params?: Record<string, any>): Promise<PaginatedResponse<ArticleList>> {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
-  const response = await serverFetch<PaginatedResponse<ArticleList>>(`/blogs/${query}`);
+  const response = await serverFetch<PaginatedResponse<ArticleList>>(`/blogs/${query}`, { next: { revalidate: 60 } });
   response.results = response.results.map(mapBlogImages);
   return response;
 }
@@ -38,33 +38,33 @@ export async function getAllBlogs(): Promise<ArticleList[]> {
 // Fetch a single blog by slug
 export async function getBlogBySlug(slug: string): Promise<ArticleDetail> {
   try {
-    const response = await serverFetch<ArticleDetail>(`/blogs/${encodeURIComponent(slug)}/`);
+    const response = await serverFetch<ArticleDetail>(`/blogs/${encodeURIComponent(slug)}/`, { next: { revalidate: 60 } });
     return mapBlogImages(response);
   } catch (error) {
     const blogs = await getAllBlogs();
     const match = blogs.find((blog) => toArticleSlug(blog.slug) === toArticleSlug(slug));
     if (!match) throw error;
 
-    const response = await serverFetch<ArticleDetail>(`/blogs/${encodeURIComponent(match.slug)}/`);
+    const response = await serverFetch<ArticleDetail>(`/blogs/${encodeURIComponent(match.slug)}/`, { next: { revalidate: 60 } });
     return mapBlogImages(response);
   }
 }
 
 // Fetch featured blogs
 export async function getFeaturedBlogs(): Promise<ArticleList[]> {
-  const response = await serverFetch<ArticleList[]>('/blogs/featured/');
+  const response = await serverFetch<ArticleList[]>('/blogs/featured/', { next: { revalidate: 60 } });
   return response.map(mapBlogImages);
 }
 
 // Fetch editors pick blogs
 export async function getEditorsPickBlogs(): Promise<ArticleList[]> {
-  const response = await serverFetch<ArticleList[]>('/blogs/editors-picks/');
+  const response = await serverFetch<ArticleList[]>('/blogs/editors-picks/', { next: { revalidate: 60 } });
   return response.map(mapBlogImages);
 }
 
 // Fetch latest blogs
 export async function getLatestBlogs(): Promise<ArticleList[]> {
-  const response = await serverFetch<ArticleList[]>('/blogs/latest/');
+  const response = await serverFetch<ArticleList[]>('/blogs/latest/', { next: { revalidate: 60 } });
   return response.map(mapBlogImages);
 }
 

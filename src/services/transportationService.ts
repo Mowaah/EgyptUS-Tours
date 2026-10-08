@@ -7,7 +7,7 @@ import { serverFetch } from "@/lib/api";
  */
 export async function getVehicles(params?: Record<string, any>): Promise<VehiclePaginatedResponse> {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
-  return serverFetch<VehiclePaginatedResponse>(`/vehicles/${query}`);
+  return serverFetch<VehiclePaginatedResponse>(`/vehicles/${query}`, { next: { revalidate: 60 } });
 }
 
 /**

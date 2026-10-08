@@ -10,7 +10,7 @@ function parseHotelPriceEgp(priceEgp?: string | null, fallbackPrice?: string | n
  */
 export async function getHotels(params?: Record<string, any>): Promise<HotelPaginatedResponse> {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
-  return serverFetch<HotelPaginatedResponse>(`/hotels/${query}`);
+  return serverFetch<HotelPaginatedResponse>(`/hotels/${query}`, { next: { revalidate: 60 } });
 }
 
 /**
