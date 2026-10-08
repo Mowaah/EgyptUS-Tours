@@ -35,9 +35,8 @@ export default function BlurText({
     <Component
       className={`${styles.wrapper} ${className || ""}`}
       style={wrapperStyle}
-      aria-label={text}
     >
-      <span aria-hidden="true" className={styles.content}>
+      <span className={styles.content}>
         {words.map((word, wordIdx) => (
           <span key={wordIdx} className={styles.word}>
             {word.split("").map((char, charIdx) => {

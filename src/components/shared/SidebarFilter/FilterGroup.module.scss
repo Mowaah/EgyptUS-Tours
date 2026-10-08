@@ -12,6 +12,7 @@
   @include flex-between;
   cursor: pointer;
 
+  h3,
   h4 {
     font-size: $font-size-base;
     font-weight: 700;
