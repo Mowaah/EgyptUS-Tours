@@ -25,8 +25,18 @@ export default function BlurText({
   const words = text.split(" ");
   let globalCharIndex = 0;
 
+  const wrapperStyle = {
+    "--char-duration": `${duration.toFixed(3)}s`,
+    "--char-blur": `${blur}px`,
+    "--char-distance": `${distance}px`,
+  } as CSSProperties;
+
   return (
-    <Component className={`${styles.wrapper} ${className || ""}`} aria-label={text}>
+    <Component
+      className={`${styles.wrapper} ${className || ""}`}
+      style={wrapperStyle}
+      aria-label={text}
+    >
       <span aria-hidden="true" className={styles.content}>
         {words.map((word, wordIdx) => (
           <span key={wordIdx} className={styles.word}>
@@ -36,9 +46,6 @@ export default function BlurText({
 
               const charStyle = {
                 "--char-delay": `${delay.toFixed(3)}s`,
-                "--char-duration": `${duration.toFixed(3)}s`,
-                "--char-blur": `${blur}px`,
-                "--char-distance": `${distance}px`,
               } as CSSProperties;
 
               return (

@@ -53,6 +53,9 @@ export default function SortButton({
             type="button"
             className={`${styles.selectBtn} ${isOpen ? styles.selectBtnOpen : ""}`}
             onClick={() => setIsOpen(!isOpen)}
+            aria-label={`${t("sortBy", "Sort by")}: ${selectedLabel}`}
+            aria-expanded={isOpen}
+            aria-haspopup="listbox"
           >
             <span className={styles.selectText}>{selectedLabel}</span>
             <Image

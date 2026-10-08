@@ -326,8 +326,8 @@ export default function HotelsPageSection({ initialHotels = [] }: HotelsPageSect
           <aside
             className={`${styles.sidebar} ${filtersOpen ? styles.sidebarOpen : ""}`}
             id="hotels-filters-panel"
-            role={isLg ? undefined : "dialog"}
-            aria-modal={!isLg && filtersOpen}
+            role={!isLg ? "dialog" : undefined}
+            aria-modal={!isLg && filtersOpen ? "true" : undefined}
             aria-label="Hotel filters"
             aria-hidden={!isLg && !filtersOpen ? true : undefined}
           >

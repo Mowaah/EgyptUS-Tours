@@ -21,7 +21,8 @@ export interface ChatMessage {
 
 const STORAGE_KEY = "egyptus_chat_history";
 
-export function useAssistantChat() {
+export function useAssistantChat(options?: { enabled?: boolean }) {
+  const enabled = options?.enabled ?? true;
   const [config, setConfig] = useState<AssistantConfig | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [quickReplies, setQuickReplies] = useState<AssistantQuickReply[]>([]);
@@ -30,6 +31,7 @@ export function useAssistantChat() {
 
   // Load initial config and restore session storage if available
   useEffect(() => {
+    if (!enabled || config !== null) return;
     let isMounted = true;
 
     async function initAssistant() {

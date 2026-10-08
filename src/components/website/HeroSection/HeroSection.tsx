@@ -47,30 +47,30 @@ export default async function HeroSection() {
           <h1 className={styles.heading}>
             <BlurText
               text={headingText}
-              baseDelay={0.08}
-              stagger={0.035}
-              blur={14}
-              distance={20}
-              duration={0.75}
+              baseDelay={0.05}
+              stagger={0.03}
+              blur={8}
+              distance={14}
+              duration={0.5}
             />
           </h1>
           <p className={styles.subheading}>
             <BlurText
               text={subheadingPart1}
               baseDelay={0.32}
-              stagger={0.016}
-              blur={10}
-              distance={12}
-              duration={0.6}
+              stagger={0.012}
+              blur={6}
+              distance={8}
+              duration={0.45}
             />
             <br />
             <BlurText
               text={subheadingPart2}
-              baseDelay={0.62}
-              stagger={0.016}
-              blur={10}
-              distance={12}
-              duration={0.6}
+              baseDelay={0.6}
+              stagger={0.012}
+              blur={6}
+              distance={8}
+              duration={0.45}
             />
           </p>
           <Button

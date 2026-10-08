@@ -3,8 +3,12 @@
 @keyframes charBlurIn {
   0% {
     opacity: 0;
-    filter: blur(var(--char-blur, 12px));
-    transform: translate3d(0, var(--char-distance, 16px), 0);
+    filter: blur(var(--char-blur, 8px));
+    transform: translate3d(0, var(--char-distance, 12px), 0);
+  }
+
+  65% {
+    filter: blur(0);
   }
 
   100% {
@@ -17,6 +21,7 @@
 .wrapper {
   display: inline-block;
   vertical-align: top;
+  contain: layout style;
 }
 
 .content {
@@ -35,11 +40,13 @@
 .char {
   display: inline-block;
   opacity: 0;
-  animation: charBlurIn var(--char-duration, 0.75s) cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: charBlurIn var(--char-duration, 0.5s) cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: var(--char-delay, 0s);
-  will-change: transform, opacity;
+  will-change: transform, opacity, filter;
+  transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
 }
 
 @media (prefers-reduced-motion: reduce) {

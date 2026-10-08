@@ -34,6 +34,11 @@ export default function PriceRangeFilter({ min, max, valueMin, valueMax, onChang
           max={max}
           step={step}
           value={valueMin}
+          aria-label="Minimum price"
+          aria-valuemin={min}
+          aria-valuemax={max}
+          aria-valuenow={valueMin}
+          aria-valuetext={formatValue ? formatValue(valueMin) : `$${valueMin}`}
           onChange={(e) => {
             const val = Math.min(Number(e.target.value), valueMax - step);
             onChange(val, valueMax);
@@ -46,6 +51,11 @@ export default function PriceRangeFilter({ min, max, valueMin, valueMax, onChang
           max={max}
           step={step}
           value={valueMax}
+          aria-label="Maximum price"
+          aria-valuemin={min}
+          aria-valuemax={max}
+          aria-valuenow={valueMax}
+          aria-valuetext={formatValue ? formatValue(valueMax) : `$${valueMax}`}
           onChange={(e) => {
             const val = Math.max(Number(e.target.value), valueMin + step);
             onChange(valueMin, val);

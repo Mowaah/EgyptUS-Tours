@@ -24,7 +24,7 @@ export default async function HomeTripsFetcher() {
         numericId: t.id,
         title: t.title,
         description: t.short_description || t.title,
-        image: t.image || "/images/home/hero-bg.png",
+        image: t.image || "/images/home/hero-bg.webp",
         location: t.location_text || "Egypt",
         price: discountedPrice,
         prices: {

@@ -33,6 +33,7 @@ export default function SearchInput({
       <input
         type="text"
         className={`${styles.searchInput} ${className}`}
+        aria-label={props["aria-label"] || (props.placeholder ? String(props.placeholder) : "Search")}
         {...props}
       />
     </div>

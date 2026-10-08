@@ -20,7 +20,7 @@ export default function ChatBot() {
     isLoading,
     sendMessage,
     resetChat,
-  } = useAssistantChat();
+  } = useAssistantChat({ enabled: isOpen });
 
   const closeTimerRef = useRef<number | null>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);

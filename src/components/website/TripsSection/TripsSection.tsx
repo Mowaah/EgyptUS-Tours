@@ -626,8 +626,8 @@ export default function TripsSection({
           <aside
             className={`${styles.sidebar} ${filtersOpen ? styles.sidebarOpen : ""}`}
             id="trips-filters-panel"
-            role={isLg ? undefined : "dialog"}
-            aria-modal={!isLg && filtersOpen}
+            role={!isLg ? "dialog" : undefined}
+            aria-modal={!isLg && filtersOpen ? "true" : undefined}
             aria-label="Trip filters"
             aria-hidden={!isLg && !filtersOpen ? true : undefined}
           >

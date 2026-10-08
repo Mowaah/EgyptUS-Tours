@@ -3,7 +3,6 @@
 import { useEffect, useState, type RefObject } from "react";
 
 const MOBILE_MQ = "(max-width: 768px)";
-const MIN_OVERLAP_PX = 24;
 
 const OBSTRUCTIVE_SELECTOR = [
   "button:not(:disabled)",
@@ -13,36 +12,30 @@ const OBSTRUCTIVE_SELECTOR = [
   'input[type="button"]:not(:disabled)',
 ].join(",");
 
-function rectsOverlap(a: DOMRect, b: DOMRect): boolean {
-  const overlapWidth = Math.min(a.right, b.right) - Math.max(a.left, b.left);
-  const overlapHeight = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
-  return overlapWidth >= MIN_OVERLAP_PX && overlapHeight >= MIN_OVERLAP_PX;
-}
 
-function isElementVisible(el: Element): boolean {
-  const rect = el.getBoundingClientRect();
-  if (rect.width < 2 || rect.height < 2) return false;
-
-  const style = window.getComputedStyle(el);
-  if (style.display === "none" || style.visibility === "hidden") return false;
-  if (Number.parseFloat(style.opacity) === 0) return false;
-
-  return true;
+function isPointObstructed(x: number, y: number, chatRoot: HTMLElement): boolean {
+  if (typeof document.elementsFromPoint !== "function") return false;
+  const elements = document.elementsFromPoint(x, y);
+  for (const el of elements) {
+    if (chatRoot.contains(el)) continue;
+    if (el.matches(OBSTRUCTIVE_SELECTOR) || el.closest(OBSTRUCTIVE_SELECTOR)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function isObstructedByInteractive(
   chatRect: DOMRect,
   chatRoot: HTMLElement
 ): boolean {
-  const candidates = document.querySelectorAll<HTMLElement>(OBSTRUCTIVE_SELECTOR);
+  // Check center and boundary points of the chat trigger
+  const midX = chatRect.left + chatRect.width / 2;
+  const midY = chatRect.top + chatRect.height / 2;
 
-  for (const el of candidates) {
-    if (chatRoot.contains(el)) continue;
-    if (!isElementVisible(el)) continue;
-
-    const rect = el.getBoundingClientRect();
-    if (rectsOverlap(chatRect, rect)) return true;
-  }
+  if (isPointObstructed(midX, midY, chatRoot)) return true;
+  if (isPointObstructed(chatRect.left + 12, chatRect.top + 12, chatRoot)) return true;
+  if (isPointObstructed(chatRect.right - 12, chatRect.bottom - 12, chatRoot)) return true;
 
   return false;
 }
@@ -100,20 +93,11 @@ export function useChatbotObstruction(
     window.addEventListener("scroll", schedule, { passive: true, capture: true });
     window.addEventListener("resize", schedule);
 
-    const mutationObserver = new MutationObserver(schedule);
-    mutationObserver.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["class", "style", "hidden", "disabled", "aria-hidden"],
-    });
-
     return () => {
       cancelAnimationFrame(rafId);
       mq.removeEventListener("change", onMqChange);
       window.removeEventListener("scroll", schedule, true);
       window.removeEventListener("resize", schedule);
-      mutationObserver.disconnect();
     };
   }, [elementRef, enabled]);
 

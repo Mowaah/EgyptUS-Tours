@@ -123,37 +123,52 @@ img {
 
 [data-animate] {
   opacity: 0;
-  transform: translateY(var(--anim-distance, 32px));
+  transform: translate3d(0, var(--anim-distance, 32px), 0);
   transition:
     opacity var(--anim-duration, 600ms) cubic-bezier(0.22, 1, 0.36, 1) var(--anim-delay, 0ms),
     transform var(--anim-duration, 600ms) cubic-bezier(0.22, 1, 0.36, 1) var(--anim-delay, 0ms);
   will-change: opacity, transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 [data-animate="visible"] {
   opacity: 1;
-  transform: none;
+  transform: translate3d(0, 0, 0);
   will-change: auto;
 }
 
 // Stagger children inside a container automatically
 [data-animate-stagger]>* {
   opacity: 0;
-  transform: translateY(var(--anim-distance, 24px));
+  transform: translate3d(0, var(--anim-distance, 24px), 0);
   transition:
     opacity var(--anim-duration, 550ms) cubic-bezier(0.22, 1, 0.36, 1),
     transform var(--anim-duration, 550ms) cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 [data-animate-stagger="visible"]>* {
   opacity: 1;
-  transform: none;
+  transform: translate3d(0, 0, 0);
   will-change: auto;
 }
 
 @for $i from 1 through 12 {
   [data-animate-stagger="visible"]>*:nth-child(#{$i}) {
     transition-delay: #{($i - 1) * 80}ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-animate],
+  [data-animate="visible"],
+  [data-animate-stagger]>*,
+  [data-animate-stagger="visible"]>* {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 }

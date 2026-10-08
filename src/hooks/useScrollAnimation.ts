@@ -26,18 +26,7 @@ const SKIP_SELECTORS = [
 export function useScrollAnimation() {
   useEffect(() => {
     if (typeof window === "undefined") return;
-
-    const stamp = (el: HTMLElement, stagger = false) => {
-      // Don't re-stamp or stamp excluded elements
-      if (
-        el.hasAttribute("data-animate") ||
-        el.hasAttribute("data-animate-stagger") ||
-        el.closest(SKIP_SELECTORS) ||
-        el.matches(SKIP_SELECTORS)
-      ) return;
-
-      el.setAttribute(stagger ? "data-animate-stagger" : "data-animate", "");
-    };
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const reveal = (el: Element) => {
       if (el.hasAttribute("data-animate")) {
@@ -70,10 +59,23 @@ export function useScrollAnimation() {
     );
 
     const observeAll = () => {
-      // Animate the direct children of every <section> with a stagger
-      document.querySelectorAll<HTMLElement>("section > *").forEach((child) => {
-        stamp(child, false); // each block fades up individually
-        observer.observe(child);
+      const sections = document.querySelectorAll<HTMLElement>("section");
+      sections.forEach((section, idx) => {
+        if (idx === 0 || section.matches(SKIP_SELECTORS) || section.closest(SKIP_SELECTORS)) return;
+        const children = section.children;
+        for (let i = 0; i < children.length; i++) {
+          const child = children[i] as HTMLElement;
+          if (
+            !child ||
+            child.hasAttribute("data-animate") ||
+            child.hasAttribute("data-animate-stagger") ||
+            child.matches(SKIP_SELECTORS)
+          ) {
+            continue;
+          }
+          child.setAttribute("data-animate", "");
+          observer.observe(child);
+        }
       });
     };
 
@@ -81,7 +83,7 @@ export function useScrollAnimation() {
 
     const scheduleObserve = () => {
       clearTimeout(timeoutId);
-      timeoutId = setTimeout(observeAll, 500);
+      timeoutId = setTimeout(observeAll, 400);
     };
 
     if ("requestIdleCallback" in window) {
