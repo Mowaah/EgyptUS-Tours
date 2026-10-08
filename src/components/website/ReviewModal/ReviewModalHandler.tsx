@@ -2,7 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import ReviewModal from "./ReviewModal";
+import dynamic from "next/dynamic";
+
+const ReviewModal = dynamic(() => import("./ReviewModal"), { ssr: false });
 
 export default function ReviewModalHandler() {
   const searchParams = useSearchParams();

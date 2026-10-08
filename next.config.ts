@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
     unoptimized: process.env.NODE_ENV === "development",
-    qualities: [75, 80, 85, 100],
+    qualities: [70, 75, 80, 85, 100],
     remotePatterns: [
       {
         protocol: apiProtocol as "http" | "https",
@@ -72,15 +72,6 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/images/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-      {
-        source: "/_next/static/:path*",
         headers: [
           {
             key: "Cache-Control",
