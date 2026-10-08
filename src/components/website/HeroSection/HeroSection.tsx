@@ -32,8 +32,8 @@ export default async function HeroSection() {
           alt=""
           fill
           priority
-          sizes="100vw"
-          quality={85}
+          sizes="(max-width: 1920px) 100vw, 1920px"
+          quality={80}
           style={{ objectFit: "cover", objectPosition: "center" }}
         />
       </div>

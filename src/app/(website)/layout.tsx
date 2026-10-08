@@ -9,7 +9,6 @@ import { CURRENCY_COOKIE_KEY, normalizeCurrency } from "@/constants/currency";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { normalizeLanguage, LANGUAGE_COOKIE_KEY } from "@/i18n";
 import { cookies } from "next/headers";
-import { Suspense } from "react";
 
 export default async function WebsiteLayout({
   children,
@@ -50,9 +49,7 @@ export default async function WebsiteLayout({
     <LanguageProvider initialLanguage={initialLanguage}>
       <CurrencyProvider initialCurrency={initialCurrency}>
         <TopBar />
-        <Suspense fallback={null}>
-          <Navbar categoryLinks={categoryLinks} destinationLinks={destinationLinks} />
-        </Suspense>
+        <Navbar categoryLinks={categoryLinks} destinationLinks={destinationLinks} />
         <main>{children}</main>
         <ChatBot />
         <Footer />

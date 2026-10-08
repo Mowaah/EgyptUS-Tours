@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense, useCallback } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
@@ -52,14 +52,52 @@ export interface NavLinkItem {
   translations?: Record<string, { name?: string; title?: string }>;
 }
 
-
-
 const TRIP_LISTING_SLUGS = new Set(["classic", "christmas", "nile-cruises"]);
 
 function isTripDetailPage(pathname: string): boolean {
   const match = pathname.match(/^\/(?:trips|egypttours)\/([^/]+)$/);
   if (!match) return false;
   return !TRIP_LISTING_SLUGS.has(match[1]);
+}
+
+interface NavbarSearchParamsWatcherProps {
+  onAuthMode: (mode: "login" | "signup") => void;
+  onVerification: (param: string) => void;
+  onDestinationChange: (dest: string | null) => void;
+}
+
+function NavbarSearchParamsWatcher({
+  onAuthMode,
+  onVerification,
+  onDestinationChange,
+}: NavbarSearchParamsWatcherProps) {
+  const searchParams = useSearchParams();
+  const destinationParam = searchParams?.get("destination") ?? null;
+  const verificationParam = searchParams?.get("verification");
+  const authModeParam = searchParams?.get("auth_mode");
+
+  useEffect(() => {
+    onDestinationChange(destinationParam);
+  }, [destinationParam, onDestinationChange]);
+
+  useEffect(() => {
+    if (authModeParam === "signup" || authModeParam === "login") {
+      onAuthMode(authModeParam);
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.delete("auth_mode");
+        window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
+      } catch {}
+    }
+  }, [authModeParam, onAuthMode]);
+
+  useEffect(() => {
+    if (verificationParam) {
+      onVerification(verificationParam);
+    }
+  }, [verificationParam, onVerification]);
+
+  return null;
 }
 
 interface NavbarProps {
@@ -107,51 +145,43 @@ export default function Navbar({
   }>({ isOpen: false, state: "expired" });
   const [authModalInitialMode, setAuthModalInitialMode] = useState<"login" | "signup">("login");
 
+  const [destinationParam, setDestinationParam] = useState<string | null>(null);
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const destinationParam = searchParams?.get("destination");
-  const verificationParam = searchParams?.get("verification");
-  const authModeParam = searchParams?.get("auth_mode");
   const isBookingPage = pathname === "/booking";
 
-  useEffect(() => {
-    if (authModeParam === "signup") {
-      setAuthModalInitialMode("signup");
-      setIsAuthModalOpen(true);
+  const handleAuthMode = useCallback((mode: "login" | "signup") => {
+    setAuthModalInitialMode(mode);
+    setIsAuthModalOpen(true);
+  }, []);
+
+  const handleVerification = useCallback((param: string) => {
+    if (
+      param === "expired" ||
+      param === "already_verified" ||
+      param === "failed" ||
+      param === "verify_email"
+    ) {
+      let storedEmail = "";
+      if (typeof window !== "undefined") {
+        storedEmail = localStorage.getItem("egyptus_last_signup_email") || "";
+      }
+      setVerificationModal({
+        isOpen: true,
+        state: param as EmailVerificationModalState,
+        email: storedEmail,
+      });
+
       try {
         const url = new URL(window.location.href);
-        url.searchParams.delete("auth_mode");
+        url.searchParams.delete("verification");
         window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
       } catch {}
     }
-  }, [authModeParam]);
+  }, []);
 
-  useEffect(() => {
-    if (verificationParam) {
-      if (
-        verificationParam === "expired" ||
-        verificationParam === "already_verified" ||
-        verificationParam === "failed" ||
-        verificationParam === "verify_email"
-      ) {
-        let storedEmail = "";
-        if (typeof window !== "undefined") {
-          storedEmail = localStorage.getItem("egyptus_last_signup_email") || "";
-        }
-        setVerificationModal({
-          isOpen: true,
-          state: verificationParam as EmailVerificationModalState,
-          email: storedEmail,
-        });
-
-        try {
-          const url = new URL(window.location.href);
-          url.searchParams.delete("verification");
-          window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
-        } catch {}
-      }
-    }
-  }, [verificationParam]);
+  const handleDestinationChange = useCallback((dest: string | null) => {
+    setDestinationParam(dest);
+  }, []);
 
   const isLinkActive = (link: { key?: string; label: string; href: string }) => {
     const isToursRoute = pathname.startsWith("/egypttours") || pathname.startsWith("/trips");
@@ -248,6 +278,13 @@ export default function Navbar({
 
   return (
     <>
+      <Suspense fallback={null}>
+        <NavbarSearchParamsWatcher
+          onAuthMode={handleAuthMode}
+          onVerification={handleVerification}
+          onDestinationChange={handleDestinationChange}
+        />
+      </Suspense>
       <nav
         className={`${styles.navbar}${shouldShowScrolled ? ` ${styles.scrolled}` : ""}${lightNavBackground ? ` ${styles.lightPage}` : ""}${tripDetailPage ? ` ${styles.notSticky}` : ""}${mobileOpen ? ` ${styles.drawerOpen}` : ""}`}
       >

@@ -715,7 +715,7 @@ export default function TripsSection({
                       key={trip.id}
                       trip={trip}
                       onFavoriteToggle={handleFavoriteToggle}
-                      priority={index === 0}
+                      priority={variant === "page" ? index === 0 : false}
                     />
                   ))}
                 </div>

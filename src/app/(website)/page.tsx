@@ -1,18 +1,16 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { generateSeoMetadata } from "@/lib/seoUtils";
-import dynamic from "next/dynamic";
 import HeroSection from "@/components/website/HeroSection/HeroSection";
 import StatsBar from "@/components/website/StatsBar/StatsBar";
-
-const DesertSection = dynamic(() => import("@/components/website/DesertSection/DesertSection"));
-const MiceSection = dynamic(() => import("@/components/website/MiceSection/MiceSection"));
-const CtaBanner = dynamic(() => import("@/components/website/CtaBanner/CtaBanner"));
-const StatsSection = dynamic(() => import("@/components/website/StatsSection/StatsSection"));
-const B2BSection = dynamic(() => import("@/components/website/B2BSection/B2BSection"));
-const DesertBannerSection = dynamic(() => import("@/components/website/DesertBannerSection/DesertBannerSection"));
-const WhyChooseUsSection = dynamic(() => import("@/components/website/WhyChooseUsSection/WhyChooseUsSection"));
-const ContactSection = dynamic(() => import("@/components/website/ContactSection/ContactSection"));
+import DesertSection from "@/components/website/DesertSection/DesertSection";
+import MiceSection from "@/components/website/MiceSection/MiceSection";
+import CtaBanner from "@/components/website/CtaBanner/CtaBanner";
+import StatsSection from "@/components/website/StatsSection/StatsSection";
+import B2BSection from "@/components/website/B2BSection/B2BSection";
+import DesertBannerSection from "@/components/website/DesertBannerSection/DesertBannerSection";
+import WhyChooseUsSection from "@/components/website/WhyChooseUsSection/WhyChooseUsSection";
+import ContactSection from "@/components/website/ContactSection/ContactSection";
 
 import HomeTripsFetcher from "@/components/website/HomeFetchers/HomeTripsFetcher";
 import HomeHotelsFetcher from "@/components/website/HomeFetchers/HomeHotelsFetcher";

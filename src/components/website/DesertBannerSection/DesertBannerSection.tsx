@@ -11,10 +11,9 @@ export default function DesertBannerSection() {
   return (
     <section className={styles.section}>
       <Image
-        src="/images/sora.png"
+        src="/images/sora.webp"
         alt="Desert landscape"
         fill
-        priority
         className={styles.bg}
         sizes="(max-width: 768px) 100vw, 1920px"
       />

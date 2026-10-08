@@ -81,10 +81,14 @@ export function useScrollAnimation() {
 
     const scheduleObserve = () => {
       clearTimeout(timeoutId);
-      timeoutId = setTimeout(observeAll, 300);
+      timeoutId = setTimeout(observeAll, 500);
     };
 
-    scheduleObserve();
+    if ("requestIdleCallback" in window) {
+      (window as any).requestIdleCallback(() => scheduleObserve(), { timeout: 1500 });
+    } else {
+      scheduleObserve();
+    }
 
     // Re-scan when React renders new content (route changes, modals, lazy loads)
     const mutationObserver = new MutationObserver(scheduleObserve);
