@@ -2,8 +2,9 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import Image from "next/image";
-import { LanguageTabs, type Language, RichTextEditor } from "@/components/shared";
-import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";;
+import { LanguageTabs, type Language } from "@/components/shared";
+import RichTextEditor from "@/components/shared/RichTextEditor/RichTextEditor";
+import { ModalHeader, ModalFooter } from "@/components/dashboard/shared";
 import styles from "./DocumentFormModal.module.scss";
 
 interface DocumentFormModalProps {

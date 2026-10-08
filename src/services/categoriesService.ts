@@ -2,6 +2,7 @@ import { serverFetch } from "@/lib/api";
 import { PaginatedResponse } from "@/types/api";
 import { getAllTrips } from "@/services/tripsService";
 import { isDesertCategory } from "@/constants";
+import { cache } from "react";
 
 export interface CategoryList {
   id: number;
@@ -44,7 +45,7 @@ export async function getAllCategories(): Promise<CategoryList[]> {
 /**
  * Returns only categories that have published trips with destination Egypt (excluding desert categories).
  */
-export async function getEgyptTripCategories(): Promise<CategoryList[]> {
+export const getEgyptTripCategories = cache(async function getEgyptTripCategories(): Promise<CategoryList[]> {
   try {
     const [allTags, egyptTrips] = await Promise.all([
       getAllCategories(),
@@ -105,4 +106,4 @@ export async function getEgyptTripCategories(): Promise<CategoryList[]> {
     console.error("Error in getEgyptTripCategories:", error);
     return [];
   }
-}
+});

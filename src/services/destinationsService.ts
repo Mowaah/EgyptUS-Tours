@@ -1,5 +1,6 @@
 import { PaginatedResponse } from "@/types/api";
 import { serverFetch } from "@/lib/api";
+import { cache } from "react";
 
 export interface DestinationList {
   id: number;
@@ -16,7 +17,7 @@ export interface DestinationList {
   translations?: Record<string, { name?: string; title?: string }>;
 }
 
-export async function getAllDestinations(params?: Record<string, string>): Promise<DestinationList[]> {
+export const getAllDestinations = cache(async function getAllDestinations(params?: Record<string, string>): Promise<DestinationList[]> {
   try {
     const query = new URLSearchParams({ page_size: "100", ...(params || {}) });
     const allResults: DestinationList[] = [];
@@ -44,5 +45,5 @@ export async function getAllDestinations(params?: Record<string, string>): Promi
     console.error("Error in getAllDestinations:", error);
     return [];
   }
-}
+});
 

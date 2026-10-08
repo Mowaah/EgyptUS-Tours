@@ -1,0 +1,53 @@
+@use "@/styles/variables" as *;
+
+@keyframes charBlurIn {
+  0% {
+    opacity: 0;
+    filter: blur(var(--char-blur, 12px));
+    transform: translate3d(0, var(--char-distance, 16px), 0);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.wrapper {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.content {
+  display: inline;
+}
+
+.word {
+  display: inline-block;
+  white-space: nowrap;
+
+  &:not(:last-child) {
+    margin-right: 0.28em;
+  }
+}
+
+.char {
+  display: inline-block;
+  opacity: 0;
+  animation: charBlurIn var(--char-duration, 0.75s) cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: var(--char-delay, 0s);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .char {
+    animation: none;
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}
+

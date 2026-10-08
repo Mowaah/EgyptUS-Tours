@@ -78,7 +78,6 @@ export { default as TimePicker } from "./TimePicker/TimePicker";
 export type { TimeValue } from "./TimePicker/TimePicker";
 export { default as AuthModal } from "./AuthModal/AuthModal";
 export { default as LanguageTabs, type Language } from "./LanguageTabs/LanguageTabs";
-export { default as RichTextEditor } from "./RichTextEditor/RichTextEditor";
 export { IconStepper } from "./IconStepper/IconStepper";
 export { default as IncludedHotelCard } from "./IncludedHotelCard/IncludedHotelCard";
 export { default as LoadingSpinner } from "./LoadingSpinner/LoadingSpinner";
@@ -95,3 +94,6 @@ export type {
 } from "./EmailVerificationModal/EmailVerificationModal";
 
 export type { RefundBankDetailsData, RefundSummaryData } from "./RefundCards/RefundCards";
+export { default as BlurText } from "./BlurText/BlurText";
+export type { BlurTextProps } from "./BlurText/BlurText";
+

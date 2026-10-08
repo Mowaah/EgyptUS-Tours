@@ -5,20 +5,28 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import Button from "@/components/shared/Button/Button";
 import {
   GlassCard,
-  AuthModal,
-  EmailVerificationModal,
   type EmailVerificationModalState,
 } from "@/components/shared";
 import UserMenu from "./UserMenu";
 import { useScrollLock } from "@/hooks/useScrollLock";
-import DashboardConfirmationModal from "@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import styles from "./Navbar.module.scss";
+
+const AuthModal = dynamic(() => import("@/components/shared/AuthModal/AuthModal"), { ssr: false });
+const EmailVerificationModal = dynamic(
+  () => import("@/components/shared/EmailVerificationModal/EmailVerificationModal"),
+  { ssr: false }
+);
+const DashboardConfirmationModal = dynamic(
+  () => import("@/components/dashboard/shared/DashboardConfirmationModal/DashboardConfirmationModal"),
+  { ssr: false }
+);
 
 const NAV_CONFIG = [
   { key: "home", defaultLabel: "Home", href: "/" },
@@ -301,6 +309,7 @@ export default function Navbar({
 
           {!isBookingPage && (
             <button
+              type="button"
               className={`${styles.hamburger} ${mobileOpen ? styles.hamburgerOpen : ""}`}
               onClick={() => setMobileOpen((o) => !o)}
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
@@ -514,7 +523,7 @@ export default function Navbar({
                       </Link>
                     </li>
                     <li>
-                      <button className={styles.drawerUserLink} onClick={() => { setMobileOpen(false); setIsLogoutModalOpen(true); }}>
+                      <button type="button" className={styles.drawerUserLink} onClick={() => { setMobileOpen(false); setIsLogoutModalOpen(true); }}>
                         <Image src="/images/logout.svg" alt="" width={22} height={22} />
                         <span>{t("userMenu.logout", "Log out")}</span>
                       </button>
@@ -533,7 +542,7 @@ export default function Navbar({
                     </li>
                     <li className={styles.drawerDivider} />
                     <li>
-                      <button className={`${styles.drawerUserLink} ${styles.drawerGuestLink}`} onClick={() => { setMobileOpen(false); setIsAuthModalOpen(true); }}>
+                      <button type="button" className={`${styles.drawerUserLink} ${styles.drawerGuestLink}`} onClick={() => { setMobileOpen(false); setIsAuthModalOpen(true); }}>
                         <Image src="/images/profile-gray.svg" alt="" width={22} height={22} />
                         <span>{t("userMenu.loginSignup", "Login / Sign up")}</span>
                       </button>

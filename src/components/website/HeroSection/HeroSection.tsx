@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Button from "@/components/shared/Button/Button";
+import { Button, BlurText } from "@/components/shared";
 import SearchBar from "../SearchBar/SearchBar";
 import { getAllDestinations } from "@/services/destinationsService";
 import { cookies } from "next/headers";
@@ -24,27 +24,54 @@ export default async function HeroSection() {
       translations: d.translations,
     }));
 
+  const headingText = getTranslation(lang, "home", "hero.heading") || "Experience";
+  const subheadingPart1 = getTranslation(lang, "home", "hero.subheadingPart1") || "History, culture, and luxury";
+  const subheadingPart2 = getTranslation(lang, "home", "hero.subheadingPart2") || "all in one trip";
+
   return (
     <section className={styles.hero}>
       <div className={styles.background}>
         <Image
           src="/images/home/hero-bg.webp"
-          alt=""
+          alt="Egypt US Tours - History, culture, and luxury all in one trip"
           fill
           priority
-          sizes="(max-width: 1920px) 100vw, 1920px"
-          quality={80}
+          sizes="(max-width: 640px) 100vw, (max-width: 1200px) 100vw, 1920px"
+          quality={75}
           style={{ objectFit: "cover", objectPosition: "center" }}
         />
       </div>
 
       <div className={styles.container}>
         <div className={styles.content}>
-          <h1 className={styles.heading}>{getTranslation(lang, "home", "hero.heading") || "Experience"}</h1>
+          <h1 className={styles.heading}>
+            <BlurText
+              text={headingText}
+              baseDelay={0.08}
+              stagger={0.035}
+              blur={14}
+              distance={20}
+              duration={0.75}
+            />
+          </h1>
           <p className={styles.subheading}>
-            {getTranslation(lang, "home", "hero.subheadingPart1") || "History, culture, and luxury"}
+            <BlurText
+              text={subheadingPart1}
+              baseDelay={0.32}
+              stagger={0.016}
+              blur={10}
+              distance={12}
+              duration={0.6}
+            />
             <br />
-            {getTranslation(lang, "home", "hero.subheadingPart2") || "all in one trip"}
+            <BlurText
+              text={subheadingPart2}
+              baseDelay={0.62}
+              stagger={0.016}
+              blur={10}
+              distance={12}
+              duration={0.6}
+            />
           </p>
           <Button
             variant="primary"

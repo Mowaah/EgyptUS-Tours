@@ -56,13 +56,24 @@ export default function UserMenu({ scrolled, lightNavBackground, isLoggedIn, use
       {useGlass ? (
         <GlassCard
           as="button"
+          type="button"
           className={`${styles.toggle} ${styles.glassToggle}`}
           onClick={() => setIsOpen(!isOpen)}
+          aria-label={t("userMenu.userMenu", "User menu")}
+          aria-expanded={isOpen}
+          aria-haspopup="menu"
         >
           {toggleButton}
         </GlassCard>
       ) : (
-        <button className={`${styles.toggle} ${styles.solidToggle}`} onClick={() => setIsOpen(!isOpen)}>
+        <button
+          type="button"
+          className={`${styles.toggle} ${styles.solidToggle}`}
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label={t("userMenu.userMenu", "User menu")}
+          aria-expanded={isOpen}
+          aria-haspopup="menu"
+        >
           {toggleButton}
         </button>
       )}

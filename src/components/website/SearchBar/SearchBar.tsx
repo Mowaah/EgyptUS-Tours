@@ -99,6 +99,9 @@ export default function SearchBar({ destinations = [] }: SearchBarProps) {
       type="button"
       className={`${styles.filter} ${isOpen ? styles.filterActive : ""}`}
       onClick={() => setIsOpen(!isOpen)}
+      aria-label={`${label}: ${value || "Not selected"}`}
+      aria-expanded={isOpen}
+      aria-haspopup="dialog"
     >
       <span className={styles.icon}>
         <Image src={`/images/search/${icon}.svg`} alt="" width={20} height={20} />
@@ -110,8 +113,13 @@ export default function SearchBar({ destinations = [] }: SearchBarProps) {
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.tabs}>
-        <button className={`${styles.tab} ${styles.active}`}>
+      <div className={styles.tabs} role="tablist">
+        <button
+          type="button"
+          role="tab"
+          aria-selected="true"
+          className={`${styles.tab} ${styles.active}`}
+        >
           <Image src="/images/search/trips.svg" alt="" width={22.5} height={19.5} />
           <span>{t("search.tripsTab", "Trips")}</span>
         </button>
@@ -164,7 +172,12 @@ export default function SearchBar({ destinations = [] }: SearchBarProps) {
           />
         </div>
 
-        <button className={styles.searchBtn} onClick={handleSearch}>
+        <button
+          type="button"
+          className={styles.searchBtn}
+          onClick={handleSearch}
+          aria-label={t("search.search", "Search")}
+        >
           <Image src="/images/search/search.svg" alt="" width={18} height={18} />
           {t("search.search", "Search")}
         </button>

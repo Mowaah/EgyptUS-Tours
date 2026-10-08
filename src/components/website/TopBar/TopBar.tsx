@@ -51,6 +51,9 @@ function SimpleDropdown({ options, value, onChange, className, type }: SimpleDro
         type="button"
         className={`${styles.dropdownToggle} ${type === "lang" ? styles.langToggle : styles.currToggle} ${isOpen ? styles.open : ""}`}
         onClick={() => setIsOpen(!isOpen)}
+        aria-label={type === "lang" ? `Select language, current is ${activeOption.name || activeOption.code}` : `Select currency, current is ${activeOption.code}`}
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
       >
         {type === "lang" ? (
           <>
