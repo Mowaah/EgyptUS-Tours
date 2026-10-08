@@ -6,17 +6,17 @@ import { useEffect, useState } from "react";
 import {
   BookingDetailsSections,
   BookingSidebar,
-  CancelBookingModal,
   PageHeader,
   RefundBankDetailsCard,
   RefundSummaryCard,
   StatusPill,
   SuccessModal,
-  AuthModal,
   EmptyState,
   LoadingSpinner,
   type BookingDetailsSection,
 } from "@/components/shared";
+import AuthModal from "@/components/shared/AuthModal/AuthModal";
+import CancelBookingModal from "@/components/shared/CancelBookingModal/CancelBookingModal";
 import TransportBookingSummary from "@/components/website/BookTransportationPage/BookingSummary/BookingSummary";
 import { getProfileBookingDetail, payRemainingBookingBalance, cancelProfileBooking, getFullImageUrl } from "@/lib/api";
 import { getAllTrips } from "@/services/tripsService";

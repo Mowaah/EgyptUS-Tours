@@ -2,12 +2,14 @@
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { useChatbotObstruction } from "@/hooks/useChatbotObstruction";
 import { useAssistantChat } from "@/hooks/useAssistantChat";
-import ChatHeader from "./ChatHeader/ChatHeader";
-import ChatMessageList from "./ChatMessageList/ChatMessageList";
-import ChatInput from "./ChatInput/ChatInput";
 import styles from "./ChatBot.module.scss";
+
+const ChatHeader = dynamic(() => import("./ChatHeader/ChatHeader"), { ssr: false });
+const ChatMessageList = dynamic(() => import("./ChatMessageList/ChatMessageList"), { ssr: false });
+const ChatInput = dynamic(() => import("./ChatInput/ChatInput"), { ssr: false });
 
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);

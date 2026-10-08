@@ -7,8 +7,10 @@ import FormField from "@/components/shared/FormField/FormField";
 import PasswordToggleButton from "@/components/shared/PasswordToggleButton/PasswordToggleButton";
 import { validateEmail, validatePassword, validateName } from "@/utils/validation";
 import { useAuth } from "@/contexts/AuthContext";
-import { GoogleLogin } from "@react-oauth/google";
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { loginCustomer, signupCustomer, googleLoginCustomer, resendCustomerEmailVerification } from "@/lib/api";
+
+const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
 import { useTranslation } from "@/hooks/useTranslation";
 import {
   getGuestAuthEmail,
@@ -367,7 +369,11 @@ export default function AuthModal({
     </div>
   );
 
-  return createPortal(content, document.body);
+  return (
+    <GoogleOAuthProvider clientId={googleClientId}>
+      {createPortal(content, document.body)}
+    </GoogleOAuthProvider>
+  );
 }
 
 function subscribeToClientMount() {

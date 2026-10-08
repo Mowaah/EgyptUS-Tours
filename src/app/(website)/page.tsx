@@ -16,7 +16,7 @@ import HomeTripsFetcher from "@/components/website/HomeFetchers/HomeTripsFetcher
 import HomeHotelsFetcher from "@/components/website/HomeFetchers/HomeHotelsFetcher";
 import HomeTransportationFetcher from "@/components/website/HomeFetchers/HomeTransportationFetcher";
 import HomeTestimonialsFetcher from "@/components/website/HomeFetchers/HomeTestimonialsFetcher";
-import { LoadingSpinner } from "@/components/shared";
+import LoadingSpinner from "@/components/shared/LoadingSpinner/LoadingSpinner";
 import { ReviewModalHandler } from "@/components/website/ReviewModal";
 
 export async function generateMetadata(): Promise<Metadata> {

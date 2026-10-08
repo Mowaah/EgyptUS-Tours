@@ -2,11 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 import { apiClient, logoutCustomer } from "@/lib/api";
 import { syncGuestFavoritesToServer } from "@/utils/guestFavorites";
-
-const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
 
 interface User {
   id: number;
@@ -79,9 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout }}>
-      <GoogleOAuthProvider clientId={googleClientId}>
-        {children}
-      </GoogleOAuthProvider>
+      {children}
     </AuthContext.Provider>
   );
 }

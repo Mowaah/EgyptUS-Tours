@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { SectionHeader, Pagination, TestimonialCard, EmptyState } from "@/components/shared";
+import SectionHeader from "@/components/shared/SectionHeader/SectionHeader";
+import Pagination from "@/components/shared/Pagination/Pagination";
+import TestimonialCard from "@/components/shared/TestimonialCard/TestimonialCard";
+import EmptyState from "@/components/shared/EmptyState/EmptyState";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { Testimonial } from "@/components/shared/TestimonialCard/TestimonialCard";
 import type { TestimonialData } from "@/services/testimonialsService";

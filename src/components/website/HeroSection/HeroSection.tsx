@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { Button, BlurText } from "@/components/shared";
+import Button from "@/components/shared/Button/Button";
+import BlurText from "@/components/shared/BlurText/BlurText";
 import SearchBar from "../SearchBar/SearchBar";
 import { getAllDestinations } from "@/services/destinationsService";
 import { cookies } from "next/headers";
@@ -38,7 +39,6 @@ export default async function HeroSection() {
           priority
           sizes="(max-width: 640px) 100vw, (max-width: 1200px) 100vw, 1920px"
           quality={70}
-          style={{ objectFit: "cover", objectPosition: "center" }}
         />
       </div>
 
@@ -83,7 +83,7 @@ export default async function HeroSection() {
                 alt=""
                 width={24}
                 height={24}
-                style={{ marginTop: "4px" }}
+                className={styles.buttonIcon}
               />
             }
           >

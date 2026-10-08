@@ -40,12 +40,17 @@ $navbar-height-mobile: 72px;
   background-color: $dark;
 
   img {
+    object-fit: cover;
     object-position: center 30%;
 
     @include md {
       object-position: center;
     }
   }
+}
+
+.buttonIcon {
+  margin-top: 4px;
 }
 
 .container {

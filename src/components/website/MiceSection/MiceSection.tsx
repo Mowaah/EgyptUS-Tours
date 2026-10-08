@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import { SectionHeader, FeatureCard, Button } from "@/components/shared";
+import SectionHeader from "@/components/shared/SectionHeader/SectionHeader";
+import FeatureCard from "@/components/shared/FeatureCard/FeatureCard";
+import Button from "@/components/shared/Button/Button";
 import { useTranslation } from "@/hooks/useTranslation";
 import Image from "next/image";
 import styles from "./MiceSection.module.scss";

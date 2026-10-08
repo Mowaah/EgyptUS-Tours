@@ -13,9 +13,9 @@ import {
   TripBookingCard,
   UpcomingTripBanner,
   SuccessModal,
-  AuthModal,
   LoadingSpinner,
 } from "@/components/shared";
+import AuthModal from "@/components/shared/AuthModal/AuthModal";
 import type { TabType, TripBookingCardProps } from "@/components/shared";
 import { Trip, Hotel } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";

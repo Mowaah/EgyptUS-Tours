@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, SuccessModal, FormField } from "@/components/shared";
+import Button from "@/components/shared/Button/Button";
+import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
+import FormField from "@/components/shared/FormField/FormField";
 import { submitContactInquiry, extractApiError } from "@/lib/api";
 import { isValidEmail } from "@/utils/validators";
 import { useTranslation } from "@/hooks/useTranslation";

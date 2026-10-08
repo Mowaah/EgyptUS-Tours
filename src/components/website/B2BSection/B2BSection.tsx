@@ -2,7 +2,12 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { SectionHeader, Button, FormField, PhoneInput, NationalitySelect, SuccessModal } from "@/components/shared";
+import SectionHeader from "@/components/shared/SectionHeader/SectionHeader";
+import Button from "@/components/shared/Button/Button";
+import FormField from "@/components/shared/FormField/FormField";
+import PhoneInput from "@/components/shared/PhoneInput/PhoneInput";
+import NationalitySelect from "@/components/shared/NationalitySelect/NationalitySelect";
+import SuccessModal from "@/components/shared/SuccessModal/SuccessModal";
 import { submitB2BProposal, extractApiError, extractFieldErrors } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";

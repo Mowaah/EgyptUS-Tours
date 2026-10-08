@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { Button, SectionHeader } from "@/components/shared";
+import Button from "@/components/shared/Button/Button";
+import SectionHeader from "@/components/shared/SectionHeader/SectionHeader";
 import { useTranslation } from "@/hooks/useTranslation";
 import Image from "next/image";
 import styles from "./WhyChooseUsSection.module.scss";

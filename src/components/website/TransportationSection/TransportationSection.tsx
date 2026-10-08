@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { SectionHeader, Button, CustomDatePicker } from "@/components/shared";
+import SectionHeader from "@/components/shared/SectionHeader/SectionHeader";
+import Button from "@/components/shared/Button/Button";
+import CustomDatePicker from "@/components/shared/CustomDatePicker/CustomDatePicker";
 import { useTranslation } from "@/hooks/useTranslation";
 import Image from "next/image";
 import styles from "./TransportationSection.module.scss";

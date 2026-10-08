@@ -9,12 +9,12 @@ import {
   RefundBankDetailsCard,
   RefundSummaryCard,
   StatusPill,
-  AuthModal,
   EmptyState,
   LoadingSpinner,
   type BookingDetailsSection,
   type TripBookingStatus,
 } from "@/components/shared";
+import AuthModal from "@/components/shared/AuthModal/AuthModal";
 import { getStatusConfig } from "@/utils/statusUtils";
 import {
   formatExpectedAttendees,

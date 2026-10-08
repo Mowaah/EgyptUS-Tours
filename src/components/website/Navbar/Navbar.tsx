@@ -7,10 +7,8 @@ import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import Button from "@/components/shared/Button/Button";
-import {
-  GlassCard,
-  type EmailVerificationModalState,
-} from "@/components/shared";
+import GlassCard from "@/components/shared/GlassCard/GlassCard";
+import type { EmailVerificationModalState } from "@/components/shared/EmailVerificationModal/EmailVerificationModal";
 import UserMenu from "./UserMenu";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { useAuth } from "@/contexts/AuthContext";

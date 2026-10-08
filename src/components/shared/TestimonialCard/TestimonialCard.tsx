@@ -185,6 +185,8 @@ export default function TestimonialCard({ testimonial }: Props) {
                   alt={testimonial.location || ""}
                   width={18}
                   height={18}
+                  loading="lazy"
+                  decoding="async"
                   className={styles.flagImg}
                 />
               )}

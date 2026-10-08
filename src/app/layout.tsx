@@ -48,19 +48,6 @@ export default async function RootLayout({
 
   return (
     <html lang={lang} suppressHydrationWarning>
-      <head>
-        <Script
-          id="gtm"
-          strategy="lazyOnload"
-          dangerouslySetInnerHTML={{
-            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-M92PRJC6');`,
-          }}
-        />
-      </head>
       <body className={`${tripSans.variable} ${tripSans.className}`} suppressHydrationWarning>
         <noscript>
           <iframe
@@ -77,6 +64,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             {children}
           </FavoritesProvider>
         </AuthProvider>
+        <Script
+          id="gtm"
+          strategy="lazyOnload"
+          dangerouslySetInnerHTML={{
+            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;
+if(document.readyState==='complete'){f.parentNode.insertBefore(j,f);}else{window.addEventListener('load',function(){f.parentNode.insertBefore(j,f);});}
+})(window,document,'script','dataLayer','GTM-M92PRJC6');`,
+          }}
+        />
       </body>
     </html>
   );

@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { GlassCard } from "@/components/shared";
+import GlassCard from "@/components/shared/GlassCard/GlassCard";
 import { useTranslation } from "@/hooks/useTranslation";
 import styles from "./UserMenu.module.scss";
 
@@ -23,6 +23,8 @@ export default function UserMenu({ scrolled, lightNavBackground, isLoggedIn, use
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!isOpen) return;
+
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsOpen(false);
@@ -30,7 +32,7 @@ export default function UserMenu({ scrolled, lightNavBackground, isLoggedIn, use
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [isOpen]);
 
   const useGlass = !scrolled && !lightNavBackground;
   const darkIcon = !useGlass;
@@ -53,30 +55,16 @@ export default function UserMenu({ scrolled, lightNavBackground, isLoggedIn, use
 
   return (
     <div className={styles.wrapper} ref={menuRef}>
-      {useGlass ? (
-        <GlassCard
-          as="button"
-          type="button"
-          className={`${styles.toggle} ${styles.glassToggle}`}
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label={t("userMenu.userMenu", "User menu")}
-          aria-expanded={isOpen}
-          aria-haspopup="menu"
-        >
-          {toggleButton}
-        </GlassCard>
-      ) : (
-        <button
-          type="button"
-          className={`${styles.toggle} ${styles.solidToggle}`}
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label={t("userMenu.userMenu", "User menu")}
-          aria-expanded={isOpen}
-          aria-haspopup="menu"
-        >
-          {toggleButton}
-        </button>
-      )}
+      <button
+        type="button"
+        className={`${styles.toggle} ${useGlass ? styles.glassToggle : styles.solidToggle}`}
+        onClick={() => setIsOpen((prev) => !prev)}
+        aria-label={t("userMenu.userMenu", "User menu")}
+        aria-expanded={isOpen}
+        aria-haspopup="menu"
+      >
+        {toggleButton}
+      </button>
 
       {/* Dropdown Menu */}
       <div className={`${styles.dropdown} ${isOpen ? styles.open : ""}`}>

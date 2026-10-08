@@ -48,9 +48,6 @@ export { default as RoomViewDropdown } from "./RoomViewDropdown/RoomViewDropdown
 export type { RoomViewOption } from "./RoomViewDropdown/RoomViewDropdown";
 export { default as SelectDropdown } from "./SelectDropdown/SelectDropdown";
 export type { SelectOption } from "./SelectDropdown/SelectDropdown";
-export { default as PaymentForm } from "./PaymentForm/PaymentForm";
-export type { PaymentFormData } from "./PaymentForm/PaymentForm";
-export { default as CancelBookingModal } from "./CancelBookingModal/CancelBookingModal";
 export { default as BookingStepFooter } from "./BookingStepFooter/BookingStepFooter";
 export { default as BookingDetailsSections } from "./BookingDetailsSections/BookingDetailsSections";
 export type {
@@ -76,7 +73,6 @@ export type { ProfileSidebarProps, UserProfile, TabType } from "./ProfileSidebar
 export { default as CounterPill } from "./CounterPill/CounterPill";
 export { default as TimePicker } from "./TimePicker/TimePicker";
 export type { TimeValue } from "./TimePicker/TimePicker";
-export { default as AuthModal } from "./AuthModal/AuthModal";
 export { default as LanguageTabs, type Language } from "./LanguageTabs/LanguageTabs";
 export { IconStepper } from "./IconStepper/IconStepper";
 export { default as IncludedHotelCard } from "./IncludedHotelCard/IncludedHotelCard";
@@ -87,11 +83,6 @@ export type { FavoriteButtonProps } from "./FavoriteButton/FavoriteButton";
 export { default as StatusPill, LoadingGlyph } from "./StatusPill/StatusPill";
 export type { StatusPillVariant, StatusPillSize, StatusPillIconType } from "./StatusPill/StatusPill";
 export { RefundBankDetailsCard, RefundSummaryCard } from "./RefundCards/RefundCards";
-export { default as EmailVerificationModal } from "./EmailVerificationModal/EmailVerificationModal";
-export type {
-  EmailVerificationModalProps,
-  EmailVerificationModalState,
-} from "./EmailVerificationModal/EmailVerificationModal";
 
 export type { RefundBankDetailsData, RefundSummaryData } from "./RefundCards/RefundCards";
 export { default as BlurText } from "./BlurText/BlurText";
